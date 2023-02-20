@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\PDO;
+namespace GenericDatabase\Engine\PDO;
 
 class Statements
 {

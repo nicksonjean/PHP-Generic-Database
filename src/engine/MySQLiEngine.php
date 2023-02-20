@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase;
+namespace GenericDatabase\Engine;
 
 class MySQLiEngine
 {
