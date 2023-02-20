@@ -1,12 +1,18 @@
 <?php
 
-namespace GenericDatabase;
+namespace GenericDatabase\Engine\PDO;
 
-use Getter, Setter, Transporter, Arrays, Regex, JSON, INI, YAML, XML;
+use
+  GenericDatabase\Traits\Arrays,
+  GenericDatabase\Traits\Regex,
+  GenericDatabase\Traits\JSON,
+  GenericDatabase\Traits\INI,
+  GenericDatabase\Traits\YAML,
+  GenericDatabase\Traits\XML,
+  GenericDatabase\Engine\PDOEngine;
 
-class PDOArguments
+class Arguments
 {
-  use Getter, Setter, Transporter;
   /**
    * array property for use in magic setter and getter in order
    */

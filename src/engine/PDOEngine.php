@@ -1,8 +1,16 @@
 <?php
 
-namespace GenericDatabase;
+namespace GenericDatabase\Engine;
 
-use Errors, Caller, Cleaner, Singleton, Exception, PDO, PDOException, PDOStatement;
+use
+  GenericDatabase\Traits\Errors,
+  GenericDatabase\Traits\Caller,
+  GenericDatabase\Traits\Cleaner,
+  GenericDatabase\Traits\Singleton,
+  GenericDatabase\Engine\PDO\Arguments,
+  GenericDatabase\Engine\PDO\Attributes,
+  GenericDatabase\Engine\PDO\DSN,
+  GenericDatabase\Engine\PDO\Dump;
 
 class PDOEngine
 {
@@ -20,7 +28,7 @@ class PDOEngine
    */
   public static function call($method, $arguments): mixed
   {
-    return PDOArguments::call($method, $arguments);
+    return Arguments::call($method, $arguments);
   }
 
   /**
@@ -35,29 +43,29 @@ class PDOEngine
         "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
         [$this->getDriver(), implode(', ', (array) $this->getAvailableDrivers())]
       );
-      throw new Exception($message);
+      throw new \Exception($message);
     }
 
     $result = [];
     $result += $this->getOptions();
-    $result += [PDO::ATTR_ERRMODE => ($this->getException()) ? PDO::ERRMODE_WARNING : PDO::ERRMODE_SILENT];
+    $result += [\PDO::ATTR_ERRMODE => ($this->getException()) ? \PDO::ERRMODE_WARNING : \PDO::ERRMODE_SILENT];
     switch ($this->getDriver()) {
       case 'mysql':
         if ($this->getCharset()) {
-          $result += [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES '" . $this->getCharset() . "';"];
+          $result += [\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES '" . $this->getCharset() . "';"];
         }
-        $result += [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true];
+        $result += [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true];
       case 'pgsql':
-        $result += [PDO::ATTR_AUTOCOMMIT => true];
+        $result += [\PDO::ATTR_AUTOCOMMIT => true];
         break;
       case 'sqlsrv':
-        $result += [PDO::SQLSRV_ATTR_ENCODING => PDO::SQLSRV_ENCODING_SYSTEM];
+        $result += [\PDO::SQLSRV_ATTR_ENCODING => \PDO::SQLSRV_ENCODING_SYSTEM];
         break;
       case 'sqlite':
         unset($this->user, $this->password);
         break;
       default:
-        $result += [PDO::ATTR_ORACLE_NULLS => PDO::NULL_EMPTY_STRING];
+        $result += [\PDO::ATTR_ORACLE_NULLS => \PDO::NULL_EMPTY_STRING];
     }
     $this->setOptions($result);
     $this->setInstance($this);
@@ -85,19 +93,19 @@ class PDOEngine
         $this->getConnection()->query('PRAGMA foreign_keys = ON');
         break;
     }
-    PDOAttributes::fetchAll();
+    Attributes::fetchAll();
     unset($this->argumentList);
     $this->setInstance($this);
   }
 
   /**
-   * This method is responsible for parsing the DSN from PDODSN class.
+   * This method is responsible for parsing the DSN from DSN class.
    * 
    * @return string|object
    */
-  public function parseDns(): string|Exception
+  public function parseDns(): string|\Exception
   {
-    return PDODSN::parseDns();
+    return DSN::parseDns();
   }
 
   /**
@@ -109,12 +117,12 @@ class PDOEngine
   {
     try {
       $this->preConnect();
-      $this->setConnection(new PDO($this->parseDns(), $this->getUser(), $this->getPassword(), $this->getOptions()));
+      $this->setConnection(new \PDO($this->parseDns(), $this->getUser(), $this->getPassword(), $this->getOptions()));
       $this->setInstance($this);
       $this->postConnect();
       $this->setConnected(true);
       return $this;
-    } catch (PDOException | Exception $error) {
+    } catch (\PDOException | \Exception $error) {
       $this->setConnected(false);
       Errors::throw($error);
     }
@@ -125,7 +133,7 @@ class PDOEngine
    * 
    * @return object
    */
-  public function getConnection(): PDO
+  public function getConnection(): \PDO
   {
     return $this->connection;
   }
@@ -136,7 +144,7 @@ class PDOEngine
    * @param object $connection
    * @return object
    */
-  public function setConnection(PDO $connection): PDO
+  public function setConnection(\PDO $connection): \PDO
   {
     $this->connection = $connection;
     return $this->connection;
@@ -152,7 +160,7 @@ class PDOEngine
    */
   public function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
   {
-    return PDODump::loadFromFile($file, $delimiter, $onProgress);
+    return Dump::loadFromFile($file, $delimiter, $onProgress);
   }
 
   /**
@@ -162,7 +170,7 @@ class PDOEngine
    */
   public function getAvailableDrivers(): array
   {
-    return PDO::getAvailableDrivers();
+    return \PDO::getAvailableDrivers();
   }
 
   /**
@@ -223,7 +231,7 @@ class PDOEngine
    * @param ?int $type
    * @return string|false
    */
-  public function quote(string $string, int $type = PDO::PARAM_STR): string | false
+  public function quote(string $string, int $type = \PDO::PARAM_STR): string | false
   {
     return $this->getConnection()->quote($string, $type);
   }
@@ -235,7 +243,7 @@ class PDOEngine
    * @param ?array $options
    * @return object|false
    */
-  public function prepare(string $query, ?array $options = []): PDOStatement | false
+  public function prepare(string $query, ?array $options = []): \PDOStatement | false
   {
     return $this->getConnection()->prepare($query, $options);
   }
@@ -247,7 +255,7 @@ class PDOEngine
    * @param ?int $fetchMode
    * @return object|false
    */
-  public function query(string $query, ?int $fetchMode = null): PDOStatement | false
+  public function query(string $query, ?int $fetchMode = null): \PDOStatement | false
   {
     return $this->getConnection()->query($query, $fetchMode);
   }
@@ -281,7 +289,7 @@ class PDOEngine
    * @param string $value
    * @return object|false
    */
-  public function setAttribute(int $attribute, string $value): PDOStatement | false
+  public function setAttribute(int $attribute, string $value): \PDOStatement | false
   {
     return $this->getConnection()->setAttribute($attribute, $value);
   }

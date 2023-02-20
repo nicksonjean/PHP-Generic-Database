@@ -1,6 +1,8 @@
 <?php
 
-require_once 'Property.php';
+namespace GenericDatabase\Traits;
+
+use GenericDatabase\Traits\Property;
 
 trait Cleaner
 {

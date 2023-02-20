@@ -1,4 +1,7 @@
 <?php
+
+namespace GenericDatabase\Traits;
+
 trait Path
 {
   public static function toAbsolute($path)
@@ -7,7 +10,7 @@ trait Path
       $path = substr($path, 6);
     } else if (!file_exists($path)) {
       $message = sprintf('File not founded in %s', $path);
-      throw new Exception($message);
+      throw new \Exception($message);
     }
     return realpath($path);
   }
@@ -16,11 +19,11 @@ trait Path
   {
     if (!is_string($path)) {
       $message = sprintf('String expected but was given %s', gettype($path));
-      throw new Exception($message);
+      throw new \Exception($message);
     }
     if (!ctype_print($path)) {
       $message = 'Path can NOT have non-printable characters or be empty';
-      throw new Exception($message);
+      throw new \Exception($message);
     }
     $regExp = '%^(?<wrappers>(?:[[:print:]]{2,}://)*)';
     $regExp .= '(?<root>(?:[[:alpha:]]:/|/)?)';
@@ -28,7 +31,7 @@ trait Path
     $parts = [];
     if (!preg_match($regExp, $path, $parts)) {
       $message = sprintf('Path is NOT valid, was given %s', $path);
-      throw new Exception($message);
+      throw new \Exception($message);
     }
     if ('' !== $parts['root']) {
       return true;

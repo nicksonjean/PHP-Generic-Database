@@ -9,7 +9,9 @@
         }
     ],
     "autoload": {
-        "classmap": ["src/"]
+        "psr-4" : {
+            "GenericDatabase\\": "src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {

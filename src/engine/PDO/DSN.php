@@ -1,19 +1,21 @@
 <?php
 
-namespace GenericDatabase;
+namespace GenericDatabase\Engine\PDO;
 
-use Exception, Path;
+use
+  GenericDatabase\Traits\Path,
+  GenericDatabase\Engine\PDOEngine;
 
-class PDODSN
+class DSN
 {
-  public static function parseDns(): string|Exception
+  public static function parseDns(): string|\Exception
   {
     if (!in_array(PDOEngine::getInstance()->getDriver(), (array) PDOEngine::getInstance()->getAvailableDrivers())) {
       $message = sprintf(
         "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
         [PDOEngine::getInstance()->getDriver(), implode(', ', (array) PDOEngine::getInstance()->getAvailableDrivers())]
       );
-      throw new Exception($message);
+      throw new \Exception($message);
     }
     $result = null;
     switch (PDOEngine::getInstance()->getDriver()) {

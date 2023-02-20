@@ -1,13 +1,16 @@
 <?php
+
+namespace GenericDatabase\Traits;
+
 trait XML
 {
   public static function isValidXML(string $xml): bool
   {
-    $xml = XMLReader::open($xml);
-    return ($xml->setParserProperty(XMLReader::VALIDATE, true) ? true : false);
+    $xml = \XMLReader::open($xml);
+    return ($xml->setParserProperty(\XMLReader::VALIDATE, true) ? true : false);
   }
 
-  public static function decodeXML(SimpleXMLElement $xml, bool $attributes_key = true, bool $reduce = true, array $always_array = array(), array $value_keys = array()): string|array
+  public static function decodeXML(\SimpleXMLElement $xml, bool $attributes_key = true, bool $reduce = true, array $always_array = array(), array $value_keys = array()): string|array
   {
     $arr = array();
     $xml_name = $xml->getName();

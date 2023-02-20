@@ -1,7 +1,7 @@
 <?php
 
-namespace GenericDatabase;
+namespace GenericDatabase\PDO;
 
-class PDOStatements
+class Statements
 {
 }

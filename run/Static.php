@@ -1,8 +1,8 @@
 <?php
 
-use GenericDatabase\PDOEngine;
+use GenericDatabase\Engine\PDOEngine;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $mysql = PDOEngine::new('mysql', 'localhost', 3306, 'demodev', 'root', '', 'utf8', [
   PDO::ATTR_PERSISTENT => true,
@@ -10,7 +10,7 @@ $mysql = PDOEngine::new('mysql', 'localhost', 3306, 'demodev', 'root', '', 'utf8
   PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
 ], true)->connect();
 
-$mysql->loadFromFile('../../tests/test.sql');
+// $mysql->loadFromFile('../../tests/test.sql');
 
 echo "<pre>";
 var_dump($mysql);
@@ -45,7 +45,7 @@ echo "<pre>";
 var_dump($oci);
 echo "</pre>";
 
-$firebird = PDOEngine::new('firebird', 'localhost', 3050, '../../assets/DB.FDB', 'sysdba', 'masterkey', 'utf8', [
+$firebird = PDOEngine::new('firebird', 'localhost', 3050, '../assets/DB.FDB', 'sysdba', 'masterkey', 'utf8', [
   PDO::ATTR_PERSISTENT => true,
   PDO::ATTR_EMULATE_PREPARES => true,
   PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
@@ -55,7 +55,7 @@ echo "<pre>";
 var_dump($firebird);
 echo "</pre>";
 
-$sqlite2 = PDOEngine::new('sqlite', '../../assets/DB.SQLITE', 'utf8', [
+$sqlite2 = PDOEngine::new('sqlite', '../assets/DB.SQLITE', 'utf8', [
   PDO::ATTR_PERSISTENT => true,
   PDO::ATTR_EMULATE_PREPARES => true,
   PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ

@@ -1,8 +1,10 @@
 <?php
 
-namespace GenericDatabase;
+namespace GenericDatabase\Engine\PDO;
 
-class PDOAttributes
+use GenericDatabase\Engine\PDOEngine;
+
+class Attributes
 {
   /**
    * static attributes constants

@@ -1,8 +1,8 @@
 <?php
 
-use GenericDatabase\PDOEngine;
+use GenericDatabase\Engine\PDOEngine;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $mysql = PDOEngine
   ::setDriver('mysql')
@@ -88,7 +88,7 @@ $firebird = PDOEngine
   ::setDriver('firebird')
   ::setHost('localhost')
   ::setPort(3050)
-  ::setDatabase('../../assets/DB.FDB')
+  ::setDatabase('../assets/DB.FDB')
   ::setUser('sysdba')
   ::setPassword('masterkey')
   ::setCharset('utf8')
@@ -106,7 +106,7 @@ echo "</pre>";
 
 $sqlite = PDOEngine
   ::setDriver('sqlite')
-  ::setDatabase('../../assets/DB.SQLITE')
+  ::setDatabase('../assets/DB.SQLITE')
   ::setCharset('utf8')
   ::setOptions([
     PDO::ATTR_PERSISTENT => true,

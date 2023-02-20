@@ -1,4 +1,7 @@
 <?php
+
+namespace GenericDatabase\Traits;
+
 trait YAML
 {
   public static function isValidYAML(string $yaml): bool

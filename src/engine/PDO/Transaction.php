@@ -1,8 +1,10 @@
 <?php
 
-namespace GenericDatabase;
+namespace GenericDatabase\Engine\PDO;
 
-class PDOTransaction
+use GenericDatabase\Engine\PDOEngine;
+
+class Transaction
 {
   protected $transactionCounter = 0;
 

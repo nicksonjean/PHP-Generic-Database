@@ -1,7 +1,10 @@
 <?php
 
-require_once 'Property.php';
-require_once 'Singleton.php';
+namespace GenericDatabase\Traits;
+
+use
+  GenericDatabase\Traits\Property,
+  GenericDatabase\Traits\Singleton;
 
 trait Transporter
 {

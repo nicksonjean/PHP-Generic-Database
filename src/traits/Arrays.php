@@ -1,4 +1,7 @@
 <?php
+
+namespace GenericDatabase\Traits;
+
 trait Arrays
 {
   public static function exceptByKeys($array, $keys)

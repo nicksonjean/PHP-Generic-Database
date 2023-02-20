@@ -1,4 +1,7 @@
 <?php
+
+namespace GenericDatabase\Traits;
+
 trait INI
 {
   public static function isValidINI(string $ini): bool

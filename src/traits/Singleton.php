@@ -1,4 +1,7 @@
 <?php
+
+namespace GenericDatabase\Traits;
+
 trait Singleton
 {
   /**

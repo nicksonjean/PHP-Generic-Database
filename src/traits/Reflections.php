@@ -1,4 +1,7 @@
 <?php
+
+namespace GenericDatabase\Traits;
+
 trait Reflections
 {
   public static $default_method = 'getInstance';
@@ -7,9 +10,9 @@ trait Reflections
   {
     try {
       $result = call_user_func($class . '::' . self::$default_method);
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       $message = sprintf('Method %s not founded in the class %s', [self::$default_method, $class]);
-      throw new Exception($message);
+      throw new \Exception($message);
     }
     return $result;
   }
@@ -19,9 +22,9 @@ trait Reflections
     try {
       $rm = new \ReflectionMethod($class, self::$default_method);
       $result = ($rm->isStatic()) ? true : false;
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       $message = sprintf('Method %s not founded in the class %s', [self::$default_method, $class]);
-      throw new Exception($message);
+      throw new \Exception($message);
     }
     return $result;
   }

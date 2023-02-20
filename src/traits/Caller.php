@@ -1,8 +1,11 @@
 <?php
 
-require_once 'Setter.php';
-require_once 'Getter.php';
-require_once 'Reflections.php';
+namespace GenericDatabase\Traits;
+
+use
+  GenericDatabase\Traits\Setter,
+  GenericDatabase\Traits\Getter,
+  GenericDatabase\Traits\Reflections;
 
 trait Caller
 {

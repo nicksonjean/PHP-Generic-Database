@@ -1,4 +1,7 @@
 <?php
+
+namespace GenericDatabase\Traits;
+
 trait JSON
 {
   public static function isValidJSON(string $json): bool

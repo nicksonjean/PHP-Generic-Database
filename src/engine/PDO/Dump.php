@@ -1,10 +1,10 @@
 <?php
 
-namespace GenericDatabase;
+namespace GenericDatabase\Engine\PDO;
 
-use Exception;
+use GenericDatabase\Engine\PDOEngine;
 
-class PDODump
+class Dump
 {
   /**
    * This is a regex array to uncomment strings in a codebase
@@ -34,7 +34,7 @@ class PDODump
 
     $handle = @fopen($file, 'r');
     if (!$handle) {
-      throw new Exception("Cannot open file '$file'.");
+      throw new \Exception("Cannot open file '$file'.");
     }
 
     $stat = fstat($handle);
