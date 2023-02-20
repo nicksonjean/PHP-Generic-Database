@@ -455,6 +455,8 @@ gradle-app.setting
 
 .phpunit.cache
 /coverage/**
+/cache/**
+/docs/**
 
 ##### Composer
 composer.phar
