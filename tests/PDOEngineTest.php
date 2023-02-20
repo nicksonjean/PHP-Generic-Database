@@ -1,9 +1,7 @@
 <?php
-require_once './src/Traits.php';
-require_once './src/engine/PDO/DSN.php';
-require_once './src/engine/PDO/Arguments.php';
-require_once './src/engine/PDO/Attributes.php';
-require_once './src/engine/PDO.php';
+
+use
+  GenericDatabase\Engine\PDOEngine;
 
 use PHPUnit\Framework\TestCase;
 

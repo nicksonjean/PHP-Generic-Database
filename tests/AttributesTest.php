@@ -1,9 +1,8 @@
 <?php
-require_once './src/Traits.php';
-require_once './src/engine/PDO/DSN.php';
-require_once './src/engine/PDO/Arguments.php';
-require_once './src/engine/PDO/Attributes.php';
-require_once './src/engine/PDO.php';
+
+use
+  GenericDatabase\Engine\PDOEngine,
+  GenericDatabase\Engine\PDO\Attributes;
 
 use PHPUnit\Framework\TestCase;
 
@@ -33,15 +32,15 @@ final class AttributesTest extends TestCase
 
   public function testFetchAllReturnsArray()
   {
-    $result = PDOAttributes::fetchAll();
+    $result = Attributes::fetchAll();
     $this->assertIsArray($result);
   }
 
   public function testFetchAllRetrievesAllAttributes()
   {
-    $result = PDOAttributes::fetchAll();
-    $this->assertEquals(count(PDOAttributes::$attributeList), count((array) $result));
-    foreach (PDOAttributes::$attributeList as $attribute) {
+    $result = Attributes::fetchAll();
+    $this->assertEquals(count(Attributes::$attributeList), count((array) $result));
+    foreach (Attributes::$attributeList as $attribute) {
       $this->assertArrayHasKey($attribute, (array) $result);
     }
   }
