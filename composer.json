@@ -23,10 +23,13 @@
         "composer/semver": "^3.3",
         "phpunit/php-code-coverage": "^10.0",
         "phpunit/phpunit": "^10.0",        
-        "pcov/clobber": "^2.0"
+        "pcov/clobber": "^2.0",
+        "code-lts/doctum": "^5.5"
     },
     "scripts":{
-        "test":"vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
-        "test:coverage": "vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/"
+        "docs:doctum": "php vendor/bin/doctum.php update ./config.php",
+        "docs:phpdoc": "",
+        "test":"php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
+        "test:coverage": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/"
     }
 }
