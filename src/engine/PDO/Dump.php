@@ -1,5 +1,9 @@
 <?php
 
+namespace GenericDatabase;
+
+use Exception;
+
 class PDODump
 {
   /**

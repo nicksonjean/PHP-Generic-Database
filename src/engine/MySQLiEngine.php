@@ -2,6 +2,6 @@
 
 namespace GenericDatabase;
 
-class PDOStatements
+class MySQLiEngine
 {
 }

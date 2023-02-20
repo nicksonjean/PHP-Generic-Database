@@ -1,5 +1,7 @@
 <?php
 
+namespace GenericDatabase;
+
 class PDOTransaction
 {
   protected $transactionCounter = 0;

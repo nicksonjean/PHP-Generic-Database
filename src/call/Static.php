@@ -1,5 +1,8 @@
 <?php
-require '../engine/PDO.php';
+
+use GenericDatabase\PDOEngine;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 $mysql = PDOEngine::new('mysql', 'localhost', 3306, 'demodev', 'root', '', 'utf8', [
   PDO::ATTR_PERSISTENT => true,

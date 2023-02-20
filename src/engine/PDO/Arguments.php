@@ -1,10 +1,12 @@
 <?php
-require_once __DIR__ . '/../../Traits.php';
+
+namespace GenericDatabase;
+
+use Getter, Setter, Transporter, Arrays, Regex, JSON, INI, YAML, XML;
 
 class PDOArguments
 {
-  use Getter, Setter, Transporter, Arrays, Regex, JSON, INI, YAML, XML;
-
+  use Getter, Setter, Transporter;
   /**
    * array property for use in magic setter and getter in order
    */

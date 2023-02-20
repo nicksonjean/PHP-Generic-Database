@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/../engine/PDO.php';
+
+use GenericDatabase\PDOEngine;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 $mysql = new PDOEngine();
 $mysql->setDriver('mysql')

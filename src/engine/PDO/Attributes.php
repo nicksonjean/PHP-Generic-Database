@@ -1,10 +1,9 @@
 <?php
-require_once __DIR__ . '/../../Traits.php';
+
+namespace GenericDatabase;
 
 class PDOAttributes
 {
-  use Errors, Getter, Setter, Caller, Singleton;
-
   /**
    * static attributes constants
    * 

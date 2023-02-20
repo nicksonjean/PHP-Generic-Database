@@ -1,9 +1,8 @@
 <?php
 
-require_once 'PDO/DSN.php';
-require_once 'PDO/Arguments.php';
-require_once 'PDO/Attributes.php';
-require_once 'PDO/Dump.php';
+namespace GenericDatabase;
+
+use Errors, Caller, Cleaner, Singleton, Exception, PDO, PDOException, PDOStatement;
 
 class PDOEngine
 {
@@ -163,7 +162,7 @@ class PDOEngine
    */
   public function getAvailableDrivers(): array
   {
-    return \PDO::getAvailableDrivers();
+    return PDO::getAvailableDrivers();
   }
 
   /**

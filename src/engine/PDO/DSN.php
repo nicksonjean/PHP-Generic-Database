@@ -1,5 +1,9 @@
 <?php
 
+namespace GenericDatabase;
+
+use Exception, Path;
+
 class PDODSN
 {
   public static function parseDns(): string|Exception

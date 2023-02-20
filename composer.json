@@ -9,9 +9,7 @@
         }
     ],
     "autoload": {
-        "psr-4": {
-            "": "src/"
-        }
+        "classmap": ["src/"]
     },
     "autoload-dev": {
         "psr-4": {
