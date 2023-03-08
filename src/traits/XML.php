@@ -10,6 +10,25 @@ trait XML
     return ($xml->setParserProperty(\XMLReader::VALIDATE, true) ? true : false);
   }
 
+  public static function castValue($value)
+  {
+    $value = trim($value);
+
+    if (preg_match('/^[0-9]{1,}$/', $value)) {
+      return intval($value);
+    }
+
+    if (preg_match('/^[0-9\.]{1,}$/', $value)) {
+      return floatval($value);
+    }
+
+    if (preg_match('/(false|true)/i', $value)) {
+      return (bool)$value;
+    }
+
+    return $value;
+  }
+
   public static function decodeXML(\SimpleXMLElement $xml, bool $attributes_key = true, bool $reduce = true, array $always_array = array(), array $value_keys = array()): string|array
   {
     $arr = array();
@@ -59,7 +78,7 @@ trait XML
     $result = self::decodeXML($objXML);
     $options = [];
     foreach ($objXML->xpath('//options/option') as $value) {
-      $options[((string) $value->attributes()->name)] = (string) $value;
+      $options[((string) $value->attributes()->name)] = self::castValue((string) $value);
     }
     $options = array('options' => $options);
     $result['options'] = $options['options'];

@@ -17,14 +17,9 @@ class PDOEngine
   use Errors, Caller, Cleaner, Singleton;
 
   /**
-   * private database connection like PDO, MySQLi etc...
-   */
-  private static $connection;
-
-  /**
    * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
    * 
-   * @return void
+   * @return mixed
    */
   public static function call($method, $arguments): mixed
   {
@@ -34,9 +29,9 @@ class PDOEngine
   /**
    * This method is responsible for prepare the connection options before connect.
    * 
-   * @return void
+   * @return PDOEngine
    */
-  public function preConnect(): void
+  private function preConnect(): PDOEngine
   {
     if (!in_array($this->getDriver(), (array) $this->getAvailableDrivers())) {
       $message = sprintf(
@@ -69,14 +64,15 @@ class PDOEngine
     }
     $this->setOptions($result);
     $this->setInstance($this);
+    return $this;
   }
 
   /**
    * This method is responsible for update in date late binding the connection.
    * 
-   * @return void
+   * @return PDOEngine
    */
-  public function postConnect(): void
+  private function postConnect(): PDOEngine
   {
     switch ($this->getDriver()) {
       case 'mysql':
@@ -93,34 +89,31 @@ class PDOEngine
         $this->getConnection()->query('PRAGMA foreign_keys = ON');
         break;
     }
-    Attributes::fetchAll();
-    unset($this->argumentList);
+    Attributes::define();
     $this->setInstance($this);
+    return $this;
   }
 
-  /**
-   * This method is responsible for parsing the DSN from DSN class.
-   * 
-   * @return string|object
-   */
-  public function parseDns(): string|\Exception
+  private function realConnect($dsn, $user, $password, $options): PDOEngine
   {
-    return DSN::parseDns();
+    $this->setConnection(new \PDO($dsn, $user, $password, $options));
+    return $this;
   }
 
   /**
    * This method is used to establish a database connection and set the connection instance
    * 
-   * @return object
+   * @return PDOEngine
    */
   public function connect(): PDOEngine
   {
     try {
-      $this->preConnect();
-      $this->setConnection(new \PDO($this->parseDns(), $this->getUser(), $this->getPassword(), $this->getOptions()));
-      $this->setInstance($this);
-      $this->postConnect();
-      $this->setConnected(true);
+      $this
+        ->preConnect()
+        ->realConnect($this->parseDns(), $this->getUser(), $this->getPassword(), $this->getOptions())
+        ->setInstance($this)
+        ->postConnect()
+        ->setConnected(true);
       return $this;
     } catch (\PDOException | \Exception $error) {
       $this->setConnected(false);
@@ -129,25 +122,34 @@ class PDOEngine
   }
 
   /**
+   * This method is responsible for parsing the DSN from DSN class.
+   * 
+   * @return string|\Exception
+   */
+  private function parseDns(): string|\Exception
+  {
+    return DSN::parseDns();
+  }
+
+  /**
    * This method is used to get the database connection instance
    * 
-   * @return object
+   * @return \PDO
    */
   public function getConnection(): \PDO
   {
-    return $this->connection;
+    return $GLOBALS['connection'];
   }
 
   /**
    * This method is used to assign the database connection instance
    * 
-   * @param object $connection
-   * @return object
+   * @param \PDO $connection
+   * @return \PDO
    */
   public function setConnection(\PDO $connection): \PDO
   {
-    $this->connection = $connection;
-    return $this->connection;
+    return $GLOBALS['connection'] = $connection;
   }
 
   /**

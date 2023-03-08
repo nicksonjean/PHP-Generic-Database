@@ -64,27 +64,16 @@ class Arguments
    * @param mixed $type
    * @return array 
    */
-  private static function setConstant($value, $type): array
+  private static function setConstant($value): array
   {
     $result = [];
     foreach (array_combine(array_keys(...$value), array_values(...$value)) as $k => $v) {
-      if ($type) {
-        $length = strlen($v);
-        if (Regex::isNumber($v) && $length > 1) {
-          $result[constant($k)] = (int) $v;
-        } else if (($v === '0' or $v === '1') && $length === 1) {
-          $result[constant($k)] = (bool) $v;
-        } else {
-          $result[constant($k)] = constant($v);
-        }
+      if (Regex::isNumber($v) && !Regex::isBoolean($v)) {
+        $result[constant($k)] = (int) $v;
+      } else if (Regex::isBoolean($v)) {
+        $result[constant($k)] = (bool) $v;
       } else {
-        if (Regex::isNumber($v) && !Regex::isBoolean($v)) {
-          $result[constant($k)] = (int) $v;
-        } else if (Regex::isBoolean($v)) {
-          $result[constant($k)] = (bool) $v;
-        } else {
-          $result[constant($k)] = constant($v);
-        }
+        $result[constant($k)] = constant($v);
       }
     }
     return $result;
@@ -116,7 +105,7 @@ class Arguments
   {
     foreach (JSON::parseJSON(...$arguments) as $key => $value) {
       if ($key == 'options') {
-        call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant($value, false)]);
+        call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant($value)]);
       } else {
         call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
       }
@@ -127,7 +116,7 @@ class Arguments
   {
     foreach (INI::parseINI(...$arguments) as $key => $value) {
       if ($key == 'options') {
-        call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant([$value], true)]);
+        call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant([$value])]);
       } else {
         call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
       }
@@ -138,7 +127,7 @@ class Arguments
   {
     foreach (YAML::parseYAML(...$arguments) as $key => $value) {
       if ($key == 'options') {
-        call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant($value, false)]);
+        call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant($value)]);
       } else {
         call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
       }
@@ -149,7 +138,7 @@ class Arguments
   {
     foreach (XML::parseXML(...$arguments) as $key => $value) {
       if ($key == 'options') {
-        call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant([$value], true)]);
+        call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant([$value])]);
       } else {
         call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
       }

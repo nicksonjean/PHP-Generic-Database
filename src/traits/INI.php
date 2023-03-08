@@ -11,6 +11,6 @@ trait INI
 
   public static function parseINI(string $ini): array
   {
-    return (array) parse_ini_file($ini);
+    return (array) parse_ini_file($ini, false, INI_SCANNER_TYPED);
   }
 }

@@ -29,17 +29,16 @@ class Attributes
   ];
 
   /**
-   * Retrieve all PDO attibute of the conection a ready exist
+   * Define all PDO attibute of the conection a ready exist
    * 
-   * @return PDO attribute list array
+   * @return void
    */
-  public static function fetchAll(): array
+  public static function define(): void
   {
     $result = [];
     foreach (self::$attributeList as $value) {
       $result[$value] = @trim((string) PDOEngine::getInstance()?->getAttribute(constant("PDO::ATTR_$value")));
     }
     PDOEngine::getInstance()?->setAttributes((array) $result);
-    return $result;
   }
 }

@@ -1,5 +1,5 @@
 driver: sqlite
-database: ../assets/DB.SQLITE
+database: ../../assets/DB.SQLITE
 charset: utf8
 options:
   - 'PDO::ATTR_PERSISTENT': true
