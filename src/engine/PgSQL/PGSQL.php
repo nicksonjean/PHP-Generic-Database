@@ -18,7 +18,6 @@ class PgSQL
 
   public static function getAttribute($name)
   {
-    var_dump(self::$data);
     if (isset(self::$data[$name])) {
       if (is_int($name)) {
         $result = self::$data[Reflections::getClassConstantName(__CLASS__, $name)];

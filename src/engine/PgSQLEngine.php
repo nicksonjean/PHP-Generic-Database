@@ -11,6 +11,7 @@ use
   GenericDatabase\Engine\PgSQL\Options,
   GenericDatabase\Engine\PgSQL\Attributes,
   GenericDatabase\Engine\PgSQL\DSN,
+  GenericDatabase\Engine\PgSQL\PgSQL,
   GenericDatabase\Engine\PgSQL\Dump;
 
 class PgSQLEngine
@@ -38,8 +39,7 @@ class PgSQLEngine
     // Options::setOptions($this->getOptions());
     // $options = [];
     // $options = Options::getOptions();
-    // $this->setOptions($options['index']);
-    $this->setInstance($this);
+    // $this->setOptions($options);
     return $this;
   }
 
@@ -55,13 +55,12 @@ class PgSQLEngine
     }
     // Options::define();
     // Attributes::define();
-    $this->setInstance($this);
     return $this;
   }
 
   private function realConnect($dsn): PgSQLEngine
   {
-    // $this->setConnection((string)!isset(Options::getOptions()['assoc']['ATTR_PERSISTENT']) ? pg_connect($dsn) : pg_pconnect($dsn));
+    // $this->setConnection((string) !Options::getOptions(PgSQL::ATTR_PERSISTENT) ? pg_connect($dsn) : pg_pconnect($dsn));
     return $this;
   }
 
