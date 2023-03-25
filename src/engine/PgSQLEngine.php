@@ -7,11 +7,11 @@ use
   GenericDatabase\Traits\Caller,
   GenericDatabase\Traits\Cleaner,
   GenericDatabase\Traits\Singleton,
-  GenericDatabase\Engine\MySQLi\Arguments,
-  GenericDatabase\Engine\MySQLi\Options,
-  GenericDatabase\Engine\MySQLi\Attributes,
-  GenericDatabase\Engine\MySQLi\DSN,
-  GenericDatabase\Engine\MySQLi\Dump;
+  GenericDatabase\Engine\PgSQL\Arguments,
+  GenericDatabase\Engine\PgSQL\Options,
+  GenericDatabase\Engine\PgSQL\Attributes,
+  GenericDatabase\Engine\PgSQL\DSN,
+  GenericDatabase\Engine\PgSQL\Dump;
 
 class PgSQLEngine
 {
@@ -24,7 +24,7 @@ class PgSQLEngine
    */
   public static function call($method, $arguments): mixed
   {
-    return Arguments::call($method, $arguments);
+    // return Arguments::call($method, $arguments);
   }
 
   /**
@@ -34,11 +34,11 @@ class PgSQLEngine
    */
   private function preConnect(): PgSQLEngine
   {
-    $this->setConnection(mysqli_init());
-    Options::setOptions($this->getOptions());
-    $options = [];
-    $options = Options::getOptions();
-    $this->setOptions($options['index']);
+    // $this->setConnection(mysqli_init());
+    // Options::setOptions($this->getOptions());
+    // $options = [];
+    // $options = Options::getOptions();
+    // $this->setOptions($options['index']);
     $this->setInstance($this);
     return $this;
   }
@@ -53,18 +53,15 @@ class PgSQLEngine
     if ($this->getCharset()) {
       $this->getInstance()->getConnection()->set_charset($this->getCharset());
     }
-    Options::define();
-    Attributes::define();
+    // Options::define();
+    // Attributes::define();
     $this->setInstance($this);
     return $this;
   }
 
-  private function realConnect($host, $user, $password, $database, $port): PgSQLEngine
+  private function realConnect($dsn): PgSQLEngine
   {
-    $host = (string)!isset(Options::getOptions()['assoc']['ATTR_PERSISTENT']) ? $host : 'p:' . $host;
-    $this->setHost($host);
-    $this->parseDns();
-    $this->getConnection()->real_connect($host, $user, $password, $database, $port);
+    // $this->setConnection((string)!isset(Options::getOptions()['assoc']['ATTR_PERSISTENT']) ? pg_connect($dsn) : pg_pconnect($dsn));
     return $this;
   }
 
@@ -78,7 +75,7 @@ class PgSQLEngine
     try {
       $this
         ->preConnect()
-        ->realConnect($this->getHost(), $this->getUser(), $this->getPassword(), $this->getDatabase(), $this->getPort())
+        ->realConnect($this->getDsn())
         ->setInstance($this)
         ->postConnect()
         ->setConnected(true);
@@ -102,9 +99,9 @@ class PgSQLEngine
   /**
    * This method is used to get the database connection instance
    * 
-   * @return \MySQLi
+   * @return \PgSql\Connection
    */
-  public function getConnection(): \MySQLi
+  public function getConnection(): \PgSql\Connection
   {
     return $GLOBALS['connection'];
   }
@@ -112,10 +109,10 @@ class PgSQLEngine
   /**
    * This method is used to assign the database connection instance
    * 
-   * @param \MySQLi $connection
-   * @return \MySQLi
+   * @param \PgSql\Connection $connection
+   * @return \PgSql\Connection
    */
-  public function setConnection(\MySQLi $connection): \MySQLi
+  public function setConnection(\PgSql\Connection $connection): \PgSql\Connection
   {
     return $GLOBALS['connection'] = $connection;
   }

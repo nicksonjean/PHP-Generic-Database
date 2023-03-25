@@ -2,38 +2,49 @@
 
 namespace GenericDatabase\Engine\MySQLi;
 
-enum MySQL
-{
-  case ATTR_OPT_CONNECT_TIMEOUT;
-  case ATTR_OPT_READ_TIMEOUT;
-  case ATTR_OPT_LOCAL_INFILE;
-  case ATTR_INIT_COMMAND;
-  case ATTR_SET_CHARSET_NAME;
-  case ATTR_READ_DEFAULT_FILE;
-  case ATTR_READ_DEFAULT_GROUP;
-  case ATTR_SERVER_PUBLIC_KEY;
-  case ATTR_OPT_NET_CMD_BUFFER_SIZE;
-  case ATTR_OPT_NET_READ_BUFFER_SIZE;
-  case ATTR_OPT_INT_AND_FLOAT_NATIVE;
-  case ATTR_OPT_SSL_VERIFY_SERVER_CERT;
-  case ATTR_PERSISTENT;
+use GenericDatabase\Traits\Reflections;
 
-  public function value($value)
+class MySQL
+{
+  const ATTR_OPT_CONNECT_TIMEOUT = 2;
+  const ATTR_OPT_READ_TIMEOUT = 3;
+  const ATTR_OPT_LOCAL_INFILE = 1003;
+  const ATTR_INIT_COMMAND = 1002;
+  const ATTR_SET_CHARSET_NAME = 4;
+  const ATTR_READ_DEFAULT_FILE = 1006;
+  const ATTR_READ_DEFAULT_GROUP = 1007;
+  const ATTR_SERVER_PUBLIC_KEY = 1008;
+  const ATTR_OPT_NET_CMD_BUFFER_SIZE = 1009;
+  const ATTR_OPT_NET_READ_BUFFER_SIZE = 1010;
+  const ATTR_OPT_INT_AND_FLOAT_NATIVE = 1011;
+  const ATTR_OPT_SSL_VERIFY_SERVER_CERT = 1012;
+  const ATTR_PERSISTENT = 13;
+
+  protected static $data = [];
+
+  public static function getAttribute($name)
   {
-    return match ($this) {
-      self::ATTR_OPT_CONNECT_TIMEOUT => [$this->name => $value],
-      self::ATTR_OPT_READ_TIMEOUT => [$this->name => $value],
-      self::ATTR_OPT_LOCAL_INFILE => [$this->name => $value],
-      self::ATTR_INIT_COMMAND => [$this->name => $value],
-      self::ATTR_SET_CHARSET_NAME => [$this->name => $value],
-      self::ATTR_READ_DEFAULT_FILE => [$this->name => $value],
-      self::ATTR_READ_DEFAULT_GROUP => [$this->name => $value],
-      self::ATTR_SERVER_PUBLIC_KEY => [$this->name => $value],
-      self::ATTR_OPT_NET_CMD_BUFFER_SIZE => [$this->name => $value],
-      self::ATTR_OPT_NET_READ_BUFFER_SIZE => [$this->name => $value],
-      self::ATTR_OPT_INT_AND_FLOAT_NATIVE => [$this->name => $value],
-      self::ATTR_OPT_SSL_VERIFY_SERVER_CERT => [$this->name => $value],
-      self::ATTR_PERSISTENT => [$this->name => $value],
-    };
+    var_dump(self::$data);
+    if (isset(self::$data[$name])) {
+      if (is_int($name)) {
+        $result = self::$data[Reflections::getClassConstantName(__CLASS__, $name)];
+      } else {
+        $result = self::$data[$name];
+      }
+    } else {
+      $result = null;
+    }
+    return $result;
+  }
+
+  public static function setAttribute($name, $value)
+  {
+    if (is_null($name)) {
+      self::$data[] = $value;
+    } else if (is_int($name)) {
+      self::$data[Reflections::getClassConstantName(__CLASS__, $name)] = $value;
+    } else {
+      self::$data[$name] = $value;
+    }
   }
 }

@@ -29,9 +29,9 @@ class Arguments
   ];
 
   /**
-   * Call the function callWithFullArguments with the supplied argument
+   * This method is used when all parameters are used
    * 
-   * @param mixed $arguments
+   * @param array $arguments
    * @return void
    */
   private static function callWithFullArguments($arguments): void
@@ -42,10 +42,9 @@ class Arguments
   }
 
   /**
-   * Execute set<argumentList> functions on PDOEngine with given arguments 
+   * This method is used when any of the parameters are omitted
    *
-   * @param mixed $method
-   * @param mixed $arguments
+   * @param array $arguments
    * @return void
    */
   private static function callWithPartialArguments($arguments): void
@@ -60,8 +59,7 @@ class Arguments
   /**
    * Transform variables in constants
    *
-   * @param mixed $value
-   * @param mixed $type
+   * @param array $value
    * @return array 
    */
   private static function setConstant($value): array
@@ -101,6 +99,12 @@ class Arguments
     return $result;
   }
 
+  /**
+   * Determines arguments type by calling to JSON type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
   private static function callArgumentsByJSON($arguments): void
   {
     foreach (JSON::parseJSON(...$arguments) as $key => $value) {
@@ -112,6 +116,12 @@ class Arguments
     }
   }
 
+  /**
+   * Determines arguments type by calling to INI type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
   private static function callArgumentsByINI($arguments): void
   {
     foreach (INI::parseINI(...$arguments) as $key => $value) {
@@ -123,6 +133,12 @@ class Arguments
     }
   }
 
+  /**
+   * Determines arguments type by calling to YAML type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
   private static function callArgumentsByYAML($arguments): void
   {
     foreach (YAML::parseYAML(...$arguments) as $key => $value) {
@@ -134,6 +150,12 @@ class Arguments
     }
   }
 
+  /**
+   * Determines arguments type by calling to XML type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
   private static function callArgumentsByXML($arguments): void
   {
     foreach (XML::parseXML(...$arguments) as $key => $value) {
@@ -145,12 +167,25 @@ class Arguments
     }
   }
 
+  /**
+   * Determines arguments type by calling to default type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
   private static function callArgumentsByDefault($method, $arguments): void
   {
     call_user_func_array([PDOEngine::getInstance(), $method], $arguments);
   }
 
-  public static function call(string $method, array $arguments): mixed
+  /**
+   * This method works like a factory and is responsible for identifying the way in which the class is instantiated, as well as its arguments.
+   * 
+   * @param string $method
+   * @param array $arguments
+   * @return PDOEngine
+   */
+  public static function call(string $method, array $arguments): PDOEngine
   {
     switch ($method) {
       case 'new':

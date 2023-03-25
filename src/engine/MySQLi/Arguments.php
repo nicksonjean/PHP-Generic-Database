@@ -8,7 +8,6 @@ use
   GenericDatabase\Traits\INI,
   GenericDatabase\Traits\YAML,
   GenericDatabase\Traits\XML,
-  GenericDatabase\Engine\MySQli\MySQL,
   GenericDatabase\Engine\MySQLiEngine;
 
 class Arguments
@@ -28,9 +27,9 @@ class Arguments
   ];
 
   /**
-   * Call the function callWithFullArguments with the supplied argument
+   * This method is used when all parameters are used
    * 
-   * @param mixed $arguments
+   * @param array $arguments
    * @return void
    */
   private static function callWithFullArguments($arguments): void
@@ -43,14 +42,22 @@ class Arguments
   /**
    * Transform variables in constants
    *
-   * @param mixed $value
-   * @param mixed $type
+   * @param array $value
    * @return array 
    */
   private static function setConstant($value): array
   {
-    Options::setOptions(Options::fixOptions(...$value));
     $options = [];
+    foreach (array_combine(array_keys(...$value), array_values(...$value)) as $key => $value) {
+      $index = str_replace('MySQL::', '', $key);
+      $key_name = $index !== 'ATTR_PERSISTENT' ? str_replace("ATTR", "MYSQLI", $index) : $index;
+      MySQLiEngine::getInstance()->setAttribute($key, $value);
+      if ($key_name !== 'ATTR_PERSISTENT') {
+        MySQLiEngine::getInstance()->setOptions(constant($key_name), $value);
+      }
+      $options[constant("GenericDatabase\Engine\MySQli\MySQL::$index")] = $value;
+    }
+    Options::setOptions($options);
     $options = Options::getOptions();
     return $options;
   }
@@ -77,6 +84,13 @@ class Arguments
     return $result;
   }
 
+  /**
+   * Determines arguments type by calling to JSON type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
+
   private static function callArgumentsByJSON($arguments): void
   {
     foreach (JSON::parseJSON(...$arguments) as $key => $value) {
@@ -88,6 +102,12 @@ class Arguments
     }
   }
 
+  /**
+   * Determines arguments type by calling to INI type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
   private static function callArgumentsByINI($arguments): void
   {
     foreach (INI::parseINI(...$arguments) as $key => $value) {
@@ -99,6 +119,12 @@ class Arguments
     }
   }
 
+  /**
+   * Determines arguments type by calling to YAML type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
   private static function callArgumentsByYAML($arguments): void
   {
     foreach (YAML::parseYAML(...$arguments) as $key => $value) {
@@ -110,6 +136,12 @@ class Arguments
     }
   }
 
+  /**
+   * Determines arguments type by calling to XML type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
   private static function callArgumentsByXML($arguments): void
   {
     foreach (XML::parseXML(...$arguments) as $key => $value) {
@@ -121,11 +153,24 @@ class Arguments
     }
   }
 
+  /**
+   * Determines arguments type by calling to default type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
   private static function callArgumentsByDefault($method, $arguments): void
   {
     call_user_func_array([MySQLiEngine::getInstance(), $method], $arguments);
   }
 
+  /**
+   * This method works like a factory and is responsible for identifying the way in which the class is instantiated, as well as its arguments.
+   * 
+   * @param string $method
+   * @param array $arguments
+   * @return MySQLiEngine
+   */
   public static function call(string $method, array $arguments): mixed
   {
     switch ($method) {

@@ -28,4 +28,15 @@ trait Reflections
     }
     return $result;
   }
+
+  public static function getClassConstants($class)
+  {
+    $reflect = new \ReflectionClass($class);
+    return $reflect->getConstants();
+  }
+
+  public static function getClassConstantName($class, $value)
+  {
+    return array_flip((new \ReflectionClass($class))->getConstants())[$value];
+  }
 }

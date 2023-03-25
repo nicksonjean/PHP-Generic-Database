@@ -14,13 +14,13 @@ $mysql->setHost('localhost')
   ->setPassword('')
   ->setCharset('utf8')
   ->setOptions([
-    MySQL::ATTR_PERSISTENT->value(true),
-    MySQL::ATTR_INIT_COMMAND->value("SET AUTOCOMMIT=1"),
-    MySQL::ATTR_SET_CHARSET_NAME->value("utf8"),
-    MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE->value(true),
-    MySQL::ATTR_OPT_CONNECT_TIMEOUT->value(28800),
-    MySQL::ATTR_OPT_READ_TIMEOUT->value(30),
-    MySQL::ATTR_READ_DEFAULT_GROUP->value("MAX_ALLOWED_PACKET=50M")
+    MySQL::ATTR_PERSISTENT => true,
+    MySQL::ATTR_INIT_COMMAND => "SET AUTOCOMMIT=1",
+    MySQL::ATTR_SET_CHARSET_NAME => "utf8",
+    MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
+    MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
+    MySQL::ATTR_OPT_READ_TIMEOUT => 30,
+    MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
   ])
   ->setException(true)
   ->connect();

@@ -37,7 +37,10 @@ class Attributes
   {
     $result = [];
     foreach (self::$attributeList as $value) {
-      $result[$value] = @trim((string) PDOEngine::getInstance()?->getAttribute(constant("PDO::ATTR_$value")));
+      try {
+        $result[$value] = @trim((string) PDOEngine::getInstance()?->getAttribute(constant("PDO::ATTR_$value")));
+      } catch (\PDOException $e) {
+      }
     }
     PDOEngine::getInstance()?->setAttributes((array) $result);
   }

@@ -21,6 +21,12 @@ class Attributes
 
   private static $settings = [];
 
+  public const Client = 0;
+
+  public const Results = 1;
+
+  public const Connection = 2;
+
   /**
    * static attributes constants
    * 
@@ -41,13 +47,31 @@ class Attributes
     'COLLATION'
   ];
 
+  public static function getCharsetType(int $type): string
+  {
+    return match ($type) {
+      self::Client => 'character_set_client',
+      self::Results => 'character_set_results',
+      self::Connection => 'character_set_connection'
+    };
+  }
+
+  public static function getInverseCharsetType(int $type): string
+  {
+    return match ($type) {
+      self::Client => 'client',
+      self::Results => 'results',
+      self::Connection => 'connection'
+    };
+  }
+
   public static function init()
   {
     self::setFetchMode();
     self::setErrorMode();
     self::setVariables();
-    self::setCharacterSet(CharsetType::Connection);
-    self::setCollation(CharsetType::Connection);
+    self::setCharacterSet(self::Connection);
+    self::setCollation(self::Connection);
     self::setSettings();
   }
 
@@ -94,22 +118,22 @@ class Attributes
     $res->free_result();
   }
 
-  private static function getVariables(?CharsetType $type = CharsetType::Connection)
+  private static function getVariables(?int $type = self::Connection)
   {
-    return !is_null($type) ? self::$variables[$type->getInverseCharsetType()] : self::$variables;
+    return !is_null($type) ? self::$variables[self::getInverseCharsetType($type)] : self::$variables;
   }
 
-  private static function setCharacterSet(?CharsetType $type = CharsetType::Connection)
+  private static function setCharacterSet(?int $type = self::Connection)
   {
     if (
-      !($res = MySQLiEngine::getInstance()->getConnection()->query(sprintf("SHOW CHARACTER SET LIKE '%s'", self::$variables[$type->getCharsetType()]))) ||
+      !($res = MySQLiEngine::getInstance()->getConnection()->query(sprintf("SHOW CHARACTER SET LIKE '%s'", self::$variables[self::getCharsetType($type)]))) ||
       !(self::$charsets = $res->fetch_assoc())
     ) {
       printf("[%d] %s\n", MySQLiEngine::getInstance()->getConnection()->errno, MySQLiEngine::getInstance()->getConnection()->error);
       return self::$charsets;
     }
 
-    self::$variables[$type->getInverseCharsetType()] = [
+    self::$variables[self::getInverseCharsetType($type)] = [
       'charset' => self::$charsets['Charset'],
       'description' => self::$charsets['Description'],
       'collation' => self::$charsets['Default collation'],
@@ -128,7 +152,7 @@ class Attributes
     return self::$charsets;
   }
 
-  private static function setCollation(?CharsetType $type = CharsetType::Connection)
+  private static function setCollation(?int $type = self::Connection)
   {
     if (
       !($res = MySQLiEngine::getInstance()->getConnection()->query(sprintf("SHOW COLLATION LIKE '%s'", self::$charsets['Default collation']))) ||
@@ -138,10 +162,10 @@ class Attributes
       return self::$collations;
     }
 
-    self::$variables[$type->getInverseCharsetType()]['sortlen'] = self::$collations['Sortlen'];
-    self::$variables[$type->getInverseCharsetType()]['default'] = self::$collations['Default'];
-    self::$variables[$type->getInverseCharsetType()]['compiled'] = self::$collations['Compiled'];
-    self::$variables[$type->getInverseCharsetType()]['id'] = self::$collations['Id'];
+    self::$variables[self::getInverseCharsetType($type)]['sortlen'] = self::$collations['Sortlen'];
+    self::$variables[self::getInverseCharsetType($type)]['default'] = self::$collations['Default'];
+    self::$variables[self::getInverseCharsetType($type)]['compiled'] = self::$collations['Compiled'];
+    self::$variables[self::getInverseCharsetType($type)]['id'] = self::$collations['Id'];
 
     $res->free_result();
   }
@@ -175,7 +199,7 @@ class Attributes
    * 
    * @return void
    */
-  public static function define(?CharsetType $type = CharsetType::Connection): void
+  public static function define(?int $type = self::Connection): void
   {
     self::init();
     $result = [];
@@ -186,7 +210,7 @@ class Attributes
         'CASE' => self::$settings['lower_case_table_names'] === '1' ? '0' : '1',
         'CLIENT_VERSION' => MySQLiEngine::getInstance()->getConnection()->client_info,
         'CONNECTION_STATUS' => MySQLiEngine::getInstance()->getConnection()->host_info,
-        'PERSISTENT' => (int) !isset(Options::getOptions()['assoc']['ATTR_PERSISTENT']) ? 0 : (int) Options::getOptions()['assoc']['ATTR_PERSISTENT'],
+        'PERSISTENT' => (int) !Options::getOptions(MySQL::ATTR_PERSISTENT) ? 0 : (int) Options::getOptions(MySQL::ATTR_PERSISTENT),
         'SERVER_INFO' => MySQLiEngine::getInstance()->getConnection()->stat(),
         'SERVER_VERSION' => MySQLiEngine::getInstance()->getConnection()->server_info,
         'TIMEOUT' => self::$settings['connect_timeout'],

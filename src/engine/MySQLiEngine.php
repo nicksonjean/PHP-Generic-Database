@@ -11,6 +11,7 @@ use
   GenericDatabase\Engine\MySQLi\Options,
   GenericDatabase\Engine\MySQLi\Attributes,
   GenericDatabase\Engine\MySQLi\DSN,
+  GenericDatabase\Engine\MySQli\MySQL,
   GenericDatabase\Engine\MySQLi\Dump;
 
 class MySQLiEngine
@@ -20,9 +21,11 @@ class MySQLiEngine
   /**
    * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
    * 
-   * @return mixed
+   * @param string $method
+   * @param array $arguments
+   * @return MySQLiEngine
    */
-  public static function call($method, $arguments): mixed
+  private static function call(string $method, array $arguments): MySQLiEngine
   {
     return Arguments::call($method, $arguments);
   }
@@ -38,8 +41,7 @@ class MySQLiEngine
     Options::setOptions($this->getOptions());
     $options = [];
     $options = Options::getOptions();
-    $this->setOptions($options['index']);
-    $this->setInstance($this);
+    $this->setOptions($options);
     return $this;
   }
 
@@ -50,18 +52,24 @@ class MySQLiEngine
    */
   private function postConnect(): MySQLiEngine
   {
-    if ($this->getCharset()) {
-      $this->getInstance()->getConnection()->set_charset($this->getCharset());
-    }
     Options::define();
     Attributes::define();
-    $this->setInstance($this);
     return $this;
   }
 
-  private function realConnect($host, $user, $password, $database, $port): MySQLiEngine
+  /**
+   * This method is responsible for creating a new instance of the MySQLi connection.
+   * 
+   * @param string|null $host
+   * @param string $user
+   * @param string|null $password
+   * @param string $database
+   * @param int $port
+   * @return PDOEngine 
+   */
+  private function realConnect(string $host = null, string $user, string $password = null, string $database, int $port): MySQLiEngine
   {
-    $host = (string)!isset(Options::getOptions()['assoc']['ATTR_PERSISTENT']) ? $host : 'p:' . $host;
+    $host = (string) !Options::getOptions(MySQL::ATTR_PERSISTENT) ? $host : 'p:' . $host;
     $this->setHost($host);
     $this->parseDns();
     $this->getConnection()->real_connect($host, $user, $password, $database, $port);
@@ -78,8 +86,8 @@ class MySQLiEngine
     try {
       $this
         ->preConnect()
-        ->realConnect($this->getHost(), $this->getUser(), $this->getPassword(), $this->getDatabase(), $this->getPort())
         ->setInstance($this)
+        ->realConnect($this->getHost(), $this->getUser(), $this->getPassword(), $this->getDatabase(), $this->getPort())
         ->postConnect()
         ->setConnected(true);
       return $this;
@@ -118,5 +126,15 @@ class MySQLiEngine
   public function setConnection(\MySQLi $connection): \MySQLi
   {
     return $GLOBALS['connection'] = $connection;
+  }
+
+  public function getAttribute($name)
+  {
+    return MySQL::getAttribute($name);
+  }
+
+  public function setAttribute($name, $value)
+  {
+    return MySQL::setAttribute($name, $value);
   }
 }

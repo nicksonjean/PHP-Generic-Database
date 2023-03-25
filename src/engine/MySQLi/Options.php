@@ -2,57 +2,56 @@
 
 namespace GenericDatabase\Engine\MySQLi;
 
-use GenericDatabase\Engine\MySQLiEngine;
+use
+  GenericDatabase\Engine\MySQLiEngine,
+  GenericDatabase\Traits\Reflections;
 
 class Options
 {
+  use Reflections;
+
   private static $options = [];
 
-  public static function getOptions(?string $type = null)
+  /**
+   * This method is responsible for obtain all options already defined by user
+   * 
+   * @param ?string|null $type
+   * @return mixed
+   */
+  public static function getOptions($type = null): mixed
   {
     return !is_null($type) ? self::$options[$type] : self::$options;
   }
 
-  // pre connect
-
-  public static function fixOptions($cases): array
+  /**
+   * This method is responsible for set options before connect in database
+   * 
+   * @param ?array|null $type
+   * @return void
+   */
+  public static function setOptions(?array $options = null): void
   {
-    $i = 0;
-    $result = [];
-    foreach (array_combine(array_keys($cases), array_values($cases)) as $key => $value) {
-      if ($key !== 'index' && $key !== 'assoc') {
-        $index = str_replace('MySQL::', '', $key);
-        $result[$i] = [$index => $value];
-      }
-      $i++;
-    }
-    return $result;
-  }
-
-  // pre connect
-
-  public static function setOptions($cases): void
-  {
-    $i = 0;
-    foreach ($cases as $key => $value) {
-      if ($key !== 'index' && $key !== 'assoc') {
-        $index = array_keys($cases[$key])[0];
-        $value = array_values($value)[0];
-        self::$options['index'][$i] = $value;
-        self::$options['assoc'][$index] = $value;
-        if ($index !== 'ATTR_PERSISTENT' && $index !== 0) {
-          MySQLiEngine::getInstance()->setOptions(constant(str_replace("ATTR", "MYSQLI", $index)), $value);
+    foreach (Reflections::getClassConstants('GenericDatabase\Engine\MySQli\MySQL') as $key => $value) {
+      $index = array_search($value, array_keys($options));
+      if ($index !== false) {
+        $key_name = $key !== 'ATTR_PERSISTENT' ? str_replace("ATTR", "MYSQLI", $key) : $key;
+        MySQLiEngine::getInstance()->setAttribute("MySQL::$key", $options[$value]);
+        if ($key !== 'ATTR_PERSISTENT') {
+          MySQLiEngine::getInstance()->setOptions(constant($key_name), $options[$value]);
         }
+        self::$options[constant("GenericDatabase\Engine\MySQli\MySQL::$key")] = $options[$value];
       }
-      $i++;
     }
   }
 
-  // post connect
-
+  /**
+   * This method is responsible for set options after connect in database
+   * 
+   * @return void
+   */
   public static function define(): void
   {
-    foreach (self::$options['assoc'] as $key => $value) {
+    foreach (self::getOptions() as $key => $value) {
       switch ($key) {
         case 'ATTR_PERSISTENT':
           if (ini_get('mysqli.allow_persistent') !== '1') {
@@ -81,6 +80,9 @@ class Options
           break;
         default:
           MySQLiEngine::getInstance()->getConnection()->query("SET SESSION sql_mode=''");
+          if (MySQLiEngine::getInstance()->getCharset()) {
+            MySQLiEngine::getInstance()->getConnection()->set_charset(MySQLiEngine::getInstance()->getCharset());
+          }
       }
     }
   }
