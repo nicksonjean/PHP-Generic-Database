@@ -18,9 +18,14 @@ class Options
    * @param ?string|null $type
    * @return mixed
    */
-  public static function getOptions($type = null): mixed
+  public static function getOptions(?int $type = null): mixed
   {
-    return !is_null($type) ? self::$options[$type] : self::$options;
+    if (!is_null($type)) {
+      $result = isset(self::$options[$type]) ? self::$options[$type] : null;
+    } else {
+      $result = self::$options;
+    }
+    return $result;
   }
 
   /**
@@ -31,7 +36,8 @@ class Options
    */
   public static function setOptions(?array $options = null): void
   {
-    foreach (Reflections::getClassConstants('GenericDatabase\Engine\MySQli\MySQL') as $key => $value) {
+    $class = 'GenericDatabase\Engine\MySQli\MySQL';
+    foreach (Reflections::getClassConstants($class) as $key => $value) {
       $index = array_search($value, array_keys($options));
       if ($index !== false) {
         $key_name = $key !== 'ATTR_PERSISTENT' ? str_replace("ATTR", "MYSQLI", $key) : $key;
@@ -39,7 +45,7 @@ class Options
         if ($key !== 'ATTR_PERSISTENT') {
           MySQLiEngine::getInstance()->setOptions(constant($key_name), $options[$value]);
         }
-        self::$options[constant("GenericDatabase\Engine\MySQli\MySQL::$key")] = $options[$value];
+        self::$options[constant("$class::$key")] = $options[$value];
       }
     }
   }

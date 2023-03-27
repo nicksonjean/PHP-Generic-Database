@@ -25,7 +25,7 @@ class PgSQLEngine
    */
   public static function call($method, $arguments): mixed
   {
-    // return Arguments::call($method, $arguments);
+    return Arguments::call($method, $arguments);
   }
 
   /**
@@ -35,11 +35,10 @@ class PgSQLEngine
    */
   private function preConnect(): PgSQLEngine
   {
-    // $this->setConnection(mysqli_init());
-    // Options::setOptions($this->getOptions());
-    // $options = [];
-    // $options = Options::getOptions();
-    // $this->setOptions($options);
+    Options::setOptions($this->getOptions());
+    $options = [];
+    $options = Options::getOptions();
+    $this->setOptions($options);
     return $this;
   }
 
@@ -50,17 +49,14 @@ class PgSQLEngine
    */
   private function postConnect(): PgSQLEngine
   {
-    if ($this->getCharset()) {
-      $this->getInstance()->getConnection()->set_charset($this->getCharset());
-    }
-    // Options::define();
-    // Attributes::define();
+    Options::define();
+    Attributes::define();
     return $this;
   }
 
   private function realConnect($dsn): PgSQLEngine
   {
-    // $this->setConnection((string) !Options::getOptions(PgSQL::ATTR_PERSISTENT) ? pg_connect($dsn) : pg_pconnect($dsn));
+    $this->setConnection((string) !Options::getOptions(PgSQL::ATTR_PERSISTENT) ? pg_connect($dsn, Attributes::getFlags()) : pg_pconnect($dsn, Attributes::getFlags()));
     return $this;
   }
 
@@ -74,8 +70,8 @@ class PgSQLEngine
     try {
       $this
         ->preConnect()
-        ->realConnect($this->getDsn())
         ->setInstance($this)
+        ->realConnect($this->parseDns())
         ->postConnect()
         ->setConnected(true);
       return $this;

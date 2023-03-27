@@ -11,9 +11,6 @@ class PgSQL
   const ATTR_CONNECT_FORCE_NEW = 1003;
   const ATTR_PERSISTENT = 13; // pconnect
 
-  // https://blog.programster.org/getting-started-with-using-postgresql-in-php
-  // https://pracucci.com/php-pdo-pgsql-connection-timeout.html
-
   protected static $data = [];
 
   public static function getAttribute($name)
