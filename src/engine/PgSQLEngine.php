@@ -111,4 +111,14 @@ class PgSQLEngine
   {
     return $GLOBALS['connection'] = $connection;
   }
+
+  public function getAttribute($name)
+  {
+    return PgSQL::getAttribute($name);
+  }
+
+  public function setAttribute($name, $value)
+  {
+    return PgSQL::setAttribute($name, $value);
+  }
 }

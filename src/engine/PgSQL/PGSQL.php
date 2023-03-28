@@ -6,10 +6,10 @@ use GenericDatabase\Traits\Reflections;
 
 class PgSQL
 {
-  const ATTR_CONNECT_TIMEOUT = 1001; // dsn connect_timeout=30
+  const ATTR_CONNECT_TIMEOUT = 1001;
   const ATTR_CONNECT_ASYNC = 1002;
   const ATTR_CONNECT_FORCE_NEW = 1003;
-  const ATTR_PERSISTENT = 13; // pconnect
+  const ATTR_PERSISTENT = 13;
 
   protected static $data = [];
 

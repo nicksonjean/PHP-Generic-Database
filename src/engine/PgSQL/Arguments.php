@@ -48,14 +48,15 @@ class Arguments
   private static function setConstant($value): array
   {
     $options = [];
+    $class = 'GenericDatabase\Engine\PgSQL\PgSQL';
     foreach (array_combine(array_keys(...$value), array_values(...$value)) as $key => $value) {
       $index = str_replace('PgSQL::', '', $key);
-      $key_name = $index !== 'ATTR_PERSISTENT' ? str_replace("ATTR", "PgSQL", $index) : $index;
+      $key_name = $index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "PGSQL", $index) : $index;
       PgSQLEngine::getInstance()->setAttribute($key, $value);
-      if ($key_name !== 'ATTR_PERSISTENT') {
+      if ($index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_CONNECT_TIMEOUT') {
         PgSQLEngine::getInstance()->setOptions(constant($key_name), $value);
       }
-      $options[constant("GenericDatabase\Engine\PgSQL\PgSQL::$index")] = $value;
+      $options[constant("$class::$index")] = $value;
     }
     Options::setOptions($options);
     $options = Options::getOptions();

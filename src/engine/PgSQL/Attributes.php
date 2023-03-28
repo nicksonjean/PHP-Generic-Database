@@ -51,10 +51,11 @@ class Attributes
   public static function define(): void
   {
     $version = pg_version(PgSQLEngine::getInstance()->getConnection());
+    $collate = pg_fetch_object(pg_query(PgSQLEngine::getInstance()->getConnection(), "SHOW LC_COLLATE"));
     $result = [];
     foreach (self::$attributeList as $key => $value) {
       $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
-        'AUTOCOMMIT' => '0',  
+        'AUTOCOMMIT' => '0',
         'ERRMODE' => (string) '1',
         'CASE' => '0',
         'CLIENT_VERSION' => $version['client'],
@@ -66,7 +67,7 @@ class Attributes
         'EMULATE_PREPARES' => 'FAKE',
         'DEFAULT_FETCH_MODE' => (string) '3',
         'CHARACTER_SET' => pg_client_encoding(PgSQLEngine::getInstance()->getConnection()),
-        'COLLATION' => pg_client_encoding(PgSQLEngine::getInstance()->getConnection())
+        'COLLATION' => $collate->lc_collate
       };
     };
     PgSQLEngine::getInstance()?->setAttributes((array) $result);
