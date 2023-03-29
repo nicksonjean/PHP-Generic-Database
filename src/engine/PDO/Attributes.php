@@ -35,13 +35,20 @@ class Attributes
    */
   public static function define(): void
   {
+    set_error_handler(
+      function ($severity, $message, $file, $line) {
+        throw new \ErrorException($message, $severity, $severity, $file, $line);
+      }
+    );
+
     $result = [];
     foreach (self::$attributeList as $value) {
       try {
-        $result[$value] = @trim((string) PDOEngine::getInstance()?->getAttribute(constant("PDO::ATTR_$value")));
-      } catch (\PDOException $e) {
+        $result[$value] = PDOEngine::getInstance()?->getAttribute(constant("\PDO::ATTR_$value"));
+      } catch (\PDOException | \Exception $e) {
       }
     }
+    restore_error_handler();
     PDOEngine::getInstance()?->setAttributes((array) $result);
   }
 }
