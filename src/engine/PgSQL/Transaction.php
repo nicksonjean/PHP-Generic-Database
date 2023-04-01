@@ -6,31 +6,41 @@ use GenericDatabase\Engine\PgSQLEngine;
 
 class Transaction
 {
-  protected $transactionCounter = 0;
+  protected static $transactionCounter = 0;
 
-  public function beginTransaction()
+  protected static $inTransaction = false;
+
+  public static function beginTransaction()
   {
-    if (!$this->transactionCounter++) {
-      return PgSQLEngine::getInstance()?->beginTransaction();
+    if (!self::$transactionCounter++) {
+      return PgSQLEngine::getInstance()?->getConnection()?->begin_transaction();
+      self::$inTransaction = true;
     }
-    PgSQLEngine::getInstance()?->exec('SAVEPOINT trans' . ($this->transactionCounter));
-    return $this->transactionCounter >= 0;
+    PgSQLEngine::getInstance()?->getConnection()?->exec('SAVEPOINT trans' . (self::$transactionCounter));
+    return self::$transactionCounter >= 0;
   }
 
-  public function commit()
+  public static function commit()
   {
-    if (!--$this->transactionCounter) {
-      return PgSQLEngine::getInstance()?->commit();
+    if (!--self::$transactionCounter) {
+      return PgSQLEngine::getInstance()?->getConnection()?->commit();
+      self::$inTransaction = false;
     }
-    return $this->transactionCounter >= 0;
+    return self::$transactionCounter >= 0;
   }
 
-  public function rollback()
+  public static function inTransaction()
   {
-    if (--$this->transactionCounter) {
-      PgSQLEngine::getInstance()?->exec('ROLLBACK TO trans' . ($this->transactionCounter + 1));
+    return self::$inTransaction;
+  }
+
+  public static function rollback()
+  {
+    if (--self::$transactionCounter) {
+      PgSQLEngine::getInstance()?->getConnection()?->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
+      self::$inTransaction = false;
       return true;
     }
-    return PgSQLEngine::getInstance()?->rollback();
+    return PgSQLEngine::getInstance()?->getConnection()?->rollback();
   }
 }

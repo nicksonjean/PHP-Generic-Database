@@ -11,7 +11,8 @@ use
   GenericDatabase\Engine\PDO\Options,
   GenericDatabase\Engine\PDO\Attributes,
   GenericDatabase\Engine\PDO\DSN,
-  GenericDatabase\Engine\PDO\Dump;
+  GenericDatabase\Engine\PDO\Dump,
+  GenericDatabase\Engine\PDO\Transaction;
 
 class PDOEngine
 {
@@ -136,23 +137,13 @@ class PDOEngine
   }
 
   /**
-   * Result all PDO Supported Drivers
-   * 
-   * @return array
-   */
-  public function getAvailableDrivers(): array
-  {
-    return \PDO::getAvailableDrivers();
-  }
-
-  /**
    * This function creates a new transaction, in order to be able to commit or rollback changes made to the database.
    * 
    * @return bool
    */
   public function beginTransaction(): bool
   {
-    return $this->getConnection()->beginTransaction();
+    return Transaction::beginTransaction();
   }
 
   /**
@@ -162,7 +153,7 @@ class PDOEngine
    */
   public function commit(): bool
   {
-    return $this->getConnection()->commit();
+    return Transaction::commit();
   }
 
   /**
@@ -172,7 +163,7 @@ class PDOEngine
    */
   public function rollback(): bool
   {
-    return $this->getConnection()->rollback();
+    return Transaction::rollback();
   }
 
   /**
@@ -182,7 +173,7 @@ class PDOEngine
    */
   public function inTransaction(): bool
   {
-    return $this->getConnection()->inTransaction();
+    return Transaction::inTransaction();
   }
 
   /**
@@ -193,7 +184,7 @@ class PDOEngine
    */
   public function lastInsertId(?string $name = null): string | false
   {
-    return $this->getConnection()->lastInsertId($name);
+    return $this->getInstance()->getConnection()->lastInsertId($name);
   }
 
   /**
@@ -205,7 +196,7 @@ class PDOEngine
    */
   public function quote(string $string, int $type = \PDO::PARAM_STR): string | false
   {
-    return $this->getConnection()->quote($string, $type);
+    return $this->getInstance()->getConnection()->quote($string, $type);
   }
 
   /**
@@ -217,7 +208,7 @@ class PDOEngine
    */
   public function prepare(string $query, ?array $options = []): \PDOStatement | false
   {
-    return $this->getConnection()->prepare($query, $options);
+    return $this->getInstance()->getConnection()->prepare($query, $options);
   }
 
   /**
@@ -229,18 +220,18 @@ class PDOEngine
    */
   public function query(string $query, ?int $fetchMode = null): \PDOStatement | false
   {
-    return $this->getConnection()->query($query, $fetchMode);
+    return $this->getInstance()->getConnection()->query($query, $fetchMode);
   }
 
   /**
    * This function runs an SQL statement and returns the number of affected rows.
    * 
-   * @param string $statement
+   * @param string $query
    * @return int|false
    */
-  public function exec(string $statement): int | false
+  public function exec(string $query): int | false
   {
-    return $this->getConnection()->exec($statement);
+    return $this->getInstance()->getConnection()->exec($query);
   }
 
   /**
@@ -251,7 +242,7 @@ class PDOEngine
    */
   public function getAttribute(int $attribute): mixed
   {
-    return $this->getConnection()->getAttribute($attribute);
+    return $this->getInstance()->getConnection()->getAttribute($attribute);
   }
 
   /**
@@ -263,7 +254,7 @@ class PDOEngine
    */
   public function setAttribute(int $attribute, string $value): \PDOStatement | false
   {
-    return $this->getConnection()->setAttribute($attribute, $value);
+    return $this->getInstance()->getConnection()->setAttribute($attribute, $value);
   }
 
   /**
@@ -273,7 +264,7 @@ class PDOEngine
    */
   public function errorCode(): ?string
   {
-    return $this->getConnection()->errorCode();
+    return $this->getInstance()->getConnection()->errorCode();
   }
 
   /**
@@ -283,6 +274,6 @@ class PDOEngine
    */
   public function errorInfo(): array
   {
-    return $this->getConnection()->errorInfo();
+    return $this->getInstance()->getConnection()->errorInfo();
   }
 }

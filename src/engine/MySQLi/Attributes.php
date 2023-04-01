@@ -205,7 +205,7 @@ class Attributes
     $result = [];
     foreach (self::$attributeList as $key => $value) {
       $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
-        'AUTOCOMMIT' => self::$settings['autocommit'] === 'ON' ? '1' : '0',
+        'AUTOCOMMIT' => (string) !Options::getOptions(MySQL::ATTR_AUTOCOMMIT) ? '0' : (string) Options::getOptions(MySQL::ATTR_AUTOCOMMIT), //self::$settings['autocommit'] === 'ON' ? '1' : '0'
         'ERRMODE' => (string) self::$errorMode,
         'CASE' => self::$settings['lower_case_table_names'] === '1' ? '0' : '1',
         'CLIENT_VERSION' => MySQLiEngine::getInstance()->getConnection()->client_info,

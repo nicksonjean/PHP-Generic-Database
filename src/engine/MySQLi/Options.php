@@ -40,9 +40,9 @@ class Options
     foreach (Reflections::getClassConstants($class) as $key => $value) {
       $index = array_search($value, array_keys($options));
       if ($index !== false) {
-        $key_name = $key !== 'ATTR_PERSISTENT' ? str_replace("ATTR", "MYSQLI", $key) : $key;
+        $key_name = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT' ? str_replace("ATTR", "MYSQLI", $key) : $key;
         MySQLiEngine::getInstance()->setAttribute("MySQL::$key", $options[$value]);
-        if ($key !== 'ATTR_PERSISTENT') {
+        if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT') {
           MySQLiEngine::getInstance()->setOptions(constant($key_name), $options[$value]);
         }
         self::$options[constant("$class::$key")] = $options[$value];

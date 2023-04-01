@@ -10,10 +10,10 @@ class DSN
 {
   public static function parseDns(): string|\Exception
   {
-    if (!in_array(PDOEngine::getInstance()->getDriver(), (array) PDOEngine::getInstance()->getAvailableDrivers())) {
+    if (!in_array(PDOEngine::getInstance()->getDriver(), (array) \PDO::getAvailableDrivers())) {
       $message = sprintf(
         "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
-        [PDOEngine::getInstance()->getDriver(), implode(', ', (array) PDOEngine::getInstance()->getAvailableDrivers())]
+        [PDOEngine::getInstance()->getDriver(), implode(', ', (array) \PDO::getAvailableDrivers())]
       );
       throw new \Exception($message);
     }

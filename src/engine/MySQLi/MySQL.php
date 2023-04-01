@@ -19,6 +19,7 @@ class MySQL
   const ATTR_OPT_INT_AND_FLOAT_NATIVE = 1011;
   const ATTR_OPT_SSL_VERIFY_SERVER_CERT = 1012;
   const ATTR_PERSISTENT = 13;
+  const ATTR_AUTOCOMMIT = 14;
 
   protected static $data = [];
 

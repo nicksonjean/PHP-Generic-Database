@@ -50,9 +50,9 @@ class Arguments
     $options = [];
     foreach (array_combine(array_keys(...$value), array_values(...$value)) as $key => $value) {
       $index = str_replace('MySQL::', '', $key);
-      $key_name = $index !== 'ATTR_PERSISTENT' ? str_replace("ATTR", "MYSQLI", $index) : $index;
+      $key_name = $index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_AUTOCOMMIT' ? str_replace("ATTR", "MYSQLI", $index) : $index;
       MySQLiEngine::getInstance()->setAttribute($key, $value);
-      if ($key_name !== 'ATTR_PERSISTENT') {
+      if ($key_name !== 'ATTR_PERSISTENT' && $key_name !== 'ATTR_AUTOCOMMIT') {
         MySQLiEngine::getInstance()->setOptions(constant($key_name), $value);
       }
       $options[constant("GenericDatabase\Engine\MySQli\MySQL::$index")] = $value;

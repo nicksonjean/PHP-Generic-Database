@@ -38,11 +38,6 @@ final class PDOEngineTest extends TestCase
     $this->assertNotEmpty(self::$instance->getConnection());
   }
 
-  public function testGetAvailableDrivers()
-  {
-    $this->assertNotEmpty(self::$instance->getAvailableDrivers());
-  }
-
   public function testLoadFromFile(): void
   {
     $this->assertGreaterThanOrEqual(1, self::$instance->loadFromFile('./tests/test.sql'));

@@ -6,31 +6,41 @@ use GenericDatabase\Engine\PDOEngine;
 
 class Transaction
 {
-  protected $transactionCounter = 0;
+  protected static $transactionCounter = 0;
 
-  public function beginTransaction()
+  protected static $inTransaction = false;
+
+  public static function beginTransaction()
   {
-    if (!$this->transactionCounter++) {
-      return PDOEngine::getInstance()?->beginTransaction();
+    if (!self::$transactionCounter++) {
+      return PDOEngine::getInstance()?->getConnection()?->begin_transaction();
+      self::$inTransaction = true;
     }
-    PDOEngine::getInstance()?->exec('SAVEPOINT trans' . ($this->transactionCounter));
-    return $this->transactionCounter >= 0;
+    PDOEngine::getInstance()?->getConnection()?->exec('SAVEPOINT trans' . (self::$transactionCounter));
+    return self::$transactionCounter >= 0;
   }
 
-  public function commit()
+  public static function commit()
   {
-    if (!--$this->transactionCounter) {
-      return PDOEngine::getInstance()?->commit();
+    if (!--self::$transactionCounter) {
+      return PDOEngine::getInstance()?->getConnection()?->commit();
+      self::$inTransaction = false;
     }
-    return $this->transactionCounter >= 0;
+    return self::$transactionCounter >= 0;
   }
 
-  public function rollback()
+  public static function inTransaction()
   {
-    if (--$this->transactionCounter) {
-      PDOEngine::getInstance()?->exec('ROLLBACK TO trans' . ($this->transactionCounter + 1));
+    return self::$inTransaction;
+  }
+
+  public static function rollback()
+  {
+    if (--self::$transactionCounter) {
+      PDOEngine::getInstance()?->getConnection()?->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
+      self::$inTransaction = false;
       return true;
     }
-    return PDOEngine::getInstance()?->rollback();
+    return PDOEngine::getInstance()?->getConnection()?->rollback();
   }
 }

@@ -15,7 +15,8 @@ $mysql = MySQLiEngine
   ::setCharset('utf8')
   ::setOptions([
     MySQL::ATTR_PERSISTENT => true,
-    MySQL::ATTR_INIT_COMMAND => "SET AUTOCOMMIT=1",
+    MySQL::ATTR_AUTOCOMMIT => true,
+    MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
     MySQL::ATTR_SET_CHARSET_NAME => "utf8",
     MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
     MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,

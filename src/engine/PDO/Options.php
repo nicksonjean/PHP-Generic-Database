@@ -13,7 +13,7 @@ class Options
    * 
    * @param ?string|null $type
    * @return array 
-   */  
+   */
   public static function getOptions(?string $type = null): array
   {
     return !is_null($type) ? self::$options[$type] : self::$options;
@@ -24,13 +24,13 @@ class Options
    * 
    * @param ?array|null $type
    * @return void
-   */ 
+   */
   public static function setOptions(?array $options = null): void
   {
-    if (!in_array(PDOEngine::getInstance()->getDriver(), (array) PDOEngine::getInstance()->getAvailableDrivers())) {
+    if (!in_array(PDOEngine::getInstance()->getDriver(), (array) \PDO::getAvailableDrivers())) {
       $message = sprintf(
         "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
-        [PDOEngine::getInstance()->getDriver(), implode(', ', (array) PDOEngine::getInstance()->getAvailableDrivers())]
+        [PDOEngine::getInstance()->getDriver(), implode(', ', (array) \PDO::getAvailableDrivers())]
       );
       throw new \Exception($message);
     }
@@ -61,7 +61,7 @@ class Options
    * This method is responsible for set options after connect in database
    * 
    * @return void
-   */ 
+   */
   public static function define(): void
   {
     $instance = PDOEngine::getInstance();

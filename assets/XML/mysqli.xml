@@ -8,7 +8,8 @@
   <charset>utf8</charset>
   <options>
     <option name="MySQL::ATTR_PERSISTENT">true</option>
-    <option name="MySQL::ATTR_INIT_COMMAND">SET AUTOCOMMIT=1</option>
+    <option name="MySQL::ATTR_AUTOCOMMIT">true</option>
+    <option name="MySQL::ATTR_INIT_COMMAND">SET NAMES 'utf8'</option>
     <option name="MySQL::ATTR_SET_CHARSET_NAME">utf8</option>
     <option name="MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE">true</option>
     <option name="MySQL::ATTR_OPT_CONNECT_TIMEOUT">28800</option>
