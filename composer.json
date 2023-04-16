@@ -27,9 +27,18 @@
         "code-lts/doctum": "^5.5"
     },
     "scripts":{
-        "docs:doctum": "php vendor/bin/doctum.php update ./config.php",
-        "docs:phpdoc": "",
+        "docs": [
+            "@clear:docs",
+            "@clear:cache",
+            "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors"
+        ],
         "test":"php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
-        "test:coverage": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/"
+        "test:coverage": [
+            "@clear:coverage",
+            "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/"
+        ],
+        "clear:docs": "php ./eraser.php --dest='./docs/'",
+        "clear:cache": "php ./eraser.php --dest='./cache/'",
+        "clear:coverage": "php ./eraser.php --dest='./coverage/'"
     }
 }

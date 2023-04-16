@@ -24,10 +24,10 @@ trait Regex
   /** 
    * Check "Booleanic" Conditions :)
    *
-   * @param  [mixed]  $variable  Can be anything (string, bol, integer, etc.)
-   * @return [boolean]           Returns TRUE  for "1", "true", "on" and "yes"
-   *                             Returns FALSE for "0", "false", "off" and "no"
-   *                             Returns NULL otherwise.
+   * @param  mixed  $variable  Can be anything (string, bol, integer, etc.)
+   * @return boolean           Returns TRUE  for "1", "true", "on" and "yes"
+   *                           Returns FALSE for "0", "false", "off" and "no"
+   *                           Returns NULL otherwise.
    */
   public static function isBoolean($value)
   {

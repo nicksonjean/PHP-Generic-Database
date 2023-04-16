@@ -13,9 +13,9 @@ trait Caller
 
   /**
    * Overload and intercept not founded methods and properties
+   * 
    * @param mixed $method
    * @param mixed $arguments
-   *
    * @return void
    */
   public function __call($method, $arguments)
@@ -32,9 +32,9 @@ trait Caller
 
   /**
    * Overload and intercept not founded methods and properties
+   * 
    * @param mixed $method
    * @param mixed $arguments
-   *
    * @return void
    */
   static function __callStatic($method, $arguments)

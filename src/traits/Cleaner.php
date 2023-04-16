@@ -10,8 +10,8 @@ trait Cleaner
 
   /**
    * Isset property
+   * 
    * @param mixed $field
-   *
    * @return boolean
    */
   public function __isset($field)
@@ -21,8 +21,8 @@ trait Cleaner
 
   /**
    * Unset property
+   * 
    * @param mixed $field
-   *
    * @return  void
    */
   public function __unset($field)

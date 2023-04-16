@@ -4,8 +4,18 @@ namespace GenericDatabase\Traits;
 
 trait Reflections
 {
+
+  /**
+   * Set default method
+   */
   public static $default_method = 'getInstance';
 
+  /**
+   * Get singleton instance
+   * 
+   * @param mixed $field
+   * @return mixed
+   */
   public static function getSingletonInstance($class)
   {
     try {
@@ -17,6 +27,12 @@ trait Reflections
     return $result;
   }
 
+  /**
+   * Detect if method exists in class
+   * 
+   * @param mixed $field
+   * @return mixed
+   */
   public static function isSingletonMethodExits($class)
   {
     try {
@@ -29,12 +45,23 @@ trait Reflections
     return $result;
   }
 
+  /**
+   * Get class constants for class
+   * 
+   * @param mixed $field
+   * @return mixed
+   */
   public static function getClassConstants($class)
   {
-    $reflect = new \ReflectionClass($class);
-    return $reflect->getConstants();
+    return (new \ReflectionClass($class))->getConstants();
   }
 
+  /**
+   * Get class constants for class by name and value
+   * 
+   * @param mixed $field
+   * @return mixed
+   */
   public static function getClassConstantName($class, $value)
   {
     return array_flip((new \ReflectionClass($class))->getConstants())[$value];

@@ -4,6 +4,13 @@ namespace GenericDatabase\Traits;
 
 trait JSON
 {
+
+  /**
+   * Detect if json is valid
+   * 
+   * @param string $json
+   * @return bool
+   */
   public static function isValidJSON(string $json): bool
   {
     json_decode(file_get_contents($json));
@@ -13,6 +20,12 @@ trait JSON
     return false;
   }
 
+  /**
+   * Parse a valid json
+   * 
+   * @param string $json
+   * @return array
+   */
   public static function parseJSON(string $json): array
   {
     return (array) json_decode(file_get_contents($json), true);

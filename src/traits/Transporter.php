@@ -9,8 +9,9 @@ use
 trait Transporter
 {
   use Property, Singleton;
+
   /**
-   * sleep instance uesd by serialize/unserialize
+   * Sleep instance uesd by serialize/unserialize
    *
    * @return  void
    */

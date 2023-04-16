@@ -4,12 +4,25 @@ namespace GenericDatabase\Traits;
 
 trait XML
 {
+
+  /**
+   * Detect if xml is valid
+   * 
+   * @param string $xml
+   * @return bool
+   */
   public static function isValidXML(string $xml): bool
   {
     $xml = \XMLReader::open($xml);
     return ($xml->setParserProperty(\XMLReader::VALIDATE, true) ? true : false);
   }
 
+  /**
+   * Convert a value by type
+   * 
+   * @param mixed $xml
+   * @return mixed
+   */
   public static function castValue($value)
   {
     $value = trim($value);
@@ -29,6 +42,16 @@ trait XML
     return $value;
   }
 
+  /**
+   * Decode a valid xml
+   * 
+   * @param \SimpleXMLElement $xml
+   * @param bool $attributes_key = true
+   * @param bool $reduce = true
+   * @param array $always_array = array()
+   * @param array $value_keys = array()s
+   * @return string|array
+   */
   public static function decodeXML(\SimpleXMLElement $xml, bool $attributes_key = true, bool $reduce = true, array $always_array = array(), array $value_keys = array()): string|array
   {
     $arr = array();
@@ -71,6 +94,12 @@ trait XML
     return $arr;
   }
 
+  /**
+   * Parse a valid xml
+   * 
+   * @param string $xml
+   * @return array
+   */
   public static function parseXML(string $xml)
   {
     libxml_use_internal_errors(TRUE);

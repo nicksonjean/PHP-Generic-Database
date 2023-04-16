@@ -4,6 +4,13 @@ namespace GenericDatabase\Traits;
 
 trait Path
 {
+
+  /**
+   * Convert path relative to absolute
+   * 
+   * @param string $path
+   * @return string
+   */
   public static function toAbsolute($path)
   {
     if (!file_exists($path)) {
@@ -15,6 +22,12 @@ trait Path
     return realpath($path);
   }
 
+  /**
+   * Detect if path is absolute
+   * 
+   * @param string $path
+   * @return string
+   */
   public static function isAbsolute($path)
   {
     if (!is_string($path)) {

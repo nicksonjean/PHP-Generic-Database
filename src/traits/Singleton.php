@@ -11,6 +11,8 @@ trait Singleton
 
   /**
    * create or obtain a singleton instance
+   * 
+   * @return self
    */
   public static function getInstance(): self
   {
@@ -20,12 +22,24 @@ trait Singleton
     return self::$instance;
   }
 
+  /**
+   * create or obtain a singleton instance
+   * 
+   * @param $instance
+   * @return self
+   */
   public static function setInstance($instance): self
   {
     self::$instance = $instance;
     return self::$instance;
   }
 
+  /**
+   * clear a singleton instance
+   * 
+   * @param $instance
+   * @return void
+   */
   protected function clearInstance(): void
   {
     self::$instance = null;
