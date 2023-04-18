@@ -72,7 +72,7 @@ class MySQLiEngine
   {
     $host = (string) !Options::getOptions(MySQL::ATTR_PERSISTENT) ? $host : 'p:' . $host;
     $this->setHost($host);
-    $this->parseDns();
+    $this->parseDsn();
     $this->getConnection()->real_connect($host, $user, $password, $database, $port);
     return $this;
   }
@@ -103,9 +103,9 @@ class MySQLiEngine
    * 
    * @return string|\Exception
    */
-  private function parseDns(): string|\Exception
+  private function parseDsn(): string|\Exception
   {
-    return DSN::parseDns();
+    return DSN::parseDsn();
   }
 
   /**

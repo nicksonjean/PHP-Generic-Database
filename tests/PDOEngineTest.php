@@ -43,9 +43,9 @@ final class PDOEngineTest extends TestCase
     $this->assertGreaterThanOrEqual(1, self::$instance->loadFromFile('./tests/test.sql'));
   }
 
-  // public function testDns()
+  // public function testDsn()
   // {
-  //   $this->assertNotEmpty(self::$instance->getDns('host', 'database', 'user', 'password', 'driver'));
+  //   $this->assertNotEmpty(self::$instance->getDsn('host', 'database', 'user', 'password', 'driver'));
   // }
 
   // public function testBeginTransaction()

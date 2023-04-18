@@ -8,7 +8,7 @@ use
 
 class DSN
 {
-  public static function parseDns(): string|\Exception
+  public static function parseDsn(): string|\Exception
   {
     if (!in_array(PDOEngine::getInstance()->getDriver(), (array) \PDO::getAvailableDrivers())) {
       $message = sprintf(

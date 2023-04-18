@@ -82,7 +82,7 @@ class PDOEngine
       $this
         ->setInstance($this)
         ->preConnect()
-        ->realConnect($this->parseDns(), $this->getUser(), $this->getPassword(), $this->getOptions())
+        ->realConnect($this->parseDsn(), $this->getUser(), $this->getPassword(), $this->getOptions())
         ->postConnect()
         ->setConnected(true);
       return $this;
@@ -97,9 +97,9 @@ class PDOEngine
    * 
    * @return string|\Exception
    */
-  private function parseDns(): string|\Exception
+  private function parseDsn(): string|\Exception
   {
-    return DSN::parseDns();
+    return DSN::parseDsn();
   }
 
   /**

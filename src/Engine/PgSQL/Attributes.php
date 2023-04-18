@@ -55,17 +55,17 @@ class Attributes
     $result = [];
     foreach (self::$attributeList as $key => $value) {
       $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
-        'AUTOCOMMIT' => '0',
-        'ERRMODE' => (string) '1',
-        'CASE' => '0',
+        'AUTOCOMMIT' => (int) 0,
+        'ERRMODE' => (int) 1,
+        'CASE' => (int) 0,
         'CLIENT_VERSION' => $version['client'],
         'CONNECTION_STATUS' => (pg_connection_status(PgSQLEngine::getInstance()->getConnection()) === PGSQL_CONNECTION_OK) ? 'Connection OK; waiting to send.' : 'Connection failed;',
         'PERSISTENT' => (int) !Options::getOptions(PgSQL::ATTR_PERSISTENT) ? 0 : (int) Options::getOptions(PgSQL::ATTR_PERSISTENT),
         'SERVER_INFO' => sprintf("PID: %s; Client Encoding: %s; Is Superuser: %s; Session Authorization: %s; Date Style: %s", pg_get_pid(PgSQLEngine::getInstance()->getConnection()), pg_client_encoding(PgSQLEngine::getInstance()->getConnection()), $version['is_superuser'], $version['session_authorization'], $version['DateStyle']),
         'SERVER_VERSION' => $version['server'],
-        'TIMEOUT' => Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) ? Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) : 30,
-        'EMULATE_PREPARES' => 'FAKE',
-        'DEFAULT_FETCH_MODE' => (string) '3',
+        'TIMEOUT' => (int) Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) ? Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) : 30,
+        'EMULATE_PREPARES' => -1,
+        'DEFAULT_FETCH_MODE' => (int) 3,
         'CHARACTER_SET' => pg_client_encoding(PgSQLEngine::getInstance()->getConnection()),
         'COLLATION' => $collate->lc_collate
       };

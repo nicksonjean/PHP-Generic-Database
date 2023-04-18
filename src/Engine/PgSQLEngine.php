@@ -80,7 +80,7 @@ class PgSQLEngine
       $this
         ->preConnect()
         ->setInstance($this)
-        ->realConnect($this->parseDns())
+        ->realConnect($this->parseDsn())
         ->postConnect()
         ->setConnected(true);
       return $this;
@@ -95,9 +95,9 @@ class PgSQLEngine
    * 
    * @return string|\Exception
    */
-  private function parseDns(): string|\Exception
+  private function parseDsn(): string|\Exception
   {
-    return DSN::parseDns();
+    return DSN::parseDsn();
   }
 
   /**

@@ -6,7 +6,7 @@ use GenericDatabase\Engine\PgSQLEngine;
 
 class DSN
 {
-  public static function parseDns(): string|\Exception
+  public static function parseDsn(): string|\Exception
   {
     if (!extension_loaded('pgsql')) {
       $message = sprintf(

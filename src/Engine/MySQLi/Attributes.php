@@ -205,17 +205,17 @@ class Attributes
     $result = [];
     foreach (self::$attributeList as $key => $value) {
       $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
-        'AUTOCOMMIT' => (string) !Options::getOptions(MySQL::ATTR_AUTOCOMMIT) ? '0' : (string) Options::getOptions(MySQL::ATTR_AUTOCOMMIT), //self::$settings['autocommit'] === 'ON' ? '1' : '0'
-        'ERRMODE' => (string) self::$errorMode,
-        'CASE' => self::$settings['lower_case_table_names'] === '1' ? '0' : '1',
+        'AUTOCOMMIT' => (int) !Options::getOptions(MySQL::ATTR_AUTOCOMMIT) ? 0 : (int) Options::getOptions(MySQL::ATTR_AUTOCOMMIT), //self::$settings['autocommit'] === 'ON' ? '1' : '0'
+        'ERRMODE' => (int) self::$errorMode,
+        'CASE' => (int) self::$settings['lower_case_table_names'] === 1 ? 0 : 1,
         'CLIENT_VERSION' => MySQLiEngine::getInstance()->getConnection()->client_info,
         'CONNECTION_STATUS' => MySQLiEngine::getInstance()->getConnection()->host_info,
         'PERSISTENT' => (int) !Options::getOptions(MySQL::ATTR_PERSISTENT) ? 0 : (int) Options::getOptions(MySQL::ATTR_PERSISTENT),
         'SERVER_INFO' => MySQLiEngine::getInstance()->getConnection()->stat(),
         'SERVER_VERSION' => MySQLiEngine::getInstance()->getConnection()->server_info,
-        'TIMEOUT' => self::$settings['connect_timeout'],
-        'EMULATE_PREPARES' => 'FAKE',
-        'DEFAULT_FETCH_MODE' => (string) self::$fetchMode,
+        'TIMEOUT' => (int) self::$settings['connect_timeout'],
+        'EMULATE_PREPARES' => -1,
+        'DEFAULT_FETCH_MODE' => (int) self::$fetchMode,
         'CHARACTER_SET' => self::getVariables($type)['charset'],
         'COLLATION' => self::getVariables($type)['collation']
       };
