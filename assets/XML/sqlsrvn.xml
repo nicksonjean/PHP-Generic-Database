@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+  <driver>sqlsrv</driver>
+  <host>localhost</host>
+  <port>1433</port>
+  <database>demodev</database>
+  <user>sa</user>
+  <password>masterkey</password>
+  <charset>utf8</charset>
+  <options>
+		<option name="SQLSrv::ATTR_PERSISTENT">true</option>
+		<option name="SQLSrv::ATTR_CONNECT_TIMEOUT">28800</option>
+  </options>
+  <exception>true</exception>
+</root>
