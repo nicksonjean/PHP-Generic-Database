@@ -17,20 +17,14 @@ class DSN
       );
       throw new \Exception($message);
     }
-    $result = null;
-    $result = self::DSNFBird();
-    FBirdEngine::getInstance()->setDsn((string) $result);
-    return $result;
-  }
 
-  private static function DSNFBird(): string
-  {
     if (!Path::isAbsolute(FBirdEngine::getInstance()->getDatabase())) {
       FBirdEngine::getInstance()->setDatabase(Path::toAbsolute(FBirdEngine::getInstance()->getDatabase()));
     }
 
-    return sprintf(
-      "firebase:%s:%s@%s:%s//%s?charset=%s",
+    $result = null;
+    $result = sprintf(
+      "ibase:%s:%s@%s:%s//%s?charset=%s",
       FBirdEngine::getInstance()->getUser(),
       FBirdEngine::getInstance()->getPassword(),
       FBirdEngine::getInstance()->getHost(),
@@ -38,5 +32,8 @@ class DSN
       FBirdEngine::getInstance()->getDatabase(),
       FBirdEngine::getInstance()->getCharset()
     );
+
+    FBirdEngine::getInstance()->setDsn((string) $result);
+    return $result;
   }
 }

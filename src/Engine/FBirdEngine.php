@@ -184,15 +184,7 @@ class FBirdEngine
    */
   public function lastInsertId(?string $name = null): string | false
   {
-    $autoKey = $this->query(vsprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE column_default LIKE 'nextval%%' AND table_name = '%s';", [$name]));
-    $autoKeyRes = pg_fetch_assoc($autoKey);
-    if (isset($autoKeyRes['column_name'])) {
-      $maxIndex = $this->query(vsprintf("SELECT pg_catalog.setval(pg_get_serial_sequence('%s', '%s'), COALESCE(MAX(%s))) AS value FROM %s;", [$name, $autoKeyRes['column_name'], $autoKeyRes['column_name'], $name]));
-      $maxIndexRes = pg_fetch_assoc($maxIndex);
-      return $maxIndexRes['value'];
-    } else {
-      return 0;
-    }
+    return 0;
   }
 
   /**

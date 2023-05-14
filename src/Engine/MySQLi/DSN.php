@@ -15,15 +15,9 @@ class DSN
       );
       throw new \Exception($message);
     }
-    $result = null;
-    $result = self::DSNMDB2MySQL();
-    MySQLiEngine::getInstance()->setDsn((string) $result);
-    return $result;
-  }
 
-  private static function DSNMDB2MySQL(): string
-  {
-    return sprintf(
+    $result = null;
+    $result = sprintf(
       "mysql://%s:%s@%s:%s/%s?charset=%s",
       MySQLiEngine::getInstance()->getUser(),
       MySQLiEngine::getInstance()->getPassword(),
@@ -32,5 +26,8 @@ class DSN
       MySQLiEngine::getInstance()->getDatabase(),
       MySQLiEngine::getInstance()->getCharset()
     );
+
+    MySQLiEngine::getInstance()->setDsn((string) $result);
+    return $result;
   }
 }

@@ -20,143 +20,109 @@ class DSN
     $result = null;
     switch (PDOEngine::getInstance()->getDriver()) {
       case 'mysql':
-        $result = self::DSNPDOMySQL();
+        $result = sprintf(
+          "%s:host=%s;dbname=%s;port=%s;charset=%s",
+          PDOEngine::getInstance()->getDriver(),
+          PDOEngine::getInstance()->getHost(),
+          PDOEngine::getInstance()->getDatabase(),
+          PDOEngine::getInstance()->getPort(),
+          PDOEngine::getInstance()->getCharset()
+        );
         break;
 
       case 'pgsql':
-        $result = self::DSNPDOPGSQL();
+        $result = sprintf(
+          "%s:host=%s;dbname=%s;port=%s;user=%s;password=%s;options='--client_encoding=%s'",
+          PDOEngine::getInstance()->getDriver(),
+          PDOEngine::getInstance()->getHost(),
+          PDOEngine::getInstance()->getDatabase(),
+          PDOEngine::getInstance()->getPort(),
+          PDOEngine::getInstance()->getUser(),
+          PDOEngine::getInstance()->getPassword(),
+          PDOEngine::getInstance()->getCharset()
+        );
         break;
 
       case 'oci':
       case 'dblib':
       case 'sybase':
-        $result = self::DSNPDOOCI();
+        $result = sprintf(
+          "%s:host=%s:%s/%s;charset=%s",
+          PDOEngine::getInstance()->getDriver(),
+          PDOEngine::getInstance()->getHost(),
+          PDOEngine::getInstance()->getPort(),
+          PDOEngine::getInstance()->getDatabase(),
+          PDOEngine::getInstance()->getCharset()
+        );
         break;
 
       case 'sqlsrv':
-        $result = self::DSNPDOSQLSRV();
+        $result = sprintf(
+          "%s:server=%s,%s;database=%s",
+          PDOEngine::getInstance()->getDriver(),
+          PDOEngine::getInstance()->getHost(),
+          PDOEngine::getInstance()->getPort(),
+          PDOEngine::getInstance()->getDatabase()
+        );
         break;
 
       case 'mssql':
-        $result = self::DSNPDOMSSQL();
+        if (PHP_OS == 'WIN') {
+          PDOEngine::getInstance()->setDriver('sqlsrv');
+          $result = sprintf(
+            "%s:server=%s,%s;database=%s",
+            PDOEngine::getInstance()->getDriver(),
+            PDOEngine::getInstance()->getHost(),
+            PDOEngine::getInstance()->getPort(),
+            PDOEngine::getInstance()->getDatabase()
+          );
+        } else {
+          PDOEngine::getInstance()->setDriver('dblib');
+          $result = sprintf(
+            "%s:host=%s:%s/%s;charset=%s",
+            PDOEngine::getInstance()->getDriver(),
+            PDOEngine::getInstance()->getHost(),
+            PDOEngine::getInstance()->getPort(),
+            PDOEngine::getInstance()->getDatabase(),
+            PDOEngine::getInstance()->getCharset()
+          );
+        }
         break;
 
       case 'ibase':
       case 'firebird':
-        $result = self::DSNPDOIBASE();
+        if (!Path::isAbsolute(PDOEngine::getInstance()->getDatabase())) {
+          PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
+        }
+        $result = sprintf(
+          "%s:dbname=%s/%s:%s;charset=%s",
+          PDOEngine::getInstance()->getDriver(),
+          PDOEngine::getInstance()->getHost(),
+          PDOEngine::getInstance()->getPort(),
+          PDOEngine::getInstance()->getDatabase(),
+          PDOEngine::getInstance()->getCharset()
+        );
         break;
 
       case 'sqlite':
-        $result = self::DSNPDOSQLite();
+
+        if (!Path::isAbsolute(PDOEngine::getInstance()->getDatabase()) && PDOEngine::getInstance()->getDatabase() !== 'memory') {
+          PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
+          $result = sprintf(
+            "%s:%s",
+            PDOEngine::getInstance()->getDriver(),
+            PDOEngine::getInstance()->getDatabase()
+          );
+        } else {
+          $result = sprintf(
+            "%s::%s:",
+            PDOEngine::getInstance()->getDriver(),
+            PDOEngine::getInstance()->getDatabase()
+          );
+        }
         break;
     }
     PDOEngine::getInstance()->setDsn((string) $result);
     return $result;
-  }
-
-  private static function DSNPDOMySQL(): string
-  {
-    return sprintf(
-      "%s:host=%s;dbname=%s;port=%s;charset=%s",
-      PDOEngine::getInstance()->getDriver(),
-      PDOEngine::getInstance()->getHost(),
-      PDOEngine::getInstance()->getDatabase(),
-      PDOEngine::getInstance()->getPort(),
-      PDOEngine::getInstance()->getCharset()
-    );
-  }
-
-  private static function DSNPDOPGSQL(): string
-  {
-    return sprintf(
-      "%s:host=%s;dbname=%s;port=%s;user=%s;password=%s;options='--client_encoding=%s'",
-      PDOEngine::getInstance()->getDriver(),
-      PDOEngine::getInstance()->getHost(),
-      PDOEngine::getInstance()->getDatabase(),
-      PDOEngine::getInstance()->getPort(),
-      PDOEngine::getInstance()->getUser(),
-      PDOEngine::getInstance()->getPassword(),
-      PDOEngine::getInstance()->getCharset()
-    );
-  }
-
-  private static function DSNPDOOCI(): string
-  {
-    return sprintf(
-      "%s:host=%s:%s/%s;charset=%s",
-      PDOEngine::getInstance()->getDriver(),
-      PDOEngine::getInstance()->getHost(),
-      PDOEngine::getInstance()->getPort(),
-      PDOEngine::getInstance()->getDatabase(),
-      PDOEngine::getInstance()->getCharset()
-    );
-  }
-
-  private static function DSNPDOSQLSRV(): string
-  {
-    return sprintf(
-      "%s:server=%s,%s;database=%s",
-      PDOEngine::getInstance()->getDriver(),
-      PDOEngine::getInstance()->getHost(),
-      PDOEngine::getInstance()->getPort(),
-      PDOEngine::getInstance()->getDatabase()
-    );
-  }
-
-  private static function DSNPDOMSSQL(): string
-  {
-    if (PHP_OS == 'WIN') {
-      PDOEngine::getInstance()->setDriver('sqlsrv');
-      return sprintf(
-        "%s:server=%s,%s;database=%s",
-        PDOEngine::getInstance()->getDriver(),
-        PDOEngine::getInstance()->getHost(),
-        PDOEngine::getInstance()->getPort(),
-        PDOEngine::getInstance()->getDatabase()
-      );
-    } else {
-      PDOEngine::getInstance()->setDriver('dblib');
-      return sprintf(
-        "%s:host=%s:%s/%s;charset=%s",
-        PDOEngine::getInstance()->getDriver(),
-        PDOEngine::getInstance()->getHost(),
-        PDOEngine::getInstance()->getPort(),
-        PDOEngine::getInstance()->getDatabase(),
-        PDOEngine::getInstance()->getCharset()
-      );
-    }
-  }
-
-  private static function DSNPDOIBASE(): string
-  {
-    if (!Path::isAbsolute(PDOEngine::getInstance()->getDatabase())) {
-      PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
-    }
-    return sprintf(
-      "%s:dbname=%s/%s:%s;charset=%s",
-      PDOEngine::getInstance()->getDriver(),
-      PDOEngine::getInstance()->getHost(),
-      PDOEngine::getInstance()->getPort(),
-      PDOEngine::getInstance()->getDatabase(),
-      PDOEngine::getInstance()->getCharset()
-    );
-  }
-
-  private static function DSNPDOSQLite(): string
-  {
-    if (!Path::isAbsolute(PDOEngine::getInstance()->getDatabase()) && PDOEngine::getInstance()->getDatabase() !== 'memory') {
-      PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
-      return sprintf(
-        "%s:%s",
-        PDOEngine::getInstance()->getDriver(),
-        PDOEngine::getInstance()->getDatabase()
-      );
-    } else {
-      return sprintf(
-        "%s::%s:",
-        PDOEngine::getInstance()->getDriver(),
-        PDOEngine::getInstance()->getDatabase()
-      );
-    }
   }
 }
