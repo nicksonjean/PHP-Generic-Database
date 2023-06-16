@@ -2,12 +2,17 @@
     "name": "nicksonjean/php-generic-database",
     "description": "Classes para Conexão Agnóstica à Bancos de Dados e Exibição de Dados em Componentes de Forma Persistente",
     "type": "library",
+    "require": {
+        "php": ">=8.1"
+    },
+    "license": "proprietary",
     "authors": [
         {
             "name": "Nickson Jeanmerson",
             "email": "nickson.jeanmrson@gmail.com"
         }
     ],
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4" : {
             "GenericDatabase\\": "src/"
@@ -17,7 +22,7 @@
         "psr-4": {
             "": "tests/"
         }
-    },
+    },  
     "require-dev": {
         "php": ">=8.1",
         "composer/semver": "^3.3",
@@ -37,8 +42,15 @@
             "@clear:coverage",
             "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/"
         ],
+        "setup": [
+            "@clear:uninstall",
+            "@clear:lock",
+            "composer install"
+        ],
         "clear:docs": "php ./eraser.php --dest='./docs/'",
         "clear:cache": "php ./eraser.php --dest='./cache/'",
-        "clear:coverage": "php ./eraser.php --dest='./coverage/'"
+        "clear:coverage": "php ./eraser.php --dest='./coverage/'",
+        "clear:uninstall": "php ./eraser.php --dest='./vendor/'",
+        "clear:lock": "php -r \"unlink('composer.lock');\""
     }
 }
