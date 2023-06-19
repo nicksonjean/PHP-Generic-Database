@@ -3,6 +3,7 @@
 namespace GenericDatabase\Engine;
 
 use
+  GenericDatabase\iConnection,
   GenericDatabase\Traits\Errors,
   GenericDatabase\Traits\Caller,
   GenericDatabase\Traits\Cleaner,
@@ -15,9 +16,11 @@ use
   GenericDatabase\Engine\SQLSrv\Dump,
   GenericDatabase\Engine\SQLSrv\Transaction;
 
-class SQLSrvEngine
+class SQLSrvEngine implements iConnection
 {
   use Errors, Caller, Cleaner, Singleton;
+
+  private $connection;
 
   /**
    * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
@@ -119,7 +122,7 @@ class SQLSrvEngine
    */
   public function getConnection(): mixed
   {
-    return $GLOBALS['connection'];
+    return $this->connection;
   }
 
   /**
@@ -130,7 +133,8 @@ class SQLSrvEngine
    */
   public function setConnection(mixed $connection): mixed
   {
-    return $GLOBALS['connection'] = $connection;
+    $this->connection = $connection;
+    return $this->connection;
   }
 
   /**
@@ -200,12 +204,12 @@ class SQLSrvEngine
   /**
    * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
    * 
-   * @param mixed $string
-   * @param ?bool $quote = false
-   * @return string|array|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function quote(mixed $string): string | array | false
+  public function quote(mixed ...$params): mixed
   {
+    $string = $params[0];
     $quoted = function ($string) {
       return str_replace("'", "''", $string);
     };
@@ -226,38 +230,41 @@ class SQLSrvEngine
   /**
    * This function prepares an SQL statement for execution and returns a statement object.
    * 
-   * @param string $statement
-   * @param array $params
-   * @param array $options
+   * @param mixed $params
    * @return mixed
    */
-  public function prepare(string $statement, array $params, array $options): mixed
+  public function prepare(mixed ...$params): mixed
   {
-    return sqlsrv_prepare($this->getInstance()->getConnection(), $statement, $params, $options);
+    $statement = $params[0];
+    $param = $params[1];
+    $options = $params[2];
+    return sqlsrv_prepare($this->getInstance()->getConnection(), $statement, $param, $options);
   }
 
   /**
    * This function executes an SQL statement and returns the result set as a statement object.
    * 
-   * @param string $statement
-   * @param array $query
-   * @param array $options
-   * @return object|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function query(string $statement, array $params, array $options): mixed
+  public function query(mixed ...$params): mixed
   {
-    return sqlsrv_query($this->getInstance()->getConnection(), $statement, $params, $options);
+    $statement = $params[0];
+    $param = $params[1];
+    $options = $params[2];
+    return sqlsrv_query($this->getInstance()->getConnection(), $statement, $param, $options);
   }
 
   /**
    * This function runs an SQL statement and returns the number of affected rows.
    * 
-   * @param mixed $statement
+   * @param mixed $params
    * @return mixed
    */
-  public function exec(mixed $statement): mixed
+  public function exec(mixed ...$params): mixed
   {
-    return sqlsrv_execute($statement);
+    $query = $params[0];
+    return sqlsrv_execute($query);
   }
 
   /**
@@ -283,21 +290,25 @@ class SQLSrvEngine
 
   /**
    * This function returns an SQLSTATE code for the last operation executed by the database.
-   * @return string
+   * 
+   * @param ?int $inst = null
+   * @return array
    */
-  public function errorCode(): array
+  public function errorCode(?int $inst = null): array
   {
-    $m = sqlsrv_errors();
+    $m = sqlsrv_errors($inst);
     return $m;
   }
 
   /**
    * This function returns an array containing error information about the last operation performed by the database.
-   * @return string
+   * 
+   * @param ?int $inst = null
+   * @return array
    */
-  public function errorInfo(): array
+  public function errorInfo(?int $inst = null): array
   {
-    $m = sqlsrv_errors();
+    $m = sqlsrv_errors($inst);
     return $m;
   }
 }

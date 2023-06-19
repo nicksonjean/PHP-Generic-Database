@@ -3,6 +3,7 @@
 namespace GenericDatabase\Engine;
 
 use
+  GenericDatabase\iConnection,
   GenericDatabase\Traits\Errors,
   GenericDatabase\Traits\Caller,
   GenericDatabase\Traits\Cleaner,
@@ -14,9 +15,11 @@ use
   GenericDatabase\Engine\PDO\Dump,
   GenericDatabase\Engine\PDO\Transaction;
 
-class PDOEngine
+class PDOEngine implements iConnection
 {
   use Errors, Caller, Cleaner, Singleton;
+
+  private $connection;
 
   /**
    * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
@@ -105,22 +108,23 @@ class PDOEngine
   /**
    * This method is used to get the database connection instance
    * 
-   * @return \PDO
+   * @return mixed
    */
-  public function getConnection(): \PDO
+  public function getConnection(): mixed
   {
-    return $GLOBALS['connection'];
+    return $this->connection;
   }
 
   /**
    * This method is used to assign the database connection instance
    * 
-   * @param \PDO $connection
-   * @return \PDO
+   * @param mixed $connection
+   * @return mixed
    */
-  public function setConnection(\PDO $connection): \PDO
+  public function setConnection(mixed $connection): mixed
   {
-    return $GLOBALS['connection'] = $connection;
+    $this->connection = $connection;
+    return $this->connection;
   }
 
   /**
@@ -190,47 +194,51 @@ class PDOEngine
   /**
    * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
    * 
-   * @param string $string
-   * @param ?int $type = \PDO::PARAM_STR
-   * @return string|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function quote(string $string, int $type = \PDO::PARAM_STR): string | false
+  public function quote(mixed ...$params): mixed
   {
+    $string = $params[0];
+    $type = isset($params[1]) ?? \PDO::PARAM_STR;
     return $this->getInstance()->getConnection()->quote($string, $type);
   }
 
   /**
    * This function prepares an SQL statement for execution and returns a statement object.
    * 
-   * @param string $query
-   * @param ?array $options
-   * @return object|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function prepare(string $query, ?array $options = []): \PDOStatement | false
+  public function prepare(mixed ...$params): mixed
   {
+    $query = $params[0];
+    $options = isset($params[1]) ?? [];
     return $this->getInstance()->getConnection()->prepare($query, $options);
   }
 
   /**
    * This function executes an SQL statement and returns the result set as a statement object.
    * 
-   * @param string $query
-   * @param ?int $fetchMode = null
-   * @return object|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function query(string $query, ?int $fetchMode = null): \PDOStatement | false
+  public function query(mixed ...$params): mixed
   {
+    $query = $params[0];
+    $fetchMode = isset($params[1]) ?? null;
     return $this->getInstance()->getConnection()->query($query, $fetchMode);
   }
 
   /**
    * This function runs an SQL statement and returns the number of affected rows.
    * 
-   * @param string $query
-   * @return int|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function exec(string $query): int | false
+  public function exec(mixed ...$params): mixed
   {
+    $query = $params[0];
     return $this->getInstance()->getConnection()->exec($query);
   }
 
@@ -260,9 +268,10 @@ class PDOEngine
   /**
    * This function returns an SQLSTATE code for the last operation executed by the database.
    * 
-   * @return ?string
+   * @param ?int $inst = null
+   * @return string
    */
-  public function errorCode(): ?string
+  public function errorCode(?int $inst = null): string
   {
     return $this->getInstance()->getConnection()->errorCode();
   }
@@ -270,9 +279,10 @@ class PDOEngine
   /**
    * This function returns an array containing error information about the last operation performed by the database.
    * 
+   * @param ?int $inst = null
    * @return array
    */
-  public function errorInfo(): array
+  public function errorInfo(?int $inst = null): array
   {
     return $this->getInstance()->getConnection()->errorInfo();
   }

@@ -24,7 +24,7 @@ class DSN
 
     $result = null;
     $result = sprintf(
-      "ibase:%s:%s@%s:%s//%s?charset=%s",
+      "ibase://%s:%s@%s:%s//%s?charset=%s",
       FBirdEngine::getInstance()->getUser(),
       FBirdEngine::getInstance()->getPassword(),
       FBirdEngine::getInstance()->getHost(),

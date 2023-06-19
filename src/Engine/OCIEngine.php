@@ -3,6 +3,7 @@
 namespace GenericDatabase\Engine;
 
 use
+  GenericDatabase\iConnection,
   GenericDatabase\Traits\Errors,
   GenericDatabase\Traits\Caller,
   GenericDatabase\Traits\Cleaner,
@@ -15,9 +16,11 @@ use
   GenericDatabase\Engine\OCI\Dump,
   GenericDatabase\Engine\OCI\Transaction;
 
-class OCIEngine
+class OCIEngine implements iConnection
 {
   use Errors, Caller, Cleaner, Singleton;
+
+  private $connection;
 
   /**
    * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
@@ -109,7 +112,7 @@ class OCIEngine
    */
   public function getConnection(): mixed
   {
-    return $GLOBALS['connection'];
+    return $this->connection;
   }
 
   /**
@@ -120,7 +123,8 @@ class OCIEngine
    */
   public function setConnection(mixed $connection): mixed
   {
-    return $GLOBALS['connection'] = $connection;
+    $this->connection = $connection;
+    return $this->connection;
   }
 
   /**
@@ -190,12 +194,12 @@ class OCIEngine
   /**
    * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
    * 
-   * @param mixed $string
-   * @param ?bool $quote = false
-   * @return string|array|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function quote(mixed $string): string | array | false
+  public function quote(mixed ...$params): mixed
   {
+    $string = $params[0];
     $quoted = function ($string) {
       return str_replace("'", "''", $string);
     };
@@ -216,26 +220,27 @@ class OCIEngine
   /**
    * This function prepares an SQL statement for execution and returns a statement object.
    * 
-   * @param mixed $statement
-   * @param mixed $param
-   * @param mixed $value
+   * @param mixed $params
    * @return mixed
    */
-  public function prepare(mixed $statement, mixed $param, mixed $value): mixed
+  public function prepare(mixed ...$params): mixed
   {
+    $query = $params[0];
+    $param = $params[1];
+    $value = $params[2];
     if (is_numeric($value)) {
-      oci_bind_by_name($statement, $param, $value,  8, SQLT_INT);
+      oci_bind_by_name($query, $param, $value,  8, SQLT_INT);
     } else if (is_float($value)) {
-      oci_bind_by_name($statement, $param, floatval($value),  8, SQLT_FLT);
+      oci_bind_by_name($query, $param, floatval($value),  8, SQLT_FLT);
     } else if (is_string($value)) {
       $value = (string) $value;
-      oci_bind_by_name($statement, $param, $value, -1, SQLT_CHR);
+      oci_bind_by_name($query, $param, $value, -1, SQLT_CHR);
     } else if (is_bool($value)) {
       $value = (bool) $value;
-      oci_bind_by_name($statement, $param, $value, -1, SQLT_BOL);
+      oci_bind_by_name($query, $param, $value, -1, SQLT_BOL);
     } else if (is_array($value)) {
       foreach ($param as $key => $val) {
-        oci_bind_by_name($statement, $key, $param[$key]);
+        oci_bind_by_name($query, $key, $param[$key]);
       }
     }
     return $this;
@@ -244,23 +249,26 @@ class OCIEngine
   /**
    * This function executes an SQL statement and returns the result set as a statement object.
    * 
-   * @param string $query
-   * @return object|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function query(string $query): mixed
+  public function query(mixed ...$params): mixed
   {
+    $query = $params[0];
     return oci_parse($this->getInstance()->getConnection(), $query);
   }
 
   /**
    * This function runs an SQL statement and returns the number of affected rows.
    * 
-   * @param mixed $statement
+   * @param mixed $params
    * @return mixed
    */
-  public function exec(mixed $statement): mixed
+  public function exec(mixed ...$params): mixed
   {
-    return oci_execute($statement, OCI_DEFAULT);
+    $query = $params[0];
+    $result_mode = isset($params[1]) ?? OCI_DEFAULT;
+    return oci_execute($query, $result_mode);
   }
 
   /**
@@ -286,10 +294,11 @@ class OCIEngine
 
   /**
    * This function returns an SQLSTATE code for the last operation executed by the database.
-   * @param mixed $inst
-   * @return string
+   * 
+   * @param ?int $inst = null
+   * @return int
    */
-  public function errorCode($inst): string
+  public function errorCode(?int $inst = null): int
   {
     $m = oci_error($inst);
     return $m['code'];
@@ -297,10 +306,11 @@ class OCIEngine
 
   /**
    * This function returns an array containing error information about the last operation performed by the database.
-   * @param mixed $inst
+   * 
+   * @param ?int $inst = null
    * @return string
    */
-  public function errorInfo($inst): string
+  public function errorInfo(?int $inst = null): string
   {
     $m = oci_error($inst);
     return $m['message'];

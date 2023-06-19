@@ -15,7 +15,7 @@ class Arguments
   /**
    * array property for use in magic setter and getter in order
    */
-  private static $argumentList = [
+  public static $argumentList = [
     'Host',
     'Port',
     'Database',

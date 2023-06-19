@@ -3,6 +3,7 @@
 namespace GenericDatabase\Engine;
 
 use
+  GenericDatabase\iConnection,
   GenericDatabase\Traits\Errors,
   GenericDatabase\Traits\Caller,
   GenericDatabase\Traits\Cleaner,
@@ -15,9 +16,11 @@ use
   GenericDatabase\Engine\MySQLi\Dump,
   GenericDatabase\Engine\MySQLi\Transaction;
 
-class MySQLiEngine
+class MySQLiEngine implements iConnection
 {
   use Errors, Caller, Cleaner, Singleton;
+
+  private $connection;
 
   /**
    * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
@@ -111,22 +114,23 @@ class MySQLiEngine
   /**
    * This method is used to get the database connection instance
    * 
-   * @return \MySQLi
+   * @return mixed
    */
-  public function getConnection(): \MySQLi
+  public function getConnection(): mixed
   {
-    return $GLOBALS['connection'];
+    return $this->connection;
   }
 
   /**
    * This method is used to assign the database connection instance
    * 
-   * @param \MySQLi $connection
-   * @return \MySQLi
+   * @param mixed $connection
+   * @return mixed
    */
-  public function setConnection(\MySQLi $connection): \MySQLi
+  public function setConnection(mixed $connection): mixed
   {
-    return $GLOBALS['connection'] = $connection;
+    $this->connection = $connection;
+    return $this->connection;
   }
 
   /**
@@ -206,12 +210,13 @@ class MySQLiEngine
   /**
    * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
    * 
-   * @param mixed $string
-   * @param ?bool $quote = false
-   * @return string|array|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function quote(mixed $string, ?bool $quote = false): string | array | false
+  public function quote(mixed ...$params): mixed
   {
+    $string = $params[0];
+    $quote = $params[1];
     if (is_array($string))
       return array_map([get_called_class(), 'quote'], $string, array_fill(0, count($string), $quote));
     elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", $string))
@@ -227,37 +232,39 @@ class MySQLiEngine
   /**
    * This function prepares an SQL statement for execution and returns a statement object.
    * 
-   * @param string $query
-   * @param ?array $options
-   * @return \mysqli_stmt|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function prepare(string $query): \mysqli_stmt|false
+  public function prepare(mixed ...$params): mixed
   {
+    $query = $params[0];
     return $this->getInstance()->getConnection()->prepare($query);
   }
 
   /**
    * This function executes an SQL statement and returns the result set as a statement object.
    * 
-   * @param string $query
-   * @param ?int $result_mode = MYSQLI_STORE_RESULT
-   * @return \mysqli_result|bool
+   * @param mixed $params
+   * @return mixed
    */
-  public function query(string $query, ?int $result_mode = MYSQLI_STORE_RESULT): \mysqli_result|bool
+  public function query(mixed ...$params): mixed
   {
+    $query = $params[0];
+    $result_mode = isset($params[1]) ?? MYSQLI_STORE_RESULT;
     return $this->getInstance()->getConnection()->query($query, $result_mode);
   }
 
   /**
    * This function runs an SQL statement and returns the number of affected rows.
    * 
-   * @param string $statement
-   * @param ?array $params = null
-   * @return \mysqli_result|bool
+   * @param mixed $params
+   * @return mixed
    */
-  public function exec(string $query, ?array $params = null): \mysqli_result|bool
+  public function exec(mixed ...$params): mixed
   {
-    return $this->getInstance()->getConnection()->execute_query($query, $params);
+    $query = $params[0];
+    $param = isset($params[1]) ?? null;
+    return $this->getInstance()->getConnection()->execute_query($query, $param);
   }
 
   /**
@@ -286,9 +293,10 @@ class MySQLiEngine
   /**
    * This function returns an SQLSTATE code for the last operation executed by the database.
    * 
+   * @param ?int $inst = null
    * @return int
    */
-  public function errorCode(): int
+  public function errorCode(?int $inst = null): int
   {
     return $this->getInstance()->getConnection()->errno;
   }
@@ -296,9 +304,10 @@ class MySQLiEngine
   /**
    * This function returns an array containing error information about the last operation performed by the database.
    * 
+   * @param ?int $inst = null
    * @return string
    */
-  public function errorInfo(): string
+  public function errorInfo(?int $inst = null): string
   {
     return $this->getInstance()->getConnection()->error;
   }

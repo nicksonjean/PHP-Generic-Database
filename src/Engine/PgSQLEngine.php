@@ -3,6 +3,7 @@
 namespace GenericDatabase\Engine;
 
 use
+  GenericDatabase\iConnection,
   GenericDatabase\Traits\Errors,
   GenericDatabase\Traits\Caller,
   GenericDatabase\Traits\Cleaner,
@@ -15,9 +16,11 @@ use
   GenericDatabase\Engine\PgSQL\Dump,
   GenericDatabase\Engine\PgSQL\Transaction;
 
-class PgSQLEngine
+class PgSQLEngine implements iConnection
 {
   use Errors, Caller, Cleaner, Singleton;
+
+  private $connection;
 
   /**
    * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
@@ -103,22 +106,23 @@ class PgSQLEngine
   /**
    * This method is used to get the database connection instance
    * 
-   * @return \PgSql\Connection
+   * @return mixed
    */
-  public function getConnection(): \PgSql\Connection
+  public function getConnection(): mixed
   {
-    return $GLOBALS['connection'];
+    return $this->connection;
   }
 
   /**
    * This method is used to assign the database connection instance
    * 
-   * @param \PgSql\Connection $connection
-   * @return \PgSql\Connection
+   * @param mixed $connection
+   * @return mixed
    */
-  public function setConnection(\PgSql\Connection $connection): \PgSql\Connection
+  public function setConnection(mixed $connection): mixed
   {
-    return $GLOBALS['connection'] = $connection;
+    $this->connection = $connection;
+    return $this->connection;
   }
 
   /**
@@ -196,12 +200,13 @@ class PgSQLEngine
   /**
    * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
    * 
-   * @param mixed $string
-   * @param ?bool $quote = false
-   * @return string|array|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function quote(mixed $string, ?bool $quote = false): string | array | false
+  public function quote(mixed ...$params): mixed
   {
+    $string = $params[0];
+    $quote = $params[1];
     if (is_array($string))
       return array_map([get_called_class(), 'quote'], $string, array_fill(0, count($string), $quote));
     elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", $string))
@@ -214,39 +219,43 @@ class PgSQLEngine
     return $quoted($string, $quote);
   }
 
+
   /**
    * This function prepares an SQL statement for execution and returns a statement object.
    * 
-   * @param string $stmtname
-   * @param string $query
-   * @return \PgSql\Result|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function prepare(string $stmtname, string $query): \PgSql\Result|false
+  public function prepare(mixed ...$params): mixed
   {
+    $stmtname = $params[0];
+    $query = $params[1];
     return pg_prepare($this->getInstance()->getConnection(), $stmtname, $query);
   }
 
   /**
    * This function executes an SQL statement and returns the result set as a statement object.
    * 
-   * @param string $query
-   * @return object|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function query(string $query): \PgSql\Result|false
+  public function query(mixed ...$params): mixed
   {
+    $query = $params[0];
     return pg_query($this->getInstance()->getConnection(), $query);
   }
 
   /**
    * This function runs an SQL statement and returns the number of affected rows.
    * 
-   * @param string $statement
-   * @param array $paramss
-   * @return \PgSql\Result|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function exec(string $stmtname, array $params): \PgSql\Result|false
+  public function exec(mixed ...$params): mixed
   {
-    return pg_execute($this->getInstance()->getConnection(), $stmtname, $params);
+    $stmtname = $params[0];
+    $param = $params[1];
+    return pg_execute($this->getInstance()->getConnection(), $stmtname, $param);
   }
 
   /**
@@ -273,9 +282,10 @@ class PgSQLEngine
   /**
    * This function returns an SQLSTATE code for the last operation executed by the database.
    * 
+   * @param ?int $inst = null
    * @return int
    */
-  public function errorCode(): int
+  public function errorCode(?int $inst = null): int
   {
     return pg_last_error($this->getInstance()->getConnection());
   }
@@ -283,9 +293,10 @@ class PgSQLEngine
   /**
    * This function returns an array containing error information about the last operation performed by the database.
    * 
+   * @param ?int $inst = null
    * @return string
    */
-  public function errorInfo(): string
+  public function errorInfo(?int $inst = null): string
   {
     return pg_last_error($this->getInstance()->getConnection());
   }

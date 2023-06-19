@@ -37,7 +37,7 @@ trait Caller
    * @param mixed $arguments
    * @return void
    */
-  static function __callStatic($method, $arguments)
+  public static function __callStatic($method, $arguments)
   {
     if (Reflections::isSingletonMethodExits(__CLASS__)) {
       $instance = Reflections::getSingletonInstance(__CLASS__);

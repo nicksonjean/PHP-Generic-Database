@@ -8,16 +8,16 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 $oci = OCIEngine
   ::setHost('localhost')
-  ->setPort(1521)
-  ->setDatabase('xe')
-  ->setUser('hr')
-  ->setPassword('masterkey')
-  ->setCharset('utf8')
-  ->setOptions([
+  ::setPort(1521)
+  ::setDatabase('xe')
+  ::setUser('hr')
+  ::setPassword('masterkey')
+  ::setCharset('utf8')
+  ::setOptions([
     OCI::ATTR_PERSISTENT => true,
     OCI::ATTR_CONNECT_TIMEOUT => 28800,
   ])
-  ->setException(true)
+  ::setException(true)
   ->connect();
 
 var_dump($oci);

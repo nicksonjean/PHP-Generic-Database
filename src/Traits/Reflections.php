@@ -13,7 +13,7 @@ trait Reflections
   /**
    * Get singleton instance
    * 
-   * @param mixed $field
+   * @param mixed $class
    * @return mixed
    */
   public static function getSingletonInstance($class)
@@ -30,7 +30,7 @@ trait Reflections
   /**
    * Detect if method exists in class
    * 
-   * @param mixed $field
+   * @param mixed $class
    * @return mixed
    */
   public static function isSingletonMethodExits($class)
@@ -48,7 +48,7 @@ trait Reflections
   /**
    * Get class constants for class
    * 
-   * @param mixed $field
+   * @param mixed $class
    * @return mixed
    */
   public static function getClassConstants($class)
@@ -59,11 +59,27 @@ trait Reflections
   /**
    * Get class constants for class by name and value
    * 
+   * @param mixed $class
    * @param mixed $field
    * @return mixed
    */
-  public static function getClassConstantName($class, $value)
+  public static function getClassConstantName($class, $field)
   {
-    return array_flip((new \ReflectionClass($class))->getConstants())[$value];
+    return array_flip((new \ReflectionClass($class))->getConstants())[$field];
+  }
+
+  /**
+   * Get class properby for class by name
+   * 
+   * @param mixed $class 
+   * @param mixed $prop
+   * @return mixed
+   */
+  public static function getClassPropertyName($class, $prop)
+  {
+    $reflection = new \ReflectionClass($class);
+    $property = $reflection->getProperty($prop);
+    $property->setAccessible(true);
+    return $property->getValue(null);
   }
 }

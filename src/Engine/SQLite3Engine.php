@@ -3,12 +3,12 @@
 namespace GenericDatabase\Engine;
 
 use
+  GenericDatabase\iConnection,
   GenericDatabase\Traits\Errors,
   GenericDatabase\Traits\Caller,
   GenericDatabase\Traits\Cleaner,
   GenericDatabase\Traits\Singleton,
   GenericDatabase\Traits\Path,
-  GenericDatabase\Traits\Reflections,
   GenericDatabase\Engine\SQLite3\Arguments,
   GenericDatabase\Engine\SQLite3\Options,
   GenericDatabase\Engine\SQLite3\Attributes,
@@ -17,9 +17,11 @@ use
   GenericDatabase\Engine\SQLite3\Dump,
   GenericDatabase\Engine\SQLite3\Transaction;
 
-class SQLite3Engine
+class SQLite3Engine implements iConnection
 {
   use Errors, Caller, Cleaner, Singleton;
+
+  private $connection;
 
   /**
    * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
@@ -117,7 +119,7 @@ class SQLite3Engine
    */
   public function getConnection(): mixed
   {
-    return $GLOBALS['connection'];
+    return $this->connection;
   }
 
   /**
@@ -128,7 +130,8 @@ class SQLite3Engine
    */
   public function setConnection(mixed $connection): mixed
   {
-    return $GLOBALS['connection'] = $connection;
+    $this->connection = $connection;
+    return $this->connection;
   }
 
   /**
@@ -198,12 +201,12 @@ class SQLite3Engine
   /**
    * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
    * 
-   * @param mixed $string
-   * @param ?bool $quote = false
-   * @return string|array|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function quote(mixed $string): string | array | false
+  public function quote(mixed ...$params): mixed
   {
+    $string = $params[0];
     $quoted = function ($string) {
       return str_replace("'", "''", $string);
     };
@@ -224,34 +227,36 @@ class SQLite3Engine
   /**
    * This function prepares an SQL statement for execution and returns a statement object.
    * 
-   * @param string $query
-   * @param ?string $transaction = null
+   * @param mixed $params
    * @return mixed
    */
-  public function prepare(string $query): mixed
+  public function prepare(mixed ...$params): mixed
   {
+    $query = $params[0];
     return $this->getInstance()->getConnection()->prepare($query);
   }
 
   /**
    * This function executes an SQL statement and returns the result set as a statement object.
    * 
-   * @param string $query
-   * @return object|false
+   * @param mixed $params
+   * @return mixed
    */
-  public function query(string $query): mixed
+  public function query(mixed ...$params): mixed
   {
+    $query = $params[0];
     return $this->getInstance()->getConnection()->query($query);
   }
 
   /**
    * This function runs an SQL statement and returns the number of affected rows.
    * 
-   * @param mixed $query
+   * @param mixed $params
    * @return mixed
    */
-  public function exec(mixed $query): mixed
+  public function exec(mixed ...$params): mixed
   {
+    $query = $params[0];
     return $this->getInstance()->getConnection()->exec($query);
   }
 
@@ -279,9 +284,10 @@ class SQLite3Engine
   /**
    * This function returns an SQLSTATE code for the last operation executed by the database.
    * 
+   * @param ?int $inst = null
    * @return int
    */
-  public function errorCode(): int
+  public function errorCode(?int $inst = null): int
   {
     return $this->getInstance()->getConnection()->lastErrorCode();
   }
@@ -289,9 +295,10 @@ class SQLite3Engine
   /**
    * This function returns an array containing error information about the last operation performed by the database.
    * 
+   * @param ?int $inst = null
    * @return string
    */
-  public function errorInfo(): string
+  public function errorInfo(?int $inst = null): string
   {
     return $this->getInstance()->getConnection()->lastErrorMsg();
   }
