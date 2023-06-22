@@ -8,7 +8,7 @@ trait INI
   /**
    * Detect if ini is valid
    * 
-   * @param string $ini
+   * @param string $ini Argument to be tested
    * @return bool
    */
   public static function isValidINI(string $ini): bool
@@ -19,7 +19,7 @@ trait INI
   /**
    * Parse a valid ini
    * 
-   * @param string $ini
+   * @param string $ini Argument to be parsed
    * @return array
    */
   public static function parseINI(string $ini): array

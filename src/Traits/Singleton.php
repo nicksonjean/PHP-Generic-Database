@@ -5,12 +5,12 @@ namespace GenericDatabase\Traits;
 trait Singleton
 {
   /**
-   * static class instance
+   * Static class instance
    */
   private static $instance;
 
   /**
-   * create or obtain a singleton instance
+   * Create or obtain a singleton instance
    * 
    * @return self
    */
@@ -23,9 +23,9 @@ trait Singleton
   }
 
   /**
-   * create or obtain a singleton instance
+   * Create or obtain a singleton instance
    * 
-   * @param $instance
+   * @param $instance The instance object to be defined
    * @return self
    */
   public static function setInstance($instance): self
@@ -35,9 +35,8 @@ trait Singleton
   }
 
   /**
-   * clear a singleton instance
+   * Clear a singleton instance
    * 
-   * @param $instance
    * @return void
    */
   protected function clearInstance(): void

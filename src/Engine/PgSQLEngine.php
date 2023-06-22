@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GenericDatabase\Engine;
 
 use
@@ -283,9 +285,9 @@ class PgSQLEngine implements iConnection
    * This function returns an SQLSTATE code for the last operation executed by the database.
    * 
    * @param ?int $inst = null
-   * @return int
+   * @return string
    */
-  public function errorCode(?int $inst = null): int
+  public function errorCode(?int $inst = null): string
   {
     return pg_last_error($this->getInstance()->getConnection());
   }

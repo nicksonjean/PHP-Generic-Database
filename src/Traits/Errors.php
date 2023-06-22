@@ -7,10 +7,11 @@ trait Errors
   /**
    * Store a Error
    */
-  static private $error;
+  private static $error;
 
   /**
    * Get error from display_errors directive
+   * 
    * @return string|false
    */
   private static function getError()
@@ -21,9 +22,11 @@ trait Errors
 
   /**
    * Set error to display_errors directive
+   * 
+   * @param string|int|float|bool|null $name Argument to be tested
    * @return string|false
    */
-  private static function setError($value)
+  private static function setError($value): string|int|float|bool|null
   {
     self::$error = ini_set('display_errors', $value);
     return self::$error;
@@ -31,6 +34,7 @@ trait Errors
 
   /**
    * Turn off errors
+   * 
    * @return string|false
    */
   public static function turnOff()
@@ -40,6 +44,7 @@ trait Errors
 
   /**
    * Turn on errors
+   * 
    * @return string|false
    */
   public static function turnOn()
@@ -50,7 +55,7 @@ trait Errors
   /**
    * Throw a exception
    * 
-   * @param object $ex 
+   * @param object $ex Argument object of the \Exception class
    * @return string|false
    */
   public static function throw($ex): never
@@ -64,8 +69,8 @@ trait Errors
   /**
    * Launch a new Throw by a exception
    * 
-   * @param object $ex 
-   * @param object $message
+   * @param object $ex Argument object of the \Exception class
+   * @param object $message Custom string message from exception
    * @return string|false
    */
   public static function newThrow($ex, $message): never

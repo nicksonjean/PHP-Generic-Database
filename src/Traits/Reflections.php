@@ -13,10 +13,10 @@ trait Reflections
   /**
    * Get singleton instance
    * 
-   * @param mixed $class
+   * @param mixed $class The class object or instance
    * @return mixed
    */
-  public static function getSingletonInstance($class)
+  public static function getSingletonInstance($class): mixed
   {
     try {
       $result = call_user_func($class . '::' . self::$default_method);
@@ -30,10 +30,10 @@ trait Reflections
   /**
    * Detect if method exists in class
    * 
-   * @param mixed $class
+   * @param mixed $class The class object or instance
    * @return mixed
    */
-  public static function isSingletonMethodExits($class)
+  public static function isSingletonMethodExits($class): mixed
   {
     try {
       $rm = new \ReflectionMethod($class, self::$default_method);
@@ -48,10 +48,10 @@ trait Reflections
   /**
    * Get class constants for class
    * 
-   * @param mixed $class
+   * @param mixed $class The class object or instance
    * @return mixed
    */
-  public static function getClassConstants($class)
+  public static function getClassConstants($class): mixed
   {
     return (new \ReflectionClass($class))->getConstants();
   }
@@ -59,11 +59,11 @@ trait Reflections
   /**
    * Get class constants for class by name and value
    * 
-   * @param mixed $class
-   * @param mixed $field
+   * @param mixed $class The class object or instance
+   * @param mixed $field Get the constant name data
    * @return mixed
    */
-  public static function getClassConstantName($class, $field)
+  public static function getClassConstantName($class, $field): mixed
   {
     return array_flip((new \ReflectionClass($class))->getConstants())[$field];
   }
@@ -71,11 +71,11 @@ trait Reflections
   /**
    * Get class properby for class by name
    * 
-   * @param mixed $class 
-   * @param mixed $prop
+   * @param mixed $class The class object or instance
+   * @param mixed $prop Get the property name data
    * @return mixed
    */
-  public static function getClassPropertyName($class, $prop)
+  public static function getClassPropertyName($class, $prop): mixed
   {
     $reflection = new \ReflectionClass($class);
     $property = $reflection->getProperty($prop);

@@ -6,9 +6,9 @@ trait Path
 {
 
   /**
-   * Convert path relative to absolute
+   * Convert path from relative to absolute
    * 
-   * @param string $path
+   * @param string $path The relative path
    * @return string
    */
   public static function toAbsolute($path)
@@ -25,7 +25,7 @@ trait Path
   /**
    * Detect if path is absolute
    * 
-   * @param string $path
+   * @param string $path The path
    * @return string
    */
   public static function isAbsolute($path)

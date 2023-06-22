@@ -8,7 +8,7 @@ trait JSON
   /**
    * Detect if json is valid
    * 
-   * @param string $json
+   * @param string $json Argument to be tested
    * @return bool
    */
   public static function isValidJSON(string $json): bool
@@ -23,7 +23,7 @@ trait JSON
   /**
    * Parse a valid json
    * 
-   * @param string $json
+   * @param string $json Argument to be parsed
    * @return array
    */
   public static function parseJSON(string $json): array

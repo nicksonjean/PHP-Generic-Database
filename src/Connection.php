@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GenericDatabase;
 
 use
@@ -13,17 +15,15 @@ use
   GenericDatabase\Engine\PDOEngine,
   GenericDatabase\Traits\Arrays,
   GenericDatabase\Traits\Errors,
-  GenericDatabase\Traits\Caller,
-  GenericDatabase\Traits\Cleaner,
   GenericDatabase\Traits\Singleton,
   GenericDatabase\Traits\Reflections;
 
 class Connection
 {
-  use Arrays, Errors, Caller, Cleaner, Singleton, Reflections;
+  use Arrays, Errors, Singleton, Reflections;
 
   /**
-   * array property for use in magic setter and getter in order
+   * Array property for use in magic setter and getter in order
    */
   private static $engineList = [
     'PDO',
@@ -35,21 +35,35 @@ class Connection
     'SQLite3'
   ];
 
+  /**
+   * Property of the type object who define the strategy
+   */
   private $strategy;
 
+  /**
+   * Defines the strategy instance
+   * 
+   * @param iConnection $strategy
+   * @return iConnection
+   */
   private function setStrategy(iConnection $strategy): Connection
   {
     $this->strategy = $strategy;
     return $this;
   }
 
+  /**
+   * Get the strategy instance
+   * 
+   * @return iConnection
+   */
   private function getStrategy(): iConnection
   {
     return $this->strategy;
   }
 
   /**
-   * Replace alternatively the __constructor and set the Strategy
+   * Factory that replaces the __constructor and defines the Strategy through the engine parameter
    * 
    * @param mixed $params
    * @return void
@@ -83,37 +97,37 @@ class Connection
   }
 
   /**
-   * Overload and intercept not founded methods and properties
+   * Triggered when invoking inaccessible methods in an object context
    * 
-   * @param string $method
-   * @param array $arguments
+   * @param string $name Name of the method
+   * @param array $arguments Array of arguments
    * @return mixed
    */
-  public function __call(string $method, array $arguments): mixed
+  public function __call(string $name, array $arguments): mixed
   {
-    $methodName = substr($method, 0, 3);
-    $field = strtolower(substr($method, 3));
+    $method = substr($name, 0, 3);
+    $field = strtolower(substr($name, 3));
     if ($field === 'engine' && count($arguments) > 0) {
       call_user_func_array([$this, 'initFactory'], [...$arguments]);
     }
-    if ($methodName == 'set') {
+    if ($method == 'set') {
       call_user_func_array([$this->getStrategy(), 'set' . ucfirst($field)], [...$arguments]);
       return $this;
-    } elseif ($methodName == 'get') {
+    } elseif ($method == 'get') {
       return call_user_func_array([$this->getStrategy(), 'get' . ucfirst($field)], []);
     }
   }
 
   /**
-   * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
+   * Triggered when invoking inaccessible methods in a static context
    * 
-   * @param string $method
-   * @param array $arguments
+   * @param string $name Name of the method
+   * @param array $arguments Array of arguments
    * @return mixed
    */
-  public static function __callStatic(string $method, array $arguments): mixed
+  public static function __callStatic(string $name, array $arguments): mixed
   {
-    switch ($method) {
+    switch ($name) {
       case 'new':
       case 'create':
       case 'config':
@@ -133,13 +147,13 @@ class Connection
         return self::getInstance();
         break;
       default:
-        return call_user_func_array([self::getInstance(), $method], $arguments);
+        return call_user_func_array([self::getInstance(), $name], $arguments);
         break;
     }
   }
 
   /**
-   * This method is used to establish a database connection and set the connection instance
+   * This method is used to establish a database connection
    * 
    * @return Connection
    */

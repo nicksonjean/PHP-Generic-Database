@@ -6,9 +6,9 @@ trait XML
 {
 
   /**
-   * Detect if xml is valid
+   * Check if xml string is valid
    * 
-   * @param string $xml
+   * @param string $xml Argument to be tested
    * @return bool
    */
   public static function isValidXML(string $xml): bool
@@ -18,41 +18,41 @@ trait XML
   }
 
   /**
-   * Convert a value by type
+   * Convert a data by type
    * 
-   * @param mixed $xml
+   * @param mixed $data Argument to be converted
    * @return mixed
    */
-  public static function castValue($value)
+  public static function convertData($data): mixed
   {
-    $value = trim($value);
+    $data = trim($data);
 
-    if (preg_match('/^[0-9]{1,}$/', $value)) {
-      return intval($value);
+    if (preg_match('/^[0-9]{1,}$/', $data)) {
+      return intval($data);
     }
 
-    if (preg_match('/^[0-9\.]{1,}$/', $value)) {
-      return floatval($value);
+    if (preg_match('/^[0-9\.]{1,}$/', $data)) {
+      return floatval($data);
     }
 
-    if (preg_match('/(false|true)/i', $value)) {
-      return (bool)$value;
+    if (preg_match('/(false|true)/i', $data)) {
+      return (bool)$data;
     }
 
-    return $value;
+    return $data;
   }
 
   /**
-   * Decode a valid xml
+   * Decode a valid xml object
    * 
-   * @param \SimpleXMLElement $xml
-   * @param bool $attributes_key = true
-   * @param bool $reduce = true
-   * @param array $always_array = array()
-   * @param array $value_keys = array()s
+   * @param \SimpleXMLElement $xml valid object SimpleXMLElement
+   * @param ?bool $attributes_key = true Optional argument to get attribute key
+   * @param ?bool $reduce = true  Optional argumento to make reduce
+   * @param ?array $always_array = array() Optional argument to always return a array
+   * @param ?array $value_keys = array() Optional argument to get array from values and keys
    * @return string|array
    */
-  public static function decodeXML(\SimpleXMLElement $xml, bool $attributes_key = true, bool $reduce = true, array $always_array = array(), array $value_keys = array()): string|array
+  public static function decodeXML(\SimpleXMLElement $xml, ?bool $attributes_key = true, ?bool $reduce = true, ?array $always_array = array(), ?array $value_keys = array()): string|array
   {
     $arr = array();
     $xml_name = $xml->getName();
@@ -95,19 +95,19 @@ trait XML
   }
 
   /**
-   * Parse a valid xml
+   * Parse a valid xml string
    * 
-   * @param string $xml
-   * @return array
+   * @param string $xml Argument to be parsed
+   * @return string|array
    */
-  public static function parseXML(string $xml)
+  public static function parseXML(string $xml): string|array
   {
     libxml_use_internal_errors(TRUE);
     $objXML = simplexml_load_file($xml);
     $result = self::decodeXML($objXML);
     $options = [];
     foreach ($objXML->xpath('//options/option') as $value) {
-      $options[((string) $value->attributes()->name)] = self::castValue((string) $value);
+      $options[((string) $value->attributes()->name)] = self::convertData((string) $value);
     }
     $options = array('options' => $options);
     $result['options'] = $options['options'];

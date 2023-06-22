@@ -13,7 +13,7 @@ trait Transporter
   /**
    * Sleep instance uesd by serialize/unserialize
    *
-   * @return  void
+   * @return void
    */
   public function __sleep()
   {
@@ -28,7 +28,7 @@ trait Transporter
   /**
    * __wakeup instance uesd by serialize/unserialize
    *
-   * @return  void
+   * @return void
    */
   public function __wakeup()
   {

@@ -6,9 +6,9 @@ trait YAML
 {
 
   /**
-   * Detect if yaml is valid
+   * Check if yaml string is valid
    * 
-   * @param string $yaml
+   * @param string $yaml Argument to be tested
    * @return bool
    */
   public static function isValidYAML(string $yaml): bool
@@ -17,9 +17,9 @@ trait YAML
   }
 
   /**
-   * Parse a valid yaml
+   * Parse a valid yaml string
    * 
-   * @param string $yaml
+   * @param string $yaml Argument to be parsed
    * @return array
    */
   public static function parseYAML(string $yaml): array

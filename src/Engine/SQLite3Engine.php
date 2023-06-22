@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GenericDatabase\Engine;
 
 use
@@ -8,7 +10,6 @@ use
   GenericDatabase\Traits\Caller,
   GenericDatabase\Traits\Cleaner,
   GenericDatabase\Traits\Singleton,
-  GenericDatabase\Traits\Path,
   GenericDatabase\Engine\SQLite3\Arguments,
   GenericDatabase\Engine\SQLite3\Options,
   GenericDatabase\Engine\SQLite3\Attributes,
@@ -69,14 +70,11 @@ class SQLite3Engine implements iConnection
    */
   private function realConnect(string $database, int $flags = null): SQLite3Engine
   {
-    if (!Path::isAbsolute($database)) {
-      SQLite3Engine::getInstance()->setDatabase(Path::toAbsolute($database));
-    }
     if (!$flags) {
       $flags = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE;
     }
 
-    $this->setConnection(new \SQLite3($this->getDatabase(), $flags));
+    $this->setConnection(new \SQLite3($database, $flags));
     return $this;
   }
 

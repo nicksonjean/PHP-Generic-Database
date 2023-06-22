@@ -12,36 +12,36 @@ trait Caller
   use Setter, Getter, Reflections;
 
   /**
-   * Overload and intercept not founded methods and properties
+   * Triggered when invoking inaccessible methods in an object context
    * 
-   * @param mixed $method
-   * @param mixed $arguments
-   * @return void
+   * @param string $name Name of the method
+   * @param array $arguments Array of arguments
+   * @return mixed
    */
-  public function __call($method, $arguments)
+  public function __call(string $name, array $arguments): mixed
   {
-    $methodName = substr($method, 0, 3);
-    $field = strtolower(substr($method, 3));
-    if ($methodName == 'set') {
+    $method = substr($name, 0, 3);
+    $field = strtolower(substr($name, 3));
+    if ($method == 'set') {
       $this->__set($field, ...$arguments);
       return $this;
-    } elseif ($methodName == 'get') {
+    } elseif ($method == 'get') {
       return $this->__get($field);
     }
   }
 
   /**
-   * Overload and intercept not founded methods and properties
+   * Triggered when invoking inaccessible methods in a static context
    * 
-   * @param mixed $method
-   * @param mixed $arguments
-   * @return void
+   * @param string $name Name of the static method
+   * @param array $arguments Array of arguments
+   * @return mixed
    */
-  public static function __callStatic($method, $arguments)
+  public static function __callStatic(string $name, array $arguments): mixed
   {
     if (Reflections::isSingletonMethodExits(__CLASS__)) {
       $instance = Reflections::getSingletonInstance(__CLASS__);
-      $instance::call($method, $arguments);
+      $instance::call($name, $arguments);
       return $instance;
     }
   }

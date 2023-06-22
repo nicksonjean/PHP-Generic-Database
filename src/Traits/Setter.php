@@ -9,15 +9,15 @@ trait Setter
   use Property;
 
   /**
-   * Define accessor aka getter
+   * This method is run when writing data to inaccessible (protected or private) or non-existing properties.
    * 
-   * @param mixed $field
-   * @param mixed $value
-   * @return mixed
+   * @param string $name Argument to be tested
+   * @param mixed $value The value to be defined
+   * @return void
    */
-  public function __set($field, $value)
+  public function __set(string $name, mixed $value)
   {
-    $this->property[$field] = $value;
+    $this->property[$name] = $value;
     return $this;
   }
 }

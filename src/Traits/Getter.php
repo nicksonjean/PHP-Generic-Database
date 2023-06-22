@@ -9,13 +9,13 @@ trait Getter
   use Property;
 
   /**
-   * Define mutator aka setter
+   * This method is utilized for reading data from inaccessible (protected or private) or non-existing properties.
    * 
-   * @param mixed $field
+   * @param string $name Argument to be tested
    * @return mixed
    */
-  public function __get($field)
+  public function __get(string $name): mixed
   {
-    return array_key_exists($field, $this->property) ? $this->property[$field] : null;
+    return array_key_exists($name, $this->property) ? $this->property[$name] : null;
   }
 }

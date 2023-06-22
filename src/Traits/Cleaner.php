@@ -9,24 +9,24 @@ trait Cleaner
   use Property;
 
   /**
-   * Isset property
+   * This method is triggered by calling isset() or empty() on inaccessible (protected or private) or non-existing properties.
    * 
-   * @param mixed $field
-   * @return boolean
+   * @param string $name Argument to be tested
+   * @return void
    */
-  public function __isset($field)
+  public function __isset(string $name)
   {
-    return isset($this->property[$field]);
+    return isset($this->property[$name]);
   }
 
   /**
-   * Unset property
+   * This method is invoked when unset() is used on inaccessible (protected or private) or non-existing properties.
    * 
-   * @param mixed $field
-   * @return  void
+   * @param string $name Argument to be tested
+   * @return void
    */
-  public function __unset($field)
+  public function __unset(string $name)
   {
-    unset($this->property[$field]);
+    unset($this->property[$name]);
   }
 }

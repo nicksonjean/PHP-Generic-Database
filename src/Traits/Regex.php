@@ -14,8 +14,8 @@ trait Regex
   /**
    * Check if a value is numeric
    * 
-   * @param dynamic $value Value to check
-   * @return boolean True if the value is numeric, false otherwise
+   * @param mixed $value Value to be checked
+   * @return int | false True if the value is numeric, false otherwise
    */
   public static function isNumber(string $value): int | false
   {
@@ -24,12 +24,10 @@ trait Regex
   /** 
    * Check "Booleanic" Conditions :)
    *
-   * @param  mixed  $variable  Can be anything (string, bol, integer, etc.)
-   * @return boolean           Returns TRUE  for "1", "true", "on" and "yes"
-   *                           Returns FALSE for "0", "false", "off" and "no"
-   *                           Returns NULL otherwise.
+   * @param mixed $variable Can be anything (string, bol, integer, etc.)
+   * @return mixed Returns TRUE  for "1", "true", "on" and "yes", Returns FALSE for "0", "false", "off" and "no", Returns NULL otherwise.
    */
-  public static function isBoolean($value)
+  public static function isBoolean($value): mixed
   {
     if (!isset($value)) return null;
     return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
