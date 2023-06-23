@@ -15,7 +15,7 @@ class SQLite
 
   protected static $data = [];
 
-  public static function getAttribute($name)
+  public static function getAttribute(mixed $name): mixed
   {
     if (isset(self::$data[$name])) {
       if (is_int($name)) {
@@ -29,7 +29,7 @@ class SQLite
     return $result;
   }
 
-  public static function setAttribute($name, $value)
+  public static function setAttribute(mixed $name, mixed $value): void
   {
     if (is_null($name)) {
       self::$data[] = $value;

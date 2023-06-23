@@ -46,7 +46,7 @@ trait Reflections
   }
 
   /**
-   * Get class constants for class
+   * Get all constants of the class
    * 
    * @param mixed $class The class object or instance
    * @return mixed
@@ -57,7 +57,7 @@ trait Reflections
   }
 
   /**
-   * Get class constants for class by name and value
+   * Get all constants of the class by name and value
    * 
    * @param mixed $class The class object or instance
    * @param mixed $field Get the constant name data
@@ -69,7 +69,7 @@ trait Reflections
   }
 
   /**
-   * Get class properby for class by name
+   * Get all property of the class by name
    * 
    * @param mixed $class The class object or instance
    * @param mixed $prop Get the property name data
