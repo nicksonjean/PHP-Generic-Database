@@ -1,5 +1,4 @@
 {
-  "driver": "firebird", 
   "host": "localhost", 
   "port": 3050, 
   "database": "../../assets/DB.FDB", 

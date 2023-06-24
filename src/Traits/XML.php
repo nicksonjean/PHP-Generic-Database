@@ -13,8 +13,16 @@ trait XML
    */
   public static function isValidXML(string $xml): bool
   {
-    $xml = \XMLReader::open($xml);
-    return ($xml->setParserProperty(\XMLReader::VALIDATE, true) ? true : false);
+    set_error_handler(fn () => null, E_WARNING);
+    $xml2 = simpleXML_load_file($xml, "SimpleXMLElement", LIBXML_NOCDATA);
+    if ($xml2 === false) {
+      restore_error_handler();
+      return false;
+    } else {
+      $xml2 = \XMLReader::open($xml);
+      return ($xml2->setParserProperty(\XMLReader::VALIDATE, true) ? true : false);
+      restore_error_handler();
+    }
   }
 
   /**

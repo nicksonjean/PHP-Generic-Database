@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
-	<driver>firebird</driver>
 	<host>localhost</host>
 	<port>3050</port>
 	<database>../../assets/DB.FDB</database>

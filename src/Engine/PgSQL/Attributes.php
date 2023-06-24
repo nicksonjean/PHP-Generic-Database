@@ -30,7 +30,7 @@ class Attributes
 
   public static function getFlags()
   {
-    $flags = null;
+    $flags = 0;
     if (Options::getOptions(PgSQL::ATTR_CONNECT_FORCE_NEW)) {
       $flags = PGSQL_CONNECT_FORCE_NEW;
     } else if (Options::getOptions(PgSQL::ATTR_CONNECT_ASYNC)) {
@@ -38,7 +38,7 @@ class Attributes
     } else if (Options::getOptions(PgSQL::ATTR_CONNECT_ASYNC) && Options::getOptions(PgSQL::ATTR_CONNECT_FORCE_NEW)) {
       $flags = PGSQL_CONNECT_ASYNC | PGSQL_CONNECT_FORCE_NEW;
     } else {
-      $flags = null;
+      $flags = 0;
     }
     return $flags;
   }

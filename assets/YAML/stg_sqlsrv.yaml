@@ -1,0 +1,11 @@
+engine: sqlsrv
+host: localhost
+port: 1433
+database: demodev
+user: sa
+password: masterkey
+charset: utf8
+options:
+  - 'SQLSrv::ATTR_PERSISTENT': true
+    'SQLSrv::ATTR_CONNECT_TIMEOUT': 28800
+exception: true

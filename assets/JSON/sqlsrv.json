@@ -1,5 +1,4 @@
 {
-  "driver": "sqlsrv", 
   "host": "localhost", 
   "port": 1433, 
   "database": "demodev", 
@@ -7,8 +6,8 @@
   "password": "masterkey", 
   "charset": "utf8", 
   "options": [{
-    "PDO::ATTR_EMULATE_PREPARES": true,
-    "PDO::ATTR_DEFAULT_FETCH_MODE":"PDO::FETCH_OBJ"
+    "SQLSrv::ATTR_PERSISTENT": true,
+    "SQLSrv::ATTR_CONNECT_TIMEOUT": 28800
   }],
   "exception": true
 }

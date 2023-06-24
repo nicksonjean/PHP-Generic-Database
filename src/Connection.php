@@ -16,7 +16,11 @@ use
   GenericDatabase\Traits\Arrays,
   GenericDatabase\Traits\Errors,
   GenericDatabase\Traits\Singleton,
-  GenericDatabase\Traits\Reflections;
+  GenericDatabase\Traits\Reflections,
+  GenericDatabase\Traits\JSON,
+  GenericDatabase\Traits\INI,
+  GenericDatabase\Traits\YAML,
+  GenericDatabase\Traits\XML;
 
 class Connection
 {
@@ -118,6 +122,82 @@ class Connection
     }
   }
 
+  private static function callArgumentsByJSON($arguments): void
+  {
+    $args = [];
+    $params = [];
+    foreach (JSON::parseJSON(...$arguments) as $key => $value) {
+      $args[$key] = $value;
+      $params[] = $value;
+    }
+    call_user_func_array([self::getInstance(), 'initFactory'], [...$params]);
+    $reflex = new \ReflectionClass(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $params)));
+    foreach ($args as $key => $value) {
+      if (strtolower($key) === 'options') {
+        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), $value)]);
+      } else {
+        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
+      }
+    }
+  }
+
+  private static function callArgumentsByYAML($arguments): void
+  {
+    $args = [];
+    $params = [];
+    foreach (YAML::parseYAML(...$arguments) as $key => $value) {
+      $args[$key] = $value;
+      $params[] = $value;
+    }
+    call_user_func_array([self::getInstance(), 'initFactory'], [...$params]);
+    $reflex = new \ReflectionClass(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $params)));
+    foreach ($args as $key => $value) {
+      if (strtolower($key) === 'options') {
+        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), $value)]);
+      } else {
+        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
+      }
+    }
+  }
+
+  private static function callArgumentsByINI($arguments): void
+  {
+    $args = [];
+    $params = [];
+    foreach (INI::parseINI(...$arguments) as $key => $value) {
+      $args[$key] = $value;
+      $params[] = $value;
+    }
+    call_user_func_array([self::getInstance(), 'initFactory'], [...$params]);
+    $reflex = new \ReflectionClass(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $params)));
+    foreach ($args as $key => $value) {
+      if (strtolower($key) === 'options') {
+        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), [$value])]);
+      } else {
+        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
+      }
+    }
+  }
+
+  private static function callArgumentsByXML($arguments): void
+  {
+    $args = [];
+    $params = [];
+    foreach (XML::parseXML(...$arguments) as $key => $value) {
+      $args[ucfirst($key)] = $value;
+      $params[] = $value;
+    }
+    call_user_func_array([self::getInstance(), 'initFactory'], [...$params]);
+    $reflex = new \ReflectionClass(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $params)));
+    foreach ($args as $key => $value) {
+      if (strtolower($key) === 'options') {
+        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), [$value])]);
+      } else {
+        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
+      }
+    }
+  }
+
   /**
    * Triggered when invoking inaccessible methods in a static context
    * 
@@ -131,17 +211,27 @@ class Connection
       case 'new':
       case 'create':
       case 'config':
-        $argumentList = [];
-        $argumentClass = Reflections::getClassPropertyName(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $arguments)), 'argumentList');
-        $argumentList = array_merge(['Engine'], $argumentClass);
-        if ($arguments[0] === 'pdo' && $arguments[1] === 'sqlite') {
-          $clonedArgumentList = Arrays::exceptByValues($argumentList, ['Host', 'Port', 'User', 'Password']);
-          foreach ($arguments as $key => $value) {
-            call_user_func_array([self::getInstance(), 'set' . $clonedArgumentList[$key]], [$value]);
-          }
+        if (JSON::isValidJSON(...$arguments)) {
+          self::callArgumentsByJSON($arguments);
+        } else if (YAML::isValidYAML(...$arguments)) {
+          self::callArgumentsByYAML($arguments);
+        } else if (INI::isValidINI(...$arguments)) {
+          self::callArgumentsByINI($arguments);
+        } else if (XML::isValidXML(...$arguments)) {
+          self::callArgumentsByXML($arguments);
         } else {
-          foreach ($arguments as $key => $value) {
-            call_user_func_array([self::getInstance(), 'set' . $argumentList[$key]], [$value]);
+          $argumentList = [];
+          $argumentClass = Reflections::getClassPropertyName(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $arguments)), 'argumentList');
+          $argumentList = array_merge(['Engine'], $argumentClass);
+          if ($arguments[0] === 'pdo' && $arguments[1] === 'sqlite') {
+            $clonedArgumentList = Arrays::exceptByValues($argumentList, ['Host', 'Port', 'User', 'Password']);
+            foreach ($arguments as $key => $value) {
+              call_user_func_array([self::getInstance(), 'set' . $clonedArgumentList[$key]], [$value]);
+            }
+          } else {
+            foreach ($arguments as $key => $value) {
+              call_user_func_array([self::getInstance(), 'set' . $argumentList[$key]], [$value]);
+            }
           }
         }
         return self::getInstance();

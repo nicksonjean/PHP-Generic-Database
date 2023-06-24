@@ -4,7 +4,6 @@ namespace GenericDatabase\Traits;
 
 trait JSON
 {
-
   /**
    * Detect if json is valid
    * 
@@ -13,10 +12,13 @@ trait JSON
    */
   public static function isValidJSON(string $json): bool
   {
+    set_error_handler(fn () => null, E_WARNING);
     json_decode(file_get_contents($json));
     if (json_last_error() === JSON_ERROR_NONE) {
+      restore_error_handler();
       return true;
     }
+    restore_error_handler();
     return false;
   }
 

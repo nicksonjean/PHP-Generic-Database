@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
-  <driver>oci</driver>
   <host>localhost</host>
   <port>1521</port>
   <database>xe</database>
@@ -8,9 +7,8 @@
   <password>masterkey</password>
   <charset>utf8</charset>
   <options>
-		<option name="PDO::ATTR_PERSISTENT">true</option>
-		<option name="PDO::ATTR_EMULATE_PREPARES">true</option>
-		<option name="PDO::ATTR_DEFAULT_FETCH_MODE">PDO::FETCH_OBJ</option>
+		<option name="OCI::ATTR_PERSISTENT">true</option>
+		<option name="OCI::ATTR_CONNECT_TIMEOUT">28800</option>
   </options>
   <exception>true</exception>
 </root>

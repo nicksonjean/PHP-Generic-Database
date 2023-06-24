@@ -1,4 +1,3 @@
-driver: oci
 host: localhost
 port: 1521
 database: xe
@@ -6,7 +5,6 @@ user: hr
 password: masterkey
 charset: utf8
 options:
-  - 'PDO::ATTR_PERSISTENT': true
-    'PDO::ATTR_EMULATE_PREPARES': true
-    'PDO::ATTR_DEFAULT_FETCH_MODE': 'PDO::FETCH_OBJ'
+  - 'OCI::ATTR_PERSISTENT': true
+    'OCI::ATTR_CONNECT_TIMEOUT': 28800
 exception: true

@@ -4,26 +4,26 @@ use GenericDatabase\Engine\PDOEngine;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-$mysql = PDOEngine::new('../../assets/JSON/mysql.json')->connect();
+$mysql = PDOEngine::new('../../assets/JSON/pdo_mysql.json')->connect();
 
 var_dump($mysql);
 
-$pgsql = PDOEngine::new('../../assets/JSON/pgsql.json')->connect();
+$pgsql = PDOEngine::new('../../assets/JSON/pdo_pgsql.json')->connect();
 
 var_dump($pgsql);
 
-$sqlsrv = PDOEngine::new('../../assets/JSON/sqlsrv.json')->connect();
+$sqlsrv = PDOEngine::new('../../assets/JSON/pdo_sqlsrv.json')->connect();
 
 var_dump($sqlsrv);
 
-$oci = PDOEngine::new('../../assets/JSON/oci.json')->connect();
+$oci = PDOEngine::new('../../assets/JSON/pdo_oci.json')->connect();
 
 var_dump($oci);
 
-$firebird = PDOEngine::new('../../assets/JSON/firebird.json')->connect();
+$firebird = PDOEngine::new('../../assets/JSON/pdo_firebird.json')->connect();
 
 var_dump($firebird);
 
-$sqlite = PDOEngine::new('../../assets/JSON/sqlite.json')->connect();
+$sqlite = PDOEngine::new('../../assets/JSON/pdo_sqlite.json')->connect();
 
 var_dump($sqlite);

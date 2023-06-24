@@ -90,7 +90,7 @@ class Arguments
   private static function callArgumentsByJSON($arguments): void
   {
     foreach (JSON::parseJSON(...$arguments) as $key => $value) {
-      if ($key == 'options') {
+      if (strtolower($key) === 'options') {
         call_user_func_array([SQLite3Engine::getInstance(), 'set' . ucfirst($key)], [self::setConstant($value)]);
       } else {
         call_user_func_array([SQLite3Engine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
@@ -107,7 +107,7 @@ class Arguments
   private static function callArgumentsByINI($arguments): void
   {
     foreach (INI::parseINI(...$arguments) as $key => $value) {
-      if ($key == 'options') {
+      if (strtolower($key) === 'options') {
         call_user_func_array([SQLite3Engine::getInstance(), 'set' . ucfirst($key)], [self::setConstant([$value])]);
       } else {
         call_user_func_array([SQLite3Engine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
@@ -124,7 +124,7 @@ class Arguments
   private static function callArgumentsByYAML($arguments): void
   {
     foreach (YAML::parseYAML(...$arguments) as $key => $value) {
-      if ($key == 'options') {
+      if (strtolower($key) === 'options') {
         call_user_func_array([SQLite3Engine::getInstance(), 'set' . ucfirst($key)], [self::setConstant($value)]);
       } else {
         call_user_func_array([SQLite3Engine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
@@ -141,7 +141,7 @@ class Arguments
   private static function callArgumentsByXML($arguments): void
   {
     foreach (XML::parseXML(...$arguments) as $key => $value) {
-      if ($key == 'options') {
+      if (strtolower($key) === 'options') {
         call_user_func_array([SQLite3Engine::getInstance(), 'set' . ucfirst($key)], [self::setConstant([$value])]);
       } else {
         call_user_func_array([SQLite3Engine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);

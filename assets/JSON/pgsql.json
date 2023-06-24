@@ -1,5 +1,4 @@
   {
-    "driver": "pgsql", 
     "host": "localhost", 
     "port": 5432, 
     "database": "postgres", 
@@ -7,9 +6,10 @@
     "password": "masterkey", 
     "charset": "utf8", 
     "options": [{
-      "PDO::ATTR_PERSISTENT": true, 
-      "PDO::ATTR_EMULATE_PREPARES": true,
-      "PDO::ATTR_DEFAULT_FETCH_MODE":"PDO::FETCH_OBJ"
+      "PgSQL::ATTR_PERSISTENT":true,
+      "PgSQL::ATTR_CONNECT_ASYNC":true,
+      "PgSQL::ATTR_CONNECT_FORCE_NEW":true,
+      "PgSQL::ATTR_CONNECT_TIMEOUT":28800
     }],
     "exception": true
   }
