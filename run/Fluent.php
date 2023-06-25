@@ -7,7 +7,7 @@ use
   GenericDatabase\Engine\SQLSrv\SQLSrv,
   GenericDatabase\Engine\OCI\OCI,
   GenericDatabase\Engine\FBird\FBird,
-  GenericDatabase\Engine\SQLite3\SQLite;
+  GenericDatabase\Engine\SQLite\SQLite;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -105,7 +105,7 @@ $context = Connection
 var_dump($context);
 
 $context = Connection
-  ::setEngine('sqlite3')
+  ::setEngine('sqlite')
   ::setDatabase('../assets/DB.SQLITE')
   ::setCharset('utf8')
   ::setOptions([

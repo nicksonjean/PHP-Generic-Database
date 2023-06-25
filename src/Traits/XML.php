@@ -44,7 +44,7 @@ trait XML
     }
 
     if (preg_match('/(false|true)/i', $data)) {
-      return (bool)$data;
+      return filter_var($data, FILTER_VALIDATE_BOOLEAN);
     }
 
     return $data;

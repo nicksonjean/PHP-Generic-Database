@@ -11,7 +11,7 @@ use
   GenericDatabase\Engine\OCIEngine,
   GenericDatabase\Engine\PgSQLEngine,
   GenericDatabase\Engine\SQLSrvEngine,
-  GenericDatabase\Engine\SQLite3Engine,
+  GenericDatabase\Engine\SQLiteEngine,
   GenericDatabase\Engine\PDOEngine,
   GenericDatabase\Traits\Arrays,
   GenericDatabase\Traits\Errors,
@@ -36,7 +36,7 @@ class Connection
     'SQLSrv',
     'OCI',
     'FBird',
-    'SQLite3'
+    'SQLite'
   ];
 
   /**
@@ -67,6 +67,72 @@ class Connection
   }
 
   /**
+   * This method is used to establish a database connection
+   * 
+   * @return Connection
+   */
+  public function connect(): Connection
+  {
+    $this->strategy->connect();
+    return $this;
+  }
+
+  /**
+   * Triggered when invoking inaccessible methods in an object context
+   * 
+   * @param string $name Name of the method
+   * @param array $arguments Array of arguments
+   * @return mixed
+   */
+  public function __call(string $name, array $arguments): mixed
+  {
+    $method = substr($name, 0, 3);
+    $field = strtolower(substr($name, 3));
+    if ($field === 'engine' && count($arguments) > 0) {
+      call_user_func_array([$this, 'initFactory'], [...$arguments]);
+    }
+    if ($method == 'set') {
+      call_user_func_array([$this->getStrategy(), 'set' . ucfirst($field)], [...$arguments]);
+      return $this;
+    } elseif ($method == 'get') {
+      return call_user_func_array([$this->getStrategy(), 'get' . ucfirst($field)], []);
+    }
+  }
+
+  /**
+   * Triggered when invoking inaccessible methods in a static context
+   * 
+   * @param string $name Name of the method
+   * @param array $arguments Array of arguments
+   * @return mixed
+   */
+  public static function __callStatic(string $name, array $arguments): mixed
+  {
+    switch ($name) {
+      case 'new':
+      case 'create':
+      case 'config':
+        if (JSON::isValidJSON(...$arguments)) {
+          self::callArgumentsByFormat('json', $arguments);
+        } else if (YAML::isValidYAML(...$arguments)) {
+          self::callArgumentsByFormat('yaml', $arguments);
+        } else if (INI::isValidINI(...$arguments)) {
+          self::callArgumentsByFormat('ini', $arguments);
+        } else if (XML::isValidXML(...$arguments)) {
+          self::callArgumentsByFormat('xml', $arguments);
+        } else {
+          self::callWithFullArguments($arguments);
+        }
+        return self::getInstance();
+        break;
+      default:
+        self::callArgumentsByDefault($name, $arguments);
+        break;
+    }
+    return self::getInstance();
+  }
+
+  /**
    * Factory that replaces the __constructor and defines the Strategy through the engine parameter
    * 
    * @param mixed $params
@@ -93,163 +159,84 @@ class Connection
       case 'fbird':
         $this->strategy = new FBirdEngine();
         break;
-      case 'sqlite3':
-        $this->strategy = new SQLite3Engine();
+      case 'sqlite':
+        $this->strategy = new SQLiteEngine();
         break;
     }
     $this->setStrategy($this->strategy);
   }
 
   /**
-   * Triggered when invoking inaccessible methods in an object context
+   * This method is used when all parameters are used
    * 
-   * @param string $name Name of the method
-   * @param array $arguments Array of arguments
-   * @return mixed
+   * @param array $arguments
+   * @return void
    */
-  public function __call(string $name, array $arguments): mixed
+  private static function callWithFullArguments($arguments): void
   {
-    $method = substr($name, 0, 3);
-    $field = strtolower(substr($name, 3));
-    if ($field === 'engine' && count($arguments) > 0) {
-      call_user_func_array([$this, 'initFactory'], [...$arguments]);
-    }
-    if ($method == 'set') {
-      call_user_func_array([$this->getStrategy(), 'set' . ucfirst($field)], [...$arguments]);
-      return $this;
-    } elseif ($method == 'get') {
-      return call_user_func_array([$this->getStrategy(), 'get' . ucfirst($field)], []);
-    }
-  }
-
-  private static function callArgumentsByJSON($arguments): void
-  {
-    $args = [];
-    $params = [];
-    foreach (JSON::parseJSON(...$arguments) as $key => $value) {
-      $args[$key] = $value;
-      $params[] = $value;
-    }
-    call_user_func_array([self::getInstance(), 'initFactory'], [...$params]);
-    $reflex = new \ReflectionClass(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $params)));
-    foreach ($args as $key => $value) {
-      if (strtolower($key) === 'options') {
-        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), $value)]);
-      } else {
-        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
+    $argumentList = [];
+    $argumentClass = Reflections::getClassPropertyName(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $arguments)), 'argumentList');
+    $argumentList = array_merge(['Engine'], $argumentClass);
+    if ($arguments[0] === 'pdo' && $arguments[1] === 'sqlite') {
+      $clonedArgumentList = Arrays::exceptByValues($argumentList, ['Host', 'Port', 'User', 'Password']);
+      foreach ($arguments as $key => $value) {
+        call_user_func_array([self::getInstance(), 'set' . $clonedArgumentList[$key]], [$value]);
       }
-    }
-  }
-
-  private static function callArgumentsByYAML($arguments): void
-  {
-    $args = [];
-    $params = [];
-    foreach (YAML::parseYAML(...$arguments) as $key => $value) {
-      $args[$key] = $value;
-      $params[] = $value;
-    }
-    call_user_func_array([self::getInstance(), 'initFactory'], [...$params]);
-    $reflex = new \ReflectionClass(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $params)));
-    foreach ($args as $key => $value) {
-      if (strtolower($key) === 'options') {
-        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), $value)]);
-      } else {
-        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
-      }
-    }
-  }
-
-  private static function callArgumentsByINI($arguments): void
-  {
-    $args = [];
-    $params = [];
-    foreach (INI::parseINI(...$arguments) as $key => $value) {
-      $args[$key] = $value;
-      $params[] = $value;
-    }
-    call_user_func_array([self::getInstance(), 'initFactory'], [...$params]);
-    $reflex = new \ReflectionClass(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $params)));
-    foreach ($args as $key => $value) {
-      if (strtolower($key) === 'options') {
-        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), [$value])]);
-      } else {
-        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
-      }
-    }
-  }
-
-  private static function callArgumentsByXML($arguments): void
-  {
-    $args = [];
-    $params = [];
-    foreach (XML::parseXML(...$arguments) as $key => $value) {
-      $args[ucfirst($key)] = $value;
-      $params[] = $value;
-    }
-    call_user_func_array([self::getInstance(), 'initFactory'], [...$params]);
-    $reflex = new \ReflectionClass(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $params)));
-    foreach ($args as $key => $value) {
-      if (strtolower($key) === 'options') {
-        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), [$value])]);
-      } else {
-        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
+    } else {
+      foreach ($arguments as $key => $value) {
+        call_user_func_array([self::getInstance(), 'set' . $argumentList[$key]], [$value]);
       }
     }
   }
 
   /**
-   * Triggered when invoking inaccessible methods in a static context
-   * 
-   * @param string $name Name of the method
-   * @param array $arguments Array of arguments
-   * @return mixed
+   * Determines arguments type by calling to default type
+   *
+   * @param mixed $arguments
+   * @return void
    */
-  public static function __callStatic(string $name, array $arguments): mixed
+  private static function callArgumentsByDefault($name, $arguments): void
   {
-    switch ($name) {
-      case 'new':
-      case 'create':
-      case 'config':
-        if (JSON::isValidJSON(...$arguments)) {
-          self::callArgumentsByJSON($arguments);
-        } else if (YAML::isValidYAML(...$arguments)) {
-          self::callArgumentsByYAML($arguments);
-        } else if (INI::isValidINI(...$arguments)) {
-          self::callArgumentsByINI($arguments);
-        } else if (XML::isValidXML(...$arguments)) {
-          self::callArgumentsByXML($arguments);
-        } else {
-          $argumentList = [];
-          $argumentClass = Reflections::getClassPropertyName(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $arguments)), 'argumentList');
-          $argumentList = array_merge(['Engine'], $argumentClass);
-          if ($arguments[0] === 'pdo' && $arguments[1] === 'sqlite') {
-            $clonedArgumentList = Arrays::exceptByValues($argumentList, ['Host', 'Port', 'User', 'Password']);
-            foreach ($arguments as $key => $value) {
-              call_user_func_array([self::getInstance(), 'set' . $clonedArgumentList[$key]], [$value]);
-            }
-          } else {
-            foreach ($arguments as $key => $value) {
-              call_user_func_array([self::getInstance(), 'set' . $argumentList[$key]], [$value]);
-            }
-          }
-        }
-        return self::getInstance();
-        break;
-      default:
-        return call_user_func_array([self::getInstance(), $name], $arguments);
-        break;
-    }
+    call_user_func_array([self::getInstance(), $name], $arguments);
   }
 
   /**
-   * This method is used to establish a database connection
-   * 
-   * @return Connection
+   * Determines arguments type by calling to format type
+   *
+   * @param string $format Accept formats json, xml, ini and yaml
+   * @param mixed $arguments
+   * @return void
    */
-  public function connect(): Connection
+  private static function callArgumentsByFormat($format, $arguments): void
   {
-    $this->strategy->connect();
-    return $this;
+    $args = [];
+    $params = [];
+
+    if ($format === 'json') {
+      $data = JSON::parseJSON(...$arguments);
+    } elseif ($format === 'ini') {
+      $data = INI::parseINI(...$arguments);
+    } elseif ($format === 'xml') {
+      $data = XML::parseXML(...$arguments);
+    } elseif ($format === 'yaml') {
+      $data = YAML::parseYAML(...$arguments);
+    }
+
+    foreach ($data as $key => $value) {
+      $args[$key] = $value;
+      $params[] = $value;
+    }
+
+    call_user_func_array([self::getInstance(), 'initFactory'], [...$params]);
+
+    $reflex = new \ReflectionClass(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $params)));
+
+    foreach ($args as $key => $value) {
+      if (strtolower($key) === 'options') {
+        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), ($format === 'json' || $format === 'yaml') ? $value : [$value])]);
+      } else {
+        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
+      }
+    }
   }
 }

@@ -3,7 +3,7 @@
   <database>../../assets/DB.SQLITE</database>
   <charset>utf8</charset>
   <options>
-		<option name="SQLite::ATTR_OPEN_READONLY">true</option>
+		<option name="SQLite::ATTR_OPEN_READONLY">false</option>
 		<option name="SQLite::ATTR_OPEN_READWRITE">true</option>
 		<option name="SQLite::ATTR_OPEN_CREATE">true</option>
     <option name="SQLite::ATTR_CONNECT_TIMEOUT">28800</option>

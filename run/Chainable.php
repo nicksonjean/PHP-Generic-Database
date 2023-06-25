@@ -7,7 +7,7 @@ use
   GenericDatabase\Engine\SQLSrv\SQLSrv,
   GenericDatabase\Engine\OCI\OCI,
   GenericDatabase\Engine\FBird\FBird,
-  GenericDatabase\Engine\SQLite3\SQLite;
+  GenericDatabase\Engine\SQLite\SQLite;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -101,7 +101,7 @@ $context->setEngine('fbird')
 
 var_dump($context);
 
-$context->setEngine('sqlite3')
+$context->setEngine('sqlite')
   ->setDatabase('../assets/DB.SQLITE')
   ->setCharset('utf8')
   ->setOptions([

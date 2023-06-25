@@ -7,7 +7,7 @@ use
   GenericDatabase\Engine\SQLSrv\SQLSrv,
   GenericDatabase\Engine\OCI\OCI,
   GenericDatabase\Engine\FBird\FBird,
-  GenericDatabase\Engine\SQLite3\SQLite;
+  GenericDatabase\Engine\SQLite\SQLite;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -54,7 +54,7 @@ $context = Connection::new('fbird', 'localhost', 3050, '../assets/DB.FDB', 'sysd
 
 var_dump($context);
 
-$context = Connection::new('sqlite3', '../assets/DB.SQLITE', 'utf8', [
+$context = Connection::new('sqlite', '../assets/DB.SQLITE', 'utf8', [
   SQLite::ATTR_OPEN_READONLY => false,
   SQLite::ATTR_OPEN_READWRITE => true,
   SQLite::ATTR_OPEN_CREATE => true,

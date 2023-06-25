@@ -1,5 +1,5 @@
 {
-  "engine": "sqlite3",
+  "engine": "sqlite",
   "database": "../assets/DB.SQLITE", 
   "charset": "utf8", 
   "options": [{

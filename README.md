@@ -12,8 +12,8 @@ Atualmente o PHP-Generic-Database suporte os seguintes mecanismos/banco de bados
   - PostgreSQL Nativo
 - fbird
   - Firebird/Interbase Nativos
-- sqlite3
-  - SQLite 3.x Nativo
+- sqlite
+  - SQLite Nativo
 - oci
   - Oracle Nativo
 - sqlsvr

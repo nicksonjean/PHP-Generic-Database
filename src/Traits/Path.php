@@ -13,13 +13,29 @@ trait Path
    */
   public static function toAbsolute($path)
   {
-    if (!file_exists($path)) {
-      $path = substr($path, 6);
-    } else if (!file_exists($path)) {
-      $message = sprintf('File not founded in %s', $path);
-      throw new \Exception($message);
+    if (DIRECTORY_SEPARATOR !== '/') {
+      $path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
     }
-    return realpath($path);
+    $search = explode('/', $path);
+    $search = array_filter($search, function ($part) {
+      return $part !== '.';
+    });
+    $append = array();
+    $match = false;
+    while (count($search) > 0) {
+      $match = realpath(implode('/', $search));
+      if ($match !== false) {
+        break;
+      }
+      array_unshift($append, array_pop($search));
+    };
+    if ($match === false) {
+      $match = getcwd();
+    }
+    if (count($append) > 0) {
+      $match .= DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $append);
+    }
+    return $match;
   }
 
   /**

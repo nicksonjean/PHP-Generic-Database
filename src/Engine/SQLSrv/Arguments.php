@@ -86,70 +86,32 @@ class Arguments
   }
 
   /**
-   * Determines arguments type by calling to JSON type
+   * Determines arguments type by calling to format type
    *
+   * @param string $format Accept formats json, xml, ini and yaml
    * @param mixed $arguments
    * @return void
    */
-
-  private static function callArgumentsByJSON($arguments): void
+  private static function callArgumentsByFormat($format, $arguments): void
   {
-    foreach (JSON::parseJSON(...$arguments) as $key => $value) {
-      if (strtolower($key) === 'options') {
-        call_user_func_array([SQLSrvEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant($value)]);
-      } else {
-        call_user_func_array([SQLSrvEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
-      }
+    $data = null;
+    if ($format === 'json') {
+      $data = JSON::parseJSON(...$arguments);
+    } elseif ($format === 'ini') {
+      $data = INI::parseINI(...$arguments);
+    } elseif ($format === 'xml') {
+      $data = XML::parseXML(...$arguments);
+    } elseif ($format === 'yaml') {
+      $data = YAML::parseYAML(...$arguments);
     }
-  }
 
-  /**
-   * Determines arguments type by calling to INI type
-   *
-   * @param mixed $arguments
-   * @return void
-   */
-  private static function callArgumentsByINI($arguments): void
-  {
-    foreach (INI::parseINI(...$arguments) as $key => $value) {
-      if (strtolower($key) === 'options') {
-        call_user_func_array([SQLSrvEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant([$value])]);
-      } else {
-        call_user_func_array([SQLSrvEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
-      }
-    }
-  }
-
-  /**
-   * Determines arguments type by calling to YAML type
-   *
-   * @param mixed $arguments
-   * @return void
-   */
-  private static function callArgumentsByYAML($arguments): void
-  {
-    foreach (YAML::parseYAML(...$arguments) as $key => $value) {
-      if (strtolower($key) === 'options') {
-        call_user_func_array([SQLSrvEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant($value)]);
-      } else {
-        call_user_func_array([SQLSrvEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
-      }
-    }
-  }
-
-  /**
-   * Determines arguments type by calling to XML type
-   *
-   * @param mixed $arguments
-   * @return void
-   */
-  private static function callArgumentsByXML($arguments): void
-  {
-    foreach (XML::parseXML(...$arguments) as $key => $value) {
-      if (strtolower($key) === 'options') {
-        call_user_func_array([SQLSrvEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant([$value])]);
-      } else {
-        call_user_func_array([SQLSrvEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
+    if ($data) {
+      foreach ($data as $key => $value) {
+        if (strtolower($key) === 'options') {
+          call_user_func_array([SQLSrvEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant(($format === 'json' || $format === 'yaml') ? $value : [$value])]);
+        } else {
+          call_user_func_array([SQLSrvEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
+        }
       }
     }
   }
@@ -182,17 +144,13 @@ class Arguments
           self::callWithFullArguments($arguments);
         } else {
           if (JSON::isValidJSON(...$arguments)) {
-            self::callArgumentsByJSON($arguments);
-          } else if (
-            YAML::isValidYAML(...$arguments)
-          ) {
-            self::callArgumentsByYAML($arguments);
-          } else if (
-            INI::isValidINI(...$arguments)
-          ) {
-            self::callArgumentsByINI($arguments);
+            self::callArgumentsByFormat('json', $arguments);
+          } else if (YAML::isValidYAML(...$arguments)) {
+            self::callArgumentsByFormat('yaml', $arguments);
+          } else if (INI::isValidINI(...$arguments)) {
+            self::callArgumentsByFormat('ini', $arguments);
           } else if (XML::isValidXML(...$arguments)) {
-            self::callArgumentsByXML($arguments);
+            self::callArgumentsByFormat('xml', $arguments);
           }
         }
         break;
