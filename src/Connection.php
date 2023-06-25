@@ -89,13 +89,13 @@ class Connection
     $method = substr($name, 0, 3);
     $field = strtolower(substr($name, 3));
     if ($field === 'engine' && count($arguments) > 0) {
-      call_user_func_array([$this, 'initFactory'], [...$arguments]);
+      self::call($this, 'initFactory', [...$arguments]);
     }
     if ($method == 'set') {
-      call_user_func_array([$this->getStrategy(), 'set' . ucfirst($field)], [...$arguments]);
+      self::call($this->getStrategy(), 'set' . ucfirst($field), [...$arguments]);
       return $this;
     } elseif ($method == 'get') {
-      return call_user_func_array([$this->getStrategy(), 'get' . ucfirst($field)], []);
+      return self::call($this->getStrategy(), 'get' . ucfirst($field), [...$arguments]);
     }
   }
 
@@ -126,7 +126,7 @@ class Connection
         return self::getInstance();
         break;
       default:
-        self::callArgumentsByDefault($name, $arguments);
+        self::call(self::getInstance(), $name, $arguments);
         break;
     }
     return self::getInstance();
@@ -175,16 +175,16 @@ class Connection
   private static function callWithFullArguments($arguments): void
   {
     $argumentList = [];
-    $argumentClass = Reflections::getClassPropertyName(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $arguments)), 'argumentList');
+    $argumentClass = Reflections::getClassPropertyName(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::matchValues(self::$engineList, $arguments)), 'argumentList');
     $argumentList = array_merge(['Engine'], $argumentClass);
     if ($arguments[0] === 'pdo' && $arguments[1] === 'sqlite') {
       $clonedArgumentList = Arrays::exceptByValues($argumentList, ['Host', 'Port', 'User', 'Password']);
       foreach ($arguments as $key => $value) {
-        call_user_func_array([self::getInstance(), 'set' . $clonedArgumentList[$key]], [$value]);
+        self::call(self::getInstance(), 'set' . $clonedArgumentList[$key], [$value]);
       }
     } else {
       foreach ($arguments as $key => $value) {
-        call_user_func_array([self::getInstance(), 'set' . $argumentList[$key]], [$value]);
+        self::call(self::getInstance(), 'set' . $argumentList[$key], [$value]);
       }
     }
   }
@@ -195,9 +195,9 @@ class Connection
    * @param mixed $arguments
    * @return void
    */
-  private static function callArgumentsByDefault($name, $arguments): void
+  private static function call($instance, $name, $arguments): void
   {
-    call_user_func_array([self::getInstance(), $name], $arguments);
+    call_user_func_array([$instance, $name], $arguments);
   }
 
   /**
@@ -209,9 +209,6 @@ class Connection
    */
   private static function callArgumentsByFormat($format, $arguments): void
   {
-    $args = [];
-    $params = [];
-
     if ($format === 'json') {
       $data = JSON::parseJSON(...$arguments);
     } elseif ($format === 'ini') {
@@ -221,21 +218,13 @@ class Connection
     } elseif ($format === 'yaml') {
       $data = YAML::parseYAML(...$arguments);
     }
-
-    foreach ($data as $key => $value) {
-      $args[$key] = $value;
-      $params[] = $value;
-    }
-
-    call_user_func_array([self::getInstance(), 'initFactory'], [...$params]);
-
-    $reflex = new \ReflectionClass(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::arrayByMatchValues(self::$engineList, $params)));
-
-    foreach ($args as $key => $value) {
+    self::call(self::getInstance(), 'initFactory', Arrays::assocToIndex(Arrays::recombine($data)));
+    $instance = Reflections::getClassInstance(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::matchValues(self::$engineList, Arrays::assocToIndex(Arrays::recombine($data)))));
+    foreach (Arrays::recombine($data) as $key => $value) {
       if (strtolower($key) === 'options') {
-        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), ($format === 'json' || $format === 'yaml') ? $value : [$value])]);
+        self::call(self::getInstance()->getStrategy(), 'set' . ucfirst($key), [$instance->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), ($format === 'json' || $format === 'yaml') ? $value : [$value])]);
       } else {
-        call_user_func_array([self::getInstance()->getStrategy(), 'set' . ucfirst($key)], [$reflex->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
+        self::call(self::getInstance()->getStrategy(), 'set' . ucfirst($key), [$instance->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
       }
     }
   }

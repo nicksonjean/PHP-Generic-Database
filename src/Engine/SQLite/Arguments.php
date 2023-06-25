@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\SQLite;
 
 use
   GenericDatabase\Traits\Regex,
+  GenericDatabase\Traits\Arrays,
   GenericDatabase\Traits\JSON,
   GenericDatabase\Traits\INI,
   GenericDatabase\Traits\YAML,
@@ -44,7 +45,7 @@ class Arguments
   private static function setConstant($value): array
   {
     $options = [];
-    foreach (array_combine(array_keys(...$value), array_values(...$value)) as $key => $value) {
+    foreach (Arrays::recombine(...$value) as $key => $value) {
       $index = str_replace('SQLite::', '', $key);
       $key_name = $index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_AUTOCOMMIT' && $index !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "SQLITE3", $index) : $index;
       SQLiteEngine::getInstance()->setAttribute($key, $value);

@@ -14,11 +14,7 @@ trait Arrays
    */
   public static function exceptByKeys(array $array, array $keys): array
   {
-    foreach ($keys as $key) {
-      unset($array[$key]);
-    }
-    $array = array_values($array);
-    return $array;
+    return array_diff_key($array, array_flip($keys));
   }
 
   /**
@@ -30,8 +26,7 @@ trait Arrays
    */
   public static function exceptByValues(array $array, array $values): array
   {
-    $array = array_values(array_diff($array, $values));
-    return $array;
+    return array_values(array_diff($array, $values));
   }
 
   /**
@@ -42,7 +37,7 @@ trait Arrays
    * @param ?string $aplly Filter to be apply
    * @return string
    */
-  public static function arrayByMatchValues(array $list, array $array, ?string $apply = 'strtolower'): string
+  public static function matchValues(array $list, array $array, ?string $apply = 'strtolower'): string
   {
     $engine = array_map(
       'unserialize',
@@ -51,7 +46,28 @@ trait Arrays
         array_map('serialize', $array)
       )
     );
-
     return $list[array_key_first($engine)];
+  }
+
+  /**
+   * Iterate the array by combining the indices and values into a new array
+   * 
+   * @param array $array The array to combine
+   * @return array
+   */
+  public static function recombine(array $array): array
+  {
+    return array_combine(array_keys($array), array_values($array));
+  }
+
+  /**
+   * Iterates through the array combining the values by substituting the indices into sequential numbers starting at zero into a new array
+   * 
+   * @param array $array The array to combine
+   * @return array
+   */
+  public static function assocToIndex(array $array): array
+  {
+    return array_combine(range(0, count($array) - 1), array_values($array));
   }
 }

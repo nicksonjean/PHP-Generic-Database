@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\PgSQL;
 
 use
   GenericDatabase\Traits\Regex,
+  GenericDatabase\Traits\Arrays,
   GenericDatabase\Traits\JSON,
   GenericDatabase\Traits\INI,
   GenericDatabase\Traits\YAML,
@@ -49,7 +50,7 @@ class Arguments
   {
     $options = [];
     $class = 'GenericDatabase\Engine\PgSQL\PgSQL';
-    foreach (array_combine(array_keys(...$value), array_values(...$value)) as $key => $value) {
+    foreach (Arrays::recombine(...$value) as $key => $value) {
       $index = str_replace('PgSQL::', '', $key);
       $key_name = $index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "PGSQL", $index) : $index;
       PgSQLEngine::getInstance()->setAttribute($key, $value);

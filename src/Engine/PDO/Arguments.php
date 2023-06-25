@@ -3,8 +3,8 @@
 namespace GenericDatabase\Engine\PDO;
 
 use
-  GenericDatabase\Traits\Arrays,
   GenericDatabase\Traits\Regex,
+  GenericDatabase\Traits\Arrays,
   GenericDatabase\Traits\JSON,
   GenericDatabase\Traits\INI,
   GenericDatabase\Traits\YAML,
@@ -50,7 +50,6 @@ class Arguments
   private static function callWithPartialArguments($arguments): void
   {
     $clonedArgumentList = Arrays::exceptByValues(self::$argumentList, ['Host', 'Port', 'User', 'Password']);
-
     foreach ($arguments as $key => $value) {
       call_user_func_array([PDOEngine::getInstance(), 'set' . $clonedArgumentList[$key]], [$value]);
     }
@@ -65,13 +64,13 @@ class Arguments
   private static function setConstant($value): array
   {
     $result = [];
-    foreach (array_combine(array_keys(...$value), array_values(...$value)) as $k => $v) {
-      if (Regex::isNumber($v) && !Regex::isBoolean($v)) {
-        $result[constant($k)] = (int) $v;
-      } else if (Regex::isBoolean($v)) {
-        $result[constant($k)] = (bool) $v;
+    foreach (Arrays::recombine(...$value) as $key => $value) {
+      if (Regex::isNumber($value) && !Regex::isBoolean($value)) {
+        $result[constant($key)] = (int) $value;
+      } else if (Regex::isBoolean($value)) {
+        $result[constant($key)] = (bool) $value;
       } else {
-        $result[constant($k)] = constant($v);
+        $result[constant($key)] = constant($value);
       }
     }
     return $result;

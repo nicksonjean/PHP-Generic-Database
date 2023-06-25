@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\MySQLi;
 
 use
   GenericDatabase\Traits\Regex,
+  GenericDatabase\Traits\Arrays,
   GenericDatabase\Traits\JSON,
   GenericDatabase\Traits\INI,
   GenericDatabase\Traits\YAML,
@@ -48,7 +49,7 @@ class Arguments
   private static function setConstant($value): array
   {
     $options = [];
-    foreach (array_combine(array_keys(...$value), array_values(...$value)) as $key => $value) {
+    foreach (Arrays::recombine(...$value) as $key => $value) {
       $index = str_replace('MySQL::', '', $key);
       $key_name = $index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_AUTOCOMMIT' ? str_replace("ATTR", "MYSQLI", $index) : $index;
       MySQLiEngine::getInstance()->setAttribute($key, $value);

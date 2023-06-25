@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\OCI;
 
 use
   GenericDatabase\Traits\Regex,
+  GenericDatabase\Traits\Arrays,
   GenericDatabase\Traits\JSON,
   GenericDatabase\Traits\INI,
   GenericDatabase\Traits\YAML,
@@ -49,7 +50,7 @@ class Arguments
   {
     $options = [];
     $class = 'GenericDatabase\Engine\OCI\OCI';
-    foreach (array_combine(array_keys(...$value), array_values(...$value)) as $key => $value) {
+    foreach (Arrays::recombine(...$value) as $key => $value) {
       $index = str_replace('OCI::', '', $key);
       $key_name = $index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "OCI", $index) : $index;
       OCIEngine::getInstance()->setAttribute($key, $value);

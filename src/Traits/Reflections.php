@@ -46,6 +46,17 @@ trait Reflections
   }
 
   /**
+   * Get class instance
+   * 
+   * @param mixed $class The class object or instance
+   * @return mixed
+   */
+  public static function getClassInstance($class): mixed
+  {
+    return new \ReflectionClass($class);
+  }
+
+  /**
    * Get all constants of the class
    * 
    * @param mixed $class The class object or instance
@@ -53,7 +64,7 @@ trait Reflections
    */
   public static function getClassConstants($class): mixed
   {
-    return (new \ReflectionClass($class))->getConstants();
+    return self::getClassInstance($class)->getConstants();
   }
 
   /**
@@ -65,7 +76,7 @@ trait Reflections
    */
   public static function getClassConstantName($class, $field): mixed
   {
-    return array_flip((new \ReflectionClass($class))->getConstants())[$field];
+    return array_flip((self::getClassInstance($class))->getConstants())[$field];
   }
 
   /**
@@ -77,7 +88,7 @@ trait Reflections
    */
   public static function getClassPropertyName($class, $prop): mixed
   {
-    $reflection = new \ReflectionClass($class);
+    $reflection = self::getClassInstance($class);
     $property = $reflection->getProperty($prop);
     $property->setAccessible(true);
     return $property->getValue(null);
