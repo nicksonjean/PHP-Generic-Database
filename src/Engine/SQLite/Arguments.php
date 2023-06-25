@@ -3,8 +3,8 @@
 namespace GenericDatabase\Engine\SQLite;
 
 use
-  GenericDatabase\Traits\Regex,
   GenericDatabase\Traits\Arrays,
+  GenericDatabase\Traits\Types,
   GenericDatabase\Traits\JSON,
   GenericDatabase\Traits\INI,
   GenericDatabase\Traits\YAML,
@@ -44,16 +44,7 @@ class Arguments
    */
   private static function setConstant($value): array
   {
-    $options = [];
-    foreach (Arrays::recombine(...$value) as $key => $value) {
-      $index = str_replace('SQLite::', '', $key);
-      $key_name = $index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_AUTOCOMMIT' && $index !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "SQLITE3", $index) : $index;
-      SQLiteEngine::getInstance()->setAttribute($key, $value);
-      if ($key_name !== 'ATTR_PERSISTENT' && $key_name !== 'ATTR_AUTOCOMMIT' && $key_name !== 'ATTR_CONNECT_TIMEOUT') {
-        SQLiteEngine::getInstance()->setOptions(constant($key_name), $value);
-      }
-      $options[constant("GenericDatabase\Engine\SQLite\SQLite::$index")] = $value;
-    }
+    $options = Types::setConstant($value, SQLiteEngine::getInstance(), 'SQLite', 'SQLite', ['ATTR_PERSISTENT', 'ATTR_AUTOCOMMIT', 'ATTR_CONNECT_TIMEOUT']);
     Options::setOptions($options);
     $options = Options::getOptions();
     return $options;
@@ -67,18 +58,7 @@ class Arguments
    */
   private static function setType($value): mixed
   {
-    $length = strlen($value);
-    $value = ($value === null) ? '' : $value;
-    if (Regex::isNumber($value) && $length > 1) {
-      $result = (int) $value;
-    } else if (($value === '0' or $value === '1') && $length === 1) {
-      $result = (bool) $value;
-    } else if (Regex::isBoolean($value)) {
-      $result = (bool) $value;
-    } else {
-      $result = (string) $value;
-    }
-    return $result;
+    return Types::setType($value);
   }
 
   /**

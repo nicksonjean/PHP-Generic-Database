@@ -3,8 +3,8 @@
 namespace GenericDatabase\Engine\SQLSrv;
 
 use
-  GenericDatabase\Traits\Regex,
   GenericDatabase\Traits\Arrays,
+  GenericDatabase\Traits\Types,
   GenericDatabase\Traits\JSON,
   GenericDatabase\Traits\INI,
   GenericDatabase\Traits\YAML,
@@ -46,19 +46,9 @@ class Arguments
    * @param array $value
    * @return array 
    */
-  private static function setConstant($value): array
+  private static function setConstant($value, $attributes = ['ATTR_PERSISTENT', 'ATTR_CONNECT_TIMEOUT']): array
   {
-    $options = [];
-    $class = 'GenericDatabase\Engine\SQLSrv\SQLSrv';
-    foreach (Arrays::recombine(...$value) as $key => $value) {
-      $index = str_replace('SQLSrv::', '', $key);
-      $key_name = $index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "SQLSrv", $index) : $index;
-      SQLSrvEngine::getInstance()->setAttribute($key, $value);
-      if ($index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_CONNECT_TIMEOUT') {
-        SQLSrvEngine::getInstance()->setOptions(constant($key_name), $value);
-      }
-      $options[constant("$class::$index")] = $value;
-    }
+    $options = Types::setConstant($value, SQLSrvEngine::getInstance(), 'SQLSrv', 'SQLSrv', ['ATTR_PERSISTENT', 'ATTR_CONNECT_TIMEOUT']);
     Options::setOptions($options);
     $options = Options::getOptions();
     return $options;
@@ -72,18 +62,7 @@ class Arguments
    */
   private static function setType($value): mixed
   {
-    $length = strlen($value);
-    $value = ($value === null) ? '' : $value;
-    if (Regex::isNumber($value) && $length > 1) {
-      $result = (int) $value;
-    } else if (($value === '0' or $value === '1') && $length === 1) {
-      $result = (bool) $value;
-    } else if (Regex::isBoolean($value)) {
-      $result = (bool) $value;
-    } else {
-      $result = (string) $value;
-    }
-    return $result;
+    return Types::setType($value);
   }
 
   /**

@@ -67,17 +67,6 @@ class Connection
   }
 
   /**
-   * This method is used to establish a database connection
-   * 
-   * @return Connection
-   */
-  public function connect(): Connection
-  {
-    $this->strategy->connect();
-    return $this;
-  }
-
-  /**
    * Triggered when invoking inaccessible methods in an object context
    * 
    * @param string $name Name of the method
@@ -121,7 +110,7 @@ class Connection
         } else if (XML::isValidXML(...$arguments)) {
           self::callArgumentsByFormat('xml', $arguments);
         } else {
-          self::callWithFullArguments($arguments);
+          self::callWithByStatic($arguments);
         }
         return self::getInstance();
         break;
@@ -130,6 +119,17 @@ class Connection
         break;
     }
     return self::getInstance();
+  }
+
+  /**
+   * This method is used to establish a database connection
+   * 
+   * @return Connection
+   */
+  public function connect(): Connection
+  {
+    $this->strategy->connect();
+    return $this;
   }
 
   /**
@@ -167,12 +167,23 @@ class Connection
   }
 
   /**
+   * Determines arguments type by calling to default type
+   *
+   * @param mixed $arguments
+   * @return void
+   */
+  private static function call($instance, $name, $arguments): void
+  {
+    call_user_func_array([$instance, $name], $arguments);
+  }
+
+  /**
    * This method is used when all parameters are used
    * 
    * @param array $arguments
    * @return void
    */
-  private static function callWithFullArguments($arguments): void
+  private static function callWithByStatic($arguments): void
   {
     $argumentList = [];
     $argumentClass = Reflections::getClassPropertyName(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::matchValues(self::$engineList, $arguments)), 'argumentList');
@@ -187,17 +198,6 @@ class Connection
         self::call(self::getInstance(), 'set' . $argumentList[$key], [$value]);
       }
     }
-  }
-
-  /**
-   * Determines arguments type by calling to default type
-   *
-   * @param mixed $arguments
-   * @return void
-   */
-  private static function call($instance, $name, $arguments): void
-  {
-    call_user_func_array([$instance, $name], $arguments);
   }
 
   /**

@@ -3,8 +3,8 @@
 namespace GenericDatabase\Engine\MySQLi;
 
 use
-  GenericDatabase\Traits\Regex,
   GenericDatabase\Traits\Arrays,
+  GenericDatabase\Traits\Types,
   GenericDatabase\Traits\JSON,
   GenericDatabase\Traits\INI,
   GenericDatabase\Traits\YAML,
@@ -48,16 +48,7 @@ class Arguments
    */
   private static function setConstant($value): array
   {
-    $options = [];
-    foreach (Arrays::recombine(...$value) as $key => $value) {
-      $index = str_replace('MySQL::', '', $key);
-      $key_name = $index !== 'ATTR_PERSISTENT' && $index !== 'ATTR_AUTOCOMMIT' ? str_replace("ATTR", "MYSQLI", $index) : $index;
-      MySQLiEngine::getInstance()->setAttribute($key, $value);
-      if ($key_name !== 'ATTR_PERSISTENT' && $key_name !== 'ATTR_AUTOCOMMIT') {
-        MySQLiEngine::getInstance()->setOptions(constant($key_name), $value);
-      }
-      $options[constant("GenericDatabase\Engine\MySQli\MySQL::$index")] = $value;
-    }
+    $options = Types::setConstant($value, MySQLiEngine::getInstance(), 'MySQL', 'MySQLi', ['ATTR_PERSISTENT', 'ATTR_AUTOCOMMIT']);
     Options::setOptions($options);
     $options = Options::getOptions();
     return $options;
@@ -71,18 +62,7 @@ class Arguments
    */
   private static function setType($value): mixed
   {
-    $length = strlen($value);
-    $value = ($value === null) ? '' : $value;
-    if (Regex::isNumber($value) && $length > 1) {
-      $result = (int) $value;
-    } else if (($value === '0' or $value === '1') && $length === 1) {
-      $result = (bool) $value;
-    } else if (Regex::isBoolean($value)) {
-      $result = (bool) $value;
-    } else {
-      $result = (string) $value;
-    }
-    return $result;
+    return Types::setType($value);
   }
 
   /**

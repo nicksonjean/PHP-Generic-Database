@@ -5,6 +5,7 @@ namespace GenericDatabase\Engine\PDO;
 use
   GenericDatabase\Traits\Regex,
   GenericDatabase\Traits\Arrays,
+  GenericDatabase\Traits\Types,
   GenericDatabase\Traits\JSON,
   GenericDatabase\Traits\INI,
   GenericDatabase\Traits\YAML,
@@ -84,18 +85,7 @@ class Arguments
    */
   private static function setType($value): mixed
   {
-    $length = strlen($value);
-    $value = ($value === null) ? '' : $value;
-    if (Regex::isNumber($value) && $length > 1) {
-      $result = (int) $value;
-    } else if (($value === '0' or $value === '1') && $length === 1) {
-      $result = (bool) $value;
-    } else if (Regex::isBoolean($value)) {
-      $result = (bool) $value;
-    } else {
-      $result = (string) $value;
-    }
-    return $result;
+    return Types::setType($value);
   }
 
   /**
