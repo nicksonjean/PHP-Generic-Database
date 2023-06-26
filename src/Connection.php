@@ -50,7 +50,7 @@ class Connection
    * @param iConnection $strategy
    * @return iConnection
    */
-  private function setStrategy(iConnection $strategy): Connection
+  public function setStrategy(iConnection $strategy): Connection
   {
     $this->strategy = $strategy;
     return $this;
@@ -61,7 +61,7 @@ class Connection
    * 
    * @return iConnection
    */
-  private function getStrategy(): iConnection
+  public function getStrategy(): iConnection
   {
     return $this->strategy;
   }

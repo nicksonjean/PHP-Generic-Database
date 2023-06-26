@@ -205,7 +205,7 @@ class PDOEngine implements iConnection
   public function quote(mixed ...$params): mixed
   {
     $string = $params[0];
-    $type = isset($params[1]) ?? \PDO::PARAM_STR;
+    $type = (count($params) > 0 && isset($params[1])) ?? \PDO::PARAM_STR;
     return $this->getInstance()->getConnection()->quote($string, $type);
   }
 
@@ -218,7 +218,7 @@ class PDOEngine implements iConnection
   public function prepare(mixed ...$params): mixed
   {
     $query = $params[0];
-    $options = isset($params[1]) ?? [];
+    $options = (count($params) > 0 && isset($params[1])) ?? [];
     return $this->getInstance()->getConnection()->prepare($query, $options);
   }
 
@@ -231,7 +231,7 @@ class PDOEngine implements iConnection
   public function query(mixed ...$params): mixed
   {
     $query = $params[0];
-    $fetchMode = isset($params[1]) ?? null;
+    $fetchMode = (count($params) > 0 && isset($params[1])) ? $params[1] : \PDO::FETCH_DEFAULT;
     return $this->getInstance()->getConnection()->query($query, $fetchMode);
   }
 
