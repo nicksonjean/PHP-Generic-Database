@@ -33,10 +33,14 @@
         "squizlabs/php_codesniffer": "4.0.x-dev",
         "phpstan/phpstan": "1.11.x-dev"
     },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "8.1"
+        }
+    },
     "scripts":{
-        "post-install-cmd": [
-            "bash scripts/setup.sh"
-        ],
         "docs": [
             "@clear:docs",
             "@clear:cache",
@@ -57,13 +61,19 @@
             "@clear:coverage",
             "@run:coverage"
         ],
-        "setup": [
+        "clear": [
+            "composer clearcache",
+            "composer dump-autoload -o",
             "@clear:vendor",
-            "@clear:lock",
+            "@clear:lock"
+        ],
+        "setup": [
+            "@clear",
             "composer install"
         ],
         "run:lint:setup": [
             "php vendor/bin/phpcs --config-set colors 1",
+            "php vendor/bin/phpcs --config-set tab_width 2",
             "php vendor/bin/phpcs --config-set report_width 160",
             "php vendor/bin/phpcs --config-set ignore_errors_on_exit 1",
             "php vendor/bin/phpcs --config-set ignore_warnings_on_exit 1"
@@ -75,10 +85,15 @@
         "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
         "run:docs": "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors",
         "run:coverage": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/",
-        "clear:docs": "php ./eraser.php --dest='./docs/'",
-        "clear:cache": "php ./eraser.php --dest='./cache/'",
-        "clear:coverage": "php ./eraser.php --dest='./coverage/'",
-        "clear:vendor": "php ./eraser.php --dest='./vendor/'",
-        "clear:lock": "php -r \"unlink('composer.lock');\""
+        "run:copy": "php ./scripts/copy.php --source=./scripts/pre-commit --dest=./.git/hooks/pre-commit",
+        "clear:docs": "php ./scripts/eraser.php --dest=./docs/",
+        "clear:cache": "php ./scripts/eraser.php --dest=./cache/",
+        "clear:coverage": "php ./scripts/eraser.php --dest=./coverage/",
+        "clear:vendor": "php ./scripts/eraser.php --dest=./vendor/",
+        "clear:lock": "php -r \"@unlink('composer.lock');\"",
+        "post-update-cmd": [
+            "@run:lint:setup",
+            "@run:copy"
+        ]
     }
   }
