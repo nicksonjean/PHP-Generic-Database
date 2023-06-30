@@ -2,12 +2,12 @@
 
 $result = [];
 foreach ($argv as $arg) {
-   $e = explode("=", $arg);
-   if (count($e) === 2) {
-       $result[$e[0]] = $e[1];
-   } else {
-       $result[$e[0]] = 0;
-   }
+    $e = explode("=", $arg);
+    if (count($e) === 2) {
+        $result[$e[0]] = $e[1];
+    } else {
+        $result[$e[0]] = 0;
+    }
 }
 if (isset($result['--dest']) && is_dir($result['--dest'])) {
     $result['--dest'] = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $result['--dest']);
