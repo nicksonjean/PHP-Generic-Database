@@ -31,11 +31,12 @@
         "pcov/clobber": "^2.0",
         "code-lts/doctum": "^5.5",
         "squizlabs/php_codesniffer": "4.0.x-dev",
-        "ccinn/composer-husky-plugin": "*",
-        "ccinn/husky-php": "*",
         "phpstan/phpstan": "1.11.x-dev"
     },
     "scripts":{
+        "post-install-cmd": [
+            "bash scripts/setup.sh"
+        ],
         "docs": [
             "@clear:docs",
             "@clear:cache",
@@ -79,10 +80,5 @@
         "clear:coverage": "php ./eraser.php --dest='./coverage/'",
         "clear:vendor": "php ./eraser.php --dest='./vendor/'",
         "clear:lock": "php -r \"unlink('composer.lock');\""
-    },
-    "config": {
-        "allow-plugins": {
-            "ccinn/composer-husky-plugin": true
-        }
     }
   }
