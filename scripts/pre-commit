@@ -5,7 +5,7 @@ STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \
 if [ "$#" -eq 1 ]
 then
   oIFS=$IFS
-  IFS='
+  IFS='eraser.php, copy.php
   '
   SFILES="$1"
   IFS=$oIFS
@@ -25,7 +25,8 @@ done
 if [ "$FILES" != "" ]
 then
   echo "Running Code Sniffer..."
-  ./vendor/bin/phpcs --ignore=*/scripts/* --standard=PSR2 --encoding=utf-8 -n -p $FILES
+  echo $FILES
+  ./vendor/bin/phpcs --standard=PSR2 --encoding=utf-8 -n -p $FILES
   if [ $? != 0 ]
   then
     echo "Fix the error before commit."
