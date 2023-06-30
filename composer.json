@@ -29,28 +29,60 @@
         "phpunit/php-code-coverage": "^10.0",
         "phpunit/phpunit": "^10.0",        
         "pcov/clobber": "^2.0",
-        "code-lts/doctum": "^5.5"
+        "code-lts/doctum": "^5.5",
+        "squizlabs/php_codesniffer": "4.0.x-dev",
+        "ccinn/composer-husky-plugin": "*",
+        "ccinn/husky-php": "*",
+        "phpstan/phpstan": "1.11.x-dev"
     },
     "scripts":{
         "docs": [
             "@clear:docs",
             "@clear:cache",
-            "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors"
+            "@run:docs"
         ],
-        "test":"php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
+        "lint:analyse": "@run:lint:analyse",
+        "lint:debug": "@run:lint:debug",
+        "lint:check": [
+            "@run:lint:setup",
+            "@run:lint:check"
+        ],
+        "lint:fix": [
+            "@run:lint:setup",
+            "@run:lint:fix"
+        ],
+        "test": "@run:test",
         "test:coverage": [
             "@clear:coverage",
-            "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/"
+            "@run:coverage"
         ],
         "setup": [
-            "@clear:uninstall",
+            "@clear:vendor",
             "@clear:lock",
             "composer install"
         ],
+        "run:lint:setup": [
+            "php vendor/bin/phpcs --config-set colors 1",
+            "php vendor/bin/phpcs --config-set report_width 160",
+            "php vendor/bin/phpcs --config-set ignore_errors_on_exit 1",
+            "php vendor/bin/phpcs --config-set ignore_warnings_on_exit 1"
+        ],
+        "run:lint:analyse": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze src/ tests/",
+        "run:lint:debug": "php vendor/bin/phpstan --memory-limit=-1 --ansi --xdebug analyze src/ tests/",
+        "run:lint:check": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 src/",
+        "run:lint:fix": "php vendor/bin/phpcbf --ignore-annotations --standard=PSR12 src/",
+        "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
+        "run:docs": "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors",
+        "run:coverage": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/",
         "clear:docs": "php ./eraser.php --dest='./docs/'",
         "clear:cache": "php ./eraser.php --dest='./cache/'",
         "clear:coverage": "php ./eraser.php --dest='./coverage/'",
-        "clear:uninstall": "php ./eraser.php --dest='./vendor/'",
+        "clear:vendor": "php ./eraser.php --dest='./vendor/'",
         "clear:lock": "php -r \"unlink('composer.lock');\""
+    },
+    "config": {
+        "allow-plugins": {
+            "ccinn/composer-husky-plugin": true
+        }
     }
-}
+  }

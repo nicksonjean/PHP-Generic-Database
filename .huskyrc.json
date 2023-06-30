@@ -1,0 +1,6 @@
+{
+  "hooks": {
+    "pre-commit": "echo 'husky-php-pre-commit'",
+    "pre-push": "echo 'husky-php-pre-push'"
+  }
+}
