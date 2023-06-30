@@ -1,7 +1,6 @@
 <?php
 
-use
-  GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Engine\PDOEngine;
 use PHPUnit\Framework\TestCase;
 
 final class PDOEngineTest extends TestCase

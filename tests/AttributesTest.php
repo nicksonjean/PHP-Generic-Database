@@ -1,9 +1,7 @@
 <?php
 
-use
-  GenericDatabase\Engine\PDOEngine,
-
-  GenericDatabase\Engine\PDO\Attributes;
+use GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Engine\PDO\Attributes;
 
 use PHPUnit\Framework\TestCase;
 
