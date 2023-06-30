@@ -64,8 +64,9 @@
         "clear": [
             "composer clearcache",
             "composer dump-autoload -o",
+            "@clear:lock",            
             "@clear:vendor",
-            "@clear:lock"
+            "@clear:trash"
         ],
         "setup": [
             "@clear",
@@ -90,6 +91,7 @@
         "clear:cache": "php scripts/eraser.php --dest=./cache/",
         "clear:coverage": "php scripts/eraser.php --dest=./coverage/",
         "clear:vendor": "php scripts/eraser.php --dest=./vendor/",
+        "clear:trash": "php -r \"@rmdir('./vendor/');\"",
         "clear:lock": "php -r \"@unlink('composer.lock');\"",
         "post-update-cmd": [
             "@run:lint:setup",

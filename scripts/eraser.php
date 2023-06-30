@@ -17,6 +17,4 @@ if (isset($result['--dest']) && is_dir($result['--dest'])) {
         $cmd = sprintf('rm -rf %s', $result['--dest']);
     }
     exec($cmd);
-    @sleep(3);
-    @rmdir('./vendor/');
 }
