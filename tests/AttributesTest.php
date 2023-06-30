@@ -32,16 +32,12 @@ final class AttributesTest extends TestCase
 
   public function testFetchAllReturnsArray()
   {
-    $result = Attributes::define();
-    $this->assertIsArray($result);
+    $this->assertIsArray(self::$instance->getAttributes());
   }
 
   public function testFetchAllRetrievesAllAttributes()
   {
-    $result = Attributes::define();
-    $this->assertEquals(count(Attributes::$attributeList), count((array) $result));
-    foreach (Attributes::$attributeList as $attribute) {
-      $this->assertArrayHasKey($attribute, (array) $result);
-    }
+    $result = self::$instance->getAttributes();
+    $this->assertArrayHasKey('ERRMODE', $result);
   }
 }

@@ -52,3 +52,12 @@ $sqlite2 = PDOEngine::new('sqlite', '../../assets/DB.SQLITE', 'utf8', [
 ], true)->connect();
 
 var_dump($sqlite2);
+
+
+$memory = PDOEngine::new('sqlite', 'memory', 'utf8', [
+  PDO::ATTR_PERSISTENT => true,
+  PDO::ATTR_EMULATE_PREPARES => true,
+  PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+], true)->connect();
+
+var_dump($memory);

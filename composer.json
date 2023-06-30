@@ -86,6 +86,7 @@
         "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
         "run:docs": "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors",
         "run:coverage": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/",
+        "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
         "run:copy": "php scripts/copy.php --source=./scripts/pre-commit --dest=./.git/hooks/pre-commit",
         "clear:docs": "php scripts/eraser.php --dest=./docs/",
         "clear:cache": "php scripts/eraser.php --dest=./cache/",
