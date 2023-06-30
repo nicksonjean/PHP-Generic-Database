@@ -5,7 +5,7 @@ STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \
 if [ "$#" -eq 1 ]
 then
   oIFS=$IFS
-  IFS='eraser.php, copy.php
+  IFS='
   '
   SFILES="$1"
   IFS=$oIFS
