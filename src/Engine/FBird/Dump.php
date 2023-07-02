@@ -6,8 +6,8 @@ use GenericDatabase\Engine\FBirdEngine;
 
 class Dump
 {
-  public static function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
-  {
-    return 0;
-  }
+    public static function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
+    {
+        return 0;
+    }
 }

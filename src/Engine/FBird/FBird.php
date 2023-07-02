@@ -6,35 +6,35 @@ use GenericDatabase\Traits\Reflections;
 
 class FBird
 {
-  const ATTR_CONNECT_TIMEOUT = 1001;
-  const ATTR_CONNECT_ASYNC = 1002;
-  const ATTR_CONNECT_FORCE_NEW = 1003;
-  const ATTR_PERSISTENT = 13;
+    public const ATTR_CONNECT_TIMEOUT = 1001;
+    public const ATTR_CONNECT_ASYNC = 1002;
+    public const ATTR_CONNECT_FORCE_NEW = 1003;
+    public const ATTR_PERSISTENT = 13;
 
-  protected static $data = [];
+    protected static $data = [];
 
-  public static function getAttribute(mixed $name): mixed
-  {
-    if (isset(self::$data[$name])) {
-      if (is_int($name)) {
-        $result = self::$data[Reflections::getClassConstantName(__CLASS__, $name)];
-      } else {
-        $result = self::$data[$name];
-      }
-    } else {
-      $result = null;
+    public static function getAttribute(mixed $name): mixed
+    {
+        if (isset(self::$data[$name])) {
+            if (is_int($name)) {
+                $result = self::$data[Reflections::getClassConstantName(__CLASS__, $name)];
+            } else {
+                $result = self::$data[$name];
+            }
+        } else {
+            $result = null;
+        }
+        return $result;
     }
-    return $result;
-  }
 
-  public static function setAttribute(mixed $name, mixed $value): void
-  {
-    if (is_null($name)) {
-      self::$data[] = $value;
-    } else if (is_int($name)) {
-      self::$data[Reflections::getClassConstantName(__CLASS__, $name)] = $value;
-    } else {
-      self::$data[$name] = $value;
+    public static function setAttribute(mixed $name, mixed $value): void
+    {
+        if (is_null($name)) {
+            self::$data[] = $value;
+        } elseif (is_int($name)) {
+            self::$data[Reflections::getClassConstantName(__CLASS__, $name)] = $value;
+        } else {
+            self::$data[$name] = $value;
+        }
     }
-  }
 }

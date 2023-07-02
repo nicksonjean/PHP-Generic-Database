@@ -8,9 +8,9 @@ class Attributes
 {
   /**
    * static attributes constants
-   * 
+   *
    */
-  public static $attributeList = [
+    public static $attributeList = [
     'AUTOCOMMIT',
     'ERRMODE',
     'CASE',
@@ -26,29 +26,29 @@ class Attributes
     'STRINGIFY_FETCHES',
     'EMULATE_PREPARES',
     'DEFAULT_FETCH_MODE'
-  ];
+    ];
 
   /**
    * Define all PDO attibute of the conection a ready exist
-   * 
+   *
    * @return void
    */
-  public static function define(): void
-  {
-    set_error_handler(
-      function ($severity, $message, $file, $line) {
-        throw new \ErrorException($message, $severity, $severity, $file, $line);
-      }
-    );
+    public static function define(): void
+    {
+        set_error_handler(
+            function ($severity, $message, $file, $line) {
+                throw new \ErrorException($message, $severity, $severity, $file, $line);
+            }
+        );
 
-    $result = [];
-    foreach (self::$attributeList as $value) {
-      try {
-        $result[$value] = PDOEngine::getInstance()?->getAttribute(constant("\PDO::ATTR_$value"));
-      } catch (\PDOException | \Exception $e) {
-      }
+        $result = [];
+        foreach (self::$attributeList as $value) {
+            try {
+                $result[$value] = PDOEngine::getInstance()?->getAttribute(constant("\PDO::ATTR_$value"));
+            } catch (\PDOException | \Exception $e) {
+            }
+        }
+        restore_error_handler();
+        PDOEngine::getInstance()?->setAttributes((array) $result);
     }
-    restore_error_handler();
-    PDOEngine::getInstance()?->setAttributes((array) $result);
-  }
 }

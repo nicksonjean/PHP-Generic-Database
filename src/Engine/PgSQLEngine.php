@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace GenericDatabase\Engine;
 
 use
-  GenericDatabase\iConnection,
+  GenericDatabase\InterfaceConnection,
+
   GenericDatabase\Traits\Errors,
   GenericDatabase\Traits\Caller,
   GenericDatabase\Traits\Cleaner,
@@ -18,293 +19,297 @@ use
   GenericDatabase\Engine\PgSQL\Dump,
   GenericDatabase\Engine\PgSQL\Transaction;
 
-class PgSQLEngine implements iConnection
+class PgSQLEngine implements InterfaceConnection
 {
-  use Errors, Caller, Cleaner, Singleton;
+    use Errors;
+    use Caller;
+    use Cleaner;
+    use Singleton;
 
   /**
    *  Instance of the connection with database
    */
-  private $connection;
+    private $connection;
 
   /**
    * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
-   * 
+   *
    * @param string $method The method name to be called
    * @param array $arguments The arguments of the method
    * @return PgSQLEngine
    */
-  private static function call(string $method, array $arguments): PgSQLEngine
-  {
-    return Arguments::call($method, $arguments);
-  }
+    private static function call(string $method, array $arguments): PgSQLEngine
+    {
+        return Arguments::call($method, $arguments);
+    }
 
   /**
    * This method is responsible for prepare the connection options before connect.
-   * 
+   *
    * @return PgSQLEngine
    */
-  private function preConnect(): PgSQLEngine
-  {
-    Options::setOptions($this->getOptions());
-    $options = [];
-    $options = Options::getOptions();
-    $this->setOptions($options);
-    return $this;
-  }
+    private function preConnect(): PgSQLEngine
+    {
+        Options::setOptions($this->getOptions());
+        $options = [];
+        $options = Options::getOptions();
+        $this->setOptions($options);
+        return $this;
+    }
 
   /**
    * This method is responsible for update in date late binding the connection.
-   * 
+   *
    * @return PgSQLEngine
    */
-  private function postConnect(): PgSQLEngine
-  {
-    Options::define();
-    Attributes::define();
-    return $this;
-  }
+    private function postConnect(): PgSQLEngine
+    {
+        Options::define();
+        Attributes::define();
+        return $this;
+    }
 
   /**
    * This method is responsible for creating a new instance of the PgSQLEngine connection.
-   * 
+   *
    * @param string $dsn The Data source name of the connection
-   * @return PgSQLEngine 
+   * @return PgSQLEngine
    */
-  private function realConnect(string $dsn): PgSQLEngine
-  {
-    $this->setConnection((string) !Options::getOptions(PgSQL::ATTR_PERSISTENT) ? pg_connect($dsn, Attributes::getFlags()) : pg_pconnect($dsn, Attributes::getFlags()));
-    return $this;
-  }
+    private function realConnect(string $dsn): PgSQLEngine
+    {
+        $this->setConnection((string) !Options::getOptions(PgSQL::ATTR_PERSISTENT) ? pg_connect($dsn, Attributes::getFlags()) : pg_pconnect($dsn, Attributes::getFlags()));
+        return $this;
+    }
 
   /**
    * This method is used to establish a database connection and set the connection instance
-   * 
+   *
    * @return PgSQLEngine
    */
-  public function connect(): PgSQLEngine
-  {
-    try {
-      $this
-        ->preConnect()
-        ->setInstance($this)
-        ->realConnect($this->parseDsn())
-        ->postConnect()
-        ->setConnected(true);
-      return $this;
-    } catch (\Exception $error) {
-      $this->setConnected(false);
-      Errors::throw($error);
+    public function connect(): PgSQLEngine
+    {
+        try {
+            $this
+            ->preConnect()
+            ->setInstance($this)
+            ->realConnect($this->parseDsn())
+            ->postConnect()
+            ->setConnected(true);
+            return $this;
+        } catch (\Exception $error) {
+            $this->setConnected(false);
+            Errors::throw($error);
+        }
     }
-  }
 
   /**
    * This method is responsible for parsing the DSN from DSN class.
-   * 
+   *
    * @return string|\Exception
    */
-  private function parseDsn(): string|\Exception
-  {
-    return DSN::parseDsn();
-  }
+    private function parseDsn(): string|\Exception
+    {
+        return DSN::parseDsn();
+    }
 
   /**
    * This method is used to get the database connection instance
-   * 
+   *
    * @return mixed
    */
-  public function getConnection(): mixed
-  {
-    return $this->connection;
-  }
+    public function getConnection(): mixed
+    {
+        return $this->connection;
+    }
 
   /**
    * This method is used to assign the database connection instance
-   * 
+   *
    * @param mixed $connection Sets a intance of the connection with the database
    * @return mixed
    */
-  public function setConnection(mixed $connection): mixed
-  {
-    $this->connection = $connection;
-    return $this->connection;
-  }
+    public function setConnection(mixed $connection): mixed
+    {
+        $this->connection = $connection;
+        return $this->connection;
+    }
 
   /**
    * Import SQL dump from file - extremely fast.
-   * 
+   *
    * @param string $file The file dumped to be imported
    * @param string $delimiter = ';' The delimiter of the dump
-   * @param array<callable(int, ?float): void> $onProgress = null
+   * @param ?callable $onProgress = null
    * @return int
    */
-  public function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
-  {
-    return Dump::loadFromFile($file, $delimiter, $onProgress);
-  }
+    public function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
+    {
+        return Dump::loadFromFile($file, $delimiter, $onProgress);
+    }
 
   /**
    * This function creates a new transaction, in order to be able to commit or rollback changes made to the database.
-   * 
+   *
    * @return bool
    */
-  public function beginTransaction(): bool
-  {
-    return Transaction::beginTransaction();
-  }
+    public function beginTransaction(): bool
+    {
+        return Transaction::beginTransaction();
+    }
 
   /**
    * This function commits any changes made to the database during this transaction.
-   * 
+   *
    * @return bool
    */
-  public function commit(): bool
-  {
-    return Transaction::commit();
-  }
+    public function commit(): bool
+    {
+        return Transaction::commit();
+    }
 
   /**
    * This function rolls back any changes made to the database during this transaction and restores the data to its original state.
-   * 
+   *
    * @return bool
    */
-  public function rollback(): bool
-  {
-    return Transaction::rollback();
-  }
+    public function rollback(): bool
+    {
+        return Transaction::rollback();
+    }
 
   /**
    * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
-   * 
+   *
    * @return bool
    */
-  public function inTransaction(): bool
-  {
-    return Transaction::inTransaction();
-  }
+    public function inTransaction(): bool
+    {
+        return Transaction::inTransaction();
+    }
 
   /**
    * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
-   * 
+   *
    * @param ?string $name = null Resource name, table or view
    * @return string|int|false
    */
-  public function lastInsertId(?string $name = null): string|int|false
-  {
-    $autoKey = $this->query(vsprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE column_default LIKE 'nextval%%' AND table_name = '%s';", [$name]));
-    $autoKeyRes = pg_fetch_assoc($autoKey);
-    if (isset($autoKeyRes['column_name'])) {
-      $maxIndex = $this->query(vsprintf("SELECT pg_catalog.setval(pg_get_serial_sequence('%s', '%s'), COALESCE(MAX(%s))) AS value FROM %s;", [$name, $autoKeyRes['column_name'], $autoKeyRes['column_name'], $name]));
-      $maxIndexRes = pg_fetch_assoc($maxIndex);
-      return $maxIndexRes['value'];
-    } else {
-      return 0;
+    public function lastInsertId(?string $name = null): string|int|false
+    {
+        $autoKey = $this->query(vsprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE column_default LIKE 'nextval%%' AND table_name = '%s';", [$name]));
+        $autoKeyRes = pg_fetch_assoc($autoKey);
+        if (isset($autoKeyRes['column_name'])) {
+            $maxIndex = $this->query(vsprintf("SELECT pg_catalog.setval(pg_get_serial_sequence('%s', '%s'), COALESCE(MAX(%s))) AS value FROM %s;", [$name, $autoKeyRes['column_name'], $autoKeyRes['column_name'], $name]));
+            $maxIndexRes = pg_fetch_assoc($maxIndex);
+            return $maxIndexRes['value'];
+        } else {
+            return 0;
+        }
     }
-  }
 
   /**
    * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
-   * 
+   *
    * @param mixed $params Content to be quoted
    * @return mixed
    */
-  public function quote(mixed ...$params): mixed
-  {
-    $string = $params[0];
-    $quote = $params[1];
-    if (is_array($string))
-      return array_map([get_called_class(), 'quote'], $string, array_fill(0, count($string), $quote));
-    elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", $string))
-      return $string;
+    public function quote(mixed ...$params): mixed
+    {
+        $string = $params[0];
+        $quote = $params[1];
+        if (is_array($string)) {
+            return array_map([get_called_class(), 'quote'], $string, array_fill(0, count($string), $quote));
+        } elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", $string)) {
+            return $string;
+        }
 
-    $quoted = function ($string, $quote) {
-      $val = pg_escape_string($this->getInstance()->getConnection(), $string);
-      return ($quote) ? "'$val'" : $val;
-    };
-    return $quoted($string, $quote);
-  }
+        $quoted = function ($string, $quote) {
+            $val = pg_escape_string($this->getInstance()->getConnection(), $string);
+            return ($quote) ? "'$val'" : $val;
+        };
+        return $quoted($string, $quote);
+    }
 
 
   /**
    * This function prepares an SQL statement for execution and returns a statement object.
-   * 
+   *
    * @param mixed $params Statement to be prepared
    * @return mixed
    */
-  public function prepare(mixed ...$params): mixed
-  {
-    $stmtname = $params[0];
-    $query = $params[1];
-    return pg_prepare($this->getInstance()->getConnection(), $stmtname, $query);
-  }
+    public function prepare(mixed ...$params): mixed
+    {
+        $stmtname = $params[0];
+        $query = $params[1];
+        return pg_prepare($this->getInstance()->getConnection(), $stmtname, $query);
+    }
 
   /**
    * This function executes an SQL statement and returns the result set as a statement object.
-   * 
+   *
    * @param mixed $params Statement to be queried
    * @return mixed
    */
-  public function query(mixed ...$params): mixed
-  {
-    $query = $params[0];
-    return pg_query($this->getInstance()->getConnection(), $query);
-  }
+    public function query(mixed ...$params): mixed
+    {
+        $query = $params[0];
+        return pg_query($this->getInstance()->getConnection(), $query);
+    }
 
   /**
    * This function runs an SQL statement and returns the number of affected rows.
-   * 
+   *
    * @param mixed $params Statement to be executed
    * @return mixed
    */
-  public function exec(mixed ...$params): mixed
-  {
-    $stmtname = $params[0];
-    $param = $params[1];
-    return pg_execute($this->getInstance()->getConnection(), $stmtname, $param);
-  }
+    public function exec(mixed ...$params): mixed
+    {
+        $stmtname = $params[0];
+        $param = $params[1];
+        return pg_execute($this->getInstance()->getConnection(), $stmtname, $param);
+    }
 
   /**
    * This function retrieves an attribute from the database.
-   * 
-   * @param mixed $name The attribute name 
+   *
+   * @param mixed $name The attribute name
    * @return mixed
    */
-  public function getAttribute(mixed $name): mixed
-  {
-    return PgSQL::getAttribute($name);
-  }
+    public function getAttribute(mixed $name): mixed
+    {
+        return PgSQL::getAttribute($name);
+    }
 
   /**
    * This function returns an array containing error information about the last operation performed by the database.
-   * 
+   *
    * @param mixed $name The attribute name
-   * @param mixed $value The attribute value 
+   * @param mixed $value The attribute value
    * @return mixed
    */
-  public function setAttribute(mixed $name, mixed $value): mixed
-  {
-    return PgSQL::setAttribute($name, $value);
-  }
+    public function setAttribute(mixed $name, mixed $value): mixed
+    {
+        return PgSQL::setAttribute($name, $value);
+    }
 
   /**
    * This function returns an SQLSTATE code for the last operation executed by the database.
-   * 
+   *
    * @param ?int $inst = null Resource name, table or view
    * @return mixed
    */
-  public function errorCode(?int $inst = null): mixed
-  {
-    return pg_last_error($this->getInstance()->getConnection());
-  }
+    public function errorCode(?int $inst = null): mixed
+    {
+        return pg_last_error($this->getInstance()->getConnection());
+    }
 
   /**
    * This function returns an array containing error information about the last operation performed by the database.
-   * 
+   *
    * @param ?int $inst = null Resource name, table or view
    * @return mixed
    */
-  public function errorInfo(?int $inst = null): mixed
-  {
-    return pg_last_error($this->getInstance()->getConnection());
-  }
+    public function errorInfo(?int $inst = null): mixed
+    {
+        return pg_last_error($this->getInstance()->getConnection());
+    }
 }

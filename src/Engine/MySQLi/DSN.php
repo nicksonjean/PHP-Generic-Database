@@ -6,28 +6,28 @@ use GenericDatabase\Engine\MySQLiEngine;
 
 class DSN
 {
-  public static function parseDsn(): string|\Exception
-  {
-    if (!extension_loaded('mysqli')) {
-      $message = sprintf(
-        "Invalid or not loaded '%s' extension in '%s' settings",
-        ['mysqli', 'PHP.ini']
-      );
-      throw new \Exception($message);
+    public static function parseDsn(): string|\Exception
+    {
+        if (!extension_loaded('mysqli')) {
+            $message = sprintf(
+                "Invalid or not loaded '%s' extension in '%s' settings",
+                ['mysqli', 'PHP.ini']
+            );
+            throw new \Exception($message);
+        }
+
+        $result = null;
+        $result = sprintf(
+            "mysql://%s:%s@%s:%s/%s?charset=%s",
+            MySQLiEngine::getInstance()->getUser(),
+            MySQLiEngine::getInstance()->getPassword(),
+            MySQLiEngine::getInstance()->getHost(),
+            MySQLiEngine::getInstance()->getPort(),
+            MySQLiEngine::getInstance()->getDatabase(),
+            MySQLiEngine::getInstance()->getCharset()
+        );
+
+        MySQLiEngine::getInstance()->setDsn((string) $result);
+        return $result;
     }
-
-    $result = null;
-    $result = sprintf(
-      "mysql://%s:%s@%s:%s/%s?charset=%s",
-      MySQLiEngine::getInstance()->getUser(),
-      MySQLiEngine::getInstance()->getPassword(),
-      MySQLiEngine::getInstance()->getHost(),
-      MySQLiEngine::getInstance()->getPort(),
-      MySQLiEngine::getInstance()->getDatabase(),
-      MySQLiEngine::getInstance()->getCharset()
-    );
-
-    MySQLiEngine::getInstance()->setDsn((string) $result);
-    return $result;
-  }
 }
