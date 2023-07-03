@@ -11,7 +11,8 @@ class DSN
         if (!extension_loaded('mysqli')) {
             $message = sprintf(
                 "Invalid or not loaded '%s' extension in '%s' settings",
-                ['mysqli', 'PHP.ini']
+                'mysqli',
+                'PHP.ini'
             );
             throw new \Exception($message);
         }

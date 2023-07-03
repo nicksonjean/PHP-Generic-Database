@@ -20,6 +20,9 @@
             "": "tests/"
         }
     },  
+    "require": {
+        "vlucas/phpdotenv": "^5.5@dev"
+    },    
     "require-dev": {
         "php": ">=8.1",
         "composer/semver": "^3.3",
@@ -45,14 +48,8 @@
         ],
         "lint:analyse": "@run:lint:analyse",
         "lint:debug": "@run:lint:debug",
-        "lint:check": [
-            "@run:lint:setup",
-            "@run:lint:check"
-        ],
-        "lint:fix": [
-            "@run:lint:setup",
-            "@run:lint:fix"
-        ],
+        "lint:check": "@run:lint:check",
+        "lint:fix": "@run:lint:fix",
         "test": "@run:test",
         "test:coverage": [
             "@clear:coverage",
@@ -84,6 +81,7 @@
         "run:coverage": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/",
         "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
         "run:copy": "php scripts/copy.php --source=./scripts/pre-commit --dest=./.git/hooks/pre-commit",
+        "run:env": "php -r \"@copy('.env.example', '.env');\"",
         "clear:docs": "php scripts/eraser.php --dest=./docs/",
         "clear:cache": "php scripts/eraser.php --dest=./cache/",
         "clear:coverage": "php scripts/eraser.php --dest=./coverage/",
@@ -92,7 +90,8 @@
         "clear:lock": "php -r \"@unlink('composer.lock');\"",
         "post-update-cmd": [
             "@run:lint:setup",
+            "@run:env",
             "@run:copy"
         ]
     }
-  }
+}

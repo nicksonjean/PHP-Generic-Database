@@ -3,9 +3,9 @@
 namespace GenericDatabase\Engine\SQLite;
 
 use
-  GenericDatabase\Traits\Path,
+    GenericDatabase\Traits\Path,
 
-  GenericDatabase\Engine\SQLiteEngine;
+    GenericDatabase\Engine\SQLiteEngine;
 
 class DSN
 {
@@ -14,7 +14,8 @@ class DSN
         if (!extension_loaded('sqlite3')) {
             $message = sprintf(
                 "Invalid or not loaded '%s' extension in '%s' settings",
-                ['sqlite3', 'PHP.ini']
+                'sqlite3',
+                'PHP.ini'
             );
             throw new \Exception($message);
         }

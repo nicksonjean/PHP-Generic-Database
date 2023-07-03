@@ -2,28 +2,30 @@
 
 use GenericDatabase\Engine\PDOEngine;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+define("PATH_ROOT", dirname(dirname(__DIR__)));
 
-$mysql = PDOEngine::new('../../assets/XML/pdo_mysql.xml')->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
+
+$mysql = PDOEngine::new(PATH_ROOT . '/assets/XML/pdo_mysql.xml')->connect();
 
 var_dump($mysql);
 
-$pgsql = PDOEngine::new('../../assets/XML/pdo_pgsql.xml')->connect();
+$pgsql = PDOEngine::new(PATH_ROOT . '/assets/XML/pdo_pgsql.xml')->connect();
 
 var_dump($pgsql);
 
-$sqlsrv = PDOEngine::new('../../assets/XML/pdo_sqlsrv.xml')->connect();
+$sqlsrv = PDOEngine::new(PATH_ROOT . '/assets/XML/pdo_sqlsrv.xml')->connect();
 
 var_dump($sqlsrv);
 
-$oci = PDOEngine::new('../../assets/XML/pdo_oci.xml')->connect();
+$oci = PDOEngine::new(PATH_ROOT . '/assets/XML/pdo_oci.xml')->connect();
 
 var_dump($oci);
 
-$firebird = PDOEngine::new('../../assets/XML/pdo_firebird.xml')->connect();
+$firebird = PDOEngine::new(PATH_ROOT . '/assets/XML/pdo_firebird.xml')->connect();
 
 var_dump($firebird);
 
-$sqlite = PDOEngine::new('../../assets/XML/pdo_sqlite.xml')->connect();
+$sqlite = PDOEngine::new(PATH_ROOT . '/assets/XML/pdo_sqlite.xml')->connect();
 
 var_dump($sqlite);

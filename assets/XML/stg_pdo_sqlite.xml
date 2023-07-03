@@ -2,7 +2,7 @@
 <root>
   <engine>pdo</engine>
   <driver>sqlite</driver>
-  <database>../assets/DB.SQLITE</database>
+  <database>../../assets/DB.SQLITE</database>
   <charset>utf8</charset>
   <options>
 		<option name="PDO::ATTR_PERSISTENT">true</option>

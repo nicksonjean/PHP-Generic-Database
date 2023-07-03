@@ -11,7 +11,8 @@ class DSN
         if (!extension_loaded('oci8')) {
             $message = sprintf(
                 "Invalid or not loaded '%s' extension in '%s' settings",
-                ['interbase', 'PHP.ini']
+                'interbase',
+                'PHP.ini'
             );
             throw new \Exception($message);
         }

@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace GenericDatabase;
 
 use
-  GenericDatabase\InterfaceConnection,
+    GenericDatabase\InterfaceConnection,
 
-  GenericDatabase\Engine\FBirdEngine,
-  GenericDatabase\Engine\MySQLiEngine,
-  GenericDatabase\Engine\OCIEngine,
-  GenericDatabase\Engine\PgSQLEngine,
-  GenericDatabase\Engine\SQLSrvEngine,
-  GenericDatabase\Engine\SQLiteEngine,
-  GenericDatabase\Engine\PDOEngine,
-  GenericDatabase\Traits\Arrays,
-  GenericDatabase\Traits\Errors,
-  GenericDatabase\Traits\Singleton,
-  GenericDatabase\Traits\Reflections,
-  GenericDatabase\Traits\JSON,
-  GenericDatabase\Traits\INI,
-  GenericDatabase\Traits\YAML,
-  GenericDatabase\Traits\XML;
+    GenericDatabase\Engine\FBirdEngine,
+    GenericDatabase\Engine\MySQLiEngine,
+    GenericDatabase\Engine\OCIEngine,
+    GenericDatabase\Engine\PgSQLEngine,
+    GenericDatabase\Engine\SQLSrvEngine,
+    GenericDatabase\Engine\SQLiteEngine,
+    GenericDatabase\Engine\PDOEngine,
+    GenericDatabase\Traits\Arrays,
+    GenericDatabase\Traits\Errors,
+    GenericDatabase\Traits\Singleton,
+    GenericDatabase\Traits\Reflections,
+    GenericDatabase\Traits\JSON,
+    GenericDatabase\Traits\INI,
+    GenericDatabase\Traits\YAML,
+    GenericDatabase\Traits\XML;
 
 class Connection
 {
@@ -30,53 +30,53 @@ class Connection
     use Singleton;
     use Reflections;
 
-  /**
-   * Array property for use in magic setter and getter in order
-   */
+    /**
+     * Array property for use in magic setter and getter in order
+     */
     private static $engineList = [
-    'PDO',
-    'MySQLi',
-    'PgSQL',
-    'SQLSrv',
-    'OCI',
-    'FBird',
-    'SQLite'
+        'PDO',
+        'MySQLi',
+        'PgSQL',
+        'SQLSrv',
+        'OCI',
+        'FBird',
+        'SQLite'
     ];
 
-  /**
-   * Property of the type object who define the strategy
-   */
+    /**
+     * Property of the type object who define the strategy
+     */
     private $strategy;
 
-  /**
-   * Defines the strategy instance
-   *
-   * @param InterfaceConnection $strategy
-   * @return InterfaceConnection
-   */
+    /**
+     * Defines the strategy instance
+     *
+     * @param InterfaceConnection $strategy
+     * @return InterfaceConnection
+     */
     public function setStrategy(InterfaceConnection $strategy): Connection
     {
         $this->strategy = $strategy;
         return $this;
     }
 
-  /**
-   * Get the strategy instance
-   *
-   * @return InterfaceConnection
-   */
+    /**
+     * Get the strategy instance
+     *
+     * @return InterfaceConnection
+     */
     public function getStrategy(): InterfaceConnection
     {
         return $this->strategy;
     }
 
-  /**
-   * Triggered when invoking inaccessible methods in an object context
-   *
-   * @param string $name Name of the method
-   * @param array $arguments Array of arguments
-   * @return mixed
-   */
+    /**
+     * Triggered when invoking inaccessible methods in an object context
+     *
+     * @param string $name Name of the method
+     * @param array $arguments Array of arguments
+     * @return mixed
+     */
     public function __call(string $name, array $arguments): mixed
     {
         $method = substr($name, 0, 3);
@@ -93,13 +93,13 @@ class Connection
         return null;
     }
 
-  /**
-   * Triggered when invoking inaccessible methods in a static context
-   *
-   * @param string $name Name of the method
-   * @param array $arguments Array of arguments
-   * @return mixed
-   */
+    /**
+     * Triggered when invoking inaccessible methods in a static context
+     *
+     * @param string $name Name of the method
+     * @param array $arguments Array of arguments
+     * @return mixed
+     */
     public static function __callStatic(string $name, array $arguments): mixed
     {
         switch ($name) {
@@ -117,8 +117,7 @@ class Connection
                 } else {
                     self::callWithByStatic($arguments);
                 }
-                return self::getInstance();
-            break;
+                break;
             default:
                 self::call(self::getInstance(), $name, $arguments);
                 break;
@@ -126,23 +125,23 @@ class Connection
         return self::getInstance();
     }
 
-  /**
-   * This method is used to establish a database connection
-   *
-   * @return Connection
-   */
+    /**
+     * This method is used to establish a database connection
+     *
+     * @return Connection
+     */
     public function connect(): Connection
     {
         $this->strategy->connect();
         return $this;
     }
 
-  /**
-   * Factory that replaces the __constructor and defines the Strategy through the engine parameter
-   *
-   * @param mixed $params
-   * @return void
-   */
+    /**
+     * Factory that replaces the __constructor and defines the Strategy through the engine parameter
+     *
+     * @param mixed $params
+     * @return void
+     */
     private function initFactory(mixed $params): void
     {
         switch ($params) {
@@ -171,23 +170,23 @@ class Connection
         $this->setStrategy($this->strategy);
     }
 
-  /**
-   * Determines arguments type by calling to default type
-   *
-   * @param mixed $arguments
-   * @return void
-   */
+    /**
+     * Determines arguments type by calling to default type
+     *
+     * @param mixed $arguments
+     * @return void
+     */
     private static function call($instance, $name, $arguments): void
     {
         call_user_func_array([$instance, $name], $arguments);
     }
 
-  /**
-   * This method is used when all parameters are used
-   *
-   * @param array $arguments
-   * @return void
-   */
+    /**
+     * This method is used when all parameters are used
+     *
+     * @param array $arguments
+     * @return void
+     */
     private static function callWithByStatic($arguments): void
     {
         $argumentList = [];
@@ -205,13 +204,13 @@ class Connection
         }
     }
 
-  /**
-   * Determines arguments type by calling to format type
-   *
-   * @param string $format Accept formats json, xml, ini and yaml
-   * @param mixed $arguments
-   * @return void
-   */
+    /**
+     * Determines arguments type by calling to format type
+     *
+     * @param string $format Accept formats json, xml, ini and yaml
+     * @param mixed $arguments
+     * @return void
+     */
     private static function callArgumentsByFormat($format, $arguments): void
     {
         $data = [];

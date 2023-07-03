@@ -3,7 +3,7 @@
 	<engine>fbird</engine>
 	<host>localhost</host>
 	<port>3050</port>
-	<database>../assets/DB.FDB</database>
+	<database>../../assets/DB.FDB</database>
 	<user>sysdba</user>
 	<password>masterkey</password>
 	<charset>utf8</charset>

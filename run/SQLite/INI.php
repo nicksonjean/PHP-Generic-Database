@@ -2,8 +2,10 @@
 
 use GenericDatabase\Engine\SQLiteEngine;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+define("PATH_ROOT", dirname(dirname(__DIR__)));
 
-$sqlite = SQLiteEngine::new('../../assets/INI/sqlite.ini')->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
+
+$sqlite = SQLiteEngine::new(PATH_ROOT . '/assets/INI/sqlite.ini')->connect();
 
 var_dump($sqlite);

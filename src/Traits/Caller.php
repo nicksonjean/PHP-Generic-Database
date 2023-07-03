@@ -3,10 +3,10 @@
 namespace GenericDatabase\Traits;
 
 use
-  GenericDatabase\Traits\Setter,
+    GenericDatabase\Traits\Setter,
 
-  GenericDatabase\Traits\Getter,
-  GenericDatabase\Traits\Reflections;
+    GenericDatabase\Traits\Getter,
+    GenericDatabase\Traits\Reflections;
 
 trait Caller
 {
@@ -14,13 +14,13 @@ trait Caller
     use Getter;
     use Reflections;
 
-  /**
-   * Triggered when invoking inaccessible methods in an object context
-   *
-   * @param string $name Name of the method
-   * @param array $arguments Array of arguments
-   * @return mixed
-   */
+    /**
+     * Triggered when invoking inaccessible methods in an object context
+     *
+     * @param string $name Name of the method
+     * @param array $arguments Array of arguments
+     * @return mixed
+     */
     public function __call(string $name, array $arguments): mixed
     {
         $method = substr($name, 0, 3);
@@ -31,15 +31,16 @@ trait Caller
         } elseif ($method == 'get') {
             return $this->__get($field);
         }
+        return null;
     }
 
-  /**
-   * Triggered when invoking inaccessible methods in a static context
-   *
-   * @param string $name Name of the static method
-   * @param array $arguments Array of arguments
-   * @return mixed
-   */
+    /**
+     * Triggered when invoking inaccessible methods in a static context
+     *
+     * @param string $name Name of the static method
+     * @param array $arguments Array of arguments
+     * @return mixed
+     */
     public static function __callStatic(string $name, array $arguments): mixed
     {
         if (Reflections::isSingletonMethodExits(__CLASS__)) {
@@ -47,5 +48,6 @@ trait Caller
             $instance::call($name, $arguments);
             return $instance;
         }
+        return null;
     }
 }

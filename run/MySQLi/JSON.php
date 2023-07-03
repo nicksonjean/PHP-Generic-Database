@@ -2,8 +2,10 @@
 
 use GenericDatabase\Engine\MySQLiEngine;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+define("PATH_ROOT", dirname(dirname(__DIR__)));
 
-$mysql = MySQLiEngine::new('../../assets/JSON/mysqli.json')->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
+
+$mysql = MySQLiEngine::new(PATH_ROOT . '/assets/JSON/mysqli.json')->connect();
 
 var_dump($mysql);

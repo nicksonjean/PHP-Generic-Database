@@ -13,8 +13,8 @@ class Transaction
     public static function beginTransaction()
     {
         if (!self::$transactionCounter++) {
-            return SQLSrvEngine::getInstance()?->getConnection()?->begin_transaction();
             self::$inTransaction = true;
+            return SQLSrvEngine::getInstance()?->getConnection()?->begin_transaction();
         }
         SQLSrvEngine::getInstance()?->getConnection()?->exec('SAVEPOINT trans' . (self::$transactionCounter));
         return self::$transactionCounter >= 0;
@@ -23,10 +23,11 @@ class Transaction
     public static function commit()
     {
         if (!--self::$transactionCounter) {
-            return SQLSrvEngine::getInstance()?->getConnection()?->commit();
             self::$inTransaction = false;
+            return SQLSrvEngine::getInstance()?->getConnection()?->commit();
+        } else {
+            return self::$transactionCounter >= 0;
         }
-        return self::$transactionCounter >= 0;
     }
 
     public static function inTransaction()

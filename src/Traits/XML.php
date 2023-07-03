@@ -4,12 +4,12 @@ namespace GenericDatabase\Traits;
 
 trait XML
 {
-  /**
-   * Check if xml string is valid
-   *
-   * @param string $xml Argument to be tested
-   * @return bool
-   */
+    /**
+     * Check if xml string is valid
+     *
+     * @param string $xml Argument to be tested
+     * @return bool
+     */
     public static function isValidXML(string $xml): bool
     {
         set_error_handler(fn () => null, E_WARNING);
@@ -19,17 +19,17 @@ trait XML
             return false;
         } else {
             $xml2 = \XMLReader::open($xml);
-            return ($xml2->setParserProperty(\XMLReader::VALIDATE, true) ? true : false);
             restore_error_handler();
+            return ($xml2->setParserProperty(\XMLReader::VALIDATE, true) ? true : false);
         }
     }
 
-  /**
-   * Convert a data by type
-   *
-   * @param mixed $data Argument to be converted
-   * @return mixed
-   */
+    /**
+     * Convert a data by type
+     *
+     * @param mixed $data Argument to be converted
+     * @return mixed
+     */
     public static function convertData($data): mixed
     {
         $data = trim($data);
@@ -49,16 +49,16 @@ trait XML
         return $data;
     }
 
-  /**
-   * Decode a valid xml object
-   *
-   * @param \SimpleXMLElement $xml valid object SimpleXMLElement
-   * @param ?bool $attributes_key = true Optional argument to get attribute key
-   * @param ?bool $reduce = true  Optional argumento to make reduce
-   * @param ?array $always_array = array() Optional argument to always return a array
-   * @param ?array $value_keys = array() Optional argument to get array from values and keys
-   * @return string|array
-   */
+    /**
+     * Decode a valid xml object
+     *
+     * @param \SimpleXMLElement $xml valid object SimpleXMLElement
+     * @param ?bool $attributes_key = true Optional argument to get attribute key
+     * @param ?bool $reduce = true  Optional argumento to make reduce
+     * @param ?array $always_array = array() Optional argument to always return a array
+     * @param ?array $value_keys = array() Optional argument to get array from values and keys
+     * @return string|array
+     */
     public static function decodeXML(\SimpleXMLElement $xml, ?bool $attributes_key = true, ?bool $reduce = true, ?array $always_array = array(), ?array $value_keys = array()): string|array
     {
         $arr = array();
@@ -101,12 +101,12 @@ trait XML
         return $arr;
     }
 
-  /**
-   * Parse a valid xml string
-   *
-   * @param string $xml Argument to be parsed
-   * @return string|array
-   */
+    /**
+     * Parse a valid xml string
+     *
+     * @param string $xml Argument to be parsed
+     * @return string|array
+     */
     public static function parseXML(string $xml): string|array
     {
         libxml_use_internal_errors(true);

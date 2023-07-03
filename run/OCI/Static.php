@@ -1,16 +1,19 @@
 <?php
 
 use
-  GenericDatabase\Engine\OCIEngine,
-  GenericDatabase\Engine\OCI\OCI;
+    GenericDatabase\Engine\OCIEngine,
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+    GenericDatabase\Engine\OCI\OCI;
 
-$oci = OCIEngine::new('localhost', 1521, 'xe', 'hr', 'masterkey', 'utf8', [
-  OCI::ATTR_PERSISTENT => true,
-  OCI::ATTR_CONNECT_TIMEOUT => 28800,
+define("PATH_ROOT", dirname(dirname(__DIR__)));
+
+require_once PATH_ROOT . '/vendor/autoload.php';
+
+$load = Dotenv\Dotenv::createImmutable(PATH_ROOT)->load();
+
+$oci = OCIEngine::new($_ENV['OCI_HOST'], +$_ENV['OCI_PORT'], $_ENV['OCI_DATABASE'], $_ENV['OCI_USER'], $_ENV['OCI_PASSWORD'], 'utf8', [
+    OCI::ATTR_PERSISTENT => true,
+    OCI::ATTR_CONNECT_TIMEOUT => 28800,
 ], true)->connect();
-
-// $oci->loadFromFile('../../tests/test.sql');
 
 var_dump($oci);

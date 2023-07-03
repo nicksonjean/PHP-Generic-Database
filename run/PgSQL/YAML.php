@@ -2,8 +2,10 @@
 
 use GenericDatabase\Engine\PgSQLEngine;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+define("PATH_ROOT", dirname(dirname(__DIR__)));
 
-$pgsql = PgSQLEngine::new('../../assets/YAML/pgsql.yaml')->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
+
+$pgsql = PgSQLEngine::new(PATH_ROOT . '/assets/YAML/pgsql.yaml')->connect();
 
 var_dump($pgsql);

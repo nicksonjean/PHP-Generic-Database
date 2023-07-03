@@ -117,9 +117,9 @@ interface InterfaceConnection
    *
    * @param mixed $name The attribute name
    * @param mixed $value The attribute value
-   * @return mixed
+   * @return void
    */
-    public function setAttribute(mixed $name, mixed $value): mixed;
+    public function setAttribute(mixed $name, mixed $value): void;
 
   /**
    * This function returns an SQLSTATE code for the last operation executed by the database.

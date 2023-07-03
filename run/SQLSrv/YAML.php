@@ -2,8 +2,10 @@
 
 use GenericDatabase\Engine\SQLSrvEngine;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+define("PATH_ROOT", dirname(dirname(__DIR__)));
 
-$sqlsrv = SQLSrvEngine::new('../../assets/YAML/sqlsrv.yaml')->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
+
+$sqlsrv = SQLSrvEngine::new(PATH_ROOT . '/assets/YAML/sqlsrv.yaml')->connect();
 
 var_dump($sqlsrv);

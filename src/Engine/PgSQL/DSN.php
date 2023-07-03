@@ -11,7 +11,8 @@ class DSN
         if (!extension_loaded('pgsql')) {
             $message = sprintf(
                 "Invalid or not loaded '%s' extension in '%s' settings",
-                ['pgsql', 'PHP.ini']
+                'pgsql',
+                'PHP.ini'
             );
             throw new \Exception($message);
         }

@@ -2,11 +2,16 @@
 
 use
   GenericDatabase\Engine\SQLiteEngine,
+
   GenericDatabase\Engine\SQLite\SQLite;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+define("PATH_ROOT", dirname(dirname(__DIR__)));
 
-$sqlite = SQLiteEngine::new('../../assets/DB.SQLITE', 'utf8', [
+require_once PATH_ROOT . '/vendor/autoload.php';
+
+$load = Dotenv\Dotenv::createImmutable(PATH_ROOT)->load();
+
+$sqlite = SQLiteEngine::new($_ENV['SQLITE_DATABASE'], 'utf8', [
   SQLite::ATTR_OPEN_READONLY => false,
   SQLite::ATTR_OPEN_READWRITE => true,
   SQLite::ATTR_OPEN_CREATE => true,
@@ -14,7 +19,5 @@ $sqlite = SQLiteEngine::new('../../assets/DB.SQLITE', 'utf8', [
   SQLite::ATTR_PERSISTENT => true,
   SQLite::ATTR_AUTOCOMMIT => true
 ], true)->connect();
-
-// $sqlite->loadFromFile('../../tests/test.sql');
 
 var_dump($sqlite);

@@ -1,5 +1,5 @@
 engine: sqlite
-database: ../assets/DB.SQLITE
+database: ../../assets/DB.SQLITE
 charset: utf8
 options:
   - 'SQLite::ATTR_OPEN_READONLY': false

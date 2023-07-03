@@ -11,7 +11,8 @@ class DSN
         if (!extension_loaded('sqlsrv')) {
             $message = sprintf(
                 "Invalid or not loaded '%s' extension in '%s' settings",
-                ['sqlsrv', 'PHP.ini']
+                'sqlsrv',
+                'PHP.ini'
             );
             throw new \Exception($message);
         }

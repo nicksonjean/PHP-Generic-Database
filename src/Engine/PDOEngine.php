@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace GenericDatabase\Engine;
 
 use
-  GenericDatabase\InterfaceConnection,
+    GenericDatabase\InterfaceConnection,
 
-  GenericDatabase\Traits\Errors,
-  GenericDatabase\Traits\Caller,
-  GenericDatabase\Traits\Cleaner,
-  GenericDatabase\Traits\Singleton,
-  GenericDatabase\Engine\PDO\Arguments,
-  GenericDatabase\Engine\PDO\Options,
-  GenericDatabase\Engine\PDO\Attributes,
-  GenericDatabase\Engine\PDO\DSN,
-  GenericDatabase\Engine\PDO\Dump,
-  GenericDatabase\Engine\PDO\Transaction;
+    GenericDatabase\Traits\Errors,
+    GenericDatabase\Traits\Caller,
+    GenericDatabase\Traits\Cleaner,
+    GenericDatabase\Traits\Singleton,
+    GenericDatabase\Engine\PDO\Arguments,
+    GenericDatabase\Engine\PDO\Options,
+    GenericDatabase\Engine\PDO\Attributes,
+    GenericDatabase\Engine\PDO\DSN,
+    GenericDatabase\Engine\PDO\Dump,
+    GenericDatabase\Engine\PDO\Transaction;
 
 class PDOEngine implements InterfaceConnection
 {
@@ -25,28 +25,28 @@ class PDOEngine implements InterfaceConnection
     use Cleaner;
     use Singleton;
 
-  /**
-   *  Instance of the connection with database
-   */
+    /**
+     *  Instance of the connection with database
+     */
     private $connection;
 
-  /**
-   * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
-   *
-   * @param string $method The method name to be called
-   * @param array $arguments The arguments of the method
-   * @return PDOEngine
-   */
+    /**
+     * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
+     *
+     * @param string $method The method name to be called
+     * @param array $arguments The arguments of the method
+     * @return PDOEngine
+     */
     private static function call(string $method, array $arguments): PDOEngine
     {
         return Arguments::call($method, $arguments);
     }
 
-  /**
-   * This method is responsible for prepare the connection options before connect.
-   *
-   * @return PDOEngine
-   */
+    /**
+     * This method is responsible for prepare the connection options before connect.
+     *
+     * @return PDOEngine
+     */
     private function preConnect(): PDOEngine
     {
         Options::setOptions($this->getOptions());
@@ -56,11 +56,11 @@ class PDOEngine implements InterfaceConnection
         return $this;
     }
 
-  /**
-   * This method is responsible for update in date late binding the connection.
-   *
-   * @return PDOEngine
-   */
+    /**
+     * This method is responsible for update in date late binding the connection.
+     *
+     * @return PDOEngine
+     */
     private function postConnect(): PDOEngine
     {
         Options::define();
@@ -68,35 +68,35 @@ class PDOEngine implements InterfaceConnection
         return $this;
     }
 
-  /**
-   * This method is responsible for creating a new instance of the PDO connection.
-   *
-   * @param string $dsn The Data source name of the connection
-   * @param ?string|null $user The user of the database
-   * @param ?string|null $password The password of the database
-   * @param ?array|null $options The options of the database
-   * @return PDOEngine
-   */
+    /**
+     * This method is responsible for creating a new instance of the PDO connection.
+     *
+     * @param string $dsn The Data source name of the connection
+     * @param ?string|null $user The user of the database
+     * @param ?string|null $password The password of the database
+     * @param ?array|null $options The options of the database
+     * @return PDOEngine
+     */
     private function realConnect(string $dsn, ?string $user = null, ?string $password = null, ?array $options = null): PDOEngine
     {
         $this->setConnection(new \PDO($dsn, $user, $password, $options));
         return $this;
     }
 
-  /**
-   * This method is used to establish a database connection and set the connection instance
-   *
-   * @return PDOEngine
-   */
+    /**
+     * This method is used to establish a database connection and set the connection instance
+     *
+     * @return PDOEngine
+     */
     public function connect(): PDOEngine
     {
         try {
             $this
-            ->setInstance($this)
-            ->preConnect()
-            ->realConnect($this->parseDsn(), $this->getUser(), $this->getPassword(), $this->getOptions())
-            ->postConnect()
-            ->setConnected(true);
+                ->setInstance($this)
+                ->preConnect()
+                ->realConnect($this->parseDsn(), $this->getUser(), $this->getPassword(), $this->getOptions())
+                ->postConnect()
+                ->setConnected(true);
             return $this;
         } catch (\PDOException | \Exception $error) {
             $this->setConnected(false);
@@ -104,108 +104,108 @@ class PDOEngine implements InterfaceConnection
         }
     }
 
-  /**
-   * This method is responsible for parsing the DSN from DSN class.
-   *
-   * @return string|\Exception
-   */
+    /**
+     * This method is responsible for parsing the DSN from DSN class.
+     *
+     * @return string|\Exception
+     */
     private function parseDsn(): string|\Exception
     {
         return DSN::parseDsn();
     }
 
-  /**
-   * This method is used to get the database connection instance
-   *
-   * @return mixed
-   */
+    /**
+     * This method is used to get the database connection instance
+     *
+     * @return mixed
+     */
     public function getConnection(): mixed
     {
         return $this->connection;
     }
 
-  /**
-   * This method is used to assign the database connection instance
-   *
-   * @param mixed $connection Sets a intance of the connection with the database
-   * @return mixed
-   */
+    /**
+     * This method is used to assign the database connection instance
+     *
+     * @param mixed $connection Sets a intance of the connection with the database
+     * @return mixed
+     */
     public function setConnection(mixed $connection): mixed
     {
         $this->connection = $connection;
         return $this->connection;
     }
 
-  /**
-   * Import SQL dump from file - extremely fast.
-   *
-   * @param string $file The file dumped to be imported
-   * @param string $delimiter = ';' The delimiter of the dump
-   * @param ?callable $onProgress = null
-   * @return int
-   */
+    /**
+     * Import SQL dump from file - extremely fast.
+     *
+     * @param string $file The file dumped to be imported
+     * @param string $delimiter = ';' The delimiter of the dump
+     * @param ?callable $onProgress = null
+     * @return int
+     */
     public function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
     {
         return Dump::loadFromFile($file, $delimiter, $onProgress);
     }
 
-  /**
-   * This function creates a new transaction, in order to be able to commit or rollback changes made to the database.
-   *
-   * @return bool
-   */
+    /**
+     * This function creates a new transaction, in order to be able to commit or rollback changes made to the database.
+     *
+     * @return bool
+     */
     public function beginTransaction(): bool
     {
         return Transaction::beginTransaction();
     }
 
-  /**
-   * This function commits any changes made to the database during this transaction.
-   *
-   * @return bool
-   */
+    /**
+     * This function commits any changes made to the database during this transaction.
+     *
+     * @return bool
+     */
     public function commit(): bool
     {
         return Transaction::commit();
     }
 
-  /**
-   * This function rolls back any changes made to the database during this transaction and restores the data to its original state.
-   *
-   * @return bool
-   */
+    /**
+     * This function rolls back any changes made to the database during this transaction and restores the data to its original state.
+     *
+     * @return bool
+     */
     public function rollback(): bool
     {
         return Transaction::rollback();
     }
 
-  /**
-   * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
-   *
-   * @return bool
-   */
+    /**
+     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     *
+     * @return bool
+     */
     public function inTransaction(): bool
     {
         return Transaction::inTransaction();
     }
 
-  /**
-   * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
-   *
-   * @param ?string $name = null Resource name, table or view
-   * @return string|int|false
-   */
+    /**
+     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     *
+     * @param ?string $name = null Resource name, table or view
+     * @return string|int|false
+     */
     public function lastInsertId(?string $name = null): string|int|false
     {
         return $this->getInstance()->getConnection()->lastInsertId($name);
     }
 
-  /**
-   * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
-   *
-   * @param mixed $params Content to be quoted
-   * @return mixed
-   */
+    /**
+     * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
+     *
+     * @param mixed $params Content to be quoted
+     * @return mixed
+     */
     public function quote(mixed ...$params): mixed
     {
         $string = $params[0];
@@ -213,12 +213,12 @@ class PDOEngine implements InterfaceConnection
         return $this->getInstance()->getConnection()->quote($string, $type);
     }
 
-  /**
-   * This function prepares an SQL statement for execution and returns a statement object.
-   *
-   * @param mixed $params Statement to be prepared
-   * @return mixed
-   */
+    /**
+     * This function prepares an SQL statement for execution and returns a statement object.
+     *
+     * @param mixed $params Statement to be prepared
+     * @return mixed
+     */
     public function prepare(mixed ...$params): mixed
     {
         $query = $params[0];
@@ -226,12 +226,12 @@ class PDOEngine implements InterfaceConnection
         return $this->getInstance()->getConnection()->prepare($query, $options);
     }
 
-  /**
-   * This function executes an SQL statement and returns the result set as a statement object.
-   *
-   * @param mixed $params Statement to be queried
-   * @return mixed
-   */
+    /**
+     * This function executes an SQL statement and returns the result set as a statement object.
+     *
+     * @param mixed $params Statement to be queried
+     * @return mixed
+     */
     public function query(mixed ...$params): mixed
     {
         $query = $params[0];
@@ -239,58 +239,58 @@ class PDOEngine implements InterfaceConnection
         return $this->getInstance()->getConnection()->query($query, $fetchMode);
     }
 
-  /**
-   * This function runs an SQL statement and returns the number of affected rows.
-   *
-   * @param mixed $params Statement to be executed
-   * @return mixed
-   */
+    /**
+     * This function runs an SQL statement and returns the number of affected rows.
+     *
+     * @param mixed $params Statement to be executed
+     * @return mixed
+     */
     public function exec(mixed ...$params): mixed
     {
         $query = $params[0];
         return $this->getInstance()->getConnection()->exec($query);
     }
 
-  /**
-   * This function retrieves an attribute from the database.
-   *
-   * @param mixed $name The attribute name
-   * @return mixed
-   */
+    /**
+     * This function retrieves an attribute from the database.
+     *
+     * @param mixed $name The attribute name
+     * @return mixed
+     */
     public function getAttribute(mixed $name): mixed
     {
         return $this->getInstance()->getConnection()->getAttribute($name);
     }
 
-  /**
-   * This function sets an attribute on the database.
-   *
-   * @param mixed $name The attribute name
-   * @param mixed $value The attribute value
-   * @return mixed
-   */
-    public function setAttribute(mixed $name, mixed $value): mixed
+    /**
+     * This function sets an attribute on the database.
+     *
+     * @param mixed $name The attribute name
+     * @param mixed $value The attribute value
+     * @return mixed
+     */
+    public function setAttribute(mixed $name, mixed $value): void
     {
-        return $this->getInstance()->getConnection()->setAttribute($name, $value);
+        $this->getInstance()->getConnection()->setAttribute($name, $value);
     }
 
-  /**
-   * This function returns an SQLSTATE code for the last operation executed by the database.
-   *
-   * @param ?int $inst = null Resource name, table or view
-   * @return mixed
-   */
+    /**
+     * This function returns an SQLSTATE code for the last operation executed by the database.
+     *
+     * @param ?int $inst = null Resource name, table or view
+     * @return mixed
+     */
     public function errorCode(?int $inst = null): mixed
     {
         return $this->getInstance()->getConnection()->errorCode();
     }
 
-  /**
-   * This function returns an array containing error information about the last operation performed by the database.
-   *
-   * @param ?int $inst = null Resource name, table or view
-   * @return mixed
-   */
+    /**
+     * This function returns an array containing error information about the last operation performed by the database.
+     *
+     * @param ?int $inst = null Resource name, table or view
+     * @return mixed
+     */
     public function errorInfo(?int $inst = null): mixed
     {
         return $this->getInstance()->getConnection()->errorInfo();

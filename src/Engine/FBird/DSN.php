@@ -3,9 +3,9 @@
 namespace GenericDatabase\Engine\FBird;
 
 use
-  GenericDatabase\Traits\Path,
+    GenericDatabase\Traits\Path,
 
-  GenericDatabase\Engine\FBirdEngine;
+    GenericDatabase\Engine\FBirdEngine;
 
 class DSN
 {
@@ -14,7 +14,8 @@ class DSN
         if (!extension_loaded('interbase')) {
             $message = sprintf(
                 "Invalid or not loaded '%s' extension in '%s' settings",
-                ['interbase', 'PHP.ini']
+                'interbase',
+                'PHP.ini'
             );
             throw new \Exception($message);
         }

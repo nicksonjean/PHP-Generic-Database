@@ -2,8 +2,10 @@
 
 use GenericDatabase\Engine\OCIEngine;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+define("PATH_ROOT", dirname(dirname(__DIR__)));
 
-$oci = OCIEngine::new('../../assets/JSON/oci.json')->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
+
+$oci = OCIEngine::new(PATH_ROOT . '/assets/JSON/oci.json')->connect();
 
 var_dump($oci);

@@ -2,8 +2,10 @@
 
 use GenericDatabase\Engine\FBirdEngine;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+define("PATH_ROOT", dirname(dirname(__DIR__)));
 
-$fbird = FBirdEngine::new('../../assets/YAML/fbird.yaml')->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
+
+$fbird = FBirdEngine::new(PATH_ROOT . '/assets/YAML/fbird.yaml')->connect();
 
 var_dump($fbird);
