@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use
-    GenericDatabase\InterfaceConnection,
-
-    GenericDatabase\Traits\Errors,
-    GenericDatabase\Traits\Caller,
-    GenericDatabase\Traits\Cleaner,
-    GenericDatabase\Traits\Singleton,
-    GenericDatabase\Engine\MySQLi\Arguments,
-    GenericDatabase\Engine\MySQLi\Options,
-    GenericDatabase\Engine\MySQLi\Attributes,
-    GenericDatabase\Engine\MySQLi\DSN,
-    GenericDatabase\Engine\MySQLi\Dump,
-    GenericDatabase\Engine\MySQLi\Transaction;
+use GenericDatabase\InterfaceConnection;
+use GenericDatabase\Traits\Errors;
+use GenericDatabase\Traits\Caller;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
+use GenericDatabase\Engine\MySQLi\Arguments;
+use GenericDatabase\Engine\MySQLi\Options;
+use GenericDatabase\Engine\MySQLi\Attributes;
+use GenericDatabase\Engine\MySQLi\DSN;
+use GenericDatabase\Engine\MySQLi\Dump;
+use GenericDatabase\Engine\MySQLi\Transaction;
 
 class MySQLiEngine implements InterfaceConnection
 {

@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\OCI;
 
-use
-  GenericDatabase\Engine\OCIEngine,
-
-  GenericDatabase\Engine\OCI\Options;
+use GenericDatabase\Engine\OCIEngine;
+use GenericDatabase\Engine\OCI\Options;
 
 class Attributes
 {

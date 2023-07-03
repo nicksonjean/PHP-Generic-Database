@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\SQLSrv;
 
-use
-  GenericDatabase\Engine\SQLSrvEngine,
-
-  GenericDatabase\Engine\SQLSrv\Options;
+use GenericDatabase\Engine\SQLSrvEngine;
+use GenericDatabase\Engine\SQLSrv\Options;
 
 class Attributes
 {

@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\SQLite;
 
-use
-  GenericDatabase\Engine\SQLiteEngine,
-
-  GenericDatabase\Traits\Reflections;
+use GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Traits\Reflections;
 
 class Options
 {

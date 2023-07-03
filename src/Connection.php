@@ -4,24 +4,22 @@ declare(strict_types=1);
 
 namespace GenericDatabase;
 
-use
-    GenericDatabase\InterfaceConnection,
-
-    GenericDatabase\Engine\FBirdEngine,
-    GenericDatabase\Engine\MySQLiEngine,
-    GenericDatabase\Engine\OCIEngine,
-    GenericDatabase\Engine\PgSQLEngine,
-    GenericDatabase\Engine\SQLSrvEngine,
-    GenericDatabase\Engine\SQLiteEngine,
-    GenericDatabase\Engine\PDOEngine,
-    GenericDatabase\Traits\Arrays,
-    GenericDatabase\Traits\Errors,
-    GenericDatabase\Traits\Singleton,
-    GenericDatabase\Traits\Reflections,
-    GenericDatabase\Traits\JSON,
-    GenericDatabase\Traits\INI,
-    GenericDatabase\Traits\YAML,
-    GenericDatabase\Traits\XML;
+use GenericDatabase\InterfaceConnection;
+use GenericDatabase\Engine\FBirdEngine;
+use GenericDatabase\Engine\MySQLiEngine;
+use GenericDatabase\Engine\OCIEngine;
+use GenericDatabase\Engine\PgSQLEngine;
+use GenericDatabase\Engine\SQLSrvEngine;
+use GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Traits\Arrays;
+use GenericDatabase\Traits\Errors;
+use GenericDatabase\Traits\Singleton;
+use GenericDatabase\Traits\Reflections;
+use GenericDatabase\Traits\JSON;
+use GenericDatabase\Traits\INI;
+use GenericDatabase\Traits\YAML;
+use GenericDatabase\Traits\XML;
 
 class Connection
 {

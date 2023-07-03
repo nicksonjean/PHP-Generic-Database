@@ -2,34 +2,31 @@
 
 namespace GenericDatabase\Engine\SQLite;
 
-use
-  GenericDatabase\Traits\Arrays,
-
-  GenericDatabase\Traits\Types,
-  GenericDatabase\Traits\JSON,
-  GenericDatabase\Traits\INI,
-  GenericDatabase\Traits\YAML,
-  GenericDatabase\Traits\XML,
-  GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Traits\Types;
+use GenericDatabase\Traits\JSON;
+use GenericDatabase\Traits\INI;
+use GenericDatabase\Traits\YAML;
+use GenericDatabase\Traits\XML;
+use GenericDatabase\Engine\SQLiteEngine;
 
 class Arguments
 {
-  /**
-   * array property for use in magic setter and getter in order
-   */
+    /**
+     * array property for use in magic setter and getter in order
+     */
     private static $argumentList = [
-    'Database',
-    'Charset',
-    'Options',
-    'Exception'
+        'Database',
+        'Charset',
+        'Options',
+        'Exception'
     ];
 
-  /**
-   * This method is used when all parameters are used
-   *
-   * @param array $arguments
-   * @return void
-   */
+    /**
+     * This method is used when all parameters are used
+     *
+     * @param array $arguments
+     * @return void
+     */
     private static function callWithFullArguments($arguments): void
     {
         foreach ($arguments as $key => $value) {
@@ -37,12 +34,12 @@ class Arguments
         }
     }
 
-  /**
-   * Transform variables in constants
-   *
-   * @param array $value
-   * @return array
-   */
+    /**
+     * Transform variables in constants
+     *
+     * @param array $value
+     * @return array
+     */
     private static function setConstant($value): array
     {
         $options = Types::setConstant($value, SQLiteEngine::getInstance(), 'SQLite', 'SQLite', ['ATTR_PERSISTENT', 'ATTR_AUTOCOMMIT', 'ATTR_CONNECT_TIMEOUT']);
@@ -51,24 +48,24 @@ class Arguments
         return $options;
     }
 
-  /**
-   * Determines the type that will receive treatment
-   *
-   * @param mixed $value
-   * @return mixed
-   */
+    /**
+     * Determines the type that will receive treatment
+     *
+     * @param mixed $value
+     * @return mixed
+     */
     private static function setType($value): mixed
     {
         return Types::setType($value);
     }
 
-  /**
-   * Determines arguments type by calling to format type
-   *
-   * @param string $format Accept formats json, xml, ini and yaml
-   * @param mixed $arguments
-   * @return void
-   */
+    /**
+     * Determines arguments type by calling to format type
+     *
+     * @param string $format Accept formats json, xml, ini and yaml
+     * @param mixed $arguments
+     * @return void
+     */
     private static function callArgumentsByFormat($format, $arguments): void
     {
         $data = null;
@@ -93,24 +90,24 @@ class Arguments
         }
     }
 
-  /**
-   * Determines arguments type by calling to default type
-   *
-   * @param mixed $arguments
-   * @return void
-   */
+    /**
+     * Determines arguments type by calling to default type
+     *
+     * @param mixed $arguments
+     * @return void
+     */
     private static function callArgumentsByDefault($method, $arguments): void
     {
         call_user_func_array([SQLiteEngine::getInstance(), $method], $arguments);
     }
 
-  /**
-   * This method works like a factory and is responsible for identifying the way in which the class is instantiated, as well as its arguments.
-   *
-   * @param string $method
-   * @param array $arguments
-   * @return SQLiteEngine
-   */
+    /**
+     * This method works like a factory and is responsible for identifying the way in which the class is instantiated, as well as its arguments.
+     *
+     * @param string $method
+     * @param array $arguments
+     * @return SQLiteEngine
+     */
     public static function call(string $method, array $arguments): mixed
     {
         switch ($method) {

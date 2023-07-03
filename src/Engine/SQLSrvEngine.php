@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use
-    GenericDatabase\InterfaceConnection,
-
-    GenericDatabase\Traits\Errors,
-    GenericDatabase\Traits\Caller,
-    GenericDatabase\Traits\Cleaner,
-    GenericDatabase\Traits\Singleton,
-    GenericDatabase\Engine\SQLSrv\Arguments,
-    GenericDatabase\Engine\SQLSrv\Options,
-    GenericDatabase\Engine\SQLSrv\Attributes,
-    GenericDatabase\Engine\SQLSrv\DSN,
-    GenericDatabase\Engine\SQLSrv\Dump,
-    GenericDatabase\Engine\SQLSrv\Transaction;
+use GenericDatabase\InterfaceConnection;
+use GenericDatabase\Traits\Errors;
+use GenericDatabase\Traits\Caller;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
+use GenericDatabase\Engine\SQLSrv\Arguments;
+use GenericDatabase\Engine\SQLSrv\Options;
+use GenericDatabase\Engine\SQLSrv\Attributes;
+use GenericDatabase\Engine\SQLSrv\DSN;
+use GenericDatabase\Engine\SQLSrv\Dump;
+use GenericDatabase\Engine\SQLSrv\Transaction;
 
 class SQLSrvEngine implements InterfaceConnection
 {

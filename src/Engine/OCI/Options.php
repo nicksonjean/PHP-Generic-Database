@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\OCI;
 
-use
-  GenericDatabase\Engine\OCIEngine,
-
-  GenericDatabase\Traits\Reflections;
+use GenericDatabase\Engine\OCIEngine;
+use GenericDatabase\Traits\Reflections;
 
 class Options
 {

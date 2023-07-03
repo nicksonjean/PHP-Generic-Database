@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\MySQLi;
 
-use
-  GenericDatabase\Engine\MySQLiEngine,
-
-  GenericDatabase\Traits\Reflections;
+use GenericDatabase\Engine\MySQLiEngine;
+use GenericDatabase\Traits\Reflections;
 
 class Options
 {

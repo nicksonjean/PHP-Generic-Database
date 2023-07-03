@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\FBird;
 
-use
-  GenericDatabase\Engine\FBirdEngine,
-
-  GenericDatabase\Traits\Reflections;
+use GenericDatabase\Engine\FBirdEngine;
+use GenericDatabase\Traits\Reflections;
 
 class Options
 {

@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\SQLite;
 
-use
-    GenericDatabase\Traits\Path,
-
-    GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Traits\Path;
+use GenericDatabase\Engine\SQLiteEngine;
 
 class DSN
 {

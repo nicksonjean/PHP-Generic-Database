@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use
-    GenericDatabase\InterfaceConnection,
-
-    GenericDatabase\Traits\Errors,
-    GenericDatabase\Traits\Caller,
-    GenericDatabase\Traits\Cleaner,
-    GenericDatabase\Traits\Singleton,
-    GenericDatabase\Engine\OCI\Arguments,
-    GenericDatabase\Engine\OCI\Options,
-    GenericDatabase\Engine\OCI\Attributes,
-    GenericDatabase\Engine\OCI\DSN,
-    GenericDatabase\Engine\OCI\Dump,
-    GenericDatabase\Engine\OCI\Transaction;
+use GenericDatabase\InterfaceConnection;
+use GenericDatabase\Traits\Errors;
+use GenericDatabase\Traits\Caller;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
+use GenericDatabase\Engine\OCI\Arguments;
+use GenericDatabase\Engine\OCI\Options;
+use GenericDatabase\Engine\OCI\Attributes;
+use GenericDatabase\Engine\OCI\DSN;
+use GenericDatabase\Engine\OCI\Dump;
+use GenericDatabase\Engine\OCI\Transaction;
 
 class OCIEngine implements InterfaceConnection
 {

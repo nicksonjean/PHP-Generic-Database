@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\SQLite;
 
-use
-  GenericDatabase\Engine\SQLiteEngine,
-
-  GenericDatabase\Engine\SQLite\Options;
+use GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Engine\SQLite\Options;
 
 class Attributes
 {

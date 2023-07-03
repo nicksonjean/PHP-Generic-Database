@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\PgSQL;
 
-use
-  GenericDatabase\Engine\PgSQLEngine,
-
-  GenericDatabase\Engine\PgSQL\Options;
+use GenericDatabase\Engine\PgSQLEngine;
+use GenericDatabase\Engine\PgSQL\Options;
 
 class Attributes
 {

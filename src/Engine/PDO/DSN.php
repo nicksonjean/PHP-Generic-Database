@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\PDO;
 
-use
-    GenericDatabase\Traits\Path,
-
-    GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Traits\Path;
+use GenericDatabase\Engine\PDOEngine;
 
 class DSN
 {

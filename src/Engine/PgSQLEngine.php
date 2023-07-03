@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use
-    GenericDatabase\InterfaceConnection,
-
-    GenericDatabase\Traits\Errors,
-    GenericDatabase\Traits\Caller,
-    GenericDatabase\Traits\Cleaner,
-    GenericDatabase\Traits\Singleton,
-    GenericDatabase\Engine\PgSQL\Arguments,
-    GenericDatabase\Engine\PgSQL\Options,
-    GenericDatabase\Engine\PgSQL\Attributes,
-    GenericDatabase\Engine\PgSQL\DSN,
-    GenericDatabase\Engine\PgSQL\Dump,
-    GenericDatabase\Engine\PgSQL\Transaction;
+use GenericDatabase\InterfaceConnection;
+use GenericDatabase\Traits\Errors;
+use GenericDatabase\Traits\Caller;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
+use GenericDatabase\Engine\PgSQL\Arguments;
+use GenericDatabase\Engine\PgSQL\Options;
+use GenericDatabase\Engine\PgSQL\Attributes;
+use GenericDatabase\Engine\PgSQL\DSN;
+use GenericDatabase\Engine\PgSQL\Dump;
+use GenericDatabase\Engine\PgSQL\Transaction;
 
 class PgSQLEngine implements InterfaceConnection
 {

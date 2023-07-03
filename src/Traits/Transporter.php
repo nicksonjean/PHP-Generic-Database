@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Traits;
 
-use
-  GenericDatabase\Traits\Property,
-
-  GenericDatabase\Traits\Singleton;
+use GenericDatabase\Traits\Property;
+use GenericDatabase\Traits\Singleton;
 
 trait Transporter
 {

@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Traits;
 
-use
-  GenericDatabase\Traits\Regex,
-
-  GenericDatabase\Traits\Arrays;
+use GenericDatabase\Traits\Regex;
+use GenericDatabase\Traits\Arrays;
 
 trait Types
 {

@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use
-    GenericDatabase\InterfaceConnection,
-
-    GenericDatabase\Traits\Errors,
-    GenericDatabase\Traits\Caller,
-    GenericDatabase\Traits\Cleaner,
-    GenericDatabase\Traits\Singleton,
-    GenericDatabase\Engine\SQLite\Arguments,
-    GenericDatabase\Engine\SQLite\Options,
-    GenericDatabase\Engine\SQLite\Attributes,
-    GenericDatabase\Engine\SQLite\DSN,
-    GenericDatabase\Engine\SQLite\Dump,
-    GenericDatabase\Engine\SQLite\Transaction;
+use GenericDatabase\InterfaceConnection;
+use GenericDatabase\Traits\Errors;
+use GenericDatabase\Traits\Caller;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
+use GenericDatabase\Engine\SQLite\Arguments;
+use GenericDatabase\Engine\SQLite\Options;
+use GenericDatabase\Engine\SQLite\Attributes;
+use GenericDatabase\Engine\SQLite\DSN;
+use GenericDatabase\Engine\SQLite\Dump;
+use GenericDatabase\Engine\SQLite\Transaction;
 
 class SQLiteEngine implements InterfaceConnection
 {

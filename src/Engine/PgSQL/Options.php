@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\PgSQL;
 
-use
-  GenericDatabase\Engine\PgSQLEngine,
-
-  GenericDatabase\Traits\Reflections;
+use GenericDatabase\Engine\PgSQLEngine;
+use GenericDatabase\Traits\Reflections;
 
 class Options
 {

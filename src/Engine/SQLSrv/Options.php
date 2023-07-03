@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\SQLSrv;
 
-use
-  GenericDatabase\Engine\SQLSrvEngine,
-
-  GenericDatabase\Traits\Reflections;
+use GenericDatabase\Engine\SQLSrvEngine;
+use GenericDatabase\Traits\Reflections;
 
 class Options
 {

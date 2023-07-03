@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use
-    GenericDatabase\InterfaceConnection,
-
-    GenericDatabase\Traits\Errors,
-    GenericDatabase\Traits\Caller,
-    GenericDatabase\Traits\Cleaner,
-    GenericDatabase\Traits\Singleton,
-    GenericDatabase\Engine\PDO\Arguments,
-    GenericDatabase\Engine\PDO\Options,
-    GenericDatabase\Engine\PDO\Attributes,
-    GenericDatabase\Engine\PDO\DSN,
-    GenericDatabase\Engine\PDO\Dump,
-    GenericDatabase\Engine\PDO\Transaction;
+use GenericDatabase\InterfaceConnection;
+use GenericDatabase\Traits\Errors;
+use GenericDatabase\Traits\Caller;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
+use GenericDatabase\Engine\PDO\Arguments;
+use GenericDatabase\Engine\PDO\Options;
+use GenericDatabase\Engine\PDO\Attributes;
+use GenericDatabase\Engine\PDO\DSN;
+use GenericDatabase\Engine\PDO\Dump;
+use GenericDatabase\Engine\PDO\Transaction;
 
 class PDOEngine implements InterfaceConnection
 {

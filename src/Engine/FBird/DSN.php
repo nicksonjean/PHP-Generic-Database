@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\FBird;
 
-use
-    GenericDatabase\Traits\Path,
-
-    GenericDatabase\Engine\FBirdEngine;
+use GenericDatabase\Traits\Path;
+use GenericDatabase\Engine\FBirdEngine;
 
 class DSN
 {

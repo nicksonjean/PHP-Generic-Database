@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\FBird;
 
-use
-  GenericDatabase\Engine\FBirdEngine,
-
-  GenericDatabase\Engine\FBird\Options;
+use GenericDatabase\Engine\FBirdEngine;
+use GenericDatabase\Engine\FBird\Options;
 
 class Attributes
 {

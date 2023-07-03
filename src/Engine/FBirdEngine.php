@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use
-    GenericDatabase\InterfaceConnection,
-
-    GenericDatabase\Traits\Errors,
-    GenericDatabase\Traits\Caller,
-    GenericDatabase\Traits\Cleaner,
-    GenericDatabase\Traits\Singleton,
-    GenericDatabase\Engine\FBird\Arguments,
-    GenericDatabase\Engine\FBird\Options,
-    GenericDatabase\Engine\FBird\Attributes,
-    GenericDatabase\Engine\FBird\DSN,
-    GenericDatabase\Engine\FBird\Dump,
-    GenericDatabase\Engine\FBird\Transaction;
+use GenericDatabase\InterfaceConnection;
+use GenericDatabase\Traits\Errors;
+use GenericDatabase\Traits\Caller;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
+use GenericDatabase\Engine\FBird\Arguments;
+use GenericDatabase\Engine\FBird\Options;
+use GenericDatabase\Engine\FBird\Attributes;
+use GenericDatabase\Engine\FBird\DSN;
+use GenericDatabase\Engine\FBird\Dump;
+use GenericDatabase\Engine\FBird\Transaction;
 
 class FBirdEngine implements InterfaceConnection
 {

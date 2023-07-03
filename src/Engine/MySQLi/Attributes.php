@@ -2,10 +2,8 @@
 
 namespace GenericDatabase\Engine\MySQLi;
 
-use
-  GenericDatabase\Engine\MySQLiEngine,
-
-  GenericDatabase\Engine\MySQLi\Options;
+use GenericDatabase\Engine\MySQLiEngine;
+use GenericDatabase\Engine\MySQLi\Options;
 
 class Attributes
 {

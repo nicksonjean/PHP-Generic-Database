@@ -2,11 +2,9 @@
 
 namespace GenericDatabase\Traits;
 
-use
-    GenericDatabase\Traits\Setter,
-
-    GenericDatabase\Traits\Getter,
-    GenericDatabase\Traits\Reflections;
+use GenericDatabase\Traits\Setter;
+use GenericDatabase\Traits\Getter;
+use GenericDatabase\Traits\Reflections;
 
 trait Caller
 {
