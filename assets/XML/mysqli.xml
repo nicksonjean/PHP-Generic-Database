@@ -4,7 +4,7 @@
   <port>3306</port>
   <database>demodev</database>
   <user>root</user>
-  <password></password>
+  <password>masterkey</password>
   <charset>utf8</charset>
   <options>
     <option name="MySQL::ATTR_PERSISTENT">true</option>
