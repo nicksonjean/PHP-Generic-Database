@@ -5,26 +5,27 @@ namespace GenericDatabase\Engine\FBird;
 use GenericDatabase\Engine\FBirdEngine;
 use GenericDatabase\Engine\FBird\Options;
 
+#[\AllowDynamicProperties]
 class Attributes
 {
-  /**
-   * static attributes constants
-   *
-   */
+    /**
+     * static attributes constants
+     *
+     */
     public static $attributeList = [
-    'AUTOCOMMIT',
-    'ERRMODE',
-    'CASE',
-    'CLIENT_VERSION',
-    'CONNECTION_STATUS',
-    'PERSISTENT',
-    'SERVER_INFO',
-    'SERVER_VERSION',
-    'TIMEOUT',
-    'EMULATE_PREPARES',
-    'DEFAULT_FETCH_MODE',
-    'CHARACTER_SET',
-    'COLLATION'
+        'AUTOCOMMIT',
+        'ERRMODE',
+        'CASE',
+        'CLIENT_VERSION',
+        'CONNECTION_STATUS',
+        'PERSISTENT',
+        'SERVER_INFO',
+        'SERVER_VERSION',
+        'TIMEOUT',
+        'EMULATE_PREPARES',
+        'DEFAULT_FETCH_MODE',
+        'CHARACTER_SET',
+        'COLLATION'
     ];
 
     private static function settings()
@@ -32,6 +33,7 @@ class Attributes
         if (($service = ibase_service_attach(FBirdEngine::getInstance()->getHost() . '/' . FBirdEngine::getInstance()->getPort(), FBirdEngine::getInstance()->getUser(), FBirdEngine::getInstance()->getPassword())) != false) {
             preg_match('/information:\s(.*)\sVariable/s', ibase_db_info($service, FBirdEngine::getInstance()->getDatabase(), 4), $matches, PREG_OFFSET_CAPTURE, 0);
             $results = [];
+            $name = '';
             foreach (preg_split("/((\r?\n)|(\r\n?))/", trim(preg_replace('/\t((?:[A-Za-z]+\s){0,2}[A-Za-z]+)\t+(.*)/m', "$1| $2", $matches[1][0]))) as $lines) {
                 $lines = trim($lines);
                 if (strlen($lines) > 0) {
@@ -48,35 +50,35 @@ class Attributes
             }
 
             $server = vsprintf('%s %s %s on disk structure version %s ', [
-            ibase_server_info($service, IBASE_SVC_IMPLEMENTATION) . ' (access method), version "' . ibase_server_info($service, IBASE_SVC_SERVER_VERSION) . '"',
-            ibase_server_info($service, IBASE_SVC_IMPLEMENTATION) . ' (remote method), version "' . ibase_server_info($service, IBASE_SVC_SERVER_VERSION) . '/tcp (' . gethostname() . ')/P15:C"',
-            ibase_server_info($service, IBASE_SVC_IMPLEMENTATION) . ' (remote interface), version "' . ibase_server_info($service, IBASE_SVC_SERVER_VERSION) . '/tcp (' . gethostname() . ')/P15:C"',
-            $results['ods_version']
+                ibase_server_info($service, IBASE_SVC_IMPLEMENTATION) . ' (access method), version "' . ibase_server_info($service, IBASE_SVC_SERVER_VERSION) . '"',
+                ibase_server_info($service, IBASE_SVC_IMPLEMENTATION) . ' (remote method), version "' . ibase_server_info($service, IBASE_SVC_SERVER_VERSION) . '/tcp (' . gethostname() . ')/P15:C"',
+                ibase_server_info($service, IBASE_SVC_IMPLEMENTATION) . ' (remote interface), version "' . ibase_server_info($service, IBASE_SVC_SERVER_VERSION) . '/tcp (' . gethostname() . ')/P15:C"',
+                $results['ods_version']
             ]);
 
 
             ibase_service_detach($service);
 
             return [
-            ...$results,
-            'server_version' => ibase_server_info($service, IBASE_SVC_SERVER_VERSION),
-            'server_implementation' => ibase_server_info($service, IBASE_SVC_IMPLEMENTATION),
-            'server_users' => ibase_server_info($service, IBASE_SVC_GET_USERS),
-            'server_directory' => ibase_server_info($service, IBASE_SVC_GET_ENV),
-            'server_lock_path' => ibase_server_info($service, IBASE_SVC_GET_ENV_LOCK),
-            'server_lib_path' => ibase_server_info($service, IBASE_SVC_GET_ENV_MSG),
-            'user_database_path' => ibase_server_info($service, IBASE_SVC_USER_DBPATH),
-            'database_info' => ibase_server_info($service, IBASE_SVC_SVR_DB_INFO),
-            'server_info' => $server
+                ...$results,
+                'server_version' => ibase_server_info($service, IBASE_SVC_SERVER_VERSION),
+                'server_implementation' => ibase_server_info($service, IBASE_SVC_IMPLEMENTATION),
+                'server_users' => ibase_server_info($service, IBASE_SVC_GET_USERS),
+                'server_directory' => ibase_server_info($service, IBASE_SVC_GET_ENV),
+                'server_lock_path' => ibase_server_info($service, IBASE_SVC_GET_ENV_LOCK),
+                'server_lib_path' => ibase_server_info($service, IBASE_SVC_GET_ENV_MSG),
+                'user_database_path' => ibase_server_info($service, IBASE_SVC_USER_DBPATH),
+                'database_info' => ibase_server_info($service, IBASE_SVC_SVR_DB_INFO),
+                'server_info' => $server
             ];
         }
     }
 
-  /**
-   * Define all FBird attibute of the conection a ready exist
-   *
-   * @return void
-   */
+    /**
+     * Define all FBird attibute of the conection a ready exist
+     *
+     * @return void
+     */
     public static function define(): void
     {
 

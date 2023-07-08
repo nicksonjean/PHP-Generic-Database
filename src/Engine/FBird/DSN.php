@@ -5,6 +5,7 @@ namespace GenericDatabase\Engine\FBird;
 use GenericDatabase\Traits\Path;
 use GenericDatabase\Engine\FBirdEngine;
 
+#[\AllowDynamicProperties]
 class DSN
 {
     public static function parseDsn(): string|\Exception

@@ -5,18 +5,19 @@ namespace GenericDatabase\Engine\PgSQL;
 use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Traits\Reflections;
 
+#[\AllowDynamicProperties]
 class Options
 {
     use Reflections;
 
     private static $options = [];
 
-  /**
-   * This method is responsible for obtain all options already defined by user
-   *
-   * @param ?string|null $type
-   * @return mixed
-   */
+    /**
+     * This method is responsible for obtain all options already defined by user
+     *
+     * @param ?int $type = null
+     * @return mixed
+     */
     public static function getOptions(?int $type = null): mixed
     {
         if (!is_null($type)) {
@@ -27,12 +28,12 @@ class Options
         return $result;
     }
 
-  /**
-   * This method is responsible for set options before connect in database
-   *
-   * @param ?array|null $type
-   * @return void
-   */
+    /**
+     * This method is responsible for set options before connect in database
+     *
+     * @param ?array $options = null
+     * @return void
+     */
     public static function setOptions(?array $options = null): void
     {
         $class = 'GenericDatabase\Engine\PgSQL\PgSQL';
@@ -49,11 +50,11 @@ class Options
         }
     }
 
-  /**
-   * This method is responsible for set options after connect in database
-   *
-   * @return void
-   */
+    /**
+     * This method is responsible for set options after connect in database
+     *
+     * @return void
+     */
     public static function define(): void
     {
         foreach (self::getOptions() as $key => $value) {

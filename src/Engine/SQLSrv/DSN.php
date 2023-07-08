@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\SQLSrv;
 
 use GenericDatabase\Engine\SQLSrvEngine;
 
+#[\AllowDynamicProperties]
 class DSN
 {
     public static function parseDsn(): string|\Exception

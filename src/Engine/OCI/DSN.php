@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\OCI;
 
 use GenericDatabase\Engine\OCIEngine;
 
+#[\AllowDynamicProperties]
 class DSN
 {
     public static function parseDsn(): string|\Exception

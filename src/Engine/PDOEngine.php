@@ -16,6 +16,7 @@ use GenericDatabase\Engine\PDO\DSN;
 use GenericDatabase\Engine\PDO\Dump;
 use GenericDatabase\Engine\PDO\Transaction;
 
+#[\AllowDynamicProperties]
 class PDOEngine implements InterfaceConnection
 {
     use Errors;
@@ -70,9 +71,9 @@ class PDOEngine implements InterfaceConnection
      * This method is responsible for creating a new instance of the PDO connection.
      *
      * @param string $dsn The Data source name of the connection
-     * @param ?string|null $user The user of the database
-     * @param ?string|null $password The password of the database
-     * @param ?array|null $options The options of the database
+     * @param ?string $user = null The user of the database
+     * @param ?string $password = null The password of the database
+     * @param ?array $options = null The options of the database
      * @return PDOEngine
      */
     private function realConnect(string $dsn, ?string $user = null, ?string $password = null, ?array $options = null): PDOEngine
@@ -265,7 +266,7 @@ class PDOEngine implements InterfaceConnection
      *
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
-     * @return mixed
+     * @return void
      */
     public function setAttribute(mixed $name, mixed $value): void
     {

@@ -16,6 +16,7 @@ use GenericDatabase\Engine\FBird\DSN;
 use GenericDatabase\Engine\FBird\Dump;
 use GenericDatabase\Engine\FBird\Transaction;
 
+#[\AllowDynamicProperties]
 class FBirdEngine implements InterfaceConnection
 {
     use Errors;
@@ -236,8 +237,9 @@ class FBirdEngine implements InterfaceConnection
     public function prepare(mixed ...$params): mixed
     {
         $query = $params[0];
-        $transaction = isset($params[1]) ?? null;
-        return (is_null($transaction) ? fbird_prepare($this->getInstance()->getConnection(), $query) : fbird_prepare($this->getInstance()->getConnection(), $transaction, $query));
+        // $transaction = isset($params[1]) ?? null;
+        // return (is_null($transaction) ? fbird_prepare($this->getInstance()->getConnection(), $query) : fbird_prepare($this->getInstance()->getConnection(), $transaction, $query));
+        return fbird_prepare($query);
     }
 
     /**
@@ -286,7 +288,7 @@ class FBirdEngine implements InterfaceConnection
      *
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
-     * @return mixed
+     * @return void
      */
     public function setAttribute(mixed $name, mixed $value): void
     {

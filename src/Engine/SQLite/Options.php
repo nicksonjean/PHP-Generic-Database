@@ -5,6 +5,7 @@ namespace GenericDatabase\Engine\SQLite;
 use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Traits\Reflections;
 
+#[\AllowDynamicProperties]
 class Options
 {
     use Reflections;
@@ -23,13 +24,13 @@ class Options
                     switch ($value) {
                         case 1: // ATTR_OPEN_READONLY
                             if (SQLiteEngine::getInstance()->getAttribute("SQLite::ATTR_OPEN_READONLY") === true) {
-                                  $result .= $value . "+";
+                                $result .= $value . "+";
                             }
                             break;
                         case 2: // ATTR_OPEN_READWRITE
                             if (SQLiteEngine::getInstance()->getAttribute("SQLite::ATTR_OPEN_READWRITE") === true) {
                                 if (SQLiteEngine::getInstance()->getAttribute("SQLite::ATTR_OPEN_READONLY") === true) {
-                                        $result = str_replace("1+", "", $result);
+                                    $result = str_replace("1+", "", $result);
                                 }
                                 $result .= $value . "+";
                             }
@@ -37,7 +38,7 @@ class Options
                         case 4: // ATTR_OPEN_CREATE
                             if (SQLiteEngine::getInstance()->getAttribute("SQLite::ATTR_OPEN_CREATE") === true) {
                                 if (SQLiteEngine::getInstance()->getAttribute("SQLite::ATTR_OPEN_READONLY") === true) {
-                                      $result = str_replace("1+", "", $result);
+                                    $result = str_replace("1+", "", $result);
                                 }
                                 $result .= $value . "+";
                             }
@@ -55,12 +56,12 @@ class Options
         return $result === 2 || $result === 4 ? 6 : $result;
     }
 
-  /**
-   * This method is responsible for obtain all options already defined by user
-   *
-   * @param ?string|null $type
-   * @return mixed
-   */
+    /**
+     * This method is responsible for obtain all options already defined by user
+     *
+     * @param ?int $type = null
+     * @return mixed
+     */
     public static function getOptions(?int $type = null): mixed
     {
         if (!is_null($type)) {
@@ -71,12 +72,12 @@ class Options
         return $result;
     }
 
-  /**
-   * This method is responsible for set options before connect in database
-   *
-   * @param ?array|null $type
-   * @return void
-   */
+    /**
+     * This method is responsible for set options before connect in database
+     *
+     * @param ?array $options = null
+     * @return void
+     */
     public static function setOptions(?array $options = null): void
     {
         $class = 'GenericDatabase\Engine\SQLite\SQLite';
@@ -93,11 +94,11 @@ class Options
         }
     }
 
-  /**
-   * This method is responsible for set options after connect in database
-   *
-   * @return void
-   */
+    /**
+     * This method is responsible for set options after connect in database
+     *
+     * @return void
+     */
     public static function define(): void
     {
         foreach (self::getOptions() as $key => $value) {

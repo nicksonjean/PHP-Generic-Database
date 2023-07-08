@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\MySQLi;
 
 use GenericDatabase\Engine\MySQLiEngine;
 
+#[\AllowDynamicProperties]
 class DSN
 {
     public static function parseDsn(): string|\Exception

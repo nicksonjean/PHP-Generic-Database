@@ -5,26 +5,27 @@ namespace GenericDatabase\Engine\SQLSrv;
 use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Engine\SQLSrv\Options;
 
+#[\AllowDynamicProperties]
 class Attributes
 {
-  /**
-   * static attributes constants
-   *
-   */
+    /**
+     * static attributes constants
+     *
+     */
     public static $attributeList = [
-    'AUTOCOMMIT',
-    'ERRMODE',
-    'CASE',
-    'CLIENT_VERSION',
-    'CONNECTION_STATUS',
-    'PERSISTENT',
-    'SERVER_INFO',
-    'SERVER_VERSION',
-    'TIMEOUT',
-    'EMULATE_PREPARES',
-    'DEFAULT_FETCH_MODE',
-    'CHARACTER_SET',
-    'COLLATION'
+        'AUTOCOMMIT',
+        'ERRMODE',
+        'CASE',
+        'CLIENT_VERSION',
+        'CONNECTION_STATUS',
+        'PERSISTENT',
+        'SERVER_INFO',
+        'SERVER_VERSION',
+        'TIMEOUT',
+        'EMULATE_PREPARES',
+        'DEFAULT_FETCH_MODE',
+        'CHARACTER_SET',
+        'COLLATION'
     ];
 
     private static function settings()
@@ -32,17 +33,17 @@ class Attributes
         $server_info = sqlsrv_server_info(SQLSrvEngine::getInstance()->getConnection());
         $client_version = sqlsrv_client_info(SQLSrvEngine::getInstance()->getConnection());
         return [
-        'server_info' => $server_info,
-        'client_version' => $client_version,
-        'server_version' => $server_info['SQLServerVersion']
+            'server_info' => $server_info,
+            'client_version' => $client_version,
+            'server_version' => $server_info['SQLServerVersion']
         ];
     }
 
-  /**
-   * Define all SQLSrv attibute of the conection a ready exist
-   *
-   * @return void
-   */
+    /**
+     * Define all SQLSrv attibute of the conection a ready exist
+     *
+     * @return void
+     */
     public static function define(): void
     {
 

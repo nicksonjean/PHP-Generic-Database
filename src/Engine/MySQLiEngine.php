@@ -16,6 +16,7 @@ use GenericDatabase\Engine\MySQLi\DSN;
 use GenericDatabase\Engine\MySQLi\Dump;
 use GenericDatabase\Engine\MySQLi\Transaction;
 
+#[\AllowDynamicProperties]
 class MySQLiEngine implements InterfaceConnection
 {
     use Errors;
@@ -75,7 +76,7 @@ class MySQLiEngine implements InterfaceConnection
      * @param string $password The password of the database
      * @param string $database The name of the database
      * @param int $port The port of the database
-     * @return PDOEngine
+     * @return MySQLiEngine
      */
     private function realConnect(string $host, string $user, string $password, string $database, int $port): MySQLiEngine
     {
@@ -305,7 +306,7 @@ class MySQLiEngine implements InterfaceConnection
      *
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
-     * @return mixed
+     * @return void
      */
     public function setAttribute(mixed $name, mixed $value): void
     {

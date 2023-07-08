@@ -21,6 +21,7 @@ use GenericDatabase\Traits\INI;
 use GenericDatabase\Traits\YAML;
 use GenericDatabase\Traits\XML;
 
+#[\AllowDynamicProperties]
 class Connection
 {
     use Arrays;
@@ -50,7 +51,7 @@ class Connection
      * Defines the strategy instance
      *
      * @param InterfaceConnection $strategy
-     * @return InterfaceConnection
+     * @return Connection
      */
     public function setStrategy(InterfaceConnection $strategy): Connection
     {

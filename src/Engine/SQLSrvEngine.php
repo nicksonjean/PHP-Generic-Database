@@ -16,6 +16,7 @@ use GenericDatabase\Engine\SQLSrv\DSN;
 use GenericDatabase\Engine\SQLSrv\Dump;
 use GenericDatabase\Engine\SQLSrv\Transaction;
 
+#[\AllowDynamicProperties]
 class SQLSrvEngine implements InterfaceConnection
 {
     use Errors;
@@ -293,7 +294,7 @@ class SQLSrvEngine implements InterfaceConnection
      *
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
-     * @return mixed
+     * @return void
      */
     public function setAttribute(mixed $name, mixed $value): void
     {

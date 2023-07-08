@@ -16,6 +16,7 @@ use GenericDatabase\Engine\SQLite\DSN;
 use GenericDatabase\Engine\SQLite\Dump;
 use GenericDatabase\Engine\SQLite\Transaction;
 
+#[\AllowDynamicProperties]
 class SQLiteEngine implements InterfaceConnection
 {
     use Errors;
@@ -278,7 +279,7 @@ class SQLiteEngine implements InterfaceConnection
      *
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
-     * @return mixed
+     * @return void
      */
     public function setAttribute(mixed $name, mixed $value): void
     {

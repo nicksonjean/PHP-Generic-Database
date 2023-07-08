@@ -5,40 +5,41 @@ namespace GenericDatabase\Engine\SQLite;
 use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Engine\SQLite\Options;
 
+#[\AllowDynamicProperties]
 class Attributes
 {
-  /**
-   * static attributes constants
-   *
-   */
+    /**
+     * static attributes constants
+     *
+     */
     public static $attributeList = [
-    'AUTOCOMMIT',
-    'ERRMODE',
-    'CASE',
-    'CLIENT_VERSION',
-    'CONNECTION_STATUS',
-    'PERSISTENT',
-    'SERVER_INFO',
-    'SERVER_VERSION',
-    'TIMEOUT',
-    'EMULATE_PREPARES',
-    'DEFAULT_FETCH_MODE'
+        'AUTOCOMMIT',
+        'ERRMODE',
+        'CASE',
+        'CLIENT_VERSION',
+        'CONNECTION_STATUS',
+        'PERSISTENT',
+        'SERVER_INFO',
+        'SERVER_VERSION',
+        'TIMEOUT',
+        'EMULATE_PREPARES',
+        'DEFAULT_FETCH_MODE'
     ];
 
     private static function settings()
     {
         $version = \SQLite3::version();
         return [
-        'versionString' => $version['versionString'],
-        'versionNumber' => $version['versionNumber']
+            'versionString' => $version['versionString'],
+            'versionNumber' => $version['versionNumber']
         ];
     }
 
-  /**
-   * Define all SQLite attibute of the conection a ready exist
-   *
-   * @return void
-   */
+    /**
+     * Define all SQLite attibute of the conection a ready exist
+     *
+     * @return void
+     */
     public static function define(): void
     {
 

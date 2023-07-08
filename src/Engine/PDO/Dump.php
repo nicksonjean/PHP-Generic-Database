@@ -6,27 +6,27 @@ use GenericDatabase\Engine\PDOEngine;
 
 class Dump
 {
-  /**
-   * This is a regex array to uncomment strings in a codebase
-   */
+    /**
+     * This is a regex array to uncomment strings in a codebase
+     */
     private static $regex = [
-    'uncomment' => '@(--[^\r\n]*)|(\#[^\r\n]*)|(/\*[\w\W]*?(?=\*/)\*/)\s*;@ms',
-    'unicode' => '/\R+/'
+        'uncomment' => '@(--[^\r\n]*)|(\#[^\r\n]*)|(/\*[\w\W]*?(?=\*/)\*/)\s*;@ms',
+        'unicode' => '/\R+/'
     ];
 
-  /**
-   * Settings for memory limit and time limit
-   */
+    /**
+     * Settings for memory limit and time limit
+     */
     private static $settings = [
-    'memoryLimit' => '5120M',
-    'timeLimit' => 0
+        'memoryLimit' => '5120M',
+        'timeLimit' => 0
     ];
 
-  /**
-   * Import SQL dump from file - extremely fast.
-   * @param  array<callable(int, ?float): void>  $onProgress
-   * @return int  count of commands
-   */
+    /**
+     * Import SQL dump from file - extremely fast.
+     * @param ?callable $onProgress = null
+     * @return int  count of commands
+     */
     public static function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
     {
         ini_set('memory_limit', (string) self::$settings['memoryLimit']);

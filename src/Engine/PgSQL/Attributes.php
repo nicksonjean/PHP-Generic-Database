@@ -5,26 +5,27 @@ namespace GenericDatabase\Engine\PgSQL;
 use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Engine\PgSQL\Options;
 
+#[\AllowDynamicProperties]
 class Attributes
 {
-  /**
-   * static attributes constants
-   *
-   */
+    /**
+     * static attributes constants
+     *
+     */
     public static $attributeList = [
-    'AUTOCOMMIT',
-    'ERRMODE',
-    'CASE',
-    'CLIENT_VERSION',
-    'CONNECTION_STATUS',
-    'PERSISTENT',
-    'SERVER_INFO',
-    'SERVER_VERSION',
-    'TIMEOUT',
-    'EMULATE_PREPARES',
-    'DEFAULT_FETCH_MODE',
-    'CHARACTER_SET',
-    'COLLATION'
+        'AUTOCOMMIT',
+        'ERRMODE',
+        'CASE',
+        'CLIENT_VERSION',
+        'CONNECTION_STATUS',
+        'PERSISTENT',
+        'SERVER_INFO',
+        'SERVER_VERSION',
+        'TIMEOUT',
+        'EMULATE_PREPARES',
+        'DEFAULT_FETCH_MODE',
+        'CHARACTER_SET',
+        'COLLATION'
     ];
 
     public static function getFlags()
@@ -42,11 +43,11 @@ class Attributes
         return $flags;
     }
 
-  /**
-   * Define all PgSQL attibute of the conection a ready exist
-   *
-   * @return void
-   */
+    /**
+     * Define all PgSQL attibute of the conection a ready exist
+     *
+     * @return void
+     */
     public static function define(): void
     {
         $version = pg_version(PgSQLEngine::getInstance()->getConnection());
@@ -66,7 +67,7 @@ class Attributes
                 'EMULATE_PREPARES' => -1,
                 'DEFAULT_FETCH_MODE' => (int) 3,
                 'CHARACTER_SET' => pg_client_encoding(PgSQLEngine::getInstance()->getConnection()),
-                'COLLATION' => $collate->lc_collate
+                'COLLATION' => ($collate !== false && property_exists($collate, 'lc_collate')) ? $collate->lc_collate : false
             };
         };
         PgSQLEngine::getInstance()?->setAttributes((array) $result);

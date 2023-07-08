@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\PDO;
 
 use GenericDatabase\Engine\PDOEngine;
 
+#[\AllowDynamicProperties]
 class Options
 {
     private static $options = [];
@@ -11,7 +12,7 @@ class Options
     /**
      * This method is responsible for obtain all options already defined by user
      *
-     * @param ?string|null $type
+     * @param ?string $type = null
      * @return array
      */
     public static function getOptions(?string $type = null): array
@@ -22,7 +23,7 @@ class Options
     /**
      * This method is responsible for set options before connect in database
      *
-     * @param ?array|null $type
+     * @param ?array $options = null
      * @return void
      */
     public static function setOptions(?array $options = null): void

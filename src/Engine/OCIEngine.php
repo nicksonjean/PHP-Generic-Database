@@ -16,6 +16,7 @@ use GenericDatabase\Engine\OCI\DSN;
 use GenericDatabase\Engine\OCI\Dump;
 use GenericDatabase\Engine\OCI\Transaction;
 
+#[\AllowDynamicProperties]
 class OCIEngine implements InterfaceConnection
 {
     use Errors;
@@ -297,7 +298,7 @@ class OCIEngine implements InterfaceConnection
      *
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
-     * @return mixed
+     * @return void
      */
     public function setAttribute(mixed $name, mixed $value): void
     {

@@ -5,6 +5,7 @@ namespace GenericDatabase\Engine\PDO;
 use GenericDatabase\Traits\Path;
 use GenericDatabase\Engine\PDOEngine;
 
+#[\AllowDynamicProperties]
 class DSN
 {
     public static function parseDsn(): string|\Exception

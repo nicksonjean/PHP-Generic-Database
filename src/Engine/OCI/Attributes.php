@@ -5,26 +5,27 @@ namespace GenericDatabase\Engine\OCI;
 use GenericDatabase\Engine\OCIEngine;
 use GenericDatabase\Engine\OCI\Options;
 
+#[\AllowDynamicProperties]
 class Attributes
 {
-  /**
-   * static attributes constants
-   *
-   */
+    /**
+     * static attributes constants
+     *
+     */
     public static $attributeList = [
-    'AUTOCOMMIT',
-    'ERRMODE',
-    'CASE',
-    'CLIENT_VERSION',
-    'CONNECTION_STATUS',
-    'PERSISTENT',
-    'SERVER_INFO',
-    'SERVER_VERSION',
-    'TIMEOUT',
-    'EMULATE_PREPARES',
-    'DEFAULT_FETCH_MODE',
-    'CHARACTER_SET',
-    'COLLATION'
+        'AUTOCOMMIT',
+        'ERRMODE',
+        'CASE',
+        'CLIENT_VERSION',
+        'CONNECTION_STATUS',
+        'PERSISTENT',
+        'SERVER_INFO',
+        'SERVER_VERSION',
+        'TIMEOUT',
+        'EMULATE_PREPARES',
+        'DEFAULT_FETCH_MODE',
+        'CHARACTER_SET',
+        'COLLATION'
     ];
 
     private static function settings()
@@ -32,17 +33,17 @@ class Attributes
         $server_info = oci_server_version(OCIEngine::getInstance()->getConnection());
         $version = preg_replace('~^.* (\d+\.\d+\.\d+\.\d+\.\d+).*~s', '\1', $server_info);
         return [
-        'server_info' => $server_info,
-        'client_version' => oci_client_version(),
-        'server_version' => $version
+            'server_info' => $server_info,
+            'client_version' => oci_client_version(),
+            'server_version' => $version
         ];
     }
 
-  /**
-   * Define all OCI attibute of the conection a ready exist
-   *
-   * @return void
-   */
+    /**
+     * Define all OCI attibute of the conection a ready exist
+     *
+     * @return void
+     */
     public static function define(): void
     {
 

@@ -5,6 +5,7 @@ namespace GenericDatabase\Engine\MySQLi;
 use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Engine\MySQLi\Options;
 
+#[\AllowDynamicProperties]
 class Attributes
 {
     private static $fetchMode = \MYSQLI_BOTH;
@@ -25,24 +26,24 @@ class Attributes
 
     public const CONNECTION = 2;
 
-  /**
-   * static attributes constants
-   *
-   */
+    /**
+     * static attributes constants
+     *
+     */
     public static $attributeList = [
-    'AUTOCOMMIT',
-    'ERRMODE',
-    'CASE',
-    'CLIENT_VERSION',
-    'CONNECTION_STATUS',
-    'PERSISTENT',
-    'SERVER_INFO',
-    'SERVER_VERSION',
-    'TIMEOUT',
-    'EMULATE_PREPARES',
-    'DEFAULT_FETCH_MODE',
-    'CHARACTER_SET',
-    'COLLATION'
+        'AUTOCOMMIT',
+        'ERRMODE',
+        'CASE',
+        'CLIENT_VERSION',
+        'CONNECTION_STATUS',
+        'PERSISTENT',
+        'SERVER_INFO',
+        'SERVER_VERSION',
+        'TIMEOUT',
+        'EMULATE_PREPARES',
+        'DEFAULT_FETCH_MODE',
+        'CHARACTER_SET',
+        'COLLATION'
     ];
 
     public static function getCharsetType(int $type): string
@@ -73,12 +74,12 @@ class Attributes
         self::setSettings();
     }
 
-  /**
-   * @desc Optionally set the return mode.
-   *
-   * @param <int> $type The mode: 1 for MYSQLI_NUM, 2 for MYSQLI_ASSOC, default is MYSQLI_BOTH
-   */
-    private static function setFetchMode($type = null)
+    /**
+     * @desc Optionally set the return mode.
+     *
+     * @param int $type = null
+     */
+    private static function setFetchMode(int $type = null)
     {
         switch ($type) {
             case 1:
@@ -132,14 +133,14 @@ class Attributes
         }
 
         self::$variables[self::getInverseCharsetType($type)] = [
-        'charset' => self::$charsets['Charset'],
-        'description' => self::$charsets['Description'],
-        'collation' => self::$charsets['Default collation'],
-        'maxlen' => self::$charsets['Maxlen'],
-        'sortlen' => null,
-        'default' => null,
-        'compiled' => null,
-        'id' => null
+            'charset' => self::$charsets['Charset'],
+            'description' => self::$charsets['Description'],
+            'collation' => self::$charsets['Default collation'],
+            'maxlen' => self::$charsets['Maxlen'],
+            'sortlen' => null,
+            'default' => null,
+            'compiled' => null,
+            'id' => null
         ];
 
         $res->free_result();
@@ -192,11 +193,11 @@ class Attributes
         return self::$settings;
     }
 
-  /**
-   * Define all MySQLi attibute of the conection a ready exist
-   *
-   * @return void
-   */
+    /**
+     * Define all MySQLi attibute of the conection a ready exist
+     *
+     * @return void
+     */
     public static function define(?int $type = self::CONNECTION): void
     {
         self::init();

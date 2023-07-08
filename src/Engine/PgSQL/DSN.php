@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\PgSQL;
 
 use GenericDatabase\Engine\PgSQLEngine;
 
+#[\AllowDynamicProperties]
 class DSN
 {
     public static function parseDsn(): string|\Exception

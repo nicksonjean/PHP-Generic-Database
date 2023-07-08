@@ -5,6 +5,7 @@ namespace GenericDatabase\Engine\SQLite;
 use GenericDatabase\Traits\Path;
 use GenericDatabase\Engine\SQLiteEngine;
 
+#[\AllowDynamicProperties]
 class DSN
 {
     public static function parseDsn(): string|\Exception

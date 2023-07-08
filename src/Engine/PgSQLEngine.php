@@ -16,6 +16,7 @@ use GenericDatabase\Engine\PgSQL\DSN;
 use GenericDatabase\Engine\PgSQL\Dump;
 use GenericDatabase\Engine\PgSQL\Transaction;
 
+#[\AllowDynamicProperties]
 class PgSQLEngine implements InterfaceConnection
 {
     use Errors;
@@ -281,7 +282,7 @@ class PgSQLEngine implements InterfaceConnection
      *
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
-     * @return mixed
+     * @return void
      */
     public function setAttribute(mixed $name, mixed $value): void
     {
