@@ -16,6 +16,56 @@ use GenericDatabase\Engine\MySQLi\DSN;
 use GenericDatabase\Engine\MySQLi\Dump;
 use GenericDatabase\Engine\MySQLi\Transaction;
 
+/**
+ * @method MySQLiEngine setDriver(mixed $value): void
+ * @method MySQLiEngine getDriver(): mixed 
+ * @method MySQLiEngine setHost(mixed $value): void
+ * @method MySQLiEngine getHost(): mixed
+ * @method MySQLiEngine setPort(mixed $value): void
+ * @method MySQLiEngine getPort(): mixed
+ * @method MySQLiEngine setUser(mixed $value): void
+ * @method MySQLiEngine getUser(): mixed
+ * @method MySQLiEngine setPassword(mixed $value): void
+ * @method MySQLiEngine getPassword(): mixed
+ * @method MySQLiEngine setDatabase(mixed $value): void
+ * @method MySQLiEngine getDatabase(): mixed
+ * @method MySQLiEngine setOptions(mixed $value): void
+ * @method MySQLiEngine getOptions(): mixed
+ * @method MySQLiEngine setConnected(mixed $value): void
+ * @method MySQLiEngine getConnected(): mixed
+ * @method MySQLiEngine setDsn(mixed $value): void
+ * @method MySQLiEngine getDsn(): mixed
+ * @method MySQLiEngine setAttributes(mixed $value): void
+ * @method MySQLiEngine getAttributes(): mixed
+ * @method MySQLiEngine setCharset(mixed $value): void
+ * @method MySQLiEngine getCharset(): mixed 
+ * @method MySQLiEngine setException(mixed $value): void
+ * @method MySQLiEngine getException(): mixed
+ * @method static MySQLiEngine|static setDriver(mixed $value): mixed
+ * @method static MySQLiEngine|static getDriver(): mixed 
+ * @method static MySQLiEngine|static setHost(mixed $value): mixed
+ * @method static MySQLiEngine|static getHost(): mixed
+ * @method static MySQLiEngine|static setPort(mixed $value): mixed
+ * @method static MySQLiEngine|static getPort(): mixed
+ * @method static MySQLiEngine|static setUser(mixed $value): mixed
+ * @method static MySQLiEngine|static getUser(): mixed
+ * @method static MySQLiEngine|static setPassword(mixed $value): mixed
+ * @method static MySQLiEngine|static getPassword(): mixed
+ * @method static MySQLiEngine|static setDatabase(mixed $value): mixed
+ * @method static MySQLiEngine|static getDatabase(): mixed
+ * @method static MySQLiEngine|static setOptions(mixed $value): mixed
+ * @method static MySQLiEngine|static getOptions(): mixed
+ * @method static MySQLiEngine|static setConnected(mixed $value): mixed
+ * @method static MySQLiEngine|static getConnected(): mixed
+ * @method static MySQLiEngine|static setDsn(mixed $value): mixed
+ * @method static MySQLiEngine|static getDsn(): mixed
+ * @method static MySQLiEngine|static setAttributes(mixed $value): mixed
+ * @method static MySQLiEngine|static getAttributes(): mixed
+ * @method static MySQLiEngine|static setCharset(mixed $value): mixed
+ * @method static MySQLiEngine|static getCharset(): mixed 
+ * @method static MySQLiEngine|static setException(mixed $value): mixed
+ * @method static MySQLiEngine|static getException(): mixed
+ */
 #[\AllowDynamicProperties]
 class MySQLiEngine implements InterfaceConnection
 {
@@ -49,7 +99,7 @@ class MySQLiEngine implements InterfaceConnection
     private function preConnect(): MySQLiEngine
     {
         $this->setConnection(mysqli_init());
-        Options::setOptions($this->getOptions());
+        Options::setOptions((array) $this->getOptions());
         $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);

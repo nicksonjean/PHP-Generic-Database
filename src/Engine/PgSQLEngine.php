@@ -16,6 +16,56 @@ use GenericDatabase\Engine\PgSQL\DSN;
 use GenericDatabase\Engine\PgSQL\Dump;
 use GenericDatabase\Engine\PgSQL\Transaction;
 
+/**
+ * @method PgSQLEngine setDriver(mixed $value): void
+ * @method PgSQLEngine getDriver(): mixed 
+ * @method PgSQLEngine setHost(mixed $value): void
+ * @method PgSQLEngine getHost(): mixed
+ * @method PgSQLEngine setPort(mixed $value): void
+ * @method PgSQLEngine getPort(): mixed
+ * @method PgSQLEngine setUser(mixed $value): void
+ * @method PgSQLEngine getUser(): mixed
+ * @method PgSQLEngine setPassword(mixed $value): void
+ * @method PgSQLEngine getPassword(): mixed
+ * @method PgSQLEngine setDatabase(mixed $value): void
+ * @method PgSQLEngine getDatabase(): mixed
+ * @method PgSQLEngine setOptions(mixed $value): void
+ * @method PgSQLEngine getOptions(): mixed
+ * @method PgSQLEngine setConnected(mixed $value): void
+ * @method PgSQLEngine getConnected(): mixed
+ * @method PgSQLEngine setDsn(mixed $value): void
+ * @method PgSQLEngine getDsn(): mixed
+ * @method PgSQLEngine setAttributes(mixed $value): void
+ * @method PgSQLEngine getAttributes(): mixed
+ * @method PgSQLEngine setCharset(mixed $value): void
+ * @method PgSQLEngine getCharset(): mixed 
+ * @method PgSQLEngine setException(mixed $value): void
+ * @method PgSQLEngine getException(): mixed
+ * @method static PgSQLEngine|static setDriver(mixed $value): mixed
+ * @method static PgSQLEngine|static getDriver(): mixed 
+ * @method static PgSQLEngine|static setHost(mixed $value): mixed
+ * @method static PgSQLEngine|static getHost(): mixed
+ * @method static PgSQLEngine|static setPort(mixed $value): mixed
+ * @method static PgSQLEngine|static getPort(): mixed
+ * @method static PgSQLEngine|static setUser(mixed $value): mixed
+ * @method static PgSQLEngine|static getUser(): mixed
+ * @method static PgSQLEngine|static setPassword(mixed $value): mixed
+ * @method static PgSQLEngine|static getPassword(): mixed
+ * @method static PgSQLEngine|static setDatabase(mixed $value): mixed
+ * @method static PgSQLEngine|static getDatabase(): mixed
+ * @method static PgSQLEngine|static setOptions(mixed $value): mixed
+ * @method static PgSQLEngine|static getOptions(): mixed
+ * @method static PgSQLEngine|static setConnected(mixed $value): mixed
+ * @method static PgSQLEngine|static getConnected(): mixed
+ * @method static PgSQLEngine|static setDsn(mixed $value): mixed
+ * @method static PgSQLEngine|static getDsn(): mixed
+ * @method static PgSQLEngine|static setAttributes(mixed $value): mixed
+ * @method static PgSQLEngine|static getAttributes(): mixed
+ * @method static PgSQLEngine|static setCharset(mixed $value): mixed
+ * @method static PgSQLEngine|static getCharset(): mixed 
+ * @method static PgSQLEngine|static setException(mixed $value): mixed
+ * @method static PgSQLEngine|static getException(): mixed
+ */
 #[\AllowDynamicProperties]
 class PgSQLEngine implements InterfaceConnection
 {
@@ -48,7 +98,7 @@ class PgSQLEngine implements InterfaceConnection
      */
     private function preConnect(): PgSQLEngine
     {
-        Options::setOptions($this->getOptions());
+        Options::setOptions((array) $this->getOptions());
         $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);

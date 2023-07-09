@@ -41,7 +41,7 @@ class Options
         switch (PDOEngine::getInstance()->getDriver()) {
             case 'mysql':
                 if (PDOEngine::getInstance()->getCharset()) {
-                    $options += [\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES '" . PDOEngine::getInstance()->getCharset() . "';"];
+                    $options += [\PDO::MYSQL_ATTR_INIT_COMMAND => sprintf("SET NAMES '%s';", PDOEngine::getInstance()->getCharset())];
                 }
                 $options += [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true];
                 // Fall-through intencional
@@ -67,20 +67,19 @@ class Options
      */
     public static function define(): void
     {
-        $instance = PDOEngine::getInstance();
-        switch ($instance->getDriver()) {
+        switch (PDOEngine::getInstance()->getDriver()) {
             case 'mysql':
-                if ($instance->getCharset()) {
-                    $instance->getConnection()->exec("SET NAMES '{$instance->getCharset()}'");
+                if (PDOEngine::getInstance()->getCharset()) {
+                    PDOEngine::getInstance()->getConnection()->exec(sprintf("SET NAMES '%s'", PDOEngine::getInstance()->getCharset()));
                 }
                 break;
             case 'pgsql':
-                if ($instance->getCharset()) {
-                    $instance->getConnection()->exec("SET CLIENT_ENCODING TO '{$instance->getCharset()}'");
+                if (PDOEngine::getInstance()->getCharset()) {
+                    PDOEngine::getInstance()->getConnection()->exec(sprintf("SET CLIENT_ENCODING TO '%s'", PDOEngine::getInstance()->getCharset()));
                 }
                 break;
             case 'sqlite':
-                $instance->getConnection()->query('PRAGMA foreign_keys = ON');
+                PDOEngine::getInstance()->getConnection()->query('PRAGMA foreign_keys = ON');
                 break;
         }
     }

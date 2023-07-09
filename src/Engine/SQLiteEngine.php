@@ -16,6 +16,56 @@ use GenericDatabase\Engine\SQLite\DSN;
 use GenericDatabase\Engine\SQLite\Dump;
 use GenericDatabase\Engine\SQLite\Transaction;
 
+/**
+ * @method SQLiteEngine setDriver(mixed $value): void
+ * @method SQLiteEngine getDriver(): mixed 
+ * @method SQLiteEngine setHost(mixed $value): void
+ * @method SQLiteEngine getHost(): mixed
+ * @method SQLiteEngine setPort(mixed $value): void
+ * @method SQLiteEngine getPort(): mixed
+ * @method SQLiteEngine setUser(mixed $value): void
+ * @method SQLiteEngine getUser(): mixed
+ * @method SQLiteEngine setPassword(mixed $value): void
+ * @method SQLiteEngine getPassword(): mixed
+ * @method SQLiteEngine setDatabase(mixed $value): void
+ * @method SQLiteEngine getDatabase(): mixed
+ * @method SQLiteEngine setOptions(mixed $value): void
+ * @method SQLiteEngine getOptions(): mixed
+ * @method SQLiteEngine setConnected(mixed $value): void
+ * @method SQLiteEngine getConnected(): mixed
+ * @method SQLiteEngine setDsn(mixed $value): void
+ * @method SQLiteEngine getDsn(): mixed
+ * @method SQLiteEngine setAttributes(mixed $value): void
+ * @method SQLiteEngine getAttributes(): mixed
+ * @method SQLiteEngine setCharset(mixed $value): void
+ * @method SQLiteEngine getCharset(): mixed 
+ * @method SQLiteEngine setException(mixed $value): void
+ * @method SQLiteEngine getException(): mixed
+ * @method static SQLiteEngine|static setDriver(mixed $value): mixed
+ * @method static SQLiteEngine|static getDriver(): mixed 
+ * @method static SQLiteEngine|static setHost(mixed $value): mixed
+ * @method static SQLiteEngine|static getHost(): mixed
+ * @method static SQLiteEngine|static setPort(mixed $value): mixed
+ * @method static SQLiteEngine|static getPort(): mixed
+ * @method static SQLiteEngine|static setUser(mixed $value): mixed
+ * @method static SQLiteEngine|static getUser(): mixed
+ * @method static SQLiteEngine|static setPassword(mixed $value): mixed
+ * @method static SQLiteEngine|static getPassword(): mixed
+ * @method static SQLiteEngine|static setDatabase(mixed $value): mixed
+ * @method static SQLiteEngine|static getDatabase(): mixed
+ * @method static SQLiteEngine|static setOptions(mixed $value): mixed
+ * @method static SQLiteEngine|static getOptions(): mixed
+ * @method static SQLiteEngine|static setConnected(mixed $value): mixed
+ * @method static SQLiteEngine|static getConnected(): mixed
+ * @method static SQLiteEngine|static setDsn(mixed $value): mixed
+ * @method static SQLiteEngine|static getDsn(): mixed
+ * @method static SQLiteEngine|static setAttributes(mixed $value): mixed
+ * @method static SQLiteEngine|static getAttributes(): mixed
+ * @method static SQLiteEngine|static setCharset(mixed $value): mixed
+ * @method static SQLiteEngine|static getCharset(): mixed 
+ * @method static SQLiteEngine|static setException(mixed $value): mixed
+ * @method static SQLiteEngine|static getException(): mixed
+ */
 #[\AllowDynamicProperties]
 class SQLiteEngine implements InterfaceConnection
 {
@@ -48,7 +98,7 @@ class SQLiteEngine implements InterfaceConnection
      */
     private function preConnect(): SQLiteEngine
     {
-        Options::setOptions($this->getOptions());
+        Options::setOptions((array) $this->getOptions());
         $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);

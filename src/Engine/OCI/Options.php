@@ -43,7 +43,7 @@ class Options
                 $key_name = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "OCI", $key) : $key;
                 OCIEngine::getInstance()->setAttribute("OCI::$key", $options[$value]);
                 if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT') {
-                    OCIEngine::getInstance()->setOptions(constant($key_name), $options[$value]);
+                    OCI::setAttribute($key_name, $options[$value]);
                 }
                 self::$options[constant("$class::$key")] = $options[$value];
             }

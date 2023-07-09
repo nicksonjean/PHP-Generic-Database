@@ -87,7 +87,7 @@ class Options
                 $key_name = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT' && $key !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "SQLITE3", $key) : $key;
                 SQLiteEngine::getInstance()->setAttribute("SQLite::$key", $options[$value]);
                 if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT' && $key !== 'ATTR_CONNECT_TIMEOUT') {
-                    SQLiteEngine::getInstance()->setOptions(constant($key_name), $options[$value]);
+                    SQLite::setAttribute($key_name, $options[$value]);
                 }
                 self::$options[constant("$class::$key")] = $options[$value];
             }

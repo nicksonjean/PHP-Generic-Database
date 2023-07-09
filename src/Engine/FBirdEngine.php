@@ -16,6 +16,56 @@ use GenericDatabase\Engine\FBird\DSN;
 use GenericDatabase\Engine\FBird\Dump;
 use GenericDatabase\Engine\FBird\Transaction;
 
+/**
+ * @method FBirdEngine setDriver(mixed $value): void
+ * @method FBirdEngine getDriver(): mixed 
+ * @method FBirdEngine setHost(mixed $value): void
+ * @method FBirdEngine getHost(): mixed
+ * @method FBirdEngine setPort(mixed $value): void
+ * @method FBirdEngine getPort(): mixed
+ * @method FBirdEngine setUser(mixed $value): void
+ * @method FBirdEngine getUser(): mixed
+ * @method FBirdEngine setPassword(mixed $value): void
+ * @method FBirdEngine getPassword(): mixed
+ * @method FBirdEngine setDatabase(mixed $value): void
+ * @method FBirdEngine getDatabase(): mixed
+ * @method FBirdEngine setOptions(mixed $value): void
+ * @method FBirdEngine getOptions(): mixed
+ * @method FBirdEngine setConnected(mixed $value): void
+ * @method FBirdEngine getConnected(): mixed
+ * @method FBirdEngine setDsn(mixed $value): void
+ * @method FBirdEngine getDsn(): mixed
+ * @method FBirdEngine setAttributes(mixed $value): void
+ * @method FBirdEngine getAttributes(): mixed
+ * @method FBirdEngine setCharset(mixed $value): void
+ * @method FBirdEngine getCharset(): mixed 
+ * @method FBirdEngine setException(mixed $value): void
+ * @method FBirdEngine getException(): mixed
+ * @method static FBirdEngine|static setDriver(mixed $value): mixed
+ * @method static FBirdEngine|static getDriver(): mixed 
+ * @method static FBirdEngine|static setHost(mixed $value): mixed
+ * @method static FBirdEngine|static getHost(): mixed
+ * @method static FBirdEngine|static setPort(mixed $value): mixed
+ * @method static FBirdEngine|static getPort(): mixed
+ * @method static FBirdEngine|static setUser(mixed $value): mixed
+ * @method static FBirdEngine|static getUser(): mixed
+ * @method static FBirdEngine|static setPassword(mixed $value): mixed
+ * @method static FBirdEngine|static getPassword(): mixed
+ * @method static FBirdEngine|static setDatabase(mixed $value): mixed
+ * @method static FBirdEngine|static getDatabase(): mixed
+ * @method static FBirdEngine|static setOptions(mixed $value): mixed
+ * @method static FBirdEngine|static getOptions(): mixed
+ * @method static FBirdEngine|static setConnected(mixed $value): mixed
+ * @method static FBirdEngine|static getConnected(): mixed
+ * @method static FBirdEngine|static setDsn(mixed $value): mixed
+ * @method static FBirdEngine|static getDsn(): mixed
+ * @method static FBirdEngine|static setAttributes(mixed $value): mixed
+ * @method static FBirdEngine|static getAttributes(): mixed
+ * @method static FBirdEngine|static setCharset(mixed $value): mixed
+ * @method static FBirdEngine|static getCharset(): mixed 
+ * @method static FBirdEngine|static setException(mixed $value): mixed
+ * @method static FBirdEngine|static getException(): mixed
+ */
 #[\AllowDynamicProperties]
 class FBirdEngine implements InterfaceConnection
 {
@@ -48,7 +98,7 @@ class FBirdEngine implements InterfaceConnection
      */
     private function preConnect(): FBirdEngine
     {
-        Options::setOptions($this->getOptions());
+        Options::setOptions((array)$this->getOptions());
         $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);

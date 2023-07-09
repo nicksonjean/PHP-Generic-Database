@@ -43,7 +43,7 @@ class Options
                 $key_name = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT' ? str_replace("ATTR", "MYSQLI", $key) : $key;
                 MySQLiEngine::getInstance()->setAttribute("MySQL::$key", $options[$value]);
                 if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT') {
-                    MySQLiEngine::getInstance()->setOptions(constant($key_name), $options[$value]);
+                    MySQL::setAttribute($key_name, $options[$value]);
                 }
                 self::$options[constant("$class::$key")] = $options[$value];
             }

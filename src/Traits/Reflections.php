@@ -6,8 +6,9 @@ trait Reflections
 {
     /**
      * Set default method
+     * @var string $default_method = 'getInstance'
      */
-    public static $default_method = 'getInstance';
+    public static string $default_method = 'getInstance';
 
     /**
      * Get singleton instance

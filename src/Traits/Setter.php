@@ -15,9 +15,9 @@ trait Setter
      * @param mixed $value The value to be defined
      * @return void
      */
-    public function __set(string $name, mixed $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->property[$name] = $value;
-        return $this;
+        // return $this;
     }
 }

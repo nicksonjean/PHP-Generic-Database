@@ -30,7 +30,7 @@ class Attributes
 
     private static function settings()
     {
-        if (($service = ibase_service_attach(FBirdEngine::getInstance()->getHost() . '/' . FBirdEngine::getInstance()->getPort(), FBirdEngine::getInstance()->getUser(), FBirdEngine::getInstance()->getPassword())) != false) {
+        if (($service = ibase_service_attach(sprintf("%s/%s", FBirdEngine::getInstance()->getHost(), FBirdEngine::getInstance()->getPort()), FBirdEngine::getInstance()->getUser(), FBirdEngine::getInstance()->getPassword())) != false) {
             preg_match('/information:\s(.*)\sVariable/s', ibase_db_info($service, FBirdEngine::getInstance()->getDatabase(), 4), $matches, PREG_OFFSET_CAPTURE, 0);
             $results = [];
             $name = '';

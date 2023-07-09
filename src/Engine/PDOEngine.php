@@ -16,6 +16,56 @@ use GenericDatabase\Engine\PDO\DSN;
 use GenericDatabase\Engine\PDO\Dump;
 use GenericDatabase\Engine\PDO\Transaction;
 
+/**
+ * @method PDOEngine setDriver(mixed $value): void
+ * @method PDOEngine getDriver(): mixed 
+ * @method PDOEngine setHost(mixed $value): void
+ * @method PDOEngine getHost(): mixed
+ * @method PDOEngine setPort(mixed $value): void
+ * @method PDOEngine getPort(): mixed
+ * @method PDOEngine setUser(mixed $value): void
+ * @method PDOEngine getUser(): mixed
+ * @method PDOEngine setPassword(mixed $value): void
+ * @method PDOEngine getPassword(): mixed
+ * @method PDOEngine setDatabase(mixed $value): void
+ * @method PDOEngine getDatabase(): mixed
+ * @method PDOEngine setOptions(mixed $value): void
+ * @method PDOEngine getOptions(): mixed
+ * @method PDOEngine setConnected(mixed $value): void
+ * @method PDOEngine getConnected(): mixed
+ * @method PDOEngine setDsn(mixed $value): void
+ * @method PDOEngine getDsn(): mixed
+ * @method PDOEngine setAttributes(mixed $value): void
+ * @method PDOEngine getAttributes(): mixed
+ * @method PDOEngine setCharset(mixed $value): void
+ * @method PDOEngine getCharset(): mixed 
+ * @method PDOEngine setException(mixed $value): void
+ * @method PDOEngine getException(): mixed
+ * @method static PDOEngine|static setDriver(mixed $value): mixed
+ * @method static PDOEngine|static getDriver(): mixed 
+ * @method static PDOEngine|static setHost(mixed $value): mixed
+ * @method static PDOEngine|static getHost(): mixed
+ * @method static PDOEngine|static setPort(mixed $value): mixed
+ * @method static PDOEngine|static getPort(): mixed
+ * @method static PDOEngine|static setUser(mixed $value): mixed
+ * @method static PDOEngine|static getUser(): mixed
+ * @method static PDOEngine|static setPassword(mixed $value): mixed
+ * @method static PDOEngine|static getPassword(): mixed
+ * @method static PDOEngine|static setDatabase(mixed $value): mixed
+ * @method static PDOEngine|static getDatabase(): mixed
+ * @method static PDOEngine|static setOptions(mixed $value): mixed
+ * @method static PDOEngine|static getOptions(): mixed
+ * @method static PDOEngine|static setConnected(mixed $value): mixed
+ * @method static PDOEngine|static getConnected(): mixed
+ * @method static PDOEngine|static setDsn(mixed $value): mixed
+ * @method static PDOEngine|static getDsn(): mixed
+ * @method static PDOEngine|static setAttributes(mixed $value): mixed
+ * @method static PDOEngine|static getAttributes(): mixed
+ * @method static PDOEngine|static setCharset(mixed $value): mixed
+ * @method static PDOEngine|static getCharset(): mixed 
+ * @method static PDOEngine|static setException(mixed $value): mixed
+ * @method static PDOEngine|static getException(): mixed
+ */
 #[\AllowDynamicProperties]
 class PDOEngine implements InterfaceConnection
 {
@@ -48,7 +98,7 @@ class PDOEngine implements InterfaceConnection
      */
     private function preConnect(): PDOEngine
     {
-        Options::setOptions($this->getOptions());
+        Options::setOptions((array) $this->getOptions());
         $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);

@@ -16,6 +16,56 @@ use GenericDatabase\Engine\OCI\DSN;
 use GenericDatabase\Engine\OCI\Dump;
 use GenericDatabase\Engine\OCI\Transaction;
 
+/**
+ * @method OCIEngine setDriver(mixed $value): void
+ * @method OCIEngine getDriver(): mixed 
+ * @method OCIEngine setHost(mixed $value): void
+ * @method OCIEngine getHost(): mixed
+ * @method OCIEngine setPort(mixed $value): void
+ * @method OCIEngine getPort(): mixed
+ * @method OCIEngine setUser(mixed $value): void
+ * @method OCIEngine getUser(): mixed
+ * @method OCIEngine setPassword(mixed $value): void
+ * @method OCIEngine getPassword(): mixed
+ * @method OCIEngine setDatabase(mixed $value): void
+ * @method OCIEngine getDatabase(): mixed
+ * @method OCIEngine setOptions(mixed $value): void
+ * @method OCIEngine getOptions(): mixed
+ * @method OCIEngine setConnected(mixed $value): void
+ * @method OCIEngine getConnected(): mixed
+ * @method OCIEngine setDsn(mixed $value): void
+ * @method OCIEngine getDsn(): mixed
+ * @method OCIEngine setAttributes(mixed $value): void
+ * @method OCIEngine getAttributes(): mixed
+ * @method OCIEngine setCharset(mixed $value): void
+ * @method OCIEngine getCharset(): mixed 
+ * @method OCIEngine setException(mixed $value): void
+ * @method OCIEngine getException(): mixed
+ * @method static OCIEngine|static setDriver(mixed $value): mixed
+ * @method static OCIEngine|static getDriver(): mixed 
+ * @method static OCIEngine|static setHost(mixed $value): mixed
+ * @method static OCIEngine|static getHost(): mixed
+ * @method static OCIEngine|static setPort(mixed $value): mixed
+ * @method static OCIEngine|static getPort(): mixed
+ * @method static OCIEngine|static setUser(mixed $value): mixed
+ * @method static OCIEngine|static getUser(): mixed
+ * @method static OCIEngine|static setPassword(mixed $value): mixed
+ * @method static OCIEngine|static getPassword(): mixed
+ * @method static OCIEngine|static setDatabase(mixed $value): mixed
+ * @method static OCIEngine|static getDatabase(): mixed
+ * @method static OCIEngine|static setOptions(mixed $value): mixed
+ * @method static OCIEngine|static getOptions(): mixed
+ * @method static OCIEngine|static setConnected(mixed $value): mixed
+ * @method static OCIEngine|static getConnected(): mixed
+ * @method static OCIEngine|static setDsn(mixed $value): mixed
+ * @method static OCIEngine|static getDsn(): mixed
+ * @method static OCIEngine|static setAttributes(mixed $value): mixed
+ * @method static OCIEngine|static getAttributes(): mixed
+ * @method static OCIEngine|static setCharset(mixed $value): mixed
+ * @method static OCIEngine|static getCharset(): mixed 
+ * @method static OCIEngine|static setException(mixed $value): mixed
+ * @method static OCIEngine|static getException(): mixed
+ */
 #[\AllowDynamicProperties]
 class OCIEngine implements InterfaceConnection
 {
@@ -48,7 +98,7 @@ class OCIEngine implements InterfaceConnection
      */
     private function preConnect(): OCIEngine
     {
-        Options::setOptions($this->getOptions());
+        Options::setOptions((array) $this->getOptions());
         $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);

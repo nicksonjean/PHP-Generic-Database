@@ -1,9 +1,5 @@
 parameters:
 	phpVersion: 80200 # PHP 8.2
-	ignoreErrors:
-		- '#Call to an undefined method#'
-		- '#Call to an undefined static method#'
-		- '#Method [a-zA-Z0-9\\_]+::__set\(\) with return type void returns#'
 	level: 3
 	paths:
 		- src/

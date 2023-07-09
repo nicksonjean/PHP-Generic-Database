@@ -13,7 +13,11 @@ class SQLite
     public const ATTR_PERSISTENT = 13;
     public const ATTR_AUTOCOMMIT = 14;
 
-    protected static $data = [];
+    /**
+     * Data to Get and Setter for Attribute
+     * @var array $data
+     */
+    protected static array $data = [];
 
     public static function getAttribute(mixed $name): mixed
     {

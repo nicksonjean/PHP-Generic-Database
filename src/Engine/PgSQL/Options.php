@@ -43,7 +43,7 @@ class Options
                 $key_name = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "PGSQL", $key) : $key;
                 PgSQLEngine::getInstance()->setAttribute("PgSQL::$key", $options[$value]);
                 if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT') {
-                    PgSQLEngine::getInstance()->setOptions(constant($key_name), $options[$value]);
+                    PgSQL::setAttribute($key_name, $options[$value]);
                 }
                 self::$options[constant("$class::$key")] = $options[$value];
             }
