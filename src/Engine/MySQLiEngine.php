@@ -18,7 +18,7 @@ use GenericDatabase\Engine\MySQLi\Transaction;
 
 /**
  * @method MySQLiEngine setDriver(mixed $value): void
- * @method MySQLiEngine getDriver(): mixed 
+ * @method MySQLiEngine getDriver(): mixed
  * @method MySQLiEngine setHost(mixed $value): void
  * @method MySQLiEngine getHost(): mixed
  * @method MySQLiEngine setPort(mixed $value): void
@@ -38,11 +38,11 @@ use GenericDatabase\Engine\MySQLi\Transaction;
  * @method MySQLiEngine setAttributes(mixed $value): void
  * @method MySQLiEngine getAttributes(): mixed
  * @method MySQLiEngine setCharset(mixed $value): void
- * @method MySQLiEngine getCharset(): mixed 
+ * @method MySQLiEngine getCharset(): mixed
  * @method MySQLiEngine setException(mixed $value): void
  * @method MySQLiEngine getException(): mixed
  * @method static MySQLiEngine|static setDriver(mixed $value): mixed
- * @method static MySQLiEngine|static getDriver(): mixed 
+ * @method static MySQLiEngine|static getDriver(): mixed
  * @method static MySQLiEngine|static setHost(mixed $value): mixed
  * @method static MySQLiEngine|static getHost(): mixed
  * @method static MySQLiEngine|static setPort(mixed $value): mixed
@@ -62,7 +62,7 @@ use GenericDatabase\Engine\MySQLi\Transaction;
  * @method static MySQLiEngine|static setAttributes(mixed $value): mixed
  * @method static MySQLiEngine|static getAttributes(): mixed
  * @method static MySQLiEngine|static setCharset(mixed $value): mixed
- * @method static MySQLiEngine|static getCharset(): mixed 
+ * @method static MySQLiEngine|static getCharset(): mixed
  * @method static MySQLiEngine|static setException(mixed $value): mixed
  * @method static MySQLiEngine|static getException(): mixed
  */

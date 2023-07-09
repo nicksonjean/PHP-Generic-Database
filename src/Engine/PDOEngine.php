@@ -18,7 +18,7 @@ use GenericDatabase\Engine\PDO\Transaction;
 
 /**
  * @method PDOEngine setDriver(mixed $value): void
- * @method PDOEngine getDriver(): mixed 
+ * @method PDOEngine getDriver(): mixed
  * @method PDOEngine setHost(mixed $value): void
  * @method PDOEngine getHost(): mixed
  * @method PDOEngine setPort(mixed $value): void
@@ -38,11 +38,11 @@ use GenericDatabase\Engine\PDO\Transaction;
  * @method PDOEngine setAttributes(mixed $value): void
  * @method PDOEngine getAttributes(): mixed
  * @method PDOEngine setCharset(mixed $value): void
- * @method PDOEngine getCharset(): mixed 
+ * @method PDOEngine getCharset(): mixed
  * @method PDOEngine setException(mixed $value): void
  * @method PDOEngine getException(): mixed
  * @method static PDOEngine|static setDriver(mixed $value): mixed
- * @method static PDOEngine|static getDriver(): mixed 
+ * @method static PDOEngine|static getDriver(): mixed
  * @method static PDOEngine|static setHost(mixed $value): mixed
  * @method static PDOEngine|static getHost(): mixed
  * @method static PDOEngine|static setPort(mixed $value): mixed
@@ -62,7 +62,7 @@ use GenericDatabase\Engine\PDO\Transaction;
  * @method static PDOEngine|static setAttributes(mixed $value): mixed
  * @method static PDOEngine|static getAttributes(): mixed
  * @method static PDOEngine|static setCharset(mixed $value): mixed
- * @method static PDOEngine|static getCharset(): mixed 
+ * @method static PDOEngine|static getCharset(): mixed
  * @method static PDOEngine|static setException(mixed $value): mixed
  * @method static PDOEngine|static getException(): mixed
  */

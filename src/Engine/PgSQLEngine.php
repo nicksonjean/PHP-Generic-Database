@@ -18,7 +18,7 @@ use GenericDatabase\Engine\PgSQL\Transaction;
 
 /**
  * @method PgSQLEngine setDriver(mixed $value): void
- * @method PgSQLEngine getDriver(): mixed 
+ * @method PgSQLEngine getDriver(): mixed
  * @method PgSQLEngine setHost(mixed $value): void
  * @method PgSQLEngine getHost(): mixed
  * @method PgSQLEngine setPort(mixed $value): void
@@ -38,11 +38,11 @@ use GenericDatabase\Engine\PgSQL\Transaction;
  * @method PgSQLEngine setAttributes(mixed $value): void
  * @method PgSQLEngine getAttributes(): mixed
  * @method PgSQLEngine setCharset(mixed $value): void
- * @method PgSQLEngine getCharset(): mixed 
+ * @method PgSQLEngine getCharset(): mixed
  * @method PgSQLEngine setException(mixed $value): void
  * @method PgSQLEngine getException(): mixed
  * @method static PgSQLEngine|static setDriver(mixed $value): mixed
- * @method static PgSQLEngine|static getDriver(): mixed 
+ * @method static PgSQLEngine|static getDriver(): mixed
  * @method static PgSQLEngine|static setHost(mixed $value): mixed
  * @method static PgSQLEngine|static getHost(): mixed
  * @method static PgSQLEngine|static setPort(mixed $value): mixed
@@ -62,7 +62,7 @@ use GenericDatabase\Engine\PgSQL\Transaction;
  * @method static PgSQLEngine|static setAttributes(mixed $value): mixed
  * @method static PgSQLEngine|static getAttributes(): mixed
  * @method static PgSQLEngine|static setCharset(mixed $value): mixed
- * @method static PgSQLEngine|static getCharset(): mixed 
+ * @method static PgSQLEngine|static getCharset(): mixed
  * @method static PgSQLEngine|static setException(mixed $value): mixed
  * @method static PgSQLEngine|static getException(): mixed
  */

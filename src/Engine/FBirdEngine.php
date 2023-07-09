@@ -18,7 +18,7 @@ use GenericDatabase\Engine\FBird\Transaction;
 
 /**
  * @method FBirdEngine setDriver(mixed $value): void
- * @method FBirdEngine getDriver(): mixed 
+ * @method FBirdEngine getDriver(): mixed
  * @method FBirdEngine setHost(mixed $value): void
  * @method FBirdEngine getHost(): mixed
  * @method FBirdEngine setPort(mixed $value): void
@@ -38,11 +38,11 @@ use GenericDatabase\Engine\FBird\Transaction;
  * @method FBirdEngine setAttributes(mixed $value): void
  * @method FBirdEngine getAttributes(): mixed
  * @method FBirdEngine setCharset(mixed $value): void
- * @method FBirdEngine getCharset(): mixed 
+ * @method FBirdEngine getCharset(): mixed
  * @method FBirdEngine setException(mixed $value): void
  * @method FBirdEngine getException(): mixed
  * @method static FBirdEngine|static setDriver(mixed $value): mixed
- * @method static FBirdEngine|static getDriver(): mixed 
+ * @method static FBirdEngine|static getDriver(): mixed
  * @method static FBirdEngine|static setHost(mixed $value): mixed
  * @method static FBirdEngine|static getHost(): mixed
  * @method static FBirdEngine|static setPort(mixed $value): mixed
@@ -62,7 +62,7 @@ use GenericDatabase\Engine\FBird\Transaction;
  * @method static FBirdEngine|static setAttributes(mixed $value): mixed
  * @method static FBirdEngine|static getAttributes(): mixed
  * @method static FBirdEngine|static setCharset(mixed $value): mixed
- * @method static FBirdEngine|static getCharset(): mixed 
+ * @method static FBirdEngine|static getCharset(): mixed
  * @method static FBirdEngine|static setException(mixed $value): mixed
  * @method static FBirdEngine|static getException(): mixed
  */

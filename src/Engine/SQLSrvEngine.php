@@ -18,7 +18,7 @@ use GenericDatabase\Engine\SQLSrv\Transaction;
 
 /**
  * @method SQLSrvEngine setDriver(mixed $value): void
- * @method SQLSrvEngine getDriver(): mixed 
+ * @method SQLSrvEngine getDriver(): mixed
  * @method SQLSrvEngine setHost(mixed $value): void
  * @method SQLSrvEngine getHost(): mixed
  * @method SQLSrvEngine setPort(mixed $value): void
@@ -38,11 +38,11 @@ use GenericDatabase\Engine\SQLSrv\Transaction;
  * @method SQLSrvEngine setAttributes(mixed $value): void
  * @method SQLSrvEngine getAttributes(): mixed
  * @method SQLSrvEngine setCharset(mixed $value): void
- * @method SQLSrvEngine getCharset(): mixed 
+ * @method SQLSrvEngine getCharset(): mixed
  * @method SQLSrvEngine setException(mixed $value): void
  * @method SQLSrvEngine getException(): mixed
  * @method static SQLSrvEngine|static setDriver(mixed $value): mixed
- * @method static SQLSrvEngine|static getDriver(): mixed 
+ * @method static SQLSrvEngine|static getDriver(): mixed
  * @method static SQLSrvEngine|static setHost(mixed $value): mixed
  * @method static SQLSrvEngine|static getHost(): mixed
  * @method static SQLSrvEngine|static setPort(mixed $value): mixed
@@ -62,7 +62,7 @@ use GenericDatabase\Engine\SQLSrv\Transaction;
  * @method static SQLSrvEngine|static setAttributes(mixed $value): mixed
  * @method static SQLSrvEngine|static getAttributes(): mixed
  * @method static SQLSrvEngine|static setCharset(mixed $value): mixed
- * @method static SQLSrvEngine|static getCharset(): mixed 
+ * @method static SQLSrvEngine|static getCharset(): mixed
  * @method static SQLSrvEngine|static setException(mixed $value): mixed
  * @method static SQLSrvEngine|static getException(): mixed
  */

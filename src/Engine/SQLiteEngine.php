@@ -18,7 +18,7 @@ use GenericDatabase\Engine\SQLite\Transaction;
 
 /**
  * @method SQLiteEngine setDriver(mixed $value): void
- * @method SQLiteEngine getDriver(): mixed 
+ * @method SQLiteEngine getDriver(): mixed
  * @method SQLiteEngine setHost(mixed $value): void
  * @method SQLiteEngine getHost(): mixed
  * @method SQLiteEngine setPort(mixed $value): void
@@ -38,11 +38,11 @@ use GenericDatabase\Engine\SQLite\Transaction;
  * @method SQLiteEngine setAttributes(mixed $value): void
  * @method SQLiteEngine getAttributes(): mixed
  * @method SQLiteEngine setCharset(mixed $value): void
- * @method SQLiteEngine getCharset(): mixed 
+ * @method SQLiteEngine getCharset(): mixed
  * @method SQLiteEngine setException(mixed $value): void
  * @method SQLiteEngine getException(): mixed
  * @method static SQLiteEngine|static setDriver(mixed $value): mixed
- * @method static SQLiteEngine|static getDriver(): mixed 
+ * @method static SQLiteEngine|static getDriver(): mixed
  * @method static SQLiteEngine|static setHost(mixed $value): mixed
  * @method static SQLiteEngine|static getHost(): mixed
  * @method static SQLiteEngine|static setPort(mixed $value): mixed
@@ -62,7 +62,7 @@ use GenericDatabase\Engine\SQLite\Transaction;
  * @method static SQLiteEngine|static setAttributes(mixed $value): mixed
  * @method static SQLiteEngine|static getAttributes(): mixed
  * @method static SQLiteEngine|static setCharset(mixed $value): mixed
- * @method static SQLiteEngine|static getCharset(): mixed 
+ * @method static SQLiteEngine|static getCharset(): mixed
  * @method static SQLiteEngine|static setException(mixed $value): mixed
  * @method static SQLiteEngine|static getException(): mixed
  */

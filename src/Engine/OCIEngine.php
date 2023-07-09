@@ -18,7 +18,7 @@ use GenericDatabase\Engine\OCI\Transaction;
 
 /**
  * @method OCIEngine setDriver(mixed $value): void
- * @method OCIEngine getDriver(): mixed 
+ * @method OCIEngine getDriver(): mixed
  * @method OCIEngine setHost(mixed $value): void
  * @method OCIEngine getHost(): mixed
  * @method OCIEngine setPort(mixed $value): void
@@ -38,11 +38,11 @@ use GenericDatabase\Engine\OCI\Transaction;
  * @method OCIEngine setAttributes(mixed $value): void
  * @method OCIEngine getAttributes(): mixed
  * @method OCIEngine setCharset(mixed $value): void
- * @method OCIEngine getCharset(): mixed 
+ * @method OCIEngine getCharset(): mixed
  * @method OCIEngine setException(mixed $value): void
  * @method OCIEngine getException(): mixed
  * @method static OCIEngine|static setDriver(mixed $value): mixed
- * @method static OCIEngine|static getDriver(): mixed 
+ * @method static OCIEngine|static getDriver(): mixed
  * @method static OCIEngine|static setHost(mixed $value): mixed
  * @method static OCIEngine|static getHost(): mixed
  * @method static OCIEngine|static setPort(mixed $value): mixed
@@ -62,7 +62,7 @@ use GenericDatabase\Engine\OCI\Transaction;
  * @method static OCIEngine|static setAttributes(mixed $value): mixed
  * @method static OCIEngine|static getAttributes(): mixed
  * @method static OCIEngine|static setCharset(mixed $value): mixed
- * @method static OCIEngine|static getCharset(): mixed 
+ * @method static OCIEngine|static getCharset(): mixed
  * @method static OCIEngine|static setException(mixed $value): mixed
  * @method static OCIEngine|static getException(): mixed
  */
