@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use AllowDynamicProperties;
+use Exception;
+use GenericDatabase\Engine\OCI\OCI;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Traits\Errors;
 use GenericDatabase\Traits\Caller;
@@ -17,56 +20,32 @@ use GenericDatabase\Engine\OCI\Dump;
 use GenericDatabase\Engine\OCI\Transaction;
 
 /**
- * @method OCIEngine setDriver(mixed $value): void
- * @method OCIEngine getDriver(): mixed
- * @method OCIEngine setHost(mixed $value): void
- * @method OCIEngine getHost(): mixed
- * @method OCIEngine setPort(mixed $value): void
- * @method OCIEngine getPort(): mixed
- * @method OCIEngine setUser(mixed $value): void
- * @method OCIEngine getUser(): mixed
- * @method OCIEngine setPassword(mixed $value): void
- * @method OCIEngine getPassword(): mixed
- * @method OCIEngine setDatabase(mixed $value): void
- * @method OCIEngine getDatabase(): mixed
- * @method OCIEngine setOptions(mixed $value): void
- * @method OCIEngine getOptions(): mixed
- * @method OCIEngine setConnected(mixed $value): void
- * @method OCIEngine getConnected(): mixed
- * @method OCIEngine setDsn(mixed $value): void
- * @method OCIEngine getDsn(): mixed
- * @method OCIEngine setAttributes(mixed $value): void
- * @method OCIEngine getAttributes(): mixed
- * @method OCIEngine setCharset(mixed $value): void
- * @method OCIEngine getCharset(): mixed
- * @method OCIEngine setException(mixed $value): void
- * @method OCIEngine getException(): mixed
- * @method static OCIEngine|static setDriver(mixed $value): mixed
+ * @method static OCIEngine|static setDriver(mixed $value): void
  * @method static OCIEngine|static getDriver(): mixed
- * @method static OCIEngine|static setHost(mixed $value): mixed
+ * @method static OCIEngine|static setHost(mixed $value): void
  * @method static OCIEngine|static getHost(): mixed
- * @method static OCIEngine|static setPort(mixed $value): mixed
+ * @method static OCIEngine|static setPort(mixed $value): void
  * @method static OCIEngine|static getPort(): mixed
- * @method static OCIEngine|static setUser(mixed $value): mixed
+ * @method static OCIEngine|static setUser(mixed $value): void
  * @method static OCIEngine|static getUser(): mixed
- * @method static OCIEngine|static setPassword(mixed $value): mixed
+ * @method static OCIEngine|static setPassword(mixed $value): void
  * @method static OCIEngine|static getPassword(): mixed
- * @method static OCIEngine|static setDatabase(mixed $value): mixed
+ * @method static OCIEngine|static setDatabase(mixed $value): void
  * @method static OCIEngine|static getDatabase(): mixed
- * @method static OCIEngine|static setOptions(mixed $value): mixed
+ * @method static OCIEngine|static setOptions(mixed $value): void
  * @method static OCIEngine|static getOptions(): mixed
- * @method static OCIEngine|static setConnected(mixed $value): mixed
+ * @method static OCIEngine|static setConnected(mixed $value): void
  * @method static OCIEngine|static getConnected(): mixed
- * @method static OCIEngine|static setDsn(mixed $value): mixed
+ * @method static OCIEngine|static setDsn(mixed $value): void
  * @method static OCIEngine|static getDsn(): mixed
- * @method static OCIEngine|static setAttributes(mixed $value): mixed
+ * @method static OCIEngine|static setAttributes(mixed $value): void
  * @method static OCIEngine|static getAttributes(): mixed
- * @method static OCIEngine|static setCharset(mixed $value): mixed
+ * @method static OCIEngine|static setCharset(mixed $value): void
  * @method static OCIEngine|static getCharset(): mixed
- * @method static OCIEngine|static setException(mixed $value): mixed
+ * @method static OCIEngine|static setException(mixed $value): void
  * @method static OCIEngine|static getException(): mixed
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class OCIEngine implements InterfaceConnection
 {
     use Errors;
@@ -77,10 +56,11 @@ class OCIEngine implements InterfaceConnection
     /**
      *  Instance of the connection with database
      */
-    private $connection;
+    private mixed $connection;
 
     /**
-     * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
+     * This method is responsible for call the static instance to
+     * Arguments class with a Magic Method __call and __callStatic.
      *
      * @param string $method The method name to be called
      * @param array $arguments The arguments of the method
@@ -99,7 +79,6 @@ class OCIEngine implements InterfaceConnection
     private function preConnect(): OCIEngine
     {
         Options::setOptions((array) $this->getOptions());
-        $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);
         return $this;
@@ -127,10 +106,19 @@ class OCIEngine implements InterfaceConnection
      * @param int $port The port of the database
      * @return OCIEngine
      */
-    private function realConnect(string $host, string $user, string $password, string $database, int $port): OCIEngine
-    {
+    private function realConnect(
+        string $host,
+        string $user,
+        string $password,
+        string $database,
+        int $port
+    ): OCIEngine {
         $dsn = vsprintf('%s:%s/%s', [$host, $port, $database]);
-        $this->setConnection((string) !Options::getOptions(\GenericDatabase\Engine\OCI\OCI::ATTR_PERSISTENT) ? oci_connect($user, $password, $dsn, $this->getCharset()) : oci_pconnect($user, $password, $dsn, $this->getCharset()));
+        $this->setConnection(
+            (string) !Options::getOptions(OCI::ATTR_PERSISTENT)
+                ? oci_connect($user, $password, $dsn, $this->getCharset())
+                : oci_pconnect($user, $password, $dsn, $this->getCharset())
+        );
         return $this;
     }
 
@@ -146,11 +134,17 @@ class OCIEngine implements InterfaceConnection
                 ->preConnect()
                 ->setInstance($this)
                 ->setDsn($this->parseDsn())
-                ->realConnect($this->getHost(), $this->getUser(), $this->getPassword(), $this->getDatabase(), $this->getPort())
+                ->realConnect(
+                    (string) $this->getHost(),
+                    (string) $this->getUser(),
+                    (string) $this->getPassword(),
+                    (string) $this->getDatabase(),
+                    $this->getPort()
+                )
                 ->postConnect()
                 ->setConnected(true);
             return $this;
-        } catch (\Exception $error) {
+        } catch (Exception $error) {
             $this->setConnected(false);
             Errors::throw($error);
         }
@@ -159,9 +153,10 @@ class OCIEngine implements InterfaceConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|\Exception
+     * @return string|Exception
+     * @throws Exception
      */
-    private function parseDsn(): string|\Exception
+    private function parseDsn(): string|Exception
     {
         return DSN::parseDsn();
     }
@@ -179,7 +174,7 @@ class OCIEngine implements InterfaceConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets a intance of the connection with the database
+     * @param mixed $connection Sets an intance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -222,7 +217,8 @@ class OCIEngine implements InterfaceConnection
     }
 
     /**
-     * This function rolls back any changes made to the database during this transaction and restores the data to its original state.
+     * This function rolls back any changes made to the database during
+     * this transaction and restores the data to its original state.
      *
      * @return bool
      */
@@ -232,7 +228,8 @@ class OCIEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     * either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @return bool
      */
@@ -242,7 +239,8 @@ class OCIEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     * either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @param ?string $name = null Resource name, table or view
      * @return string|int|false
@@ -261,21 +259,13 @@ class OCIEngine implements InterfaceConnection
     public function quote(mixed ...$params): mixed
     {
         $string = $params[0];
-        $quoted = function ($string) {
-            return str_replace("'", "''", $string);
+        return match (true) {
+            is_int($string) => $string,
+            is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
+            is_bool($string) => $string ? '1' : '0',
+            is_null($string) => 'NULL',
+            default => "'" . str_replace("'", "''", $string) . "'",
         };
-
-        if (is_int($string)) {
-            return $string;
-        } elseif (is_float($string)) {
-            return "'" . $quoted(str_replace(',', '.', strval(floatval($string)))) . "'";
-        } elseif (is_bool($string)) {
-            return $string ? '1' : '0';
-        } elseif (is_null($string)) {
-            return 'NULL';
-        } else {
-            return "'" . $quoted($string) . "'";
-        }
     }
 
     /**
@@ -290,18 +280,20 @@ class OCIEngine implements InterfaceConnection
         $param = $params[1];
         $value = $params[2];
         if (is_numeric($value)) {
-            oci_bind_by_name($query, $param, $value, 8, SQLT_INT);
+            $numericValue = $value;
+            oci_bind_by_name($query, $param, $numericValue, 8, SQLT_INT);
         } elseif (is_float($value)) {
-            oci_bind_by_name($query, $param, floatval($value), 8, SQLT_FLT);
+            $floatValue = $value;
+            oci_bind_by_name($query, $param, $floatValue, 8, SQLT_FLT);
         } elseif (is_string($value)) {
-            $value = (string) $value;
-            oci_bind_by_name($query, $param, $value, -1, SQLT_CHR);
+            $stringValue = $value;
+            oci_bind_by_name($query, $param, $stringValue, -1);
         } elseif (is_bool($value)) {
-            $value = (bool) $value;
-            oci_bind_by_name($query, $param, $value, -1, SQLT_BOL);
+            $boolValue = $value;
+            oci_bind_by_name($query, $param, $boolValue, -1, SQLT_BOL);
         } elseif (is_array($value)) {
             foreach ($param as $key => $val) {
-                oci_bind_by_name($query, $key, $param[$key]);
+                oci_bind_by_name($query, $key, $value[$key]);
             }
         }
         return $this;
@@ -328,8 +320,8 @@ class OCIEngine implements InterfaceConnection
     public function exec(mixed ...$params): mixed
     {
         $query = $params[0];
-        $result_mode = isset($params[1]) ?? OCI_DEFAULT;
-        return oci_execute($query, $result_mode);
+        $resultMode = isset($params[1]) ?? OCI_DEFAULT;
+        return oci_execute($query, $resultMode);
     }
 
     /**
@@ -340,7 +332,7 @@ class OCIEngine implements InterfaceConnection
      */
     public function getAttribute(mixed $name): mixed
     {
-        return \GenericDatabase\Engine\OCI\OCI::getAttribute($name);
+        return OCI::getAttribute($name);
     }
 
     /**
@@ -352,7 +344,7 @@ class OCIEngine implements InterfaceConnection
      */
     public function setAttribute(mixed $name, mixed $value): void
     {
-        \GenericDatabase\Engine\OCI\OCI::setAttribute($name, $value);
+        OCI::setAttribute($name, $value);
     }
 
     /**

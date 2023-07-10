@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use AllowDynamicProperties;
+use Exception;
+use GenericDatabase\Engine\FBird\FBird;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Traits\Errors;
 use GenericDatabase\Traits\Caller;
@@ -17,56 +20,32 @@ use GenericDatabase\Engine\FBird\Dump;
 use GenericDatabase\Engine\FBird\Transaction;
 
 /**
- * @method FBirdEngine setDriver(mixed $value): void
- * @method FBirdEngine getDriver(): mixed
- * @method FBirdEngine setHost(mixed $value): void
- * @method FBirdEngine getHost(): mixed
- * @method FBirdEngine setPort(mixed $value): void
- * @method FBirdEngine getPort(): mixed
- * @method FBirdEngine setUser(mixed $value): void
- * @method FBirdEngine getUser(): mixed
- * @method FBirdEngine setPassword(mixed $value): void
- * @method FBirdEngine getPassword(): mixed
- * @method FBirdEngine setDatabase(mixed $value): void
- * @method FBirdEngine getDatabase(): mixed
- * @method FBirdEngine setOptions(mixed $value): void
- * @method FBirdEngine getOptions(): mixed
- * @method FBirdEngine setConnected(mixed $value): void
- * @method FBirdEngine getConnected(): mixed
- * @method FBirdEngine setDsn(mixed $value): void
- * @method FBirdEngine getDsn(): mixed
- * @method FBirdEngine setAttributes(mixed $value): void
- * @method FBirdEngine getAttributes(): mixed
- * @method FBirdEngine setCharset(mixed $value): void
- * @method FBirdEngine getCharset(): mixed
- * @method FBirdEngine setException(mixed $value): void
- * @method FBirdEngine getException(): mixed
- * @method static FBirdEngine|static setDriver(mixed $value): mixed
+ * @method static FBirdEngine|static setDriver(mixed $value): void
  * @method static FBirdEngine|static getDriver(): mixed
- * @method static FBirdEngine|static setHost(mixed $value): mixed
+ * @method static FBirdEngine|static setHost(mixed $value): void
  * @method static FBirdEngine|static getHost(): mixed
- * @method static FBirdEngine|static setPort(mixed $value): mixed
+ * @method static FBirdEngine|static setPort(mixed $value): void
  * @method static FBirdEngine|static getPort(): mixed
- * @method static FBirdEngine|static setUser(mixed $value): mixed
+ * @method static FBirdEngine|static setUser(mixed $value): void
  * @method static FBirdEngine|static getUser(): mixed
- * @method static FBirdEngine|static setPassword(mixed $value): mixed
+ * @method static FBirdEngine|static setPassword(mixed $value): void
  * @method static FBirdEngine|static getPassword(): mixed
- * @method static FBirdEngine|static setDatabase(mixed $value): mixed
+ * @method static FBirdEngine|static setDatabase(mixed $value): void
  * @method static FBirdEngine|static getDatabase(): mixed
- * @method static FBirdEngine|static setOptions(mixed $value): mixed
+ * @method static FBirdEngine|static setOptions(mixed $value): void
  * @method static FBirdEngine|static getOptions(): mixed
- * @method static FBirdEngine|static setConnected(mixed $value): mixed
+ * @method static FBirdEngine|static setConnected(mixed $value): void
  * @method static FBirdEngine|static getConnected(): mixed
- * @method static FBirdEngine|static setDsn(mixed $value): mixed
+ * @method static FBirdEngine|static setDsn(mixed $value): void
  * @method static FBirdEngine|static getDsn(): mixed
- * @method static FBirdEngine|static setAttributes(mixed $value): mixed
+ * @method static FBirdEngine|static setAttributes(mixed $value): void
  * @method static FBirdEngine|static getAttributes(): mixed
- * @method static FBirdEngine|static setCharset(mixed $value): mixed
+ * @method static FBirdEngine|static setCharset(mixed $value): void
  * @method static FBirdEngine|static getCharset(): mixed
- * @method static FBirdEngine|static setException(mixed $value): mixed
+ * @method static FBirdEngine|static setException(mixed $value): void
  * @method static FBirdEngine|static getException(): mixed
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class FBirdEngine implements InterfaceConnection
 {
     use Errors;
@@ -77,10 +56,11 @@ class FBirdEngine implements InterfaceConnection
     /**
      *  Instance of the connection with database
      */
-    private $connection;
+    private mixed $connection;
 
     /**
-     * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
+     * This method is responsible for call the static instance to
+     * Arguments class with a Magic Method __call and __callStatic.
      *
      * @param string $method The method name to be called
      * @param array $arguments The arguments of the method
@@ -98,8 +78,7 @@ class FBirdEngine implements InterfaceConnection
      */
     private function preConnect(): FBirdEngine
     {
-        Options::setOptions((array)$this->getOptions());
-        $options = [];
+        Options::setOptions((array) $this->getOptions());
         $options = Options::getOptions();
         $this->setOptions($options);
         return $this;
@@ -127,10 +106,19 @@ class FBirdEngine implements InterfaceConnection
      * @param int $port The port of the database
      * @return FBirdEngine
      */
-    private function realConnect(string $host, string $user, string $password, string $database, int $port): FBirdEngine
-    {
+    private function realConnect(
+        string $host,
+        string $user,
+        string $password,
+        string $database,
+        int $port
+    ): FBirdEngine {
         $dsn = vsprintf('%s/%s:%s', [$host, $port, $database]);
-        $this->setConnection((string) !Options::getOptions(\GenericDatabase\Engine\FBird\FBird::ATTR_PERSISTENT) ? fbird_connect($dsn, $user, $password) : fbird_pconnect($dsn, $user, $password));
+        $this->setConnection(
+            (string) !Options::getOptions(FBird::ATTR_PERSISTENT)
+                ? ibase_connect($dsn, $user, $password)
+                : ibase_pconnect($dsn, $user, $password)
+        );
         return $this;
     }
 
@@ -146,11 +134,17 @@ class FBirdEngine implements InterfaceConnection
                 ->preConnect()
                 ->setInstance($this)
                 ->setDsn($this->parseDsn())
-                ->realConnect($this->getHost(), $this->getUser(), $this->getPassword(), $this->getDatabase(), $this->getPort())
+                ->realConnect(
+                    (string) $this->getHost(),
+                    (string) $this->getUser(),
+                    (string) $this->getPassword(),
+                    (string) $this->getDatabase(),
+                    $this->getPort()
+                )
                 ->postConnect()
                 ->setConnected(true);
             return $this;
-        } catch (\Exception $error) {
+        } catch (Exception $error) {
             $this->setConnected(false);
             Errors::throw($error);
         }
@@ -159,9 +153,10 @@ class FBirdEngine implements InterfaceConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|\Exception
+     * @return string|Exception
+     * @throws Exception
      */
-    private function parseDsn(): string|\Exception
+    private function parseDsn(): string|Exception
     {
         return DSN::parseDsn();
     }
@@ -179,7 +174,7 @@ class FBirdEngine implements InterfaceConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets a intance of the connection with the database
+     * @param mixed $connection Sets an intance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -222,7 +217,8 @@ class FBirdEngine implements InterfaceConnection
     }
 
     /**
-     * This function rolls back any changes made to the database during this transaction and restores the data to its original state.
+     * This function rolls back any changes made to the database during
+     * this transaction and restores the data to its original state.
      *
      * @return bool
      */
@@ -232,7 +228,8 @@ class FBirdEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     * either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @return bool
      */
@@ -242,7 +239,8 @@ class FBirdEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     * either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @param ?string $name = null Resource name, table or view
      * @return string|int|false
@@ -256,26 +254,18 @@ class FBirdEngine implements InterfaceConnection
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
         $string = $params[0];
-        $quoted = function ($string) {
-            return str_replace("'", "''", $string);
+        return match (true) {
+            is_int($string) => $string,
+            is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
+            is_bool($string) => $string ? '1' : '0',
+            is_null($string) => 'NULL',
+            default => "'" . str_replace("'", "''", $string) . "'",
         };
-
-        if (is_int($string)) {
-            return $string;
-        } elseif (is_float($string)) {
-            return "'" . $quoted(str_replace(',', '.', strval(floatval($string)))) . "'";
-        } elseif (is_bool($string)) {
-            return $string ? '1' : '0';
-        } elseif (is_null($string)) {
-            return 'NULL';
-        } else {
-            return "'" . $quoted($string) . "'";
-        }
     }
 
     /**
@@ -287,9 +277,10 @@ class FBirdEngine implements InterfaceConnection
     public function prepare(mixed ...$params): mixed
     {
         $query = $params[0];
-        // $transaction = isset($params[1]) ?? null;
-        // return (is_null($transaction) ? fbird_prepare($this->getInstance()->getConnection(), $query) : fbird_prepare($this->getInstance()->getConnection(), $transaction, $query));
-        return fbird_prepare($query);
+        $transaction = (string) isset($params[1]) ?? null;
+        return is_null($transaction)
+            ? ibase_prepare($this->getInstance()->getConnection(), $query, null)
+            : ibase_prepare($this->getInstance()->getConnection(), $transaction, $query);
     }
 
     /**
@@ -301,7 +292,7 @@ class FBirdEngine implements InterfaceConnection
     public function query(mixed ...$params): mixed
     {
         $query = $params[0];
-        return fbird_query($this->getInstance()->getConnection(), $query);
+        return ibase_query($this->getInstance()->getConnection(), $query);
     }
 
     /**
@@ -315,11 +306,10 @@ class FBirdEngine implements InterfaceConnection
         $query = $params[0];
         $param = $params[1];
         if (!is_array($param)) {
-            return fbird_execute($query, $param);
+            return ibase_execute($query, $param);
         }
         array_unshift($param, $query);
-        $rc = call_user_func_array('fbird_execute', $param);
-        return $rc;
+        return call_user_func_array('ibase_execute', $param);
     }
 
     /**
@@ -330,7 +320,7 @@ class FBirdEngine implements InterfaceConnection
      */
     public function getAttribute(mixed $name): mixed
     {
-        return \GenericDatabase\Engine\FBird\FBird::getAttribute($name);
+        return FBird::getAttribute($name);
     }
 
     /**
@@ -342,28 +332,28 @@ class FBirdEngine implements InterfaceConnection
      */
     public function setAttribute(mixed $name, mixed $value): void
     {
-        \GenericDatabase\Engine\FBird\FBird::setAttribute($name, $value);
+        FBird::setAttribute($name, $value);
     }
 
     /**
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
      * @param ?int $inst = null Resource name, table or view
-     * @return mixed
+     * @return int|false
      */
-    public function errorCode(?int $inst = null): mixed
+    public function errorCode(?int $inst = null): int|false
     {
-        return fbird_errcode();
+        return ibase_errcode();
     }
 
     /**
      * This function returns an array containing error information about the last operation performed by the database.
      *
      * @param ?int $inst = null Resource name, table or view
-     * @return mixed
+     * @return string|false
      */
-    public function errorInfo(?int $inst = null): mixed
+    public function errorInfo(?int $inst = null): string|false
     {
-        return fbird_errmsg();
+        return ibase_errmsg();
     }
 }

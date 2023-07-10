@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use AllowDynamicProperties;
+use Exception;
+use GenericDatabase\Engine\PgSQL\PgSQL;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Traits\Errors;
 use GenericDatabase\Traits\Caller;
@@ -17,56 +20,32 @@ use GenericDatabase\Engine\PgSQL\Dump;
 use GenericDatabase\Engine\PgSQL\Transaction;
 
 /**
- * @method PgSQLEngine setDriver(mixed $value): void
- * @method PgSQLEngine getDriver(): mixed
- * @method PgSQLEngine setHost(mixed $value): void
- * @method PgSQLEngine getHost(): mixed
- * @method PgSQLEngine setPort(mixed $value): void
- * @method PgSQLEngine getPort(): mixed
- * @method PgSQLEngine setUser(mixed $value): void
- * @method PgSQLEngine getUser(): mixed
- * @method PgSQLEngine setPassword(mixed $value): void
- * @method PgSQLEngine getPassword(): mixed
- * @method PgSQLEngine setDatabase(mixed $value): void
- * @method PgSQLEngine getDatabase(): mixed
- * @method PgSQLEngine setOptions(mixed $value): void
- * @method PgSQLEngine getOptions(): mixed
- * @method PgSQLEngine setConnected(mixed $value): void
- * @method PgSQLEngine getConnected(): mixed
- * @method PgSQLEngine setDsn(mixed $value): void
- * @method PgSQLEngine getDsn(): mixed
- * @method PgSQLEngine setAttributes(mixed $value): void
- * @method PgSQLEngine getAttributes(): mixed
- * @method PgSQLEngine setCharset(mixed $value): void
- * @method PgSQLEngine getCharset(): mixed
- * @method PgSQLEngine setException(mixed $value): void
- * @method PgSQLEngine getException(): mixed
- * @method static PgSQLEngine|static setDriver(mixed $value): mixed
+ * @method static PgSQLEngine|static setDriver(mixed $value): void
  * @method static PgSQLEngine|static getDriver(): mixed
- * @method static PgSQLEngine|static setHost(mixed $value): mixed
+ * @method static PgSQLEngine|static setHost(mixed $value): void
  * @method static PgSQLEngine|static getHost(): mixed
- * @method static PgSQLEngine|static setPort(mixed $value): mixed
+ * @method static PgSQLEngine|static setPort(mixed $value): void
  * @method static PgSQLEngine|static getPort(): mixed
- * @method static PgSQLEngine|static setUser(mixed $value): mixed
+ * @method static PgSQLEngine|static setUser(mixed $value): void
  * @method static PgSQLEngine|static getUser(): mixed
- * @method static PgSQLEngine|static setPassword(mixed $value): mixed
+ * @method static PgSQLEngine|static setPassword(mixed $value): void
  * @method static PgSQLEngine|static getPassword(): mixed
- * @method static PgSQLEngine|static setDatabase(mixed $value): mixed
+ * @method static PgSQLEngine|static setDatabase(mixed $value): void
  * @method static PgSQLEngine|static getDatabase(): mixed
- * @method static PgSQLEngine|static setOptions(mixed $value): mixed
+ * @method static PgSQLEngine|static setOptions(mixed $value): void
  * @method static PgSQLEngine|static getOptions(): mixed
- * @method static PgSQLEngine|static setConnected(mixed $value): mixed
+ * @method static PgSQLEngine|static setConnected(mixed $value): void
  * @method static PgSQLEngine|static getConnected(): mixed
- * @method static PgSQLEngine|static setDsn(mixed $value): mixed
+ * @method static PgSQLEngine|static setDsn(mixed $value): void
  * @method static PgSQLEngine|static getDsn(): mixed
- * @method static PgSQLEngine|static setAttributes(mixed $value): mixed
+ * @method static PgSQLEngine|static setAttributes(mixed $value): void
  * @method static PgSQLEngine|static getAttributes(): mixed
- * @method static PgSQLEngine|static setCharset(mixed $value): mixed
+ * @method static PgSQLEngine|static setCharset(mixed $value): void
  * @method static PgSQLEngine|static getCharset(): mixed
- * @method static PgSQLEngine|static setException(mixed $value): mixed
+ * @method static PgSQLEngine|static setException(mixed $value): void
  * @method static PgSQLEngine|static getException(): mixed
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class PgSQLEngine implements InterfaceConnection
 {
     use Errors;
@@ -77,10 +56,11 @@ class PgSQLEngine implements InterfaceConnection
     /**
      *  Instance of the connection with database
      */
-    private $connection;
+    private mixed $connection;
 
     /**
-     * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
+     * This method is responsible for call the static instance to
+     *  Arguments class with a Magic Method __call and __callStatic.
      *
      * @param string $method The method name to be called
      * @param array $arguments The arguments of the method
@@ -99,7 +79,6 @@ class PgSQLEngine implements InterfaceConnection
     private function preConnect(): PgSQLEngine
     {
         Options::setOptions((array) $this->getOptions());
-        $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);
         return $this;
@@ -125,7 +104,11 @@ class PgSQLEngine implements InterfaceConnection
      */
     private function realConnect(string $dsn): PgSQLEngine
     {
-        $this->setConnection((string) !Options::getOptions(\GenericDatabase\Engine\PgSQL\PgSQL::ATTR_PERSISTENT) ? pg_connect($dsn, Attributes::getFlags()) : pg_pconnect($dsn, Attributes::getFlags()));
+        $this->setConnection(
+            (string) !Options::getOptions(PgSQL::ATTR_PERSISTENT)
+                ? pg_connect($dsn, Attributes::getFlags())
+                : pg_pconnect($dsn, Attributes::getFlags())
+        );
         return $this;
     }
 
@@ -140,11 +123,13 @@ class PgSQLEngine implements InterfaceConnection
             $this
                 ->preConnect()
                 ->setInstance($this)
-                ->realConnect($this->parseDsn())
+                ->realConnect(
+                    $this->parseDsn()
+                )
                 ->postConnect()
                 ->setConnected(true);
             return $this;
-        } catch (\Exception $error) {
+        } catch (Exception $error) {
             $this->setConnected(false);
             Errors::throw($error);
         }
@@ -153,9 +138,10 @@ class PgSQLEngine implements InterfaceConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|\Exception
+     * @return string|Exception
+     * @throws Exception
      */
-    private function parseDsn(): string|\Exception
+    private function parseDsn(): string|Exception
     {
         return DSN::parseDsn();
     }
@@ -173,7 +159,7 @@ class PgSQLEngine implements InterfaceConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets a intance of the connection with the database
+     * @param mixed $connection Sets an intance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -216,7 +202,8 @@ class PgSQLEngine implements InterfaceConnection
     }
 
     /**
-     * This function rolls back any changes made to the database during this transaction and restores the data to its original state.
+     * This function rolls back any changes made to the database during
+     * this transaction and restores the data to its original state.
      *
      * @return bool
      */
@@ -226,7 +213,8 @@ class PgSQLEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     *  either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @return bool
      */
@@ -236,17 +224,23 @@ class PgSQLEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     *  either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @param ?string $name = null Resource name, table or view
      * @return string|int|false
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        $autoKey = $this->query(vsprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE column_default LIKE 'nextval%%' AND table_name = '%s';", [$name]));
-        $autoKeyRes = pg_fetch_assoc($autoKey);
+        $filter = sprintf("WHERE column_default LIKE 'nextval%%' AND table_name = '%s'", $name);
+        $query = $this->query(sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS %s", $filter));
+        $autoKeyRes = pg_fetch_assoc($query);
         if (isset($autoKeyRes['column_name'])) {
-            $maxIndex = $this->query(vsprintf("SELECT pg_catalog.setval(pg_get_serial_sequence('%s', '%s'), COALESCE(MAX(%s))) AS value FROM %s;", [$name, $autoKeyRes['column_name'], $autoKeyRes['column_name'], $name]));
+            $query = vsprintf(
+                "SELECT pg_catalog.setval(pg_get_serial_sequence('%s', '%s'), COALESCE(MAX(%s))) AS value FROM %s;",
+                [$name, $autoKeyRes['column_name'], $autoKeyRes['column_name'], $name]
+            );
+            $maxIndex = $this->query($query);
             $maxIndexRes = pg_fetch_assoc($maxIndex);
             return $maxIndexRes['value'];
         } else {
@@ -265,16 +259,12 @@ class PgSQLEngine implements InterfaceConnection
         $string = $params[0];
         $quote = $params[1];
         if (is_array($string)) {
-            return array_map([get_called_class(), 'quote'], $string, array_fill(0, count($string), $quote));
+            return array_map(fn ($str) => $this->quote($str, $quote), $string);
         } elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", $string)) {
             return $string;
         }
-
-        $quoted = function ($string, $quote) {
-            $val = pg_escape_string($this->getInstance()->getConnection(), $string);
-            return ($quote) ? "'$val'" : $val;
-        };
-        return $quoted($string, $quote);
+        $quoted = fn ($str) => pg_escape_string($this->getInstance()->getConnection(), $str);
+        return ($quote) ? "'" . $quoted($string) . "'" : $quoted($string);
     }
 
 
@@ -324,7 +314,7 @@ class PgSQLEngine implements InterfaceConnection
      */
     public function getAttribute(mixed $name): mixed
     {
-        return \GenericDatabase\Engine\PgSQL\PgSQL::getAttribute($name);
+        return PgSQL::getAttribute($name);
     }
 
     /**
@@ -336,7 +326,7 @@ class PgSQLEngine implements InterfaceConnection
      */
     public function setAttribute(mixed $name, mixed $value): void
     {
-        \GenericDatabase\Engine\PgSQL\PgSQL::setAttribute($name, $value);
+        PgSQL::setAttribute($name, $value);
     }
 
     /**

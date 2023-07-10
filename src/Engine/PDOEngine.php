@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use AllowDynamicProperties;
+use ErrorException;
+use Exception;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Traits\Errors;
 use GenericDatabase\Traits\Caller;
@@ -15,58 +18,36 @@ use GenericDatabase\Engine\PDO\Attributes;
 use GenericDatabase\Engine\PDO\DSN;
 use GenericDatabase\Engine\PDO\Dump;
 use GenericDatabase\Engine\PDO\Transaction;
+use PDO;
+use PDOException;
 
 /**
- * @method PDOEngine setDriver(mixed $value): void
- * @method PDOEngine getDriver(): mixed
- * @method PDOEngine setHost(mixed $value): void
- * @method PDOEngine getHost(): mixed
- * @method PDOEngine setPort(mixed $value): void
- * @method PDOEngine getPort(): mixed
- * @method PDOEngine setUser(mixed $value): void
- * @method PDOEngine getUser(): mixed
- * @method PDOEngine setPassword(mixed $value): void
- * @method PDOEngine getPassword(): mixed
- * @method PDOEngine setDatabase(mixed $value): void
- * @method PDOEngine getDatabase(): mixed
- * @method PDOEngine setOptions(mixed $value): void
- * @method PDOEngine getOptions(): mixed
- * @method PDOEngine setConnected(mixed $value): void
- * @method PDOEngine getConnected(): mixed
- * @method PDOEngine setDsn(mixed $value): void
- * @method PDOEngine getDsn(): mixed
- * @method PDOEngine setAttributes(mixed $value): void
- * @method PDOEngine getAttributes(): mixed
- * @method PDOEngine setCharset(mixed $value): void
- * @method PDOEngine getCharset(): mixed
- * @method PDOEngine setException(mixed $value): void
- * @method PDOEngine getException(): mixed
- * @method static PDOEngine|static setDriver(mixed $value): mixed
+ * @method static PDOEngine|static setDriver(mixed $value): void
  * @method static PDOEngine|static getDriver(): mixed
- * @method static PDOEngine|static setHost(mixed $value): mixed
+ * @method static PDOEngine|static setHost(mixed $value): void
  * @method static PDOEngine|static getHost(): mixed
- * @method static PDOEngine|static setPort(mixed $value): mixed
+ * @method static PDOEngine|static setPort(mixed $value): void
  * @method static PDOEngine|static getPort(): mixed
- * @method static PDOEngine|static setUser(mixed $value): mixed
+ * @method static PDOEngine|static setUser(mixed $value): void
  * @method static PDOEngine|static getUser(): mixed
- * @method static PDOEngine|static setPassword(mixed $value): mixed
+ * @method static PDOEngine|static setPassword(mixed $value): void
  * @method static PDOEngine|static getPassword(): mixed
- * @method static PDOEngine|static setDatabase(mixed $value): mixed
+ * @method static PDOEngine|static setDatabase(mixed $value): void
  * @method static PDOEngine|static getDatabase(): mixed
- * @method static PDOEngine|static setOptions(mixed $value): mixed
+ * @method static PDOEngine|static setOptions(mixed $value): void
  * @method static PDOEngine|static getOptions(): mixed
- * @method static PDOEngine|static setConnected(mixed $value): mixed
+ * @method static PDOEngine|static setConnected(mixed $value): void
  * @method static PDOEngine|static getConnected(): mixed
- * @method static PDOEngine|static setDsn(mixed $value): mixed
+ * @method static PDOEngine|static setDsn(mixed $value): void
  * @method static PDOEngine|static getDsn(): mixed
- * @method static PDOEngine|static setAttributes(mixed $value): mixed
+ * @method static PDOEngine|static setAttributes(mixed $value): void
  * @method static PDOEngine|static getAttributes(): mixed
- * @method static PDOEngine|static setCharset(mixed $value): mixed
+ * @method static PDOEngine|static setCharset(mixed $value): void
  * @method static PDOEngine|static getCharset(): mixed
- * @method static PDOEngine|static setException(mixed $value): mixed
+ * @method static PDOEngine|static setException(mixed $value): void
  * @method static PDOEngine|static getException(): mixed
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class PDOEngine implements InterfaceConnection
 {
     use Errors;
@@ -77,10 +58,11 @@ class PDOEngine implements InterfaceConnection
     /**
      *  Instance of the connection with database
      */
-    private $connection;
+    private mixed $connection;
 
     /**
-     * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
+     * This method is responsible for call the static instance to
+     * Arguments class with a Magic Method __call and __callStatic.
      *
      * @param string $method The method name to be called
      * @param array $arguments The arguments of the method
@@ -95,11 +77,11 @@ class PDOEngine implements InterfaceConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return PDOEngine
+     * @throws Exception
      */
     private function preConnect(): PDOEngine
     {
         Options::setOptions((array) $this->getOptions());
-        $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);
         return $this;
@@ -109,6 +91,7 @@ class PDOEngine implements InterfaceConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return PDOEngine
+     * @throws ErrorException
      */
     private function postConnect(): PDOEngine
     {
@@ -126,9 +109,13 @@ class PDOEngine implements InterfaceConnection
      * @param ?array $options = null The options of the database
      * @return PDOEngine
      */
-    private function realConnect(string $dsn, ?string $user = null, ?string $password = null, ?array $options = null): PDOEngine
-    {
-        $this->setConnection(new \PDO($dsn, $user, $password, $options));
+    private function realConnect(
+        string $dsn,
+        ?string $user = null,
+        ?string $password = null,
+        ?array $options = null
+    ): PDOEngine {
+        $this->setConnection(new PDO($dsn, $user, $password, $options));
         return $this;
     }
 
@@ -143,11 +130,16 @@ class PDOEngine implements InterfaceConnection
             $this
                 ->setInstance($this)
                 ->preConnect()
-                ->realConnect($this->parseDsn(), $this->getUser(), $this->getPassword(), $this->getOptions())
+                ->realConnect(
+                    (string) $this->parseDsn(),
+                    (string) $this->getUser(),
+                    (string) $this->getPassword(),
+                    (array) $this->getOptions()
+                )
                 ->postConnect()
                 ->setConnected(true);
             return $this;
-        } catch (\PDOException | \Exception $error) {
+        } catch (PDOException | Exception $error) {
             $this->setConnected(false);
             Errors::throw($error);
         }
@@ -156,9 +148,10 @@ class PDOEngine implements InterfaceConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|\Exception
+     * @return string|Exception
+     * @throws Exception
      */
-    private function parseDsn(): string|\Exception
+    private function parseDsn(): string|Exception
     {
         return DSN::parseDsn();
     }
@@ -176,7 +169,7 @@ class PDOEngine implements InterfaceConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets a intance of the connection with the database
+     * @param mixed $connection Sets an intance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -192,6 +185,7 @@ class PDOEngine implements InterfaceConnection
      * @param string $delimiter = ';' The delimiter of the dump
      * @param ?callable $onProgress = null
      * @return int
+     * @throws Exception
      */
     public function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
     {
@@ -219,7 +213,8 @@ class PDOEngine implements InterfaceConnection
     }
 
     /**
-     * This function rolls back any changes made to the database during this transaction and restores the data to its original state.
+     * This function rolls back any changes made to the database during
+     *  this transaction and restores the data to its original state.
      *
      * @return bool
      */
@@ -229,7 +224,8 @@ class PDOEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     *  either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @return bool
      */
@@ -239,7 +235,8 @@ class PDOEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     *  either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @param ?string $name = null Resource name, table or view
      * @return string|int|false
@@ -258,7 +255,7 @@ class PDOEngine implements InterfaceConnection
     public function quote(mixed ...$params): mixed
     {
         $string = $params[0];
-        $type = (count($params) > 0 && isset($params[1])) ?? \PDO::PARAM_STR;
+        $type = (empty($params) || !isset($params[1])) ? PDO::PARAM_STR : $params[1];
         return $this->getInstance()->getConnection()->quote($string, $type);
     }
 
@@ -271,7 +268,7 @@ class PDOEngine implements InterfaceConnection
     public function prepare(mixed ...$params): mixed
     {
         $query = $params[0];
-        $options = (count($params) > 0 && isset($params[1])) ?? [];
+        $options = empty($params) || !isset($params[1]) ? [] : $params[1];
         return $this->getInstance()->getConnection()->prepare($query, $options);
     }
 
@@ -284,7 +281,7 @@ class PDOEngine implements InterfaceConnection
     public function query(mixed ...$params): mixed
     {
         $query = $params[0];
-        $fetchMode = (count($params) > 0 && isset($params[1])) ? $params[1] : \PDO::FETCH_DEFAULT;
+        $fetchMode = (empty($params) || !isset($params[1])) ? PDO::FETCH_DEFAULT : $params[1];
         return $this->getInstance()->getConnection()->query($query, $fetchMode);
     }
 

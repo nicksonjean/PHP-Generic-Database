@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use AllowDynamicProperties;
+use Exception;
+use GenericDatabase\Engine\SQLSrv\SQLSrv;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Traits\Errors;
 use GenericDatabase\Traits\Caller;
@@ -17,56 +20,32 @@ use GenericDatabase\Engine\SQLSrv\Dump;
 use GenericDatabase\Engine\SQLSrv\Transaction;
 
 /**
- * @method SQLSrvEngine setDriver(mixed $value): void
- * @method SQLSrvEngine getDriver(): mixed
- * @method SQLSrvEngine setHost(mixed $value): void
- * @method SQLSrvEngine getHost(): mixed
- * @method SQLSrvEngine setPort(mixed $value): void
- * @method SQLSrvEngine getPort(): mixed
- * @method SQLSrvEngine setUser(mixed $value): void
- * @method SQLSrvEngine getUser(): mixed
- * @method SQLSrvEngine setPassword(mixed $value): void
- * @method SQLSrvEngine getPassword(): mixed
- * @method SQLSrvEngine setDatabase(mixed $value): void
- * @method SQLSrvEngine getDatabase(): mixed
- * @method SQLSrvEngine setOptions(mixed $value): void
- * @method SQLSrvEngine getOptions(): mixed
- * @method SQLSrvEngine setConnected(mixed $value): void
- * @method SQLSrvEngine getConnected(): mixed
- * @method SQLSrvEngine setDsn(mixed $value): void
- * @method SQLSrvEngine getDsn(): mixed
- * @method SQLSrvEngine setAttributes(mixed $value): void
- * @method SQLSrvEngine getAttributes(): mixed
- * @method SQLSrvEngine setCharset(mixed $value): void
- * @method SQLSrvEngine getCharset(): mixed
- * @method SQLSrvEngine setException(mixed $value): void
- * @method SQLSrvEngine getException(): mixed
- * @method static SQLSrvEngine|static setDriver(mixed $value): mixed
+ * @method static SQLSrvEngine|static setDriver(mixed $value): void
  * @method static SQLSrvEngine|static getDriver(): mixed
- * @method static SQLSrvEngine|static setHost(mixed $value): mixed
+ * @method static SQLSrvEngine|static setHost(mixed $value): void
  * @method static SQLSrvEngine|static getHost(): mixed
- * @method static SQLSrvEngine|static setPort(mixed $value): mixed
+ * @method static SQLSrvEngine|static setPort(mixed $value): void
  * @method static SQLSrvEngine|static getPort(): mixed
- * @method static SQLSrvEngine|static setUser(mixed $value): mixed
+ * @method static SQLSrvEngine|static setUser(mixed $value): void
  * @method static SQLSrvEngine|static getUser(): mixed
- * @method static SQLSrvEngine|static setPassword(mixed $value): mixed
+ * @method static SQLSrvEngine|static setPassword(mixed $value): void
  * @method static SQLSrvEngine|static getPassword(): mixed
- * @method static SQLSrvEngine|static setDatabase(mixed $value): mixed
+ * @method static SQLSrvEngine|static setDatabase(mixed $value): void
  * @method static SQLSrvEngine|static getDatabase(): mixed
- * @method static SQLSrvEngine|static setOptions(mixed $value): mixed
+ * @method static SQLSrvEngine|static setOptions(mixed $value): void
  * @method static SQLSrvEngine|static getOptions(): mixed
- * @method static SQLSrvEngine|static setConnected(mixed $value): mixed
+ * @method static SQLSrvEngine|static setConnected(mixed $value): void
  * @method static SQLSrvEngine|static getConnected(): mixed
- * @method static SQLSrvEngine|static setDsn(mixed $value): mixed
+ * @method static SQLSrvEngine|static setDsn(mixed $value): void
  * @method static SQLSrvEngine|static getDsn(): mixed
- * @method static SQLSrvEngine|static setAttributes(mixed $value): mixed
+ * @method static SQLSrvEngine|static setAttributes(mixed $value): void
  * @method static SQLSrvEngine|static getAttributes(): mixed
- * @method static SQLSrvEngine|static setCharset(mixed $value): mixed
+ * @method static SQLSrvEngine|static setCharset(mixed $value): void
  * @method static SQLSrvEngine|static getCharset(): mixed
- * @method static SQLSrvEngine|static setException(mixed $value): mixed
+ * @method static SQLSrvEngine|static setException(mixed $value): void
  * @method static SQLSrvEngine|static getException(): mixed
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class SQLSrvEngine implements InterfaceConnection
 {
     use Errors;
@@ -77,10 +56,11 @@ class SQLSrvEngine implements InterfaceConnection
     /**
      *  Instance of the connection with database
      */
-    private $connection;
+    private mixed $connection;
 
     /**
-     * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
+     * This method is responsible for call the static instance to
+     *  Arguments class with a Magic Method __call and __callStatic.
      *
      * @param string $method The method name to be called
      * @param array $arguments The arguments of the method
@@ -99,11 +79,10 @@ class SQLSrvEngine implements InterfaceConnection
     private function preConnect(): SQLSrvEngine
     {
         Options::setOptions((array) $this->getOptions());
-        $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);
         if ($this->getCharset()) {
-            $this->setCharset(($this->getCharset() === 'utf8') ? 'UTF-8' : $this->getCharset());
+            $this->setCharset(((string) $this->getCharset() === 'utf8') ? 'UTF-8' : $this->getCharset());
         }
         return $this;
     }
@@ -130,15 +109,20 @@ class SQLSrvEngine implements InterfaceConnection
      * @param int $port The port of the database
      * @return SQLSrvEngine
      */
-    private function realConnect(string $host, string $user, string $password, string $database, int $port): SQLSrvEngine
-    {
+    private function realConnect(
+        string $host,
+        string $user,
+        string $password,
+        string $database,
+        int $port
+    ): SQLSrvEngine {
         $sn = vsprintf('%s,%s', [$host, $port]);
         $cnx = ["Database" => $database, "UID" => $user, "PWD" => $password];
         if ($this->getCharset()) {
             $cnx['CharacterSet'] = $this->getCharset();
         }
-        if (Options::getOptions(\GenericDatabase\Engine\SQLSrv\SQLSrv::ATTR_CONNECT_TIMEOUT)) {
-            $cnx['LoginTimeout'] = Options::getOptions(\GenericDatabase\Engine\SQLSrv\SQLSrv::ATTR_CONNECT_TIMEOUT);
+        if (Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)) {
+            $cnx['LoginTimeout'] = Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT);
         }
         $this->setConnection(sqlsrv_connect($sn, $cnx));
         return $this;
@@ -156,11 +140,17 @@ class SQLSrvEngine implements InterfaceConnection
                 ->preConnect()
                 ->setInstance($this)
                 ->setDsn($this->parseDsn())
-                ->realConnect($this->getHost(), $this->getUser(), $this->getPassword(), $this->getDatabase(), $this->getPort())
+                ->realConnect(
+                    (string) $this->getHost(),
+                    (string) $this->getUser(),
+                    (string) $this->getPassword(),
+                    (string) $this->getDatabase(),
+                    $this->getPort()
+                )
                 ->postConnect()
                 ->setConnected(true);
             return $this;
-        } catch (\Exception $error) {
+        } catch (Exception $error) {
             $this->setConnected(false);
             Errors::throw($error);
         }
@@ -169,9 +159,10 @@ class SQLSrvEngine implements InterfaceConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|\Exception
+     * @return string|Exception
+     * @throws Exception
      */
-    private function parseDsn(): string|\Exception
+    private function parseDsn(): string|Exception
     {
         return DSN::parseDsn();
     }
@@ -189,7 +180,7 @@ class SQLSrvEngine implements InterfaceConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets a intance of the connection with the database
+     * @param mixed $connection Sets an intance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -232,7 +223,8 @@ class SQLSrvEngine implements InterfaceConnection
     }
 
     /**
-     * This function rolls back any changes made to the database during this transaction and restores the data to its original state.
+     * This function rolls back any changes made to the database during
+     *  this transaction and restores the data to its original state.
      *
      * @return bool
      */
@@ -242,7 +234,8 @@ class SQLSrvEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     *  either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @return bool
      */
@@ -252,7 +245,8 @@ class SQLSrvEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     *  either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @param ?string $name = null Resource name, table or view
      * @return string|int|false
@@ -271,21 +265,13 @@ class SQLSrvEngine implements InterfaceConnection
     public function quote(mixed ...$params): mixed
     {
         $string = $params[0];
-        $quoted = function ($string) {
-            return str_replace("'", "''", $string);
+        return match (true) {
+            is_int($string) => $string,
+            is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
+            is_bool($string) => $string ? '1' : '0',
+            is_null($string) => 'NULL',
+            default => "'" . str_replace("'", "''", $string) . "'",
         };
-
-        if (is_int($string)) {
-            return $string;
-        } elseif (is_float($string)) {
-            return "'" . $quoted(str_replace(',', '.', strval(floatval($string)))) . "'";
-        } elseif (is_bool($string)) {
-            return $string ? '1' : '0';
-        } elseif (is_null($string)) {
-            return 'NULL';
-        } else {
-            return "'" . $quoted($string) . "'";
-        }
     }
 
     /**
@@ -336,7 +322,7 @@ class SQLSrvEngine implements InterfaceConnection
      */
     public function getAttribute(mixed $name): mixed
     {
-        return \GenericDatabase\Engine\SQLSrv\SQLSrv::getAttribute($name);
+        return SQLSrv::getAttribute($name);
     }
 
     /**
@@ -348,7 +334,7 @@ class SQLSrvEngine implements InterfaceConnection
      */
     public function setAttribute(mixed $name, mixed $value): void
     {
-        \GenericDatabase\Engine\SQLSrv\SQLSrv::setAttribute($name, $value);
+        SQLSrv::setAttribute($name, $value);
     }
 
     /**
@@ -359,8 +345,7 @@ class SQLSrvEngine implements InterfaceConnection
      */
     public function errorCode(?int $inst = null): mixed
     {
-        $m = sqlsrv_errors($inst);
-        return $m;
+        return sqlsrv_errors($inst);
     }
 
     /**
@@ -371,7 +356,6 @@ class SQLSrvEngine implements InterfaceConnection
      */
     public function errorInfo(?int $inst = null): mixed
     {
-        $m = sqlsrv_errors($inst);
-        return $m;
+        return sqlsrv_errors($inst);
     }
 }

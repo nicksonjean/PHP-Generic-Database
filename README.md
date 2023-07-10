@@ -27,7 +27,7 @@ Atualmente o PHP-Generic-Database suporte os seguintes mecanismos/banco de bados
   - SQLServer
 
 ## Dependências
-- PHP >= 81
+- PHP >= 8.1
 - Composer
 
 ## Configuração

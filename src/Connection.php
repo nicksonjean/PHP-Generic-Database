@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GenericDatabase;
 
-use GenericDatabase\InterfaceConnection;
+use AllowDynamicProperties;
 use GenericDatabase\Engine\FBirdEngine;
 use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Engine\OCIEngine;
@@ -21,7 +21,7 @@ use GenericDatabase\Traits\INI;
 use GenericDatabase\Traits\YAML;
 use GenericDatabase\Traits\XML;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class Connection
 {
     use Arrays;
@@ -32,7 +32,7 @@ class Connection
     /**
      * Array property for use in magic setter and getter in order
      */
-    private static $engineList = [
+    private static array $engineList = [
         'PDO',
         'MySQLi',
         'PgSQL',
@@ -45,7 +45,7 @@ class Connection
     /**
      * Property of the type object who define the strategy
      */
-    private $strategy;
+    private InterfaceConnection $strategy;
 
     /**
      * Defines the strategy instance
@@ -74,14 +74,14 @@ class Connection
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return mixed
+     * @return Connection
      */
-    public function __call(string $name, array $arguments): mixed
+    public function __call(string $name, array $arguments): Connection
     {
         $method = substr($name, 0, 3);
         $field = strtolower(substr($name, 3));
-        if ($field === 'engine' && count($arguments) > 0) {
-            self::call($this, 'initFactory', [...$arguments]);
+        if ($field === 'engine' && !empty($arguments)) {
+            $this->initFactory(...$arguments);
         }
         if ($method == 'set') {
             self::call($this->getStrategy(), 'set' . ucfirst($field), [...$arguments]);
@@ -89,7 +89,7 @@ class Connection
         } elseif ($method == 'get') {
             self::call($this->getStrategy(), 'get' . ucfirst($field), [...$arguments]);
         }
-        return null;
+        return self::getInstance();
     }
 
     /**
@@ -97,9 +97,9 @@ class Connection
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return mixed
+     * @return Connection
      */
-    public static function __callStatic(string $name, array $arguments): mixed
+    public static function __callStatic(string $name, array $arguments): Connection
     {
         switch ($name) {
             case 'new':
@@ -143,39 +143,29 @@ class Connection
      */
     private function initFactory(mixed $params): void
     {
-        switch ($params) {
-            case 'pdo':
-                $this->strategy = new PDOEngine();
-                break;
-            case 'mysqli':
-                $this->strategy = new MySQLiEngine();
-                break;
-            case 'pgsql':
-                $this->strategy = new PgSQLEngine();
-                break;
-            case 'sqlsrv':
-                $this->strategy = new SQLSrvEngine();
-                break;
-            case 'oci':
-                $this->strategy = new OCIEngine();
-                break;
-            case 'fbird':
-                $this->strategy = new FBirdEngine();
-                break;
-            case 'sqlite':
-                $this->strategy = new SQLiteEngine();
-                break;
-        }
+        $this->strategy = match ($params) {
+            'pdo' => new PDOEngine(),
+            'mysqli' => new MySQLiEngine(),
+            'pgsql' => new PgSQLEngine(),
+            'sqlsrv' => new SQLSrvEngine(),
+            'oci' => new OCIEngine(),
+            'fbird' => new FBirdEngine(),
+            'sqlite' => new SQLiteEngine(),
+            default => null,
+        };
+
         $this->setStrategy($this->strategy);
     }
 
     /**
      * Determines arguments type by calling to default type
      *
+     * @param mixed $instance
+     * @param mixed $name
      * @param mixed $arguments
      * @return void
      */
-    private static function call($instance, $name, $arguments): void
+    private static function call(mixed $instance, mixed $name, mixed $arguments): void
     {
         call_user_func_array([$instance, $name], $arguments);
     }
@@ -186,10 +176,15 @@ class Connection
      * @param array $arguments
      * @return void
      */
-    private static function callWithByStatic($arguments): void
+    private static function callWithByStatic(array $arguments): void
     {
-        $argumentList = [];
-        $argumentClass = Reflections::getClassPropertyName(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::matchValues(self::$engineList, $arguments)), 'argumentList');
+        $argumentClass = Reflections::getClassPropertyName(
+            sprintf(
+                "GenericDatabase\Engine\%s\Arguments",
+                Arrays::matchValues(self::$engineList, $arguments)
+            ),
+            'argumentList'
+        );
         $argumentList = array_merge(['Engine'], $argumentClass);
         if ($arguments[0] === 'pdo' && $arguments[1] === 'sqlite') {
             $clonedArgumentList = Arrays::exceptByValues($argumentList, ['Host', 'Port', 'User', 'Password']);
@@ -210,7 +205,7 @@ class Connection
      * @param mixed $arguments
      * @return void
      */
-    private static function callArgumentsByFormat($format, $arguments): void
+    private static function callArgumentsByFormat(string $format, mixed $arguments): void
     {
         $data = [];
         if ($format === 'json') {
@@ -223,12 +218,30 @@ class Connection
             $data = YAML::parseYAML(...$arguments);
         }
         self::call(self::getInstance(), 'initFactory', Arrays::assocToIndex(Arrays::recombine($data)));
-        $instance = Reflections::getClassInstance(sprintf("GenericDatabase\Engine\%s\Arguments", Arrays::matchValues(self::$engineList, Arrays::assocToIndex(Arrays::recombine($data)))));
+        $instance = Reflections::getClassInstance(
+            sprintf(
+                "GenericDatabase\Engine\%s\Arguments",
+                Arrays::matchValues(self::$engineList, Arrays::assocToIndex(Arrays::recombine($data)))
+            )
+        );
         foreach (Arrays::recombine($data) as $key => $value) {
             if (strtolower($key) === 'options') {
-                self::call(self::getInstance()->getStrategy(), 'set' . ucfirst($key), [$instance->getMethod('setConstant')->invoke(self::getInstance()->getStrategy(), ($format === 'json' || $format === 'yaml') ? $value : [$value])]);
+                self::call(
+                    self::getInstance()->getStrategy(),
+                    'set' . ucfirst($key),
+                    [
+                        $instance->getMethod('setConstant')->invoke(
+                            self::getInstance()->getStrategy(),
+                            ($format === 'json' || $format === 'yaml') ? $value : [$value]
+                        )
+                    ]
+                );
             } else {
-                self::call(self::getInstance()->getStrategy(), 'set' . ucfirst($key), [$instance->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]);
+                self::call(
+                    self::getInstance()->getStrategy(),
+                    'set' . ucfirst($key),
+                    [$instance->getMethod('setType')->invoke(self::getInstance()->getStrategy(), $value)]
+                );
             }
         }
     }

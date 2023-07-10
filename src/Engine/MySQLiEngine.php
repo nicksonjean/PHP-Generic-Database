@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use AllowDynamicProperties;
+use Exception;
+use GenericDatabase\Engine\MySQLi\MySQL;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Traits\Errors;
 use GenericDatabase\Traits\Caller;
@@ -17,56 +20,32 @@ use GenericDatabase\Engine\MySQLi\Dump;
 use GenericDatabase\Engine\MySQLi\Transaction;
 
 /**
- * @method MySQLiEngine setDriver(mixed $value): void
- * @method MySQLiEngine getDriver(): mixed
- * @method MySQLiEngine setHost(mixed $value): void
- * @method MySQLiEngine getHost(): mixed
- * @method MySQLiEngine setPort(mixed $value): void
- * @method MySQLiEngine getPort(): mixed
- * @method MySQLiEngine setUser(mixed $value): void
- * @method MySQLiEngine getUser(): mixed
- * @method MySQLiEngine setPassword(mixed $value): void
- * @method MySQLiEngine getPassword(): mixed
- * @method MySQLiEngine setDatabase(mixed $value): void
- * @method MySQLiEngine getDatabase(): mixed
- * @method MySQLiEngine setOptions(mixed $value): void
- * @method MySQLiEngine getOptions(): mixed
- * @method MySQLiEngine setConnected(mixed $value): void
- * @method MySQLiEngine getConnected(): mixed
- * @method MySQLiEngine setDsn(mixed $value): void
- * @method MySQLiEngine getDsn(): mixed
- * @method MySQLiEngine setAttributes(mixed $value): void
- * @method MySQLiEngine getAttributes(): mixed
- * @method MySQLiEngine setCharset(mixed $value): void
- * @method MySQLiEngine getCharset(): mixed
- * @method MySQLiEngine setException(mixed $value): void
- * @method MySQLiEngine getException(): mixed
- * @method static MySQLiEngine|static setDriver(mixed $value): mixed
+ * @method static MySQLiEngine|static setDriver(mixed $value): void
  * @method static MySQLiEngine|static getDriver(): mixed
- * @method static MySQLiEngine|static setHost(mixed $value): mixed
+ * @method static MySQLiEngine|static setHost(mixed $value): void
  * @method static MySQLiEngine|static getHost(): mixed
- * @method static MySQLiEngine|static setPort(mixed $value): mixed
+ * @method static MySQLiEngine|static setPort(mixed $value): void
  * @method static MySQLiEngine|static getPort(): mixed
- * @method static MySQLiEngine|static setUser(mixed $value): mixed
+ * @method static MySQLiEngine|static setUser(mixed $value): void
  * @method static MySQLiEngine|static getUser(): mixed
- * @method static MySQLiEngine|static setPassword(mixed $value): mixed
+ * @method static MySQLiEngine|static setPassword(mixed $value): void
  * @method static MySQLiEngine|static getPassword(): mixed
- * @method static MySQLiEngine|static setDatabase(mixed $value): mixed
+ * @method static MySQLiEngine|static setDatabase(mixed $value): void
  * @method static MySQLiEngine|static getDatabase(): mixed
- * @method static MySQLiEngine|static setOptions(mixed $value): mixed
+ * @method static MySQLiEngine|static setOptions(mixed $value): void
  * @method static MySQLiEngine|static getOptions(): mixed
- * @method static MySQLiEngine|static setConnected(mixed $value): mixed
+ * @method static MySQLiEngine|static setConnected(mixed $value): void
  * @method static MySQLiEngine|static getConnected(): mixed
- * @method static MySQLiEngine|static setDsn(mixed $value): mixed
+ * @method static MySQLiEngine|static setDsn(mixed $value): void
  * @method static MySQLiEngine|static getDsn(): mixed
- * @method static MySQLiEngine|static setAttributes(mixed $value): mixed
+ * @method static MySQLiEngine|static setAttributes(mixed $value): void
  * @method static MySQLiEngine|static getAttributes(): mixed
- * @method static MySQLiEngine|static setCharset(mixed $value): mixed
+ * @method static MySQLiEngine|static setCharset(mixed $value): void
  * @method static MySQLiEngine|static getCharset(): mixed
- * @method static MySQLiEngine|static setException(mixed $value): mixed
+ * @method static MySQLiEngine|static setException(mixed $value): void
  * @method static MySQLiEngine|static getException(): mixed
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class MySQLiEngine implements InterfaceConnection
 {
     use Errors;
@@ -77,10 +56,11 @@ class MySQLiEngine implements InterfaceConnection
     /**
      *  Instance of the connection with database
      */
-    private $connection;
+    private mixed $connection;
 
     /**
-     * This method is responsible for call the static instance to Arguments class with a Magic Method __call and __callStatic.
+     * This method is responsible for call the static instance to
+     *  Arguments class with a Magic Method __call and __callStatic.
      *
      * @param string $method The method name to be called
      * @param array $arguments The arguments of the method
@@ -100,7 +80,6 @@ class MySQLiEngine implements InterfaceConnection
     {
         $this->setConnection(mysqli_init());
         Options::setOptions((array) $this->getOptions());
-        $options = [];
         $options = Options::getOptions();
         $this->setOptions($options);
         return $this;
@@ -127,10 +106,18 @@ class MySQLiEngine implements InterfaceConnection
      * @param string $database The name of the database
      * @param int $port The port of the database
      * @return MySQLiEngine
+     * @throws Exception
      */
-    private function realConnect(string $host, string $user, string $password, string $database, int $port): MySQLiEngine
-    {
-        $host = (string) !Options::getOptions(\GenericDatabase\Engine\MySQLi\MySQL::ATTR_PERSISTENT) ? $host : 'p:' . $host;
+    private function realConnect(
+        string $host,
+        string $user,
+        string $password,
+        string $database,
+        int $port
+    ): MySQLiEngine {
+        $host = (string) !Options::getOptions(MySQL::ATTR_PERSISTENT)
+            ? $host
+            : 'p:' . $host;
         $this->setHost($host);
         $this->parseDsn();
         $this->getConnection()->real_connect($host, $user, $password, $database, $port);
@@ -148,11 +135,17 @@ class MySQLiEngine implements InterfaceConnection
             $this
                 ->preConnect()
                 ->setInstance($this)
-                ->realConnect($this->getHost(), $this->getUser(), $this->getPassword(), $this->getDatabase(), $this->getPort())
+                ->realConnect(
+                    (string) $this->getHost(),
+                    (string) $this->getUser(),
+                    (string) $this->getPassword(),
+                    (string) $this->getDatabase(),
+                    $this->getPort()
+                )
                 ->postConnect()
                 ->setConnected(true);
             return $this;
-        } catch (\Exception $error) {
+        } catch (Exception $error) {
             $this->setConnected(false);
             Errors::throw($error);
         }
@@ -161,9 +154,10 @@ class MySQLiEngine implements InterfaceConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|\Exception
+     * @return string|Exception
+     * @throws Exception
      */
-    private function parseDsn(): string|\Exception
+    private function parseDsn(): string|Exception
     {
         return DSN::parseDsn();
     }
@@ -181,7 +175,7 @@ class MySQLiEngine implements InterfaceConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets a intance of the connection with the database
+     * @param mixed $connection Sets an intance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -224,7 +218,8 @@ class MySQLiEngine implements InterfaceConnection
     }
 
     /**
-     * This function rolls back any changes made to the database during this transaction and restores the data to its original state.
+     * This function rolls back any changes made to the database during
+     * this transaction and restores the data to its original state.
      *
      * @return bool
      */
@@ -234,7 +229,8 @@ class MySQLiEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     * either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @return bool
      */
@@ -244,7 +240,8 @@ class MySQLiEngine implements InterfaceConnection
     }
 
     /**
-     * This function returns the last ID generated by an auto-increment column, either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * This function returns the last ID generated by an auto-increment column,
+     * either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @param ?string $name = null Resource name, table or view
      * @return string|int|false
@@ -253,30 +250,26 @@ class MySQLiEngine implements InterfaceConnection
     {
         if (!$name) {
             return $this->getInstance()->getConnection()->insert_id;
-        } else {
-            $query = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = ? AND column_key = ? AND extra = ?";
+        }
+        $filter = "WHERE table_name = ? AND column_key = ? AND extra = ?";
+        $query = sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
+        $stmt = $this->getInstance()->getConnection()->prepare($query);
+        $stmt->bind_param("sss", $name, 'PRI', 'auto_increment');
+        $stmt->execute();
+        $autoKeyResult = $stmt->get_result();
+        $autoKey = $autoKeyResult->fetch_assoc();
+        if (isset($autoKey['column_name'])) {
+            $query = sprintf("SELECT COALESCE(MAX(%s)) AS value FROM %s", $autoKey['column_name'], $name);
             $stmt = $this->getInstance()->getConnection()->prepare($query);
-            $stmt->bind_param("sss", $name, 'PRI', 'auto_increment');
             $stmt->execute();
-            $autoKeyResult = $stmt->get_result();
-            $autoKey = $autoKeyResult->fetch_assoc();
+            $maxIndexResult = $stmt->get_result();
+            $maxIndex = $maxIndexResult->fetch_assoc()['value'];
 
-            if (isset($autoKey['column_name'])) {
-                $query = "SELECT COALESCE(MAX(" . $autoKey['column_name'] . ")) AS value FROM " . $name;
-                $stmt = $this->getInstance()->getConnection()->prepare($query);
-                $stmt->execute();
-                $maxIndexResult = $stmt->get_result();
-                $maxIndex = $maxIndexResult->fetch_assoc()['value'];
-
-                if ($maxIndex !== null) {
-                    return $maxIndex;
-                } else {
-                    return false;
-                }
-            } else {
-                return 0;
+            if ($maxIndex !== null) {
+                return $maxIndex;
             }
         }
+        return $autoKey['column_name'] ?? 0;
     }
 
     /**
@@ -290,16 +283,12 @@ class MySQLiEngine implements InterfaceConnection
         $string = $params[0];
         $quote = $params[1];
         if (is_array($string)) {
-            return array_map([get_called_class(), 'quote'], $string, array_fill(0, count($string), $quote));
+            return array_map(fn ($str) => $this->quote($str, $quote), $string);
         } elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", $string)) {
             return $string;
         }
-
-        $quoted = function ($string, $quote) {
-            $val = $this->getInstance()->getConnection()->real_escape_string($string);
-            return ($quote) ? "'$val'" : $val;
-        };
-        return $quoted($string, $quote);
+        $quoted = fn ($str) => $this->getInstance()->getConnection()->real_escape_string($str);
+        return ($quote) ? "'" . $quoted($string) . "'" : $quoted($string);
     }
 
     /**
@@ -323,8 +312,8 @@ class MySQLiEngine implements InterfaceConnection
     public function query(mixed ...$params): mixed
     {
         $query = $params[0];
-        $result_mode = isset($params[1]) ?? MYSQLI_STORE_RESULT;
-        return $this->getInstance()->getConnection()->query($query, $result_mode);
+        $resultMode = isset($params[1]) ?? MYSQLI_STORE_RESULT;
+        return $this->getInstance()->getConnection()->query($query, $resultMode);
     }
 
     /**
@@ -348,7 +337,7 @@ class MySQLiEngine implements InterfaceConnection
      */
     public function getAttribute(mixed $name): mixed
     {
-        return \GenericDatabase\Engine\MySQLi\MySQL::getAttribute($name);
+        return MySQL::getAttribute($name);
     }
 
     /**
@@ -360,7 +349,7 @@ class MySQLiEngine implements InterfaceConnection
      */
     public function setAttribute(mixed $name, mixed $value): void
     {
-        \GenericDatabase\Engine\MySQLi\MySQL::setAttribute($name, $value);
+        MySQL::setAttribute($name, $value);
     }
 
     /**

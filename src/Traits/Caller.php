@@ -48,4 +48,14 @@ trait Caller
         }
         return null;
     }
+
+    /**
+     * Triggered when invoking an echo command
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return '';
+    }
 }
