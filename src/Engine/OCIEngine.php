@@ -21,29 +21,29 @@ use GenericDatabase\Engine\OCI\Transaction;
 
 /**
  * @method static OCIEngine|static setDriver(mixed $value): void
- * @method static OCIEngine|static getDriver(): mixed
+ * @method static OCIEngine|static getDriver($p = null): mixed
  * @method static OCIEngine|static setHost(mixed $value): void
- * @method static OCIEngine|static getHost(): mixed
+ * @method static OCIEngine|static getHost($p = null): mixed
  * @method static OCIEngine|static setPort(mixed $value): void
- * @method static OCIEngine|static getPort(): mixed
+ * @method static OCIEngine|static getPort($p = null): mixed
  * @method static OCIEngine|static setUser(mixed $value): void
- * @method static OCIEngine|static getUser(): mixed
+ * @method static OCIEngine|static getUser($p = null): mixed
  * @method static OCIEngine|static setPassword(mixed $value): void
- * @method static OCIEngine|static getPassword(): mixed
+ * @method static OCIEngine|static getPassword($p = null): mixed
  * @method static OCIEngine|static setDatabase(mixed $value): void
- * @method static OCIEngine|static getDatabase(): mixed
+ * @method static OCIEngine|static getDatabase($p = null): mixed
  * @method static OCIEngine|static setOptions(mixed $value): void
- * @method static OCIEngine|static getOptions(): mixed
+ * @method static OCIEngine|static getOptions($p = null): mixed
  * @method static OCIEngine|static setConnected(mixed $value): void
- * @method static OCIEngine|static getConnected(): mixed
+ * @method static OCIEngine|static getConnected($p = null): mixed
  * @method static OCIEngine|static setDsn(mixed $value): void
- * @method static OCIEngine|static getDsn(): mixed
+ * @method static OCIEngine|static getDsn($p = null): mixed
  * @method static OCIEngine|static setAttributes(mixed $value): void
- * @method static OCIEngine|static getAttributes(): mixed
+ * @method static OCIEngine|static getAttributes($p = null): mixed
  * @method static OCIEngine|static setCharset(mixed $value): void
- * @method static OCIEngine|static getCharset(): mixed
+ * @method static OCIEngine|static getCharset($p = null): mixed
  * @method static OCIEngine|static setException(mixed $value): void
- * @method static OCIEngine|static getException(): mixed
+ * @method static OCIEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
 class OCIEngine implements InterfaceConnection

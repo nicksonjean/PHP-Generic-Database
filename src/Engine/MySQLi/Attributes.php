@@ -5,7 +5,6 @@ namespace GenericDatabase\Engine\MySQLi;
 use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Engine\MySQLi\Options;
 
-#[\AllowDynamicProperties]
 class Attributes
 {
     private static $fetchMode = \MYSQLI_BOTH;
@@ -213,7 +212,7 @@ class Attributes
                 'SERVER_INFO' => MySQLiEngine::getInstance()->getConnection()->stat(),
                 'SERVER_VERSION' => MySQLiEngine::getInstance()->getConnection()->server_info,
                 'TIMEOUT' => (int) self::$settings['connect_timeout'],
-                'EMULATE_PREPARES' => -1,
+                'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) self::$fetchMode,
                 'CHARACTER_SET' => self::getVariables($type)['charset'],
                 'COLLATION' => self::getVariables($type)['collation']

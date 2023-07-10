@@ -5,7 +5,6 @@ namespace GenericDatabase\Engine\FBird;
 use GenericDatabase\Engine\FBirdEngine;
 use GenericDatabase\Engine\FBird\Options;
 
-#[\AllowDynamicProperties]
 class Attributes
 {
     /**
@@ -35,7 +34,7 @@ class Attributes
             $results = [];
             $name = '';
             foreach (preg_split("/((\r?\n)|(\r\n?))/", trim(preg_replace('/\t((?:[A-Za-z]+\s){0,2}[A-Za-z]+)\t+(.*)/m', "$1| $2", $matches[1][0]))) as $lines) {
-                $lines = trim($lines);
+                    $lines = trim($lines);
                 if (strlen($lines) > 0) {
                     foreach (explode('|', $lines) as $key => $line) {
                         if ($key === 0) {
@@ -55,7 +54,6 @@ class Attributes
                 ibase_server_info($service, IBASE_SVC_IMPLEMENTATION) . ' (remote interface), version "' . ibase_server_info($service, IBASE_SVC_SERVER_VERSION) . '/tcp (' . gethostname() . ')/P15:C"',
                 $results['ods_version']
             ]);
-
 
             ibase_service_detach($service);
 
@@ -95,7 +93,7 @@ class Attributes
                 'SERVER_INFO' => $settings['server_info'],
                 'SERVER_VERSION' => $settings['server_info'],
                 'TIMEOUT' =>  (int) Options::getOptions(FBird::ATTR_CONNECT_TIMEOUT) ? Options::getOptions(FBird::ATTR_CONNECT_TIMEOUT) : 30,
-                'EMULATE_PREPARES' => 'FAKE',
+                'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) 3,
                 'CHARACTER_SET' => FBirdEngine::getInstance()?->getCharset(),
                 'COLLATION' => FBirdEngine::getInstance()?->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',

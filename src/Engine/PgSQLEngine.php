@@ -21,29 +21,29 @@ use GenericDatabase\Engine\PgSQL\Transaction;
 
 /**
  * @method static PgSQLEngine|static setDriver(mixed $value): void
- * @method static PgSQLEngine|static getDriver(): mixed
+ * @method static PgSQLEngine|static getDriver($p = null): mixed
  * @method static PgSQLEngine|static setHost(mixed $value): void
- * @method static PgSQLEngine|static getHost(): mixed
+ * @method static PgSQLEngine|static getHost($p = null): mixed
  * @method static PgSQLEngine|static setPort(mixed $value): void
- * @method static PgSQLEngine|static getPort(): mixed
+ * @method static PgSQLEngine|static getPort($p = null): mixed
  * @method static PgSQLEngine|static setUser(mixed $value): void
- * @method static PgSQLEngine|static getUser(): mixed
+ * @method static PgSQLEngine|static getUser($p = null): mixed
  * @method static PgSQLEngine|static setPassword(mixed $value): void
- * @method static PgSQLEngine|static getPassword(): mixed
+ * @method static PgSQLEngine|static getPassword($p = null): mixed
  * @method static PgSQLEngine|static setDatabase(mixed $value): void
- * @method static PgSQLEngine|static getDatabase(): mixed
+ * @method static PgSQLEngine|static getDatabase($p = null): mixed
  * @method static PgSQLEngine|static setOptions(mixed $value): void
- * @method static PgSQLEngine|static getOptions(): mixed
+ * @method static PgSQLEngine|static getOptions($p = null): mixed
  * @method static PgSQLEngine|static setConnected(mixed $value): void
- * @method static PgSQLEngine|static getConnected(): mixed
+ * @method static PgSQLEngine|static getConnected($p = null): mixed
  * @method static PgSQLEngine|static setDsn(mixed $value): void
- * @method static PgSQLEngine|static getDsn(): mixed
+ * @method static PgSQLEngine|static getDsn($p = null): mixed
  * @method static PgSQLEngine|static setAttributes(mixed $value): void
- * @method static PgSQLEngine|static getAttributes(): mixed
+ * @method static PgSQLEngine|static getAttributes($p = null): mixed
  * @method static PgSQLEngine|static setCharset(mixed $value): void
- * @method static PgSQLEngine|static getCharset(): mixed
+ * @method static PgSQLEngine|static getCharset($p = null): mixed
  * @method static PgSQLEngine|static setException(mixed $value): void
- * @method static PgSQLEngine|static getException(): mixed
+ * @method static PgSQLEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
 class PgSQLEngine implements InterfaceConnection

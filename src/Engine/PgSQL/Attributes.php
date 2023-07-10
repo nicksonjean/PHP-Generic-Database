@@ -64,7 +64,7 @@ class Attributes
                 'SERVER_INFO' => sprintf("PID: %s; Client Encoding: %s; Is Superuser: %s; Session Authorization: %s; Date Style: %s", pg_get_pid(PgSQLEngine::getInstance()->getConnection()), pg_client_encoding(PgSQLEngine::getInstance()->getConnection()), $version['is_superuser'], $version['session_authorization'], $version['DateStyle']),
                 'SERVER_VERSION' => $version['server'],
                 'TIMEOUT' => (int) Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) ? Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) : 30,
-                'EMULATE_PREPARES' => -1,
+                'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) 3,
                 'CHARACTER_SET' => pg_client_encoding(PgSQLEngine::getInstance()->getConnection()),
                 'COLLATION' => ($collate !== false && property_exists($collate, 'lc_collate')) ? $collate->lc_collate : false

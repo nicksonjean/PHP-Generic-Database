@@ -30,12 +30,12 @@ class Attributes
 
     private static function settings()
     {
-        $server_info = sqlsrv_server_info(SQLSrvEngine::getInstance()->getConnection());
-        $client_version = sqlsrv_client_info(SQLSrvEngine::getInstance()->getConnection());
+        $serverInfo = sqlsrv_server_info(SQLSrvEngine::getInstance()->getConnection());
+        $clientVersion = sqlsrv_client_info(SQLSrvEngine::getInstance()->getConnection());
         return [
-            'server_info' => $server_info,
-            'client_version' => $client_version,
-            'server_version' => $server_info['SQLServerVersion']
+            'server_info' => $serverInfo,
+            'client_version' => $clientVersion,
+            'server_version' => $serverInfo['SQLServerVersion']
         ];
     }
 
@@ -60,7 +60,7 @@ class Attributes
                 'SERVER_INFO' => $settings['server_info'],
                 'SERVER_VERSION' => $settings['server_version'],
                 'TIMEOUT' =>  (int) Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT) ? Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT) : 30,
-                'EMULATE_PREPARES' => 'FAKE',
+                'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) 3,
                 'CHARACTER_SET' => SQLSrvEngine::getInstance()?->getCharset(),
                 'COLLATION' => SQLSrvEngine::getInstance()?->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',

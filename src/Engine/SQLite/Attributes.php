@@ -56,7 +56,7 @@ class Attributes
                 'SERVER_INFO' => '',
                 'SERVER_VERSION' => $settings['versionNumber'],
                 'TIMEOUT' =>  (int) Options::getOptions(SQLite::ATTR_CONNECT_TIMEOUT) ? Options::getOptions(SQLite::ATTR_CONNECT_TIMEOUT) : 30,
-                'EMULATE_PREPARES' => 'FAKE',
+                'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) 3
             };
         };

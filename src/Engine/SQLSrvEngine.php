@@ -21,29 +21,29 @@ use GenericDatabase\Engine\SQLSrv\Transaction;
 
 /**
  * @method static SQLSrvEngine|static setDriver(mixed $value): void
- * @method static SQLSrvEngine|static getDriver(): mixed
+ * @method static SQLSrvEngine|static getDriver($p = null): mixed
  * @method static SQLSrvEngine|static setHost(mixed $value): void
- * @method static SQLSrvEngine|static getHost(): mixed
+ * @method static SQLSrvEngine|static getHost($p = null): mixed
  * @method static SQLSrvEngine|static setPort(mixed $value): void
- * @method static SQLSrvEngine|static getPort(): mixed
+ * @method static SQLSrvEngine|static getPort($p = null): mixed
  * @method static SQLSrvEngine|static setUser(mixed $value): void
- * @method static SQLSrvEngine|static getUser(): mixed
+ * @method static SQLSrvEngine|static getUser($p = null): mixed
  * @method static SQLSrvEngine|static setPassword(mixed $value): void
- * @method static SQLSrvEngine|static getPassword(): mixed
+ * @method static SQLSrvEngine|static getPassword($p = null): mixed
  * @method static SQLSrvEngine|static setDatabase(mixed $value): void
- * @method static SQLSrvEngine|static getDatabase(): mixed
+ * @method static SQLSrvEngine|static getDatabase($p = null): mixed
  * @method static SQLSrvEngine|static setOptions(mixed $value): void
- * @method static SQLSrvEngine|static getOptions(): mixed
+ * @method static SQLSrvEngine|static getOptions($p = null): mixed
  * @method static SQLSrvEngine|static setConnected(mixed $value): void
- * @method static SQLSrvEngine|static getConnected(): mixed
+ * @method static SQLSrvEngine|static getConnected($p = null): mixed
  * @method static SQLSrvEngine|static setDsn(mixed $value): void
- * @method static SQLSrvEngine|static getDsn(): mixed
+ * @method static SQLSrvEngine|static getDsn($p = null): mixed
  * @method static SQLSrvEngine|static setAttributes(mixed $value): void
- * @method static SQLSrvEngine|static getAttributes(): mixed
+ * @method static SQLSrvEngine|static getAttributes($p = null): mixed
  * @method static SQLSrvEngine|static setCharset(mixed $value): void
- * @method static SQLSrvEngine|static getCharset(): mixed
+ * @method static SQLSrvEngine|static getCharset($p = null): mixed
  * @method static SQLSrvEngine|static setException(mixed $value): void
- * @method static SQLSrvEngine|static getException(): mixed
+ * @method static SQLSrvEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
 class SQLSrvEngine implements InterfaceConnection

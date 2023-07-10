@@ -22,29 +22,29 @@ use SQLite3;
 
 /**
  * @method static SQLiteEngine|static setDriver(mixed $value): void
- * @method static SQLiteEngine|static getDriver(): mixed
+ * @method static SQLiteEngine|static getDriver($p = null): mixed
  * @method static SQLiteEngine|static setHost(mixed $value): void
- * @method static SQLiteEngine|static getHost(): mixed
+ * @method static SQLiteEngine|static getHost($p = null): mixed
  * @method static SQLiteEngine|static setPort(mixed $value): void
- * @method static SQLiteEngine|static getPort(): mixed
+ * @method static SQLiteEngine|static getPort($p = null): mixed
  * @method static SQLiteEngine|static setUser(mixed $value): void
- * @method static SQLiteEngine|static getUser(): mixed
+ * @method static SQLiteEngine|static getUser($p = null): mixed
  * @method static SQLiteEngine|static setPassword(mixed $value): void
- * @method static SQLiteEngine|static getPassword(): mixed
+ * @method static SQLiteEngine|static getPassword($p = null): mixed
  * @method static SQLiteEngine|static setDatabase(mixed $value): void
- * @method static SQLiteEngine|static getDatabase(): mixed
+ * @method static SQLiteEngine|static getDatabase($p = null): mixed
  * @method static SQLiteEngine|static setOptions(mixed $value): void
- * @method static SQLiteEngine|static getOptions(): mixed
+ * @method static SQLiteEngine|static getOptions($p = null): mixed
  * @method static SQLiteEngine|static setConnected(mixed $value): void
- * @method static SQLiteEngine|static getConnected(): mixed
+ * @method static SQLiteEngine|static getConnected($p = null): mixed
  * @method static SQLiteEngine|static setDsn(mixed $value): void
- * @method static SQLiteEngine|static getDsn(): mixed
+ * @method static SQLiteEngine|static getDsn($p = null): mixed
  * @method static SQLiteEngine|static setAttributes(mixed $value): void
- * @method static SQLiteEngine|static getAttributes(): mixed
+ * @method static SQLiteEngine|static getAttributes($p = null): mixed
  * @method static SQLiteEngine|static setCharset(mixed $value): void
- * @method static SQLiteEngine|static getCharset(): mixed
+ * @method static SQLiteEngine|static getCharset($p = null): mixed
  * @method static SQLiteEngine|static setException(mixed $value): void
- * @method static SQLiteEngine|static getException(): mixed
+ * @method static SQLiteEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
 class SQLiteEngine implements InterfaceConnection

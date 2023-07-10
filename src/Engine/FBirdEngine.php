@@ -21,29 +21,29 @@ use GenericDatabase\Engine\FBird\Transaction;
 
 /**
  * @method static FBirdEngine|static setDriver(mixed $value): void
- * @method static FBirdEngine|static getDriver(): mixed
+ * @method static FBirdEngine|static getDriver($p = null): mixed
  * @method static FBirdEngine|static setHost(mixed $value): void
- * @method static FBirdEngine|static getHost(): mixed
+ * @method static FBirdEngine|static getHost($p = null): mixed
  * @method static FBirdEngine|static setPort(mixed $value): void
- * @method static FBirdEngine|static getPort(): mixed
+ * @method static FBirdEngine|static getPort($p = null): int
  * @method static FBirdEngine|static setUser(mixed $value): void
- * @method static FBirdEngine|static getUser(): mixed
+ * @method static FBirdEngine|static getUser($p = null): mixed
  * @method static FBirdEngine|static setPassword(mixed $value): void
- * @method static FBirdEngine|static getPassword(): mixed
+ * @method static FBirdEngine|static getPassword($p = null): mixed
  * @method static FBirdEngine|static setDatabase(mixed $value): void
- * @method static FBirdEngine|static getDatabase(): mixed
+ * @method static FBirdEngine|static getDatabase($p = null): mixed
  * @method static FBirdEngine|static setOptions(mixed $value): void
- * @method static FBirdEngine|static getOptions(): mixed
+ * @method static FBirdEngine|static getOptions($p = null): mixed
  * @method static FBirdEngine|static setConnected(mixed $value): void
- * @method static FBirdEngine|static getConnected(): mixed
+ * @method static FBirdEngine|static getConnected($p = null): mixed
  * @method static FBirdEngine|static setDsn(mixed $value): void
- * @method static FBirdEngine|static getDsn(): mixed
+ * @method static FBirdEngine|static getDsn($p = null): mixed
  * @method static FBirdEngine|static setAttributes(mixed $value): void
- * @method static FBirdEngine|static getAttributes(): mixed
+ * @method static FBirdEngine|static getAttributes($p = null): mixed
  * @method static FBirdEngine|static setCharset(mixed $value): void
- * @method static FBirdEngine|static getCharset(): mixed
+ * @method static FBirdEngine|static getCharset($p = null): mixed
  * @method static FBirdEngine|static setException(mixed $value): void
- * @method static FBirdEngine|static getException(): mixed
+ * @method static FBirdEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
 class FBirdEngine implements InterfaceConnection

@@ -23,29 +23,29 @@ use PDOException;
 
 /**
  * @method static PDOEngine|static setDriver(mixed $value): void
- * @method static PDOEngine|static getDriver(): mixed
+ * @method static PDOEngine|static getDriver($p = null): mixed
  * @method static PDOEngine|static setHost(mixed $value): void
- * @method static PDOEngine|static getHost(): mixed
+ * @method static PDOEngine|static getHost($p = null): mixed
  * @method static PDOEngine|static setPort(mixed $value): void
- * @method static PDOEngine|static getPort(): mixed
+ * @method static PDOEngine|static getPort($p = null): mixed
  * @method static PDOEngine|static setUser(mixed $value): void
- * @method static PDOEngine|static getUser(): mixed
+ * @method static PDOEngine|static getUser($p = null): mixed
  * @method static PDOEngine|static setPassword(mixed $value): void
- * @method static PDOEngine|static getPassword(): mixed
+ * @method static PDOEngine|static getPassword($p = null): mixed
  * @method static PDOEngine|static setDatabase(mixed $value): void
- * @method static PDOEngine|static getDatabase(): mixed
+ * @method static PDOEngine|static getDatabase($p = null): mixed
  * @method static PDOEngine|static setOptions(mixed $value): void
- * @method static PDOEngine|static getOptions(): mixed
+ * @method static PDOEngine|static getOptions($p = null): mixed
  * @method static PDOEngine|static setConnected(mixed $value): void
- * @method static PDOEngine|static getConnected(): mixed
+ * @method static PDOEngine|static getConnected($p = null): mixed
  * @method static PDOEngine|static setDsn(mixed $value): void
- * @method static PDOEngine|static getDsn(): mixed
+ * @method static PDOEngine|static getDsn($p = null): mixed
  * @method static PDOEngine|static setAttributes(mixed $value): void
- * @method static PDOEngine|static getAttributes(): mixed
+ * @method static PDOEngine|static getAttributes($p = null): mixed
  * @method static PDOEngine|static setCharset(mixed $value): void
- * @method static PDOEngine|static getCharset(): mixed
+ * @method static PDOEngine|static getCharset($p = null): mixed
  * @method static PDOEngine|static setException(mixed $value): void
- * @method static PDOEngine|static getException(): mixed
+ * @method static PDOEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
 class PDOEngine implements InterfaceConnection
