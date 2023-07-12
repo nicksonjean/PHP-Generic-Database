@@ -84,6 +84,7 @@
         "run:lint:debug": "php vendor/bin/phpstan --memory-limit=-1 --ansi --xdebug analyze -c ./phpstan.neon",
         "run:lint:check": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 --exclude=PSR1.Classes.ClassDeclaration,Generic.Files.LineLength src/",
         "run:lint:fix": "php vendor/bin/phpcbf --ignore-annotations --standard=PSR12 --exclude=PSR1.Classes.ClassDeclaration,Generic.Files.LineLength src/",
+        "run:lint:md": "php vendor/bin/phpmd src/,tests/ ansi phpmd.xml",
         "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
         "run:docs": "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors",
         "run:coverage": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/",
