@@ -60,7 +60,8 @@ trait Arrays
     }
 
     /**
-     * Iterates through the array combining the values by substituting the indices into sequential numbers starting at zero into a new array
+     * Iterates through the array combining the values by substituting
+     * the indices into sequential numbers starting at zero into a new array
      *
      * @param array $array The array to combine
      * @return array
@@ -73,7 +74,7 @@ trait Arrays
     public static function isAssoc($arr)
     {
         // don't try to check non-arrays or empty arrays
-        if (false === is_array($arr) || 0 === ($l = count($arr))) {
+        if (false === is_array($arr) || 0 === ($count = count($arr))) {
             return false;
         }
 
@@ -85,7 +86,7 @@ trait Arrays
 
         // shortcut by guessing at the end
         end($arr);
-        if (key($arr) !== $l - 1) {
+        if (key($arr) !== $count - 1) {
             return true;
         }
 

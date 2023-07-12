@@ -116,15 +116,15 @@ class SQLSrvEngine implements InterfaceConnection
         string $database,
         int $port
     ): SQLSrvEngine {
-        $sn = vsprintf('%s,%s', [$host, $port]);
-        $cnx = ["Database" => $database, "UID" => $user, "PWD" => $password];
+        $serverName = vsprintf('%s,%s', [$host, $port]);
+        $connectionInfo = ["Database" => $database, "UID" => $user, "PWD" => $password];
         if ($this->getCharset()) {
-            $cnx['CharacterSet'] = $this->getCharset();
+            $connectionInfo['CharacterSet'] = $this->getCharset();
         }
         if (Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)) {
-            $cnx['LoginTimeout'] = Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT);
+            $connectionInfo['LoginTimeout'] = Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT);
         }
-        $this->setConnection(sqlsrv_connect($sn, $cnx));
+        $this->setConnection(sqlsrv_connect($serverName, $connectionInfo));
         return $this;
     }
 

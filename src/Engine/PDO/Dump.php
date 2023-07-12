@@ -45,14 +45,18 @@ class Dump
             $size += strlen($string);
 
             $uncomment = function ($string = '') {
-                return preg_replace((string) self::$regex['unicode'], ' ', (($string == '') ?  '' : preg_replace((string) self::$regex['uncomment'], '', $string)));
+                return preg_replace(
+                    (string) self::$regex['unicode'],
+                    ' ',
+                    (($string == '') ?  '' : preg_replace((string) self::$regex['uncomment'], '', $string))
+                );
             };
 
             if (strlen($uncomment($string)) > 1) {
                 if (!strncasecmp($uncomment($string), "DELIMITER ", 10)) {
                     $delimiter = trim(substr($uncomment($string), 10));
-                } elseif (substr($ts = rtrim($uncomment($string)), -strlen($delimiter)) === $delimiter) {
-                    $sql .= substr($ts, 0, -strlen($delimiter));
+                } elseif (substr($trim = rtrim($uncomment($string)), -strlen($delimiter)) === $delimiter) {
+                    $sql .= substr($trim, 0, -strlen($delimiter));
                     PDOEngine::getInstance()?->exec($sql);
                     $sql = '';
                     $count++;

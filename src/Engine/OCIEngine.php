@@ -355,8 +355,8 @@ class OCIEngine implements InterfaceConnection
      */
     public function errorCode(?int $inst = null): mixed
     {
-        $m = oci_error($inst);
-        return $m['code'];
+        $error = oci_error($inst);
+        return $error['code'];
     }
 
     /**
@@ -367,7 +367,7 @@ class OCIEngine implements InterfaceConnection
      */
     public function errorInfo(?int $inst = null): mixed
     {
-        $m = oci_error($inst);
-        return $m['message'];
+        $error = oci_error($inst);
+        return $error['message'];
     }
 }

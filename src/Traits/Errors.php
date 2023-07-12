@@ -55,29 +55,29 @@ trait Errors
     /**
      * Throw a exception
      *
-     * @param object $ex Argument object of the \Exception class
+     * @param object $exception Argument object of the \Exception class
      * @return never
      */
-    public static function throw($ex): never
+    public static function throw($exception): never
     {
         die(json_encode(array(
-            'message' => $ex->getMessage(),
-            'location' => "{$ex->getFile()}:{$ex->getLine()}"
+            'message' => $exception->getMessage(),
+            'location' => "{$exception->getFile()}:{$exception->getLine()}"
         )));
     }
 
     /**
      * Launch a new Throw by a exception
      *
-     * @param object $ex Argument object of the \Exception class
+     * @param object $exception Argument object of the \Exception class
      * @param object $message Custom string message from exception
      * @return never
      */
-    public static function newThrow($ex, $message): never
+    public static function newThrow($exception, $message): never
     {
         die(json_encode(array(
             'message' => $message,
-            'location' => "{$ex->getFile()}:{$ex->getLine()}"
+            'location' => "{$exception->getFile()}:{$exception->getLine()}"
         )));
     }
 }

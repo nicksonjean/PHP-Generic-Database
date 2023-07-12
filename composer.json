@@ -37,6 +37,7 @@
         "phpunit/phpunit": "^10.0",        
         "pcov/clobber": "^2.0",
         "code-lts/doctum": "^5.5",
+        "phpmd/phpmd" : "@stable",
         "squizlabs/php_codesniffer": "^3.7.2",
         "phpstan/phpstan": "^1.10.25"
     },

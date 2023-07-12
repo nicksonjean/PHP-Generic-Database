@@ -1,35 +1,55 @@
-#! /usr/bin/env bash
-PROJECT=`php -r "echo dirname(dirname(dirname(realpath('$0'))));"`
-STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.php`
+#!/bin/sh
+
+PROJECT=$(php -r "echo dirname(dirname(dirname(realpath('$0'))));")
+STAGED_FILES_CMD=$(git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\.php)
+UNSTAGED_FILES_CMD=$(git diff --name-only --diff-filter=ACMR | grep \\.php)
+
 # Determine if a file list is passed
 if [ "$#" -eq 1 ]
 then
-  oIFS=$IFS
-  IFS='
-  '
-  SFILES="$1"
-  IFS=$oIFS
+    oIFS=$IFS
+    IFS='
+    '
+    SFILES="$1"
+    IFS=$oIFS
 fi
+
 SFILES=${SFILES:-$STAGED_FILES_CMD}
+
+STAGED_BUT_MODIFIED_FILES=$(php -r "\$sfiles=(explode(\"\\n\", '$SFILES'));\$usfiles=(explode(\"\\n\", '$UNSTAGED_FILES_CMD'));echo implode(\"\\n\",array_intersect(\$usfiles,\$sfiles));")
+
+if [ -z "$STAGED_BUT_MODIFIED_FILES" ]; then
+    echo "OK"
+else
+    echo "Files staged but then modified:\n"
+    echo "${STAGED_BUT_MODIFIED_FILES}"
+    exit 1
+fi
+
 echo "Checking PHP Lint..."
 for FILE in $SFILES
 do
-  php -l -d display_errors=0 $PROJECT/$FILE
-  if [ $? != 0 ]
-  then
-    echo "Fix the error before commit."
-    exit 1
-  fi
-  FILES="$FILES $PROJECT/$FILE"
+    php -l -d display_errors=0 $PROJECT/$FILE
+    if [ $? != 0 ]
+    then
+        echo "Fix the error before commit."
+        exit 1
+    fi
+    FILES="$FILES $PROJECT/$FILE"
 done
+
 if [ "$FILES" != "" ]
 then
-  echo "Running Code Sniffer...\\n$FILES\\n"
-  ./vendor/bin/phpcs --standard=PSR12 --encoding=utf-8 --exclude=PSR1.Classes.ClassDeclaration,Generic.Files.LineLength -n -p $FILES
-  if [ $? != 0 ]
-  then
-    echo "Fix the error before commit."
-    exit 1
-  fi
+    echo "Running Code Sniffer."
+    ./vendor/bin/phpcs --standard=PSR12 --encoding=utf-8 --exclude=PSR1.Classes.ClassDeclaration,Generic.Files.LineLength -n -p $FILES
+    if [ $? != 0 ]
+    then
+        echo "Fix the error before commit!"
+        echo "Run"
+        echo "  ./vendor/bin/phpcbf $FILES"
+        echo "for automatic fix or fix it manually."
+        exit 1
+    fi
 fi
+
 exit $?

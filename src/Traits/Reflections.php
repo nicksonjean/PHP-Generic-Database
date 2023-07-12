@@ -36,9 +36,9 @@ trait Reflections
     public static function isSingletonMethodExits($class): mixed
     {
         try {
-            $rm = new \ReflectionMethod($class, self::$default_method);
-            $result = ($rm->isStatic()) ? true : false;
-        } catch (\Exception $e) {
+            $method = new \ReflectionMethod($class, self::$default_method);
+            $result = ($method->isStatic()) ? true : false;
+        } catch (\Exception $error) {
             $message = sprintf('Method %s not founded in the class %s', self::$default_method, $class);
             throw new \Exception($message);
         }
