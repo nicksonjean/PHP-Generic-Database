@@ -23,7 +23,7 @@ $mysql = MySQLiEngine::new([
         MySQL::ATTR_AUTOCOMMIT => true,
         MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
         MySQL::ATTR_SET_CHARSET_NAME => "utf8",
-        MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
+        MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,a
         MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
         MySQL::ATTR_OPT_READ_TIMEOUT => 30,
         MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
