@@ -7,6 +7,7 @@ use GenericDatabase\Traits\JSON;
 use GenericDatabase\Traits\INI;
 use GenericDatabase\Traits\YAML;
 use GenericDatabase\Traits\XML;
+use GenericDatabase\Traits\Arrays;
 use GenericDatabase\Engine\PgSQLEngine;
 
 class Arguments
@@ -26,19 +27,6 @@ class Arguments
     ];
 
     /**
-     * This method is used when all parameters are used
-     *
-     * @param array $arguments
-     * @return void
-     */
-    private static function callWithFullArguments($arguments): void
-    {
-        foreach ($arguments as $key => $value) {
-            call_user_func_array([PgSQLEngine::getInstance(), 'set' . self::$argumentList[$key]], [$value]);
-        }
-    }
-
-    /**
      * Transform variables in constants
      *
      * @param array $value
@@ -46,10 +34,15 @@ class Arguments
      */
     private static function setConstant($value): array
     {
-        $options = Types::setConstant($value, PgSQLEngine::getInstance(), 'PgSQL', 'PgSQL', ['ATTR_PERSISTENT', 'ATTR_CONNECT_TIMEOUT']);
+        $options = Types::setConstant(
+            $value,
+            PgSQLEngine::getInstance(),
+            'PgSQL',
+            'PgSQL',
+            ['ATTR_PERSISTENT', 'ATTR_CONNECT_TIMEOUT']
+        );
         Options::setOptions($options);
-        $options = Options::getOptions();
-        return $options;
+        return Options::getOptions();
     }
 
     /**
@@ -72,21 +65,20 @@ class Arguments
      */
     private static function callArgumentsByFormat($format, $arguments): void
     {
-        $data = null;
-        if ($format === 'json') {
-            $data = JSON::parseJSON(...$arguments);
-        } elseif ($format === 'ini') {
-            $data = INI::parseINI(...$arguments);
-        } elseif ($format === 'xml') {
-            $data = XML::parseXML(...$arguments);
-        } elseif ($format === 'yaml') {
-            $data = YAML::parseYAML(...$arguments);
-        }
-
+        $data = match ($format) {
+            'json' => JSON::parseJSON(...$arguments),
+            'ini' => INI::parseINI(...$arguments),
+            'xml' => XML::parseXML(...$arguments),
+            'yaml' => YAML::parseYAML(...$arguments),
+            default => null,
+        };
         if ($data) {
             foreach ($data as $key => $value) {
                 if (strtolower($key) === 'options') {
-                    call_user_func_array([PgSQLEngine::getInstance(), 'set' . ucfirst($key)], [self::setConstant(($format === 'json' || $format === 'yaml') ? $value : [$value])]);
+                    call_user_func_array(
+                        [PgSQLEngine::getInstance(), 'set' . ucfirst($key)],
+                        [self::setConstant(($format === 'json' || $format === 'yaml') ? $value : [$value])]
+                    );
                 } else {
                     call_user_func_array([PgSQLEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
                 }
@@ -95,47 +87,53 @@ class Arguments
     }
 
     /**
-     * Determines arguments type by calling to default type
+     * This method is used when all parameters are used in the static array format
      *
-     * @param mixed $arguments
+     * @param array $arguments
      * @return void
      */
-    private static function callArgumentsByDefault($method, $arguments): void
+    private static function callWithByStaticArray(array $arguments): void
     {
-        call_user_func_array([PgSQLEngine::getInstance(), $method], $arguments);
+        foreach ($arguments as $key => $value) {
+            call_user_func_array([PgSQLEngine::getInstance(), 'set' . ucfirst($key)], [$value]);
+        }
     }
 
     /**
-     * This method works like a factory and is responsible for identifying the way in which the class is instantiated, as well as its arguments.
+     * This method is used when all parameters are used in the static arguments format
      *
-     * @param string $method
+     * @param array $arguments
+     * @return void
+     */
+    private static function callWithByStaticArgs(array $arguments): void
+    {
+        foreach ($arguments as $key => $value) {
+            call_user_func_array([PgSQLEngine::getInstance(), 'set' . self::$argumentList[$key]], [$value]);
+        }
+    }
+
+    /**
+     * This method works like a factory and is responsible for identifying
+     * the way in which the class is instantiated, as well as its arguments.
+     *
+     * @param string $name
      * @param array $arguments
      * @return PgSQLEngine
      */
-    public static function call(string $method, array $arguments): mixed
+    public static function call(string $name, array $arguments): PgSQLEngine
     {
-        switch ($method) {
-            case 'new':
-            case 'create':
-            case 'config':
-                if (count($arguments) === 8) {
-                    self::callWithFullArguments($arguments);
-                } else {
-                    if (JSON::isValidJSON(...$arguments)) {
-                        self::callArgumentsByFormat('json', $arguments);
-                    } elseif (YAML::isValidYAML(...$arguments)) {
-                        self::callArgumentsByFormat('yaml', $arguments);
-                    } elseif (INI::isValidINI(...$arguments)) {
-                        self::callArgumentsByFormat('ini', $arguments);
-                    } elseif (XML::isValidXML(...$arguments)) {
-                        self::callArgumentsByFormat('xml', $arguments);
-                    }
-                }
-                break;
-            default:
-                self::callArgumentsByDefault($method, $arguments);
-                break;
-        }
+        match ($name) {
+            'new' => match (true) {
+                JSON::isValidJSON(...$arguments) => self::callArgumentsByFormat('json', $arguments),
+                YAML::isValidYAML(...$arguments) => self::callArgumentsByFormat('yaml', $arguments),
+                INI::isValidINI(...$arguments) => self::callArgumentsByFormat('ini', $arguments),
+                XML::isValidXML(...$arguments) => self::callArgumentsByFormat('xml', $arguments),
+                default => Arrays::isAssoc(...$arguments)
+                    ? self::callWithByStaticArray(...$arguments)
+                    : self::callWithByStaticArgs($arguments)
+            },
+            default => call_user_func_array([PgSQLEngine::getInstance(), $name], $arguments)
+        };
         return PgSQLEngine::getInstance();
     }
 }

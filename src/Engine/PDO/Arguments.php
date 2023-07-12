@@ -13,27 +13,27 @@ use GenericDatabase\Engine\PDOEngine;
 
 class Arguments
 {
-  /**
-   * array property for use in magic setter and getter in order
-   */
+    /**
+     * array property for use in magic setter and getter in order
+     */
     private static $argumentList = [
-    'Driver',
-    'Host',
-    'Port',
-    'Database',
-    'User',
-    'Password',
-    'Charset',
-    'Options',
-    'Exception'
+        'Driver',
+        'Host',
+        'Port',
+        'Database',
+        'User',
+        'Password',
+        'Charset',
+        'Options',
+        'Exception'
     ];
 
-  /**
-   * This method is used when all parameters are used
-   *
-   * @param array $arguments
-   * @return void
-   */
+    /**
+     * This method is used when all parameters are used
+     *
+     * @param array $arguments
+     * @return void
+     */
     private static function callWithFullArguments($arguments): void
     {
         foreach ($arguments as $key => $value) {
@@ -41,12 +41,12 @@ class Arguments
         }
     }
 
-  /**
-   * This method is used when any of the parameters are omitted
-   *
-   * @param array $arguments
-   * @return void
-   */
+    /**
+     * This method is used when any of the parameters are omitted
+     *
+     * @param array $arguments
+     * @return void
+     */
     private static function callWithPartialArguments($arguments): void
     {
         $clonedArgumentList = Arrays::exceptByValues(self::$argumentList, ['Host', 'Port', 'User', 'Password']);
@@ -55,12 +55,12 @@ class Arguments
         }
     }
 
-  /**
-   * Transform variables in constants
-   *
-   * @param array $value
-   * @return array
-   */
+    /**
+     * Transform variables in constants
+     *
+     * @param array $value
+     * @return array
+     */
     private static function setConstant($value): array
     {
         $result = [];
@@ -76,24 +76,24 @@ class Arguments
         return $result;
     }
 
-  /**
-   * Determines the type that will receive treatment
-   *
-   * @param mixed $value
-   * @return mixed
-   */
+    /**
+     * Determines the type that will receive treatment
+     *
+     * @param mixed $value
+     * @return mixed
+     */
     private static function setType($value): mixed
     {
         return Types::setType($value);
     }
 
-  /**
-   * Determines arguments type by calling to format type
-   *
-   * @param string $format Accept formats json, xml, ini and yaml
-   * @param mixed $arguments
-   * @return void
-   */
+    /**
+     * Determines arguments type by calling to format type
+     *
+     * @param string $format Accept formats json, xml, ini and yaml
+     * @param mixed $arguments
+     * @return void
+     */
     private static function callArgumentsByFormat($format, $arguments): void
     {
         $data = null;
@@ -118,24 +118,24 @@ class Arguments
         }
     }
 
-  /**
-   * Determines arguments type by calling to default type
-   *
-   * @param mixed $arguments
-   * @return void
-   */
+    /**
+     * Determines arguments type by calling to default type
+     *
+     * @param mixed $arguments
+     * @return void
+     */
     private static function callArgumentsByDefault($method, $arguments): void
     {
         call_user_func_array([PDOEngine::getInstance(), $method], $arguments);
     }
 
-  /**
-   * This method works like a factory and is responsible for identifying the way in which the class is instantiated, as well as its arguments.
-   *
-   * @param string $method
-   * @param array $arguments
-   * @return PDOEngine
-   */
+    /**
+     * This method works like a factory and is responsible for identifying the way in which the class is instantiated, as well as its arguments.
+     *
+     * @param string $method
+     * @param array $arguments
+     * @return PDOEngine
+     */
     public static function call(string $method, array $arguments): mixed
     {
         switch ($method) {

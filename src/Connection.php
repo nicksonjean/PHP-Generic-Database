@@ -81,7 +81,7 @@ class Connection
         $method = substr($name, 0, 3);
         $field = strtolower(substr($name, 3));
         if ($field === 'engine' && !empty($arguments)) {
-            $this->initFactory(...$arguments);
+            self::call($this, 'initFactory', $arguments);
         }
         if ($method == 'set') {
             self::call($this->getStrategy(), 'set' . ucfirst($field), [...$arguments]);
@@ -101,26 +101,18 @@ class Connection
      */
     public static function __callStatic(string $name, array $arguments): Connection
     {
-        switch ($name) {
-            case 'new':
-            case 'create':
-            case 'config':
-                if (JSON::isValidJSON(...$arguments)) {
-                    self::callArgumentsByFormat('json', $arguments);
-                } elseif (YAML::isValidYAML(...$arguments)) {
-                    self::callArgumentsByFormat('yaml', $arguments);
-                } elseif (INI::isValidINI(...$arguments)) {
-                    self::callArgumentsByFormat('ini', $arguments);
-                } elseif (XML::isValidXML(...$arguments)) {
-                    self::callArgumentsByFormat('xml', $arguments);
-                } else {
-                    self::callWithByStatic($arguments);
-                }
-                break;
-            default:
-                self::call(self::getInstance(), $name, $arguments);
-                break;
-        }
+        match ($name) {
+            'new' => match (true) {
+                JSON::isValidJSON(...$arguments) => self::callArgumentsByFormat('json', $arguments),
+                YAML::isValidYAML(...$arguments) => self::callArgumentsByFormat('yaml', $arguments),
+                INI::isValidINI(...$arguments) => self::callArgumentsByFormat('ini', $arguments),
+                XML::isValidXML(...$arguments) => self::callArgumentsByFormat('xml', $arguments),
+                default => Arrays::isAssoc(...$arguments)
+                    ? self::callWithByStaticArray(...$arguments)
+                    : self::callWithByStaticArgs($arguments)
+            },
+            default => self::call(self::getInstance(), $name, $arguments)
+        };
         return self::getInstance();
     }
 
@@ -153,7 +145,6 @@ class Connection
             'sqlite' => new SQLiteEngine(),
             default => null,
         };
-
         $this->setStrategy($this->strategy);
     }
 
@@ -171,12 +162,25 @@ class Connection
     }
 
     /**
-     * This method is used when all parameters are used
+     * This method is used when all parameters are used in the static array format
      *
      * @param array $arguments
      * @return void
      */
-    private static function callWithByStatic(array $arguments): void
+    private static function callWithByStaticArray(array $arguments): void
+    {
+        foreach ($arguments as $key => $value) {
+            self::call(self::getInstance(), 'set' . ucfirst($key), [$value]);
+        }
+    }
+
+    /**
+     * This method is used when all parameters are used in the static arguments format
+     *
+     * @param array $arguments
+     * @return void
+     */
+    private static function callWithByStaticArgs(array $arguments): void
     {
         $argumentClass = Reflections::getClassPropertyName(
             sprintf(

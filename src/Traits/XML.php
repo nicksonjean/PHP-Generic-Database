@@ -7,11 +7,14 @@ trait XML
     /**
      * Check if xml string is valid
      *
-     * @param string $xml Argument to be tested
+     * @param mixed $xml Argument to be tested
      * @return bool
      */
-    public static function isValidXML(string $xml): bool
+    public static function isValidXML(mixed $xml): bool
     {
+        if (!is_string($xml)) {
+            return false;
+        }
         set_error_handler(fn () => null, E_WARNING);
         $xml2 = simpleXML_load_file($xml, "SimpleXMLElement", LIBXML_NOCDATA);
         if ($xml2 === false) {
@@ -20,7 +23,7 @@ trait XML
         } else {
             $xml2 = \XMLReader::open($xml);
             restore_error_handler();
-            return ($xml2->setParserProperty(\XMLReader::VALIDATE, true) ? true : false);
+            return $xml2->setParserProperty(\XMLReader::VALIDATE, true) ? true : false;
         }
     }
 

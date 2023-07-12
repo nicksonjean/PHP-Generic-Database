@@ -24,8 +24,7 @@ do
 done
 if [ "$FILES" != "" ]
 then
-  echo "Running Code Sniffer..."
-  echo -e $FILES $NEWLINE
+  echo "Running Code Sniffer...\n$FILES\n"
   ./vendor/bin/phpcs --standard=PSR12 --encoding=utf-8 --exclude=PSR1.Classes.ClassDeclaration,Generic.Files.LineLength -n -p $FILES
   if [ $? != 0 ]
   then
