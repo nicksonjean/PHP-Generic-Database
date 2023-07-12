@@ -10,16 +10,38 @@ trait Types
     public static function setConstant($value, $instance, $className, $constantName, $attributes): array
     {
         $options = [];
+
         foreach (Arrays::recombine(...$value) as $key => $value) {
             $index = str_replace("$className::", '', $key);
-            $key_name = !in_array($index, $attributes) ? str_replace("ATTR", $constantName === 'SQLite' ? strtoupper($constantName) . '3' : strtoupper($constantName), $index) : $index;
+            $keyName = !in_array($index, $attributes) ? self::generateKeyName($index, $constantName) : $index;
+
             $instance->setAttribute($key, $value);
-            if (!in_array($key_name, $attributes)) {
-                $instance->setOptions(constant($key_name), $value);
+
+            if (!in_array($keyName, $attributes)) {
+                $optionKey = constant(sprintf("GenericDatabase\Engine\%s\%s::%s", $constantName, $className, $index));
+                $instance->setOptions($optionKey, $value);
             }
-            $options[constant(sprintf("GenericDatabase\Engine\%s\%s::%s", $constantName, $className, $index))] = $value;
+
+            $options[self::generateOptionKey($className, $constantName, $index)] = $value;
         }
+
         return $options;
+    }
+
+    private static function generateKeyName($index, $constantName): string
+    {
+        return str_replace(
+            "ATTR",
+            $constantName === 'SQLite'
+                ? strtoupper($constantName) . '3'
+                : strtoupper($constantName),
+            $index
+        );
+    }
+
+    private static function generateOptionKey($className, $constantName, $index): string
+    {
+        return constant(sprintf("GenericDatabase\Engine\%s\%s::%s", $constantName, $className, $index));
     }
 
     public static function setType($value)
@@ -28,7 +50,7 @@ trait Types
         $value = ($value === null) ? '' : $value;
         if (Regex::isNumber($value) && $length > 1) {
             $result = (int) $value;
-        } elseif (($value === '0' or $value === '1') && $length === 1) {
+        } elseif (($value === '0' || $value === '1') && $length === 1) {
             $result = (bool) $value;
         } elseif (Regex::isBoolean($value)) {
             $result = (bool) $value;

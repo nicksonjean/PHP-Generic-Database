@@ -1,36 +1,105 @@
-#! /usr/bin/env bash
-PROJECT=`php -r "echo dirname(dirname(dirname(realpath('$0'))));"`
-STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.php`
-# Determine if a file list is passed
-if [ "$#" -eq 1 ]
-then
-  oIFS=$IFS
-  IFS='
-  '
-  SFILES="$1"
-  IFS=$oIFS
-fi
-SFILES=${SFILES:-$STAGED_FILES_CMD}
-echo "Checking PHP Lint..."
-for FILE in $SFILES
-do
-  php -l -d display_errors=0 $PROJECT/$FILE
-  if [ $? != 0 ]
-  then
-    echo "Fix the error before commit."
+#!/bin/sh
+
+#########################
+#                       #
+#     Initializing      #
+#                       #
+#########################
+
+##
+# You should add all tools as composer dependencies or change this path
+# 
+# composer require phpmd/phpmd
+# composer require squizlabs/php_codesniffer
+##
+
+PHPCS_BIN=./vendor/bin/phpcs
+PHPCBF_BIN=./vendor/bin/phpcbf
+
+# Check for PHPCS / PHPCBF
+if [ ! -x $PHPCS_BIN ]; then
+    echo "[PRE-COMMIT] PHP CodeSniffer is not installed locally."
+    echo "[PRE-COMMIT] Please run 'composer install' or check the path: $PHPCS_BIN"
     exit 1
-  fi
-  FILES="$FILES $PROJECT/$FILE"
-done
+fi
+
+if [ ! -x $PHPCBF_BIN ]; then
+    echo "[PRE-COMMIT] PHP Code Beautifier and Fixer is not installed locally."
+    echo "[PRE-COMMIT] Please run 'composer install' or check the path: $PHPCBF_BIN"
+    exit 1
+fi
+
+PHPMD_BIN=./vendor/bin/phpmd
+
+# Check for PHPMD
+if [ ! -x $PHPMD_BIN ]; then
+    echo "[PRE-COMMIT] PHP Mess Detect is not installed locally."
+    echo "[PRE-COMMIT] Please run 'composer install' or check the path: $PHPMD_BIN"
+    exit 1
+fi
+
+#########################
+#                       #
+#       Starting        #
+#                       #
+#########################
+
+# All files in staging area (Added | Created | Modified | Renamed)
+
+PROJECT=$(git rev-parse --show-toplevel)
+FILES=$(git diff --cached --name-only --diff-filter=ACMR HEAD | grep .php)
+
 if [ "$FILES" != "" ]
 then
-  echo "Running Code Sniffer..."
-  echo -e $FILES
-  ./vendor/bin/phpcs --standard=PSR12 --encoding=utf-8 --exclude=PSR1.Classes.ClassDeclaration,Generic.Files.LineLength -n -p $FILES
-  if [ $? != 0 ]
-  then
-    echo "Fix the error before commit."
-    exit 1
-  fi
+    # Coding Standards
+
+    echo "[PRE-COMMIT] Checking PHPCS..."
+
+    # You can change your PHPCS command here
+    $PHPCS_BIN -n $FILES
+
+    if [ $? != 0 ]
+    then
+        echo "[PRE-COMMIT] Coding standards errors have been detected."
+        echo "[PRE-COMMIT] Running PHP Code Beautifier and Fixer..."
+
+        # You can change your PHPCBF command here
+        $PHPCBF_BIN --ignore-annotations --standard=PSR12 --exclude=PSR1.Classes.ClassDeclaration,Generic.Files.LineLength -n $FILES
+
+        echo "[PRE-COMMIT] Checking PHPCS again..."
+
+        # You can change your PHPCS command here
+        $PHPCS_BIN --ignore-annotations --standard=PSR12 --exclude=PSR1.Classes.ClassDeclaration,Generic.Files.LineLength -n $FILES
+
+        if [ $? != 0 ]
+        then
+            echo "[PRE-COMMIT] PHP Code Beautifier and Fixer wasn't able to solve all problems."
+            echo "[PRE-COMMIT] Run PHPCS manually to check and fix all errors."
+            exit 1
+        fi
+
+        echo "[PRE-COMMIT] All errors are fixed automatically."
+
+        git add $FILES
+    else
+        echo "[PRE-COMMIT] No errors found."
+    fi
+
+    # Mess Detector
+
+    echo "[PRE-COMMIT] Checking PHPMD..."
+
+    for FILE in $FILES
+    do
+        # You can change your PHPMD command here
+        $PHPMD_BIN $PROJECT/$FILE ansi phpmd.xml
+
+        if [ $? != 0 ]
+        then
+            echo "[PRE-COMMIT] Fix errors before commit."
+            exit 1
+        fi
+    done
 fi
+
 exit $?

@@ -6,9 +6,9 @@ trait Reflections
 {
     /**
      * Set default method
-     * @var string $default_method = 'getInstance'
+     * @var string $defaultMethod = 'getInstance'
      */
-    public static string $default_method = 'getInstance';
+    public static string $defaultMethod = 'getInstance';
 
     /**
      * Get singleton instance
@@ -19,9 +19,9 @@ trait Reflections
     public static function getSingletonInstance($class): mixed
     {
         try {
-            $result = call_user_func($class . '::' . self::$default_method);
+            $result = call_user_func($class . '::' . self::$defaultMethod);
         } catch (\Exception $e) {
-            $message = sprintf('Method %s not founded in the class %s', self::$default_method, $class);
+            $message = sprintf('Method %s not founded in the class %s', self::$defaultMethod, $class);
             throw new \Exception($message);
         }
         return $result;
@@ -36,10 +36,10 @@ trait Reflections
     public static function isSingletonMethodExits($class): mixed
     {
         try {
-            $method = new \ReflectionMethod($class, self::$default_method);
+            $method = new \ReflectionMethod($class, self::$defaultMethod);
             $result = ($method->isStatic()) ? true : false;
-        } catch (\Exception $error) {
-            $message = sprintf('Method %s not founded in the class %s', self::$default_method, $class);
+        } catch (\Exception) {
+            $message = sprintf('Method %s not founded in the class %s', self::$defaultMethod, $class);
             throw new \Exception($message);
         }
         return $result;

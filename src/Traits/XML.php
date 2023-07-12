@@ -37,16 +37,14 @@ trait XML
     {
         $data = trim($data);
 
-        if (preg_match('/^[0-9]{1,}$/', $data)) {
-            return intval($data);
+        if (is_numeric($data)) {
+            return strpos($data, '.') !== false ? floatval($data) : intval($data);
         }
 
-        if (preg_match('/^[0-9\.]{1,}$/', $data)) {
-            return floatval($data);
-        }
-
-        if (preg_match('/(false|true)/i', $data)) {
-            return filter_var($data, FILTER_VALIDATE_BOOLEAN);
+        if (strcasecmp($data, 'false') === 0) {
+            $data = false;
+        } elseif (strcasecmp($data, 'true') === 0) {
+            $data = true;
         }
 
         return $data;
@@ -56,52 +54,115 @@ trait XML
      * Decode a valid xml object
      *
      * @param \SimpleXMLElement $xml valid object SimpleXMLElement
-     * @param ?bool $attributes_key = true Optional argument to get attribute key
+     * @param ?bool $attributesKey = true Optional argument to get attribute key
      * @param ?bool $reduce = true  Optional argumento to make reduce
-     * @param ?array $always_array = array() Optional argument to always return a array
-     * @param ?array $value_keys = array() Optional argument to get array from values and keys
+     * @param ?array $alwaysArray = [] Optional argument to always return a array
+     * @param ?array $valueKeys = [] Optional argument to get array from values and keys
      * @return string|array
      */
-    public static function decodeXML(\SimpleXMLElement $xml, ?bool $attributes_key = true, ?bool $reduce = true, ?array $always_array = array(), ?array $value_keys = array()): string|array
-    {
-        $arr = array();
-        $xml_name = $xml->getName();
-        foreach ($xml->attributes() as $key => $value) {
-            if ($attributes_key) {
-                $arr['attributes'][strval($key)] = strval($value);
-            } else {
-                $arr[strval($key)] = strval($value);
-            }
-        }
-        $children_count = $xml->children()->count();
-        if ($children_count == 0) {
-            if (count($arr) > 0) {
-                $key = $value_keys[$xml_name] ?? $value_keys['*'] ?? "value";
-                $arr[$key] = strval($xml);
-            } else {
-                $arr = strval($xml);
-            }
+    public static function decodeXML(
+        \SimpleXMLElement $xml,
+        ?bool $attributesKey = true,
+        ?bool $reduce = true,
+        ?array $alwaysArray = [],
+        ?array $valueKeys = []
+    ): string|array {
+        $arr = [];
+        self::extractAttributes($xml, $attributesKey, $arr);
+        $childrenCount = $xml->children()->count();
+
+        if ($childrenCount === 0) {
+            self::extractValue($xml, $arr, $valueKeys);
         } else {
-            $children_names = array();
-            foreach ($xml->children() as $child) {
-                $child_name = $child->getName();
-                in_array($child_name, $children_names) or $children_names[] = $child_name;
-            }
-            $reducible = empty($arr) && count($children_names) === 1;
-            foreach ($xml->children() as $child) {
-                $name = $child->getName();
-                if ($xml->$name->count() > 1 || in_array($name, $always_array)) {
-                    if ($reduce && $reducible) {
-                        $arr[] = self::decodeXML($child, $attributes_key, $reduce, $always_array, $value_keys);
-                    } else {
-                        $arr[$name][] = self::decodeXML($child, $attributes_key, $reduce, $always_array, $value_keys);
-                    }
-                } else {
-                    $arr[$name] = self::decodeXML($child, $attributes_key, $reduce, $always_array, $value_keys);
-                }
+            self::processChildren($xml, $arr, $attributesKey, $reduce, $alwaysArray, $valueKeys);
+        }
+
+        return $arr;
+    }
+
+    /**
+     * extractAttributes a valid xml object
+     *
+     * @param \SimpleXMLElement $xml valid object SimpleXMLElement
+     * @param ?bool $attributesKey = true Optional argument to get attribute key
+     * @param array &$arr reference to get array from values and keys
+     * @return void
+     */
+    private static function extractAttributes(\SimpleXMLElement $xml, bool $attributesKey, array &$arr): void
+    {
+        foreach ($xml->attributes() as $key => $value) {
+            $key = strval($key);
+            $value = strval($value);
+
+            if ($attributesKey) {
+                $arr['attributes'][$key] = $value;
+            } else {
+                $arr[$key] = $value;
             }
         }
-        return $arr;
+    }
+
+    /**
+     * extractValue a valid xml object
+     *
+     * @param \SimpleXMLElement $xml valid object SimpleXMLElement
+     * @param array &$arr reference to get array from values and keys
+     * @param ?array $valueKeys = [] Optional argument to get array from values and keys
+     * @return string|array
+     */
+    private static function extractValue(\SimpleXMLElement $xml, array &$arr, array $valueKeys): void
+    {
+        if (!empty($arr)) {
+            $key = $valueKeys[$xml->getName()] ?? $valueKeys['*'] ?? "value";
+            $arr[$key] = strval($xml);
+        } else {
+            $arr = strval($xml);
+        }
+    }
+
+    /**
+     * processChildren a valid xml object
+     *
+     * @param \SimpleXMLElement $xml valid object SimpleXMLElement
+     * @param ?bool $attributesKey = true Optional argument to get attribute key
+     * @param ?bool $reduce = true  Optional argumento to make reduce
+     * @param ?array $alwaysArray = [] Optional argument to always return a array
+     * @param ?array $valueKeys = [] Optional argument to get array from values and keys
+     * @return string|array
+     */
+    private static function processChildren(
+        \SimpleXMLElement $xml,
+        array &$arr,
+        bool $attributesKey,
+        bool $reduce,
+        array $alwaysArray,
+        array $valueKeys
+    ): void {
+        $childrenNames = [];
+
+        foreach ($xml->children() as $child) {
+            $childName = $child->getName();
+
+            if (!in_array($childName, $childrenNames, true)) {
+                $childrenNames[] = $childName;
+            }
+        }
+
+        $reducible = empty($arr) && count($childrenNames) === 1;
+
+        foreach ($xml->children() as $child) {
+            $name = $child->getName();
+
+            if ($xml->$name->count() > 1 || in_array($name, $alwaysArray, true)) {
+                if ($reduce && $reducible) {
+                    $arr[] = self::decodeXML($child, $attributesKey, $reduce, $alwaysArray, $valueKeys);
+                } else {
+                    $arr[$name][] = self::decodeXML($child, $attributesKey, $reduce, $alwaysArray, $valueKeys);
+                }
+            } else {
+                $arr[$name] = self::decodeXML($child, $attributesKey, $reduce, $alwaysArray, $valueKeys);
+            }
+        }
     }
 
     /**

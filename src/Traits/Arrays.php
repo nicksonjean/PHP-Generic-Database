@@ -73,24 +73,20 @@ trait Arrays
 
     public static function isAssoc($arr)
     {
-        // don't try to check non-arrays or empty arrays
         if (false === is_array($arr) || 0 === ($count = count($arr))) {
             return false;
         }
 
-        // shortcut by guessing at the beginning
         reset($arr);
         if (key($arr) !== 0) {
             return true;
         }
 
-        // shortcut by guessing at the end
         end($arr);
         if (key($arr) !== $count - 1) {
             return true;
         }
 
-        // rely on php to optimize test by reference or fast compare
         return array_values($arr) !== $arr;
     }
 }
