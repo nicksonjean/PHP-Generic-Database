@@ -21,12 +21,12 @@
   <rule ref="rulesets/controversial.xml/CamelCaseParameterName" />
   <rule ref="rulesets/controversial.xml/CamelCaseVariableName" />
 
-  <!-- Intentionally excluded rules, mentioned here for thoroughness -->
+  <rule ref="rulesets/unusedcode.xml/UnusedFormalParameter" />
+  <rule ref="rulesets/unusedcode.xml/UnusedLocalVariable" />
+  <rule ref="rulesets/unusedcode.xml/UnusedPrivateField" />
+  <rule ref="rulesets/unusedcode.xml/UnusedPrivateMethod" />
 
-  <!-- <rule ref="rulesets/unusedcode.xml/UnusedFormalParameter" /> -->
-  <!-- <rule ref="rulesets/unusedcode.xml/UnusedLocalVariable" /> -->
-  <!-- <rule ref="rulesets/unusedcode.xml/UnusedPrivateField" /> -->
-  <!-- <rule ref="rulesets/unusedcode.xml/UnusedPrivateMethod" /> -->
+  <!-- Intentionally excluded rules, mentioned here for thoroughness -->
 
   <!-- <rule ref="rulesets/design.xml/DevelopmentCodeFragment" /> -->
   <!-- <rule ref="rulesets/design.xml/EmptyCatchBlock" /> -->

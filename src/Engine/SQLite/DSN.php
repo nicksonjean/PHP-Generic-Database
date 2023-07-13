@@ -2,13 +2,15 @@
 
 namespace GenericDatabase\Engine\SQLite;
 
+use AllowDynamicProperties;
 use GenericDatabase\Traits\Path;
 use GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Helpers\GenericException;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class DSN
 {
-    public static function parseDsn(): string|\Exception
+    public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('sqlite3')) {
             $message = sprintf(
@@ -16,7 +18,7 @@ class DSN
                 'sqlite3',
                 'PHP.ini'
             );
-            throw new \Exception($message);
+            throw new GenericException($message);
         }
 
         if (!Path::isAbsolute(SQLiteEngine::getInstance()->getDatabase())) {

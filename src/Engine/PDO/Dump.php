@@ -2,6 +2,7 @@
 
 namespace GenericDatabase\Engine\PDO;
 
+use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Engine\PDOEngine;
 
 class Dump
@@ -34,7 +35,7 @@ class Dump
 
         $handle = @fopen($file, 'r');
         if (!$handle) {
-            throw new \Exception("Cannot open file '$file'.");
+            throw new GenericException("Cannot open file '$file'.");
         }
 
         $stat = fstat($handle);

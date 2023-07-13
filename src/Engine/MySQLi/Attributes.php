@@ -19,6 +19,8 @@ class Attributes
 
     private static $settings = [];
 
+    private const RX_ERROR = "[%d] %s\n";
+
     public const CLIENT = 0;
 
     public const RESULTS = 1;
@@ -97,15 +99,18 @@ class Attributes
     {
         self::$errorMode = (MySQLiEngine::getInstance()->getException()) ? \MYSQLI_REPORT_ERROR : \MYSQLI_REPORT_OFF;
         if (MySQLiEngine::getInstance()->getException()) {
-            $driver = new \MySQLi_Driver();
-            $driver->report_mode = (int) self::$errorMode;
+            mysqli_report(self::$errorMode);
         }
     }
 
     private static function setVariables()
     {
         if (!($res = MySQLiEngine::getInstance()->getConnection()->query("SHOW VARIABLES LIKE '%character%'"))) {
-            printf("[%d] %s\n", MySQLiEngine::getInstance()->getConnection()->errno, MySQLiEngine::getInstance()->getConnection()->error);
+            printf(
+                self::RX_ERROR,
+                MySQLiEngine::getInstance()->getConnection()->errno,
+                MySQLiEngine::getInstance()->getConnection()->error
+            );
             return self::$variables;
         }
 
@@ -124,10 +129,19 @@ class Attributes
     private static function setCharacterSet(?int $type = self::CONNECTION)
     {
         if (
-            !($res = MySQLiEngine::getInstance()->getConnection()->query(sprintf("SHOW CHARACTER SET LIKE '%s'", self::$variables[self::getCharsetType($type)]))) ||
+            !($res = MySQLiEngine::getInstance()->getConnection()->query(
+                sprintf(
+                    "SHOW CHARACTER SET LIKE '%s'",
+                    self::$variables[self::getCharsetType($type)]
+                )
+            )) ||
             !(self::$charsets = $res->fetch_assoc())
         ) {
-            printf("[%d] %s\n", MySQLiEngine::getInstance()->getConnection()->errno, MySQLiEngine::getInstance()->getConnection()->error);
+            printf(
+                self::RX_ERROR,
+                MySQLiEngine::getInstance()->getConnection()->errno,
+                MySQLiEngine::getInstance()->getConnection()->error
+            );
             return self::$charsets;
         }
 
@@ -153,17 +167,26 @@ class Attributes
     private static function setCollation(?int $type = self::CONNECTION)
     {
         if (
-            !($res = MySQLiEngine::getInstance()->getConnection()->query(sprintf("SHOW COLLATION LIKE '%s'", self::$charsets['Default collation']))) ||
+            !($res = MySQLiEngine::getInstance()->getConnection()->query(
+                sprintf(
+                    "SHOW COLLATION LIKE '%s'",
+                    self::getCharacterSet()['Default collation']
+                )
+            )) ||
             !(self::$collations = $res->fetch_assoc())
         ) {
-            printf("[%d] %s\n", MySQLiEngine::getInstance()->getConnection()->errno, MySQLiEngine::getInstance()->getConnection()->error);
-            return self::$collations;
+            printf(
+                self::RX_ERROR,
+                MySQLiEngine::getInstance()->getConnection()->errno,
+                MySQLiEngine::getInstance()->getConnection()->error
+            );
+            return self::getCollation();
         }
 
-        self::$variables[self::getInverseCharsetType($type)]['sortlen'] = self::$collations['Sortlen'];
-        self::$variables[self::getInverseCharsetType($type)]['default'] = self::$collations['Default'];
-        self::$variables[self::getInverseCharsetType($type)]['compiled'] = self::$collations['Compiled'];
-        self::$variables[self::getInverseCharsetType($type)]['id'] = self::$collations['Id'];
+        self::$variables[self::getInverseCharsetType($type)]['sortlen'] = self::getCollation()['Sortlen'];
+        self::$variables[self::getInverseCharsetType($type)]['default'] = self::getCollation()['Default'];
+        self::$variables[self::getInverseCharsetType($type)]['compiled'] = self::getCollation()['Compiled'];
+        self::$variables[self::getInverseCharsetType($type)]['id'] = self::getCollation()['Id'];
 
         $res->free_result();
     }
@@ -175,9 +198,22 @@ class Attributes
 
     private static function setSettings()
     {
-        if (!($res = MySQLiEngine::getInstance()->getConnection()->query("SHOW SESSION VARIABLES WHERE Variable_name IN('autocommit', 'lower_case_table_names', 'sql_mode', 'connect_timeout', 'interactive_timeout', 'wait_timeout', 'net_read_timeout', 'net_write_timeout');"))) {
-            printf("[%d] %s\n", MySQLiEngine::getInstance()->getConnection()->errno, MySQLiEngine::getInstance()->getConnection()->error);
-            return self::$settings;
+        $query = "SHOW SESSION VARIABLES WHERE Variable_name IN(
+            'autocommit',
+            'lower_case_table_names',
+            'sql_mode',
+            'connect_timeout',
+            'interactive_timeout',
+            'wait_timeout',
+            'net_read_timeout',
+            'net_write_timeout');";
+        if (!($res = MySQLiEngine::getInstance()->getConnection()->query($query))) {
+            printf(
+                self::RX_ERROR,
+                MySQLiEngine::getInstance()->getConnection()->errno,
+                MySQLiEngine::getInstance()->getConnection()->error
+            );
+            return self::getSettings();
         }
 
         while ($row = $res->fetch_assoc()) {
@@ -201,14 +237,20 @@ class Attributes
     {
         self::init();
         $result = [];
-        foreach (self::$attributeList as $key => $value) {
+        $keys = array_keys(self::$attributeList);
+
+        foreach ($keys as $key) {
             $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
-                'AUTOCOMMIT' => (int) !Options::getOptions(MySQL::ATTR_AUTOCOMMIT) ? 0 : (int) Options::getOptions(MySQL::ATTR_AUTOCOMMIT),
+                'AUTOCOMMIT' => (int) !Options::getOptions(MySQL::ATTR_AUTOCOMMIT)
+                    ? 0
+                    : (int) Options::getOptions(MySQL::ATTR_AUTOCOMMIT),
                 'ERRMODE' => (int) self::$errorMode,
                 'CASE' => (int) self::$settings['lower_case_table_names'] === 1 ? 0 : 1,
                 'CLIENT_VERSION' => MySQLiEngine::getInstance()->getConnection()->client_info,
                 'CONNECTION_STATUS' => MySQLiEngine::getInstance()->getConnection()->host_info,
-                'PERSISTENT' => (int) !Options::getOptions(MySQL::ATTR_PERSISTENT) ? 0 : (int) Options::getOptions(MySQL::ATTR_PERSISTENT),
+                'PERSISTENT' => (int) !Options::getOptions(MySQL::ATTR_PERSISTENT)
+                    ? 0
+                    : (int) Options::getOptions(MySQL::ATTR_PERSISTENT),
                 'SERVER_INFO' => MySQLiEngine::getInstance()->getConnection()->stat(),
                 'SERVER_VERSION' => MySQLiEngine::getInstance()->getConnection()->server_info,
                 'TIMEOUT' => (int) self::$settings['connect_timeout'],
@@ -218,6 +260,7 @@ class Attributes
                 'COLLATION' => self::getVariables($type)['collation']
             };
         };
+
         MySQLiEngine::getInstance()?->setAttributes((array) $result);
     }
 }

@@ -5,7 +5,6 @@ namespace GenericDatabase\Engine\SQLite;
 use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Traits\Reflections;
 
-#[\AllowDynamicProperties]
 class Options
 {
     use Reflections;
@@ -14,46 +13,28 @@ class Options
 
     public static function flags(): int
     {
-        $options = [];
         $options = Options::getOptions();
-        $result = '';
-        foreach (Reflections::getClassConstants('GenericDatabase\Engine\SQLite\SQLite') as $key => $value) {
-            $index = array_search($value, array_keys($options));
-            if ($index !== false) {
-                if ($value <= 4) {
-                    switch ($value) {
-                        case 1: // ATTR_OPEN_READONLY
-                            if (SQLiteEngine::getInstance()->getAttribute("SQLite::ATTR_OPEN_READONLY") === true) {
-                                $result .= $value . "+";
-                            }
-                            break;
-                        case 2: // ATTR_OPEN_READWRITE
-                            if (SQLiteEngine::getInstance()->getAttribute("SQLite::ATTR_OPEN_READWRITE") === true) {
-                                if (SQLiteEngine::getInstance()->getAttribute("SQLite::ATTR_OPEN_READONLY") === true) {
-                                    $result = str_replace("1+", "", $result);
-                                }
-                                $result .= $value . "+";
-                            }
-                            break;
-                        case 4: // ATTR_OPEN_CREATE
-                            if (SQLiteEngine::getInstance()->getAttribute("SQLite::ATTR_OPEN_CREATE") === true) {
-                                if (SQLiteEngine::getInstance()->getAttribute("SQLite::ATTR_OPEN_READONLY") === true) {
-                                    $result = str_replace("1+", "", $result);
-                                }
-                                $result .= $value . "+";
-                            }
-                            break;
-                    }
+        $result = [];
+
+        foreach (Reflections::getClassConstants('GenericDatabase\Engine\SQLite\SQLite') as $value) {
+            $attribute = "SQLite::ATTR_" . strtoupper($value);
+            $attributeValue = SQLiteEngine::getInstance()->getAttribute($attribute);
+
+            if ($attributeValue === true && in_array($attribute, $options)) {
+                if ($value === 1) {
+                    $result[] = $value;
+                } elseif ($value === 2 || $value === 4) {
+                    $result = [$value];
+                    break;
                 }
             }
         }
 
-        $calculate = (function ($str) {
-            eval("\$str = $str;");
-            return $str;
-        });
-        $result = $result !== '' ? $calculate(rtrim($result, "+")) : 6;
-        return $result === 2 || $result === 4 ? 6 : $result;
+        if (empty($result)) {
+            $result = [6];
+        }
+
+        return $result[0];
     }
 
     /**
@@ -84,10 +65,12 @@ class Options
         foreach (Reflections::getClassConstants($class) as $key => $value) {
             $index = array_search($value, array_keys($options));
             if ($index !== false) {
-                $key_name = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT' && $key !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "SQLITE3", $key) : $key;
+                $keyName = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT' && $key !== 'ATTR_CONNECT_TIMEOUT'
+                    ? str_replace("ATTR", "SQLITE3", $key)
+                    : $key;
                 SQLiteEngine::getInstance()->setAttribute("SQLite::$key", $options[$value]);
                 if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT' && $key !== 'ATTR_CONNECT_TIMEOUT') {
-                    SQLite::setAttribute($key_name, $options[$value]);
+                    SQLite::setAttribute($keyName, $options[$value]);
                 }
                 self::$options[constant("$class::$key")] = $options[$value];
             }
@@ -101,14 +84,11 @@ class Options
      */
     public static function define(): void
     {
-        foreach (self::getOptions() as $key => $value) {
-            switch ($key) {
-                case 'ATTR_PERSISTENT':
-                    if (ini_get('sqlite.allow_persistent') !== '1') {
-                        ini_set('sqlite.allow_persistent', 1);
-                    }
-                    break;
-                default:
+        $options = self::getOptions();
+        $keys = array_keys($options);
+        foreach ($keys as $key) {
+            if ($key === 'ATTR_PERSISTENT' && ini_get('sqlite.allow_persistent') !== '1') {
+                ini_set('sqlite.allow_persistent', 1);
             }
         }
     }

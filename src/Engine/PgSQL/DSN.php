@@ -2,12 +2,14 @@
 
 namespace GenericDatabase\Engine\PgSQL;
 
+use AllowDynamicProperties;
 use GenericDatabase\Engine\PgSQLEngine;
+use GenericDatabase\Helpers\GenericException;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class DSN
 {
-    public static function parseDsn(): string|\Exception
+    public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('pgsql')) {
             $message = sprintf(
@@ -15,7 +17,7 @@ class DSN
                 'pgsql',
                 'PHP.ini'
             );
-            throw new \Exception($message);
+            throw new GenericException($message);
         }
 
         $result = null;
@@ -26,7 +28,9 @@ class DSN
             PgSQLEngine::getInstance()->getDatabase(),
             PgSQLEngine::getInstance()->getUser(),
             PgSQLEngine::getInstance()->getPassword(),
-            Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) ? ' connect_timeout=' . Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) : '',
+            Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
+                ? ' connect_timeout=' . Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
+                : '',
             PgSQLEngine::getInstance()->getCharset()
         );
 

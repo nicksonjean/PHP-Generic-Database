@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace GenericDatabase\Engine;
 
 use AllowDynamicProperties;
-use ErrorException;
 use Exception;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Traits\Errors;
-use GenericDatabase\Traits\Caller;
+use GenericDatabase\Traits\Setter;
+use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
 use GenericDatabase\Traits\Singleton;
 use GenericDatabase\Engine\PDO\Arguments;
@@ -20,6 +20,7 @@ use GenericDatabase\Engine\PDO\Dump;
 use GenericDatabase\Engine\PDO\Transaction;
 use PDO;
 use PDOException;
+use ErrorException;
 
 /**
  * @method static PDOEngine|static setDriver(mixed $value): void
@@ -51,26 +52,47 @@ use PDOException;
 class PDOEngine implements InterfaceConnection
 {
     use Errors;
-    use Caller;
+    use Setter;
+    use Getter;
     use Cleaner;
     use Singleton;
 
     /**
-     *  Instance of the connection with database
+     * Instance of the connection with database
+     * @var mixed $connection
      */
     private mixed $connection;
 
     /**
-     * This method is responsible for call the static instance to
-     * Arguments class with a Magic Method __call and __callStatic.
+     * Triggered when invoking inaccessible methods in an object context
      *
-     * @param string $method The method name to be called
-     * @param array $arguments The arguments of the method
+     * @param string $name Name of the method
+     * @param array $arguments Array of arguments
+     * @return mixed
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        $method = substr($name, 0, 3);
+        $field = strtolower(substr($name, 3));
+        if ($method == 'set') {
+            $this->__set($field, ...$arguments);
+            return $this;
+        } elseif ($method == 'get') {
+            return $this->__get($field);
+        }
+        return null;
+    }
+
+    /**
+     * Triggered when invoking inaccessible methods in a static context
+     *
+     * @param string $name Name of the static method
+     * @param array $arguments Array of arguments
      * @return PDOEngine
      */
-    private static function call(string $method, array $arguments): PDOEngine
+    public static function __callStatic(string $name, array $arguments): PDOEngine
     {
-        return Arguments::call($method, $arguments);
+        return Arguments::call($name, $arguments);
     }
 
     /**

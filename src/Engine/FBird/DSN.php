@@ -2,13 +2,15 @@
 
 namespace GenericDatabase\Engine\FBird;
 
+use AllowDynamicProperties;
 use GenericDatabase\Traits\Path;
 use GenericDatabase\Engine\FBirdEngine;
+use GenericDatabase\Helpers\GenericException;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class DSN
 {
-    public static function parseDsn(): string|\Exception
+    public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('interbase')) {
             $message = sprintf(
@@ -16,7 +18,7 @@ class DSN
                 'interbase',
                 'PHP.ini'
             );
-            throw new \Exception($message);
+            throw new GenericException($message);
         }
 
         if (!Path::isAbsolute(FBirdEngine::getInstance()->getDatabase())) {

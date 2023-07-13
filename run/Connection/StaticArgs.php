@@ -234,3 +234,18 @@ $context = Connection::new(
 )->connect();
 
 var_dump($context);
+
+$context = Connection::new(
+    'pdo',
+    'sqlite',
+    'memory',
+    'utf8',
+    [
+        PDO::ATTR_PERSISTENT => true,
+        PDO::ATTR_EMULATE_PREPARES => true,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+    ],
+    true
+)->connect();
+
+var_dump($context);

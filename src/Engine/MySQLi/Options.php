@@ -5,7 +5,6 @@ namespace GenericDatabase\Engine\MySQLi;
 use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Traits\Reflections;
 
-#[\AllowDynamicProperties]
 class Options
 {
     use Reflections;
@@ -40,10 +39,12 @@ class Options
         foreach (Reflections::getClassConstants($class) as $key => $value) {
             $index = array_search($value, array_keys($options));
             if ($index !== false) {
-                $key_name = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT' ? str_replace("ATTR", "MYSQLI", $key) : $key;
+                $keyName = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT'
+                    ? str_replace("ATTR", "MYSQLI", $key)
+                    : $key;
                 MySQLiEngine::getInstance()->setAttribute("MySQL::$key", $options[$value]);
                 if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_AUTOCOMMIT') {
-                    MySQL::setAttribute($key_name, $options[$value]);
+                    MySQL::setAttribute($keyName, $options[$value]);
                 }
                 self::$options[constant("$class::$key")] = $options[$value];
             }
@@ -76,18 +77,30 @@ class Options
                     MySQLiEngine::getInstance()->getConnection()->set_charset($value);
                     break;
                 case 'ATTR_OPT_CONNECT_TIMEOUT':
-                    MySQLiEngine::getInstance()->getConnection()->query("SET GLOBAL connect_timeout=" . $value . "");
-                    MySQLiEngine::getInstance()->getConnection()->query("SET SESSION interactive_timeout=" . $value . "");
-                    MySQLiEngine::getInstance()->getConnection()->query("SET SESSION wait_timeout=" . $value . "");
+                    MySQLiEngine::getInstance()->getConnection()->query(
+                        "SET GLOBAL connect_timeout=" . $value . ""
+                    );
+                    MySQLiEngine::getInstance()->getConnection()->query(
+                        "SET SESSION interactive_timeout=" . $value . ""
+                    );
+                    MySQLiEngine::getInstance()->getConnection()->query(
+                        "SET SESSION wait_timeout=" . $value . ""
+                    );
                     break;
                 case 'ATTR_OPT_READ_TIMEOUT':
-                    MySQLiEngine::getInstance()->getConnection()->query("SET SESSION net_read_timeout=" . $value . "");
-                    MySQLiEngine::getInstance()->getConnection()->query("SET SESSION net_write_timeout=" . ($value * 2) . "");
+                    MySQLiEngine::getInstance()->getConnection()->query(
+                        "SET SESSION net_read_timeout=" . $value . ""
+                    );
+                    MySQLiEngine::getInstance()->getConnection()->query(
+                        "SET SESSION net_write_timeout=" . ($value * 2) . ""
+                    );
                     break;
                 default:
                     MySQLiEngine::getInstance()->getConnection()->query("SET SESSION sql_mode=''");
                     if (MySQLiEngine::getInstance()->getCharset()) {
-                        MySQLiEngine::getInstance()->getConnection()->set_charset(MySQLiEngine::getInstance()->getCharset());
+                        MySQLiEngine::getInstance()->getConnection()->set_charset(
+                            MySQLiEngine::getInstance()->getCharset()
+                        );
                     }
             }
         }

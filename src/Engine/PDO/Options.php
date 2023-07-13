@@ -2,9 +2,10 @@
 
 namespace GenericDatabase\Engine\PDO;
 
+use PDO;
+use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Engine\PDOEngine;
 
-#[\AllowDynamicProperties]
 class Options
 {
     private static $options = [];
@@ -28,34 +29,39 @@ class Options
      */
     public static function setOptions(?array $options = null): void
     {
-        if (!in_array(PDOEngine::getInstance()->getDriver(), (array) \PDO::getAvailableDrivers())) {
+        if (!in_array(PDOEngine::getInstance()->getDriver(), (array) PDO::getAvailableDrivers())) {
             $message = sprintf(
                 "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
                 PDOEngine::getInstance()->getDriver(),
-                implode(', ', (array) \PDO::getAvailableDrivers())
+                implode(', ', (array) PDO::getAvailableDrivers())
             );
-            throw new \Exception($message);
+            throw new GenericException($message);
         }
 
-        $options += [\PDO::ATTR_ERRMODE => (PDOEngine::getInstance()->getException()) ? \PDO::ERRMODE_WARNING : \PDO::ERRMODE_SILENT];
+        $options += [PDO::ATTR_ERRMODE => (PDOEngine::getInstance()->getException())
+            ? PDO::ERRMODE_WARNING
+            : PDO::ERRMODE_SILENT];
         switch (PDOEngine::getInstance()->getDriver()) {
             case 'mysql':
                 if (PDOEngine::getInstance()->getCharset()) {
-                    $options += [\PDO::MYSQL_ATTR_INIT_COMMAND => sprintf("SET NAMES '%s';", PDOEngine::getInstance()->getCharset())];
+                    $options += [PDO::MYSQL_ATTR_INIT_COMMAND => sprintf(
+                        "SET NAMES '%s';",
+                        PDOEngine::getInstance()->getCharset()
+                    )];
                 }
-                $options += [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true];
+                $options += [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true];
                 // Fall-through intencional
             case 'pgsql':
-                $options += [\PDO::ATTR_AUTOCOMMIT => true];
+                $options += [PDO::ATTR_AUTOCOMMIT => true];
                 break;
             case 'sqlsrv':
-                $options += [\PDO::SQLSRV_ATTR_ENCODING => \PDO::SQLSRV_ENCODING_SYSTEM];
+                $options += [PDO::SQLSRV_ATTR_ENCODING => PDO::SQLSRV_ENCODING_SYSTEM];
                 break;
             case 'sqlite':
                 unset(PDOEngine::getInstance()->user, PDOEngine::getInstance()->password);
                 break;
             default:
-                $options += [\PDO::ATTR_ORACLE_NULLS => \PDO::NULL_EMPTY_STRING];
+                $options += [PDO::ATTR_ORACLE_NULLS => PDO::NULL_EMPTY_STRING];
         }
         self::$options = $options;
     }
@@ -67,20 +73,16 @@ class Options
      */
     public static function define(): void
     {
-        switch (PDOEngine::getInstance()->getDriver()) {
-            case 'mysql':
-                if (PDOEngine::getInstance()->getCharset()) {
-                    PDOEngine::getInstance()->getConnection()->exec(sprintf("SET NAMES '%s'", PDOEngine::getInstance()->getCharset()));
-                }
-                break;
-            case 'pgsql':
-                if (PDOEngine::getInstance()->getCharset()) {
-                    PDOEngine::getInstance()->getConnection()->exec(sprintf("SET CLIENT_ENCODING TO '%s'", PDOEngine::getInstance()->getCharset()));
-                }
-                break;
-            case 'sqlite':
-                PDOEngine::getInstance()->getConnection()->query('PRAGMA foreign_keys = ON');
-                break;
+        $driver = PDOEngine::getInstance()->getDriver();
+        $charset = PDOEngine::getInstance()->getCharset();
+        $connection = PDOEngine::getInstance()->getConnection();
+
+        if ($driver === 'mysql' && $charset) {
+            $connection->exec(sprintf("SET NAMES '%s'", $charset));
+        } elseif ($driver === 'pgsql' && $charset) {
+            $connection->exec(sprintf("SET CLIENT_ENCODING TO '%s'", $charset));
+        } elseif ($driver === 'sqlite') {
+            $connection->query('PRAGMA foreign_keys = ON');
         }
     }
 }

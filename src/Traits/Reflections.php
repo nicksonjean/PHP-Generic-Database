@@ -2,6 +2,8 @@
 
 namespace GenericDatabase\Traits;
 
+use Exception;
+
 trait Reflections
 {
     /**
@@ -20,9 +22,9 @@ trait Reflections
     {
         try {
             $result = call_user_func($class . '::' . self::$defaultMethod);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $message = sprintf('Method %s not founded in the class %s', self::$defaultMethod, $class);
-            throw new \Exception($message);
+            throw new Exception($message);
         }
         return $result;
     }
@@ -38,9 +40,9 @@ trait Reflections
         try {
             $method = new \ReflectionMethod($class, self::$defaultMethod);
             $result = ($method->isStatic()) ? true : false;
-        } catch (\Exception) {
+        } catch (Exception) {
             $message = sprintf('Method %s not founded in the class %s', self::$defaultMethod, $class);
-            throw new \Exception($message);
+            throw new Exception($message);
         }
         return $result;
     }

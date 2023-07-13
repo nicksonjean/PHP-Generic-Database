@@ -5,7 +5,6 @@ namespace GenericDatabase\Engine\PgSQL;
 use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Engine\PgSQL\Options;
 
-#[\AllowDynamicProperties]
 class Attributes
 {
     /**
@@ -35,7 +34,10 @@ class Attributes
             $flags = PGSQL_CONNECT_FORCE_NEW;
         } elseif (Options::getOptions(PgSQL::ATTR_CONNECT_ASYNC)) {
             $flags = PGSQL_CONNECT_ASYNC;
-        } elseif (Options::getOptions(PgSQL::ATTR_CONNECT_ASYNC) && Options::getOptions(PgSQL::ATTR_CONNECT_FORCE_NEW)) {
+        } elseif (
+            Options::getOptions(PgSQL::ATTR_CONNECT_ASYNC)
+            && Options::getOptions(PgSQL::ATTR_CONNECT_FORCE_NEW)
+        ) {
             $flags = PGSQL_CONNECT_ASYNC | PGSQL_CONNECT_FORCE_NEW;
         } else {
             $flags = 0;
@@ -53,23 +55,43 @@ class Attributes
         $version = pg_version(PgSQLEngine::getInstance()->getConnection());
         $collate = pg_fetch_object(pg_query(PgSQLEngine::getInstance()->getConnection(), "SHOW LC_COLLATE"));
         $result = [];
-        foreach (self::$attributeList as $key => $value) {
+        $keys = array_keys(self::$attributeList);
+
+        foreach ($keys as $key) {
             $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
                 'AUTOCOMMIT' => (int) 0,
                 'ERRMODE' => (int) 1,
                 'CASE' => (int) 0,
                 'CLIENT_VERSION' => $version['client'],
-                'CONNECTION_STATUS' => (pg_connection_status(PgSQLEngine::getInstance()->getConnection()) === PGSQL_CONNECTION_OK) ? 'Connection OK; waiting to send.' : 'Connection failed;',
-                'PERSISTENT' => (int) !Options::getOptions(PgSQL::ATTR_PERSISTENT) ? 0 : (int) Options::getOptions(PgSQL::ATTR_PERSISTENT),
-                'SERVER_INFO' => sprintf("PID: %s; Client Encoding: %s; Is Superuser: %s; Session Authorization: %s; Date Style: %s", pg_get_pid(PgSQLEngine::getInstance()->getConnection()), pg_client_encoding(PgSQLEngine::getInstance()->getConnection()), $version['is_superuser'], $version['session_authorization'], $version['DateStyle']),
+                'CONNECTION_STATUS' => (pg_connection_status(
+                    PgSQLEngine::getInstance()->getConnection()
+                ) === PGSQL_CONNECTION_OK)
+                    ? 'Connection OK; waiting to send.'
+                    : 'Connection failed;',
+                'PERSISTENT' => (int) !Options::getOptions(PgSQL::ATTR_PERSISTENT)
+                    ? 0
+                    : (int) Options::getOptions(PgSQL::ATTR_PERSISTENT),
+                'SERVER_INFO' => sprintf(
+                    "PID: %s; Client Encoding: %s; Is Superuser: %s; Session Authorization: %s; Date Style: %s",
+                    pg_get_pid(PgSQLEngine::getInstance()->getConnection()),
+                    pg_client_encoding(PgSQLEngine::getInstance()->getConnection()),
+                    $version['is_superuser'],
+                    $version['session_authorization'],
+                    $version['DateStyle']
+                ),
                 'SERVER_VERSION' => $version['server'],
-                'TIMEOUT' => (int) Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) ? Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) : 30,
+                'TIMEOUT' => (int) Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
+                    ? Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
+                    : 30,
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) 3,
                 'CHARACTER_SET' => pg_client_encoding(PgSQLEngine::getInstance()->getConnection()),
-                'COLLATION' => ($collate !== false && property_exists($collate, 'lc_collate')) ? $collate->lc_collate : false
+                'COLLATION' => ($collate !== false && property_exists($collate, 'lc_collate'))
+                    ? $collate->lc_collate
+                    : false
             };
         };
+
         PgSQLEngine::getInstance()?->setAttributes((array) $result);
     }
 }

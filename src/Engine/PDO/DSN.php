@@ -2,21 +2,24 @@
 
 namespace GenericDatabase\Engine\PDO;
 
+use PDO;
+use AllowDynamicProperties;
 use GenericDatabase\Traits\Path;
 use GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Helpers\GenericException;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class DSN
 {
-    public static function parseDsn(): string|\Exception
+    public static function parseDsn(): string|GenericException
     {
-        if (!in_array(PDOEngine::getInstance()->getDriver(), (array) \PDO::getAvailableDrivers())) {
+        if (!in_array(PDOEngine::getInstance()->getDriver(), (array) PDO::getAvailableDrivers())) {
             $message = sprintf(
                 "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
                 PDOEngine::getInstance()->getDriver(),
-                implode(', ', (array) \PDO::getAvailableDrivers())
+                implode(', ', (array) PDO::getAvailableDrivers())
             );
-            throw new \Exception($message);
+            throw new GenericException($message);
         }
         $result = null;
         switch (PDOEngine::getInstance()->getDriver()) {
@@ -106,7 +109,11 @@ class DSN
                 break;
 
             case 'sqlite':
-                if (!Path::isAbsolute(PDOEngine::getInstance()->getDatabase()) && PDOEngine::getInstance()->getDatabase() !== 'memory') {
+                if (
+                    !Path::isAbsolute(
+                        PDOEngine::getInstance()->getDatabase()
+                    ) && PDOEngine::getInstance()->getDatabase() !== 'memory'
+                ) {
                     PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
                     $result = sprintf(
                         "%s:%s",
@@ -121,6 +128,19 @@ class DSN
                     );
                 }
                 break;
+            default:
+                if (
+                    !Path::isAbsolute(
+                        PDOEngine::getInstance()->getDatabase()
+                    ) && PDOEngine::getInstance()->getDatabase() !== 'memory'
+                ) {
+                    PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
+                    $result = sprintf(
+                        "%s:%s",
+                        PDOEngine::getInstance()->getDriver(),
+                        PDOEngine::getInstance()->getDatabase()
+                    );
+                }
         }
         PDOEngine::getInstance()->setDsn((string) $result);
         return $result;

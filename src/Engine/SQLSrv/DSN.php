@@ -2,12 +2,14 @@
 
 namespace GenericDatabase\Engine\SQLSrv;
 
+use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLSrvEngine;
+use GenericDatabase\Helpers\GenericException;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class DSN
 {
-    public static function parseDsn(): string|\Exception
+    public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('sqlsrv')) {
             $message = sprintf(
@@ -15,7 +17,7 @@ class DSN
                 'sqlsrv',
                 'PHP.ini'
             );
-            throw new \Exception($message);
+            throw new GenericException($message);
         }
 
         $result = null;
@@ -27,7 +29,9 @@ class DSN
             SQLSrvEngine::getInstance()->getPort(),
             SQLSrvEngine::getInstance()->getDatabase(),
             SQLSrvEngine::getInstance()->getCharset(),
-            Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT) ? '&timeout=' . Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT) : '',
+            Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)
+                ? '&timeout=' . Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)
+                : '',
         );
 
         SQLSrvEngine::getInstance()->setDsn((string) $result);

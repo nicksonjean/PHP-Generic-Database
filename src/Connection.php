@@ -81,7 +81,7 @@ class Connection
         $method = substr($name, 0, 3);
         $field = strtolower(substr($name, 3));
         if ($field === 'engine' && !empty($arguments)) {
-            self::call($this, 'initFactory', $arguments);
+            $this->initFactory(...$arguments);
         }
         if ($method == 'set') {
             self::call($this->getStrategy(), 'set' . ucfirst($field), [...$arguments]);

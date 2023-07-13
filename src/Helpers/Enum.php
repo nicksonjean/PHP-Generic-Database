@@ -14,7 +14,7 @@ class Enum
     public static function registerConstants($constants)
     {
         $class = static::who();
-        foreach ($constants as $name => $value) {
+        foreach ($constants as $name) {
             self::$constantToClassMap[$class . '_' . $name] = new $class();
         }
     }

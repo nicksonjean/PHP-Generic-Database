@@ -5,7 +5,6 @@ namespace GenericDatabase\Engine\SQLSrv;
 use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Traits\Reflections;
 
-#[\AllowDynamicProperties]
 class Options
 {
     use Reflections;
@@ -40,10 +39,12 @@ class Options
         foreach (Reflections::getClassConstants($class) as $key => $value) {
             $index = array_search($value, array_keys($options));
             if ($index !== false) {
-                $key_name = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT' ? str_replace("ATTR", "SQLSrv", $key) : $key;
+                $keyName = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT'
+                    ? str_replace("ATTR", "SQLSrv", $key)
+                    : $key;
                 SQLSrvEngine::getInstance()->setAttribute("SQLSrv::$key", $options[$value]);
                 if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT') {
-                    SQLSrv::setAttribute($key_name, $options[$value]);
+                    SQLSrv::setAttribute($keyName, $options[$value]);
                 }
                 self::$options[constant("$class::$key")] = $options[$value];
             }
@@ -57,14 +58,9 @@ class Options
      */
     public static function define(): void
     {
-        foreach (self::getOptions() as $key => $value) {
-            switch ($key) {
-                case 'ATTR_PERSISTENT':
-                    if (ini_get('sqlsrv.persistent_timeout ') !== '1') {
-                        ini_set('sqlsrv.persistent_timeout ', Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT));
-                    }
-                    break;
-                default:
+        foreach (array_keys(self::getOptions()) as $key) {
+            if ($key === 'ATTR_PERSISTENT' && ini_get('sqlsrv.persistent_timeout') !== '1') {
+                ini_set('sqlsrv.persistent_timeout ', Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT));
             }
         }
     }

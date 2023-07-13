@@ -2,9 +2,11 @@
 
 namespace GenericDatabase\Engine\PDO;
 
+use Exception;
+use PDOException;
+use ErrorException;
 use GenericDatabase\Engine\PDOEngine;
 
-#[\AllowDynamicProperties]
 class Attributes
 {
     /**
@@ -38,7 +40,7 @@ class Attributes
     {
         set_error_handler(
             function ($severity, $message, $file, $line) {
-                throw new \ErrorException($message, $severity, $severity, $file, $line);
+                throw new ErrorException($message, $severity, $severity, $file, $line);
             }
         );
 
@@ -46,7 +48,8 @@ class Attributes
         foreach (self::$attributeList as $value) {
             try {
                 $result[$value] = PDOEngine::getInstance()?->getAttribute(constant("\PDO::ATTR_$value"));
-            } catch (\PDOException | \Exception $e) {
+            } catch (PDOException | Exception $e) {
+                unset($e);
             }
         }
         restore_error_handler();

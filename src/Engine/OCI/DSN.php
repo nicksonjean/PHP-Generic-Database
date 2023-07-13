@@ -2,12 +2,14 @@
 
 namespace GenericDatabase\Engine\OCI;
 
+use AllowDynamicProperties;
 use GenericDatabase\Engine\OCIEngine;
+use GenericDatabase\Helpers\GenericException;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class DSN
 {
-    public static function parseDsn(): string|\Exception
+    public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('oci8')) {
             $message = sprintf(
@@ -15,7 +17,7 @@ class DSN
                 'interbase',
                 'PHP.ini'
             );
-            throw new \Exception($message);
+            throw new GenericException($message);
         }
 
         $result = null;
