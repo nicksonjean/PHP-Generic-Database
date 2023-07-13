@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Engine\OCI;
 
-use GenericDatabase\Traits\Reflections;
+use GenericDatabase\Helpers\Reflections;
 
 class OCI
 {

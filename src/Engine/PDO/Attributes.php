@@ -47,12 +47,12 @@ class Attributes
         $result = [];
         foreach (self::$attributeList as $value) {
             try {
-                $result[$value] = PDOEngine::getInstance()?->getAttribute(constant("\PDO::ATTR_$value"));
+                $result[$value] = PDOEngine::getInstance()->getAttribute(constant("\PDO::ATTR_$value"));
             } catch (PDOException | Exception $e) {
                 unset($e);
             }
         }
         restore_error_handler();
-        PDOEngine::getInstance()?->setAttributes((array) $result);
+        PDOEngine::getInstance()->setAttributes((array) $result);
     }
 }

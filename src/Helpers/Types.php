@@ -1,11 +1,11 @@
 <?php
 
-namespace GenericDatabase\Traits;
+namespace GenericDatabase\Helpers;
 
-use GenericDatabase\Traits\Regex;
-use GenericDatabase\Traits\Arrays;
+use GenericDatabase\Helpers\Regex;
+use GenericDatabase\Helpers\Arrays;
 
-trait Types
+class Types
 {
     public static function setConstant($value, $instance, $className, $constantName, $attributes): array
     {

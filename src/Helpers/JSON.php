@@ -1,8 +1,8 @@
 <?php
 
-namespace GenericDatabase\Traits;
+namespace GenericDatabase\Helpers;
 
-trait JSON
+class JSON
 {
     /**
      * Detect if json is valid

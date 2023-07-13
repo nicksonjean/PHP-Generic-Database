@@ -58,7 +58,7 @@ class Dump
                     $delimiter = trim(substr($uncomment($string), 10));
                 } elseif (substr($trim = rtrim($uncomment($string)), -strlen($delimiter)) === $delimiter) {
                     $sql .= substr($trim, 0, -strlen($delimiter));
-                    PDOEngine::getInstance()?->exec($sql);
+                    PDOEngine::getInstance()->exec($sql);
                     $sql = '';
                     $count++;
                     if ($onProgress) {
@@ -71,7 +71,7 @@ class Dump
         }
 
         if (rtrim($sql) !== '') {
-            PDOEngine::getInstance()?->exec($sql);
+            PDOEngine::getInstance()->exec($sql);
             $count++;
             if ($onProgress) {
                 $onProgress($count, isset($stat['size']) ? 100 : null);

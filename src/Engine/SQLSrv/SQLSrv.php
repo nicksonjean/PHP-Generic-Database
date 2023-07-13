@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Engine\SQLSrv;
 
-use GenericDatabase\Traits\Reflections;
+use GenericDatabase\Helpers\Reflections;
 
 class SQLSrv
 {

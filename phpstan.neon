@@ -1,6 +1,7 @@
 parameters:
 	phpVersion: 80200 # PHP 8.2
-	level: 3
+	level: 4
+	treatPhpDocTypesAsCertain: false
 	paths:
 		- src/
 		- tests/

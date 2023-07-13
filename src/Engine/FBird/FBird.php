@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Engine\FBird;
 
-use GenericDatabase\Traits\Reflections;
+use GenericDatabase\Helpers\Reflections;
 
 class FBird
 {

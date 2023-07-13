@@ -1,8 +1,8 @@
 <?php
 
-namespace GenericDatabase\Traits;
+namespace GenericDatabase\Helpers;
 
-trait Arrays
+class Arrays
 {
     /**
      * Find elements in array except by keys
@@ -31,8 +31,8 @@ trait Arrays
     /**
      * Find the first element that matches between two arrays
      *
-     * @param array $list A stringlist array
-     * @param array $array A associative array
+     * @param array $list A string list array
+     * @param array $array An associative array
      * @param string|null $apply Filter to be applied
      * @return string
      */
@@ -71,22 +71,28 @@ trait Arrays
         return array_combine(range(0, count($array) - 1), array_values($array));
     }
 
-    public static function isAssoc($arr)
+    /**
+     * Determine if array is indexed or associative
+     *
+     * @param mixed $array The array
+     * @return bool
+     */
+    public static function isAssoc(mixed $array): bool
     {
-        if (false === is_array($arr) || 0 === ($count = count($arr))) {
+        if (false === is_array($array) || 0 === ($count = count($array))) {
             return false;
         }
 
-        reset($arr);
-        if (key($arr) !== 0) {
+        reset($array);
+        if (key($array) !== 0) {
             return true;
         }
 
-        end($arr);
-        if (key($arr) !== $count - 1) {
+        end($array);
+        if (key($array) !== $count - 1) {
             return true;
         }
 
-        return array_values($arr) !== $arr;
+        return array_values($array) !== $array;
     }
 }

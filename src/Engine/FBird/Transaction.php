@@ -14,9 +14,9 @@ class Transaction
     {
         if (!self::$transactionCounter++) {
             self::$inTransaction = true;
-            return FBirdEngine::getInstance()?->getConnection()?->begin_transaction();
+            return FBirdEngine::getInstance()->getConnection()->begin_transaction();
         }
-        FBirdEngine::getInstance()?->getConnection()?->exec('SAVEPOINT trans' . (self::$transactionCounter));
+        FBirdEngine::getInstance()->getConnection()->exec('SAVEPOINT trans' . (self::$transactionCounter));
         return self::$transactionCounter >= 0;
     }
 
@@ -24,7 +24,7 @@ class Transaction
     {
         if (!--self::$transactionCounter) {
             self::$inTransaction = false;
-            return FBirdEngine::getInstance()?->getConnection()?->commit();
+            return FBirdEngine::getInstance()->getConnection()->commit();
         } else {
             return self::$transactionCounter >= 0;
         }
@@ -38,10 +38,10 @@ class Transaction
     public static function rollback()
     {
         if (--self::$transactionCounter) {
-            FBirdEngine::getInstance()?->getConnection()?->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
+            FBirdEngine::getInstance()->getConnection()->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
             self::$inTransaction = false;
             return true;
         }
-        return FBirdEngine::getInstance()?->getConnection()?->rollback();
+        return FBirdEngine::getInstance()->getConnection()->rollback();
     }
 }

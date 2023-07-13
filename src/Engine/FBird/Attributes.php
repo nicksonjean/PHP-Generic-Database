@@ -142,11 +142,11 @@ class Attributes
                     : 30,
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) 3,
-                'CHARACTER_SET' => FBirdEngine::getInstance()?->getCharset(),
-                'COLLATION' => FBirdEngine::getInstance()?->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
+                'CHARACTER_SET' => FBirdEngine::getInstance()->getCharset(),
+                'COLLATION' => FBirdEngine::getInstance()->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
             };
         };
 
-        FBirdEngine::getInstance()?->setAttributes((array) $result);
+        FBirdEngine::getInstance()->setAttributes((array) $result);
     }
 }

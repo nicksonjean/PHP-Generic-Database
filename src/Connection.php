@@ -12,22 +12,18 @@ use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Engine\PDOEngine;
-use GenericDatabase\Traits\Arrays;
-use GenericDatabase\Traits\Errors;
 use GenericDatabase\Traits\Singleton;
-use GenericDatabase\Traits\Reflections;
-use GenericDatabase\Traits\JSON;
-use GenericDatabase\Traits\INI;
-use GenericDatabase\Traits\YAML;
-use GenericDatabase\Traits\XML;
+use GenericDatabase\Helpers\Reflections;
+use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\JSON;
+use GenericDatabase\Helpers\INI;
+use GenericDatabase\Helpers\YAML;
+use GenericDatabase\Helpers\XML;
 
 #[AllowDynamicProperties]
 class Connection
 {
-    use Arrays;
-    use Errors;
     use Singleton;
-    use Reflections;
 
     /**
      * Array property for use in magic setter and getter in order

@@ -3,12 +3,10 @@
 namespace GenericDatabase\Engine\MySQLi;
 
 use GenericDatabase\Engine\MySQLiEngine;
-use GenericDatabase\Traits\Reflections;
+use GenericDatabase\Helpers\Reflections;
 
 class Options
 {
-    use Reflections;
-
     private static $options = [];
 
     /**

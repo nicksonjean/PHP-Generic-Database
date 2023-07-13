@@ -3,12 +3,10 @@
 namespace GenericDatabase\Engine\SQLSrv;
 
 use GenericDatabase\Engine\SQLSrvEngine;
-use GenericDatabase\Traits\Reflections;
+use GenericDatabase\Helpers\Reflections;
 
 class Options
 {
-    use Reflections;
-
     private static $options = [];
 
     /**

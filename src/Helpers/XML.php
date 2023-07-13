@@ -1,8 +1,11 @@
 <?php
 
-namespace GenericDatabase\Traits;
+namespace GenericDatabase\Helpers;
 
-trait XML
+use XMLReader;
+use SimpleXMLElement;
+
+class XML
 {
     /**
      * Check if xml string is valid
@@ -21,47 +24,44 @@ trait XML
             restore_error_handler();
             return false;
         } else {
-            $xml2 = \XMLReader::open($xml);
+            $xml2 = XMLReader::open($xml);
             restore_error_handler();
-            return $xml2->setParserProperty(\XMLReader::VALIDATE, true) ? true : false;
+            return $xml2->setParserProperty(XMLReader::VALIDATE, true) ? true : false;
         }
     }
 
     /**
-     * Convert a data by type
+     * Convert data to its appropriate type.
      *
-     * @param mixed $data Argument to be converted
-     * @return mixed
+     * @param mixed $data The data to convert.
+     * @return mixed The converted data.
      */
     public static function convertData($data): mixed
     {
         $data = trim($data);
-
         if (is_numeric($data)) {
             return strpos($data, '.') !== false ? floatval($data) : intval($data);
         }
-
         if (strcasecmp($data, 'false') === 0) {
             $data = false;
         } elseif (strcasecmp($data, 'true') === 0) {
             $data = true;
         }
-
         return $data;
     }
 
     /**
-     * Decode a valid xml object
+     * Decode a SimpleXMLElement object into an array or a string.
      *
-     * @param \SimpleXMLElement $xml valid object SimpleXMLElement
-     * @param ?bool $attributesKey = true Optional argument to get attribute key
-     * @param ?bool $reduce = true  Optional argumento to make reduce
-     * @param ?array $alwaysArray = [] Optional argument to always return a array
-     * @param ?array $valueKeys = [] Optional argument to get array from values and keys
-     * @return string|array
+     * @param SimpleXMLElement $xml The SimpleXMLElement object to decode.
+     * @param bool|null $attributesKey Whether to use the 'attributes' key in the array or not.
+     * @param bool|null $reduce Whether to reduce the array structure when there is only one child element.
+     * @param array|null $alwaysArray An array of element names that should always be treated as arrays.
+     * @param array|null $valueKeys The mapping of element names to value keys.
+     * @return string|array The decoded XML data as an array or a string.
      */
     public static function decodeXML(
-        \SimpleXMLElement $xml,
+        SimpleXMLElement $xml,
         ?bool $attributesKey = true,
         ?bool $reduce = true,
         ?array $alwaysArray = [],
@@ -70,30 +70,27 @@ trait XML
         $arr = [];
         self::extractAttributes($xml, $attributesKey, $arr);
         $childrenCount = $xml->children()->count();
-
         if ($childrenCount === 0) {
             self::extractValue($xml, $arr, $valueKeys);
         } else {
             self::processChildren($xml, $arr, $attributesKey, $reduce, $alwaysArray, $valueKeys);
         }
-
         return $arr;
     }
 
     /**
-     * extractAttributes a valid xml object
+     * Extract attributes from a SimpleXMLElement object and add them to an array.
      *
-     * @param \SimpleXMLElement $xml valid object SimpleXMLElement
-     * @param ?bool $attributesKey = true Optional argument to get attribute key
-     * @param array &$arr reference to get array from values and keys
+     * @param SimpleXMLElement $xml The SimpleXMLElement object to extract attributes from.
+     * @param bool $attributesKey Whether to use the 'attributes' key in the array or not.
+     * @param array &$arr The array to add the extracted attributes to.
      * @return void
      */
-    private static function extractAttributes(\SimpleXMLElement $xml, bool $attributesKey, array &$arr): void
+    private static function extractAttributes(SimpleXMLElement $xml, bool $attributesKey, array &$arr): void
     {
         foreach ($xml->attributes() as $key => $value) {
             $key = strval($key);
             $value = strval($value);
-
             if ($attributesKey) {
                 $arr['attributes'][$key] = $value;
             } else {
@@ -103,14 +100,14 @@ trait XML
     }
 
     /**
-     * extractValue a valid xml object
+     * Extract the value from a SimpleXMLElement object and add it to an array.
      *
-     * @param \SimpleXMLElement $xml valid object SimpleXMLElement
-     * @param array &$arr reference to get array from values and keys
-     * @param ?array $valueKeys = [] Optional argument to get array from values and keys
-     * @return string|array
+     * @param SimpleXMLElement $xml The SimpleXMLElement object to extract the value from.
+     * @param array &$arr The array to add the extracted value to.
+     * @param array $valueKeys The mapping of element names to value keys.
+     * @return void
      */
-    private static function extractValue(\SimpleXMLElement $xml, array &$arr, array $valueKeys): void
+    private static function extractValue(SimpleXMLElement $xml, array &$arr, array $valueKeys): void
     {
         if (!empty($arr)) {
             $key = $valueKeys[$xml->getName()] ?? $valueKeys['*'] ?? "value";
@@ -121,17 +118,18 @@ trait XML
     }
 
     /**
-     * processChildren a valid xml object
+     * Process the children of a SimpleXMLElement object and add them to an array.
      *
-     * @param \SimpleXMLElement $xml valid object SimpleXMLElement
-     * @param ?bool $attributesKey = true Optional argument to get attribute key
-     * @param ?bool $reduce = true  Optional argumento to make reduce
-     * @param ?array $alwaysArray = [] Optional argument to always return a array
-     * @param ?array $valueKeys = [] Optional argument to get array from values and keys
-     * @return string|array
+     * @param SimpleXMLElement $xml The SimpleXMLElement object to process the children of.
+     * @param array &$arr The array to add the processed children to.
+     * @param bool $attributesKey Whether to use the 'attributes' key in the array or not.
+     * @param bool $reduce Whether to reduce the array structure when there is only one child element.
+     * @param array $alwaysArray An array of element names that should always be treated as arrays.
+     * @param array $valueKeys The mapping of element names to value keys.
+     * @return void
      */
     private static function processChildren(
-        \SimpleXMLElement $xml,
+        SimpleXMLElement $xml,
         array &$arr,
         bool $attributesKey,
         bool $reduce,
@@ -139,20 +137,15 @@ trait XML
         array $valueKeys
     ): void {
         $childrenNames = [];
-
         foreach ($xml->children() as $child) {
             $childName = $child->getName();
-
             if (!in_array($childName, $childrenNames, true)) {
                 $childrenNames[] = $childName;
             }
         }
-
         $reducible = empty($arr) && count($childrenNames) === 1;
-
         foreach ($xml->children() as $child) {
             $name = $child->getName();
-
             if ($xml->$name->count() > 1 || in_array($name, $alwaysArray, true)) {
                 if ($reduce && $reducible) {
                     $arr[] = self::decodeXML($child, $attributesKey, $reduce, $alwaysArray, $valueKeys);
@@ -166,10 +159,10 @@ trait XML
     }
 
     /**
-     * Parse a valid xml string
+     * Parse XML data and convert it into an array.
      *
-     * @param string $xml Argument to be parsed
-     * @return string|array
+     * @param string $xml The XML data to parse.
+     * @return string|array The parsed XML data as an array or a string.
      */
     public static function parseXML(string $xml): string|array
     {

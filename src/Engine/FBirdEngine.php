@@ -8,7 +8,7 @@ use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\Engine\FBird\FBird;
 use GenericDatabase\InterfaceConnection;
-use GenericDatabase\Traits\Errors;
+use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -49,7 +49,6 @@ use GenericDatabase\Engine\FBird\Transaction;
 #[AllowDynamicProperties]
 class FBirdEngine implements InterfaceConnection
 {
-    use Errors;
     use Setter;
     use Getter;
     use Cleaner;
@@ -299,8 +298,8 @@ class FBirdEngine implements InterfaceConnection
     public function prepare(mixed ...$params): mixed
     {
         $query = $params[0];
-        $transaction = (string) isset($params[1]) ?? null;
-        return is_null($transaction)
+        $transaction = isset($params[1]) ? (string) $params[1] : null;
+        return $transaction === null
             ? ibase_prepare($this->getInstance()->getConnection(), $query, null)
             : ibase_prepare($this->getInstance()->getConnection(), $transaction, $query);
     }

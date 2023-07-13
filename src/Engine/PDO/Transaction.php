@@ -14,9 +14,9 @@ class Transaction
     {
         if (!self::$transactionCounter++) {
             self::$inTransaction = true;
-            return PDOEngine::getInstance()?->getConnection()?->begin_transaction();
+            return PDOEngine::getInstance()->getConnection()->begin_transaction();
         }
-        PDOEngine::getInstance()?->getConnection()?->exec('SAVEPOINT trans' . (self::$transactionCounter));
+        PDOEngine::getInstance()->getConnection()->exec('SAVEPOINT trans' . (self::$transactionCounter));
         return self::$transactionCounter >= 0;
     }
 
@@ -24,7 +24,7 @@ class Transaction
     {
         if (!--self::$transactionCounter) {
             self::$inTransaction = false;
-            return PDOEngine::getInstance()?->getConnection()?->commit();
+            return PDOEngine::getInstance()->getConnection()->commit();
         } else {
             return self::$transactionCounter >= 0;
         }
@@ -38,10 +38,10 @@ class Transaction
     public static function rollback()
     {
         if (--self::$transactionCounter) {
-            PDOEngine::getInstance()?->getConnection()?->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
+            PDOEngine::getInstance()->getConnection()->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
             self::$inTransaction = false;
             return true;
         }
-        return PDOEngine::getInstance()?->getConnection()?->rollback();
+        return PDOEngine::getInstance()->getConnection()->rollback();
     }
 }

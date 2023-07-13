@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\MySQLi;
 
 use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Engine\MySQLi\Options;
+use GenericDatabase\Helpers\GenericException;
 
 class Attributes
 {
@@ -52,7 +53,8 @@ class Attributes
         return match ($type) {
             self::CLIENT => 'character_set_client',
             self::RESULTS => 'character_set_results',
-            self::CONNECTION => 'character_set_connection'
+            self::CONNECTION => 'character_set_connection',
+            default => throw new GenericException("Invalid type: $type"),
         };
     }
 
@@ -61,7 +63,8 @@ class Attributes
         return match ($type) {
             self::CLIENT => 'client',
             self::RESULTS => 'results',
-            self::CONNECTION => 'connection'
+            self::CONNECTION => 'connection',
+            default => throw new GenericException("Invalid type: $type"),
         };
     }
 
@@ -261,6 +264,6 @@ class Attributes
             };
         };
 
-        MySQLiEngine::getInstance()?->setAttributes((array) $result);
+        MySQLiEngine::getInstance()->setAttributes((array) $result);
     }
 }

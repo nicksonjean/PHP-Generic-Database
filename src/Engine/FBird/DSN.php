@@ -3,8 +3,8 @@
 namespace GenericDatabase\Engine\FBird;
 
 use AllowDynamicProperties;
-use GenericDatabase\Traits\Path;
 use GenericDatabase\Engine\FBirdEngine;
+use GenericDatabase\Helpers\Path;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]

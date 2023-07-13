@@ -68,10 +68,10 @@ class Attributes
                     : 30,
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) 3,
-                'CHARACTER_SET' => SQLSrvEngine::getInstance()?->getCharset(),
-                'COLLATION' => SQLSrvEngine::getInstance()?->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
+                'CHARACTER_SET' => SQLSrvEngine::getInstance()->getCharset(),
+                'COLLATION' => SQLSrvEngine::getInstance()->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
             };
         };
-        SQLSrvEngine::getInstance()?->setAttributes((array) $result);
+        SQLSrvEngine::getInstance()->setAttributes((array) $result);
     }
 }

@@ -14,9 +14,9 @@ class Transaction
     {
         if (!self::$transactionCounter++) {
             self::$inTransaction = true;
-            return MySQLiEngine::getInstance()?->getConnection()?->begin_transaction();
+            return MySQLiEngine::getInstance()->getConnection()->begin_transaction();
         }
-        MySQLiEngine::getInstance()?->getConnection()?->exec('SAVEPOINT trans' . (self::$transactionCounter));
+        MySQLiEngine::getInstance()->getConnection()->exec('SAVEPOINT trans' . (self::$transactionCounter));
         return self::$transactionCounter >= 0;
     }
 
@@ -24,7 +24,7 @@ class Transaction
     {
         if (!--self::$transactionCounter) {
             self::$inTransaction = false;
-            return MySQLiEngine::getInstance()?->getConnection()?->commit();
+            return MySQLiEngine::getInstance()->getConnection()->commit();
         } else {
             return self::$transactionCounter >= 0;
         }
@@ -38,10 +38,10 @@ class Transaction
     public static function rollback()
     {
         if (--self::$transactionCounter) {
-            MySQLiEngine::getInstance()?->getConnection()?->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
+            MySQLiEngine::getInstance()->getConnection()->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
             self::$inTransaction = false;
             return true;
         }
-        return MySQLiEngine::getInstance()?->getConnection()?->rollback();
+        return MySQLiEngine::getInstance()->getConnection()->rollback();
     }
 }

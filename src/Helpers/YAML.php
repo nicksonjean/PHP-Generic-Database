@@ -1,8 +1,8 @@
 <?php
 
-namespace GenericDatabase\Traits;
+namespace GenericDatabase\Helpers;
 
-trait YAML
+class YAML
 {
     /**
      * Check if yaml string is valid

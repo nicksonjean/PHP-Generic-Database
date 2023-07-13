@@ -14,9 +14,9 @@ class Transaction
     {
         if (!self::$transactionCounter++) {
             self::$inTransaction = true;
-            return SQLiteEngine::getInstance()?->getConnection()?->begin_transaction();
+            return SQLiteEngine::getInstance()->getConnection()->begin_transaction();
         }
-        SQLiteEngine::getInstance()?->getConnection()?->exec('SAVEPOINT trans' . (self::$transactionCounter));
+        SQLiteEngine::getInstance()->getConnection()->exec('SAVEPOINT trans' . (self::$transactionCounter));
         return self::$transactionCounter >= 0;
     }
 
@@ -24,7 +24,7 @@ class Transaction
     {
         if (!--self::$transactionCounter) {
             self::$inTransaction = false;
-            return SQLiteEngine::getInstance()?->getConnection()?->commit();
+            return SQLiteEngine::getInstance()->getConnection()->commit();
         } else {
             return self::$transactionCounter >= 0;
         }
@@ -38,10 +38,10 @@ class Transaction
     public static function rollback()
     {
         if (--self::$transactionCounter) {
-            SQLiteEngine::getInstance()?->getConnection()?->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
+            SQLiteEngine::getInstance()->getConnection()->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
             self::$inTransaction = false;
             return true;
         }
-        return SQLiteEngine::getInstance()?->getConnection()?->rollback();
+        return SQLiteEngine::getInstance()->getConnection()->rollback();
     }
 }

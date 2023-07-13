@@ -7,7 +7,7 @@ namespace GenericDatabase\Engine;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\InterfaceConnection;
-use GenericDatabase\Traits\Errors;
+use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -51,7 +51,6 @@ use ErrorException;
 #[AllowDynamicProperties]
 class PDOEngine implements InterfaceConnection
 {
-    use Errors;
     use Setter;
     use Getter;
     use Cleaner;

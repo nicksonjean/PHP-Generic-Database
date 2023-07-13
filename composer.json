@@ -80,11 +80,11 @@
             "php vendor/bin/phpcs --config-set ignore_errors_on_exit 1",
             "php vendor/bin/phpcs --config-set ignore_warnings_on_exit 1"
         ],
-        "run:lint:analyse": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
         "run:lint:debug": "php vendor/bin/phpstan --memory-limit=-1 --ansi --xdebug analyze -c ./phpstan.neon",
+        "run:lint:analyse": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
+        "run:lint:md": "php vendor/bin/phpmd src/,tests/ ansi phpmd.xml",        
         "run:lint:check": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 src/",
         "run:lint:fix": "php vendor/bin/phpcbf --ignore-annotations --standard=PSR12 src/",
-        "run:lint:md": "php vendor/bin/phpmd src/,tests/ ansi phpmd.xml",
         "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
         "run:docs": "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors",
         "run:coverage": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result --coverage-html=coverage/ --coverage-filter=src/",

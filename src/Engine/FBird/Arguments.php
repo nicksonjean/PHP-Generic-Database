@@ -2,12 +2,12 @@
 
 namespace GenericDatabase\Engine\FBird;
 
-use GenericDatabase\Traits\Types;
-use GenericDatabase\Traits\JSON;
-use GenericDatabase\Traits\INI;
-use GenericDatabase\Traits\YAML;
-use GenericDatabase\Traits\XML;
-use GenericDatabase\Traits\Arrays;
+use GenericDatabase\Helpers\Types;
+use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\JSON;
+use GenericDatabase\Helpers\INI;
+use GenericDatabase\Helpers\YAML;
+use GenericDatabase\Helpers\XML;
 use GenericDatabase\Engine\FBirdEngine;
 
 class Arguments

@@ -1,16 +1,18 @@
 <?php
 
-namespace GenericDatabase\Traits;
+namespace GenericDatabase\Helpers;
 
-trait Path
+use GenericDatabase\Helpers\GenericException;
+
+class Path
 {
-  /**
-   * Convert path from relative to absolute
-   *
-   * @param string $path The relative path
-   * @return string
-   */
-    public static function toAbsolute($path)
+    /**
+     * Convert path from relative to absolute
+     *
+     * @param string $path The relative path
+     * @return string
+     */
+    public static function toAbsolute($path): string
     {
         if (DIRECTORY_SEPARATOR !== '/') {
             $path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
@@ -37,21 +39,21 @@ trait Path
         return $match;
     }
 
-  /**
-   * Detect if path is absolute
-   *
-   * @param string $path The path
-   * @return string
-   */
-    public static function isAbsolute($path)
+    /**
+     * Detect if path is absolute
+     *
+     * @param string $path The path
+     * @return bool
+     */
+    public static function isAbsolute($path): bool
     {
         if (!is_string($path)) {
             $message = sprintf('String expected but was given %s', gettype($path));
-            throw new \Exception($message);
+            throw new GenericException($message);
         }
         if (!ctype_print($path)) {
             $message = 'Path can NOT have non-printable characters or be empty';
-            throw new \Exception($message);
+            throw new GenericException($message);
         }
         $regExp = '%^(?<wrappers>(?:[[:print:]]{2,}://)*)';
         $regExp .= '(?<root>(?:[[:alpha:]]:/|/)?)';
@@ -59,7 +61,7 @@ trait Path
         $parts = [];
         if (!preg_match($regExp, $path, $parts)) {
             $message = sprintf('Path is NOT valid, was given %s', $path);
-            throw new \Exception($message);
+            throw new GenericException($message);
         }
         if ('' !== $parts['root']) {
             return true;

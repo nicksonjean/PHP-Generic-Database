@@ -66,6 +66,6 @@ class Attributes
                 'DEFAULT_FETCH_MODE' => (int) 3
             };
         };
-        SQLiteEngine::getInstance()?->setAttributes((array) $result);
+        SQLiteEngine::getInstance()->setAttributes((array) $result);
     }
 }

@@ -14,9 +14,9 @@ class Transaction
     {
         if (!self::$transactionCounter++) {
             self::$inTransaction = true;
-            return PgSQLEngine::getInstance()?->getConnection()?->begin_transaction();
+            return PgSQLEngine::getInstance()->getConnection()->begin_transaction();
         }
-        PgSQLEngine::getInstance()?->getConnection()?->exec('SAVEPOINT trans' . (self::$transactionCounter));
+        PgSQLEngine::getInstance()->getConnection()->exec('SAVEPOINT trans' . (self::$transactionCounter));
         return self::$transactionCounter >= 0;
     }
 
@@ -24,7 +24,7 @@ class Transaction
     {
         if (!--self::$transactionCounter) {
             self::$inTransaction = false;
-            return PgSQLEngine::getInstance()?->getConnection()?->commit();
+            return PgSQLEngine::getInstance()->getConnection()->commit();
         } else {
             return self::$transactionCounter >= 0;
         }
@@ -38,10 +38,10 @@ class Transaction
     public static function rollback()
     {
         if (--self::$transactionCounter) {
-            PgSQLEngine::getInstance()?->getConnection()?->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
+            PgSQLEngine::getInstance()->getConnection()->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
             self::$inTransaction = false;
             return true;
         }
-        return PgSQLEngine::getInstance()?->getConnection()?->rollback();
+        return PgSQLEngine::getInstance()->getConnection()->rollback();
     }
 }

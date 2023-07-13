@@ -68,11 +68,11 @@ class Attributes
                     : 30,
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) 3,
-                'CHARACTER_SET' => OCIEngine::getInstance()?->getCharset(),
-                'COLLATION' => OCIEngine::getInstance()?->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
+                'CHARACTER_SET' => OCIEngine::getInstance()->getCharset(),
+                'COLLATION' => OCIEngine::getInstance()->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
             };
         };
 
-        OCIEngine::getInstance()?->setAttributes((array) $result);
+        OCIEngine::getInstance()->setAttributes((array) $result);
     }
 }

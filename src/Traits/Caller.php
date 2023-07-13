@@ -4,13 +4,12 @@ namespace GenericDatabase\Traits;
 
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
-use GenericDatabase\Traits\Reflections;
+use GenericDatabase\Helpers\Reflections;
 
 trait Caller
 {
     use Setter;
     use Getter;
-    use Reflections;
 
     /**
      * Triggered when invoking inaccessible methods in an object context

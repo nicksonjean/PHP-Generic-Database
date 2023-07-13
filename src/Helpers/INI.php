@@ -1,8 +1,8 @@
 <?php
 
-namespace GenericDatabase\Traits;
+namespace GenericDatabase\Helpers;
 
-trait INI
+class INI
 {
     /**
      * Detect if ini is valid

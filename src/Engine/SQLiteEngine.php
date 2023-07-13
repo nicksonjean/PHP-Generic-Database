@@ -9,7 +9,7 @@ use Exception;
 use SQLite3;
 use GenericDatabase\Engine\SQLite\SQLite;
 use GenericDatabase\InterfaceConnection;
-use GenericDatabase\Traits\Errors;
+use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -50,7 +50,6 @@ use GenericDatabase\Engine\SQLite\Transaction;
 #[AllowDynamicProperties]
 class SQLiteEngine implements InterfaceConnection
 {
-    use Errors;
     use Setter;
     use Getter;
     use Cleaner;

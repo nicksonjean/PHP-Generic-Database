@@ -1,10 +1,10 @@
 <?php
 
-namespace GenericDatabase\Traits;
+namespace GenericDatabase\Helpers;
 
 use Exception;
 
-trait Reflections
+class Reflections
 {
     /**
      * Set default method

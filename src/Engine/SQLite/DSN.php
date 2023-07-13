@@ -3,8 +3,8 @@
 namespace GenericDatabase\Engine\SQLite;
 
 use AllowDynamicProperties;
-use GenericDatabase\Traits\Path;
 use GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Helpers\Path;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]

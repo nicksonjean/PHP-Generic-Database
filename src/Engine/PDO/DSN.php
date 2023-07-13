@@ -4,8 +4,8 @@ namespace GenericDatabase\Engine\PDO;
 
 use PDO;
 use AllowDynamicProperties;
-use GenericDatabase\Traits\Path;
 use GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Helpers\Path;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]

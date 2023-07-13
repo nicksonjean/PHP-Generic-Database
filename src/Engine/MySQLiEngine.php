@@ -8,7 +8,7 @@ use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\Engine\MySQLi\MySQL;
 use GenericDatabase\InterfaceConnection;
-use GenericDatabase\Traits\Errors;
+use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -49,7 +49,6 @@ use GenericDatabase\Engine\MySQLi\Transaction;
 #[AllowDynamicProperties]
 class MySQLiEngine implements InterfaceConnection
 {
-    use Errors;
     use Setter;
     use Getter;
     use Cleaner;
@@ -334,7 +333,7 @@ class MySQLiEngine implements InterfaceConnection
     public function query(mixed ...$params): mixed
     {
         $query = $params[0];
-        $resultMode = isset($params[1]) ?? MYSQLI_STORE_RESULT;
+        $resultMode = isset($params[1]) ? (int) $params[1] : MYSQLI_STORE_RESULT;
         return $this->getInstance()->getConnection()->query($query, $resultMode);
     }
 
@@ -347,7 +346,7 @@ class MySQLiEngine implements InterfaceConnection
     public function exec(mixed ...$params): mixed
     {
         $query = $params[0];
-        $param = isset($params[1]) ?? null;
+        $param = isset($params[1]) ? (array) $params[1] : null;
         return $this->getInstance()->getConnection()->execute_query($query, $param);
     }
 

@@ -13,9 +13,9 @@ trait Cleaner
      * inaccessible (protected or private) or non-existing properties.
      *
      * @param string $name Argument to be tested
-     * @return void
+     * @return bool
      */
-    public function __isset(string $name)
+    public function __isset(string $name): bool
     {
         return isset($this->property[$name]);
     }

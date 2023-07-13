@@ -14,9 +14,9 @@ class Transaction
     {
         if (!self::$transactionCounter++) {
             self::$inTransaction = true;
-            return SQLSrvEngine::getInstance()?->getConnection()?->begin_transaction();
+            return SQLSrvEngine::getInstance()->getConnection()->begin_transaction();
         }
-        SQLSrvEngine::getInstance()?->getConnection()?->exec('SAVEPOINT trans' . (self::$transactionCounter));
+        SQLSrvEngine::getInstance()->getConnection()->exec('SAVEPOINT trans' . (self::$transactionCounter));
         return self::$transactionCounter >= 0;
     }
 
@@ -24,7 +24,7 @@ class Transaction
     {
         if (!--self::$transactionCounter) {
             self::$inTransaction = false;
-            return SQLSrvEngine::getInstance()?->getConnection()?->commit();
+            return SQLSrvEngine::getInstance()->getConnection()->commit();
         } else {
             return self::$transactionCounter >= 0;
         }
@@ -38,10 +38,10 @@ class Transaction
     public static function rollback()
     {
         if (--self::$transactionCounter) {
-            SQLSrvEngine::getInstance()?->getConnection()?->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
+            SQLSrvEngine::getInstance()->getConnection()->exec('ROLLBACK TO trans' . (self::$transactionCounter + 1));
             self::$inTransaction = false;
             return true;
         }
-        return SQLSrvEngine::getInstance()?->getConnection()?->rollback();
+        return SQLSrvEngine::getInstance()->getConnection()->rollback();
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace GenericDatabase\Traits;
+namespace GenericDatabase\Helpers;
 
-trait Errors
+class Errors
 {
     /**
      * Store a Error
@@ -10,23 +10,12 @@ trait Errors
     private static $error;
 
     /**
-     * Get error from display_errors directive
-     *
-     * @return string|false
-     */
-    private static function getError(): string|false
-    {
-        self::$error = ini_get('display_errors');
-        return self::$error;
-    }
-
-    /**
      * Set error to display_errors directive
      *
-     * @param string|int|float|bool|null $value Argument to be tested
-     * @return string|false
+     * @param mixed $value Argument to be tested
+     * @return mixed
      */
-    private static function setError($value): string|int|float|bool|null
+    private static function setError(mixed $value): mixed
     {
         self::$error = ini_set('display_errors', $value);
         return self::$error;

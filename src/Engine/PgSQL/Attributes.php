@@ -31,16 +31,9 @@ class Attributes
     {
         $flags = 0;
         if (Options::getOptions(PgSQL::ATTR_CONNECT_FORCE_NEW)) {
-            $flags = PGSQL_CONNECT_FORCE_NEW;
+            $flags |= PGSQL_CONNECT_FORCE_NEW;
         } elseif (Options::getOptions(PgSQL::ATTR_CONNECT_ASYNC)) {
-            $flags = PGSQL_CONNECT_ASYNC;
-        } elseif (
-            Options::getOptions(PgSQL::ATTR_CONNECT_ASYNC)
-            && Options::getOptions(PgSQL::ATTR_CONNECT_FORCE_NEW)
-        ) {
-            $flags = PGSQL_CONNECT_ASYNC | PGSQL_CONNECT_FORCE_NEW;
-        } else {
-            $flags = 0;
+            $flags |= PGSQL_CONNECT_ASYNC;
         }
         return $flags;
     }
@@ -92,6 +85,6 @@ class Attributes
             };
         };
 
-        PgSQLEngine::getInstance()?->setAttributes((array) $result);
+        PgSQLEngine::getInstance()->setAttributes((array) $result);
     }
 }

@@ -3,12 +3,10 @@
 namespace GenericDatabase\Engine\PgSQL;
 
 use GenericDatabase\Engine\PgSQLEngine;
-use GenericDatabase\Traits\Reflections;
+use GenericDatabase\Helpers\Reflections;
 
 class Options
 {
-    use Reflections;
-
     private static $options = [];
 
     /**

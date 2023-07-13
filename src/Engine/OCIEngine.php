@@ -8,7 +8,7 @@ use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\Engine\OCI\OCI;
 use GenericDatabase\InterfaceConnection;
-use GenericDatabase\Traits\Errors;
+use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -49,7 +49,6 @@ use GenericDatabase\Engine\OCI\Transaction;
 #[AllowDynamicProperties]
 class OCIEngine implements InterfaceConnection
 {
-    use Errors;
     use Setter;
     use Getter;
     use Cleaner;
@@ -301,11 +300,8 @@ class OCIEngine implements InterfaceConnection
         $query = $params[0];
         $param = $params[1];
         $value = $params[2];
-        if (is_numeric($value)) {
-            $numericValue = $value;
-            oci_bind_by_name($query, $param, $numericValue, 8, SQLT_INT);
-        } elseif (is_float($value)) {
-            $floatValue = $value;
+        if (is_numeric($value) && strpos($value, '.') !== false) {
+            $floatValue = (float) $value;
             oci_bind_by_name($query, $param, $floatValue, 8, SQLT_FLT);
         } elseif (is_string($value)) {
             $stringValue = $value;
@@ -342,7 +338,7 @@ class OCIEngine implements InterfaceConnection
     public function exec(mixed ...$params): mixed
     {
         $query = $params[0];
-        $resultMode = isset($params[1]) ?? OCI_DEFAULT;
+        $resultMode = isset($params[1]) ? (int) $params[1] : OCI_COMMIT_ON_SUCCESS;
         return oci_execute($query, $resultMode);
     }
 

@@ -3,12 +3,10 @@
 namespace GenericDatabase\Engine\OCI;
 
 use GenericDatabase\Engine\OCIEngine;
-use GenericDatabase\Traits\Reflections;
+use GenericDatabase\Helpers\Reflections;
 
 class Options
 {
-    use Reflections;
-
     private static $options = [];
 
     /**

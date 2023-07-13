@@ -3,12 +3,10 @@
 namespace GenericDatabase\Engine\SQLite;
 
 use GenericDatabase\Engine\SQLiteEngine;
-use GenericDatabase\Traits\Reflections;
+use GenericDatabase\Helpers\Reflections;
 
 class Options
 {
-    use Reflections;
-
     private static $options = [];
 
     public static function flags(): int
