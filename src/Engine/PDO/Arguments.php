@@ -61,6 +61,22 @@ class Arguments
     }
 
     /**
+     * Remove unused objects from PDO SQLite
+     *
+     * @param mixed $driver
+     * @return void
+     */
+    private static function resetArgs(mixed $driver): void
+    {
+        if ($driver === 'sqlite') {
+            unset(PDOEngine::getInstance()->host);
+            unset(PDOEngine::getInstance()->port);
+            unset(PDOEngine::getInstance()->user);
+            unset(PDOEngine::getInstance()->password);
+        }
+    }
+
+    /**
      * Determines arguments type by calling to format type
      *
      * @param string $format Accept formats json, xml, ini and yaml
@@ -84,6 +100,7 @@ class Arguments
                         [self::setConstant(($format === 'json' || $format === 'yaml') ? $value : [$value])]
                     );
                 } else {
+                    self::resetArgs($value);
                     call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
                 }
             }
@@ -93,6 +110,7 @@ class Arguments
     private static function callWithByStaticArgs(array $arguments): void
     {
         if ($arguments[0] === 'sqlite') {
+            self::resetArgs($arguments[0]);
             $clonedArgumentList = Arrays::exceptByValues(self::$argumentList, ['Host', 'Port', 'User', 'Password']);
             foreach ($arguments as $key => $value) {
                 call_user_func_array([PDOEngine::getInstance(), 'set' . $clonedArgumentList[$key]], [$value]);
@@ -112,10 +130,12 @@ class Arguments
      */
     private static function callWithByStaticArray(array $arguments): void
     {
+        self::resetArgs($arguments['driver']);
         foreach ($arguments as $key => $value) {
             call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [$value]);
         }
     }
+
     /**
      * This method works like a factory and is responsible for identifying
      * the way in which the class is instantiated, as well as its arguments.
@@ -126,6 +146,7 @@ class Arguments
      */
     public static function call(string $name, array $arguments): PDOEngine
     {
+        self::resetArgs($arguments[0]);
         match ($name) {
             'new' => match (true) {
                 JSON::isValidJSON(...$arguments) => self::callArgumentsByFormat('json', $arguments),
