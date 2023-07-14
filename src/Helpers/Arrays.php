@@ -79,20 +79,16 @@ class Arrays
      */
     public static function isAssoc(mixed $array): bool
     {
-        if (false === is_array($array) || 0 === ($count = count($array))) {
+        if (!is_array($array) || empty($array)) {
             return false;
         }
 
         reset($array);
-        if (key($array) !== 0) {
-            return true;
-        }
+        $firstKey = key($array);
 
         end($array);
-        if (key($array) !== $count - 1) {
-            return true;
-        }
+        $lastKey = key($array);
 
-        return array_values($array) !== $array;
+        return $firstKey !== 0 || $lastKey !== count($array) - 1 || array_values($array) !== $array;
     }
 }

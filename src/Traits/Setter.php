@@ -18,6 +18,5 @@ trait Setter
     public function __set(string $name, mixed $value): void
     {
         $this->property[$name] = $value;
-        // return $this;
     }
 }
