@@ -10,7 +10,7 @@ class Dump
     /**
      * This is a regex array to uncomment strings in a codebase
      */
-    private static $regex = [
+    private static array $regex = [
         'uncomment' => '@(--[^\r\n]*)|(\#[^\r\n]*)|(/\*[\w\W]*?(?=\*/)\*/)\s*;@ms',
         'unicode' => '/\R+/'
     ];
@@ -18,7 +18,7 @@ class Dump
     /**
      * Settings for memory limit and time limit
      */
-    private static $settings = [
+    private static array $settings = [
         'memoryLimit' => '5120M',
         'timeLimit' => 0
     ];
@@ -27,6 +27,7 @@ class Dump
      * Import SQL dump from file - extremely fast.
      * @param ?callable $onProgress = null
      * @return int  count of commands
+     * @throws GenericException
      */
     public static function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
     {
@@ -56,7 +57,7 @@ class Dump
             if (strlen($uncomment($string)) > 1) {
                 if (!strncasecmp($uncomment($string), "DELIMITER ", 10)) {
                     $delimiter = trim(substr($uncomment($string), 10));
-                } elseif (substr($trim = rtrim($uncomment($string)), -strlen($delimiter)) === $delimiter) {
+                } elseif (str_ends_with($trim = rtrim($uncomment($string)), $delimiter)) {
                     $sql .= substr($trim, 0, -strlen($delimiter));
                     PDOEngine::getInstance()->exec($sql);
                     $sql = '';

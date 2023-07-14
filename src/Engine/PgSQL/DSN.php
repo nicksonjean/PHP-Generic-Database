@@ -9,6 +9,9 @@ use GenericDatabase\Helpers\GenericException;
 #[AllowDynamicProperties]
 class DSN
 {
+    /**
+     * @throws GenericException
+     */
     public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('pgsql')) {
@@ -20,7 +23,6 @@ class DSN
             throw new GenericException($message);
         }
 
-        $result = null;
         $result = sprintf(
             "host=%s port=%s dbname=%s user=%s password=%s%s options='--client_encoding=%s'",
             PgSQLEngine::getInstance()->getHost(),
@@ -34,7 +36,7 @@ class DSN
             PgSQLEngine::getInstance()->getCharset()
         );
 
-        PgSQLEngine::getInstance()->setDsn((string) $result);
+        PgSQLEngine::getInstance()->setDsn($result);
         return $result;
     }
 }

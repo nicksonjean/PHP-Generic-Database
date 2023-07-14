@@ -6,9 +6,9 @@ use GenericDatabase\Engine\PgSQLEngine;
 
 class Transaction
 {
-    protected static $transactionCounter = 0;
+    protected static int $transactionCounter = 0;
 
-    protected static $inTransaction = false;
+    protected static bool $inTransaction = false;
 
     public static function beginTransaction()
     {
@@ -30,7 +30,7 @@ class Transaction
         }
     }
 
-    public static function inTransaction()
+    public static function inTransaction(): bool
     {
         return self::$inTransaction;
     }

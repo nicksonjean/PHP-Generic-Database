@@ -10,6 +10,9 @@ use GenericDatabase\Helpers\GenericException;
 #[AllowDynamicProperties]
 class DSN
 {
+    /**
+     * @throws GenericException
+     */
     public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('interbase')) {
@@ -25,7 +28,6 @@ class DSN
             FBirdEngine::getInstance()->setDatabase(Path::toAbsolute(FBirdEngine::getInstance()->getDatabase()));
         }
 
-        $result = null;
         $result = sprintf(
             "ibase://%s:%s@%s:%s//%s?charset=%s",
             FBirdEngine::getInstance()->getUser(),
@@ -36,7 +38,7 @@ class DSN
             FBirdEngine::getInstance()->getCharset()
         );
 
-        FBirdEngine::getInstance()->setDsn((string) $result);
+        FBirdEngine::getInstance()->setDsn($result);
         return $result;
     }
 }

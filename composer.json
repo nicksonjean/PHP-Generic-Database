@@ -96,7 +96,7 @@
         "clear:coverage": "php scripts/eraser.php --dest=./coverage/",
         "clear:vendor": "php scripts/eraser.php --dest=./vendor/",
         "clear:trash": "php -r \"@rmdir('./vendor/');\"",
-         "clear:lock": "php -r \"@unlink('composer.lock');\"",
+        "clear:lock": "php -r \"@unlink('composer.lock');\"",
         "post-update-cmd": [
             "@run:lint:setup",
             "@run:env",

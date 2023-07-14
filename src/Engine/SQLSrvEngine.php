@@ -7,6 +7,7 @@ namespace GenericDatabase\Engine;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\Engine\SQLSrv\SQLSrv;
+use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
@@ -112,6 +113,7 @@ class SQLSrvEngine implements InterfaceConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return SQLSrvEngine
+     * @throws GenericException
      */
     private function postConnect(): SQLSrvEngine
     {
@@ -135,7 +137,7 @@ class SQLSrvEngine implements InterfaceConnection
         string $user,
         string $password,
         string $database,
-        int $port
+        mixed $port
     ): SQLSrvEngine {
         $serverName = vsprintf('%s,%s', [$host, $port]);
         $connectionInfo = ["Database" => $database, "UID" => $user, "PWD" => $password];

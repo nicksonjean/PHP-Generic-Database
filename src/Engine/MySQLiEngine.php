@@ -7,6 +7,7 @@ namespace GenericDatabase\Engine;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\Engine\MySQLi\MySQL;
+use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
@@ -110,6 +111,7 @@ class MySQLiEngine implements InterfaceConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return MySQLiEngine
+     * @throws GenericException
      */
     private function postConnect(): MySQLiEngine
     {
@@ -125,7 +127,7 @@ class MySQLiEngine implements InterfaceConnection
      * @param string $user The user of the database
      * @param string $password The password of the database
      * @param string $database The name of the database
-     * @param int $port The port of the database
+     * @param MySQLiEngine $port The port of the database
      * @return MySQLiEngine
      * @throws Exception
      */
@@ -134,7 +136,7 @@ class MySQLiEngine implements InterfaceConnection
         string $user,
         string $password,
         string $database,
-        int $port
+        mixed $port
     ): MySQLiEngine {
         $host = (string) !Options::getOptions(MySQL::ATTR_PERSISTENT)
             ? $host

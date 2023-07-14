@@ -6,6 +6,7 @@ namespace GenericDatabase\Engine;
 
 use AllowDynamicProperties;
 use Exception;
+use GenericDatabase\Helpers\GenericException;
 use SQLite3;
 use GenericDatabase\Engine\SQLite\SQLite;
 use GenericDatabase\InterfaceConnection;
@@ -110,6 +111,7 @@ class SQLiteEngine implements InterfaceConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return SQLiteEngine
+     * @throws GenericException
      */
     private function postConnect(): SQLiteEngine
     {

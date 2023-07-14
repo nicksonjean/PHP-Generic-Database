@@ -4,8 +4,8 @@ namespace GenericDatabase\Engine\SQLite;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLiteEngine;
-use GenericDatabase\Engine\SQLite\Options;
 use GenericDatabase\Helpers\GenericException;
+use SQLite3;
 
 #[AllowDynamicProperties]
 class Attributes
@@ -14,7 +14,7 @@ class Attributes
      * static attributes constants
      *
      */
-    public static $attributeList = [
+    public static array $attributeList = [
         'AUTOCOMMIT',
         'ERRMODE',
         'CASE',
@@ -28,9 +28,9 @@ class Attributes
         'DEFAULT_FETCH_MODE'
     ];
 
-    private static function settings()
+    private static function settings(): array
     {
-        $version = \SQLite3::version();
+        $version = SQLite3::version();
         return [
             'versionString' => $version['versionString'],
             'versionNumber' => $version['versionNumber']
@@ -41,6 +41,7 @@ class Attributes
      * Define all SQLite attibute of the conection a ready exist
      *
      * @return void
+     * @throws GenericException
      */
     public static function define(): void
     {
@@ -50,9 +51,8 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => (int) 0,
-                'ERRMODE' => (int) 1,
-                'CASE' => (int) 0,
+                'AUTOCOMMIT', 'CASE' => 0,
+                'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['versionString'],
                 'CONNECTION_STATUS' => SQLiteEngine::getInstance()->getConnection()
                     ? 'Connection OK; waiting to send.'
@@ -66,10 +66,10 @@ class Attributes
                     ? Options::getOptions(SQLite::ATTR_CONNECT_TIMEOUT)
                     : 30,
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => (int) 3,
+                'DEFAULT_FETCH_MODE' => 3,
                 default => throw new GenericException("Invalid attribute: $attribute"),
             };
         }
-        SQLiteEngine::getInstance()->setAttributes((array) $result);
+        SQLiteEngine::getInstance()->setAttributes($result);
     }
 }

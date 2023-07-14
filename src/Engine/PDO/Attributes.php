@@ -13,7 +13,7 @@ class Attributes
      * static attributes constants
      *
      */
-    public static $attributeList = [
+    public static array $attributeList = [
         'AUTOCOMMIT',
         'ERRMODE',
         'CASE',
@@ -35,6 +35,7 @@ class Attributes
      * Define all PDO attibute of the conection a ready exist
      *
      * @return void
+     * @throws ErrorException
      */
     public static function define(): void
     {
@@ -53,6 +54,6 @@ class Attributes
             }
         }
         restore_error_handler();
-        PDOEngine::getInstance()->setAttributes((array) $result);
+        PDOEngine::getInstance()->setAttributes($result);
     }
 }

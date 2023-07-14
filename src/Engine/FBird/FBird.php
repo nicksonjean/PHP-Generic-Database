@@ -11,7 +11,7 @@ class FBird
     public const ATTR_CONNECT_FORCE_NEW = 1003;
     public const ATTR_PERSISTENT = 13;
 
-    protected static $data = [];
+    protected static array $data = [];
 
     public static function getAttribute(mixed $name): mixed
     {

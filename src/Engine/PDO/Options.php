@@ -8,7 +8,7 @@ use GenericDatabase\Engine\PDOEngine;
 
 class Options
 {
-    private static $options = [];
+    private static array $options = [];
 
     /**
      * This method is responsible for obtain all options already defined by user
@@ -26,14 +26,15 @@ class Options
      *
      * @param ?array $options = null
      * @return void
+     * @throws GenericException
      */
     public static function setOptions(?array $options = null): void
     {
-        if (!in_array(PDOEngine::getInstance()->getDriver(), (array) PDO::getAvailableDrivers())) {
+        if (!in_array(PDOEngine::getInstance()->getDriver(), PDO::getAvailableDrivers())) {
             $message = sprintf(
                 "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
                 PDOEngine::getInstance()->getDriver(),
-                implode(', ', (array) PDO::getAvailableDrivers())
+                implode(', ', PDO::getAvailableDrivers())
             );
             throw new GenericException($message);
         }
@@ -50,7 +51,8 @@ class Options
                     )];
                 }
                 $options += [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true];
-                // Fall-through intencional
+                break;
+            // Fall-through intencional
             case 'pgsql':
                 $options += [PDO::ATTR_AUTOCOMMIT => true];
                 break;
@@ -77,11 +79,11 @@ class Options
         $charset = PDOEngine::getInstance()->getCharset();
         $connection = PDOEngine::getInstance()->getConnection();
 
-        if ($driver === 'mysql' && $charset) {
+        if ($driver == 'mysql' && $charset) {
             $connection->exec(sprintf("SET NAMES '%s'", $charset));
-        } elseif ($driver === 'pgsql' && $charset) {
+        } elseif ($driver == 'pgsql' && $charset) {
             $connection->exec(sprintf("SET CLIENT_ENCODING TO '%s'", $charset));
-        } elseif ($driver === 'sqlite') {
+        } elseif ($driver == 'sqlite') {
             $connection->query('PRAGMA foreign_keys = ON');
         }
     }

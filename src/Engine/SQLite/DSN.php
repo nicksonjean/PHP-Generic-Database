@@ -10,6 +10,9 @@ use GenericDatabase\Helpers\GenericException;
 #[AllowDynamicProperties]
 class DSN
 {
+    /**
+     * @throws GenericException
+     */
     public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('sqlite3')) {
@@ -25,14 +28,13 @@ class DSN
             SQLiteEngine::getInstance()->setDatabase(Path::toAbsolute(SQLiteEngine::getInstance()->getDatabase()));
         }
 
-        $result = null;
         $result = sprintf(
             "sqlite:%s?charset=%s",
             SQLiteEngine::getInstance()->getDatabase(),
             SQLiteEngine::getInstance()->getCharset()
         );
 
-        SQLiteEngine::getInstance()->setDsn((string) $result);
+        SQLiteEngine::getInstance()->setDsn($result);
         return $result;
     }
 }

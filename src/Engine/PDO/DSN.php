@@ -11,13 +11,16 @@ use GenericDatabase\Helpers\GenericException;
 #[AllowDynamicProperties]
 class DSN
 {
+    /**
+     * @throws GenericException
+     */
     public static function parseDsn(): string|GenericException
     {
-        if (!in_array(PDOEngine::getInstance()->getDriver(), (array) PDO::getAvailableDrivers())) {
+        if (!in_array(PDOEngine::getInstance()->getDriver(), PDO::getAvailableDrivers())) {
             $message = sprintf(
                 "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
                 PDOEngine::getInstance()->getDriver(),
-                implode(', ', (array) PDO::getAvailableDrivers())
+                implode(', ', PDO::getAvailableDrivers())
             );
             throw new GenericException($message);
         }
@@ -112,7 +115,7 @@ class DSN
                 if (
                     !Path::isAbsolute(
                         PDOEngine::getInstance()->getDatabase()
-                    ) && PDOEngine::getInstance()->getDatabase() !== 'memory'
+                    ) && PDOEngine::getInstance()->getDatabase() != 'memory'
                 ) {
                     PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
                     $result = sprintf(
@@ -132,7 +135,7 @@ class DSN
                 if (
                     !Path::isAbsolute(
                         PDOEngine::getInstance()->getDatabase()
-                    ) && PDOEngine::getInstance()->getDatabase() !== 'memory'
+                    ) && PDOEngine::getInstance()->getDatabase() != 'memory'
                 ) {
                     PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
                     $result = sprintf(

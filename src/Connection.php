@@ -97,7 +97,7 @@ class Connection
      */
     public static function __callStatic(string $name, array $arguments): Connection
     {
-        match ($name) {
+        return match ($name) {
             'new' => match (true) {
                 JSON::isValidJSON(...$arguments) => self::callArgumentsByFormat('json', $arguments),
                 YAML::isValidYAML(...$arguments) => self::callArgumentsByFormat('yaml', $arguments),
@@ -109,7 +109,6 @@ class Connection
             },
             default => self::call(self::getInstance(), $name, $arguments)
         };
-        return self::getInstance();
     }
 
     /**
@@ -150,33 +149,35 @@ class Connection
      * @param mixed $instance
      * @param mixed $name
      * @param mixed $arguments
-     * @return void
+     * @return Connection
      */
-    private static function call(mixed $instance, mixed $name, mixed $arguments): void
+    private static function call(mixed $instance, mixed $name, mixed $arguments): Connection
     {
         call_user_func_array([$instance, $name], $arguments);
+        return self::getInstance();
     }
 
     /**
      * This method is used when all parameters are used in the static array format
      *
      * @param array $arguments
-     * @return void
+     * @return Connection
      */
-    private static function callWithByStaticArray(array $arguments): void
+    private static function callWithByStaticArray(array $arguments): Connection
     {
         foreach ($arguments as $key => $value) {
             self::call(self::getInstance(), 'set' . ucfirst($key), [$value]);
         }
+        return self::getInstance();
     }
 
     /**
      * This method is used when all parameters are used in the static arguments format
      *
      * @param array $arguments
-     * @return void
+     * @return Connection
      */
-    private static function callWithByStaticArgs(array $arguments): void
+    private static function callWithByStaticArgs(array $arguments): Connection
     {
         $argumentClass = Reflections::getClassPropertyName(
             sprintf(
@@ -196,6 +197,7 @@ class Connection
                 self::call(self::getInstance(), 'set' . $argumentList[$key], [$value]);
             }
         }
+        return self::getInstance();
     }
 
     /**
@@ -203,9 +205,9 @@ class Connection
      *
      * @param string $format Accept formats json, xml, ini and yaml
      * @param mixed $arguments
-     * @return void
+     * @return Connection
      */
-    private static function callArgumentsByFormat(string $format, mixed $arguments): void
+    private static function callArgumentsByFormat(string $format, mixed $arguments): Connection
     {
         $data = [];
         if ($format === 'json') {
@@ -244,5 +246,6 @@ class Connection
                 );
             }
         }
+        return self::getInstance();
     }
 }

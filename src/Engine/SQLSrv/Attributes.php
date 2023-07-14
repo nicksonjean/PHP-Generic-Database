@@ -4,7 +4,6 @@ namespace GenericDatabase\Engine\SQLSrv;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLSrvEngine;
-use GenericDatabase\Engine\SQLSrv\Options;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]
@@ -14,7 +13,7 @@ class Attributes
      * static attributes constants
      *
      */
-    public static $attributeList = [
+    public static array $attributeList = [
         'AUTOCOMMIT',
         'ERRMODE',
         'CASE',
@@ -30,7 +29,7 @@ class Attributes
         'COLLATION'
     ];
 
-    private static function settings()
+    private static function settings(): array
     {
         $serverInfo = sqlsrv_server_info(SQLSrvEngine::getInstance()->getConnection());
         $clientVersion = sqlsrv_client_info(SQLSrvEngine::getInstance()->getConnection());
@@ -45,6 +44,7 @@ class Attributes
      * Define all SQLSrv attibute of the conection a ready exist
      *
      * @return void
+     * @throws GenericException
      */
     public static function define(): void
     {
@@ -54,9 +54,8 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => (int) 0,
-                'ERRMODE' => (int) 1,
-                'CASE' => (int) 0,
+                'AUTOCOMMIT', 'CASE' => 0,
+                'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['client_version'],
                 'CONNECTION_STATUS' => SQLSrvEngine::getInstance()->getConnection()
                     ? 'Connection OK; waiting to send.'
@@ -70,12 +69,12 @@ class Attributes
                     ? Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)
                     : 30,
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => (int) 3,
+                'DEFAULT_FETCH_MODE' => 3,
                 'CHARACTER_SET' => SQLSrvEngine::getInstance()->getCharset(),
-                'COLLATION' => SQLSrvEngine::getInstance()->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
+                'COLLATION' => SQLSrvEngine::getInstance()->getCharset() == 'utf8' ? 'unicode_ci_ai' : 'none',
                 default => throw new GenericException("Invalid attribute: $attribute"),
             };
         }
-        SQLSrvEngine::getInstance()->setAttributes((array) $result);
+        SQLSrvEngine::getInstance()->setAttributes($result);
     }
 }

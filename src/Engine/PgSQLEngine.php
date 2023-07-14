@@ -7,6 +7,7 @@ namespace GenericDatabase\Engine;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\Engine\PgSQL\PgSQL;
+use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
@@ -109,6 +110,7 @@ class PgSQLEngine implements InterfaceConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return PgSQLEngine
+     * @throws GenericException
      */
     private function postConnect(): PgSQLEngine
     {

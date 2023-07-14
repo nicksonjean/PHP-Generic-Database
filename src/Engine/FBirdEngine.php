@@ -7,6 +7,7 @@ namespace GenericDatabase\Engine;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\Engine\FBird\FBird;
+use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
@@ -109,6 +110,7 @@ class FBirdEngine implements InterfaceConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return FBirdEngine
+     * @throws GenericException
      */
     private function postConnect(): FBirdEngine
     {
@@ -132,7 +134,7 @@ class FBirdEngine implements InterfaceConnection
         string $user,
         string $password,
         string $database,
-        int $port
+        mixed $port
     ): FBirdEngine {
         $dsn = vsprintf('%s/%s:%s', [$host, $port, $database]);
         $this->setConnection(

@@ -4,7 +4,6 @@ namespace GenericDatabase\Engine\PgSQL;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\PgSQLEngine;
-use GenericDatabase\Engine\PgSQL\Options;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]
@@ -14,7 +13,7 @@ class Attributes
      * static attributes constants
      *
      */
-    public static $attributeList = [
+    public static array $attributeList = [
         'AUTOCOMMIT',
         'ERRMODE',
         'CASE',
@@ -30,7 +29,7 @@ class Attributes
         'COLLATION'
     ];
 
-    public static function getFlags()
+    public static function getFlags(): int
     {
         $flags = 0;
         if (Options::getOptions(PgSQL::ATTR_CONNECT_FORCE_NEW)) {
@@ -41,7 +40,7 @@ class Attributes
         return $flags;
     }
 
-    private static function settings()
+    private static function settings(): array
     {
         $version = pg_version(PgSQLEngine::getInstance()->getConnection());
         $collate = pg_fetch_object(pg_query(PgSQLEngine::getInstance()->getConnection(), "SHOW LC_COLLATE"));
@@ -55,6 +54,7 @@ class Attributes
      * Define all PgSQL attibute of the conection a ready exist
      *
      * @return void
+     * @throws GenericException
      */
     public static function define(): void
     {
@@ -64,9 +64,8 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => (int) 0,
-                'ERRMODE' => (int) 1,
-                'CASE' => (int) 0,
+                'AUTOCOMMIT', 'CASE' => 0,
+                'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['version']['client'],
                 'CONNECTION_STATUS' => (pg_connection_status(
                     PgSQLEngine::getInstance()->getConnection()
@@ -89,7 +88,7 @@ class Attributes
                     ? Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
                     : 30,
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => (int) 3,
+                'DEFAULT_FETCH_MODE' => 3,
                 'CHARACTER_SET' => pg_client_encoding(PgSQLEngine::getInstance()->getConnection()),
                 'COLLATION' => ($settings['collate'] !== false && property_exists($settings['collate'], 'lc_collate'))
                     ? $settings['collate']->lc_collate
@@ -97,6 +96,6 @@ class Attributes
                 default => throw new GenericException("Invalid attribute: $attribute"),
             };
         }
-        PgSQLEngine::getInstance()->setAttributes((array) $result);
+        PgSQLEngine::getInstance()->setAttributes($result);
     }
 }

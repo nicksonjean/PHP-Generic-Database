@@ -7,6 +7,7 @@ namespace GenericDatabase\Engine;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\Engine\OCI\OCI;
+use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
@@ -109,6 +110,7 @@ class OCIEngine implements InterfaceConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return OCIEngine
+     * @throws GenericException
      */
     private function postConnect(): OCIEngine
     {
@@ -132,7 +134,7 @@ class OCIEngine implements InterfaceConnection
         string $user,
         string $password,
         string $database,
-        int $port
+        mixed $port
     ): OCIEngine {
         $dsn = vsprintf('%s:%s/%s', [$host, $port, $database]);
         $this->setConnection(
@@ -300,7 +302,7 @@ class OCIEngine implements InterfaceConnection
         $query = $params[0];
         $param = $params[1];
         $value = $params[2];
-        if (is_numeric($value) && strpos($value, '.') !== false) {
+        if (is_numeric($value) && str_contains($value, '.')) {
             $floatValue = (float) $value;
             oci_bind_by_name($query, $param, $floatValue, 8, SQLT_FLT);
         } elseif (is_string($value)) {

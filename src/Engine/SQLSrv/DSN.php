@@ -9,6 +9,9 @@ use GenericDatabase\Helpers\GenericException;
 #[AllowDynamicProperties]
 class DSN
 {
+    /**
+     * @throws GenericException
+     */
     public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('sqlsrv')) {
@@ -20,7 +23,6 @@ class DSN
             throw new GenericException($message);
         }
 
-        $result = null;
         $result = sprintf(
             "sqlsrv://%s:%s@%s:%s/?database=%s&charset=%s%s",
             SQLSrvEngine::getInstance()->getUser(),
@@ -34,7 +36,7 @@ class DSN
                 : '',
         );
 
-        SQLSrvEngine::getInstance()->setDsn((string) $result);
+        SQLSrvEngine::getInstance()->setDsn($result);
         return $result;
     }
 }

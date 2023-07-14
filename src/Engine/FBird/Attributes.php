@@ -14,7 +14,7 @@ class Attributes
      * static attributes constants
      *
      */
-    public static $attributeList = [
+    public static array $attributeList = [
         'AUTOCOMMIT',
         'ERRMODE',
         'CASE',
@@ -30,7 +30,7 @@ class Attributes
         'COLLATION'
     ];
 
-    private static function settings()
+    private static function settings(): ?array
     {
         $service = self::attachService();
         if ($service === false) {
@@ -58,7 +58,7 @@ class Attributes
         );
     }
 
-    private static function getDatabaseInfo($service)
+    private static function getDatabaseInfo($service): array
     {
         $info = ibase_db_info($service, FBirdEngine::getInstance()->getDatabase(), 4);
         $matches = [];
@@ -79,7 +79,7 @@ class Attributes
         return $results;
     }
 
-    private static function getServerInfo($service, $odsVersion)
+    private static function getServerInfo($service, $odsVersion): array
     {
         $server = vsprintf(
             '%s %s %s on disk structure version %s',
@@ -110,6 +110,7 @@ class Attributes
      * Define all FBird attibute of the conection a ready exist
      *
      * @return void
+     * @throws GenericException
      */
     public static function define(): void
     {
@@ -119,9 +120,8 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => (int) 0,
-                'ERRMODE' => (int) 1,
-                'CASE' => (int) 0,
+                'AUTOCOMMIT', 'CASE' => 0,
+                'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['server_version'],
                 'CONNECTION_STATUS' => FBirdEngine::getInstance()->getConnection()
                     ? 'Connection OK; waiting to send.'
@@ -129,18 +129,17 @@ class Attributes
                 'PERSISTENT' => (int) !Options::getOptions(FBird::ATTR_PERSISTENT)
                     ? 0
                     : (int) Options::getOptions(FBird::ATTR_PERSISTENT),
-                'SERVER_INFO' => $settings['server_info'],
-                'SERVER_VERSION' => $settings['server_info'],
+                'SERVER_INFO', 'SERVER_VERSION' => $settings['server_info'],
                 'TIMEOUT' =>  (int) Options::getOptions(FBird::ATTR_CONNECT_TIMEOUT)
                     ? Options::getOptions(FBird::ATTR_CONNECT_TIMEOUT)
                     : 30,
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => (int) 3,
+                'DEFAULT_FETCH_MODE' => 3,
                 'CHARACTER_SET' => FBirdEngine::getInstance()->getCharset(),
-                'COLLATION' => FBirdEngine::getInstance()->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
+                'COLLATION' => FBirdEngine::getInstance()->getCharset() == 'utf8' ? 'unicode_ci_ai' : 'none',
                 default => throw new GenericException("Invalid attribute: $attribute"),
             };
         }
-        FBirdEngine::getInstance()->setAttributes((array) $result);
+        FBirdEngine::getInstance()->setAttributes($result);
     }
 }

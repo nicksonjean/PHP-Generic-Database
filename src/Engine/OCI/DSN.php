@@ -9,6 +9,9 @@ use GenericDatabase\Helpers\GenericException;
 #[AllowDynamicProperties]
 class DSN
 {
+    /**
+     * @throws GenericException
+     */
     public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('oci8')) {
@@ -20,7 +23,6 @@ class DSN
             throw new GenericException($message);
         }
 
-        $result = null;
         $result = sprintf(
             "oci8://%s:%s@%s:%s/?service=%s&charset=%s",
             OCIEngine::getInstance()->getUser(),
@@ -31,7 +33,7 @@ class DSN
             OCIEngine::getInstance()->getCharset()
         );
 
-        OCIEngine::getInstance()->setDsn((string) $result);
+        OCIEngine::getInstance()->setDsn($result);
         return $result;
     }
 }

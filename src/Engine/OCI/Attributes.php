@@ -4,7 +4,6 @@ namespace GenericDatabase\Engine\OCI;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\OCIEngine;
-use GenericDatabase\Engine\OCI\Options;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]
@@ -14,7 +13,7 @@ class Attributes
      * static attributes constants
      *
      */
-    public static $attributeList = [
+    public static array $attributeList = [
         'AUTOCOMMIT',
         'ERRMODE',
         'CASE',
@@ -30,7 +29,7 @@ class Attributes
         'COLLATION'
     ];
 
-    private static function settings()
+    private static function settings(): array
     {
         $serverInfo = oci_server_version(OCIEngine::getInstance()->getConnection());
         $version = preg_replace('~^.* (\d+\.\d+\.\d+\.\d+\.\d+).*~s', '\1', $serverInfo);
@@ -45,6 +44,7 @@ class Attributes
      * Define all OCI attibute of the conection a ready exist
      *
      * @return void
+     * @throws GenericException
      */
     public static function define(): void
     {
@@ -54,9 +54,8 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => (int) 0,
-                'ERRMODE' => (int) 1,
-                'CASE' => (int) 0,
+                'AUTOCOMMIT', 'CASE' => 0,
+                'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['client_version'],
                 'CONNECTION_STATUS' => OCIEngine::getInstance()->getConnection()
                     ? 'Connection OK; waiting to send.'
@@ -70,12 +69,12 @@ class Attributes
                     ? Options::getOptions(OCI::ATTR_CONNECT_TIMEOUT)
                     : 30,
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => (int) 3,
+                'DEFAULT_FETCH_MODE' => 3,
                 'CHARACTER_SET' => OCIEngine::getInstance()->getCharset(),
-                'COLLATION' => OCIEngine::getInstance()->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
+                'COLLATION' => OCIEngine::getInstance()->getCharset() == 'utf8' ? 'unicode_ci_ai' : 'none',
                 default => throw new GenericException("Invalid attribute: $attribute"),
             };
         }
-        OCIEngine::getInstance()->setAttributes((array) $result);
+        OCIEngine::getInstance()->setAttributes($result);
     }
 }

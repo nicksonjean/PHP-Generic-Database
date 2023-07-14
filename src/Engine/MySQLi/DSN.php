@@ -9,6 +9,9 @@ use GenericDatabase\Helpers\GenericException;
 #[AllowDynamicProperties]
 class DSN
 {
+    /**
+     * @throws GenericException
+     */
     public static function parseDsn(): string|GenericException
     {
         if (!extension_loaded('mysqli')) {
@@ -20,7 +23,6 @@ class DSN
             throw new GenericException($message);
         }
 
-        $result = null;
         $result = sprintf(
             "mysql://%s:%s@%s:%s/%s?charset=%s",
             MySQLiEngine::getInstance()->getUser(),
@@ -31,7 +33,7 @@ class DSN
             MySQLiEngine::getInstance()->getCharset()
         );
 
-        MySQLiEngine::getInstance()->setDsn((string) $result);
+        MySQLiEngine::getInstance()->setDsn($result);
         return $result;
     }
 }

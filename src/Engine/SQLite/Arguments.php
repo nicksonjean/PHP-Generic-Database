@@ -15,7 +15,7 @@ class Arguments
     /**
      * array property for use in magic setter and getter in order
      */
-    private static $argumentList = [
+    private static array $argumentList = [
         'Database',
         'Charset',
         'Options',
@@ -28,7 +28,7 @@ class Arguments
      * @param array $value
      * @return array
      */
-    private static function setConstant($value): array
+    private static function setConstant(array $value): array
     {
         $options = Types::setConstant(
             $value,
@@ -45,9 +45,9 @@ class Arguments
      * Determines the type that will receive treatment
      *
      * @param mixed $value
-     * @return mixed
+     * @return string|int|bool
      */
-    private static function setType($value): mixed
+    private static function setType(mixed $value): string|int|bool
     {
         return Types::setType($value);
     }
@@ -57,9 +57,9 @@ class Arguments
      *
      * @param string $format Accept formats json, xml, ini and yaml
      * @param mixed $arguments
-     * @return void
+     * @return SQLiteEngine
      */
-    private static function callArgumentsByFormat($format, $arguments): void
+    private static function callArgumentsByFormat(string $format, mixed $arguments): SQLiteEngine
     {
         $data = match ($format) {
             'json' => JSON::parseJSON(...$arguments),
@@ -80,32 +80,35 @@ class Arguments
                 }
             }
         }
+        return SQLiteEngine::getInstance();
     }
 
     /**
      * This method is used when all parameters are used in the static array format
      *
      * @param array $arguments
-     * @return void
+     * @return SQLiteEngine
      */
-    private static function callWithByStaticArray(array $arguments): void
+    private static function callWithByStaticArray(array $arguments): SQLiteEngine
     {
         foreach ($arguments as $key => $value) {
             call_user_func_array([SQLiteEngine::getInstance(), 'set' . ucfirst($key)], [$value]);
         }
+        return SQLiteEngine::getInstance();
     }
 
     /**
      * This method is used when all parameters are used in the static arguments format
      *
      * @param array $arguments
-     * @return void
+     * @return SQLiteEngine
      */
-    private static function callWithByStaticArgs(array $arguments): void
+    private static function callWithByStaticArgs(array $arguments): SQLiteEngine
     {
         foreach ($arguments as $key => $value) {
             call_user_func_array([SQLiteEngine::getInstance(), 'set' . self::$argumentList[$key]], [$value]);
         }
+        return SQLiteEngine::getInstance();
     }
 
     /**
@@ -118,7 +121,7 @@ class Arguments
      */
     public static function call(string $name, array $arguments): SQLiteEngine
     {
-        match ($name) {
+        return match ($name) {
             'new' => match (true) {
                 JSON::isValidJSON(...$arguments) => self::callArgumentsByFormat('json', $arguments),
                 YAML::isValidYAML(...$arguments) => self::callArgumentsByFormat('yaml', $arguments),
@@ -130,6 +133,5 @@ class Arguments
             },
             default => call_user_func_array([SQLiteEngine::getInstance(), $name], $arguments)
         };
-        return SQLiteEngine::getInstance();
     }
 }

@@ -16,7 +16,7 @@ class Arguments
     /**
      * array property for use in magic setter and getter in order
      */
-    private static $argumentList = [
+    private static array $argumentList = [
         'Driver',
         'Host',
         'Port',
@@ -34,7 +34,7 @@ class Arguments
      * @param array $value
      * @return array
      */
-    private static function setConstant($value): array
+    private static function setConstant(array $value): array
     {
         $result = [];
         foreach (Arrays::recombine(...$value) as $key => $value) {
@@ -53,9 +53,9 @@ class Arguments
      * Determines the type that will receive treatment
      *
      * @param mixed $value
-     * @return mixed
+     * @return string|int|bool
      */
-    private static function setType($value): mixed
+    private static function setType(mixed $value): string|int|bool
     {
         return Types::setType($value);
     }
@@ -81,9 +81,9 @@ class Arguments
      *
      * @param string $format Accept formats json, xml, ini and yaml
      * @param mixed $arguments
-     * @return void
+     * @return PDOEngine
      */
-    private static function callArgumentsByFormat($format, $arguments): void
+    private static function callArgumentsByFormat(string $format, mixed $arguments): PDOEngine
     {
         $data = match ($format) {
             'json' => JSON::parseJSON(...$arguments),
@@ -105,9 +105,16 @@ class Arguments
                 }
             }
         }
+        return PDOEngine::getInstance();
     }
 
-    private static function callWithByStaticArgs(array $arguments): void
+    /**
+     * This method is used when all parameters are used in the static arguments format
+     *
+     * @param array $arguments
+     * @return PDOEngine
+     */
+    private static function callWithByStaticArgs(array $arguments): PDOEngine
     {
         if ($arguments[0] === 'sqlite') {
             self::resetArgs($arguments[0]);
@@ -120,20 +127,22 @@ class Arguments
                 call_user_func_array([PDOEngine::getInstance(), 'set' . self::$argumentList[$key]], [$value]);
             }
         }
+        return PDOEngine::getInstance();
     }
 
     /**
      * This method is used when all parameters are used in the static array format
      *
      * @param array $arguments
-     * @return void
+     * @return PDOEngine
      */
-    private static function callWithByStaticArray(array $arguments): void
+    private static function callWithByStaticArray(array $arguments): PDOEngine
     {
         self::resetArgs($arguments['driver']);
         foreach ($arguments as $key => $value) {
             call_user_func_array([PDOEngine::getInstance(), 'set' . ucfirst($key)], [$value]);
         }
+        return PDOEngine::getInstance();
     }
 
     /**
@@ -147,7 +156,7 @@ class Arguments
     public static function call(string $name, array $arguments): PDOEngine
     {
         self::resetArgs($arguments[0]);
-        match ($name) {
+        return match ($name) {
             'new' => match (true) {
                 JSON::isValidJSON(...$arguments) => self::callArgumentsByFormat('json', $arguments),
                 YAML::isValidYAML(...$arguments) => self::callArgumentsByFormat('yaml', $arguments),
@@ -159,6 +168,5 @@ class Arguments
             },
             default => call_user_func_array([PDOEngine::getInstance(), $name], $arguments)
         };
-        return PDOEngine::getInstance();
     }
 }

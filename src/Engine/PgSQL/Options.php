@@ -7,7 +7,7 @@ use GenericDatabase\Helpers\Reflections;
 
 class Options
 {
-    private static $options = [];
+    private static array $options = [];
 
     /**
      * This method is responsible for obtain all options already defined by user
@@ -18,7 +18,7 @@ class Options
     public static function getOptions(?int $type = null): mixed
     {
         if (!is_null($type)) {
-            $result = isset(self::$options[$type]) ? self::$options[$type] : null;
+            $result = self::$options[$type] ?? null;
         } else {
             $result = self::$options;
         }
@@ -35,7 +35,7 @@ class Options
     {
         $class = 'GenericDatabase\Engine\PgSQL\PgSQL';
         foreach (Reflections::getClassConstants($class) as $key => $value) {
-            $index = array_search($value, array_keys($options));
+            $index = in_array($value, array_keys($options));
             if ($index !== false) {
                 $keyName = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT'
                     ? str_replace("ATTR", "PGSQL", $key)

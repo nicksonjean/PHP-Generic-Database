@@ -9,7 +9,7 @@ class SQLSrv
     public const ATTR_CONNECT_TIMEOUT = 1001;
     public const ATTR_PERSISTENT = 13;
 
-    protected static $data = [];
+    protected static array $data = [];
 
     public static function getAttribute(mixed $name): mixed
     {
