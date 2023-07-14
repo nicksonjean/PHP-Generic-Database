@@ -2,9 +2,12 @@
 
 namespace GenericDatabase\Engine\SQLSrv;
 
+use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Engine\SQLSrv\Options;
+use GenericDatabase\Helpers\GenericException;
 
+#[AllowDynamicProperties]
 class Attributes
 {
     /**
@@ -48,9 +51,9 @@ class Attributes
         $settings = self::settings();
         $result = [];
         $keys = array_keys(self::$attributeList);
-
         foreach ($keys as $key) {
-            $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
+            $attribute = self::$attributeList[$key];
+            $result[$attribute] = match ($attribute) {
                 'AUTOCOMMIT' => (int) 0,
                 'ERRMODE' => (int) 1,
                 'CASE' => (int) 0,
@@ -70,8 +73,9 @@ class Attributes
                 'DEFAULT_FETCH_MODE' => (int) 3,
                 'CHARACTER_SET' => SQLSrvEngine::getInstance()->getCharset(),
                 'COLLATION' => SQLSrvEngine::getInstance()->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
+                default => throw new GenericException("Invalid attribute: $attribute"),
             };
-        };
+        }
         SQLSrvEngine::getInstance()->setAttributes((array) $result);
     }
 }

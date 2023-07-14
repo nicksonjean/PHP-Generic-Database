@@ -2,9 +2,12 @@
 
 namespace GenericDatabase\Engine\SQLite;
 
+use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Engine\SQLite\Options;
+use GenericDatabase\Helpers\GenericException;
 
+#[AllowDynamicProperties]
 class Attributes
 {
     /**
@@ -44,9 +47,9 @@ class Attributes
         $settings = self::settings();
         $result = [];
         $keys = array_keys(self::$attributeList);
-
         foreach ($keys as $key) {
-            $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
+            $attribute = self::$attributeList[$key];
+            $result[$attribute] = match ($attribute) {
                 'AUTOCOMMIT' => (int) 0,
                 'ERRMODE' => (int) 1,
                 'CASE' => (int) 0,
@@ -63,9 +66,10 @@ class Attributes
                     ? Options::getOptions(SQLite::ATTR_CONNECT_TIMEOUT)
                     : 30,
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => (int) 3
+                'DEFAULT_FETCH_MODE' => (int) 3,
+                default => throw new GenericException("Invalid attribute: $attribute"),
             };
-        };
+        }
         SQLiteEngine::getInstance()->setAttributes((array) $result);
     }
 }

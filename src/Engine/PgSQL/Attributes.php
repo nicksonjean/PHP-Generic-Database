@@ -2,9 +2,12 @@
 
 namespace GenericDatabase\Engine\PgSQL;
 
+use AllowDynamicProperties;
 use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Engine\PgSQL\Options;
+use GenericDatabase\Helpers\GenericException;
 
+#[AllowDynamicProperties]
 class Attributes
 {
     /**
@@ -38,6 +41,16 @@ class Attributes
         return $flags;
     }
 
+    private static function settings()
+    {
+        $version = pg_version(PgSQLEngine::getInstance()->getConnection());
+        $collate = pg_fetch_object(pg_query(PgSQLEngine::getInstance()->getConnection(), "SHOW LC_COLLATE"));
+        return [
+            'collate' => $collate,
+            'version' => $version
+        ];
+    }
+
     /**
      * Define all PgSQL attibute of the conection a ready exist
      *
@@ -45,17 +58,16 @@ class Attributes
      */
     public static function define(): void
     {
-        $version = pg_version(PgSQLEngine::getInstance()->getConnection());
-        $collate = pg_fetch_object(pg_query(PgSQLEngine::getInstance()->getConnection(), "SHOW LC_COLLATE"));
+        $settings = self::settings();
         $result = [];
         $keys = array_keys(self::$attributeList);
-
         foreach ($keys as $key) {
-            $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
+            $attribute = self::$attributeList[$key];
+            $result[$attribute] = match ($attribute) {
                 'AUTOCOMMIT' => (int) 0,
                 'ERRMODE' => (int) 1,
                 'CASE' => (int) 0,
-                'CLIENT_VERSION' => $version['client'],
+                'CLIENT_VERSION' => $settings['version']['client'],
                 'CONNECTION_STATUS' => (pg_connection_status(
                     PgSQLEngine::getInstance()->getConnection()
                 ) === PGSQL_CONNECTION_OK)
@@ -68,23 +80,23 @@ class Attributes
                     "PID: %s; Client Encoding: %s; Is Superuser: %s; Session Authorization: %s; Date Style: %s",
                     pg_get_pid(PgSQLEngine::getInstance()->getConnection()),
                     pg_client_encoding(PgSQLEngine::getInstance()->getConnection()),
-                    $version['is_superuser'],
-                    $version['session_authorization'],
-                    $version['DateStyle']
+                    $settings['version']['is_superuser'],
+                    $settings['version']['session_authorization'],
+                    $settings['version']['DateStyle']
                 ),
-                'SERVER_VERSION' => $version['server'],
+                'SERVER_VERSION' => $settings['version']['server'],
                 'TIMEOUT' => (int) Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
                     ? Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
                     : 30,
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) 3,
                 'CHARACTER_SET' => pg_client_encoding(PgSQLEngine::getInstance()->getConnection()),
-                'COLLATION' => ($collate !== false && property_exists($collate, 'lc_collate'))
-                    ? $collate->lc_collate
-                    : false
+                'COLLATION' => ($settings['collate'] !== false && property_exists($settings['collate'], 'lc_collate'))
+                    ? $settings['collate']->lc_collate
+                    : false,
+                default => throw new GenericException("Invalid attribute: $attribute"),
             };
-        };
-
+        }
         PgSQLEngine::getInstance()->setAttributes((array) $result);
     }
 }

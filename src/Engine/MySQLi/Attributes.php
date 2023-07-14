@@ -2,15 +2,17 @@
 
 namespace GenericDatabase\Engine\MySQLi;
 
+use AllowDynamicProperties;
 use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Engine\MySQLi\Options;
 use GenericDatabase\Helpers\GenericException;
 
+#[AllowDynamicProperties]
 class Attributes
 {
-    private static $fetchMode = \MYSQLI_BOTH;
+    private static $fetchMode = MYSQLI_BOTH;
 
-    private static $errorMode = \MYSQLI_REPORT_ERROR;
+    private static $errorMode = MYSQLI_REPORT_ERROR;
 
     private static $variables = [];
 
@@ -68,7 +70,7 @@ class Attributes
         };
     }
 
-    public static function init()
+    public static function settings()
     {
         self::setFetchMode();
         self::setErrorMode();
@@ -76,6 +78,7 @@ class Attributes
         self::setCharacterSet(self::CONNECTION);
         self::setCollation(self::CONNECTION);
         self::setSettings();
+        return self::getSettings();
     }
 
     /**
@@ -100,7 +103,7 @@ class Attributes
 
     private static function setErrorMode()
     {
-        self::$errorMode = (MySQLiEngine::getInstance()->getException()) ? \MYSQLI_REPORT_ERROR : \MYSQLI_REPORT_OFF;
+        self::$errorMode = (MySQLiEngine::getInstance()->getException()) ? MYSQLI_REPORT_ERROR : MYSQLI_REPORT_OFF;
         if (MySQLiEngine::getInstance()->getException()) {
             mysqli_report(self::$errorMode);
         }
@@ -238,17 +241,17 @@ class Attributes
      */
     public static function define(?int $type = self::CONNECTION): void
     {
-        self::init();
+        $settings = self::settings();
         $result = [];
         $keys = array_keys(self::$attributeList);
-
         foreach ($keys as $key) {
-            $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
+            $attribute = self::$attributeList[$key];
+            $result[$attribute] = match ($attribute) {
                 'AUTOCOMMIT' => (int) !Options::getOptions(MySQL::ATTR_AUTOCOMMIT)
                     ? 0
                     : (int) Options::getOptions(MySQL::ATTR_AUTOCOMMIT),
                 'ERRMODE' => (int) self::$errorMode,
-                'CASE' => (int) self::$settings['lower_case_table_names'] === 1 ? 0 : 1,
+                'CASE' => (int) $settings['lower_case_table_names'] === 1 ? 0 : 1,
                 'CLIENT_VERSION' => MySQLiEngine::getInstance()->getConnection()->client_info,
                 'CONNECTION_STATUS' => MySQLiEngine::getInstance()->getConnection()->host_info,
                 'PERSISTENT' => (int) !Options::getOptions(MySQL::ATTR_PERSISTENT)
@@ -256,14 +259,14 @@ class Attributes
                     : (int) Options::getOptions(MySQL::ATTR_PERSISTENT),
                 'SERVER_INFO' => MySQLiEngine::getInstance()->getConnection()->stat(),
                 'SERVER_VERSION' => MySQLiEngine::getInstance()->getConnection()->server_info,
-                'TIMEOUT' => (int) self::$settings['connect_timeout'],
+                'TIMEOUT' => (int) $settings['connect_timeout'],
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => (int) self::$fetchMode,
                 'CHARACTER_SET' => self::getVariables($type)['charset'],
-                'COLLATION' => self::getVariables($type)['collation']
+                'COLLATION' => self::getVariables($type)['collation'],
+                default => throw new GenericException("Invalid attribute: $attribute"),
             };
-        };
-
+        }
         MySQLiEngine::getInstance()->setAttributes((array) $result);
     }
 }

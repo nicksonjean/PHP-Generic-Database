@@ -2,9 +2,12 @@
 
 namespace GenericDatabase\Engine\FBird;
 
+use AllowDynamicProperties;
 use GenericDatabase\Engine\FBirdEngine;
 use GenericDatabase\Engine\FBird\Options;
+use GenericDatabase\Helpers\GenericException;
 
+#[AllowDynamicProperties]
 class Attributes
 {
     /**
@@ -33,12 +36,9 @@ class Attributes
         if ($service === false) {
             return null;
         }
-
         $results = self::getDatabaseInfo($service);
         $serverInfo = self::getServerInfo($service, $results['ods_version']);
-
         ibase_service_detach($service);
-
         return [
             ...$results,
             ...$serverInfo
@@ -63,10 +63,8 @@ class Attributes
         $info = ibase_db_info($service, FBirdEngine::getInstance()->getDatabase(), 4);
         $matches = [];
         preg_match('/information:\s(.*)\sVariable/s', $info, $matches);
-
         $results = [];
         $lines = preg_split("/((\r?\n)|(\r\n?))/", trim($matches[1]));
-
         foreach ($lines as $line) {
             $line = trim($line);
             if (strlen($line) > 0) {
@@ -75,12 +73,9 @@ class Attributes
                 $results[$name] = trim($value) ?: null;
             }
         }
-
-        // Verificar se a chave 'ods_version' está definida
         if (!isset($results['ods_version'])) {
             $results['ods_version'] = null;
         }
-
         return $results;
     }
 
@@ -98,7 +93,6 @@ class Attributes
                 $odsVersion
             ]
         );
-
         return [
             'server_version' => ibase_server_info($service, IBASE_SVC_SERVER_VERSION),
             'server_implementation' => ibase_server_info($service, IBASE_SVC_IMPLEMENTATION),
@@ -122,9 +116,9 @@ class Attributes
         $settings = self::settings();
         $result = [];
         $keys = array_keys(self::$attributeList);
-
         foreach ($keys as $key) {
-            $result[self::$attributeList[$key]] = match (self::$attributeList[$key]) {
+            $attribute = self::$attributeList[$key];
+            $result[$attribute] = match ($attribute) {
                 'AUTOCOMMIT' => (int) 0,
                 'ERRMODE' => (int) 1,
                 'CASE' => (int) 0,
@@ -144,9 +138,9 @@ class Attributes
                 'DEFAULT_FETCH_MODE' => (int) 3,
                 'CHARACTER_SET' => FBirdEngine::getInstance()->getCharset(),
                 'COLLATION' => FBirdEngine::getInstance()->getCharset() === 'utf8' ? 'unicode_ci_ai' : 'none',
+                default => throw new GenericException("Invalid attribute: $attribute"),
             };
-        };
-
+        }
         FBirdEngine::getInstance()->setAttributes((array) $result);
     }
 }
