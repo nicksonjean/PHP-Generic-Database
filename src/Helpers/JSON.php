@@ -15,7 +15,7 @@ class JSON
         if (!is_string($json)) {
             return false;
         }
-        set_error_handler(fn () => null, E_WARNING);
+        set_error_handler(fn (): bool => true, E_WARNING);
         json_decode(file_get_contents($json));
         if (json_last_error() === JSON_ERROR_NONE) {
             restore_error_handler();

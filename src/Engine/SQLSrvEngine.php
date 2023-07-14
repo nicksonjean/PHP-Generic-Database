@@ -129,7 +129,7 @@ class SQLSrvEngine implements InterfaceConnection //NOSONAR
      * @param string $user The user of the database
      * @param string $password The password of the database
      * @param string $database The name of the database
-     * @param int $port The port of the database
+     * @param mixed $port The port of the database
      * @return SQLSrvEngine
      */
     private function realConnect(
@@ -363,10 +363,10 @@ class SQLSrvEngine implements InterfaceConnection //NOSONAR
     /**
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
-     * @param ?int $inst = null Resource name, table or view
+     * @param mixed $inst = null Resource name, table or view
      * @return mixed
      */
-    public function errorCode(?int $inst = null): mixed
+    public function errorCode(mixed $inst = null): mixed
     {
         return sqlsrv_errors($inst);
     }
@@ -374,10 +374,10 @@ class SQLSrvEngine implements InterfaceConnection //NOSONAR
     /**
      * This function returns an array containing error information about the last operation performed by the database.
      *
-     * @param ?int $inst = null Resource name, table or view
+     * @param mixed $inst = null Resource name, table or view
      * @return mixed
      */
-    public function errorInfo(?int $inst = null): mixed
+    public function errorInfo(mixed $inst = null): mixed
     {
         return sqlsrv_errors($inst);
     }

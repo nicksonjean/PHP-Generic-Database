@@ -27,7 +27,7 @@ trait Cleaner
      * @param string $name Argument to be tested
      * @return void
      */
-    public function __unset(string $name)
+    public function __unset(string $name): void
     {
         unset($this->property[$name]);
     }

@@ -27,7 +27,7 @@ use GenericDatabase\Engine\FBird\Transaction;
  * @method static FBirdEngine|static setHost(mixed $value): void
  * @method static FBirdEngine|static getHost($p = null): mixed
  * @method static FBirdEngine|static setPort(mixed $value): void
- * @method static FBirdEngine|static getPort($p = null): int
+ * @method static FBirdEngine|static getPort($p = null): mixed
  * @method static FBirdEngine|static setUser(mixed $value): void
  * @method static FBirdEngine|static getUser($p = null): mixed
  * @method static FBirdEngine|static setPassword(mixed $value): void
@@ -126,7 +126,7 @@ class FBirdEngine implements InterfaceConnection //NOSONAR
      * @param string $user The user of the database
      * @param string $password The password of the database
      * @param string $database The name of the database
-     * @param int $port The port of the database
+     * @param mixed $port The port of the database
      * @return FBirdEngine
      */
     private function realConnect(
@@ -361,10 +361,10 @@ class FBirdEngine implements InterfaceConnection //NOSONAR
     /**
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
-     * @param ?int $inst = null Resource name, table or view
+     * @param mixed $inst = null Resource name, table or view
      * @return int|false
      */
-    public function errorCode(?int $inst = null): int|false
+    public function errorCode(mixed $inst = null): int|false
     {
         return ibase_errcode();
     }
@@ -372,10 +372,10 @@ class FBirdEngine implements InterfaceConnection //NOSONAR
     /**
      * This function returns an array containing error information about the last operation performed by the database.
      *
-     * @param ?int $inst = null Resource name, table or view
+     * @param mixed $inst = null Resource name, table or view
      * @return string|false
      */
-    public function errorInfo(?int $inst = null): string|false
+    public function errorInfo(mixed $inst = null): string|false
     {
         return ibase_errmsg();
     }

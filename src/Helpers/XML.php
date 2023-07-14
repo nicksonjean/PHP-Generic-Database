@@ -18,7 +18,7 @@ class XML
         if (!is_string($xml)) {
             return false;
         }
-        set_error_handler(fn () => null, E_WARNING);
+        set_error_handler(fn (): bool => true, E_WARNING);
         $xml2 = simpleXML_load_file($xml, "SimpleXMLElement", LIBXML_NOCDATA);
         if ($xml2 === false) {
             restore_error_handler();

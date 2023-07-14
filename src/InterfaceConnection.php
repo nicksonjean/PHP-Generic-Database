@@ -127,16 +127,16 @@ interface InterfaceConnection
     /**
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
-     * @param ?int $inst = null Resource name, table or view
+     * @param mixed $inst = null Resource name, table or view
      * @return mixed
      */
-    public function errorCode(?int $inst = null): mixed;
+    public function errorCode(mixed $inst = null): mixed;
 
     /**
      * This function returns an array containing error information about the last operation performed by the database.
      *
-     * @param ?int $inst = null Resource name, table or view
+     * @param mixed $inst = null Resource name, table or view
      * @return mixed
      */
-    public function errorInfo(?int $inst = null): mixed;
+    public function errorInfo(mixed $inst = null): mixed;
 }
