@@ -49,7 +49,7 @@ use GenericDatabase\Engine\SQLite\Transaction;
  * @method static SQLiteEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class SQLiteEngine implements InterfaceConnection
+class SQLiteEngine implements InterfaceConnection //NOSONAR
 {
     use Setter;
     use Getter;

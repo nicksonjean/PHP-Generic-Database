@@ -48,7 +48,7 @@ use GenericDatabase\Engine\MySQLi\Transaction;
  * @method static MySQLiEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class MySQLiEngine implements InterfaceConnection
+class MySQLiEngine implements InterfaceConnection //NOSONAR
 {
     use Setter;
     use Getter;

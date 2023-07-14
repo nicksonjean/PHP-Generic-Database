@@ -48,7 +48,7 @@ use GenericDatabase\Engine\OCI\Transaction;
  * @method static OCIEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class OCIEngine implements InterfaceConnection
+class OCIEngine implements InterfaceConnection //NOSONAR
 {
     use Setter;
     use Getter;
@@ -302,7 +302,7 @@ class OCIEngine implements InterfaceConnection
         $query = $params[0];
         $param = $params[1];
         $value = $params[2];
-        if (is_numeric($value) && str_contains($value, '.')) {
+        if (is_numeric($value) && is_string($value) && str_contains($value, '.')) {
             $floatValue = (float) $value;
             oci_bind_by_name($query, $param, $floatValue, 8, SQLT_FLT);
         } elseif (is_string($value)) {

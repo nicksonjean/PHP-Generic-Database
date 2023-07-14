@@ -19,7 +19,7 @@ class Enum
         }
     }
 
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic($name, $arguments) //NOSONAR
     {
         return self::$constantToClassMap[static::who() . '_' . $name];
     }

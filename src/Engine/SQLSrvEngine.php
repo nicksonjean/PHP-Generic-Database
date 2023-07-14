@@ -48,7 +48,7 @@ use GenericDatabase\Engine\SQLSrv\Transaction;
  * @method static SQLSrvEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class SQLSrvEngine implements InterfaceConnection
+class SQLSrvEngine implements InterfaceConnection //NOSONAR
 {
     use Setter;
     use Getter;

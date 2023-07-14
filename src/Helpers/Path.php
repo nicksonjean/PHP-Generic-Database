@@ -29,7 +29,7 @@ class Path
                 break;
             }
             array_unshift($append, array_pop($search));
-        };
+        }
         if ($match === false) {
             $match = getcwd();
         }

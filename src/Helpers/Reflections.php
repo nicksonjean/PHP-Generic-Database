@@ -2,7 +2,9 @@
 
 namespace GenericDatabase\Helpers;
 
-use Exception;
+use ReflectionClass;
+use ReflectionMethod;
+use GenericDatabase\Helpers\GenericException;
 
 class Reflections
 {
@@ -22,9 +24,9 @@ class Reflections
     {
         try {
             $result = call_user_func($class . '::' . self::$defaultMethod);
-        } catch (Exception $e) {
+        } catch (GenericException $error) {
             $message = sprintf('Method %s not founded in the class %s', self::$defaultMethod, $class);
-            throw new Exception($message);
+            throw new GenericException($message);
         }
         return $result;
     }
@@ -38,11 +40,11 @@ class Reflections
     public static function isSingletonMethodExits($class): mixed
     {
         try {
-            $method = new \ReflectionMethod($class, self::$defaultMethod);
+            $method = new ReflectionMethod($class, self::$defaultMethod);
             $result = ($method->isStatic()) ? true : false;
-        } catch (Exception) {
+        } catch (GenericException) {
             $message = sprintf('Method %s not founded in the class %s', self::$defaultMethod, $class);
-            throw new Exception($message);
+            throw new GenericException($message);
         }
         return $result;
     }
@@ -55,7 +57,7 @@ class Reflections
      */
     public static function getClassInstance($class): mixed
     {
-        return new \ReflectionClass($class);
+        return new ReflectionClass($class);
     }
 
     /**
@@ -90,9 +92,6 @@ class Reflections
      */
     public static function getClassPropertyName($class, $prop): mixed
     {
-        $reflection = self::getClassInstance($class);
-        $property = $reflection->getProperty($prop);
-        $property->setAccessible(true);
-        return $property->getValue(null);
+        return self::getClassInstance($class)->getProperty($prop)->getValue(null);
     }
 }

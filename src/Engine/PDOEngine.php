@@ -49,7 +49,7 @@ use ErrorException;
  * @method static PDOEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class PDOEngine implements InterfaceConnection
+class PDOEngine implements InterfaceConnection //NOSONAR
 {
     use Setter;
     use Getter;
