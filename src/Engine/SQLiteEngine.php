@@ -6,10 +6,9 @@ namespace GenericDatabase\Engine;
 
 use AllowDynamicProperties;
 use Exception;
+use GenericDatabase\IConnection;
 use GenericDatabase\Helpers\GenericException;
-use SQLite3;
 use GenericDatabase\Engine\SQLite\SQLite;
-use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
@@ -21,6 +20,7 @@ use GenericDatabase\Engine\SQLite\Attributes;
 use GenericDatabase\Engine\SQLite\DSN;
 use GenericDatabase\Engine\SQLite\Dump;
 use GenericDatabase\Engine\SQLite\Transaction;
+use SQLite3;
 
 /**
  * @method static SQLiteEngine|static setDriver(mixed $value): void
@@ -49,7 +49,7 @@ use GenericDatabase\Engine\SQLite\Transaction;
  * @method static SQLiteEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class SQLiteEngine implements InterfaceConnection //NOSONAR
+class SQLiteEngine implements IConnection //NOSONAR
 {
     use Setter;
     use Getter;
@@ -159,6 +159,40 @@ class SQLiteEngine implements InterfaceConnection //NOSONAR
             $this->setConnected(false);
             Errors::throw($error);
         }
+    }
+
+    /**
+     * Pings a server connection, or tries to reconnect if the connection has gone down
+     *
+     * @param mixed $connection A link identifier returned by an simple query
+     * @return bool
+     */
+    public function ping(mixed $connection): bool
+    {
+        return $this->query($connection, 'SELECT 1') !== false;
+    }
+
+    /**
+     * Disconnects from a database.
+     *
+     * @return void
+     */
+    public function disconnect(): void
+    {
+        if ($this->getConnection() !== null && $this->ping($this->getConnection())) {
+            $this->getConnection()->close();
+            $this->connection = null;
+        }
+    }
+
+    /**
+     * Returns true when connection was established.
+     *
+     * @return bool
+     */
+    public function isConnected(): bool
+    {
+        return (bool) $this->getConnected();
     }
 
     /**

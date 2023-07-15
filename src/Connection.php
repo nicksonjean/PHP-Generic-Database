@@ -41,15 +41,15 @@ class Connection
     /**
      * Property of the type object who define the strategy
      */
-    private InterfaceConnection $strategy;
+    private IConnection $strategy;
 
     /**
      * Defines the strategy instance
      *
-     * @param InterfaceConnection $strategy
+     * @param IConnection $strategy
      * @return Connection
      */
-    public function setStrategy(InterfaceConnection $strategy): Connection
+    public function setStrategy(IConnection $strategy): Connection
     {
         $this->strategy = $strategy;
         return $this;
@@ -58,9 +58,9 @@ class Connection
     /**
      * Get the strategy instance
      *
-     * @return InterfaceConnection
+     * @return IConnection
      */
-    public function getStrategy(): InterfaceConnection
+    public function getStrategy(): IConnection
     {
         return $this->strategy;
     }

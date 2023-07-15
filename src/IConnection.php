@@ -2,24 +2,46 @@
 
 namespace GenericDatabase;
 
-interface InterfaceConnection
+interface IConnection
 {
     /**
-     * This method is used to establish a database connection and set the connection instance
+     * Connects to a database.
      *
-     * @return InterfaceConnection
+     * @return IConnection
      */
-    public function connect(): InterfaceConnection;
+    public function connect(): IConnection;
 
     /**
-     * This method is used to get the database connection instance
+     * Pings a server connection, or tries to reconnect if the connection has gone down
+     *
+     * @param mixed $connection A link identifier returned by mysqli_connect() or mysqli_init()
+     * @return bool
+     */
+    public function ping(mixed $connection): bool;
+
+    /**
+     * Disconnects from a database.
+     *
+     * @return void
+     */
+    public function disconnect(): void;
+
+    /**
+     * Returns true when connection was established.
+     *
+     * @return bool
+     */
+    public function isConnected(): bool;
+
+    /**
+     * This method is used to get the database connection instance.
      *
      * @return mixed
      */
     public function getConnection(): mixed;
 
     /**
-     * This method is used to assign the database connection instance
+     * This method is used to assign the database connection instance.
      *
      * @param mixed $connection Sets an instance of the connection with the database
      * @return mixed

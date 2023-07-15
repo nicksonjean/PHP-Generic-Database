@@ -6,7 +6,7 @@ namespace GenericDatabase\Engine;
 
 use AllowDynamicProperties;
 use Exception;
-use GenericDatabase\InterfaceConnection;
+use GenericDatabase\IConnection;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
@@ -49,7 +49,7 @@ use ErrorException;
  * @method static PDOEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class PDOEngine implements InterfaceConnection //NOSONAR
+class PDOEngine implements IConnection //NOSONAR
 {
     use Setter;
     use Getter;
@@ -164,6 +164,70 @@ class PDOEngine implements InterfaceConnection //NOSONAR
             $this->setConnected(false);
             Errors::throw($error);
         }
+    }
+
+    /**
+     * Pings a server connection, or tries to reconnect if the connection has gone down
+     *
+     * @param mixed $connection A link identifier returned by an simple query
+     * @return bool
+     */
+    public function ping(mixed $connection): bool
+    {
+        return $this->query($connection, 'SELECT 1') !== false;
+    }
+
+    /**
+     * Disconnects from a database.
+     *
+     * @return void
+     */
+    public function disconnect(): void
+    {
+        if ($this->getConnection() !== null && $this->ping($this->getConnection())) {
+            switch ($this->getDriver()) {
+                case 'mysql':
+                    $this->query('KILL CONNECTION CONNECTION_ID();');
+                    break;
+                case 'pgsql':
+                    $this->query('SELECT pg_terminate_backend (pg_backend_pid());');
+                    break;
+                case 'oci':
+                    $this->query('ALTER SYSTEM DISCONNECT SESSION;');
+                    break;
+                case 'sqlsrv':
+                case 'mssql':
+                    $this->query('DECLARE @killSpid INT; ' .
+                        'SET @killSpid=(SELECT spid FROM sys.sysprocesses WHERE dbid = DB_ID() AND spid <> @@SPID); ' .
+                        'EXEC(\'KILL \' + CAST(@killSpid AS NVARCHAR));');
+                    break;
+                case 'ibase':
+                case 'firebird':
+                case 'dblib':
+                case 'sybase':
+                    $this->query('DISCONNECT;');
+                    break;
+                case 'sqlite':
+                    $this->query('PRAGMA foreign_keys = OFF;');
+                    $this->query('PRAGMA busy_timeout = 0');
+                    $this->query('PRAGMA wal_autocheckpoint = 1000');
+                    $this->query('PRAGMA optimize');
+                    break;
+                default:
+                    break;
+            }
+            $this->connection = null;
+        }
+    }
+
+    /**
+     * Returns true when connection was established.
+     *
+     * @return bool
+     */
+    public function isConnected(): bool
+    {
+        return (bool) $this->getConnected();
     }
 
     /**

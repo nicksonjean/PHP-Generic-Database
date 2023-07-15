@@ -6,9 +6,9 @@ namespace GenericDatabase\Engine;
 
 use AllowDynamicProperties;
 use Exception;
+use GenericDatabase\IConnection;
 use GenericDatabase\Engine\FBird\FBird;
 use GenericDatabase\Helpers\GenericException;
-use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
@@ -48,7 +48,7 @@ use GenericDatabase\Engine\FBird\Transaction;
  * @method static FBirdEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class FBirdEngine implements InterfaceConnection //NOSONAR
+class FBirdEngine implements IConnection //NOSONAR
 {
     use Setter;
     use Getter;
@@ -171,6 +171,40 @@ class FBirdEngine implements InterfaceConnection //NOSONAR
             $this->setConnected(false);
             Errors::throw($error);
         }
+    }
+
+    /**
+     * Pings a server connection, or tries to reconnect if the connection has gone down
+     *
+     * @param mixed $connection A link identifier returned by an simple query
+     * @return bool
+     */
+    public function ping(mixed $connection): bool
+    {
+        return $this->query($connection, 'SELECT 1 FROM RDB$DATABASE') !== false;
+    }
+
+    /**
+     * Disconnects from a database.
+     *
+     * @return void
+     */
+    public function disconnect(): void
+    {
+        if ($this->getConnection() !== null && $this->ping($this->getConnection())) {
+            ibase_close($this->getConnection());
+            $this->connection = null;
+        }
+    }
+
+    /**
+     * Returns true when connection was established.
+     *
+     * @return bool
+     */
+    public function isConnected(): bool
+    {
+        return (bool) $this->getConnected();
     }
 
     /**

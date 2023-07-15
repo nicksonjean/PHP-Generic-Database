@@ -6,9 +6,9 @@ namespace GenericDatabase\Engine;
 
 use AllowDynamicProperties;
 use Exception;
+use GenericDatabase\IConnection;
 use GenericDatabase\Engine\OCI\OCI;
 use GenericDatabase\Helpers\GenericException;
-use GenericDatabase\InterfaceConnection;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
@@ -48,7 +48,7 @@ use GenericDatabase\Engine\OCI\Transaction;
  * @method static OCIEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class OCIEngine implements InterfaceConnection //NOSONAR
+class OCIEngine implements IConnection //NOSONAR
 {
     use Setter;
     use Getter;
@@ -174,6 +174,41 @@ class OCIEngine implements InterfaceConnection //NOSONAR
             $this->setConnected(false);
             Errors::throw($error);
         }
+    }
+
+    /**
+     * Pings a server connection, or tries to reconnect if the connection has gone down
+     *
+     * @param mixed $connection A link identifier returned by an simple query
+     * @return bool
+     */
+    public function ping(mixed $connection): bool
+    {
+        $result = $this->query($connection, 'SELECT 1 FROM DUAL');
+        return $this->exec($result) !== false;
+    }
+
+    /**
+     * Disconnects from a database.
+     *
+     * @return void
+     */
+    public function disconnect(): void
+    {
+        if ($this->getConnection() !== null && $this->ping($this->getConnection())) {
+            oci_close($this->getConnection());
+            $this->connection = null;
+        }
+    }
+
+    /**
+     * Returns true when connection was established.
+     *
+     * @return bool
+     */
+    public function isConnected(): bool
+    {
+        return (bool) $this->getConnected();
     }
 
     /**
