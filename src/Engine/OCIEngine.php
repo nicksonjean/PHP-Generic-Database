@@ -179,7 +179,7 @@ class OCIEngine implements IConnection
     /**
      * Pings a server connection, or tries to reconnect if the connection has gone down
      *
-     * @param mixed $connection A link identifier returned by an simple query
+     * @param mixed $connection A link identifier returned by a simple query
      * @return bool
      */
     public function ping(mixed $connection): bool

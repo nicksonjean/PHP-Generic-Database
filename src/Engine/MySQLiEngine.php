@@ -182,7 +182,7 @@ class MySQLiEngine implements IConnection
      */
     public function ping(mixed $connection): bool
     {
-        return $this->isConnected() ? mysqli_ping($connection) : false;
+        return $this->isConnected() && mysqli_ping($connection);
     }
 
     /**
