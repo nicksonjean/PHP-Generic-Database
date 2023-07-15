@@ -49,7 +49,7 @@ use SQLite3;
  * @method static SQLiteEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class SQLiteEngine implements IConnection //NOSONAR
+class SQLiteEngine implements IConnection
 {
     use Setter;
     use Getter;

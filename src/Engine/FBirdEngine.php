@@ -48,7 +48,7 @@ use GenericDatabase\Engine\FBird\Transaction;
  * @method static FBirdEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class FBirdEngine implements IConnection //NOSONAR
+class FBirdEngine implements IConnection
 {
     use Setter;
     use Getter;

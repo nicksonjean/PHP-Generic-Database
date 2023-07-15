@@ -48,7 +48,7 @@ use GenericDatabase\Engine\OCI\Transaction;
  * @method static OCIEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class OCIEngine implements IConnection //NOSONAR
+class OCIEngine implements IConnection
 {
     use Setter;
     use Getter;

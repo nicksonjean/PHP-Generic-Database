@@ -48,7 +48,7 @@ use GenericDatabase\Engine\PgSQL\Transaction;
  * @method static PgSQLEngine|static getException($p = null): mixed
  */
 #[AllowDynamicProperties]
-class PgSQLEngine implements IConnection //NOSONAR
+class PgSQLEngine implements IConnection
 {
     use Setter;
     use Getter;
