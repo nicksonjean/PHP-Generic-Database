@@ -4,6 +4,8 @@ namespace GenericDatabase\Engine\SQLite;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Engine\SQLite\Options;
+use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 use SQLite3;
 
@@ -48,14 +50,21 @@ class Attributes
         $settings = self::settings();
         $result = [];
         $keys = array_keys(self::$attributeList);
+        $memory = SQLiteEngine::getInstance()->getDatabase() === 'memory' ? '' : ' via File';
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
                 'AUTOCOMMIT', 'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['versionString'],
-                'CONNECTION_STATUS' => SQLiteEngine::getInstance()->getConnection()
-                    ? 'Connection OK; waiting to send.'
+                'CONNECTION_STATUS' => (Compare::connection(
+                    SQLiteEngine::getInstance()->getConnection()
+                ) === 'sqlite')
+                    ? sprintf(
+                        'Connection OK in %s%s; waiting to send.',
+                        SQLiteEngine::getInstance()->getDatabase(),
+                        $memory
+                    )
                     : 'Connection failed;',
                 'PERSISTENT' => (int) !Options::getOptions(SQLite::ATTR_PERSISTENT)
                     ? 0

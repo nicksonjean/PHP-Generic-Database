@@ -4,6 +4,8 @@ namespace GenericDatabase\Engine\SQLSrv;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLSrvEngine;
+use GenericDatabase\Engine\SQLSrv\Options;
+use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]
@@ -57,8 +59,13 @@ class Attributes
                 'AUTOCOMMIT', 'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['client_version'],
-                'CONNECTION_STATUS' => SQLSrvEngine::getInstance()->getConnection()
-                    ? 'Connection OK; waiting to send.'
+                'CONNECTION_STATUS' => (Compare::connection(
+                    SQLSrvEngine::getInstance()->getConnection()
+                ) === 'sqlsrv')
+                    ? sprintf(
+                        'Connection OK in %s via TCP/IP; waiting to send.',
+                        SQLSrvEngine::getInstance()->getHost()
+                    )
                     : 'Connection failed;',
                 'PERSISTENT' => (int) !Options::getOptions(SQLSrv::ATTR_PERSISTENT)
                     ? 0

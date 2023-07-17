@@ -4,48 +4,52 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\FBird\FBird;
-use GenericDatabase\Helpers\GenericException;
-use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Traits\Setter;
-use GenericDatabase\Traits\Getter;
-use GenericDatabase\Traits\Cleaner;
-use GenericDatabase\Traits\Singleton;
 use GenericDatabase\Engine\FBird\Arguments;
 use GenericDatabase\Engine\FBird\Options;
 use GenericDatabase\Engine\FBird\Attributes;
 use GenericDatabase\Engine\FBird\DSN;
 use GenericDatabase\Engine\FBird\Dump;
 use GenericDatabase\Engine\FBird\Transaction;
+use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\Compare;
+use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Traits\Setter;
+use GenericDatabase\Traits\Getter;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
 
 /**
+ * Dynamic and Static container class for FBirdEngine connections.
+ *
  * @method static FBirdEngine|static setDriver(mixed $value): void
- * @method static FBirdEngine|static getDriver($p = null): mixed
+ * @method static FBirdEngine|static getDriver($value = null): mixed
  * @method static FBirdEngine|static setHost(mixed $value): void
- * @method static FBirdEngine|static getHost($p = null): mixed
+ * @method static FBirdEngine|static getHost($value = null): mixed
  * @method static FBirdEngine|static setPort(mixed $value): void
- * @method static FBirdEngine|static getPort($p = null): mixed
+ * @method static FBirdEngine|static getPort($value = null): mixed
  * @method static FBirdEngine|static setUser(mixed $value): void
- * @method static FBirdEngine|static getUser($p = null): mixed
+ * @method static FBirdEngine|static getUser($value = null): mixed
  * @method static FBirdEngine|static setPassword(mixed $value): void
- * @method static FBirdEngine|static getPassword($p = null): mixed
+ * @method static FBirdEngine|static getPassword($value = null): mixed
  * @method static FBirdEngine|static setDatabase(mixed $value): void
- * @method static FBirdEngine|static getDatabase($p = null): mixed
+ * @method static FBirdEngine|static getDatabase($value = null): mixed
  * @method static FBirdEngine|static setOptions(mixed $value): void
- * @method static FBirdEngine|static getOptions($p = null): mixed
+ * @method static FBirdEngine|static getOptions($value = null): mixed
  * @method static FBirdEngine|static setConnected(mixed $value): void
- * @method static FBirdEngine|static getConnected($p = null): mixed
+ * @method static FBirdEngine|static getConnected($value = null): mixed
  * @method static FBirdEngine|static setDsn(mixed $value): void
- * @method static FBirdEngine|static getDsn($p = null): mixed
+ * @method static FBirdEngine|static getDsn($value = null): mixed
  * @method static FBirdEngine|static setAttributes(mixed $value): void
- * @method static FBirdEngine|static getAttributes($p = null): mixed
+ * @method static FBirdEngine|static getAttributes($value = null): mixed
  * @method static FBirdEngine|static setCharset(mixed $value): void
- * @method static FBirdEngine|static getCharset($p = null): mixed
+ * @method static FBirdEngine|static getCharset($value = null): mixed
  * @method static FBirdEngine|static setException(mixed $value): void
- * @method static FBirdEngine|static getException($p = null): mixed
+ * @method static FBirdEngine|static getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class FBirdEngine implements IConnection
@@ -97,6 +101,7 @@ class FBirdEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return FBirdEngine
+     * @throws GenericException
      */
     private function preConnect(): FBirdEngine
     {
@@ -128,11 +133,12 @@ class FBirdEngine implements IConnection
      * @param string $database The name of the database
      * @param mixed $port The port of the database
      * @return FBirdEngine
+     * @throws Exception
      */
     private function realConnect(
         string $host,
         string $user,
-        string $password,
+        #[SensitiveParameter] string $password,
         string $database,
         mixed $port
     ): FBirdEngine {
@@ -149,6 +155,7 @@ class FBirdEngine implements IConnection
      * This method is used to establish a database connection and set the connection instance
      *
      * @return FBirdEngine
+     * @throws Exception
      */
     public function connect(): FBirdEngine
     {
@@ -168,7 +175,7 @@ class FBirdEngine implements IConnection
                 ->setConnected(true);
             return $this;
         } catch (Exception $error) {
-            $this->setConnected(false);
+            $this->disconnect();
             Errors::throw($error);
         }
     }
@@ -176,12 +183,11 @@ class FBirdEngine implements IConnection
     /**
      * Pings a server connection, or tries to reconnect if the connection has gone down
      *
-     * @param mixed $connection A link identifier returned by a simple query
      * @return bool
      */
-    public function ping(mixed $connection): bool
+    public function ping(): bool
     {
-        return $this->query($connection, 'SELECT 1 FROM RDB$DATABASE') !== false;
+        return $this->query('SELECT 1 FROM RDB$DATABASE') !== false;
     }
 
     /**
@@ -191,9 +197,14 @@ class FBirdEngine implements IConnection
      */
     public function disconnect(): void
     {
-        if ($this->getConnection() !== null && $this->ping($this->getConnection())) {
-            ibase_close($this->getConnection());
-            $this->connection = null;
+        if ($this->isConnected()) {
+            $this->setConnected(false);
+            if (!Options::getOptions(FBird::ATTR_PERSISTENT)) {
+                if (Compare::connection($this->getConnection()) === 'fbird/ibase') {
+                    ibase_close($this->getConnection());
+                }
+                $this->setConnection(null);
+            }
         }
     }
 
@@ -204,16 +215,16 @@ class FBirdEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (bool) $this->getConnected();
+        return (Compare::connection($this->getConnection()) === 'fbird/ibase') && $this->getConnected();
     }
 
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|Exception
-     * @throws Exception
+     * @return string|GenericException
+     * @throws GenericException
      */
-    private function parseDsn(): string|Exception
+    private function parseDsn(): string|GenericException
     {
         return DSN::parseDsn();
     }
@@ -336,8 +347,8 @@ class FBirdEngine implements IConnection
         $query = $params[0];
         $transaction = isset($params[1]) ? (string) $params[1] : null;
         return $transaction === null
-            ? ibase_prepare($this->getInstance()->getConnection(), $query, null)
-            : ibase_prepare($this->getInstance()->getConnection(), $transaction, $query);
+            ? ibase_prepare($this->getConnection(), $query, null)
+            : ibase_prepare($this->getConnection(), $transaction, $query);
     }
 
     /**
@@ -349,7 +360,7 @@ class FBirdEngine implements IConnection
     public function query(mixed ...$params): mixed
     {
         $query = $params[0];
-        return ibase_query($this->getInstance()->getConnection(), $query);
+        return ibase_query($this->getConnection(), $query);
     }
 
     /**

@@ -43,6 +43,11 @@ class GenericException extends Exception implements Throwable, Stringable
         return $this->severity;
     }
 
+    final protected function noop(mixed $value): mixed
+    {
+        return $value;
+    }
+
     /**
      * Constructs the Exception.
      *
@@ -62,11 +67,11 @@ class GenericException extends Exception implements Throwable, Stringable
         $line = null,
         $previous = null
     ) {
-        var_dump($message);
-        var_dump($code);
-        var_dump($severity);
-        var_dump($filename);
-        var_dump($line);
-        var_dump($previous);
+        $this->noop($message);
+        $this->noop($code);
+        $this->noop($severity);
+        $this->noop($filename);
+        $this->noop($line);
+        $this->noop($previous);
     }
 }

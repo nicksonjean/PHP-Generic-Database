@@ -5,6 +5,7 @@ namespace GenericDatabase\Engine\FBird;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\FBirdEngine;
 use GenericDatabase\Engine\FBird\Options;
+use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]
@@ -123,8 +124,13 @@ class Attributes
                 'AUTOCOMMIT', 'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['server_version'],
-                'CONNECTION_STATUS' => FBirdEngine::getInstance()->getConnection()
-                    ? 'Connection OK; waiting to send.'
+                'CONNECTION_STATUS' => (Compare::connection(
+                    FBirdEngine::getInstance()->getConnection()
+                ) === 'fbird/ibase')
+                    ? sprintf(
+                        'Connection OK in %s via TCP/IP; waiting to send.',
+                        FBirdEngine::getInstance()->getHost()
+                    )
                     : 'Connection failed;',
                 'PERSISTENT' => (int) !Options::getOptions(FBird::ATTR_PERSISTENT)
                     ? 0

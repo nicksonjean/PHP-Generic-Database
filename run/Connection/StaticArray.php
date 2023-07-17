@@ -1,20 +1,19 @@
 <?php
 
-use
-    GenericDatabase\Connection,
-
-    GenericDatabase\Engine\MySQli\MySQL,
-    GenericDatabase\Engine\PgSQL\PgSQL,
-    GenericDatabase\Engine\SQLSrv\SQLSrv,
-    GenericDatabase\Engine\OCI\OCI,
-    GenericDatabase\Engine\FBird\FBird,
-    GenericDatabase\Engine\SQLite\SQLite;
+use GenericDatabase\Connection;
+use GenericDatabase\Engine\MySQli\MySQL;
+use GenericDatabase\Engine\PgSQL\PgSQL;
+use GenericDatabase\Engine\SQLSrv\SQLSrv;
+use GenericDatabase\Engine\OCI\OCI;
+use GenericDatabase\Engine\FBird\FBird;
+use GenericDatabase\Engine\SQLite\SQLite;
+use Dotenv\Dotenv;
 
 define("PATH_ROOT", dirname(dirname(__DIR__)));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$load = Dotenv\Dotenv::createImmutable(PATH_ROOT)->load();
+Dotenv::createImmutable(PATH_ROOT)->load();
 
 $context = Connection::new([
     'engine' => 'mysqli',

@@ -4,49 +4,53 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\IConnection;
-use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Engine\SQLite\SQLite;
-use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Traits\Setter;
-use GenericDatabase\Traits\Getter;
-use GenericDatabase\Traits\Cleaner;
-use GenericDatabase\Traits\Singleton;
 use GenericDatabase\Engine\SQLite\Arguments;
 use GenericDatabase\Engine\SQLite\Options;
 use GenericDatabase\Engine\SQLite\Attributes;
 use GenericDatabase\Engine\SQLite\DSN;
 use GenericDatabase\Engine\SQLite\Dump;
 use GenericDatabase\Engine\SQLite\Transaction;
+use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\Compare;
+use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Traits\Setter;
+use GenericDatabase\Traits\Getter;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
 use SQLite3;
 
 /**
+ * Dynamic and Static container class for SQLiteEngine connections.
+ *
  * @method static SQLiteEngine|static setDriver(mixed $value): void
- * @method static SQLiteEngine|static getDriver($p = null): mixed
+ * @method static SQLiteEngine|static getDriver($value = null): mixed
  * @method static SQLiteEngine|static setHost(mixed $value): void
- * @method static SQLiteEngine|static getHost($p = null): mixed
+ * @method static SQLiteEngine|static getHost($value = null): mixed
  * @method static SQLiteEngine|static setPort(mixed $value): void
- * @method static SQLiteEngine|static getPort($p = null): mixed
+ * @method static SQLiteEngine|static getPort($value = null): mixed
  * @method static SQLiteEngine|static setUser(mixed $value): void
- * @method static SQLiteEngine|static getUser($p = null): mixed
+ * @method static SQLiteEngine|static getUser($value = null): mixed
  * @method static SQLiteEngine|static setPassword(mixed $value): void
- * @method static SQLiteEngine|static getPassword($p = null): mixed
+ * @method static SQLiteEngine|static getPassword($value = null): mixed
  * @method static SQLiteEngine|static setDatabase(mixed $value): void
- * @method static SQLiteEngine|static getDatabase($p = null): mixed
+ * @method static SQLiteEngine|static getDatabase($value = null): mixed
  * @method static SQLiteEngine|static setOptions(mixed $value): void
- * @method static SQLiteEngine|static getOptions($p = null): mixed
+ * @method static SQLiteEngine|static getOptions($value = null): mixed
  * @method static SQLiteEngine|static setConnected(mixed $value): void
- * @method static SQLiteEngine|static getConnected($p = null): mixed
+ * @method static SQLiteEngine|static getConnected($value = null): mixed
  * @method static SQLiteEngine|static setDsn(mixed $value): void
- * @method static SQLiteEngine|static getDsn($p = null): mixed
+ * @method static SQLiteEngine|static getDsn($value = null): mixed
  * @method static SQLiteEngine|static setAttributes(mixed $value): void
- * @method static SQLiteEngine|static getAttributes($p = null): mixed
+ * @method static SQLiteEngine|static getAttributes($value = null): mixed
  * @method static SQLiteEngine|static setCharset(mixed $value): void
- * @method static SQLiteEngine|static getCharset($p = null): mixed
+ * @method static SQLiteEngine|static getCharset($value = null): mixed
  * @method static SQLiteEngine|static setException(mixed $value): void
- * @method static SQLiteEngine|static getException($p = null): mixed
+ * @method static SQLiteEngine|static getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class SQLiteEngine implements IConnection
@@ -98,6 +102,7 @@ class SQLiteEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return SQLiteEngine
+     * @throws GenericException
      */
     private function preConnect(): SQLiteEngine
     {
@@ -126,12 +131,14 @@ class SQLiteEngine implements IConnection
      * @param string $database The path of the database file
      * @param int|null $flags = null Flags of the database behavior
      * @return SQLiteEngine
+     * @throws Exception
      */
     private function realConnect(string $database, int $flags = null): SQLiteEngine
     {
         if (!$flags) {
             $flags = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE;
         }
+        $database = (string) $database !== 'memory' ? $database : ':' . $database . ':';
         $this->setConnection(new SQLite3($database, $flags));
         return $this;
     }
@@ -140,6 +147,7 @@ class SQLiteEngine implements IConnection
      * This method is used to establish a database connection and set the connection instance
      *
      * @return SQLiteEngine
+     * @throws Exception
      */
     public function connect(): SQLiteEngine
     {
@@ -156,7 +164,7 @@ class SQLiteEngine implements IConnection
                 ->setConnected(true);
             return $this;
         } catch (Exception $error) {
-            $this->setConnected(false);
+            $this->disconnect();
             Errors::throw($error);
         }
     }
@@ -164,12 +172,11 @@ class SQLiteEngine implements IConnection
     /**
      * Pings a server connection, or tries to reconnect if the connection has gone down
      *
-     * @param mixed $connection A link identifier returned by a simple query
      * @return bool
      */
-    public function ping(mixed $connection): bool
+    public function ping(): bool
     {
-        return $this->query($connection, 'SELECT 1') !== false;
+        return $this->query('SELECT 1') !== false;
     }
 
     /**
@@ -179,9 +186,14 @@ class SQLiteEngine implements IConnection
      */
     public function disconnect(): void
     {
-        if ($this->getConnection() !== null && $this->ping($this->getConnection())) {
-            $this->getConnection()->close();
-            $this->connection = null;
+        if ($this->isConnected()) {
+            $this->setConnected(false);
+            if (!Options::getOptions(SQLite::ATTR_PERSISTENT)) {
+                if (Compare::connection($this->getConnection()) === 'sqlite3') {
+                    $this->getConnection()->close();
+                }
+                $this->setConnection(null);
+            }
         }
     }
 
@@ -192,16 +204,16 @@ class SQLiteEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (bool) $this->getConnected();
+        return (Compare::connection($this->getConnection()) === 'sqlite3') && $this->getConnected();
     }
 
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|Exception
-     * @throws Exception
+     * @return string|GenericException
+     * @throws GenericException
      */
-    private function parseDsn(): string|Exception
+    private function parseDsn(): string|GenericException
     {
         return DSN::parseDsn();
     }
@@ -292,7 +304,7 @@ class SQLiteEngine implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return $this->getInstance()->getConnection()->lastInsertRowID();
+        return $this->getConnection()->lastInsertRowID();
     }
 
     /**
@@ -322,7 +334,7 @@ class SQLiteEngine implements IConnection
     public function prepare(mixed ...$params): mixed
     {
         $query = $params[0];
-        return $this->getInstance()->getConnection()->prepare($query);
+        return $this->getConnection()->prepare($query);
     }
 
     /**
@@ -334,7 +346,7 @@ class SQLiteEngine implements IConnection
     public function query(mixed ...$params): mixed
     {
         $query = $params[0];
-        return $this->getInstance()->getConnection()->query($query);
+        return $this->getConnection()->query($query);
     }
 
     /**
@@ -346,7 +358,7 @@ class SQLiteEngine implements IConnection
     public function exec(mixed ...$params): mixed
     {
         $query = $params[0];
-        return $this->getInstance()->getConnection()->exec($query);
+        return $this->getConnection()->exec($query);
     }
 
     /**
@@ -380,7 +392,7 @@ class SQLiteEngine implements IConnection
      */
     public function errorCode(mixed $inst = null): mixed
     {
-        return $this->getInstance()->getConnection()->lastErrorCode();
+        return $this->getConnection()->lastErrorCode();
     }
 
     /**
@@ -391,6 +403,6 @@ class SQLiteEngine implements IConnection
      */
     public function errorInfo(mixed $inst = null): mixed
     {
-        return $this->getInstance()->getConnection()->lastErrorMsg();
+        return $this->getConnection()->lastErrorMsg();
     }
 }

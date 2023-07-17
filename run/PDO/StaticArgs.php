@@ -1,6 +1,7 @@
 <?php
 
 use GenericDatabase\Engine\PDOEngine;
+use PDO;
 
 define("PATH_ROOT", dirname(dirname(__DIR__)));
 

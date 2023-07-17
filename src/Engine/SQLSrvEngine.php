@@ -4,48 +4,52 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\SQLSrv\SQLSrv;
-use GenericDatabase\Helpers\GenericException;
-use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Traits\Setter;
-use GenericDatabase\Traits\Getter;
-use GenericDatabase\Traits\Cleaner;
-use GenericDatabase\Traits\Singleton;
 use GenericDatabase\Engine\SQLSrv\Arguments;
 use GenericDatabase\Engine\SQLSrv\Options;
 use GenericDatabase\Engine\SQLSrv\Attributes;
 use GenericDatabase\Engine\SQLSrv\DSN;
 use GenericDatabase\Engine\SQLSrv\Dump;
 use GenericDatabase\Engine\SQLSrv\Transaction;
+use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\Compare;
+use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Traits\Setter;
+use GenericDatabase\Traits\Getter;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
 
 /**
+ * Dynamic and Static container class for SQLSrvEngine connections.
+ *
  * @method static SQLSrvEngine|static setDriver(mixed $value): void
- * @method static SQLSrvEngine|static getDriver($p = null): mixed
+ * @method static SQLSrvEngine|static getDriver($value = null): mixed
  * @method static SQLSrvEngine|static setHost(mixed $value): void
- * @method static SQLSrvEngine|static getHost($p = null): mixed
+ * @method static SQLSrvEngine|static getHost($value = null): mixed
  * @method static SQLSrvEngine|static setPort(mixed $value): void
- * @method static SQLSrvEngine|static getPort($p = null): mixed
+ * @method static SQLSrvEngine|static getPort($value = null): mixed
  * @method static SQLSrvEngine|static setUser(mixed $value): void
- * @method static SQLSrvEngine|static getUser($p = null): mixed
+ * @method static SQLSrvEngine|static getUser($value = null): mixed
  * @method static SQLSrvEngine|static setPassword(mixed $value): void
- * @method static SQLSrvEngine|static getPassword($p = null): mixed
+ * @method static SQLSrvEngine|static getPassword($value = null): mixed
  * @method static SQLSrvEngine|static setDatabase(mixed $value): void
- * @method static SQLSrvEngine|static getDatabase($p = null): mixed
+ * @method static SQLSrvEngine|static getDatabase($value = null): mixed
  * @method static SQLSrvEngine|static setOptions(mixed $value): void
- * @method static SQLSrvEngine|static getOptions($p = null): mixed
+ * @method static SQLSrvEngine|static getOptions($value = null): mixed
  * @method static SQLSrvEngine|static setConnected(mixed $value): void
- * @method static SQLSrvEngine|static getConnected($p = null): mixed
+ * @method static SQLSrvEngine|static getConnected($value = null): mixed
  * @method static SQLSrvEngine|static setDsn(mixed $value): void
- * @method static SQLSrvEngine|static getDsn($p = null): mixed
+ * @method static SQLSrvEngine|static getDsn($value = null): mixed
  * @method static SQLSrvEngine|static setAttributes(mixed $value): void
- * @method static SQLSrvEngine|static getAttributes($p = null): mixed
+ * @method static SQLSrvEngine|static getAttributes($value = null): mixed
  * @method static SQLSrvEngine|static setCharset(mixed $value): void
- * @method static SQLSrvEngine|static getCharset($p = null): mixed
+ * @method static SQLSrvEngine|static getCharset($value = null): mixed
  * @method static SQLSrvEngine|static setException(mixed $value): void
- * @method static SQLSrvEngine|static getException($p = null): mixed
+ * @method static SQLSrvEngine|static getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class SQLSrvEngine implements IConnection
@@ -97,6 +101,7 @@ class SQLSrvEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return SQLSrvEngine
+     * @throws GenericException
      */
     private function preConnect(): SQLSrvEngine
     {
@@ -131,11 +136,12 @@ class SQLSrvEngine implements IConnection
      * @param string $database The name of the database
      * @param mixed $port The port of the database
      * @return SQLSrvEngine
+     * @throws Exception
      */
     private function realConnect(
         string $host,
         string $user,
-        string $password,
+        #[SensitiveParameter] string $password,
         string $database,
         mixed $port
     ): SQLSrvEngine {
@@ -155,6 +161,7 @@ class SQLSrvEngine implements IConnection
      * This method is used to establish a database connection and set the connection instance
      *
      * @return SQLSrvEngine
+     * @throws Exception
      */
     public function connect(): SQLSrvEngine
     {
@@ -174,7 +181,7 @@ class SQLSrvEngine implements IConnection
                 ->setConnected(true);
             return $this;
         } catch (Exception $error) {
-            $this->setConnected(false);
+            $this->disconnect();
             Errors::throw($error);
         }
     }
@@ -182,12 +189,11 @@ class SQLSrvEngine implements IConnection
     /**
      * Pings a server connection, or tries to reconnect if the connection has gone down
      *
-     * @param mixed $connection A link identifier returned by a simple query
      * @return bool
      */
-    public function ping(mixed $connection): bool
+    public function ping(): bool
     {
-        return $this->query($connection, 'SELECT 1') !== false;
+        return $this->query('SELECT 1') !== false;
     }
 
     /**
@@ -197,9 +203,14 @@ class SQLSrvEngine implements IConnection
      */
     public function disconnect(): void
     {
-        if ($this->getConnection() !== null && $this->ping($this->getConnection())) {
-            sqlsrv_close($this->getConnection());
-            $this->connection = null;
+        if ($this->isConnected()) {
+            $this->setConnected(false);
+            if (!Options::getOptions(SQLSrv::ATTR_PERSISTENT)) {
+                if (Compare::connection($this->getConnection()) === 'sqlsrv') {
+                    sqlsrv_close($this->getConnection());
+                }
+                $this->setConnection(null);
+            }
         }
     }
 
@@ -210,16 +221,16 @@ class SQLSrvEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (bool) $this->getConnected();
+        return (Compare::connection($this->getConnection()) === 'sqlsrv') && $this->getConnected();
     }
 
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|Exception
-     * @throws Exception
+     * @return string|GenericException
+     * @throws GenericException
      */
-    private function parseDsn(): string|Exception
+    private function parseDsn(): string|GenericException
     {
         return DSN::parseDsn();
     }
@@ -342,7 +353,7 @@ class SQLSrvEngine implements IConnection
         $statement = $params[0];
         $param = $params[1];
         $options = $params[2];
-        return sqlsrv_prepare($this->getInstance()->getConnection(), $statement, $param, $options);
+        return sqlsrv_prepare($this->getConnection(), $statement, $param, $options);
     }
 
     /**
@@ -354,9 +365,9 @@ class SQLSrvEngine implements IConnection
     public function query(mixed ...$params): mixed
     {
         $statement = $params[0];
-        $param = $params[1];
-        $options = $params[2];
-        return sqlsrv_query($this->getInstance()->getConnection(), $statement, $param, $options);
+        $param = $params[1] ?? [];
+        $options = $params[2] ?? [];
+        return sqlsrv_query($this->getConnection(), $statement, $param, $options);
     }
 
     /**

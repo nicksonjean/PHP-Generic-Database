@@ -4,6 +4,8 @@ namespace GenericDatabase\Engine\MySQLi;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\MySQLiEngine;
+use GenericDatabase\Engine\MySQLi\Options;
+use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]
@@ -268,7 +270,14 @@ class Attributes
                 'ERRMODE' => self::$errorMode,
                 'CASE' => (int) $settings['lower_case_table_names'] === 1 ? 0 : 1,
                 'CLIENT_VERSION' => MySQLiEngine::getInstance()->getConnection()->client_info,
-                'CONNECTION_STATUS' => MySQLiEngine::getInstance()->getConnection()->host_info,
+                'CONNECTION_STATUS' => (Compare::connection(
+                    MySQLiEngine::getInstance()->getConnection()
+                ) === 'mysqli')
+                    ? sprintf(
+                        'Connection OK in %s; waiting to send.',
+                        MySQLiEngine::getInstance()->getConnection()->host_info
+                    )
+                    : 'Connection failed;',
                 'PERSISTENT' => (int) !Options::getOptions(MySQL::ATTR_PERSISTENT)
                     ? 0
                     : (int) Options::getOptions(MySQL::ATTR_PERSISTENT),

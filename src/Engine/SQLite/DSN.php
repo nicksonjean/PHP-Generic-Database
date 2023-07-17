@@ -24,15 +24,22 @@ class DSN
             throw new GenericException($message);
         }
 
-        if (!Path::isAbsolute(SQLiteEngine::getInstance()->getDatabase())) {
+        if (
+            !Path::isAbsolute(
+                SQLiteEngine::getInstance()->getDatabase()
+            ) && SQLiteEngine::getInstance()->getDatabase() !== 'memory'
+        ) {
             SQLiteEngine::getInstance()->setDatabase(Path::toAbsolute(SQLiteEngine::getInstance()->getDatabase()));
+            $result = sprintf(
+                "sqlite:%s",
+                SQLiteEngine::getInstance()->getDatabase()
+            );
+        } else {
+            $result = sprintf(
+                "sqlite:%s:",
+                SQLiteEngine::getInstance()->getDatabase()
+            );
         }
-
-        $result = sprintf(
-            "sqlite:%s?charset=%s",
-            SQLiteEngine::getInstance()->getDatabase(),
-            SQLiteEngine::getInstance()->getCharset()
-        );
 
         SQLiteEngine::getInstance()->setDsn($result);
         return $result;

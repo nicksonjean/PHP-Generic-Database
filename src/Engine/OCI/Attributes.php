@@ -4,6 +4,8 @@ namespace GenericDatabase\Engine\OCI;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\OCIEngine;
+use GenericDatabase\Engine\OCI\Options;
+use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]
@@ -57,8 +59,13 @@ class Attributes
                 'AUTOCOMMIT', 'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['client_version'],
-                'CONNECTION_STATUS' => OCIEngine::getInstance()->getConnection()
-                    ? 'Connection OK; waiting to send.'
+                'CONNECTION_STATUS' => (Compare::connection(
+                    OCIEngine::getInstance()->getConnection()
+                ) === 'oci')
+                    ? sprintf(
+                        'Connection OK in %s via TCP/IP; waiting to send.',
+                        OCIEngine::getInstance()->getHost()
+                    )
                     : 'Connection failed;',
                 'PERSISTENT' => (int) !Options::getOptions(OCI::ATTR_PERSISTENT)
                     ? 0

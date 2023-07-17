@@ -4,7 +4,7 @@ namespace GenericDatabase\Engine\PDO;
 
 use Exception;
 use PDOException;
-use ErrorException;
+use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Engine\PDOEngine;
 
 class Attributes
@@ -35,13 +35,13 @@ class Attributes
      * Define all PDO attibute of the conection a ready exist
      *
      * @return void
-     * @throws ErrorException
+     * @throws GenericException|PDOException|Exception
      */
     public static function define(): void
     {
         set_error_handler(
             function ($severity, $message, $file, $line) {
-                throw new ErrorException($message, $severity, $severity, $file, $line);
+                throw new GenericException($message, $severity, $severity, $file, $line);
             }
         );
 

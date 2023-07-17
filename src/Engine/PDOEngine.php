@@ -4,49 +4,53 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
+use PDOException;
 use GenericDatabase\IConnection;
-use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Traits\Setter;
-use GenericDatabase\Traits\Getter;
-use GenericDatabase\Traits\Cleaner;
-use GenericDatabase\Traits\Singleton;
 use GenericDatabase\Engine\PDO\Arguments;
 use GenericDatabase\Engine\PDO\Options;
 use GenericDatabase\Engine\PDO\Attributes;
 use GenericDatabase\Engine\PDO\DSN;
 use GenericDatabase\Engine\PDO\Dump;
 use GenericDatabase\Engine\PDO\Transaction;
+use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\Compare;
+use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Traits\Setter;
+use GenericDatabase\Traits\Getter;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
 use PDO;
-use PDOException;
-use ErrorException;
 
 /**
+ * Dynamic and Static container class for PDOEngine connections.
+ *
  * @method static PDOEngine|static setDriver(mixed $value): void
- * @method static PDOEngine|static getDriver($p = null): mixed
+ * @method static PDOEngine|static getDriver($value = null): mixed
  * @method static PDOEngine|static setHost(mixed $value): void
- * @method static PDOEngine|static getHost($p = null): mixed
+ * @method static PDOEngine|static getHost($value = null): mixed
  * @method static PDOEngine|static setPort(mixed $value): void
- * @method static PDOEngine|static getPort($p = null): mixed
+ * @method static PDOEngine|static getPort($value = null): mixed
  * @method static PDOEngine|static setUser(mixed $value): void
- * @method static PDOEngine|static getUser($p = null): mixed
+ * @method static PDOEngine|static getUser($value = null): mixed
  * @method static PDOEngine|static setPassword(mixed $value): void
- * @method static PDOEngine|static getPassword($p = null): mixed
+ * @method static PDOEngine|static getPassword($value = null): mixed
  * @method static PDOEngine|static setDatabase(mixed $value): void
- * @method static PDOEngine|static getDatabase($p = null): mixed
+ * @method static PDOEngine|static getDatabase($value = null): mixed
  * @method static PDOEngine|static setOptions(mixed $value): void
- * @method static PDOEngine|static getOptions($p = null): mixed
+ * @method static PDOEngine|static getOptions($value = null): mixed
  * @method static PDOEngine|static setConnected(mixed $value): void
- * @method static PDOEngine|static getConnected($p = null): mixed
+ * @method static PDOEngine|static getConnected($value = null): mixed
  * @method static PDOEngine|static setDsn(mixed $value): void
- * @method static PDOEngine|static getDsn($p = null): mixed
+ * @method static PDOEngine|static getDsn($value = null): mixed
  * @method static PDOEngine|static setAttributes(mixed $value): void
- * @method static PDOEngine|static getAttributes($p = null): mixed
+ * @method static PDOEngine|static getAttributes($value = null): mixed
  * @method static PDOEngine|static setCharset(mixed $value): void
- * @method static PDOEngine|static getCharset($p = null): mixed
+ * @method static PDOEngine|static getCharset($value = null): mixed
  * @method static PDOEngine|static setException(mixed $value): void
- * @method static PDOEngine|static getException($p = null): mixed
+ * @method static PDOEngine|static getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class PDOEngine implements IConnection
@@ -98,7 +102,7 @@ class PDOEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return PDOEngine
-     * @throws Exception
+     * @throws GenericException
      */
     private function preConnect(): PDOEngine
     {
@@ -112,7 +116,7 @@ class PDOEngine implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return PDOEngine
-     * @throws ErrorException
+     * @throws GenericException
      */
     private function postConnect(): PDOEngine
     {
@@ -129,11 +133,12 @@ class PDOEngine implements IConnection
      * @param ?string $password = null The password of the database
      * @param ?array $options = null The options of the database
      * @return PDOEngine
+     * @throws Exception
      */
     private function realConnect(
         string $dsn,
         ?string $user = null,
-        ?string $password = null,
+        #[SensitiveParameter] ?string $password = null,
         ?array $options = null
     ): PDOEngine {
         $this->setConnection(new PDO($dsn, $user, $password, $options));
@@ -144,6 +149,7 @@ class PDOEngine implements IConnection
      * This method is used to establish a database connection and set the connection instance
      *
      * @return PDOEngine
+     * @throws PDOException|Exception
      */
     public function connect(): PDOEngine
     {
@@ -161,7 +167,7 @@ class PDOEngine implements IConnection
                 ->setConnected(true);
             return $this;
         } catch (PDOException | Exception $error) {
-            $this->setConnected(false);
+            $this->disconnect();
             Errors::throw($error);
         }
     }
@@ -169,12 +175,17 @@ class PDOEngine implements IConnection
     /**
      * Pings a server connection, or tries to reconnect if the connection has gone down
      *
-     * @param mixed $connection A link identifier returned by a simple query
      * @return bool
      */
-    public function ping(mixed $connection): bool
+    public function ping(): bool
     {
-        return $this->query($connection, 'SELECT 1') !== false;
+        $query = 'SELECT 1';
+        if ($this->getDriver() === 'oci') {
+            $query .= ' FROM DUAL';
+        } elseif ($this->getDriver() === 'ibase' || $this->getDriver() === 'firebird') {
+            $query .= ' FROM RDB$DATABASE';
+        }
+        return $this->query($query) !== false;
     }
 
     /**
@@ -184,39 +195,11 @@ class PDOEngine implements IConnection
      */
     public function disconnect(): void
     {
-        if ($this->getConnection() !== null && $this->ping($this->getConnection())) {
-            switch ($this->getDriver()) {
-                case 'mysql':
-                    $this->query('KILL CONNECTION CONNECTION_ID();');
-                    break;
-                case 'pgsql':
-                    $this->query('SELECT pg_terminate_backend (pg_backend_pid());');
-                    break;
-                case 'oci':
-                    $this->query('ALTER SYSTEM DISCONNECT SESSION;');
-                    break;
-                case 'sqlsrv':
-                case 'mssql':
-                    $this->query('DECLARE @killSpid INT; ' .
-                        'SET @killSpid=(SELECT spid FROM sys.sysprocesses WHERE dbid = DB_ID() AND spid <> @@SPID); ' .
-                        'EXEC(\'KILL \' + CAST(@killSpid AS NVARCHAR));');
-                    break;
-                case 'ibase':
-                case 'firebird':
-                case 'dblib':
-                case 'sybase':
-                    $this->query('DISCONNECT;');
-                    break;
-                case 'sqlite':
-                    $this->query('PRAGMA foreign_keys = OFF;');
-                    $this->query('PRAGMA busy_timeout = 0');
-                    $this->query('PRAGMA wal_autocheckpoint = 1000');
-                    $this->query('PRAGMA optimize');
-                    break;
-                default:
-                    break;
+        if ($this->getConnection() !== null && $this->ping()) {
+            $this->setConnected(false);
+            if (!$this->getAttribute(PDO::ATTR_PERSISTENT)) {
+                $this->setConnection(null);
             }
-            $this->connection = null;
         }
     }
 
@@ -227,7 +210,7 @@ class PDOEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (bool) $this->getConnected();
+        return ($this->getConnection() !== null) && $this->getConnected();
     }
 
     /**
@@ -328,7 +311,7 @@ class PDOEngine implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return $this->getInstance()->getConnection()->lastInsertId($name);
+        return $this->getConnection()->lastInsertId($name);
     }
 
     /**
@@ -341,7 +324,7 @@ class PDOEngine implements IConnection
     {
         $string = $params[0];
         $type = (empty($params) || !isset($params[1])) ? PDO::PARAM_STR : $params[1];
-        return $this->getInstance()->getConnection()->quote($string, $type);
+        return $this->getConnection()->quote($string, $type);
     }
 
     /**
@@ -354,7 +337,7 @@ class PDOEngine implements IConnection
     {
         $query = $params[0];
         $options = empty($params) || !isset($params[1]) ? [] : $params[1];
-        return $this->getInstance()->getConnection()->prepare($query, $options);
+        return $this->getConnection()->prepare($query, $options);
     }
 
     /**
@@ -367,7 +350,7 @@ class PDOEngine implements IConnection
     {
         $query = $params[0];
         $fetchMode = (empty($params) || !isset($params[1])) ? PDO::FETCH_DEFAULT : $params[1];
-        return $this->getInstance()->getConnection()->query($query, $fetchMode);
+        return $this->getConnection()->query($query, $fetchMode);
     }
 
     /**
@@ -379,7 +362,7 @@ class PDOEngine implements IConnection
     public function exec(mixed ...$params): mixed
     {
         $query = $params[0];
-        return $this->getInstance()->getConnection()->exec($query);
+        return $this->getConnection()->exec($query);
     }
 
     /**
@@ -390,7 +373,7 @@ class PDOEngine implements IConnection
      */
     public function getAttribute(mixed $name): mixed
     {
-        return $this->getInstance()->getConnection()->getAttribute($name);
+        return $this->getConnection()->getAttribute($name);
     }
 
     /**
@@ -402,7 +385,7 @@ class PDOEngine implements IConnection
      */
     public function setAttribute(mixed $name, mixed $value): void
     {
-        $this->getInstance()->getConnection()->setAttribute($name, $value);
+        $this->getConnection()->setAttribute($name, $value);
     }
 
     /**
@@ -413,7 +396,7 @@ class PDOEngine implements IConnection
      */
     public function errorCode(mixed $inst = null): mixed
     {
-        return $this->getInstance()->getConnection()->errorCode();
+        return $this->getConnection()->errorCode();
     }
 
     /**
@@ -424,6 +407,6 @@ class PDOEngine implements IConnection
      */
     public function errorInfo(mixed $inst = null): mixed
     {
-        return $this->getInstance()->getConnection()->errorInfo();
+        return $this->getConnection()->errorInfo();
     }
 }

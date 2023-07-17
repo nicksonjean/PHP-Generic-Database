@@ -14,10 +14,9 @@ interface IConnection
     /**
      * Pings a server connection, or tries to reconnect if the connection has gone down
      *
-     * @param mixed $connection A link identifier returned by mysqli_connect() or mysqli_init()
      * @return bool
      */
-    public function ping(mixed $connection): bool;
+    public function ping(): bool;
 
     /**
      * Disconnects from a database.

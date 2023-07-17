@@ -4,48 +4,52 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\OCI\OCI;
-use GenericDatabase\Helpers\GenericException;
-use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Traits\Setter;
-use GenericDatabase\Traits\Getter;
-use GenericDatabase\Traits\Cleaner;
-use GenericDatabase\Traits\Singleton;
 use GenericDatabase\Engine\OCI\Arguments;
 use GenericDatabase\Engine\OCI\Options;
 use GenericDatabase\Engine\OCI\Attributes;
 use GenericDatabase\Engine\OCI\DSN;
 use GenericDatabase\Engine\OCI\Dump;
 use GenericDatabase\Engine\OCI\Transaction;
+use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\Compare;
+use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Traits\Setter;
+use GenericDatabase\Traits\Getter;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
 
 /**
+ * Dynamic and Static container class for OCIEngine connections.
+ *
  * @method static OCIEngine|static setDriver(mixed $value): void
- * @method static OCIEngine|static getDriver($p = null): mixed
+ * @method static OCIEngine|static getDriver($value = null): mixed
  * @method static OCIEngine|static setHost(mixed $value): void
- * @method static OCIEngine|static getHost($p = null): mixed
+ * @method static OCIEngine|static getHost($value = null): mixed
  * @method static OCIEngine|static setPort(mixed $value): void
- * @method static OCIEngine|static getPort($p = null): mixed
+ * @method static OCIEngine|static getPort($value = null): mixed
  * @method static OCIEngine|static setUser(mixed $value): void
- * @method static OCIEngine|static getUser($p = null): mixed
+ * @method static OCIEngine|static getUser($value = null): mixed
  * @method static OCIEngine|static setPassword(mixed $value): void
- * @method static OCIEngine|static getPassword($p = null): mixed
+ * @method static OCIEngine|static getPassword($value = null): mixed
  * @method static OCIEngine|static setDatabase(mixed $value): void
- * @method static OCIEngine|static getDatabase($p = null): mixed
+ * @method static OCIEngine|static getDatabase($value = null): mixed
  * @method static OCIEngine|static setOptions(mixed $value): void
- * @method static OCIEngine|static getOptions($p = null): mixed
+ * @method static OCIEngine|static getOptions($value = null): mixed
  * @method static OCIEngine|static setConnected(mixed $value): void
- * @method static OCIEngine|static getConnected($p = null): mixed
+ * @method static OCIEngine|static getConnected($value = null): mixed
  * @method static OCIEngine|static setDsn(mixed $value): void
- * @method static OCIEngine|static getDsn($p = null): mixed
+ * @method static OCIEngine|static getDsn($value = null): mixed
  * @method static OCIEngine|static setAttributes(mixed $value): void
- * @method static OCIEngine|static getAttributes($p = null): mixed
+ * @method static OCIEngine|static getAttributes($value = null): mixed
  * @method static OCIEngine|static setCharset(mixed $value): void
- * @method static OCIEngine|static getCharset($p = null): mixed
+ * @method static OCIEngine|static getCharset($value = null): mixed
  * @method static OCIEngine|static setException(mixed $value): void
- * @method static OCIEngine|static getException($p = null): mixed
+ * @method static OCIEngine|static getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class OCIEngine implements IConnection
@@ -97,6 +101,7 @@ class OCIEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return OCIEngine
+     * @throws GenericException
      */
     private function preConnect(): OCIEngine
     {
@@ -129,11 +134,12 @@ class OCIEngine implements IConnection
      * @param mixed $port The port of the database
      * @param string $charset The charset of the database
      * @return OCIEngine
+     * @throws Exception
      */
     private function realConnect(
         string $host,
         string $user,
-        string $password,
+        #[SensitiveParameter] string $password,
         string $database,
         mixed $port,
         string $charset
@@ -151,6 +157,7 @@ class OCIEngine implements IConnection
      * This method is used to establish a database connection and set the connection instance
      *
      * @return OCIEngine
+     * @throws Exception
      */
     public function connect(): OCIEngine
     {
@@ -171,7 +178,7 @@ class OCIEngine implements IConnection
                 ->setConnected(true);
             return $this;
         } catch (Exception $error) {
-            $this->setConnected(false);
+            $this->disconnect();
             Errors::throw($error);
         }
     }
@@ -179,12 +186,11 @@ class OCIEngine implements IConnection
     /**
      * Pings a server connection, or tries to reconnect if the connection has gone down
      *
-     * @param mixed $connection A link identifier returned by a simple query
      * @return bool
      */
-    public function ping(mixed $connection): bool
+    public function ping(): bool
     {
-        $result = $this->query($connection, 'SELECT 1 FROM DUAL');
+        $result = $this->query('SELECT 1 FROM DUAL');
         return $this->exec($result) !== false;
     }
 
@@ -195,9 +201,14 @@ class OCIEngine implements IConnection
      */
     public function disconnect(): void
     {
-        if ($this->getConnection() !== null && $this->ping($this->getConnection())) {
-            oci_close($this->getConnection());
-            $this->connection = null;
+        if ($this->isConnected()) {
+            $this->setConnected(false);
+            if (!Options::getOptions(OCI::ATTR_PERSISTENT)) {
+                if (Compare::connection($this->getConnection()) === 'oci') {
+                    oci_close($this->getConnection());
+                }
+                $this->setConnection(null);
+            }
         }
     }
 
@@ -208,16 +219,16 @@ class OCIEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (bool) $this->getConnected();
+        return (Compare::connection($this->getConnection()) === 'oci') && $this->getConnected();
     }
 
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|Exception
-     * @throws Exception
+     * @return string|GenericException
+     * @throws GenericException
      */
-    private function parseDsn(): string|Exception
+    private function parseDsn(): string|GenericException
     {
         return DSN::parseDsn();
     }
@@ -366,7 +377,7 @@ class OCIEngine implements IConnection
     public function query(mixed ...$params): mixed
     {
         $query = $params[0];
-        return oci_parse($this->getInstance()->getConnection(), $query);
+        return oci_parse($this->getConnection(), $query);
     }
 
     /**

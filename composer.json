@@ -21,14 +21,14 @@
         }
     },  
     "require": {
-        "vlucas/phpdotenv": "^5.5@dev",
+        "ext-interbase": "*",
         "ext-mysqli": "*",
         "ext-oci8": "*",
-        "ext-interbase": "*",
         "ext-pdo": "*",
         "ext-pgsql": "*",
         "ext-sqlite3": "*",
-        "ext-sqlsrv": "*"
+        "ext-sqlsrv": "*",
+        "vlucas/phpdotenv": "^5.5@dev"
     },    
     "require-dev": {
         "php": "^8.1",
@@ -65,7 +65,7 @@
         ],
         "clear": [
             "composer clearcache",
-            "composer dump-autoload -o",
+            "composer dump-autoload -o", 
             "@clear:lock",            
             "@clear:vendor",
             "@clear:trash"

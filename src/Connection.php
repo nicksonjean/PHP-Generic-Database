@@ -20,6 +20,13 @@ use GenericDatabase\Helpers\INI;
 use GenericDatabase\Helpers\YAML;
 use GenericDatabase\Helpers\XML;
 
+/**
+ * Dynamic and Static container class for Connection connections.
+ *
+ * @method static Connection|static setEngine(mixed $value): void
+ * @method static Connection|static setEngine($value = null): mixed
+ */
+
 #[AllowDynamicProperties]
 class Connection
 {
@@ -63,6 +70,28 @@ class Connection
     public function getStrategy(): IConnection
     {
         return $this->strategy;
+    }
+
+    /**
+     * This method is used to assign the database connection instance
+     *
+     * @param IConnection $connection Sets an intance of the connection with the database
+     * @return Connection
+     */
+    public function setConnection(IConnection $connection): Connection
+    {
+        $this->setStrategy($connection);
+        return $this;
+    }
+
+    /**
+     * This method is used to get the database connection instance
+     *
+     * @return IConnection
+     */
+    public function getConnection(): IConnection
+    {
+        return $this->getStrategy()->getConnection();
     }
 
     /**
@@ -118,8 +147,38 @@ class Connection
      */
     public function connect(): Connection
     {
-        $this->strategy->connect();
+        $this->getStrategy()->connect();
         return $this;
+    }
+
+    /**
+     * Pings a server connection, or tries to reconnect if the connection has gone down
+     *
+     * @return bool
+     */
+    public function ping(): bool
+    {
+        return $this->getStrategy()->ping();
+    }
+
+    /**
+     * Disconnects from a database.
+     *
+     * @return void
+     */
+    public function disconnect(): void
+    {
+        $this->getStrategy()->disconnect();
+    }
+
+    /**
+     * Returns true when connection was established.
+     *
+     * @return bool
+     */
+    public function isConnected(): bool
+    {
+        return (bool) call_user_func([$this->getStrategy(), 'getConnected']);
     }
 
     /**

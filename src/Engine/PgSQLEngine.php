@@ -4,48 +4,52 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\PgSQL\PgSQL;
-use GenericDatabase\Helpers\GenericException;
-use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Traits\Setter;
-use GenericDatabase\Traits\Getter;
-use GenericDatabase\Traits\Cleaner;
-use GenericDatabase\Traits\Singleton;
 use GenericDatabase\Engine\PgSQL\Arguments;
 use GenericDatabase\Engine\PgSQL\Options;
 use GenericDatabase\Engine\PgSQL\Attributes;
 use GenericDatabase\Engine\PgSQL\DSN;
 use GenericDatabase\Engine\PgSQL\Dump;
 use GenericDatabase\Engine\PgSQL\Transaction;
+use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\Compare;
+use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Traits\Setter;
+use GenericDatabase\Traits\Getter;
+use GenericDatabase\Traits\Cleaner;
+use GenericDatabase\Traits\Singleton;
 
 /**
+ * Dynamic and Static container class for PgSQLEngine connections.
+ *
  * @method static PgSQLEngine|static setDriver(mixed $value): void
- * @method static PgSQLEngine|static getDriver($p = null): mixed
+ * @method static PgSQLEngine|static getDriver($value = null): mixed
  * @method static PgSQLEngine|static setHost(mixed $value): void
- * @method static PgSQLEngine|static getHost($p = null): mixed
+ * @method static PgSQLEngine|static getHost($value = null): mixed
  * @method static PgSQLEngine|static setPort(mixed $value): void
- * @method static PgSQLEngine|static getPort($p = null): mixed
+ * @method static PgSQLEngine|static getPort($value = null): mixed
  * @method static PgSQLEngine|static setUser(mixed $value): void
- * @method static PgSQLEngine|static getUser($p = null): mixed
+ * @method static PgSQLEngine|static getUser($value = null): mixed
  * @method static PgSQLEngine|static setPassword(mixed $value): void
- * @method static PgSQLEngine|static getPassword($p = null): mixed
+ * @method static PgSQLEngine|static getPassword($value = null): mixed
  * @method static PgSQLEngine|static setDatabase(mixed $value): void
- * @method static PgSQLEngine|static getDatabase($p = null): mixed
+ * @method static PgSQLEngine|static getDatabase($value = null): mixed
  * @method static PgSQLEngine|static setOptions(mixed $value): void
- * @method static PgSQLEngine|static getOptions($p = null): mixed
+ * @method static PgSQLEngine|static getOptions($value = null): mixed
  * @method static PgSQLEngine|static setConnected(mixed $value): void
- * @method static PgSQLEngine|static getConnected($p = null): mixed
+ * @method static PgSQLEngine|static getConnected($value = null): mixed
  * @method static PgSQLEngine|static setDsn(mixed $value): void
- * @method static PgSQLEngine|static getDsn($p = null): mixed
+ * @method static PgSQLEngine|static getDsn($value = null): mixed
  * @method static PgSQLEngine|static setAttributes(mixed $value): void
- * @method static PgSQLEngine|static getAttributes($p = null): mixed
+ * @method static PgSQLEngine|static getAttributes($value = null): mixed
  * @method static PgSQLEngine|static setCharset(mixed $value): void
- * @method static PgSQLEngine|static getCharset($p = null): mixed
+ * @method static PgSQLEngine|static getCharset($value = null): mixed
  * @method static PgSQLEngine|static setException(mixed $value): void
- * @method static PgSQLEngine|static getException($p = null): mixed
+ * @method static PgSQLEngine|static getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class PgSQLEngine implements IConnection
@@ -97,6 +101,7 @@ class PgSQLEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return PgSQLEngine
+     * @throws GenericException
      */
     private function preConnect(): PgSQLEngine
     {
@@ -124,6 +129,7 @@ class PgSQLEngine implements IConnection
      *
      * @param string $dsn The Data source name of the connection
      * @return PgSQLEngine
+     * @throws Exception
      */
     private function realConnect(string $dsn): PgSQLEngine
     {
@@ -139,6 +145,7 @@ class PgSQLEngine implements IConnection
      * This method is used to establish a database connection and set the connection instance
      *
      * @return PgSQLEngine
+     * @throws Exception
      */
     public function connect(): PgSQLEngine
     {
@@ -153,7 +160,7 @@ class PgSQLEngine implements IConnection
                 ->setConnected(true);
             return $this;
         } catch (Exception $error) {
-            $this->setConnected(false);
+            $this->disconnect();
             Errors::throw($error);
         }
     }
@@ -161,12 +168,11 @@ class PgSQLEngine implements IConnection
     /**
      * Pings a server connection, or tries to reconnect if the connection has gone down
      *
-     * @param mixed $connection A link identifier returned by a simple query
      * @return bool
      */
-    public function ping(mixed $connection): bool
+    public function ping(): bool
     {
-        return $this->query($connection, 'SELECT 1') !== false;
+        return $this->query('SELECT 1') !== false;
     }
 
     /**
@@ -176,9 +182,14 @@ class PgSQLEngine implements IConnection
      */
     public function disconnect(): void
     {
-        if ($this->getConnection() !== null && $this->ping($this->getConnection())) {
-            pg_close($this->getConnection());
-            $this->connection = null;
+        if ($this->isConnected()) {
+            $this->setConnected(false);
+            if (!Options::getOptions(PgSQL::ATTR_PERSISTENT)) {
+                if (Compare::connection($this->getConnection()) === 'pgsql') {
+                    pg_close($this->getConnection());
+                }
+                $this->setConnection(null);
+            }
         }
     }
 
@@ -189,16 +200,16 @@ class PgSQLEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (bool) $this->getConnected();
+        return (Compare::connection($this->getConnection()) === 'pgsql') && $this->getConnected();
     }
 
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|Exception
-     * @throws Exception
+     * @return string|GenericException
+     * @throws GenericException
      */
-    private function parseDsn(): string|Exception
+    private function parseDsn(): string|GenericException
     {
         return DSN::parseDsn();
     }
@@ -320,7 +331,7 @@ class PgSQLEngine implements IConnection
         } elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", $string)) {
             return $string;
         }
-        $quoted = fn ($str) => pg_escape_string($this->getInstance()->getConnection(), $str);
+        $quoted = fn ($str) => pg_escape_string($this->getConnection(), $str);
         return ($quote) ? "'" . $quoted($string) . "'" : $quoted($string);
     }
 
@@ -335,7 +346,7 @@ class PgSQLEngine implements IConnection
     {
         $stmtname = $params[0];
         $query = $params[1];
-        return pg_prepare($this->getInstance()->getConnection(), $stmtname, $query);
+        return pg_prepare($this->getConnection(), $stmtname, $query);
     }
 
     /**
@@ -347,7 +358,7 @@ class PgSQLEngine implements IConnection
     public function query(mixed ...$params): mixed
     {
         $query = $params[0];
-        return pg_query($this->getInstance()->getConnection(), $query);
+        return pg_query($this->getConnection(), $query);
     }
 
     /**
@@ -360,7 +371,7 @@ class PgSQLEngine implements IConnection
     {
         $stmtname = $params[0];
         $param = $params[1];
-        return pg_execute($this->getInstance()->getConnection(), $stmtname, $param);
+        return pg_execute($this->getConnection(), $stmtname, $param);
     }
 
     /**
@@ -394,7 +405,7 @@ class PgSQLEngine implements IConnection
      */
     public function errorCode(mixed $inst = null): mixed
     {
-        return pg_last_error($this->getInstance()->getConnection());
+        return pg_last_error($this->getConnection());
     }
 
     /**
@@ -405,6 +416,6 @@ class PgSQLEngine implements IConnection
      */
     public function errorInfo(mixed $inst = null): mixed
     {
-        return pg_last_error($this->getInstance()->getConnection());
+        return pg_last_error($this->getConnection());
     }
 }

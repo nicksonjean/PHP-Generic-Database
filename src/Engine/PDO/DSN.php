@@ -115,7 +115,7 @@ class DSN
                 if (
                     !Path::isAbsolute(
                         PDOEngine::getInstance()->getDatabase()
-                    ) && PDOEngine::getInstance()->getDatabase() != 'memory'
+                    ) && PDOEngine::getInstance()->getDatabase() !== 'memory'
                 ) {
                     PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
                     $result = sprintf(
@@ -135,7 +135,7 @@ class DSN
                 if (
                     !Path::isAbsolute(
                         PDOEngine::getInstance()->getDatabase()
-                    ) && PDOEngine::getInstance()->getDatabase() != 'memory'
+                    ) && PDOEngine::getInstance()->getDatabase() !== 'memory'
                 ) {
                     PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
                     $result = sprintf(

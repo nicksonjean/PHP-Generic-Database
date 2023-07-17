@@ -4,6 +4,8 @@ namespace GenericDatabase\Engine\PgSQL;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\PgSQLEngine;
+use GenericDatabase\Engine\PgSQL\Options;
+use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 
 #[AllowDynamicProperties]
@@ -67,10 +69,15 @@ class Attributes
                 'AUTOCOMMIT', 'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['version']['client'],
-                'CONNECTION_STATUS' => (pg_connection_status(
+                'CONNECTION_STATUS' => (Compare::connection(
+                    PgSQLEngine::getInstance()->getConnection()
+                ) === 'pgsql' && pg_connection_status(
                     PgSQLEngine::getInstance()->getConnection()
                 ) === PGSQL_CONNECTION_OK)
-                    ? 'Connection OK; waiting to send.'
+                    ? sprintf(
+                        'Connection OK in %s via TCP/IP; waiting to send.',
+                        PgSQLEngine::getInstance()->getHost()
+                    )
                     : 'Connection failed;',
                 'PERSISTENT' => (int) !Options::getOptions(PgSQL::ATTR_PERSISTENT)
                     ? 0
