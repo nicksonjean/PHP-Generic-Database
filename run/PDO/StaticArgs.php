@@ -1,7 +1,6 @@
 <?php
 
 use GenericDatabase\Engine\PDOEngine;
-use PDO;
 
 define("PATH_ROOT", dirname(dirname(__DIR__)));
 
@@ -18,9 +17,9 @@ $mysql = PDOEngine::new(
     $_ENV['MYSQL_PASSWORD'],
     'utf8',
     [
-        PDO::ATTR_PERSISTENT => true,
-        PDO::ATTR_EMULATE_PREPARES => true,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+        \PDO::ATTR_PERSISTENT => true,
+        \PDO::ATTR_EMULATE_PREPARES => true,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
     ],
     true
 )->connect();
@@ -36,9 +35,9 @@ $pgsql = PDOEngine::new(
     $_ENV['PGSQL_PASSWORD'],
     'utf8',
     [
-        PDO::ATTR_PERSISTENT => true,
-        PDO::ATTR_EMULATE_PREPARES => true,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+        \PDO::ATTR_PERSISTENT => true,
+        \PDO::ATTR_EMULATE_PREPARES => true,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
     ],
     true
 )->connect();
@@ -54,8 +53,8 @@ $sqlsrv = PDOEngine::new(
     $_ENV['SQLSRV_PASSWORD'],
     'utf8',
     [
-        PDO::ATTR_EMULATE_PREPARES => true,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+        \PDO::ATTR_EMULATE_PREPARES => true,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
     ],
     true
 )->connect();
@@ -71,9 +70,9 @@ $oci = PDOEngine::new(
     $_ENV['OCI_PASSWORD'],
     'utf8',
     [
-        PDO::ATTR_PERSISTENT => true,
-        PDO::ATTR_EMULATE_PREPARES => true,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+        \PDO::ATTR_PERSISTENT => true,
+        \PDO::ATTR_EMULATE_PREPARES => true,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
     ],
     true
 )->connect();
@@ -89,9 +88,9 @@ $firebird = PDOEngine::new(
     $_ENV['FBIRD_PASSWORD'],
     'utf8',
     [
-        PDO::ATTR_PERSISTENT => true,
-        PDO::ATTR_EMULATE_PREPARES => true,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+        \PDO::ATTR_PERSISTENT => true,
+        \PDO::ATTR_EMULATE_PREPARES => true,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
     ],
     true
 )->connect();
@@ -103,9 +102,9 @@ $sqlite2 = PDOEngine::new(
     $_ENV['SQLITE_DATABASE'],
     'utf8',
     [
-        PDO::ATTR_PERSISTENT => true,
-        PDO::ATTR_EMULATE_PREPARES => true,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+        \PDO::ATTR_PERSISTENT => true,
+        \PDO::ATTR_EMULATE_PREPARES => true,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
     ],
     true
 )->connect();
@@ -117,9 +116,9 @@ $memory = PDOEngine::new(
     'memory',
     'utf8',
     [
-        PDO::ATTR_PERSISTENT => true,
-        PDO::ATTR_EMULATE_PREPARES => true,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+        \PDO::ATTR_PERSISTENT => true,
+        \PDO::ATTR_EMULATE_PREPARES => true,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
     ],
     true
 )->connect();
