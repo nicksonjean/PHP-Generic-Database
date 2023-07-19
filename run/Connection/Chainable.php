@@ -1,67 +1,108 @@
 <?php
 
 use GenericDatabase\Runner\Chainable;
-
 use Dotenv\Dotenv;
 
-define("PATH_ROOT", dirname(dirname(__DIR__)));
+define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
 Dotenv::createImmutable(PATH_ROOT)->load();
 
-$context = Chainable::nativeMySQLi(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Chainable::nativePgSQL(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Chainable::nativeSQLSrv(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Chainable::nativeFBird(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Chainable::nativeOCI(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Chainable::nativeMemory(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Chainable::nativeFBird(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Chainable::pdoSQLSrv(env: $_ENV, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Chainable::nativeSQLite(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Chainable::nativeMemory(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Chainable::pdoSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
-
-$context = Chainable::pdoMySQL(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
-
-$context = Chainable::pdoPgSQL(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
-
-$context = Chainable::pdoSQLSrv(env: $_ENV, strategy: true)->connect();
-
-var_dump($context);
-
-$context = Chainable::pdoOCI(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
-
-$context = Chainable::pdoFirebird(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
-
-$context = Chainable::pdoSQLite(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
-
-$context = Chainable::pdoMemory(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
+try {
+    $context = Chainable::pdoMemory(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}

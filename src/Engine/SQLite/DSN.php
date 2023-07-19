@@ -36,7 +36,7 @@ class DSN
             );
         } else {
             $result = sprintf(
-                "sqlite:%s:",
+                "sqlite::%s:",
                 SQLiteEngine::getInstance()->getDatabase()
             );
         }

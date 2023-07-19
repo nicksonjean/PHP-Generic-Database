@@ -1,67 +1,108 @@
 <?php
 
 use GenericDatabase\Runner\Fluent;
-
 use Dotenv\Dotenv;
 
-define("PATH_ROOT", dirname(dirname(__DIR__)));
+define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
 Dotenv::createImmutable(PATH_ROOT)->load();
 
-$context = Fluent::nativeMySQLi(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Fluent::nativeMySQLi(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Fluent::nativePgSQL(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Fluent::nativePgSQL(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Fluent::nativeSQLSrv(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Fluent::nativeOCI(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Fluent::nativeSQLSrv(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Fluent::nativeFBird(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Fluent::nativeSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Fluent::nativeOCI(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Fluent::nativeMemory(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Fluent::pdoMySQL(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Fluent::nativeFBird(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Fluent::pdoPgSQL(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Fluent::pdoSQLSrv(env: $_ENV, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Fluent::nativeSQLite(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Fluent::pdoOCI(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
+try {
+    $context = Fluent::pdoFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$context = Fluent::nativeMemory(env: $_ENV, strategy: true, persistent: true)->connect();
+try {
+    $context = Fluent::pdoSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($context);
-
-$context = Fluent::pdoMySQL(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
-
-$context = Fluent::pdoPgSQL(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
-
-$context = Fluent::pdoSQLSrv(env: $_ENV, strategy: true)->connect();
-
-var_dump($context);
-
-$context = Fluent::pdoOCI(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
-
-$context = Fluent::pdoFirebird(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
-
-$context = Fluent::pdoSQLite(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
-
-$context = Fluent::pdoMemory(env: $_ENV, strategy: true, persistent: true)->connect();
-
-var_dump($context);
+try {
+    $context = Fluent::pdoMemory(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}

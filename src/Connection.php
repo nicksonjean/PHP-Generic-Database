@@ -24,9 +24,32 @@ use GenericDatabase\Helpers\XML;
  * Dynamic and Static container class for Connection connections.
  *
  * @method static Connection|static setEngine(mixed $value): void
- * @method static Connection|static setEngine($value = null): mixed
+ * @method static Connection|static getEngine($value = null): mixed
+ * @method static Connection|static setDriver(mixed $value): void
+ * @method static Connection|static getDriver($value = null): mixed
+ * @method static Connection|static setHost(mixed $value): void
+ * @method static Connection|static getHost($value = null): mixed
+ * @method static Connection|static setPort(mixed $value): void
+ * @method static Connection|static getPort($value = null): mixed
+ * @method static Connection|static setUser(mixed $value): void
+ * @method static Connection|static getUser($value = null): mixed
+ * @method static Connection|static setPassword(mixed $value): void
+ * @method static Connection|static getPassword($value = null): mixed
+ * @method static Connection|static setDatabase(mixed $value): void
+ * @method static Connection|static getDatabase($value = null): mixed
+ * @method static Connection|static setOptions(mixed $value): void
+ * @method static Connection|static getOptions($value = null): mixed
+ * @method static Connection|static setConnected(mixed $value): void
+ * @method static Connection|static getConnected($value = null): mixed
+ * @method static Connection|static setDsn(mixed $value): void
+ * @method static Connection|static getDsn($value = null): mixed
+ * @method static Connection|static setAttributes(mixed $value): void
+ * @method static Connection|static getAttributes($value = null): mixed
+ * @method static Connection|static setCharset(mixed $value): void
+ * @method static Connection|static getCharset($value = null): mixed
+ * @method static Connection|static setException(mixed $value): void
+ * @method static Connection|static getException($value = null): mixed
  */
-
 #[AllowDynamicProperties]
 class Connection
 {
@@ -70,18 +93,6 @@ class Connection
     public function getStrategy(): IConnection
     {
         return $this->strategy;
-    }
-
-    /**
-     * This method is used to assign the database connection instance
-     *
-     * @param IConnection $connection Sets an intance of the connection with the database
-     * @return Connection
-     */
-    public function setConnection(IConnection $connection): Connection
-    {
-        $this->setStrategy($connection);
-        return $this;
     }
 
     /**

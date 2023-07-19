@@ -4,7 +4,6 @@ namespace GenericDatabase\Engine\MySQLi;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\MySQLiEngine;
-use GenericDatabase\Engine\MySQLi\Options;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 
@@ -250,7 +249,7 @@ class Attributes
     }
 
     /**
-     * Define all MySQLi attibute of the conection a ready exist
+     * Define all MySQLi attribute of the connection a ready exist
      *
      * @param int|null $type
      * @return void

@@ -16,7 +16,6 @@ use GenericDatabase\Engine\PDO\DSN;
 use GenericDatabase\Engine\PDO\Dump;
 use GenericDatabase\Engine\PDO\Transaction;
 use GenericDatabase\Helpers\GenericException;
-use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
@@ -71,19 +70,18 @@ class PDOEngine implements IConnection
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return mixed
+     * @return PDOEngine|string|int|bool|array|null
      */
-    public function __call(string $name, array $arguments): mixed
+    public function __call(string $name, array $arguments): PDOEngine|string|int|bool|array|null
     {
         $method = substr($name, 0, 3);
         $field = strtolower(substr($name, 3));
         if ($method == 'set') {
             $this->__set($field, ...$arguments);
-            return $this;
         } elseif ($method == 'get') {
             return $this->__get($field);
         }
-        return null;
+        return $this;
     }
 
     /**
@@ -180,9 +178,9 @@ class PDOEngine implements IConnection
     public function ping(): bool
     {
         $query = 'SELECT 1';
-        if ($this->getDriver() === 'oci') {
+        if ($this->getDriver() == 'oci') {
             $query .= ' FROM DUAL';
-        } elseif ($this->getDriver() === 'ibase' || $this->getDriver() === 'firebird') {
+        } elseif ($this->getDriver() == 'ibase' || $this->getDriver() == 'firebird') {
             $query .= ' FROM RDB$DATABASE';
         }
         return $this->query($query) !== false;
@@ -237,7 +235,7 @@ class PDOEngine implements IConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets an intance of the connection with the database
+     * @param mixed $connection Sets an instance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -328,16 +326,17 @@ class PDOEngine implements IConnection
     }
 
     /**
-     * This function prepares an SQL statement for execution and returns a statement object.
+     * This function binds the parameters to a prepared query.
      *
-     * @param mixed $params Statement to be prepared
-     * @return mixed
+     * @param mixed ...$params
+     * @return static
      */
-    public function prepare(mixed ...$params): mixed
+    public function prepare(mixed ...$params): static
     {
         $query = $params[0];
         $options = empty($params) || !isset($params[1]) ? [] : $params[1];
-        return $this->getConnection()->prepare($query, $options);
+        $this->getConnection()->prepare($query, $options);
+        return $this;
     }
 
     /**

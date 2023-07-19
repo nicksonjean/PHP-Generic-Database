@@ -4,7 +4,6 @@ namespace GenericDatabase\Engine\FBird;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\FBirdEngine;
-use GenericDatabase\Engine\FBird\Options;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 
@@ -108,7 +107,7 @@ class Attributes
     }
 
     /**
-     * Define all FBird attibute of the conection a ready exist
+     * Define all FBird attribute of the connection a ready exist
      *
      * @return void
      * @throws GenericException

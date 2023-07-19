@@ -22,6 +22,12 @@ use PDO;
 
 class Chainable
 {
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|MySQLiEngine
+     */
     public static function nativeMySQLi(
         array $env,
         bool $persistent = false,
@@ -54,6 +60,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PgSQLEngine
+     */
     public static function nativePgSQL(
         array $env,
         bool $persistent = false,
@@ -82,6 +94,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|SQLSrvEngine
+     */
     public static function nativeSQLSrv(
         array $env,
         bool $persistent = false,
@@ -108,6 +126,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|OCIEngine
+     */
     public static function nativeOCI(
         array $env,
         bool $persistent = false,
@@ -134,6 +158,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|FBirdEngine
+     */
     public static function nativeFBird(
         array $env,
         bool $persistent = false,
@@ -160,6 +190,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|SQLiteEngine
+     */
     public static function nativeSQLite(
         array $env,
         bool $persistent = false,
@@ -186,6 +222,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|SQLiteEngine
+     */
     public static function nativeMemory(
         array $env,
         bool $persistent = false,
@@ -212,6 +254,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoMySQL(
         array $env,
         bool $persistent = false,
@@ -240,6 +288,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoPgSQL(
         array $env,
         bool $persistent = false,
@@ -268,6 +322,11 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoSQLSrv(
         array $env,
         bool $strategy = false
@@ -294,6 +353,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoOCI(
         array $env,
         bool $persistent = false,
@@ -322,6 +387,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoFirebird(
         array $env,
         bool $persistent = false,
@@ -350,6 +421,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoSQLite(
         array $env,
         bool $persistent = false,
@@ -374,6 +451,12 @@ class Chainable
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoMemory(
         array $env,
         bool $persistent = false,

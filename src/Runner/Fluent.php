@@ -23,6 +23,12 @@ use GenericDatabase\Helpers\Entity;
 
 class Fluent
 {
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|MySQLiEngine
+     */
     public static function nativeMySQLi(
         array $env,
         bool $persistent = false,
@@ -32,6 +38,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'mysqli');
         }
+        /** @var Connection|MySQLiEngine $className */
         $instance = $className::setHost($env['MYSQL_HOST']);
         $instance::setPort((int)$env['MYSQL_PORT'])
             ::setDatabase($env['MYSQL_DATABASE'])
@@ -53,6 +60,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PgSQLEngine
+     */
     public static function nativePgSQL(
         array $env,
         bool $persistent = false,
@@ -62,6 +75,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pgsql');
         }
+        /** @var Connection|PgSQLEngine $className */
         $instance = $className::setHost($env['PGSQL_HOST']);
         $instance::setPort((int)$env['PGSQL_PORT'])
             ::setDatabase($env['PGSQL_DATABASE'])
@@ -79,6 +93,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|SQLSrvEngine
+     */
     public static function nativeSQLSrv(
         array $env,
         bool $persistent = false,
@@ -88,6 +108,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlsrv');
         }
+        /** @var Connection|SQLSrvEngine $className */
         $instance = $className::setHost($env['SQLSRV_HOST']);
         $instance::setPort((int)$env['SQLSRV_PORT'])
             ::setPort((int)$env['SQLSRV_PORT'])
@@ -104,6 +125,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|OCIEngine
+     */
     public static function nativeOCI(
         array $env,
         bool $persistent = false,
@@ -113,6 +140,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'oci');
         }
+        /** @var Connection|OCIEngine $className */
         $instance = $className::setHost($env['OCI_HOST']);
         $instance::setPort((int)$env['OCI_PORT'])
             ::setDatabase($env['OCI_DATABASE'])
@@ -128,6 +156,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|FBirdEngine
+     */
     public static function nativeFBird(
         array $env,
         bool $persistent = false,
@@ -137,6 +171,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'fbird');
         }
+        /** @var Connection|FBirdEngine $className */
         $instance = $className::setHost($env['FBIRD_HOST']);
         $instance::setPort((int)$env['FBIRD_PORT'])
             ::setDatabase($env['FBIRD_DATABASE'])
@@ -152,6 +187,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|SQLiteEngine
+     */
     public static function nativeSQLite(
         array $env,
         bool $persistent = false,
@@ -161,6 +202,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlite');
         }
+        /** @var Connection|SQLiteEngine $className */
         $instance = $className::setDatabase($env['SQLITE_DATABASE']);
         $instance::setCharset('utf8')
             ::setOptions([
@@ -176,6 +218,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|SQLiteEngine
+     */
     public static function nativeMemory(
         array $env,
         bool $persistent = false,
@@ -185,6 +233,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlite');
         }
+        /** @var Connection|SQLiteEngine $className */
         $instance = $className::setDatabase($env['SQLITE_DATABASE_MEMORY']);
         $instance::setCharset('utf8')
             ::setOptions([
@@ -200,6 +249,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoMySQL(
         array $env,
         bool $persistent = false,
@@ -209,6 +264,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
+        /** @var Connection|PDOEngine $className */
         $instance = $className::setDriver('mysql');
         $instance::setHost($env['MYSQL_HOST'])
             ::setPort((int)$env['MYSQL_PORT'])
@@ -226,6 +282,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoPgSQL(
         array $env,
         bool $persistent = false,
@@ -235,6 +297,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
+        /** @var Connection|PDOEngine $className */
         $instance = $className::setDriver('pgsql');
         $instance
             ::setHost($env['PGSQL_HOST'])
@@ -253,6 +316,11 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoSQLSrv(
         array $env,
         bool $strategy = false
@@ -261,6 +329,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
+        /** @var Connection|PDOEngine $className */
         $instance = $className::setDriver('sqlsrv');
         $instance
             ::setHost($env['SQLSRV_HOST'])
@@ -278,6 +347,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoOCI(
         array $env,
         bool $persistent = false,
@@ -287,6 +362,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
+        /** @var Connection|PDOEngine $className */
         $instance = $className::setDriver('oci');
         $instance
             ::setHost($env['OCI_HOST'])
@@ -305,6 +381,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoFirebird(
         array $env,
         bool $persistent = false,
@@ -314,6 +396,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
+        /** @var Connection|PDOEngine $className */
         $instance = $className::setDriver('firebird');
         $instance
             ::setHost($env['FBIRD_HOST'])
@@ -332,6 +415,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoSQLite(
         array $env,
         bool $persistent = false,
@@ -341,6 +430,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
+        /** @var Connection|PDOEngine $className */
         $instance = $className::setDriver('sqlite');
         $instance
             ::setDatabase($env['SQLITE_DATABASE'])
@@ -355,6 +445,12 @@ class Fluent
         return $instance;
     }
 
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|PDOEngine
+     */
     public static function pdoMemory(
         array $env,
         bool $persistent = false,
@@ -364,6 +460,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
+        /** @var Connection|PDOEngine $className */
         $instance = $className::setDriver('sqlite');
         $instance
             ::setDatabase($env['SQLITE_DATABASE_MEMORY'])

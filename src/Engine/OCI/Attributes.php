@@ -4,7 +4,6 @@ namespace GenericDatabase\Engine\OCI;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\OCIEngine;
-use GenericDatabase\Engine\OCI\Options;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 
@@ -43,7 +42,7 @@ class Attributes
     }
 
     /**
-     * Define all OCI attibute of the conection a ready exist
+     * Define all OCI attribute of the connection a ready exist
      *
      * @return void
      * @throws GenericException

@@ -4,7 +4,6 @@ namespace GenericDatabase\Engine\SQLSrv;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLSrvEngine;
-use GenericDatabase\Engine\SQLSrv\Options;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 
@@ -43,7 +42,7 @@ class Attributes
     }
 
     /**
-     * Define all SQLSrv attibute of the conection a ready exist
+     * Define all SQLSrv attribute of the connection a ready exist
      *
      * @return void
      * @throws GenericException

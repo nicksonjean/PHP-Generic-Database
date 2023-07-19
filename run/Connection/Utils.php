@@ -1,67 +1,62 @@
 <?php
 
+use GenericDatabase\Connection;
+use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Runner\Chainable;
-
 use Dotenv\Dotenv;
 
-define("PATH_ROOT", dirname(dirname(__DIR__)));
+define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
 Dotenv::createImmutable(PATH_ROOT)->load();
 
-$status = 'Connection Status: %s';
+$withStrategy = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: true);
 
-$withStrategy = Chainable::nativeMySQLi(env: $_ENV, strategy: true, persistent: true);
+tryConnectDisconnectReconnect($withStrategy);
 
-// Connectar
+$withoutStrategy = Chainable::nativeMySQLi(env: $_ENV, persistent: true);
 
-$withStrategy->connect();
+tryConnectDisconnectReconnect($withoutStrategy);
 
-var_dump($withStrategy);
+/**
+ * @param MySQLiEngine|Connection $context
+ * @return void
+ */
+function tryConnectDisconnectReconnect(MySQLiEngine|Connection $context): void
+{
+    $status = 'Connection Status: %s';
 
-var_dump(sprintf($status, $withStrategy->isConnected() ? 'true' : 'false'));
+    // Connectar
 
-// Desconnectar
+    try {
+        $context->connect();
+        var_dump($context);
+    } catch (Exception $e) {
+        var_dump($e);
+    }
 
-$withStrategy->disconnect();
+    var_dump(sprintf($status, $context->isConnected() ? 'true' : 'false'));
 
-var_dump($withStrategy);
+    // Desconnectar
 
-var_dump(sprintf($status, $withStrategy->isConnected() ? 'true' : 'false'));
+    try {
+        $context->disconnect();
+        var_dump($context);
+    } catch (Exception $e) {
+        var_dump($e);
+    }
 
-// Reconnectar
+    var_dump(sprintf($status, $context->isConnected() ? 'true' : 'false'));
 
-$withStrategy->connect();
+    // Reconnectar
 
-var_dump($withStrategy);
+    try {
+        $context->connect();
+        var_dump($context);
+    } catch (Exception $e) {
+        var_dump($e);
+    }
 
-var_dump(sprintf($status, $withStrategy->isConnected() ? 'true' : 'false'));
-
-
-
-$withoutStrategy = Chainable::nativeMySQLi(env: $_ENV, strategy: false, persistent: true);
-
-// Connectar
-
-$withoutStrategy->connect();
-
-var_dump($withoutStrategy);
-
-var_dump(sprintf($status, $withoutStrategy->isConnected() ? 'true' : 'false'));
-
-// Desconnectar
-
-$withoutStrategy->disconnect();
-
-var_dump($withoutStrategy);
-
-var_dump(sprintf($status, $withoutStrategy->isConnected() ? 'true' : 'false'));
-
-// Reconnectar
-
-$withoutStrategy->connect();
-
-var_dump($withoutStrategy);
-
-var_dump(sprintf($status, $withoutStrategy->isConnected() ? 'true' : 'false'));
+    var_dump(sprintf($status, $context->isConnected() ? 'true' : 'false'));
+}

@@ -108,9 +108,9 @@ interface IConnection
      * This function prepares an SQL statement for execution and returns a statement object.
      *
      * @param mixed $params Statement to be prepared
-     * @return mixed
+     * @return static
      */
-    public function prepare(mixed ...$params): mixed;
+    public function prepare(mixed ...$params): static;
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.

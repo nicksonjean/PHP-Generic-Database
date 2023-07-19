@@ -4,7 +4,6 @@ namespace GenericDatabase\Engine\SQLite;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLiteEngine;
-use GenericDatabase\Engine\SQLite\Options;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 use SQLite3;
@@ -40,7 +39,7 @@ class Attributes
     }
 
     /**
-     * Define all SQLite attibute of the conection a ready exist
+     * Define all SQLite attribute of the connection a ready exist
      *
      * @return void
      * @throws GenericException
@@ -50,7 +49,7 @@ class Attributes
         $settings = self::settings();
         $result = [];
         $keys = array_keys(self::$attributeList);
-        $memory = SQLiteEngine::getInstance()->getDatabase() === 'memory' ? '' : ' via File';
+        $memory = SQLiteEngine::getInstance()->getDatabase() == 'memory' ? '' : ' via File';
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {

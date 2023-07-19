@@ -4,7 +4,6 @@ namespace GenericDatabase\Engine\PgSQL;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\PgSQLEngine;
-use GenericDatabase\Engine\PgSQL\Options;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\GenericException;
 
@@ -53,7 +52,7 @@ class Attributes
     }
 
     /**
-     * Define all PgSQL attibute of the conection a ready exist
+     * Define all PgSQL attribute of the connection a ready exist
      *
      * @return void
      * @throws GenericException

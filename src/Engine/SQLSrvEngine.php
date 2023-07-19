@@ -70,19 +70,18 @@ class SQLSrvEngine implements IConnection
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return mixed
+     * @return SQLSrvEngine|string|int|bool|array|null
      */
-    public function __call(string $name, array $arguments): mixed
+    public function __call(string $name, array $arguments): SQLSrvEngine|string|int|bool|array|null
     {
         $method = substr($name, 0, 3);
         $field = strtolower(substr($name, 3));
         if ($method == 'set') {
             $this->__set($field, ...$arguments);
-            return $this;
         } elseif ($method == 'get') {
             return $this->__get($field);
         }
-        return null;
+        return $this;
     }
 
     /**
@@ -101,7 +100,6 @@ class SQLSrvEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return SQLSrvEngine
-     * @throws GenericException
      */
     private function preConnect(): SQLSrvEngine
     {
@@ -248,7 +246,7 @@ class SQLSrvEngine implements IConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets an intance of the connection with the database
+     * @param mixed $connection Sets an instance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -328,9 +326,9 @@ class SQLSrvEngine implements IConnection
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
         $string = $params[0];
         return match (true) {
@@ -343,26 +341,27 @@ class SQLSrvEngine implements IConnection
     }
 
     /**
-     * This function prepares an SQL statement for execution and returns a statement object.
+     * This function binds the parameters to a prepared query.
      *
-     * @param mixed $params Statement to be prepared
-     * @return mixed
+     * @param mixed ...$params
+     * @return static
      */
-    public function prepare(mixed ...$params): mixed
+    public function prepare(mixed ...$params): static
     {
         $statement = $params[0];
         $param = $params[1];
         $options = $params[2];
-        return sqlsrv_prepare($this->getConnection(), $statement, $param, $options);
+        sqlsrv_prepare($this->getConnection(), $statement, $param, $options);
+        return $this;
     }
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return mixed
+     * @return bool
      */
-    public function query(mixed ...$params): mixed
+    public function query(mixed ...$params): bool
     {
         $statement = $params[0];
         $param = $params[1] ?? [];
@@ -374,9 +373,9 @@ class SQLSrvEngine implements IConnection
      * This function runs an SQL statement and returns the number of affected rows.
      *
      * @param mixed $params Statement to be executed
-     * @return mixed
+     * @return bool
      */
-    public function exec(mixed ...$params): mixed
+    public function exec(mixed ...$params): bool
     {
         $query = $params[0];
         return sqlsrv_execute($query);
@@ -409,9 +408,9 @@ class SQLSrvEngine implements IConnection
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return mixed
+     * @return array|null
      */
-    public function errorCode(mixed $inst = null): mixed
+    public function errorCode(mixed $inst = null): ?array
     {
         return sqlsrv_errors($inst);
     }
@@ -420,9 +419,9 @@ class SQLSrvEngine implements IConnection
      * This function returns an array containing error information about the last operation performed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return mixed
+     * @return array|null
      */
-    public function errorInfo(mixed $inst = null): mixed
+    public function errorInfo(mixed $inst = null): ?array
     {
         return sqlsrv_errors($inst);
     }

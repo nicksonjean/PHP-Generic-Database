@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\IConnection;
@@ -71,19 +70,18 @@ class SQLiteEngine implements IConnection
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return mixed
+     * @return SQLiteEngine|string|int|bool|array|null
      */
-    public function __call(string $name, array $arguments): mixed
+    public function __call(string $name, array $arguments): SQLiteEngine|string|int|bool|array|null
     {
         $method = substr($name, 0, 3);
         $field = strtolower(substr($name, 3));
         if ($method == 'set') {
             $this->__set($field, ...$arguments);
-            return $this;
         } elseif ($method == 'get') {
             return $this->__get($field);
         }
-        return null;
+        return $this;
     }
 
     /**
@@ -102,7 +100,6 @@ class SQLiteEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return SQLiteEngine
-     * @throws GenericException
      */
     private function preConnect(): SQLiteEngine
     {
@@ -138,7 +135,7 @@ class SQLiteEngine implements IConnection
         if (!$flags) {
             $flags = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE;
         }
-        $database = (string) $database !== 'memory' ? $database : ':' . $database . ':';
+        $database = $database !== 'memory' ? $database : ':' . $database . ':';
         $this->setConnection(new SQLite3($database, $flags));
         return $this;
     }
@@ -231,7 +228,7 @@ class SQLiteEngine implements IConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets an intance of the connection with the database
+     * @param mixed $connection Sets an instance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -311,9 +308,9 @@ class SQLiteEngine implements IConnection
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
         $string = $params[0];
         return match (true) {
@@ -326,15 +323,16 @@ class SQLiteEngine implements IConnection
     }
 
     /**
-     * This function prepares an SQL statement for execution and returns a statement object.
+     * This function binds the parameters to a prepared query.
      *
-     * @param mixed $params Statement to be prepared
-     * @return mixed
+     * @param mixed ...$params
+     * @return static
      */
-    public function prepare(mixed ...$params): mixed
+    public function prepare(mixed ...$params): static
     {
         $query = $params[0];
-        return $this->getConnection()->prepare($query);
+        $this->getConnection()->prepare($query);
+        return $this;
     }
 
     /**

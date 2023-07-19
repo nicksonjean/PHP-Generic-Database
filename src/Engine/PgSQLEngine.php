@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\IConnection;
@@ -22,6 +21,8 @@ use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
 use GenericDatabase\Traits\Singleton;
+use PgSql\Connection;
+use PgSql\Result;
 
 /**
  * Dynamic and Static container class for PgSQLEngine connections.
@@ -70,19 +71,18 @@ class PgSQLEngine implements IConnection
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return mixed
+     * @return PgSQLEngine|string|int|bool|array|null
      */
-    public function __call(string $name, array $arguments): mixed
+    public function __call(string $name, array $arguments): PgSQLEngine|string|int|bool|array|null
     {
         $method = substr($name, 0, 3);
         $field = strtolower(substr($name, 3));
         if ($method == 'set') {
             $this->__set($field, ...$arguments);
-            return $this;
         } elseif ($method == 'get') {
             return $this->__get($field);
         }
-        return null;
+        return $this;
     }
 
     /**
@@ -101,7 +101,6 @@ class PgSQLEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return PgSQLEngine
-     * @throws GenericException
      */
     private function preConnect(): PgSQLEngine
     {
@@ -227,7 +226,7 @@ class PgSQLEngine implements IConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets an intance of the connection with the database
+     * @param mixed $connection Sets an instance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -337,25 +336,26 @@ class PgSQLEngine implements IConnection
 
 
     /**
-     * This function prepares an SQL statement for execution and returns a statement object.
+     * This function binds the parameters to a prepared query.
      *
-     * @param mixed $params Statement to be prepared
-     * @return mixed
+     * @param mixed ...$params
+     * @return static
      */
-    public function prepare(mixed ...$params): mixed
+    public function prepare(mixed ...$params): static
     {
         $stmtname = $params[0];
         $query = $params[1];
-        return pg_prepare($this->getConnection(), $stmtname, $query);
+        pg_prepare($this->getConnection(), $stmtname, $query);
+        return $this;
     }
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return mixed
+     * @return bool|Result
      */
-    public function query(mixed ...$params): mixed
+    public function query(mixed ...$params): bool|Result
     {
         $query = $params[0];
         return pg_query($this->getConnection(), $query);
@@ -365,9 +365,9 @@ class PgSQLEngine implements IConnection
      * This function runs an SQL statement and returns the number of affected rows.
      *
      * @param mixed $params Statement to be executed
-     * @return mixed
+     * @return bool|Result
      */
-    public function exec(mixed ...$params): mixed
+    public function exec(mixed ...$params): bool|Result
     {
         $stmtname = $params[0];
         $param = $params[1];
@@ -400,10 +400,10 @@ class PgSQLEngine implements IConnection
     /**
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
-     * @param mixed $inst = null Resource name, table or view
-     * @return mixed
+     * @param ?Connection $inst = null
+     * @return string
      */
-    public function errorCode(mixed $inst = null): mixed
+    public function errorCode(mixed $inst = null): string
     {
         return pg_last_error($this->getConnection());
     }
@@ -411,10 +411,10 @@ class PgSQLEngine implements IConnection
     /**
      * This function returns an array containing error information about the last operation performed by the database.
      *
-     * @param mixed $inst = null Resource name, table or view
-     * @return mixed
+     * @param ?Connection $inst = null
+     * @return string
      */
-    public function errorInfo(mixed $inst = null): mixed
+    public function errorInfo(mixed $inst = null): string
     {
         return pg_last_error($this->getConnection());
     }

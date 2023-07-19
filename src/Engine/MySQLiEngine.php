@@ -70,19 +70,18 @@ class MySQLiEngine implements IConnection
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return mixed
+     * @return MySQLiEngine|string|int|bool|array|null
      */
-    public function __call(string $name, array $arguments): mixed
+    public function __call(string $name, array $arguments): MySQLiEngine|string|int|bool|array|null
     {
         $method = substr($name, 0, 3);
         $field = strtolower(substr($name, 3));
         if ($method == 'set') {
             $this->__set($field, ...$arguments);
-            return $this;
         } elseif ($method == 'get') {
             return $this->__get($field);
         }
-        return null;
+        return $this;
     }
 
     /**
@@ -101,7 +100,6 @@ class MySQLiEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return MySQLiEngine
-     * @throws GenericException
      */
     private function preConnect(): MySQLiEngine
     {
@@ -244,7 +242,7 @@ class MySQLiEngine implements IConnection
     /**
      * This method is used to assign the database connection instance
      *
-     * @param mixed $connection Sets an intance of the connection with the database
+     * @param mixed $connection Sets an instance of the connection with the database
      * @return mixed
      */
     public function setConnection(mixed $connection): mixed
@@ -361,15 +359,16 @@ class MySQLiEngine implements IConnection
     }
 
     /**
-     * This function prepares an SQL statement for execution and returns a statement object.
+     * This function binds the parameters to a prepared query.
      *
-     * @param mixed $params Statement to be prepared
-     * @return mixed
+     * @param mixed ...$params
+     * @return static
      */
-    public function prepare(mixed ...$params): mixed
+    public function prepare(mixed ...$params): static
     {
         $query = $params[0];
-        return $this->getConnection()->prepare($query);
+        $this->getConnection()->prepare($query);
+        return $this;
     }
 
     /**
