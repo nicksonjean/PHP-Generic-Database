@@ -98,11 +98,23 @@ class Connection
     /**
      * This method is used to get the database connection instance
      *
-     * @return IConnection
+     * @return Connection
      */
-    public function getConnection(): IConnection
+    public function getConnection(): Connection
     {
         return $this->getStrategy()->getConnection();
+    }
+
+    /**
+     * Defines the connection instance by strategy
+     *
+     * @param IConnection $strategy
+     * @return Connection
+     */
+    /** @noinspection PhpUnused */
+    public function setConnection(IConnection $strategy): Connection
+    {
+        return $this->setStrategy($strategy);
     }
 
     /**
@@ -189,7 +201,7 @@ class Connection
      */
     public function isConnected(): bool
     {
-        return (bool) call_user_func([$this->getStrategy(), 'getConnected']);
+        return $this->getStrategy()->isConnected();
     }
 
     /**

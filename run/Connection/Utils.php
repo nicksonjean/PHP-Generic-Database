@@ -15,7 +15,7 @@ $withStrategy = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: 
 
 tryConnectDisconnectReconnect($withStrategy);
 
-$withoutStrategy = Chainable::nativeMySQLi(env: $_ENV, persistent: true);
+$withoutStrategy = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false);
 
 tryConnectDisconnectReconnect($withoutStrategy);
 
@@ -36,7 +36,7 @@ function tryConnectDisconnectReconnect(MySQLiEngine|Connection $context): void
         var_dump($e);
     }
 
-    var_dump(sprintf($status, $context->isConnected() ? 'true' : 'false'));
+    var_dump(sprintf($status, $context->isConnected() ? 'Connected' : 'Disconnected'));
 
     // Desconnectar
 
@@ -47,7 +47,7 @@ function tryConnectDisconnectReconnect(MySQLiEngine|Connection $context): void
         var_dump($e);
     }
 
-    var_dump(sprintf($status, $context->isConnected() ? 'true' : 'false'));
+    var_dump(sprintf($status, $context->isConnected() ? 'Connected' : 'Disconnected'));
 
     // Reconnectar
 
@@ -58,5 +58,5 @@ function tryConnectDisconnectReconnect(MySQLiEngine|Connection $context): void
         var_dump($e);
     }
 
-    var_dump(sprintf($status, $context->isConnected() ? 'true' : 'false'));
+    var_dump(sprintf($status, $context->isConnected() ? 'Connected' : 'Disconnected'));
 }
