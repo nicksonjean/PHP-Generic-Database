@@ -44,7 +44,7 @@ class Chainable
             ->setDatabase($env['MYSQL_DATABASE'])
             ->setUser($env['MYSQL_USER'])
             ->setPassword($env['MYSQL_PASSWORD'])
-            ->setCharset('utf8')
+            ->setCharset($env['MYSQL_CHARSET'])
             ->setOptions([
                 MySQL::ATTR_PERSISTENT => $persistent,
                 MySQL::ATTR_AUTOCOMMIT => true,
@@ -82,7 +82,7 @@ class Chainable
             ->setDatabase($env['PGSQL_DATABASE'])
             ->setUser($env['PGSQL_USER'])
             ->setPassword($env['PGSQL_PASSWORD'])
-            ->setCharset('utf8')
+            ->setCharset($env['PGSQL_CHARSET'])
             ->setOptions([
                 PgSQL::ATTR_PERSISTENT => $persistent,
                 PgSQL::ATTR_CONNECT_ASYNC => true,
@@ -116,7 +116,7 @@ class Chainable
             ->setDatabase($env['SQLSRV_DATABASE'])
             ->setUser($env['SQLSRV_USER'])
             ->setPassword($env['SQLSRV_PASSWORD'])
-            ->setCharset('utf8')
+            ->setCharset($env['SQLSRV_CHARSET'])
             ->setOptions([
                 SQLSrv::ATTR_PERSISTENT => $persistent,
                 SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
@@ -148,7 +148,7 @@ class Chainable
             ->setDatabase($env['OCI_DATABASE'])
             ->setUser($env['OCI_USER'])
             ->setPassword($env['OCI_PASSWORD'])
-            ->setCharset('utf8')
+            ->setCharset($env['OCI_CHARSET'])
             ->setOptions([
                 OCI::ATTR_PERSISTENT => $persistent,
                 OCI::ATTR_CONNECT_TIMEOUT => 28800,
@@ -180,7 +180,7 @@ class Chainable
             ->setDatabase($env['FBIRD_DATABASE'])
             ->setUser($env['FBIRD_USER'])
             ->setPassword($env['FBIRD_PASSWORD'])
-            ->setCharset('utf8')
+            ->setCharset($env['FBIRD_CHARSET'])
             ->setOptions([
                 FBird::ATTR_PERSISTENT => $persistent,
                 FBird::ATTR_CONNECT_TIMEOUT => 28800,
@@ -208,7 +208,7 @@ class Chainable
             $instance = new SQLiteEngine();
         }
         $instance->setDatabase($env['SQLITE_DATABASE'])
-            ->setCharset('utf8')
+            ->setCharset($env['SQLITE_CHARSET'])
             ->setOptions([
                 SQLite::ATTR_OPEN_READONLY => false,
                 SQLite::ATTR_OPEN_READWRITE => true,
@@ -240,7 +240,7 @@ class Chainable
             $instance = new SQLiteEngine();
         }
         $instance->setDatabase($env['SQLITE_DATABASE_MEMORY'])
-            ->setCharset('utf8')
+            ->setCharset($env['SQLITE_CHARSET'])
             ->setOptions([
                 SQLite::ATTR_OPEN_READONLY => false,
                 SQLite::ATTR_OPEN_READWRITE => true,
@@ -277,7 +277,7 @@ class Chainable
             ->setDatabase($env['MYSQL_DATABASE'])
             ->setUser($env['MYSQL_USER'])
             ->setPassword($env['MYSQL_PASSWORD'])
-            ->setCharset('utf8')
+            ->setCharset($env['MYSQL_CHARSET'])
             ->setOptions([
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
@@ -343,7 +343,7 @@ class Chainable
             ->setDatabase($env['SQLSRV_DATABASE'])
             ->setUser($env['SQLSRV_USER'])
             ->setPassword($env['SQLSRV_PASSWORD'])
-            ->setCharset('utf8')
+            ->setCharset($env['SQLSRV_CHARSET'])
             ->setOptions([
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
@@ -376,7 +376,7 @@ class Chainable
             ->setDatabase($env['OCI_DATABASE'])
             ->setUser($env['OCI_USER'])
             ->setPassword($env['OCI_PASSWORD'])
-            ->setCharset('utf8')
+            ->setCharset($env['OCI_CHARSET'])
             ->setOptions([
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
@@ -410,7 +410,7 @@ class Chainable
             ->setDatabase($env['FBIRD_DATABASE'])
             ->setUser($env['FBIRD_USER'])
             ->setPassword($env['FBIRD_PASSWORD'])
-            ->setCharset('utf8')
+            ->setCharset($env['FBIRD_CHARSET'])
             ->setOptions([
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
@@ -440,7 +440,7 @@ class Chainable
         }
         $instance->setDriver('sqlite')
             ->setDatabase($env['SQLITE_DATABASE'])
-            ->setCharset('utf8')
+            ->setCharset($env['SQLITE_CHARSET'])
             ->setOptions([
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
@@ -470,7 +470,7 @@ class Chainable
         }
         $instance->setDriver('sqlite')
             ->setDatabase($env['SQLITE_DATABASE_MEMORY'])
-            ->setCharset('utf8')
+            ->setCharset($env['SQLITE_CHARSET'])
             ->setOptions([
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
