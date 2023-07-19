@@ -1,28 +1,17 @@
 <?php
 
-use
-    GenericDatabase\Engine\OCIEngine,
+use GenericDatabase\Runner\Chainable;
+use Dotenv\Dotenv;
 
-    GenericDatabase\Engine\OCI\OCI;
-
-define("PATH_ROOT", dirname(dirname(__DIR__)));
+define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$load = Dotenv\Dotenv::createImmutable(PATH_ROOT)->load();
+Dotenv::createImmutable(PATH_ROOT)->load();
 
-$oci = new OCIEngine();
-$oci->setHost($_ENV['OCI_HOST'])
-    ->setPort(+$_ENV['OCI_PORT'])
-    ->setDatabase($_ENV['OCI_DATABASE'])
-    ->setUser($_ENV['OCI_USER'])
-    ->setPassword($_ENV['OCI_PASSWORD'])
-    ->setCharset('utf8')
-    ->setOptions([
-        OCI::ATTR_PERSISTENT => true,
-        OCI::ATTR_CONNECT_TIMEOUT => 28800,
-    ])
-    ->setException(true)
-    ->connect();
-
-var_dump($oci);
+try {
+    $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}

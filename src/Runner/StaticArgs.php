@@ -34,6 +34,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|MySQLiEngine {
+        /** @var Connection|MySQLiEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_MYSQLI_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -58,8 +59,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|MySQLiEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -73,6 +75,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PgSQLEngine {
+        /** @var Connection|PgSQLEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_PGSQL_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -93,8 +96,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|PgSQLEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -108,6 +112,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|SQLSrvEngine {
+        /** @var Connection|SQLSrvEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_SQLSRV_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -126,8 +131,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|SQLSrvEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -141,6 +147,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|OCIEngine {
+        /** @var Connection|OCIEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_OCI_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -159,8 +166,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|OCIEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -174,6 +182,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|FBirdEngine {
+        /** @var Connection|FBirdEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_FBIRD_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -192,8 +201,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|FBirdEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -207,6 +217,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|SQLiteEngine {
+        /** @var Connection|SQLiteEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_SQLITE_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -225,8 +236,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|SQLiteEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -240,6 +252,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|SQLiteEngine {
+        /** @var Connection|SQLiteEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_SQLITE_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -258,8 +271,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|SQLiteEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -273,6 +287,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOEngine {
+        /** @var Connection|PDOEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_PDO_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -293,8 +308,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|PDOEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -308,6 +324,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOEngine {
+        /** @var Connection|PDOEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_PDO_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -328,8 +345,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|PDOEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -341,6 +359,7 @@ class StaticArgs
         array $env,
         bool $strategy = false
     ): Connection|PDOEngine {
+        /** @var Connection|PDOEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_PDO_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -360,8 +379,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|PDOEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -375,6 +395,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOEngine {
+        /** @var Connection|PDOEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_PDO_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -395,8 +416,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|PDOEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -410,6 +432,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOEngine {
+        /** @var Connection|PDOEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_PDO_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -430,8 +453,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|PDOEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -445,6 +469,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOEngine {
+        /** @var Connection|PDOEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_PDO_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -461,8 +486,9 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|PDOEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 
     /**
@@ -476,6 +502,7 @@ class StaticArgs
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOEngine {
+        /** @var Connection|PDOEngine $className */
         $className = $strategy ? Entity::CLASS_CONNECTION : Entity::CLASS_PDO_ENGINE;
         $parameters = [];
         if ($strategy) {
@@ -492,7 +519,8 @@ class StaticArgs
             ],
             true
         ]);
-        /** @var Connection|PDOEngine $className */
-        return $className::new(...$parameters);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return $constructor(...$parameters);
     }
 }

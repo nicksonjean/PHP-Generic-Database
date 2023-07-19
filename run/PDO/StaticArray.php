@@ -1,126 +1,59 @@
 <?php
 
-use GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Runner\StaticArray;
+use Dotenv\Dotenv;
 
-define("PATH_ROOT", dirname(dirname(__DIR__)));
+define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$load = Dotenv\Dotenv::createImmutable(PATH_ROOT)->load();
+Dotenv::createImmutable(PATH_ROOT)->load();
 
-$mysql = PDOEngine::new([
-    'driver' => 'mysql',
-    'host' => $_ENV['MYSQL_HOST'],
-    'port' => +$_ENV['MYSQL_PORT'],
-    'database' => $_ENV['MYSQL_DATABASE'],
-    'user' => $_ENV['MYSQL_USER'],
-    'password' => $_ENV['MYSQL_PASSWORD'],
-    'charset' => 'utf8',
-    'options' => [
-        \PDO::ATTR_PERSISTENT => true,
-        \PDO::ATTR_EMULATE_PREPARES => true,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-    ],
-    'exception' => true
-])->connect();
+try {
+    $context = StaticArray::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($mysql);
+try {
+    $context = StaticArray::pdoPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$pgsql = PDOEngine::new([
-    'driver' => 'pgsql',
-    'host' => $_ENV['PGSQL_HOST'],
-    'port' => +$_ENV['PGSQL_PORT'],
-    'database' => $_ENV['PGSQL_DATABASE'],
-    'user' => $_ENV['PGSQL_USER'],
-    'password' => $_ENV['PGSQL_PASSWORD'],
-    'charset' => 'utf8',
-    'options' => [
-        \PDO::ATTR_PERSISTENT => true,
-        \PDO::ATTR_EMULATE_PREPARES => true,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-    ],
-    'exception' => true
-])->connect();
+try {
+    $context = StaticArray::pdoSQLSrv(env: $_ENV, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($pgsql);
+try {
+    $context = StaticArray::pdoOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$sqlsrv = PDOEngine::new([
-    'driver' => 'sqlsrv',
-    'host' => $_ENV['SQLSRV_HOST'],
-    'port' => +$_ENV['SQLSRV_PORT'],
-    'database' => $_ENV['SQLSRV_DATABASE'],
-    'user' => $_ENV['SQLSRV_USER'],
-    'password' => $_ENV['SQLSRV_PASSWORD'],
-    'charset' => 'utf8',
-    'options' => [
-        \PDO::ATTR_EMULATE_PREPARES => true,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-    ],
-    'exception' => true
-])->connect();
+try {
+    $context = StaticArray::pdoFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-var_dump($sqlsrv);
+try {
+    $context = StaticArray::pdoSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-$oci = PDOEngine::new([
-    'driver' => 'oci',
-    'host' => $_ENV['OCI_HOST'],
-    'port' => +$_ENV['OCI_PORT'],
-    'database' => $_ENV['OCI_DATABASE'],
-    'user' => $_ENV['OCI_USER'],
-    'password' => $_ENV['OCI_PASSWORD'],
-    'charset' => 'utf8',
-    'options' => [
-        \PDO::ATTR_PERSISTENT => true,
-        \PDO::ATTR_EMULATE_PREPARES => true,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-    ],
-    'exception' => true
-])->connect();
-
-var_dump($oci);
-
-$firebird = PDOEngine::new([
-    'driver' => 'firebird',
-    'host' => $_ENV['FBIRD_HOST'],
-    'port' => +$_ENV['FBIRD_PORT'],
-    'database' => $_ENV['FBIRD_DATABASE'],
-    'user' => $_ENV['FBIRD_USER'],
-    'password' => $_ENV['FBIRD_PASSWORD'],
-    'charset' => 'utf8',
-    'options' => [
-        \PDO::ATTR_PERSISTENT => true,
-        \PDO::ATTR_EMULATE_PREPARES => true,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-    ],
-    'exception' => true
-])->connect();
-
-var_dump($firebird);
-
-$sqlite2 = PDOEngine::new([
-    'driver' => 'sqlite',
-    'database' => $_ENV['SQLITE_DATABASE'],
-    'charset' => 'utf8',
-    'options' => [
-        \PDO::ATTR_PERSISTENT => true,
-        \PDO::ATTR_EMULATE_PREPARES => true,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-    ],
-    'exception' => true
-])->connect();
-
-var_dump($sqlite2);
-
-$memory = PDOEngine::new([
-    'driver' => 'sqlite',
-    'database' => 'memory',
-    'charset' => 'utf8',
-    'options' => [
-        \PDO::ATTR_PERSISTENT => true,
-        \PDO::ATTR_EMULATE_PREPARES => true,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-    ],
-    'exception' => true
-])->connect();
-
-var_dump($memory);
+try {
+    $context = StaticArray::pdoMemory(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}

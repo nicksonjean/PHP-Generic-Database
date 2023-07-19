@@ -1,28 +1,17 @@
 <?php
 
-use
-    GenericDatabase\Engine\OCIEngine,
+use GenericDatabase\Runner\StaticArgs;
+use Dotenv\Dotenv;
 
-    GenericDatabase\Engine\OCI\OCI;
-
-define("PATH_ROOT", dirname(dirname(__DIR__)));
+define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$load = Dotenv\Dotenv::createImmutable(PATH_ROOT)->load();
+Dotenv::createImmutable(PATH_ROOT)->load();
 
-$oci = OCIEngine::new(
-    $_ENV['OCI_HOST'],
-    +$_ENV['OCI_PORT'],
-    $_ENV['OCI_DATABASE'],
-    $_ENV['OCI_USER'],
-    $_ENV['OCI_PASSWORD'],
-    'utf8',
-    [
-        OCI::ATTR_PERSISTENT => true,
-        OCI::ATTR_CONNECT_TIMEOUT => 28800,
-    ],
-    true
-)->connect();
-
-var_dump($oci);
+try {
+    $context = StaticArgs::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}

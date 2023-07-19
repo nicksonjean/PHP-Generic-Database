@@ -1,28 +1,17 @@
 <?php
 
-use
-    GenericDatabase\Engine\FBirdEngine,
+use GenericDatabase\Runner\StaticArray;
+use Dotenv\Dotenv;
 
-    GenericDatabase\Engine\FBird\FBird;
-
-define("PATH_ROOT", dirname(dirname(__DIR__)));
+define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$load = Dotenv\Dotenv::createImmutable(PATH_ROOT)->load();
+Dotenv::createImmutable(PATH_ROOT)->load();
 
-$fbird = FBirdEngine::new([
-    'host' => $_ENV['FBIRD_HOST'],
-    'port' => +$_ENV['FBIRD_PORT'],
-    'database' => $_ENV['FBIRD_DATABASE'],
-    'user' => $_ENV['FBIRD_USER'],
-    'password' => $_ENV['FBIRD_PASSWORD'],
-    'charset' => 'utf8',
-    'options' => [
-        FBird::ATTR_PERSISTENT => true,
-        FBird::ATTR_CONNECT_TIMEOUT => 28800,
-    ],
-    'exception' => true
-])->connect();
-
-var_dump($fbird);
+try {
+    $context = StaticArray::nativeFBird(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}

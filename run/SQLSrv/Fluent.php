@@ -1,28 +1,17 @@
 <?php
 
-use
-    GenericDatabase\Engine\SQLSrvEngine,
+use GenericDatabase\Runner\Fluent;
+use Dotenv\Dotenv;
 
-    GenericDatabase\Engine\SQLSrv\SQLSrv;
-
-define("PATH_ROOT", dirname(dirname(__DIR__)));
+define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$load = Dotenv\Dotenv::createImmutable(PATH_ROOT)->load();
+Dotenv::createImmutable(PATH_ROOT)->load();
 
-$sqlsrv = SQLSrvEngine
-    ::setHost($_ENV['SQLSRV_HOST'])
-    ::setPort(+$_ENV['SQLSRV_PORT'])
-    ::setDatabase($_ENV['SQLSRV_DATABASE'])
-    ::setUser($_ENV['SQLSRV_USER'])
-    ::setPassword($_ENV['SQLSRV_PASSWORD'])
-    ::setCharset('utf8')
-    ::setOptions([
-        SQLSrv::ATTR_PERSISTENT => true,
-        SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
-    ])
-    ::setException(true)
-    ->connect();
-
-var_dump($sqlsrv);
+try {
+    $context = Fluent::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
