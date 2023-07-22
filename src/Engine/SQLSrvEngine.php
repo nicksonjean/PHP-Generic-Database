@@ -344,24 +344,23 @@ class SQLSrvEngine implements IConnection
      * This function binds the parameters to a prepared query.
      *
      * @param mixed ...$params
-     * @return static
+     * @return mixed
      */
-    public function prepare(mixed ...$params): static
+    public function prepare(mixed ...$params): mixed
     {
         $statement = $params[0];
-        $param = $params[1];
-        $options = $params[2];
-        sqlsrv_prepare($this->getConnection(), $statement, $param, $options);
-        return $this;
+        $param = $params[1] ?? [];
+        $options = $params[2] ?? [];
+        return sqlsrv_prepare($this->getConnection(), $statement, $param, $options);
     }
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return bool
+     * @return mixed
      */
-    public function query(mixed ...$params): bool
+    public function query(mixed ...$params): mixed
     {
         $statement = $params[0];
         $param = $params[1] ?? [];

@@ -4,6 +4,14 @@ namespace GenericDatabase\Engine\OCI;
 
 use GenericDatabase\Helpers\Reflections;
 
+define('OCI_FETCH_NUM', 8);
+define('OCI_FETCH_OBJ', 9);
+define('OCI_FETCH_BOTH', 10);
+define('OCI_FETCH_INTO', 11);
+define('OCI_FETCH_CLASS', 12);
+define('OCI_FETCH_ASSOC', 13);
+define('OCI_FETCH_COLUMN', 14);
+
 class OCI
 {
     public const ATTR_CONNECT_TIMEOUT = 1001;

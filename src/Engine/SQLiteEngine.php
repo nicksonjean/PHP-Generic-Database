@@ -326,13 +326,12 @@ class SQLiteEngine implements IConnection
      * This function binds the parameters to a prepared query.
      *
      * @param mixed ...$params
-     * @return static
+     * @return mixed
      */
-    public function prepare(mixed ...$params): static
+    public function prepare(mixed ...$params): mixed
     {
         $query = $params[0];
-        $this->getConnection()->prepare($query);
-        return $this;
+        return $this->getConnection()->prepare($query);
     }
 
     /**

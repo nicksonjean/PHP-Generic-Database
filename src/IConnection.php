@@ -108,9 +108,9 @@ interface IConnection
      * This function prepares an SQL statement for execution and returns a statement object.
      *
      * @param mixed $params Statement to be prepared
-     * @return static
+     * @return mixed
      */
-    public function prepare(mixed ...$params): static;
+    public function prepare(mixed ...$params): mixed;
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
@@ -127,6 +127,22 @@ interface IConnection
      * @return mixed
      */
     public function exec(mixed ...$params): mixed;
+
+    /**
+     * Fetches the next row from the statement and returns it as an array.
+     *
+     * @param mixed $params The fetch style (optional)
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
+     */
+    // public function fetch(mixed ...$params): mixed;
+
+    /**
+     * Fetches all rows from the statement and returns them as an array.
+     *
+     * @param mixed $params The fetch style (optional)
+     * @return mixed An array containing all rows from the statement.
+     */
+    // public function fetchAll(mixed ...$params): mixed;
 
     /**
      * This function retrieves an attribute from the database.

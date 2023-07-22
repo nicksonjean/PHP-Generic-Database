@@ -4,6 +4,14 @@ namespace GenericDatabase\Engine\FBird;
 
 use GenericDatabase\Helpers\Reflections;
 
+define('IBASE_FETCH_NUM', 8);
+define('IBASE_FETCH_OBJ', 9);
+define('IBASE_FETCH_BOTH', 10);
+define('IBASE_FETCH_INTO', 11);
+define('IBASE_FETCH_CLASS', 12);
+define('IBASE_FETCH_ASSOC', 13);
+define('IBASE_FETCH_COLUMN', 14);
+
 class FBird
 {
     public const ATTR_CONNECT_TIMEOUT = 1001;

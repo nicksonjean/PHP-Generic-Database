@@ -9,18 +9,19 @@ class Regex
      */
     private static $patterns = [
         'onlyNumbers' =>
-        "/^(?:-(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))|(?:0|(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))))(?:.\\d+|)$/"
+        "/^(?:-(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))|(?:0|(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))))(?:.\\d+|)$/",
+        'noBinding' => '/(:[a-zA-Z]{1,})/i'
     ];
 
     /**
      * Check if a value is numeric
      *
-     * @param string $subject Value to be checked
+     * @param string $value Value to be checked
      * @return int|false True if the value is numeric, false otherwise
      */
-    public static function isNumber(string $subject): int|false
+    public static function isNumber(string $value): int|false
     {
-        return preg_match(self::$patterns['onlyNumbers'], (string) $subject);
+        return preg_match(self::$patterns['onlyNumbers'], (string) $value);
     }
     /**
      * Check "Booleanic" Conditions :)
@@ -37,5 +38,16 @@ class Regex
             return null;
         }
         return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    }
+
+    /**
+     * Check if a value is numeric
+     *
+     * @param string $value Value to be checked
+     * @return string The interrogation bingding
+     */
+    public static function noBinding(string $value)
+    {
+        return preg_replace(self::$patterns['noBinding'], '?', $value);
     }
 }

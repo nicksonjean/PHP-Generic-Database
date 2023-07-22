@@ -4,6 +4,8 @@ namespace GenericDatabase\Helpers;
 
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionObject;
+use ReflectionProperty;
 use GenericDatabase\Helpers\GenericException;
 
 class Reflections
@@ -93,5 +95,46 @@ class Reflections
     public static function getClassPropertyName($class, $prop): mixed
     {
         return self::getClassInstance($class)->getProperty($prop)->getValue(null);
+    }
+
+    public static function createObjectAndSetPropertiesCaseInsenstive($aClassOrObject, array $aConstructorArgArray, array $aPropertyList)
+    {
+        $callConstructor = false;
+        if (is_object($aClassOrObject)) {
+            $result = $aClassOrObject;
+            $reflector = new ReflectionObject($aClassOrObject);
+        } else {
+            if (!is_string($aClassOrObject))
+                $aClassOrObject = '\stdClass';
+            $classReflector = new ReflectionClass($aClassOrObject);
+            if (method_exists($classReflector, 'newInstanceWithoutConstructor')) {
+                $result = $classReflector->newInstanceWithoutConstructor();
+                $callConstructor = true;
+            } else {
+                $result = $classReflector->newInstance($aConstructorArgArray);
+            }
+            $reflector = new ReflectionObject((object) $result);
+        }
+        $propertyReflections = $reflector->getProperties();
+        foreach ($aPropertyList as $properyName => $propertyValue) {
+            $createNewProperty = true;
+            foreach ($propertyReflections as $propertyReflector) /* @var $propertyReflector ReflectionProperty */ {
+                if (strcasecmp($properyName, $propertyReflector->name) == 0) {
+                    $propertyReflector->setValue($result, $propertyValue);
+                    $createNewProperty = false;
+                    break;
+                }
+            }
+            if ($createNewProperty) {
+                $result->$properyName = $propertyValue;
+            }
+        }
+        if ($callConstructor) {
+            $constructorRefelector = $reflector->getConstructor();
+            if ($constructorRefelector) {
+                $constructorRefelector->invokeArgs($result, $aConstructorArgArray);
+            }
+        }
+        return $result;
     }
 }

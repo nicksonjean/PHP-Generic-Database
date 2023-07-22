@@ -18,6 +18,10 @@ use GenericDatabase\Engine\FBird\Transaction;
 use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Helpers\Types;
+use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\Reflections;
+use GenericDatabase\Helpers\Regex;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -64,6 +68,30 @@ class FBirdEngine implements IConnection
      * @var mixed $connection
      */
     private mixed $connection;
+
+    /**
+     * Instance of the Statement of the database
+     * @var mixed $statement = null
+     */
+    private mixed $statement = null;
+
+    /**
+     * Affected rows in query post statement
+     * @var ?int $rows = 0
+     */
+    private ?int $rows = 0;
+
+    /**
+     * Last string query runned
+     * @var string $query = ''
+     */
+    private string $query = '';
+
+    /**
+     * Lasts params query runned
+     * @var array $params = []
+     */
+    private array $params = [];
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -335,31 +363,206 @@ class FBirdEngine implements IConnection
     }
 
     /**
-     * This function binds the parameters to a prepared query.
+     * Returns the number of rows affected by the executed statement.
      *
-     * @param mixed ...$params
-     * @return static
+     * @return int|null The number of rows affected by the statement or null if the number is not available.
      */
-    public function prepare(mixed ...$params): static
+    public function getRows(): ?int
     {
-        $query = $params[0];
-        $transaction = isset($params[1]) ? (string) $params[1] : null;
-        $transaction === null
-            ? call_user_func_array('ibase_prepare', [$this->getConnection(), $query, null])
-            : call_user_func_array('ibase_prepare', [$this->getConnection(), $transaction, $query]);
-        return $this;
+        return $this->rows;
+    }
+
+    /**
+     * Returns the parameters that were bound to the SQL statement.
+     *
+     * @return array|null An array containing the parameters bound
+     * to the SQL statement, or null if no parameters were bound.
+     */
+    public function getParams(): ?array
+    {
+        return $this->params;
+    }
+
+    /**
+     * Binds a value to a parameter in the SQL statement.
+     *
+     * @param mixed $param The name of the parameter or an associative array of parameters and values.
+     * @param mixed $value The value to be bound to the parameter.
+     * @return mixed The value bound to the parameter.
+     */
+    public function bindValue($stmt, $param, $value)
+    {
+        return $this->bindParam($stmt, $param, $value);
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $param The name of the parameter or an associative array of parameters and values.
+     * @param mixed $value A variable that will be bound to the parameter.
+     * @return mixed The value of the variable bound to the parameter.
+     */
+    public function bindParam($stmt, $param, &$value)
+    {
+        if (is_array($param)) {
+            $this->params = [];
+            foreach ($param as $key => $val) {
+                $this->params[$key] = $val;
+                $this->statement = $this->exec($stmt, $val);
+            }
+        } else {
+            $value = (string) $value;
+            if (is_float($value)) {
+                $value = (float) $value;
+            } elseif (is_int($value)) {
+                $value = (int) $value;
+            } elseif (is_bool($value)) {
+                $value = (bool) $value;
+            }
+            $this->params = [$param => $value];
+            $this->statement = $this->exec($stmt, $value);
+        }
+        return $value;
+    }
+
+    /**
+     * Returns the number of rows returned by an statement.
+     *
+     * @param mixed $stmt The statement (optional).
+     * @param bool|null $useQuery Defines whether to use the internal class statement (optional).
+     * @return int|false The number of rows returned by the statement or false in case of an error.
+     */
+    public function rowCount(mixed ...$params): int|false
+    {
+        Errors::turnOff();
+        if (!empty($params) && is_bool($params[0]) && $params[0] === true) {
+            $stmt = $this->parse($this->query);
+        } else {
+            $query = Regex::noBinding($params[0]);
+            $statement = ibase_prepare($this->getConnection(), $query);
+            if (count($params) > 1) {
+                $param = $params[1];
+                $value = null;
+                if (count($params) > 2) {
+                    $value = $params[2];
+                }
+                if (is_array($param)) {
+                    $this->params = [];
+                    foreach ($param as $key => $val) {
+                        $this->params[$key] = $val;
+                        $stmt = $this->exec($statement, $val);
+                    }
+                } else {
+                    $value = (string) $value;
+                    if (is_float($value)) {
+                        $value = (float) $value;
+                    } elseif (is_int($value)) {
+                        $value = (int) $value;
+                    } elseif (is_bool($value)) {
+                        $value = (bool) $value;
+                    }
+                    $stmt = $this->exec($statement, $value);
+                }
+            } else {
+                $stmt = $this->exec($statement);
+            }
+        }
+        $result = [];
+        while ($data = ibase_fetch_assoc($stmt, IBASE_TEXT)) {
+            $result[] = $data;
+        }
+        Errors::turnOn();
+        return count($result);
+    }
+
+    /**
+     * Returns the number of columns in an statement result.
+     *
+     * @return int|false The number of columns in the result or false in case of an error.
+     */
+    public function columnCount(): int|false
+    {
+        return ibase_num_fields($this->statement);
+    }
+
+    /**
+     * Parses an SQL statement and returns an statement.
+     *
+     * @param mixed ...$params The parameters for the ibase_query() function.
+     * @return mixed The statement resulting from the SQL statement.
+     */
+    private function parse(mixed ...$params): mixed
+    {
+        $this->query = Regex::noBinding($params[0]);
+        return ibase_query($this->getConnection(), $this->query);
     }
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return mixed
+     * @return static|null
      */
-    public function query(mixed ...$params): mixed
+    public function query(mixed ...$params): static|null
     {
-        $query = $params[0];
-        return call_user_func_array('ibase_query', [$this->getConnection(), $query]);
+        $this->rows = null;
+        $this->statement = $this->parse(...$params);
+        $count = $this->rowCount(true);
+        if ($count > 0) {
+            $this->rows = Types::false2Null($count);
+        }
+        return $this->run();
+    }
+
+    /**
+     * This function binds the parameters to a prepared query.
+     *
+     * @param mixed ...$params
+     * @return static|null
+     */
+    public function prepare(mixed ...$params): static|null
+    {
+        $this->query = Regex::noBinding($params[0]);
+        $this->rows = null;
+        $statement = ibase_prepare($this->getConnection(), $this->query);
+        if (count($params) > 1) {
+            $param = $params[1];
+            $value = null;
+            if (count($params) > 2) {
+                $value = $params[2];
+            }
+            $this->bindValue($statement, $param, $value);
+        } else {
+            $this->statement = $this->exec($statement);
+        }
+        $count = $this->rowCount(...$params);
+        if ($count > 0) {
+            $this->rows = Types::false2Null($count);
+        }
+        return $this->run();
+    }
+
+    /**
+     * This function executes an SQL statement and returns the result set as a statement object.
+     *
+     * @param mixed $params Statement to be queried
+     * @return static|null
+     * @throws GenericException
+     */
+    private function run(): static|null
+    {
+        if ($this->statement) {
+            $err = $this->errorInfo($this->statement);
+            if ($err) {
+                throw new GenericException();
+            } elseif (is_resource($this->statement)) {
+                return $this;
+            }
+        } else {
+            $this->errorInfo($this->getConnection());
+            throw new GenericException();
+        }
+        return null;
     }
 
     /**
@@ -370,13 +573,153 @@ class FBirdEngine implements IConnection
      */
     public function exec(mixed ...$params): mixed
     {
-        $query = $params[0];
-        $param = $params[1];
-        if (!is_array($param)) {
-            return ibase_execute($query, $param);
+        $stmt = $params[0];
+        if (count($params) > 1) {
+            $value = $params[1];
+            return ibase_execute($stmt, $value);
         }
-        array_unshift($param, $query);
-        return call_user_func_array('ibase_execute', $param);
+        return ibase_execute($stmt);
+    }
+
+    /**
+     * Fetches the next row from the statement and returns it as an array.
+     *
+     * @param int $fetchStyle The fetch style (optional). Default is IBASE_FETCH_BOTH.
+     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     */
+    public function fetch($fetchStyle = IBASE_FETCH_BOTH, $optArg1 = null)
+    {
+        switch ($fetchStyle) {
+            case IBASE_FETCH_OBJ:
+            case IBASE_FETCH_CLASS:
+                return $this->internalFetchClassOrObject(isset($optArg1) ? $optArg1 : '\stdClass', []);
+            case IBASE_FETCH_INTO:
+                return $this->internalFetchClassOrObject(isset($optArg1) ? $optArg1 : null, []);
+            case IBASE_FETCH_ASSOC:
+                return $this->internalFetchAssoc();
+            case IBASE_FETCH_NUM:
+                return $this->internalFetchNum();
+            case IBASE_FETCH_BOTH:
+                return $this->internalFetchBoth();
+            default:
+                return $this->internalFetchBoth();
+        }
+    }
+
+    /**
+     * Fetches all rows from the statement and returns them as an array.
+     *
+     * @param int $fetchStyle The fetch style (optional). Default is IBASE_FETCH_ASSOC.
+     * @return array An array containing all rows from the statement.
+     */
+    public function fetchAll($fetchStyle = IBASE_FETCH_ASSOC, $fetchArgument = null, $ctorArgs = null)
+    {
+        switch ($fetchStyle) {
+            case IBASE_FETCH_OBJ:
+            case IBASE_FETCH_CLASS:
+                if (null === $fetchArgument) {
+                    $fetchArgument = '\stdClass';
+                }
+                return $this->internalFetchAllClassOrObjects($fetchArgument, $ctorArgs == null ? [] : $ctorArgs);
+            case IBASE_FETCH_COLUMN:
+                return $this->internalFetchAllColumn($fetchArgument == null ? 0 : $fetchArgument);
+            case IBASE_FETCH_BOTH:
+                return $this->internalFetchAllBoth();
+            case IBASE_FETCH_ASSOC:
+                return $this->internalFetchAllAssoc();
+            case IBASE_FETCH_NUM:
+                return $this->internalFetchAllNum();
+            default:
+                return $this->internalFetchAllBoth();
+        }
+    }
+
+    protected function internalFetchClassOrObject($aClassOrObject, array $constructorArguments = null)
+    {
+        $rowData = $this->internalFetchAssoc();
+        if (is_array($rowData)) {
+            return Reflections::createObjectAndSetPropertiesCaseInsenstive(
+                $aClassOrObject,
+                is_array($constructorArguments) ? $constructorArguments : [],
+                $rowData
+            );
+        }
+        return $rowData;
+    }
+
+    protected function internalFetchBoth()
+    {
+        $tmpData = ibase_fetch_assoc($this->statement, IBASE_TEXT);
+        if (is_array($tmpData)) {
+            return Arrays::toBoth($tmpData);
+        }
+        return false;
+    }
+
+    protected function internalFetchAssoc()
+    {
+        return ibase_fetch_assoc($this->statement, IBASE_TEXT);
+    }
+
+    protected function internalFetchNum()
+    {
+        return ibase_fetch_row($this->statement, IBASE_TEXT);
+    }
+
+    protected function internalFetchColumn($columnIndex = 0)
+    {
+        $rowData = $this->internalFetchNum();
+        if (is_array($rowData)) {
+            return isset($rowData[$columnIndex]) ? $rowData[$columnIndex] : null;
+        }
+        return false;
+    }
+
+    protected function internalFetchAllAssoc()
+    {
+        $result = [];
+        while ($data = $this->internalFetchAssoc()) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllNum()
+    {
+        $result = [];
+        while ($data = $this->internalFetchNum()) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllBoth()
+    {
+        $result = [];
+        while ($data = $this->internalFetchBoth()) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllColumn($columnIndex = 0)
+    {
+        $result = [];
+        while ($data = $this->internalFetchColumn($columnIndex)) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllClassOrObjects($aClassOrObject, array $constructorArguments)
+    {
+        $result = [];
+        while ($row = $this->internalFetchClassOrObject($aClassOrObject, $constructorArguments)) {
+            if ($row !== false) {
+                $result[] = $row;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -417,10 +760,18 @@ class FBirdEngine implements IConnection
      * This function returns an array containing error information about the last operation performed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return string|false
+     * @return array|false
      */
-    public function errorInfo(mixed $inst = null): string|false
+    public function errorInfo(mixed $inst = null): array|false
     {
-        return ibase_errmsg();
+        $errorCode = $this->errorCode();
+        $result = false;
+        if ($errorCode) {
+            $result = [
+                'code' => $this->errorCode(),
+                'message' => ibase_errmsg(),
+            ];
+        }
+        return $result;
     }
 }

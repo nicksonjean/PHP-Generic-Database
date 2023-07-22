@@ -18,6 +18,7 @@ use GenericDatabase\Engine\OCI\Transaction;
 use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Helpers\Types;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -64,6 +65,30 @@ class OCIEngine implements IConnection
      * @var mixed $connection
      */
     private mixed $connection;
+
+    /**
+     * Instance of the Statement of the database
+     * @var mixed $statement = null
+     */
+    private mixed $statement = null;
+
+    /**
+     * Affected rows in query post statement
+     * @var ?int $rows = 0
+     */
+    private ?int $rows = 0;
+
+    /**
+     * Last string query runned
+     * @var string $query = ''
+     */
+    private string $query = '';
+
+    /**
+     * Lasts params query runned
+     * @var array $params = []
+     */
+    private array $params = [];
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -339,43 +364,175 @@ class OCIEngine implements IConnection
     }
 
     /**
-     * This function binds the parameters to a prepared query.
+     * Returns the number of rows affected by the executed statement.
      *
-     * @param mixed ...$params
-     * @return static
+     * @return int|null The number of rows affected by the statement or null if the number is not available.
      */
-    public function prepare(mixed ...$params): static
+    public function getRows(): ?int
     {
-        $query = $params[0];
-        $param = $params[1];
-        $value = $params[2];
-        if (is_numeric($value) && is_string($value) && str_contains($value, '.')) {
-            $floatValue = (float) $value;
-            oci_bind_by_name($query, $param, $floatValue, 8, SQLT_FLT);
-        } elseif (is_string($value)) {
-            $stringValue = $value;
-            oci_bind_by_name($query, $param, $stringValue, -1);
-        } elseif (is_bool($value)) {
-            $boolValue = $value;
-            oci_bind_by_name($query, $param, $boolValue, -1, SQLT_BOL);
-        } elseif (is_array($value)) {
-            foreach ($param as $key) {
-                oci_bind_by_name($query, $key, $value[$key]);
+        return $this->rows;
+    }
+
+    /**
+     * Returns the parameters that were bound to the SQL statement.
+     *
+     * @return array|null An array containing the parameters bound
+     * to the SQL statement, or null if no parameters were bound.
+     */
+    public function getParams(): ?array
+    {
+        return $this->params;
+    }
+
+    /**
+     * Binds a value to a parameter in the SQL statement.
+     *
+     * @param mixed $param The name of the parameter or an associative array of parameters and values.
+     * @param mixed $value The value to be bound to the parameter.
+     * @return mixed The value bound to the parameter.
+     */
+    public function bindValue($param, $value)
+    {
+        return $this->bindParam($param, $value);
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $param The name of the parameter or an associative array of parameters and values.
+     * @param mixed $value A variable that will be bound to the parameter.
+     * @return mixed The value of the variable bound to the parameter.
+     */
+    public function bindParam($param, &$value)
+    {
+        Errors::turnOff();
+        if (is_array($param)) {
+            $this->params = [];
+            foreach ($param as $key => $val) {
+                oci_bind_by_name($this->statement, $key, $val);
+                $this->params[$key] = $val;
             }
+        } else {
+            $ociType = SQLT_CHR;
+            if (is_float($value)) {
+                $ociType = SQLT_FLT;
+            } elseif (is_int($value)) {
+                $ociType = SQLT_INT;
+            } elseif (is_bool($value)) {
+                $ociType = SQLT_BOL;
+            }
+            oci_bind_by_name($this->statement, $param, $value, -1, $ociType);
+            $this->params = [$param => $value];
         }
-        return $this;
+        Errors::turnOn();
+        $this->rows = Types::false2Null($this->rowCount($this->statement, false));
+        return $value;
+    }
+
+    /**
+     * Returns the number of rows returned by an OCI statement.
+     *
+     * @param mixed $stmt The OCI statement (optional).
+     * @param bool|null $useQuery Defines whether to use the internal class statement (optional).
+     * @return int|false The number of rows returned by the statement or false in case of an error.
+     */
+    public function rowCount(mixed $stmt = null, ?bool $useQuery = true): int|false
+    {
+        Errors::turnOff();
+        if ($useQuery) {
+            $stmt = $this->parse($this->query);
+        }
+        oci_execute($stmt);
+        $output = [];
+        $result = oci_fetch_all($stmt, $output);
+        Errors::turnOn();
+        return $result;
+    }
+
+    /**
+     * Returns the number of columns in an OCI statement result.
+     *
+     * @return int|false The number of columns in the result or false in case of an error.
+     */
+    public function columnCount(): int|false
+    {
+        return oci_num_fields($this->statement);
+    }
+
+    /**
+     * Parses an SQL statement and returns an OCI statement.
+     *
+     * @param mixed ...$params The parameters for the oci_parse() function.
+     * @return mixed The OCI statement resulting from the SQL statement.
+     */
+    private function parse(mixed ...$params): mixed
+    {
+        $this->query = $params[0];
+        return oci_parse($this->getConnection(), $this->query);
     }
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return bool
+     * @return static|null
      */
-    public function query(mixed ...$params): bool
+    public function query(mixed ...$params): static|null
     {
-        $query = $params[0];
-        return oci_parse($this->getConnection(), $query);
+        $this->rows = null;
+        $this->statement = $this->parse(...$params);
+        return $this->run(...$params);
+    }
+
+    /**
+     * This function binds the parameters to a prepared query.
+     *
+     * @param mixed ...$params
+     * @return static|null
+     */
+    public function prepare(mixed ...$params): static|null
+    {
+        $this->query = $params[0];
+        $this->rows = null;
+        $this->statement = $this->parse($this->query);
+        if (count($params) > 1) {
+            $param = $params[1];
+            $value = null;
+            if (count($params) > 2) {
+                $value = $params[2];
+            }
+            $this->bindValue($param, $value);
+        }
+        return $this->run(...$params);
+    }
+
+    /**
+     * This function executes an SQL statement and returns the result set as a statement object.
+     *
+     * @param mixed $params Statement to be queried
+     * @return static|null
+     * @throws GenericException
+     */
+    private function run(mixed ...$params): static|null
+    {
+        if ($this->statement) {
+            $this->exec(...$params);
+            $err = $this->errorInfo($this->statement);
+            if ($err) {
+                throw new GenericException();
+            } elseif (is_resource($this->statement)) {
+                $count = $this->rowCount();
+                if ($count > 0) {
+                    $this->rows = Types::false2Null($count);
+                }
+                $this->columnCount() ? $this->statement : null;
+                return $this;
+            }
+        } else {
+            $this->errorInfo($this->getConnection());
+            throw new GenericException();
+        }
+        return null;
     }
 
     /**
@@ -386,9 +543,50 @@ class OCIEngine implements IConnection
      */
     public function exec(mixed ...$params): bool
     {
-        $query = $params[0];
-        $resultMode = isset($params[1]) ? (int) $params[1] : OCI_COMMIT_ON_SUCCESS;
-        return oci_execute($query, $resultMode);
+        $resultMode = isset($params[0]) ? (int) $params[0] : OCI_DEFAULT;
+        return oci_execute($this->statement, $resultMode);
+    }
+
+    /**
+     * Fetches the next row from the OCI statement and returns it as an array.
+     *
+     * @param int $fetchStyle The fetch style (optional). Default is OCI_BOTH.
+     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     */
+    public function fetch($fetchStyle = OCI_BOTH)
+    {
+        return oci_fetch_array($this->statement, $fetchStyle | OCI_RETURN_NULLS | OCI_RETURN_LOBS);
+    }
+
+    /**
+     * Fetches all rows from the OCI statement and returns them as an array.
+     *
+     * @param int $fetchStyle The fetch style (optional). Default is OCI_FETCHSTATEMENT_BY_ROW.
+     * @return array An array containing all rows from the statement.
+     */
+    public function fetchAll($fetchStyle = OCI_FETCHSTATEMENT_BY_ROW)
+    {
+        $result = [];
+        oci_fetch_all(
+            $this->statement,
+            $result,
+            0,
+            -1,
+            $fetchStyle | OCI_RETURN_NULLS | OCI_RETURN_LOBS
+        );
+        return $result;
+    }
+
+    /**
+     * Fetches a single column from the next row of the OCI statement.
+     *
+     * @param int $columnIndex The index of the column to fetch (optional). Default is 0.
+     * @return mixed The value of the specified column from the next row, or false if there are no more rows.
+     */
+    public function fetchColumn($columnIndex = 0)
+    {
+        $row = oci_fetch_array($this->statement, OCI_NUM | OCI_RETURN_NULLS | OCI_RETURN_LOBS);
+        return $row[$columnIndex] ?? null;
     }
 
     /**
@@ -423,7 +621,7 @@ class OCIEngine implements IConnection
     public function errorCode(mixed $inst = null): mixed
     {
         $error = oci_error($inst);
-        return $error['code'];
+        return @$error['code'];
     }
 
     /**
@@ -435,6 +633,6 @@ class OCIEngine implements IConnection
     public function errorInfo(mixed $inst = null): mixed
     {
         $error = oci_error($inst);
-        return $error['message'];
+        return @$error['message'];
     }
 }

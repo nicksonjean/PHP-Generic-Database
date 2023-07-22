@@ -59,4 +59,9 @@ class Types
         }
         return $result;
     }
+
+    public static function false2Null(mixed $val): mixed
+    {
+        return $val === false ? null : $val;
+    }
 }

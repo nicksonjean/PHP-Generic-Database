@@ -79,7 +79,7 @@ class Connection
      * @param IConnection $strategy
      * @return Connection
      */
-    public function setStrategy(IConnection $strategy): Connection
+    private function setStrategy(IConnection $strategy): Connection
     {
         $this->strategy = $strategy;
         return $this;
@@ -90,7 +90,7 @@ class Connection
      *
      * @return IConnection
      */
-    public function getStrategy(): IConnection
+    private function getStrategy(): IConnection
     {
         return $this->strategy;
     }
@@ -100,10 +100,10 @@ class Connection
      *
      * @return Connection
      */
-    public function getConnection(): Connection
-    {
-        return $this->getStrategy()->getConnection();
-    }
+    // private function getConnection(): Connection
+    // {
+    //     return $this->getStrategy()->getConnection();
+    // }
 
     /**
      * Defines the connection instance by strategy
@@ -112,10 +112,10 @@ class Connection
      * @return Connection
      */
     /** @noinspection PhpUnused */
-    public function setConnection(IConnection $strategy): Connection
-    {
-        return $this->setStrategy($strategy);
-    }
+    // private function setConnection(IConnection $strategy): Connection
+    // {
+    //     return $this->setStrategy($strategy);
+    // }
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -202,6 +202,72 @@ class Connection
     public function isConnected(): bool
     {
         return $this->getStrategy()->isConnected();
+    }
+
+    /**
+     * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
+     *
+     * @param mixed $params Content to be quoted
+     * @return mixed
+     */
+    public function quote(mixed ...$params): mixed
+    {
+        return $this->getStrategy()->quote(...$params);
+    }
+
+    /**
+     * This function binds the parameters to a prepared query.
+     *
+     * @param mixed ...$params
+     * @return mixed
+     */
+    public function prepare(mixed ...$params): mixed
+    {
+        return $this->getStrategy()->prepare(...$params);
+    }
+
+    /**
+     * This function executes an SQL statement and returns the result set as a statement object.
+     *
+     * @param mixed $params Statement to be queried
+     * @return mixed
+     */
+    public function query(mixed ...$params): mixed
+    {
+        return $this->getStrategy()->query(...$params);
+    }
+
+    /**
+     * This function runs an SQL statement and returns the number of affected rows.
+     *
+     * @param mixed $params Statement to be executed
+     * @return mixed
+     */
+    public function exec(mixed ...$params): mixed
+    {
+        return $this->getStrategy()->exec(...$params);
+    }
+
+    /**
+     * Fetches the next row from the statement and returns it as an array.
+     *
+     * @param mixed $params The fetch style (optional)
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
+     */
+    public function fetch(mixed ...$params): mixed
+    {
+        return $this->getStrategy()->fetch(...$params);
+    }
+
+    /**
+     * Fetches all rows from the statement and returns them as an array.
+     *
+     * @param mixed $params The fetch style (optional)
+     * @return mixed An array containing all rows from the statement.
+     */
+    public function fetchAll(mixed ...$params): mixed
+    {
+        return $this->getStrategy()->fetch(...$params);
     }
 
     /**

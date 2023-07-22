@@ -91,4 +91,24 @@ class Arrays
 
         return $firstKey !== 0 || $lastKey !== count($array) - 1 || array_values($array) !== $array;
     }
+
+    /**
+     * Create a index or list array to a Assoc array;
+     *
+     * @param mixed $array The array
+     * @return array
+     */
+    public static function toBoth(...$arrays): array
+    {
+        $data = [];
+        foreach ($arrays as $a) {
+            $i = 0;
+            foreach ($a as $k => $v) {
+                $data[$i] = $v;
+                $data[$k] = $v;
+                ++$i;
+            }
+        }
+        return $data;
+    }
 }

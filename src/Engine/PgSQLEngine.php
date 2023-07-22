@@ -339,14 +339,19 @@ class PgSQLEngine implements IConnection
      * This function binds the parameters to a prepared query.
      *
      * @param mixed ...$params
-     * @return static
+     * @return bool|Result
      */
-    public function prepare(mixed ...$params): static
+    public function prepare(mixed ...$params): bool|Result
     {
-        $stmtname = $params[0];
-        $query = $params[1];
-        pg_prepare($this->getConnection(), $stmtname, $query);
-        return $this;
+        $query = '';
+        $stmtname = '';
+        if (count($params) === 1) {
+            $query = $params[0];
+        } elseif (count($params) === 2) {
+            $query = $params[0];
+            $stmtname = $params[1];
+        }
+        return pg_prepare($this->getConnection(), $stmtname, $query);
     }
 
     /**
