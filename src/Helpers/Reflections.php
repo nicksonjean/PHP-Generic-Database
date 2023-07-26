@@ -97,15 +97,26 @@ class Reflections
         return self::getClassInstance($class)->getProperty($prop)->getValue(null);
     }
 
-    public static function createObjectAndSetPropertiesCaseInsenstive($aClassOrObject, array $aConstructorArgArray, array $aPropertyList)
-    {
+    /**
+     * @param $aClassOrObject
+     * @param array $aConstructorArgArray
+     * @param array $aPropertyList
+     * @return mixed|object|string
+     * @throws \ReflectionException
+     */
+    public static function createObjectAndSetPropertiesCaseInsenstive(
+        $aClassOrObject,
+        array $aConstructorArgArray,
+        array $aPropertyList
+    ) {
         $callConstructor = false;
         if (is_object($aClassOrObject)) {
             $result = $aClassOrObject;
             $reflector = new ReflectionObject($aClassOrObject);
         } else {
-            if (!is_string($aClassOrObject))
+            if (!is_string($aClassOrObject)) {
                 $aClassOrObject = '\stdClass';
+            }
             $classReflector = new ReflectionClass($aClassOrObject);
             if (method_exists($classReflector, 'newInstanceWithoutConstructor')) {
                 $result = $classReflector->newInstanceWithoutConstructor();
@@ -118,7 +129,7 @@ class Reflections
         $propertyReflections = $reflector->getProperties();
         foreach ($aPropertyList as $properyName => $propertyValue) {
             $createNewProperty = true;
-            foreach ($propertyReflections as $propertyReflector) /* @var $propertyReflector ReflectionProperty */ {
+            foreach ($propertyReflections as $propertyReflector) { /* @var $propertyReflector ReflectionProperty */
                 if (strcasecmp($properyName, $propertyReflector->name) == 0) {
                     $propertyReflector->setValue($result, $propertyValue);
                     $createNewProperty = false;

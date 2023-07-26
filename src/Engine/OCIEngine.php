@@ -19,6 +19,8 @@ use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Types;
+use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -74,9 +76,14 @@ class OCIEngine implements IConnection
 
     /**
      * Affected rows in query post statement
-     * @var ?int $rows = 0
+     * @var ?int $queriedRows = 0
      */
-    private ?int $rows = 0;
+    private ?int $queriedRows = 0;
+
+    /**
+     * @var ?int $affectedRows = 0
+     */
+    private ?int $affectedRows = 0;
 
     /**
      * Last string query runned
@@ -363,70 +370,85 @@ class OCIEngine implements IConnection
         };
     }
 
-    /**
-     * Returns the number of rows affected by the executed statement.
-     *
-     * @return int|null The number of rows affected by the statement or null if the number is not available.
-     */
-    public function getRows(): ?int
+    public function getRows()
     {
-        return $this->rows;
+        return [
+            'queriedRows' => $this->queriedRows,
+            'affectedRows' => $this->affectedRows
+        ];
     }
 
-    /**
-     * Returns the parameters that were bound to the SQL statement.
-     *
-     * @return array|null An array containing the parameters bound
-     * to the SQL statement, or null if no parameters were bound.
-     */
-    public function getParams(): ?array
+    public function getParams()
     {
         return $this->params;
+    }
+
+    private function numRows(mixed ...$params): int|false
+    {
+        return oci_num_rows(...$params);
     }
 
     /**
      * Binds a value to a parameter in the SQL statement.
      *
-     * @param mixed $param The name of the parameter or an associative array of parameters and values.
+     * @param mixed $stmt The statement of the prepared query.
+     * @param mixed $params The name of the parameter or an associative array of parameters and values.
      * @param mixed $value The value to be bound to the parameter.
      * @return mixed The value bound to the parameter.
      */
-    public function bindValue($param, $value)
+    public function bindValue($stmt, $params, $value, $count = true)
     {
-        return $this->bindParam($param, $value);
+        return $this->bindParam($stmt, $params, $value, $count);
     }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $param The name of the parameter or an associative array of parameters and values.
+     * @param mixed $stmt The statement of the prepared query.
+     * @param mixed $params The name of the parameter or an associative array of parameters and values.
      * @param mixed $value A variable that will be bound to the parameter.
      * @return mixed The value of the variable bound to the parameter.
      */
-    public function bindParam($param, &$value)
+    public function bindParam($stmt, $params, &$value, $count = true)
     {
-        Errors::turnOff();
-        if (is_array($param)) {
-            $this->params = [];
-            foreach ($param as $key => $val) {
-                oci_bind_by_name($this->statement, $key, $val);
-                $this->params[$key] = $val;
+        if (!empty($params)) {
+            if (is_array($params)) {
+                $this->params = $params;
+                if (Arrays::isMultidimensional($params)) {
+                    foreach ($params as $val) {
+                        for ($index = 0; $index < count($val); $index++) {
+                            oci_bind_by_name($stmt, array_keys($val)[$index], array_values($val)[$index]);
+                        }
+                        $this->exec($stmt);
+                        if ($count) {
+                            $this->affectedRows += $this->numRows($stmt);
+                        }
+                    }
+                } else {
+                    for ($index = 0; $index < count($params); $index++) {
+                        oci_bind_by_name($stmt, array_keys($params)[$index], array_values($params)[$index]);
+                    }
+                    $this->exec($stmt);
+                    if ($count) {
+                        $this->affectedRows = $this->numRows($stmt);
+                    }
+                }
+            } else {
+                $this->params = [$params => $value];
+                $ociType = match (gettype($value)) {
+                    'boolean' => SQLT_BOL,
+                    'integer' => SQLT_INT,
+                    'double' => SQLT_FLT,
+                    default => SQLT_CHR,
+                };
+                oci_bind_by_name($stmt, $params, $value, -1, $ociType);
+                $this->exec($stmt);
+                if ($count) {
+                    $this->affectedRows = $this->numRows($stmt);
+                }
             }
-        } else {
-            $ociType = SQLT_CHR;
-            if (is_float($value)) {
-                $ociType = SQLT_FLT;
-            } elseif (is_int($value)) {
-                $ociType = SQLT_INT;
-            } elseif (is_bool($value)) {
-                $ociType = SQLT_BOL;
-            }
-            oci_bind_by_name($this->statement, $param, $value, -1, $ociType);
-            $this->params = [$param => $value];
         }
-        Errors::turnOn();
-        $this->rows = Types::false2Null($this->rowCount($this->statement, false));
-        return $value;
+        return $this->affectedRows ?: 0;
     }
 
     /**
@@ -436,16 +458,18 @@ class OCIEngine implements IConnection
      * @param bool|null $useQuery Defines whether to use the internal class statement (optional).
      * @return int|false The number of rows returned by the statement or false in case of an error.
      */
-    public function rowCount(mixed $stmt = null, ?bool $useQuery = true): int|false
+    public function rowCount(mixed ...$params): int|false
     {
-        Errors::turnOff();
-        if ($useQuery) {
-            $stmt = $this->parse($this->query);
+        $stmt = $this->parse($params[0]);
+        if (isset($params[1])) {
+            $param = isset($params[1]) ? $params[1] : null;
+            $value = isset($params[2]) ? $params[2] : null;
+            $this->bindParam($stmt, $param, $value, false);
         }
-        oci_execute($stmt);
-        $output = [];
-        $result = oci_fetch_all($stmt, $output);
-        Errors::turnOn();
+        $result = 0;
+        if ($this->exec($stmt)) {
+            $result = count($this->internalFetchAllAssoc($stmt));
+        }
         return $result;
     }
 
@@ -479,9 +503,13 @@ class OCIEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->rows = null;
-        $this->statement = $this->parse(...$params);
-        return $this->run(...$params);
+        if (!empty($params)) {
+            $this->statement = $this->parse(...$params);
+            $this->exec($this->statement);
+            $this->queriedRows = Types::false2Null($this->rowCount(...$params));
+            $this->affectedRows = $this->numRows($this->statement);
+        }
+        return $this;
     }
 
     /**
@@ -492,47 +520,22 @@ class OCIEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $this->query = $params[0];
-        $this->rows = null;
-        $this->statement = $this->parse($this->query);
-        if (count($params) > 1) {
-            $param = $params[1];
-            $value = null;
-            if (count($params) > 2) {
-                $value = $params[2];
-            }
-            $this->bindValue($param, $value);
-        }
-        return $this->run(...$params);
-    }
-
-    /**
-     * This function executes an SQL statement and returns the result set as a statement object.
-     *
-     * @param mixed $params Statement to be queried
-     * @return static|null
-     * @throws GenericException
-     */
-    private function run(mixed ...$params): static|null
-    {
-        if ($this->statement) {
-            $this->exec(...$params);
-            $err = $this->errorInfo($this->statement);
-            if ($err) {
-                throw new GenericException();
-            } elseif (is_resource($this->statement)) {
-                $count = $this->rowCount();
-                if ($count > 0) {
-                    $this->rows = Types::false2Null($count);
+        if (!empty($params)) {
+            $this->statement = $this->parse($params[0]);
+            if (isset($params[1])) {
+                $param = isset($params[1]) ? $params[1] : null;
+                $value = isset($params[2]) ? $params[2] : null;
+                if (!$this->bindParam($this->statement, $param, $value)) {
+                    $this->queriedRows = Types::false2Null($this->rowCount(...$params));
                 }
-                $this->columnCount() ? $this->statement : null;
-                return $this;
+            } else {
+                $this->exec($this->statement);
+                if (!$this->affectedRows) {
+                    $this->queriedRows = Types::false2Null($this->rowCount(...$params));
+                }
             }
-        } else {
-            $this->errorInfo($this->getConnection());
-            throw new GenericException();
         }
-        return null;
+        return $this;
     }
 
     /**
@@ -543,19 +546,44 @@ class OCIEngine implements IConnection
      */
     public function exec(mixed ...$params): bool
     {
-        $resultMode = isset($params[0]) ? (int) $params[0] : OCI_DEFAULT;
-        return oci_execute($this->statement, $resultMode);
+        $statement = isset($params[0]) ? $params[0] : $this->statement;
+        $resultMode = isset($params[1]) ? (int) $params[1] : OCI_COMMIT_ON_SUCCESS;
+        return oci_execute($statement, $resultMode);
     }
 
     /**
-     * Fetches the next row from the OCI statement and returns it as an array.
+     * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is OCI_BOTH.
+     * @param int $fetchStyle The fetch style (optional). Default is OCI_FETCH_BOTH.
      * @return array|false The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch($fetchStyle = OCI_BOTH)
+    public function fetch($fetchStyle = OCI_FETCH_BOTH, $fetchArgument = null, $optArg1 = null)
     {
-        return oci_fetch_array($this->statement, $fetchStyle | OCI_RETURN_NULLS | OCI_RETURN_LOBS);
+        switch ($fetchStyle) {
+            case OCI_FETCH_OBJ:
+            case OCI_FETCH_CLASS:
+                return $this->internalFetchClassOrObject(
+                    isset($optArg1) ? $optArg1 : '\stdClass',
+                    [],
+                    $this->statement,
+                );
+            case OCI_FETCH_INTO:
+                return $this->internalFetchClassOrObject(
+                    isset($optArg1) ? $optArg1 : null,
+                    [],
+                    $this->statement,
+                );
+            case OCI_FETCH_COLUMN:
+                return $this->internalFetchColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
+            case OCI_FETCH_ASSOC:
+                return $this->internalFetchAssoc($this->statement);
+            case OCI_FETCH_NUM:
+                return $this->internalFetchNum($this->statement);
+            case OCI_FETCH_BOTH:
+                return $this->internalFetchBoth($this->statement);
+            default:
+                return $this->internalFetchBoth($this->statement);
+        }
     }
 
     /**
@@ -564,29 +592,118 @@ class OCIEngine implements IConnection
      * @param int $fetchStyle The fetch style (optional). Default is OCI_FETCHSTATEMENT_BY_ROW.
      * @return array An array containing all rows from the statement.
      */
-    public function fetchAll($fetchStyle = OCI_FETCHSTATEMENT_BY_ROW)
+    public function fetchAll($fetchStyle = OCI_FETCH_ASSOC, $fetchArgument = null, $ctorArgs = null)
+    {
+        switch ($fetchStyle) {
+            case OCI_FETCH_OBJ:
+            case OCI_FETCH_CLASS:
+                if (null === $fetchArgument) {
+                    $fetchArgument = '\stdClass';
+                }
+                return $this->internalFetchAllClassOrObjects(
+                    $fetchArgument,
+                    $this->statement,
+                    $ctorArgs == null ? [] : $ctorArgs
+                );
+            case OCI_FETCH_COLUMN:
+                return $this->internalFetchAllColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
+            case OCI_FETCH_ASSOC:
+                return $this->internalFetchAllAssoc($this->statement);
+            case OCI_FETCH_NUM:
+                return $this->internalFetchAllNum($this->statement);
+            case OCI_FETCH_BOTH:
+                return $this->internalFetchAllBoth($this->statement);
+            default:
+                return $this->internalFetchAllBoth($this->statement);
+        }
+    }
+
+    protected function internalFetchClassOrObject(
+        $aClassOrObject,
+        array $constructorArguments = null,
+        $statement = null,
+    ) {
+        $rowData = $this->internalFetchAssoc($statement);
+        if (is_array($rowData)) {
+            return Reflections::createObjectAndSetPropertiesCaseInsenstive(
+                $aClassOrObject,
+                is_array($constructorArguments) ? $constructorArguments : [],
+                $rowData
+            );
+        }
+        return $rowData;
+    }
+
+    protected function internalFetchBoth($statement = null)
+    {
+        return oci_fetch_array($statement, OCI_BOTH | OCI_RETURN_NULLS | OCI_RETURN_LOBS);
+    }
+
+    protected function internalFetchAssoc($statement = null)
+    {
+        return oci_fetch_assoc($statement);
+    }
+
+    protected function internalFetchNum($statement = null)
+    {
+        return oci_fetch_row($statement);
+    }
+
+    protected function internalFetchColumn($statement = null, $columnIndex = 0)
+    {
+        $row = oci_fetch_array($statement, OCI_NUM | OCI_RETURN_NULLS | OCI_RETURN_LOBS);
+        return $row[$columnIndex] ?? null;
+    }
+
+    protected function internalFetchAllAssoc($statement = null)
     {
         $result = [];
-        oci_fetch_all(
-            $this->statement,
+        @oci_fetch_all(
+            $statement,
             $result,
             0,
             -1,
-            $fetchStyle | OCI_RETURN_NULLS | OCI_RETURN_LOBS
+            OCI_FETCHSTATEMENT_BY_ROW | OCI_RETURN_NULLS | OCI_RETURN_LOBS
         );
         return $result;
     }
 
-    /**
-     * Fetches a single column from the next row of the OCI statement.
-     *
-     * @param int $columnIndex The index of the column to fetch (optional). Default is 0.
-     * @return mixed The value of the specified column from the next row, or false if there are no more rows.
-     */
-    public function fetchColumn($columnIndex = 0)
+    protected function internalFetchAllNum($statement = null)
     {
-        $row = oci_fetch_array($this->statement, OCI_NUM | OCI_RETURN_NULLS | OCI_RETURN_LOBS);
-        return $row[$columnIndex] ?? null;
+        $result = [];
+        while ($data = $this->internalFetchNum($statement)) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllBoth($statement = null)
+    {
+        $result = [];
+        while ($data = $this->internalFetchBoth($statement)) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllColumn($statement = null, $columnIndex = 0)
+    {
+        $result = [];
+        while ($data = $this->internalFetchColumn($statement, $columnIndex)) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllClassOrObjects($aClassOrObject, array $constructorArguments, $statement = null)
+    {
+        $result = [];
+        while ($row = $this->internalFetchClassOrObject($aClassOrObject, $constructorArguments, $statement)) {
+            if ($row !== false) {
+                $result[] = $row;
+            }
+        }
+        return $result;
     }
 
     /**

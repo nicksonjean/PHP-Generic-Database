@@ -77,9 +77,14 @@ class FBirdEngine implements IConnection
 
     /**
      * Affected rows in query post statement
-     * @var ?int $rows = 0
+     * @var ?int $queriedRows = 0
      */
-    private ?int $rows = 0;
+    private ?int $queriedRows = 0;
+
+    /**
+     * @var ?int $affectedRows = 0
+     */
+    private ?int $affectedRows = 0;
 
     /**
      * Last string query runned
@@ -362,23 +367,15 @@ class FBirdEngine implements IConnection
         };
     }
 
-    /**
-     * Returns the number of rows affected by the executed statement.
-     *
-     * @return int|null The number of rows affected by the statement or null if the number is not available.
-     */
-    public function getRows(): ?int
+    public function getRows()
     {
-        return $this->rows;
+        return [
+            'queriedRows' => $this->queriedRows,
+            'affectedRows' => $this->affectedRows
+        ];
     }
 
-    /**
-     * Returns the parameters that were bound to the SQL statement.
-     *
-     * @return array|null An array containing the parameters bound
-     * to the SQL statement, or null if no parameters were bound.
-     */
-    public function getParams(): ?array
+    public function getParams()
     {
         return $this->params;
     }
@@ -386,41 +383,58 @@ class FBirdEngine implements IConnection
     /**
      * Binds a value to a parameter in the SQL statement.
      *
-     * @param mixed $param The name of the parameter or an associative array of parameters and values.
+     * @param mixed $stmt The statement of the prepared query.
+     * @param mixed $params The name of the parameter or an associative array of parameters and values.
      * @param mixed $value The value to be bound to the parameter.
      * @return mixed The value bound to the parameter.
      */
-    public function bindValue($stmt, $param, $value)
+    public function bindValue($stmt, $params, $value)
     {
-        return $this->bindParam($stmt, $param, $value);
+        return $this->bindParam($stmt, $params, $value);
     }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $param The name of the parameter or an associative array of parameters and values.
+     * @param mixed $stmt The statement of the prepared query.
+     * @param mixed $params The name of the parameter or an associative array of parameters and values.
      * @param mixed $value A variable that will be bound to the parameter.
      * @return mixed The value of the variable bound to the parameter.
      */
-    public function bindParam($stmt, $param, &$value)
+    public function bindParam($stmt, $params, &$value)
     {
-        if (is_array($param)) {
-            $this->params = [];
-            foreach ($param as $key => $val) {
-                $this->params[$key] = $val;
-                $this->statement = $this->exec($stmt, $val);
+        if (!empty($params)) {
+            if (is_array($params)) {
+                $this->params = [];
+                if (Arrays::isMultidimensional($params)) {
+                    foreach ((array) Arrays::arrayValuesRecursive($params) as $key => $param) {
+                        $this->params[$key] = $param;
+                        $this->affectedRows += ($this->exec($stmt, $param) !== false)
+                            ? ibase_affected_rows($this->getConnection())
+                            : 0;
+                    }
+                } else {
+                    foreach ($params as $key => $val) {
+                        $this->params[$key] = $val;
+                    }
+                    $this->affectedRows = ($this->exec($stmt, array_values($this->params)) !== false)
+                        ? ibase_affected_rows($this->getConnection())
+                        : 0;
+                }
+            } else {
+                $value = match (gettype($value)) {
+                    'boolean' => (bool) ($value),
+                    'integer' => (int) ($value),
+                    'float' => (float) ($value),
+                    default => (string) ($value),
+                };
+                $this->params = [$params => $value];
+                $this->affectedRows = ($this->exec($stmt, $value) !== false)
+                    ? ibase_affected_rows($this->getConnection())
+                    : 0;
             }
         } else {
-            $value = (string) $value;
-            if (is_float($value)) {
-                $value = (float) $value;
-            } elseif (is_int($value)) {
-                $value = (int) $value;
-            } elseif (is_bool($value)) {
-                $value = (bool) $value;
-            }
-            $this->params = [$param => $value];
-            $this->statement = $this->exec($stmt, $value);
+            $this->affectedRows = ($this->exec($stmt) !== false) ? ibase_affected_rows($this->getConnection()) : 0;
         }
         return $value;
     }
@@ -428,51 +442,32 @@ class FBirdEngine implements IConnection
     /**
      * Returns the number of rows returned by an statement.
      *
-     * @param mixed $stmt The statement (optional).
-     * @param bool|null $useQuery Defines whether to use the internal class statement (optional).
-     * @return int|false The number of rows returned by the statement or false in case of an error.
+     * @param mixed $params The statement (optional).
      */
     public function rowCount(mixed ...$params): int|false
     {
-        Errors::turnOff();
-        if (!empty($params) && is_bool($params[0]) && $params[0] === true) {
+        $stmt = null;
+        if (!empty($params) && $params[0] === true) {
             $stmt = $this->parse($this->query);
         } else {
             $query = Regex::noBinding($params[0]);
             $statement = ibase_prepare($this->getConnection(), $query);
-            if (count($params) > 1) {
-                $param = $params[1];
-                $value = null;
-                if (count($params) > 2) {
-                    $value = $params[2];
-                }
-                if (is_array($param)) {
-                    $this->params = [];
-                    foreach ($param as $key => $val) {
-                        $this->params[$key] = $val;
-                        $stmt = $this->exec($statement, $val);
-                    }
-                } else {
-                    $value = (string) $value;
-                    if (is_float($value)) {
-                        $value = (float) $value;
-                    } elseif (is_int($value)) {
-                        $value = (int) $value;
-                    } elseif (is_bool($value)) {
-                        $value = (bool) $value;
-                    }
-                    $stmt = $this->exec($statement, $value);
+            if (isset($params[1])) {
+                $value = match (gettype($params[2] ?? null)) {
+                    'boolean' => (bool) ($params[2] ?? null),
+                    'integer' => (int) ($params[2] ?? null),
+                    'float' => (float) ($params[2] ?? null),
+                    default => (string) ($params[2] ?? null),
+                };
+                $params = is_array($params[1]) ? $params[1] : [$value];
+                foreach ($params as $param) {
+                    $stmt = ibase_execute($statement, $param);
                 }
             } else {
-                $stmt = $this->exec($statement);
+                $stmt = ibase_execute($statement);
             }
         }
-        $result = [];
-        while ($data = ibase_fetch_assoc($stmt, IBASE_TEXT)) {
-            $result[] = $data;
-        }
-        Errors::turnOn();
-        return count($result);
+        return count($this->internalFetchAllAssoc($stmt));
     }
 
     /**
@@ -505,13 +500,12 @@ class FBirdEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->rows = null;
         $this->statement = $this->parse(...$params);
         $count = $this->rowCount(true);
         if ($count > 0) {
-            $this->rows = Types::false2Null($count);
+            $this->queriedRows = Types::false2Null($count);
         }
-        return $this->run();
+        return $this;
     }
 
     /**
@@ -522,47 +516,22 @@ class FBirdEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $this->query = Regex::noBinding($params[0]);
-        $this->rows = null;
-        $statement = ibase_prepare($this->getConnection(), $this->query);
-        if (count($params) > 1) {
-            $param = $params[1];
-            $value = null;
-            if (count($params) > 2) {
-                $value = $params[2];
-            }
+        if (!empty($params)) {
+            $this->query = Regex::noBinding($params[0]);
+            $statement = ibase_prepare($this->getConnection(), $this->query); //NOSONAR
+            $param = !empty($params[1]) ? $params[1] : null;
+            $value = !empty($params[2]) ? $params[2] : null;
             $this->bindValue($statement, $param, $value);
-        } else {
-            $this->statement = $this->exec($statement);
-        }
-        $count = $this->rowCount(...$params);
-        if ($count > 0) {
-            $this->rows = Types::false2Null($count);
-        }
-        return $this->run();
-    }
-
-    /**
-     * This function executes an SQL statement and returns the result set as a statement object.
-     *
-     * @param mixed $params Statement to be queried
-     * @return static|null
-     * @throws GenericException
-     */
-    private function run(): static|null
-    {
-        if ($this->statement) {
-            $err = $this->errorInfo($this->statement);
-            if ($err) {
-                throw new GenericException();
-            } elseif (is_resource($this->statement)) {
-                return $this;
+            if (!is_resource($this->statement)) {
+                $this->statement = $statement;
+            } else {
+                $count = $this->rowCount(...$params);
+                if ($count > 0) {
+                    $this->queriedRows = Types::false2Null($count);
+                }
             }
-        } else {
-            $this->errorInfo($this->getConnection());
-            throw new GenericException();
         }
-        return null;
+        return $this;
     }
 
     /**
@@ -575,10 +544,20 @@ class FBirdEngine implements IConnection
     {
         $stmt = $params[0];
         if (count($params) > 1) {
-            $value = $params[1];
-            return ibase_execute($stmt, $value);
+            $data = $params[1];
+            if (!is_array($data)) {
+                $result = ibase_execute($stmt, $data);
+                $this->statement = $result;
+                return $result;
+            }
+            array_unshift($data, $stmt);
+            $result = call_user_func_array('ibase_execute', $data);
+            $this->statement = $result;
+            return $result;
         }
-        return ibase_execute($stmt);
+        $result = ibase_execute($stmt);
+        $this->statement = $result;
+        return $result;
     }
 
     /**
@@ -587,22 +566,32 @@ class FBirdEngine implements IConnection
      * @param int $fetchStyle The fetch style (optional). Default is IBASE_FETCH_BOTH.
      * @return array|false The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch($fetchStyle = IBASE_FETCH_BOTH, $optArg1 = null)
+    public function fetch($fetchStyle = IBASE_FETCH_BOTH, $fetchArgument = null, $optArg1 = null)
     {
         switch ($fetchStyle) {
             case IBASE_FETCH_OBJ:
             case IBASE_FETCH_CLASS:
-                return $this->internalFetchClassOrObject(isset($optArg1) ? $optArg1 : '\stdClass', []);
+                return $this->internalFetchClassOrObject(
+                    isset($optArg1) ? $optArg1 : '\stdClass',
+                    [],
+                    $this->statement,
+                );
             case IBASE_FETCH_INTO:
-                return $this->internalFetchClassOrObject(isset($optArg1) ? $optArg1 : null, []);
+                return $this->internalFetchClassOrObject(
+                    isset($optArg1) ? $optArg1 : null,
+                    [],
+                    $this->statement,
+                );
+            case IBASE_FETCH_COLUMN:
+                return $this->internalFetchColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
             case IBASE_FETCH_ASSOC:
-                return $this->internalFetchAssoc();
+                return $this->internalFetchAssoc($this->statement);
             case IBASE_FETCH_NUM:
-                return $this->internalFetchNum();
+                return $this->internalFetchNum($this->statement);
             case IBASE_FETCH_BOTH:
-                return $this->internalFetchBoth();
+                return $this->internalFetchBoth($this->statement);
             default:
-                return $this->internalFetchBoth();
+                return $this->internalFetchBoth($this->statement);
         }
     }
 
@@ -620,23 +609,30 @@ class FBirdEngine implements IConnection
                 if (null === $fetchArgument) {
                     $fetchArgument = '\stdClass';
                 }
-                return $this->internalFetchAllClassOrObjects($fetchArgument, $ctorArgs == null ? [] : $ctorArgs);
+                return $this->internalFetchAllClassOrObjects(
+                    $fetchArgument,
+                    $this->statement,
+                    $ctorArgs == null ? [] : $ctorArgs
+                );
             case IBASE_FETCH_COLUMN:
-                return $this->internalFetchAllColumn($fetchArgument == null ? 0 : $fetchArgument);
-            case IBASE_FETCH_BOTH:
-                return $this->internalFetchAllBoth();
+                return $this->internalFetchAllColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
             case IBASE_FETCH_ASSOC:
-                return $this->internalFetchAllAssoc();
+                return $this->internalFetchAllAssoc($this->statement);
             case IBASE_FETCH_NUM:
-                return $this->internalFetchAllNum();
+                return $this->internalFetchAllNum($this->statement);
+            case IBASE_FETCH_BOTH:
+                return $this->internalFetchAllBoth($this->statement);
             default:
-                return $this->internalFetchAllBoth();
+                return $this->internalFetchAllBoth($this->statement);
         }
     }
 
-    protected function internalFetchClassOrObject($aClassOrObject, array $constructorArguments = null)
-    {
-        $rowData = $this->internalFetchAssoc();
+    protected function internalFetchClassOrObject(
+        $aClassOrObject,
+        array $constructorArguments = null,
+        $statement = null,
+    ) {
+        $rowData = $this->internalFetchAssoc($statement);
         if (is_array($rowData)) {
             return Reflections::createObjectAndSetPropertiesCaseInsenstive(
                 $aClassOrObject,
@@ -647,74 +643,74 @@ class FBirdEngine implements IConnection
         return $rowData;
     }
 
-    protected function internalFetchBoth()
+    protected function internalFetchBoth($statement = null)
     {
-        $tmpData = ibase_fetch_assoc($this->statement, IBASE_TEXT);
+        $tmpData = ibase_fetch_assoc($statement, IBASE_TEXT);
         if (is_array($tmpData)) {
             return Arrays::toBoth($tmpData);
         }
         return false;
     }
 
-    protected function internalFetchAssoc()
+    protected function internalFetchAssoc($statement = null)
     {
-        return ibase_fetch_assoc($this->statement, IBASE_TEXT);
+        return ibase_fetch_assoc($statement, IBASE_TEXT);
     }
 
-    protected function internalFetchNum()
+    protected function internalFetchNum($statement = null)
     {
-        return ibase_fetch_row($this->statement, IBASE_TEXT);
+        return ibase_fetch_row($statement, IBASE_TEXT);
     }
 
-    protected function internalFetchColumn($columnIndex = 0)
+    protected function internalFetchColumn($statement = null, $columnIndex = 0)
     {
-        $rowData = $this->internalFetchNum();
+        $rowData = $this->internalFetchNum($statement);
         if (is_array($rowData)) {
             return isset($rowData[$columnIndex]) ? $rowData[$columnIndex] : null;
         }
         return false;
     }
 
-    protected function internalFetchAllAssoc()
+    protected function internalFetchAllAssoc($statement = null)
     {
         $result = [];
-        while ($data = $this->internalFetchAssoc()) {
+        while ($data = $this->internalFetchAssoc($statement)) {
             $result[] = $data;
         }
         return $result;
     }
 
-    protected function internalFetchAllNum()
+    protected function internalFetchAllNum($statement = null)
     {
         $result = [];
-        while ($data = $this->internalFetchNum()) {
+        while ($data = $this->internalFetchNum($statement)) {
             $result[] = $data;
         }
         return $result;
     }
 
-    protected function internalFetchAllBoth()
+    protected function internalFetchAllBoth($statement = null)
     {
         $result = [];
-        while ($data = $this->internalFetchBoth()) {
+        while ($data = $this->internalFetchBoth($statement)) {
             $result[] = $data;
         }
         return $result;
     }
 
-    protected function internalFetchAllColumn($columnIndex = 0)
+    protected function internalFetchAllColumn($statement = null, $columnIndex = 0)
     {
         $result = [];
-        while ($data = $this->internalFetchColumn($columnIndex)) {
+        while ($data = $this->internalFetchColumn($statement, $columnIndex)) {
             $result[] = $data;
         }
         return $result;
     }
 
-    protected function internalFetchAllClassOrObjects($aClassOrObject, array $constructorArguments)
+    protected function internalFetchAllClassOrObjects($aClassOrObject, array $constructorArguments, $statement = null)
     {
         $result = [];
-        while ($row = $this->internalFetchClassOrObject($aClassOrObject, $constructorArguments)) {
+        while ($row = $this->internalFetchClassOrObject($aClassOrObject, $constructorArguments, $statement)) {
             if ($row !== false) {
                 $result[] = $row;
             }

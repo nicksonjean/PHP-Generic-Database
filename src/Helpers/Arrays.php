@@ -93,12 +93,40 @@ class Arrays
     }
 
     /**
-     * Create a index or list array to a Assoc array;
+     * Determine if array is an array multidimensional
      *
-     * @param mixed $array The array
+     * @param array $array The array
+     * @return bool
+     */
+    public static function isMultidimensional(array $array): bool
+    {
+        return is_array($array[array_key_first($array)]);
+    }
+
+    /**
+     * Determine if array is an array multidimensional
+     *
+     * @param array $array The array
      * @return array
      */
-    public static function toBoth(...$arrays): array
+    public static function arrayValuesRecursive(array $array): array
+    {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = array_values($value);
+                self::arrayValuesRecursive($value);
+            }
+        }
+        return $array;
+    }
+
+    /**
+     * Create an index or list array to an Assoc array;
+     *
+     * @param array $arrays The array
+     * @return array
+     */
+    public static function toBoth(array ...$arrays): array
     {
         $data = [];
         foreach ($arrays as $a) {
