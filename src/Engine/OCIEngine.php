@@ -475,8 +475,10 @@ class OCIEngine implements IConnection
         $stmt = $this->parse($params[0]);
         if (isset($params[1])) {
             $this->bindParam($stmt, $params[1], $params[2] ?? null);
+        } else {
+            $this->exec($stmt);
         }
-        return $this->exec($stmt) ? count($this->internalFetchAllAssoc($stmt)) : 0;
+        return count($this->internalFetchAllAssoc($stmt));
     }
 
     /**

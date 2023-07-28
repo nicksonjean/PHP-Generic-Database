@@ -516,11 +516,7 @@ class PgSQLEngine implements IConnection
         if (!empty($params)) {
             $this->query = Regex::noBinding($params[0], false);
             $stmtname = Regex::randomString(18);
-            $this->statement = pg_prepare(
-                $this->getConnection(),
-                $stmtname,
-                $this->query
-            );
+            $this->statement = pg_prepare($this->getConnection(), $stmtname, $this->query);
             if (isset($params[1])) {
                 $param = !empty($params[1]) ? $params[1] : null;
                 $value = !empty($params[2]) ? $params[2] : null;

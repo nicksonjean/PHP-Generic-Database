@@ -558,12 +558,14 @@ class FBirdEngine implements IConnection
     public function exec(mixed ...$params): mixed
     {
         $stmt = !empty($params[0]) ? $params[0] : null;
-        $data = !empty($params[1]) ? $params[1] : null;
+        $data = !empty($params[1]) ?? $params[1];
         if (!is_array($data)) {
             $data = [$data];
         }
         array_unshift($data, $stmt);
-        return $this->statement = call_user_func_array('ibase_execute', $data);
+        return $this->statement = isset($params[1])
+            ? call_user_func_array('ibase_execute', $data)
+            : call_user_func_array('ibase_execute', [$stmt]);
     }
 
     /**
