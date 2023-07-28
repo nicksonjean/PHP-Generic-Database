@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\IConnection;
@@ -17,12 +18,14 @@ use GenericDatabase\Engine\PgSQL\Transaction;
 use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Helpers\Types;
+use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\Reflections;
+use GenericDatabase\Helpers\Regex;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
 use GenericDatabase\Traits\Singleton;
-use PgSql\Connection;
-use PgSql\Result;
 
 /**
  * Dynamic and Static container class for PgSQLEngine connections.
@@ -65,6 +68,35 @@ class PgSQLEngine implements IConnection
      * @var mixed $connection
      */
     private mixed $connection;
+
+    /**
+     * Instance of the Statement of the database
+     * @var mixed $statement = null
+     */
+    private mixed $statement = null;
+
+    /**
+     * Affected rows in query post statement
+     * @var ?int $queriedRows = 0
+     */
+    private ?int $queriedRows = 0;
+
+    /**
+     * @var ?int $affectedRows = 0
+     */
+    private ?int $affectedRows = 0;
+
+    /**
+     * Last string query runned
+     * @var string $query = ''
+     */
+    private string $query = '';
+
+    /**
+     * Lasts params query runned
+     * @var array $params = []
+     */
+    private array $params = [];
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -300,14 +332,14 @@ class PgSQLEngine implements IConnection
     public function lastInsertId(?string $name = null): string|int|false
     {
         $filter = sprintf("WHERE column_default LIKE 'nextval%%' AND table_name = '%s'", $name);
-        $query = $this->query(sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS %s", $filter));
+        $query = $this->parse(sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS %s", $filter));
         $autoKeyRes = pg_fetch_assoc($query);
         if (isset($autoKeyRes['column_name'])) {
             $query = vsprintf(
                 "SELECT pg_catalog.setval(pg_get_serial_sequence('%s', '%s'), COALESCE(MAX(%s))) AS value FROM %s;",
                 [$name, $autoKeyRes['column_name'], $autoKeyRes['column_name'], $name]
             );
-            $maxIndex = $this->query($query);
+            $maxIndex = $this->parse($query);
             $maxIndexRes = pg_fetch_assoc($maxIndex);
             return $maxIndexRes['value'];
         } else {
@@ -334,49 +366,345 @@ class PgSQLEngine implements IConnection
         return ($quote) ? "'" . $quoted($string) . "'" : $quoted($string);
     }
 
+    /**
+     * Returns an array containing the number of queried rows and the number of affected rows.
+     *
+     * @return array An assPGSQLative array with keys 'queriedRows' and 'affectedRows'.
+     */
+    public function getRows()
+    {
+        return [
+            'queriedRows' => $this->queriedRows,
+            'affectedRows' => $this->affectedRows
+        ];
+    }
 
     /**
-     * This function binds the parameters to a prepared query.
+     * Get the parameters assPGSQLated with this instance.
      *
-     * @param mixed ...$params
-     * @return bool|Result
+     * @return mixed The parameters assPGSQLated with this instance.
      */
-    public function prepare(mixed ...$params): bool|Result
+    public function getParams()
     {
-        $query = '';
-        $stmtname = '';
-        if (count($params) === 1) {
-            $query = $params[0];
-        } elseif (count($params) === 2) {
-            $query = $params[0];
-            $stmtname = $params[1];
+        return $this->params;
+    }
+
+    /**
+     * Returns the number of rows affected by an InterBase/Firebird operation.
+     *
+     * @param mixed ...$params The parameters required for the PGSQL_affected_rows() function.
+     * @return int The number of affected rows
+     */
+    private function numRows(mixed ...$params): int
+    {
+        return pg_num_rows(...$params);
+    }
+
+    /**
+     * Binds a value to a parameter in the SQL statement.
+     *
+     * @param mixed $stmt The statement of the prepared query.
+     * @param mixed $params The name of the parameter or an assPGSQLative array of parameters and values.
+     * @param mixed $value The value to be bound to the parameter.
+     * @return mixed The value bound to the parameter.
+     */
+    public function bindValue($stmt, $params, $value)
+    {
+        return $this->bindParam($stmt, $params, $value);
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $stmt The statement of the prepared query.
+     * @param mixed $params The name of the parameter or an assPGSQLative array of parameters and values.
+     * @param mixed $value A variable that will be bound to the parameter.
+     * @return mixed The value of the variable bound to the parameter.
+     */
+    public function bindParam($stmt, $params, $value)
+    {
+        if (!empty($params)) {
+            if (is_array($params)) {
+                $this->params = [];
+                if (Arrays::isMultidimensional($params)) {
+                    foreach ((array) Arrays::arrayValuesRecursive($params) as $key => $param) {
+                        $this->params[$key] = $param;
+                        $this->exec($stmt, $param);
+                        $this->affectedRows += pg_affected_rows($this->statement);
+                    }
+                } else {
+                    foreach ($params as $key => $val) {
+                        $this->params[$key] = $val;
+                    }
+                    $this->exec($stmt, array_values($this->params));
+                    $this->affectedRows = pg_affected_rows($this->statement);
+                }
+            } else {
+                $value = match (true) {
+                    is_bool($value) => (bool) $value,
+                    is_int($value) => (int) $value,
+                    is_float($value) => (float) $value,
+                    default => (string) $value,
+                };
+                $this->params = [$params => $value];
+                $this->exec($stmt, [$value]);
+                $this->affectedRows = pg_affected_rows($this->statement);
+            }
+        } else {
+            $this->exec($stmt);
+            $this->affectedRows = pg_affected_rows($this->statement);
         }
-        return pg_prepare($this->getConnection(), $stmtname, $query);
+        return $this->affectedRows ?: 0;
+    }
+
+    /**
+     * Returns the number of rows returned by an statement.
+     *
+     * @param mixed $params The statement.
+     */
+    public function rowCount(mixed ...$params): int|false
+    {
+        return pg_num_rows(...$params);
+    }
+
+    /**
+     * Returns the number of columns in an statement result.
+     *
+     * @return int|false The number of columns in the result or false in case of an error.
+     */
+    public function columnCount(): int|false
+    {
+        return pg_num_fields($this->statement);
+    }
+
+    /**
+     * Parses an SQL statement and returns an statement.
+     *
+     * @param mixed ...$params The parameters for the PGSQL_query() function.
+     * @return mixed The statement resulting from the SQL statement.
+     */
+    private function parse(mixed ...$params): mixed
+    {
+        $this->query = Regex::noBinding($params[0], false);
+        return pg_query($this->getConnection(), $this->query);
     }
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return bool|Result
+     * @return static|null
      */
-    public function query(mixed ...$params): bool|Result
+    public function query(mixed ...$params): static|null
     {
-        $query = $params[0];
-        return pg_query($this->getConnection(), $query);
+        if (!empty($params)) {
+            $this->statement = $this->parse(...$params);
+            $this->queriedRows = $this->numRows($this->statement);
+            $this->affectedRows = pg_affected_rows($this->statement);
+        }
+        return $this;
+    }
+
+    /**
+     * This function binds the parameters to a prepared query.
+     *
+     * @param mixed ...$params
+     * @return static|null
+     */
+    public function prepare(mixed ...$params): static|null
+    {
+        if (!empty($params)) {
+            $this->query = Regex::noBinding($params[0], false);
+            $stmtname = Regex::randomString(18);
+            $this->statement = pg_prepare(
+                $this->getConnection(),
+                $stmtname,
+                $this->query
+            );
+            if (isset($params[1])) {
+                $param = !empty($params[1]) ? $params[1] : null;
+                $value = !empty($params[2]) ? $params[2] : null;
+                $this->bindParam($stmtname, $param, $value);
+            } else {
+                $this->exec($stmtname);
+            }
+        }
+        return $this;
     }
 
     /**
      * This function runs an SQL statement and returns the number of affected rows.
      *
      * @param mixed $params Statement to be executed
-     * @return bool|Result
+     * @return mixed
      */
-    public function exec(mixed ...$params): bool|Result
+    public function exec(mixed ...$params): mixed
     {
-        $stmtname = $params[0];
-        $param = $params[1];
-        return pg_execute($this->getConnection(), $stmtname, $param);
+        $stmtname = !empty($params[0]) ? $params[0] : Regex::randomString(18);
+        $param = !empty($params[1]) ? $params[1] : [];
+        $this->statement = pg_execute($this->getConnection(), $stmtname, $param);
+        $this->queriedRows = $this->numRows($this->statement);
+        $this->affectedRows = pg_affected_rows($this->statement);
+        return $this->statement;
+    }
+
+    /**
+     * Fetches the next row from the statement and returns it as an array.
+     *
+     * @param int $fetchStyle The fetch style (optional). Default is PGSQL_FETCH_BOTH.
+     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     */
+    public function fetch($fetchStyle = PGSQL_FETCH_BOTH, $fetchArgument = null, $optArg1 = null)
+    {
+        switch ($fetchStyle) {
+            case PGSQL_FETCH_OBJ:
+            case PGSQL_FETCH_CLASS:
+            case FETCH_OBJ:
+            case FETCH_CLASS:
+                return $this->internalFetchClassOrObject(
+                    isset($optArg1) ? $optArg1 : '\stdClass',
+                    [],
+                    $this->statement,
+                );
+            case PGSQL_FETCH_INTO:
+            case FETCH_INTO:
+                return $this->internalFetchClassOrObject(
+                    isset($optArg1) ? $optArg1 : null,
+                    [],
+                    $this->statement,
+                );
+            case PGSQL_FETCH_COLUMN:
+            case FETCH_COLUMN:
+                return $this->internalFetchColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
+            case PGSQL_FETCH_ASSOC:
+            case FETCH_ASSOC:
+                return $this->internalFetchAssoc($this->statement);
+            case PGSQL_FETCH_NUM:
+            case FETCH_NUM:
+                return $this->internalFetchNum($this->statement);
+            case PGSQL_FETCH_BOTH:
+            case FETCH_BOTH:
+                return $this->internalFetchBoth($this->statement);
+            default:
+                return $this->internalFetchBoth($this->statement);
+        }
+    }
+
+    /**
+     * Fetches all rows from the statement and returns them as an array.
+     *
+     * @param int $fetchStyle The fetch style (optional). Default is PGSQL_FETCH_ASSOC.
+     * @return array An array containing all rows from the statement.
+     */
+    public function fetchAll($fetchStyle = PGSQL_FETCH_ASSOC, $fetchArgument = null, $ctorArgs = null)
+    {
+        switch ($fetchStyle) {
+            case PGSQL_FETCH_OBJ:
+            case PGSQL_FETCH_CLASS:
+            case FETCH_OBJ:
+            case FETCH_CLASS:
+                if (null === $fetchArgument) {
+                    $fetchArgument = '\stdClass';
+                }
+                return $this->internalFetchAllClassOrObjects(
+                    $fetchArgument,
+                    $ctorArgs == null ? [] : $ctorArgs,
+                    $this->statement
+                );
+            case PGSQL_FETCH_COLUMN:
+            case FETCH_COLUMN:
+                return $this->internalFetchAllColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
+            case PGSQL_FETCH_ASSOC:
+            case FETCH_ASSOC:
+                return $this->internalFetchAllAssoc($this->statement);
+            case PGSQL_FETCH_NUM:
+            case FETCH_NUM:
+                return $this->internalFetchAllNum($this->statement);
+            case PGSQL_FETCH_BOTH:
+            case FETCH_BOTH:
+                return $this->internalFetchAllBoth($this->statement);
+            default:
+                return $this->internalFetchAllBoth($this->statement);
+        }
+    }
+
+    protected function internalFetchClassOrObject(
+        $aClassOrObject,
+        array $constructorArguments = null,
+        $statement = null,
+    ) {
+        $rowData = $this->internalFetchAssoc($statement);
+        if (is_array($rowData)) {
+            return Reflections::createObjectAndSetPropertiesCaseInsenstive(
+                $aClassOrObject,
+                is_array($constructorArguments) ? $constructorArguments : [],
+                $rowData
+            );
+        }
+        return $rowData;
+    }
+
+    protected function internalFetchBoth($statement = null)
+    {
+        return pg_fetch_array($statement);
+    }
+
+    protected function internalFetchAssoc($statement = null)
+    {
+        return pg_fetch_assoc($statement);
+    }
+
+    protected function internalFetchNum($statement = null)
+    {
+        return pg_fetch_row($statement);
+    }
+
+    protected function internalFetchColumn($statement = null, $columnIndex = 0)
+    {
+        $rowData = $this->internalFetchNum($statement);
+        if (is_array($rowData)) {
+            return isset($rowData[$columnIndex]) ? $rowData[$columnIndex] : null;
+        }
+        return false;
+    }
+
+    protected function internalFetchAllAssoc($statement = null)
+    {
+        return pg_fetch_all($statement);
+    }
+
+    protected function internalFetchAllNum($statement = null)
+    {
+        $result = [];
+        while ($data = $this->internalFetchNum($statement)) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllBoth($statement = null)
+    {
+        $result = [];
+        while ($data = $this->internalFetchBoth($statement)) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllColumn($statement = null, $columnIndex = 0)
+    {
+        return pg_fetch_all_columns($statement, $columnIndex);
+    }
+
+    protected function internalFetchAllClassOrObjects($aClassOrObject, array $constructorArguments, $statement = null)
+    {
+        $result = [];
+        while ($row = $this->internalFetchClassOrObject($aClassOrObject, $constructorArguments, $statement)) {
+            if ($row !== false) {
+                $result[] = $row;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -405,7 +733,7 @@ class PgSQLEngine implements IConnection
     /**
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
-     * @param ?Connection $inst = null
+     * @param ?mixed $inst = null
      * @return string
      */
     public function errorCode(mixed $inst = null): string
@@ -416,7 +744,7 @@ class PgSQLEngine implements IConnection
     /**
      * This function returns an array containing error information about the last operation performed by the database.
      *
-     * @param ?Connection $inst = null
+     * @param ?mixed $inst = null
      * @return string
      */
     public function errorInfo(mixed $inst = null): string

@@ -41,13 +41,29 @@ class Regex
     }
 
     /**
-     * Check if a value is numeric
+     * Replace binding param name to another bind type
      *
-     * @param string $value Value to be checked
-     * @return string The interrogation bingding
+     * @param string $value The SQL Query with binding names
+     * @param bool $bindType The binding type Value
+     * @return string The SQL Query post processed with binding types
      */
-    public static function noBinding(string $value)
+    public static function noBinding(string $value, bool $bindType = true)
     {
-        return preg_replace(self::$patterns['noBinding'], '?', $value);
+        return $bindType
+            ? preg_replace(self::$patterns['noBinding'], '?', $value)
+            :   preg_replace_callback(self::$patterns['noBinding'], function () {
+                static $count = 1;
+                return '$' . $count++;
+            }, $value);
+    }
+
+    public static function randomString(int $length)
+    {
+        $keys = array_merge(range('a', 'z'), range('A', 'Z'));
+        $key = '';
+        for ($i = 0; $i < $length; $i++) {
+            $key .= $keys[array_rand($keys)];
+        }
+        return $key;
     }
 }

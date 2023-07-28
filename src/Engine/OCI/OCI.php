@@ -12,6 +12,14 @@ define('OCI_FETCH_CLASS', 12);
 define('OCI_FETCH_ASSOC', 13);
 define('OCI_FETCH_COLUMN', 14);
 
+define('FETCH_NUM', 8);
+define('FETCH_OBJ', 9);
+define('FETCH_BOTH', 10);
+define('FETCH_INTO', 11);
+define('FETCH_CLASS', 12);
+define('FETCH_ASSOC', 13);
+define('FETCH_COLUMN', 14);
+
 class OCI
 {
     public const ATTR_CONNECT_TIMEOUT = 1001;

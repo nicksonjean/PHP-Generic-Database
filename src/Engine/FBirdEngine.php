@@ -367,6 +367,11 @@ class FBirdEngine implements IConnection
         };
     }
 
+    /**
+     * Returns an array containing the number of queried rows and the number of affected rows.
+     *
+     * @return array An associative array with keys 'queriedRows' and 'affectedRows'.
+     */
     public function getRows()
     {
         return [
@@ -375,9 +380,25 @@ class FBirdEngine implements IConnection
         ];
     }
 
+    /**
+     * Get the parameters associated with this instance.
+     *
+     * @return mixed The parameters associated with this instance.
+     */
     public function getParams()
     {
         return $this->params;
+    }
+
+    /**
+     * Returns the number of rows affected by an InterBase/Firebird operation.
+     *
+     * @param mixed ...$params The parameters required for the ibase_affected_rows() function.
+     * @return int The number of affected rows
+     */
+    private function numRows(mixed ...$params): int
+    {
+        return ibase_affected_rows(...$params);
     }
 
     /**
@@ -401,7 +422,7 @@ class FBirdEngine implements IConnection
      * @param mixed $value A variable that will be bound to the parameter.
      * @return mixed The value of the variable bound to the parameter.
      */
-    public function bindParam($stmt, $params, &$value)
+    public function bindParam($stmt, $params, $value)
     {
         if (!empty($params)) {
             if (is_array($params)) {
@@ -410,7 +431,7 @@ class FBirdEngine implements IConnection
                     foreach ((array) Arrays::arrayValuesRecursive($params) as $key => $param) {
                         $this->params[$key] = $param;
                         $this->affectedRows += ($this->exec($stmt, $param) !== false)
-                            ? ibase_affected_rows($this->getConnection())
+                            ? $this->numRows($this->getConnection())
                             : 0;
                     }
                 } else {
@@ -418,25 +439,25 @@ class FBirdEngine implements IConnection
                         $this->params[$key] = $val;
                     }
                     $this->affectedRows = ($this->exec($stmt, array_values($this->params)) !== false)
-                        ? ibase_affected_rows($this->getConnection())
+                        ? $this->numRows($this->getConnection())
                         : 0;
                 }
             } else {
-                $value = match (gettype($value)) {
-                    'boolean' => (bool) ($value),
-                    'integer' => (int) ($value),
-                    'float' => (float) ($value),
-                    default => (string) ($value),
+                $value = match (true) {
+                    is_bool($value) => (bool) $value,
+                    is_int($value) => (int) $value,
+                    is_float($value) => (float) $value,
+                    default => (string) $value,
                 };
                 $this->params = [$params => $value];
                 $this->affectedRows = ($this->exec($stmt, $value) !== false)
-                    ? ibase_affected_rows($this->getConnection())
+                    ? $this->numRows($this->getConnection())
                     : 0;
             }
         } else {
-            $this->affectedRows = ($this->exec($stmt) !== false) ? ibase_affected_rows($this->getConnection()) : 0;
+            $this->affectedRows = ($this->exec($stmt) !== false) ? $this->numRows($this->getConnection()) : 0;
         }
-        return $value;
+        return $this->affectedRows ?: 0;
     }
 
     /**
@@ -446,26 +467,15 @@ class FBirdEngine implements IConnection
      */
     public function rowCount(mixed ...$params): int|false
     {
-        $stmt = null;
-        if (!empty($params) && $params[0] === true) {
-            $stmt = $this->parse($this->query);
-        } else {
-            $query = Regex::noBinding($params[0]);
-            $statement = ibase_prepare($this->getConnection(), $query);
-            if (isset($params[1])) {
-                $value = match (gettype($params[2] ?? null)) {
-                    'boolean' => (bool) ($params[2] ?? null),
-                    'integer' => (int) ($params[2] ?? null),
-                    'float' => (float) ($params[2] ?? null),
-                    default => (string) ($params[2] ?? null),
-                };
-                $params = is_array($params[1]) ? $params[1] : [$value];
-                foreach ($params as $param) {
-                    $stmt = ibase_execute($statement, $param);
-                }
-            } else {
-                $stmt = ibase_execute($statement);
+        /** @phpstan-ignore-next-line */
+        $stmt = $statement = ibase_prepare($this->getConnection(), Regex::noBinding($params[0]));
+        if (isset($params[1])) {
+            $params = is_array($params[1]) ? $params[1] : [$params[2]];
+            foreach ($params as $param) {
+                $stmt = ibase_execute($statement, $param);
             }
+        } else {
+            $stmt = ibase_execute($statement);
         }
         return count($this->internalFetchAllAssoc($stmt));
     }
@@ -500,10 +510,10 @@ class FBirdEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->statement = $this->parse(...$params);
-        $count = $this->rowCount(true);
-        if ($count > 0) {
-            $this->queriedRows = Types::false2Null($count);
+        if (!empty($params)) {
+            $this->statement = $this->parse(...$params);
+            $this->queriedRows = Types::false2Null($this->rowCount(...$params));
+            $this->affectedRows = $this->numRows($this->getConnection());
         }
         return $this;
     }
@@ -518,16 +528,21 @@ class FBirdEngine implements IConnection
     {
         if (!empty($params)) {
             $this->query = Regex::noBinding($params[0]);
-            $statement = ibase_prepare($this->getConnection(), $this->query); //NOSONAR
-            $param = !empty($params[1]) ? $params[1] : null;
-            $value = !empty($params[2]) ? $params[2] : null;
-            $this->bindValue($statement, $param, $value);
-            if (!is_resource($this->statement)) {
-                $this->statement = $statement;
+            /** @phpstan-ignore-next-line */
+            $statement = ibase_prepare($this->getConnection(), $this->query);
+            if (isset($params[1])) {
+                $param = !empty($params[1]) ? $params[1] : null;
+                $value = !empty($params[2]) ? $params[2] : null;
+                $this->bindParam($statement, $param, $value);
+                if (!is_resource($this->statement)) {
+                    $this->statement = $statement;
+                } else {
+                    $this->queriedRows = Types::false2Null($this->rowCount(...$params));
+                }
             } else {
-                $count = $this->rowCount(...$params);
-                if ($count > 0) {
-                    $this->queriedRows = Types::false2Null($count);
+                $this->exec($statement);
+                if (!$this->affectedRows) {
+                    $this->queriedRows = Types::false2Null($this->rowCount(...$params));
                 }
             }
         }
@@ -542,22 +557,13 @@ class FBirdEngine implements IConnection
      */
     public function exec(mixed ...$params): mixed
     {
-        $stmt = $params[0];
-        if (count($params) > 1) {
-            $data = $params[1];
-            if (!is_array($data)) {
-                $result = ibase_execute($stmt, $data);
-                $this->statement = $result;
-                return $result;
-            }
-            array_unshift($data, $stmt);
-            $result = call_user_func_array('ibase_execute', $data);
-            $this->statement = $result;
-            return $result;
+        $stmt = !empty($params[0]) ? $params[0] : null;
+        $data = !empty($params[1]) ? $params[1] : null;
+        if (!is_array($data)) {
+            $data = [$data];
         }
-        $result = ibase_execute($stmt);
-        $this->statement = $result;
-        return $result;
+        array_unshift($data, $stmt);
+        return $this->statement = call_user_func_array('ibase_execute', $data);
     }
 
     /**
@@ -571,24 +577,31 @@ class FBirdEngine implements IConnection
         switch ($fetchStyle) {
             case IBASE_FETCH_OBJ:
             case IBASE_FETCH_CLASS:
+            case FETCH_OBJ:
+            case FETCH_CLASS:
                 return $this->internalFetchClassOrObject(
                     isset($optArg1) ? $optArg1 : '\stdClass',
                     [],
                     $this->statement,
                 );
             case IBASE_FETCH_INTO:
+            case FETCH_INTO:
                 return $this->internalFetchClassOrObject(
                     isset($optArg1) ? $optArg1 : null,
                     [],
                     $this->statement,
                 );
             case IBASE_FETCH_COLUMN:
+            case FETCH_COLUMN:
                 return $this->internalFetchColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
             case IBASE_FETCH_ASSOC:
+            case FETCH_ASSOC:
                 return $this->internalFetchAssoc($this->statement);
             case IBASE_FETCH_NUM:
+            case FETCH_NUM:
                 return $this->internalFetchNum($this->statement);
             case IBASE_FETCH_BOTH:
+            case FETCH_BOTH:
                 return $this->internalFetchBoth($this->statement);
             default:
                 return $this->internalFetchBoth($this->statement);
@@ -606,21 +619,27 @@ class FBirdEngine implements IConnection
         switch ($fetchStyle) {
             case IBASE_FETCH_OBJ:
             case IBASE_FETCH_CLASS:
+            case FETCH_OBJ:
+            case FETCH_CLASS:
                 if (null === $fetchArgument) {
                     $fetchArgument = '\stdClass';
                 }
                 return $this->internalFetchAllClassOrObjects(
                     $fetchArgument,
-                    $this->statement,
-                    $ctorArgs == null ? [] : $ctorArgs
+                    $ctorArgs == null ? [] : $ctorArgs,
+                    $this->statement
                 );
             case IBASE_FETCH_COLUMN:
+            case FETCH_COLUMN:
                 return $this->internalFetchAllColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
             case IBASE_FETCH_ASSOC:
+            case FETCH_ASSOC:
                 return $this->internalFetchAllAssoc($this->statement);
             case IBASE_FETCH_NUM:
+            case FETCH_NUM:
                 return $this->internalFetchAllNum($this->statement);
             case IBASE_FETCH_BOTH:
+            case FETCH_BOTH:
                 return $this->internalFetchAllBoth($this->statement);
             default:
                 return $this->internalFetchAllBoth($this->statement);

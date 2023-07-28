@@ -129,12 +129,12 @@ class Arrays
     public static function toBoth(array ...$arrays): array
     {
         $data = [];
-        foreach ($arrays as $a) {
-            $i = 0;
-            foreach ($a as $k => $v) {
-                $data[$i] = $v;
-                $data[$k] = $v;
-                ++$i;
+        foreach ($arrays as $array) {
+            $index = 0;
+            foreach ($array as $key => $value) {
+                $data[$index] = $value;
+                $data[$key] = $value;
+                ++$index;
             }
         }
         return $data;

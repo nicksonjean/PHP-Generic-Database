@@ -370,6 +370,11 @@ class OCIEngine implements IConnection
         };
     }
 
+    /**
+     * Returns an array containing the number of queried rows and the number of affected rows.
+     *
+     * @return array An associative array with keys 'queriedRows' and 'affectedRows'.
+     */
     public function getRows()
     {
         return [
@@ -378,11 +383,22 @@ class OCIEngine implements IConnection
         ];
     }
 
+    /**
+     * Get the parameters associated with this instance.
+     *
+     * @return mixed The parameters associated with this instance.
+     */
     public function getParams()
     {
         return $this->params;
     }
 
+    /**
+     * Returns the number of rows affected by an InterBase/Firebird operation.
+     *
+     * @param mixed ...$params The parameters required for the ibase_affected_rows() function.
+     * @return int|false The number of affected rows or FALSE in case of an error.
+     */
     private function numRows(mixed ...$params): int|false
     {
         return oci_num_rows(...$params);
@@ -396,9 +412,9 @@ class OCIEngine implements IConnection
      * @param mixed $value The value to be bound to the parameter.
      * @return mixed The value bound to the parameter.
      */
-    public function bindValue($stmt, $params, $value, $count = true)
+    public function bindValue($stmt, $params, $value)
     {
-        return $this->bindParam($stmt, $params, $value, $count);
+        return $this->bindParam($stmt, $params, $value);
     }
 
     /**
@@ -409,7 +425,7 @@ class OCIEngine implements IConnection
      * @param mixed $value A variable that will be bound to the parameter.
      * @return mixed The value of the variable bound to the parameter.
      */
-    public function bindParam($stmt, $params, &$value, $count = true)
+    public function bindParam($stmt, $params, $value)
     {
         if (!empty($params)) {
             if (is_array($params)) {
@@ -420,57 +436,47 @@ class OCIEngine implements IConnection
                             oci_bind_by_name($stmt, array_keys($val)[$index], array_values($val)[$index]);
                         }
                         $this->exec($stmt);
-                        if ($count) {
-                            $this->affectedRows += $this->numRows($stmt);
-                        }
+                        $this->affectedRows += $this->numRows($stmt);
                     }
                 } else {
                     for ($index = 0; $index < count($params); $index++) {
                         oci_bind_by_name($stmt, array_keys($params)[$index], array_values($params)[$index]);
                     }
                     $this->exec($stmt);
-                    if ($count) {
-                        $this->affectedRows = $this->numRows($stmt);
-                    }
-                }
-            } else {
-                $this->params = [$params => $value];
-                $ociType = match (gettype($value)) {
-                    'boolean' => SQLT_BOL,
-                    'integer' => SQLT_INT,
-                    'double' => SQLT_FLT,
-                    default => SQLT_CHR,
-                };
-                oci_bind_by_name($stmt, $params, $value, -1, $ociType);
-                $this->exec($stmt);
-                if ($count) {
                     $this->affectedRows = $this->numRows($stmt);
                 }
+            } else {
+                $ociType = match (true) {
+                    is_bool($value) => SQLT_BOL,
+                    is_int($value) => SQLT_INT,
+                    is_float($value) => SQLT_FLT,
+                    default => SQLT_CHR,
+                };
+                $this->params = [$params => $value];
+                oci_bind_by_name($stmt, $params, $value, -1, $ociType);
+                $this->exec($stmt);
+                $this->affectedRows = $this->numRows($stmt);
             }
         }
         return $this->affectedRows ?: 0;
     }
 
     /**
-     * Returns the number of rows returned by an OCI statement.
+     * Returns the number of rows returned by a prepared InterBase/Firebird statement.
      *
-     * @param mixed $stmt The OCI statement (optional).
-     * @param bool|null $useQuery Defines whether to use the internal class statement (optional).
-     * @return int|false The number of rows returned by the statement or false in case of an error.
+     * @param mixed ...$params The parameters required for the rowCount() method.
+     *                         Parameter 1: The prepared statement.
+     *                         Parameter 2 (optional): The parameter to bind (if applicable).
+     *                         Parameter 3 (optional): The value to bind to the parameter (if applicable).
+     * @return int|false The number of rows returned by the prepared statement, or FALSE in case of an error.
      */
     public function rowCount(mixed ...$params): int|false
     {
         $stmt = $this->parse($params[0]);
         if (isset($params[1])) {
-            $param = isset($params[1]) ? $params[1] : null;
-            $value = isset($params[2]) ? $params[2] : null;
-            $this->bindParam($stmt, $param, $value, false);
+            $this->bindParam($stmt, $params[1], $params[2] ?? null);
         }
-        $result = 0;
-        if ($this->exec($stmt)) {
-            $result = count($this->internalFetchAllAssoc($stmt));
-        }
-        return $result;
+        return $this->exec($stmt) ? count($this->internalFetchAllAssoc($stmt)) : 0;
     }
 
     /**
@@ -523,8 +529,8 @@ class OCIEngine implements IConnection
         if (!empty($params)) {
             $this->statement = $this->parse($params[0]);
             if (isset($params[1])) {
-                $param = isset($params[1]) ? $params[1] : null;
-                $value = isset($params[2]) ? $params[2] : null;
+                $param = !empty($params[1]) ? $params[1] : null;
+                $value = !empty($params[2]) ? $params[2] : null;
                 if (!$this->bindParam($this->statement, $param, $value)) {
                     $this->queriedRows = Types::false2Null($this->rowCount(...$params));
                 }
@@ -546,8 +552,8 @@ class OCIEngine implements IConnection
      */
     public function exec(mixed ...$params): bool
     {
-        $statement = isset($params[0]) ? $params[0] : $this->statement;
-        $resultMode = isset($params[1]) ? (int) $params[1] : OCI_COMMIT_ON_SUCCESS;
+        $statement = $params[0] ?? $this->statement;
+        $resultMode = $params[1] ?? OCI_COMMIT_ON_SUCCESS;
         return oci_execute($statement, $resultMode);
     }
 
@@ -562,24 +568,31 @@ class OCIEngine implements IConnection
         switch ($fetchStyle) {
             case OCI_FETCH_OBJ:
             case OCI_FETCH_CLASS:
+            case FETCH_OBJ:
+            case FETCH_CLASS:
                 return $this->internalFetchClassOrObject(
                     isset($optArg1) ? $optArg1 : '\stdClass',
                     [],
                     $this->statement,
                 );
             case OCI_FETCH_INTO:
+            case FETCH_INTO:
                 return $this->internalFetchClassOrObject(
                     isset($optArg1) ? $optArg1 : null,
                     [],
                     $this->statement,
                 );
             case OCI_FETCH_COLUMN:
+            case FETCH_COLUMN:
                 return $this->internalFetchColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
             case OCI_FETCH_ASSOC:
+            case FETCH_ASSOC:
                 return $this->internalFetchAssoc($this->statement);
             case OCI_FETCH_NUM:
+            case FETCH_NUM:
                 return $this->internalFetchNum($this->statement);
             case OCI_FETCH_BOTH:
+            case FETCH_BOTH:
                 return $this->internalFetchBoth($this->statement);
             default:
                 return $this->internalFetchBoth($this->statement);
@@ -597,21 +610,27 @@ class OCIEngine implements IConnection
         switch ($fetchStyle) {
             case OCI_FETCH_OBJ:
             case OCI_FETCH_CLASS:
+            case FETCH_OBJ:
+            case FETCH_CLASS:
                 if (null === $fetchArgument) {
                     $fetchArgument = '\stdClass';
                 }
                 return $this->internalFetchAllClassOrObjects(
                     $fetchArgument,
-                    $this->statement,
-                    $ctorArgs == null ? [] : $ctorArgs
+                    $ctorArgs == null ? [] : $ctorArgs,
+                    $this->statement
                 );
             case OCI_FETCH_COLUMN:
+            case FETCH_COLUMN:
                 return $this->internalFetchAllColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
             case OCI_FETCH_ASSOC:
+            case FETCH_ASSOC:
                 return $this->internalFetchAllAssoc($this->statement);
             case OCI_FETCH_NUM:
+            case FETCH_NUM:
                 return $this->internalFetchAllNum($this->statement);
             case OCI_FETCH_BOTH:
+            case FETCH_BOTH:
                 return $this->internalFetchAllBoth($this->statement);
             default:
                 return $this->internalFetchAllBoth($this->statement);
@@ -658,7 +677,7 @@ class OCIEngine implements IConnection
     protected function internalFetchAllAssoc($statement = null)
     {
         $result = [];
-        @oci_fetch_all(
+        oci_fetch_all(
             $statement,
             $result,
             0,

@@ -141,9 +141,9 @@ class Reflections
             }
         }
         if ($callConstructor) {
-            $constructorRefelector = $reflector->getConstructor();
-            if ($constructorRefelector) {
-                $constructorRefelector->invokeArgs($result, $aConstructorArgArray);
+            $constructor = $reflector->getConstructor();
+            if ($constructor) {
+                $constructor->invokeArgs($result, $aConstructorArgArray);
             }
         }
         return $result;
