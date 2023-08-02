@@ -369,7 +369,7 @@ class PgSQLEngine implements IConnection
     /**
      * Returns an array containing the number of queried rows and the number of affected rows.
      *
-     * @return array An assPGSQLative array with keys 'queriedRows' and 'affectedRows'.
+     * @return array An array with keys 'queriedRows' and 'affectedRows'.
      */
     public function getRows()
     {
@@ -400,61 +400,53 @@ class PgSQLEngine implements IConnection
         return pg_num_rows(...$params);
     }
 
-    /**
-     * Binds a value to a parameter in the SQL statement.
-     *
-     * @param mixed $stmt The statement of the prepared query.
-     * @param mixed $params The name of the parameter or an assPGSQLative array of parameters and values.
-     * @param mixed $value The value to be bound to the parameter.
-     * @return mixed The value bound to the parameter.
-     */
-    public function bindValue($stmt, $params, $value)
+    private function affectedRows(mixed ...$params): int
     {
-        return $this->bindParam($stmt, $params, $value);
+        return pg_affected_rows(...$params);
     }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $stmt The statement of the prepared query.
-     * @param mixed $params The name of the parameter or an assPGSQLative array of parameters and values.
-     * @param mixed $value A variable that will be bound to the parameter.
-     * @return mixed The value of the variable bound to the parameter.
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
      */
-    public function bindParam($stmt, $params, $value)
+    public function bindParam(mixed ...$params): void
     {
+        $stmtname = $params[0];
         if (!empty($params)) {
-            if (is_array($params)) {
-                $this->params = [];
-                if (Arrays::isMultidimensional($params)) {
-                    foreach ((array) Arrays::arrayValuesRecursive($params) as $key => $param) {
+            if (is_array($params[2])) {
+                $this->statement = pg_prepare($this->getConnection(), $stmtname, $this->query);
+                if (Arrays::isMultidimensional($params[2])) {
+                    foreach ((array) Arrays::arrayValuesRecursive($params[2]) as $key => $param) {
                         $this->params[$key] = $param;
-                        $this->exec($stmt, $param);
-                        $this->affectedRows += pg_affected_rows($this->statement);
+                        $this->exec($stmtname, $param);
+                        $this->queriedRows = $this->numRows($this->statement);
+                        $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows($this->statement);
                     }
                 } else {
-                    foreach ($params as $key => $val) {
+                    foreach ($params[2] as $key => $val) {
                         $this->params[$key] = $val;
                     }
-                    $this->exec($stmt, array_values($this->params));
-                    $this->affectedRows = pg_affected_rows($this->statement);
+                    $this->exec($stmtname, array_values($this->params));
+                    $this->queriedRows = $this->numRows($this->statement);
+                    $this->affectedRows = $this->affectedRows($this->statement);
                 }
             } else {
-                $value = match (true) {
-                    is_bool($value) => (bool) $value,
-                    is_int($value) => (int) $value,
-                    is_float($value) => (float) $value,
-                    default => (string) $value,
-                };
-                $this->params = [$params => $value];
-                $this->exec($stmt, [$value]);
-                $this->affectedRows = pg_affected_rows($this->statement);
+                array_splice($params, 0, 2);
+                $this->statement = pg_prepare($this->getConnection(), $stmtname, $this->query);
+                $preparedParams = [];
+                for ($i = 0; $i < count($params); $i++) {
+                    if ($i % 2 == 0) {
+                        $this->params[] = [$params[$i] => $params[$i + 1]];
+                        $preparedParams[] = $params[$i + 1];
+                    }
+                }
+                $this->exec($stmtname, $preparedParams);
+                $this->queriedRows = $this->numRows($this->statement);
+                $this->affectedRows = $this->affectedRows($this->statement);
             }
-        } else {
-            $this->exec($stmt);
-            $this->affectedRows = pg_affected_rows($this->statement);
         }
-        return $this->affectedRows ?: 0;
     }
 
     /**
@@ -500,7 +492,7 @@ class PgSQLEngine implements IConnection
         if (!empty($params)) {
             $this->statement = $this->parse(...$params);
             $this->queriedRows = $this->numRows($this->statement);
-            $this->affectedRows = pg_affected_rows($this->statement);
+            $this->affectedRows = $this->queriedRows !== 0 ? 0 : $this->affectedRows($this->statement);
         }
         return $this;
     }
@@ -516,12 +508,11 @@ class PgSQLEngine implements IConnection
         if (!empty($params)) {
             $this->query = Regex::noBinding($params[0], false);
             $stmtname = Regex::randomString(18);
-            $this->statement = pg_prepare($this->getConnection(), $stmtname, $this->query);
             if (isset($params[1])) {
-                $param = !empty($params[1]) ? $params[1] : null;
-                $value = !empty($params[2]) ? $params[2] : null;
-                $this->bindParam($stmtname, $param, $value);
+                array_unshift($params, $stmtname);
+                $this->bindParam(...$params);
             } else {
+                $this->statement = pg_prepare($this->getConnection(), $stmtname, $this->query);
                 $this->exec($stmtname);
             }
         }
@@ -540,7 +531,7 @@ class PgSQLEngine implements IConnection
         $param = !empty($params[1]) ? $params[1] : [];
         $this->statement = pg_execute($this->getConnection(), $stmtname, $param);
         $this->queriedRows = $this->numRows($this->statement);
-        $this->affectedRows = pg_affected_rows($this->statement);
+        $this->affectedRows = $this->queriedRows !== 0 ? 0 : $this->affectedRows($this->statement);
         return $this->statement;
     }
 

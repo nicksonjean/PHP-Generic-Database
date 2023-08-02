@@ -18,6 +18,10 @@ use GenericDatabase\Engine\SQLSrv\Transaction;
 use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Helpers\Types;
+use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\Reflections;
+use GenericDatabase\Helpers\Regex;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -64,6 +68,35 @@ class SQLSrvEngine implements IConnection
      * @var mixed $connection
      */
     private mixed $connection;
+
+    /**
+     * Instance of the Statement of the database
+     * @var mixed $statement = null
+     */
+    private mixed $statement = null;
+
+    /**
+     * Affected rows in query post statement
+     * @var ?int $queriedRows = 0
+     */
+    private ?int $queriedRows = 0;
+
+    /**
+     * @var ?int $affectedRows = 0
+     */
+    private ?int $affectedRows = 0;
+
+    /**
+     * Last string query runned
+     * @var string $query = ''
+     */
+    private string $query = '';
+
+    /**
+     * Lasts params query runned
+     * @var array $params = []
+     */
+    private array $params = [];
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -341,43 +374,379 @@ class SQLSrvEngine implements IConnection
     }
 
     /**
-     * This function binds the parameters to a prepared query.
+     * Returns an array containing the number of queried rows and the number of affected rows.
      *
-     * @param mixed ...$params
-     * @return mixed
+     * @return array An array with keys 'queriedRows' and 'affectedRows'.
      */
-    public function prepare(mixed ...$params): mixed
+    public function getRows()
     {
-        $statement = $params[0];
-        $param = $params[1] ?? [];
-        $options = $params[2] ?? [];
-        return sqlsrv_prepare($this->getConnection(), $statement, $param, $options);
+        return [
+            'queriedRows' => $this->queriedRows,
+            'affectedRows' => $this->affectedRows
+        ];
+    }
+
+    /**
+     * Get the parameters with this instance.
+     *
+     * @return mixed The parameters with this instance.
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    /**
+     * Returns the number of rows affected by an operation.
+     *
+     * @param mixed ...$params The parameters required for the function.
+     * @return int The number of affected rows
+     */
+    private function numRows(mixed ...$params): int
+    {
+        return (int) sqlsrv_num_rows(...$params);
+    }
+
+    /**
+     * Returns the number of rows affected by an operation.
+     *
+     * @param mixed ...$params The parameters required for the function.
+     * @return int The number of affected rows
+     */
+    private function affectedRows(mixed ...$params): int
+    {
+        return (int) (sqlsrv_rows_affected(...$params) === -1 ? 0 : sqlsrv_rows_affected(...$params));
+    }
+
+    /**
+     * Binds a value to a parameter in the SQL statement.
+     *
+     * @param mixed $stmt The statement of the prepared query.
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param mixed $value The value to be bound to the parameter.
+     * @return mixed The value bound to the parameter.
+     */
+    public function bindValue($stmt, $params, $value)
+    {
+        return $this->bindParam($stmt, $params, $value);
+    }
+
+
+    /**
+     * Detect if query is Select
+     *
+     * @return bool The value bound to the parameter.
+     */
+    private function isSelect(string $stmt): bool
+    {
+        $trimMaskWithParams = "( \t\n\r\0\x0B";
+        return 'SELECT' === strtoupper(substr(ltrim($stmt, $trimMaskWithParams), 0, 6));
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return mixed The value of the variable bound to the parameter.
+     */
+    public function bindParam(mixed ...$params)
+    {
+        $internalPrepare = function (mixed $preparedParams) {
+            $scrollable = $this->isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD;
+            return $this->statement = sqlsrv_prepare(
+                $this->getConnection(),
+                $this->query,
+                $preparedParams,
+                ['Scrollable' => $scrollable]
+            );
+        };
+
+        if (!empty($params)) {
+            if (is_array($params[1])) {
+                $this->params = $params[1];
+                if (Arrays::isMultidimensional($this->params)) {
+                    $referenceParams = [];
+                    $preparedParams = [];
+                    for ($i = 0; $i < count($this->params[0]); $i++) {
+                        $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
+                    }
+                    $this->statement = $internalPrepare($preparedParams);
+                    foreach (Arrays::arrayValuesRecursive($this->params) as $row) {
+                        for ($i = 0; $i < count($this->params[0]); $i++) {
+                            $referenceParams[$i] = $row[$i];
+                        }
+                        $this->exec($this->statement);
+                        $this->affectedRows += $this->affectedRows($this->statement);
+                        $this->queriedRows += $this->numRows($this->statement);
+                    }
+                } else {
+                    $referenceParams = [];
+                    $preparedParams = [];
+                    for ($i = 0; $i < count($this->params); $i++) {
+                        $referenceParams[$i] = array_values($this->params)[$i];
+                        $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
+                    }
+                    $this->statement = $internalPrepare($preparedParams);
+                    $this->exec($this->statement);
+                    $this->affectedRows += $this->affectedRows($this->statement);
+                    $this->queriedRows += $this->numRows($this->statement);
+                }
+            } else {
+                $referenceParams = [];
+                $preparedParams = [];
+                for ($i = 1; $i < count($params); $i++) {
+                    $this->params[] = $params[$i];
+                }
+                for ($i = 0; $i < count($this->params); $i++) {
+                    $referenceParams[$i] = array_values($this->params)[$i];
+                    $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
+                }
+                $this->statement = $internalPrepare($preparedParams);
+                $this->exec($this->statement);
+                $this->affectedRows += $this->affectedRows($this->statement);
+                $this->queriedRows += $this->numRows($this->statement);
+            }
+        }
+        return $this->statement;
+    }
+
+    /**
+     * Returns the number of columns in an statement result.
+     *
+     * @return int|false The number of columns in the result or false in case of an error.
+     */
+    public function columnCount(): int|false
+    {
+        return sqlsrv_num_fields($this->statement);
+    }
+
+    /**
+     * Parses an SQL statement and returns an statement.
+     *
+     * @param mixed ...$params The parameters for the SQLSRV_query() function.
+     * @return mixed The statement resulting from the SQL statement.
+     */
+    private function parse(mixed ...$params): mixed
+    {
+        $this->query = Regex::noBinding($params[0]);
+        $scrollable = $this->isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD;
+        return sqlsrv_query($this->getConnection(), $this->query, [], ['Scrollable' => $scrollable]);
     }
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return mixed
+     * @return static|null
      */
-    public function query(mixed ...$params): mixed
+    public function query(mixed ...$params): static|null
     {
-        $statement = $params[0];
-        $param = $params[1] ?? [];
-        $options = $params[2] ?? [];
-        return sqlsrv_query($this->getConnection(), $statement, $param, $options);
+        if (!empty($params)) {
+            $this->statement = $this->parse(...$params);
+            $this->affectedRows += $this->affectedRows($this->statement);
+            $this->queriedRows += $this->numRows($this->statement);
+        }
+        return $this;
+    }
+
+
+    /**
+     * This function binds the parameters to a prepared query.
+     *
+     * @param mixed ...$params
+     * @return static|null
+     */
+    public function prepare(mixed ...$params): static|null
+    {
+        if (!empty($params)) {
+            $this->query = Regex::noBinding($params[0]);
+            if (isset($params[1])) {
+                $this->statement = $this->bindParam(...$params);
+            } else {
+                $this->query($this->query);
+            }
+        }
+        return $this;
     }
 
     /**
      * This function runs an SQL statement and returns the number of affected rows.
      *
      * @param mixed $params Statement to be executed
-     * @return bool
+     * @return mixed
      */
-    public function exec(mixed ...$params): bool
+    public function exec(mixed ...$params): mixed
     {
-        $query = $params[0];
-        return sqlsrv_execute($query);
+        $statement = $params[0] ?? $this->statement;
+        sqlsrv_execute($statement);
+        return $this->statement = $statement;
+    }
+
+    /**
+     * Fetches the next row from the statement and returns it as an array.
+     *
+     * @param int $fetchStyle The fetch style (optional). Default is SQLSRV_FETCH_BOTH.
+     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     */
+    public function fetch($fetchStyle = SQLSRV_FETCH_BOTH, $fetchArgument = null, $optArg1 = null)
+    {
+        switch ($fetchStyle) {
+            case SQLSRV_FETCH_OBJ:
+            case SQLSRV_FETCH_CLASS:
+            case FETCH_OBJ:
+            case FETCH_CLASS:
+                return $this->internalFetchClassOrObject(
+                    isset($optArg1) ? $optArg1 : '\stdClass',
+                    [],
+                    $this->statement,
+                );
+            case SQLSRV_FETCH_INTO:
+            case FETCH_INTO:
+                return $this->internalFetchClassOrObject(
+                    isset($optArg1) ? $optArg1 : null,
+                    [],
+                    $this->statement,
+                );
+            case SQLSRV_FETCH_COLUMN:
+            case FETCH_COLUMN:
+                return $this->internalFetchColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
+            case SQLSRV_FETCH_ASSOC:
+            case FETCH_ASSOC:
+                return $this->internalFetchAssoc($this->statement);
+            case SQLSRV_FETCH_NUM:
+            case FETCH_NUM:
+                return $this->internalFetchNum($this->statement);
+            case SQLSRV_FETCH_BOTH:
+            case FETCH_BOTH:
+                return $this->internalFetchBoth($this->statement);
+            default:
+                return $this->internalFetchBoth($this->statement);
+        }
+    }
+
+    /**
+     * Fetches all rows from the statement and returns them as an array.
+     *
+     * @param int $fetchStyle The fetch style (optional). Default is SQLSRV_FETCH_ASSOC.
+     * @return array An array containing all rows from the statement.
+     */
+    public function fetchAll($fetchStyle = SQLSRV_FETCH_ASSOC, $fetchArgument = null, $ctorArgs = null)
+    {
+        switch ($fetchStyle) {
+            case SQLSRV_FETCH_OBJ:
+            case SQLSRV_FETCH_CLASS:
+            case FETCH_OBJ:
+            case FETCH_CLASS:
+                if (null === $fetchArgument) {
+                    $fetchArgument = '\stdClass';
+                }
+                return $this->internalFetchAllClassOrObjects(
+                    $fetchArgument,
+                    $ctorArgs == null ? [] : $ctorArgs,
+                    $this->statement
+                );
+            case SQLSRV_FETCH_COLUMN:
+            case FETCH_COLUMN:
+                return $this->internalFetchAllColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
+            case SQLSRV_FETCH_ASSOC:
+            case FETCH_ASSOC:
+                return $this->internalFetchAllAssoc($this->statement);
+            case SQLSRV_FETCH_NUM:
+            case FETCH_NUM:
+                return $this->internalFetchAllNum($this->statement);
+            case SQLSRV_FETCH_BOTH:
+            case FETCH_BOTH:
+                return $this->internalFetchAllBoth($this->statement);
+            default:
+                return $this->internalFetchAllBoth($this->statement);
+        }
+    }
+
+    protected function internalFetchClassOrObject(
+        $aClassOrObject,
+        array $constructorArguments = null,
+        $statement = null,
+    ) {
+        $rowData = $this->internalFetchAssoc($statement);
+        if (is_array($rowData)) {
+            return Reflections::createObjectAndSetPropertiesCaseInsenstive(
+                $aClassOrObject,
+                is_array($constructorArguments) ? $constructorArguments : [],
+                $rowData
+            );
+        }
+        return $rowData;
+    }
+
+    protected function internalFetchBoth($statement = null)
+    {
+        return sqlsrv_fetch_array($statement, SQLSRV_FETCH_BOTH);
+    }
+
+    protected function internalFetchAssoc($statement = null)
+    {
+        return sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC);
+    }
+
+    protected function internalFetchNum($statement = null)
+    {
+        return sqlsrv_fetch_array($statement, SQLSRV_FETCH_NUMERIC);
+    }
+
+    protected function internalFetchColumn($statement = null, $columnIndex = 0)
+    {
+        $rowData = $this->internalFetchNum($statement);
+        if (is_array($rowData)) {
+            return isset($rowData[$columnIndex]) ? $rowData[$columnIndex] : null;
+        }
+        return false;
+    }
+
+    protected function internalFetchAllAssoc($statement = null)
+    {
+        $result = [];
+        while ($data = $this->internalFetchAssoc($statement)) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllNum($statement = null)
+    {
+        $result = [];
+        while ($data = $this->internalFetchNum($statement)) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllBoth($statement = null)
+    {
+        $result = [];
+        while ($data = $this->internalFetchBoth($statement)) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllColumn($statement = null, $columnIndex = 0)
+    {
+        $result = [];
+        while ($data = $this->internalFetchColumn($statement, $columnIndex)) {
+            $result[] = $data;
+        }
+        return $result;
+    }
+
+    protected function internalFetchAllClassOrObjects($aClassOrObject, array $constructorArguments, $statement = null)
+    {
+        $result = [];
+        while ($row = $this->internalFetchClassOrObject($aClassOrObject, $constructorArguments, $statement)) {
+            if ($row !== false) {
+                $result[] = $row;
+            }
+        }
+        return $result;
     }
 
     /**

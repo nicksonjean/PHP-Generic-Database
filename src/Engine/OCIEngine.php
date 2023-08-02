@@ -462,13 +462,9 @@ class OCIEngine implements IConnection
     }
 
     /**
-     * Returns the number of rows returned by a prepared InterBase/Firebird statement.
+     * Returns the number of rows returned by an statement.
      *
-     * @param mixed ...$params The parameters required for the rowCount() method.
-     *                         Parameter 1: The prepared statement.
-     *                         Parameter 2 (optional): The parameter to bind (if applicable).
-     *                         Parameter 3 (optional): The value to bind to the parameter (if applicable).
-     * @return int|false The number of rows returned by the prepared statement, or FALSE in case of an error.
+     * @param mixed $params The statement (optional).
      */
     public function rowCount(mixed ...$params): int|false
     {
