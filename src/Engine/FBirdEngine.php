@@ -391,9 +391,9 @@ class FBirdEngine implements IConnection
     }
 
     /**
-     * Returns the number of rows affected by an InterBase/Firebird operation.
+     * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the ibase_affected_rows() function.
+     * @param mixed ...$params The parameters required for the function.
      * @return int The number of affected rows
      */
     private function numRows(mixed ...$params): int
@@ -402,16 +402,13 @@ class FBirdEngine implements IConnection
     }
 
     /**
-     * Binds a value to a parameter in the SQL statement.
+     * Returns the number of columns in an statement result.
      *
-     * @param mixed $stmt The statement of the prepared query.
-     * @param mixed $params The name of the parameter or an associative array of parameters and values.
-     * @param mixed $value The value to be bound to the parameter.
-     * @return mixed The value bound to the parameter.
+     * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function bindValue($stmt, $params, $value)
+    public function columnCount(): int|false
     {
-        return $this->bindParam($stmt, $params, $value);
+        return ibase_num_fields($this->statement);
     }
 
     /**
@@ -478,16 +475,6 @@ class FBirdEngine implements IConnection
             $stmt = ibase_execute($statement);
         }
         return count($this->internalFetchAllAssoc($stmt));
-    }
-
-    /**
-     * Returns the number of columns in an statement result.
-     *
-     * @return int|false The number of columns in the result or false in case of an error.
-     */
-    public function columnCount(): int|false
-    {
-        return ibase_num_fields($this->statement);
     }
 
     /**

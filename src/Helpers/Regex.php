@@ -57,6 +57,12 @@ class Regex
             }, $value);
     }
 
+    /**
+     * Make a random string in length size
+     *
+     * @param int $length The length size of the string
+     * @return string The random string generated
+     */
     public static function randomString(int $length)
     {
         $keys = array_merge(range('a', 'z'), range('A', 'Z'));
@@ -65,5 +71,16 @@ class Regex
             $key .= $keys[array_rand($keys)];
         }
         return $key;
+    }
+
+    /**
+     * Detect if query is Select
+     *
+     * @return bool The value bound to the parameter.
+     */
+    public static function isSelect(string $stmt): bool
+    {
+        $trimMaskWithParams = "( \t\n\r\0\x0B";
+        return 'SELECT' === strtoupper(substr(ltrim($stmt, $trimMaskWithParams), 0, 6));
     }
 }

@@ -376,7 +376,7 @@ class SQLSrvEngine implements IConnection
     /**
      * Returns an array containing the number of queried rows and the number of affected rows.
      *
-     * @return array An array with keys 'queriedRows' and 'affectedRows'.
+     * @return array An associative array with keys 'queriedRows' and 'affectedRows'.
      */
     public function getRows()
     {
@@ -387,9 +387,9 @@ class SQLSrvEngine implements IConnection
     }
 
     /**
-     * Get the parameters with this instance.
+     * Get the parameters associated with this instance.
      *
-     * @return mixed The parameters with this instance.
+     * @return mixed The parameters associated with this instance.
      */
     public function getParams()
     {
@@ -419,40 +419,25 @@ class SQLSrvEngine implements IConnection
     }
 
     /**
-     * Binds a value to a parameter in the SQL statement.
+     * Returns the number of columns in an statement result.
      *
-     * @param mixed $stmt The statement of the prepared query.
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @param mixed $value The value to be bound to the parameter.
-     * @return mixed The value bound to the parameter.
+     * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function bindValue($stmt, $params, $value)
+    public function columnCount(): int|false
     {
-        return $this->bindParam($stmt, $params, $value);
-    }
-
-
-    /**
-     * Detect if query is Select
-     *
-     * @return bool The value bound to the parameter.
-     */
-    private function isSelect(string $stmt): bool
-    {
-        $trimMaskWithParams = "( \t\n\r\0\x0B";
-        return 'SELECT' === strtoupper(substr(ltrim($stmt, $trimMaskWithParams), 0, 6));
+        return sqlsrv_num_fields($this->statement);
     }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return mixed The value of the variable bound to the parameter.
+     * @return void
      */
-    public function bindParam(mixed ...$params)
+    public function bindParam(mixed ...$params): void
     {
         $internalPrepare = function (mixed $preparedParams) {
-            $scrollable = $this->isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD;
+            $scrollable = Regex::isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD;
             return $this->statement = sqlsrv_prepare(
                 $this->getConnection(),
                 $this->query,
@@ -507,29 +492,18 @@ class SQLSrvEngine implements IConnection
                 $this->queriedRows += $this->numRows($this->statement);
             }
         }
-        return $this->statement;
-    }
-
-    /**
-     * Returns the number of columns in an statement result.
-     *
-     * @return int|false The number of columns in the result or false in case of an error.
-     */
-    public function columnCount(): int|false
-    {
-        return sqlsrv_num_fields($this->statement);
     }
 
     /**
      * Parses an SQL statement and returns an statement.
      *
-     * @param mixed ...$params The parameters for the SQLSRV_query() function.
+     * @param mixed ...$params The parameters for the query function.
      * @return mixed The statement resulting from the SQL statement.
      */
     private function parse(mixed ...$params): mixed
     {
         $this->query = Regex::noBinding($params[0]);
-        $scrollable = $this->isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD;
+        $scrollable = Regex::isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD;
         return sqlsrv_query($this->getConnection(), $this->query, [], ['Scrollable' => $scrollable]);
     }
 
@@ -561,9 +535,9 @@ class SQLSrvEngine implements IConnection
         if (!empty($params)) {
             $this->query = Regex::noBinding($params[0]);
             if (isset($params[1])) {
-                $this->statement = $this->bindParam(...$params);
+                $this->bindParam(...$params);
             } else {
-                $this->query($this->query);
+                $this->query(...$params);
             }
         }
         return $this;

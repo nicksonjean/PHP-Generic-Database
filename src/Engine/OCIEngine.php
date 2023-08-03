@@ -394,79 +394,12 @@ class OCIEngine implements IConnection
     }
 
     /**
-     * Returns the number of rows affected by an InterBase/Firebird operation.
+     * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the ibase_affected_rows() function.
-     * @return int|false The number of affected rows or FALSE in case of an error.
+     * @param mixed ...$params The parameters required for the function.
+     * @return int The number of affected rows
      */
-    private function numRows(mixed ...$params): int|false
-    {
-        return oci_num_rows(...$params);
-    }
-
-    /**
-     * Binds a value to a parameter in the SQL statement.
-     *
-     * @param mixed $stmt The statement of the prepared query.
-     * @param mixed $params The name of the parameter or an associative array of parameters and values.
-     * @param mixed $value The value to be bound to the parameter.
-     * @return mixed The value bound to the parameter.
-     */
-    public function bindValue($stmt, $params, $value)
-    {
-        return $this->bindParam($stmt, $params, $value);
-    }
-
-    /**
-     * Binds a parameter to a variable in the SQL statement.
-     *
-     * @param mixed $stmt The statement of the prepared query.
-     * @param mixed $params The name of the parameter or an associative array of parameters and values.
-     * @param mixed $value A variable that will be bound to the parameter.
-     * @return mixed The value of the variable bound to the parameter.
-     */
-    public function bindParam($stmt, $params, $value)
-    {
-        if (!empty($params)) {
-            if (is_array($params)) {
-                $this->params = $params;
-                if (Arrays::isMultidimensional($params)) {
-                    foreach ($params as $val) {
-                        for ($index = 0; $index < count($val); $index++) {
-                            oci_bind_by_name($stmt, array_keys($val)[$index], array_values($val)[$index]);
-                        }
-                        $this->exec($stmt);
-                        $this->affectedRows += $this->numRows($stmt);
-                    }
-                } else {
-                    for ($index = 0; $index < count($params); $index++) {
-                        oci_bind_by_name($stmt, array_keys($params)[$index], array_values($params)[$index]);
-                    }
-                    $this->exec($stmt);
-                    $this->affectedRows = $this->numRows($stmt);
-                }
-            } else {
-                $ociType = match (true) {
-                    is_bool($value) => SQLT_BOL,
-                    is_int($value) => SQLT_INT,
-                    is_float($value) => SQLT_FLT,
-                    default => SQLT_CHR,
-                };
-                $this->params = [$params => $value];
-                oci_bind_by_name($stmt, $params, $value, -1, $ociType);
-                $this->exec($stmt);
-                $this->affectedRows = $this->numRows($stmt);
-            }
-        }
-        return $this->affectedRows ?: 0;
-    }
-
-    /**
-     * Returns the number of rows returned by an statement.
-     *
-     * @param mixed $params The statement (optional).
-     */
-    public function rowCount(mixed ...$params): int|false
+    public function numRows(mixed ...$params): int|false
     {
         $stmt = $this->parse($params[0]);
         if (isset($params[1])) {
@@ -478,6 +411,17 @@ class OCIEngine implements IConnection
     }
 
     /**
+     * Returns the number of rows affected by an operation.
+     *
+     * @param mixed ...$params The parameters required for the function.
+     * @return int The number of affected rows
+     */
+    private function affectedRows(mixed ...$params): int|false
+    {
+        return oci_num_rows(...$params);
+    }
+
+    /**
      * Returns the number of columns in an OCI statement result.
      *
      * @return int|false The number of columns in the result or false in case of an error.
@@ -485,6 +429,53 @@ class OCIEngine implements IConnection
     public function columnCount(): int|false
     {
         return oci_num_fields($this->statement);
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return int
+     */
+    public function bindParam(mixed ...$params): int
+    {
+        if (!empty($params)) {
+            $stmt = $params[0];
+            if (is_array($params[2])) {
+                if (Arrays::isMultidimensional($params[2])) {
+                    foreach ($params[2] as $key => $param) {
+                        $this->params[$key] = $param;
+                        for ($index = 0; $index < count($param); $index++) {
+                            oci_bind_by_name($stmt, array_keys($param)[$index], array_values($param)[$index]);
+                        }
+                        $this->exec($stmt);
+                        $this->affectedRows += $this->affectedRows($stmt);
+                    }
+                } else {
+                    foreach ($params[2] as $key => $param) {
+                        $this->params[$key] = $param;
+                        oci_bind_by_name($stmt, $key, $param);
+                    }
+                    $this->exec($stmt);
+                    $this->affectedRows += $this->affectedRows($stmt);
+                }
+            } else {
+                $paramValues = [];
+                for ($i = 2; $i < count($params); $i++) {
+                    $paramValues[] = $params[$i];
+                }
+                preg_match_all('/(:\w+)/', $this->query, $matches);
+                $this->params = array_combine($matches[1], $paramValues);
+                for ($i = 0; $i < count($this->params); $i++) {
+                    $key = key($this->params);
+                    oci_bind_by_name($stmt, $key, $this->params[$key]);
+                    next($this->params);
+                }
+                $this->exec($stmt);
+                $this->affectedRows += $this->affectedRows($stmt);
+            }
+        }
+        return $this->affectedRows ?: 0;
     }
 
     /**
@@ -510,8 +501,8 @@ class OCIEngine implements IConnection
         if (!empty($params)) {
             $this->statement = $this->parse(...$params);
             $this->exec($this->statement);
-            $this->queriedRows = Types::false2Null($this->rowCount(...$params));
-            $this->affectedRows = $this->numRows($this->statement);
+            // $this->queriedRows = Types::false2Null($this->numRows(...$params));
+            $this->affectedRows = $this->affectedRows($this->statement);
         }
         return $this;
     }
@@ -527,15 +518,14 @@ class OCIEngine implements IConnection
         if (!empty($params)) {
             $this->statement = $this->parse($params[0]);
             if (isset($params[1])) {
-                $param = !empty($params[1]) ? $params[1] : null;
-                $value = !empty($params[2]) ? $params[2] : null;
-                if (!$this->bindParam($this->statement, $param, $value)) {
-                    $this->queriedRows = Types::false2Null($this->rowCount(...$params));
+                array_unshift($params, $this->statement);
+                if (!$this->bindParam(...$params)) {
+                    // $this->queriedRows = Types::false2Null($this->numRows(...$params));
                 }
             } else {
                 $this->exec($this->statement);
                 if (!$this->affectedRows) {
-                    $this->queriedRows = Types::false2Null($this->rowCount(...$params));
+                    // $this->queriedRows = Types::false2Null($this->numRows(...$params));
                 }
             }
         }
