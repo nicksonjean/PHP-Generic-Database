@@ -479,9 +479,12 @@ class SQLSrvEngine implements IConnection
             } else {
                 $referenceParams = [];
                 $preparedParams = [];
+                $paramValues = [];
                 for ($i = 1; $i < count($params); $i++) {
-                    $this->params[] = $params[$i];
+                    $paramValues[] = $params[$i];
                 }
+                preg_match_all('/(:\w+)/', $params[0], $matches);
+                $this->params = array_combine($matches[1], $paramValues);
                 for ($i = 0; $i < count($this->params); $i++) {
                     $referenceParams[$i] = array_values($this->params)[$i];
                     $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];

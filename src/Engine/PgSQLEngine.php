@@ -450,10 +450,13 @@ class PgSQLEngine implements IConnection
                 }
             } else {
                 $this->statement = pg_prepare($this->getConnection(), $stmtname, $this->query);
+                $paramValues = [];
                 for ($i = 2; $i < count($params); $i++) {
-                    $this->params[] = $params[$i];
+                    $paramValues[] = $params[$i];
                 }
-                $this->exec($stmtname, $this->params);
+                preg_match_all('/(:\w+)/', $params[1], $matches);
+                $this->params = array_combine($matches[1], $paramValues);
+                $this->exec($stmtname, $paramValues);
                 $this->queriedRows += $this->numRows($this->statement);
                 $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows($this->statement);
             }
