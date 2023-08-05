@@ -393,9 +393,9 @@ class PgSQLEngine implements IConnection
      * Returns the number of rows affected by an operation.
      *
      * @param mixed ...$params The parameters required for the function.
-     * @return int The number of affected rows
+     * @return int|false The number of affected rows
      */
-    private function numRows(mixed ...$params): int
+    public function numRows(mixed ...$params): int|false
     {
         return pg_num_rows(...$params);
     }
@@ -404,9 +404,9 @@ class PgSQLEngine implements IConnection
      * Returns the number of rows affected by an operation.
      *
      * @param mixed ...$params The parameters required for the function.
-     * @return int The number of affected rows
+     * @return int|false The number of affected rows
      */
-    private function affectedRows(mixed ...$params): int
+    public function affectedRows(mixed ...$params): int|false
     {
         return pg_affected_rows(...$params);
     }

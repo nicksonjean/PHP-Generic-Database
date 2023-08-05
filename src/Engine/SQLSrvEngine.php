@@ -359,9 +359,9 @@ class SQLSrvEngine implements IConnection
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return string|int
+     * @return mixed
      */
-    public function quote(mixed ...$params): string|int
+    public function quote(mixed ...$params): mixed
     {
         $string = $params[0];
         return match (true) {
@@ -400,9 +400,9 @@ class SQLSrvEngine implements IConnection
      * Returns the number of rows affected by an operation.
      *
      * @param mixed ...$params The parameters required for the function.
-     * @return int The number of affected rows
+     * @return int|false The number of affected rows
      */
-    private function numRows(mixed ...$params): int
+    public function numRows(mixed ...$params): int|false
     {
         return (int) sqlsrv_num_rows(...$params);
     }
@@ -411,9 +411,9 @@ class SQLSrvEngine implements IConnection
      * Returns the number of rows affected by an operation.
      *
      * @param mixed ...$params The parameters required for the function.
-     * @return int The number of affected rows
+     * @return int|false The number of affected rows
      */
-    private function affectedRows(mixed ...$params): int
+    public function affectedRows(mixed ...$params): int|false
     {
         return (int) (sqlsrv_rows_affected(...$params) === -1 ? 0 : sqlsrv_rows_affected(...$params));
     }
@@ -522,7 +522,6 @@ class SQLSrvEngine implements IConnection
         }
         return $this;
     }
-
 
     /**
      * This function binds the parameters to a prepared query.

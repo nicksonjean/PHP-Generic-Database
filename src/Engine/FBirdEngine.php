@@ -353,9 +353,9 @@ class FBirdEngine implements IConnection
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return string|int
+     * @return mixed
      */
-    public function quote(mixed ...$params): string|int
+    public function quote(mixed ...$params): mixed
     {
         $string = $params[0];
         return match (true) {
@@ -394,9 +394,43 @@ class FBirdEngine implements IConnection
      * Returns the number of rows affected by an operation.
      *
      * @param mixed ...$params The parameters required for the function.
+     * @return int|false The number of affected rows
+     */
+    public function numRows(mixed ...$params): int|false
+    {
+        $statement = ibase_prepare($this->getConnection(), Regex::noBinding($params[1]));
+        if (!empty($params)) {
+            if (isset($params[2]) && is_array($params[2])) {
+                if (Arrays::isMultidimensional($params[2])) {
+                    foreach ((array) Arrays::arrayValuesRecursive($params[2]) as $param) {
+                        $stmt = $this->exec($statement, $param);
+                    }
+                } else {
+                    $referenceParams = [];
+                    foreach ($params[2] as $param) {
+                        $referenceParams[] = $param;
+                    }
+                    $stmt = $this->exec($statement, $referenceParams);
+                }
+            } else {
+                $referenceParams = [];
+                for ($i = 2; $i < count($params); $i++) {
+                    $referenceParams[] = $params[$i];
+                }
+                preg_match_all('/(:\w+)/', $params[1], $matches);
+                $stmt = $this->exec($statement, $referenceParams);
+            }
+        }
+        return count($this->internalFetchAllAssoc($stmt));
+    }
+
+    /**
+     * Returns the number of rows affected by an operation.
+     *
+     * @param mixed ...$params The parameters required for the function.
      * @return int The number of affected rows
      */
-    private function numRows(mixed ...$params): int
+    public function affectedRows(mixed ...$params): int|false
     {
         return ibase_affected_rows(...$params);
     }
@@ -414,73 +448,49 @@ class FBirdEngine implements IConnection
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $stmt The statement of the prepared query.
-     * @param mixed $params The name of the parameter or an associative array of parameters and values.
-     * @param mixed $value A variable that will be bound to the parameter.
-     * @return mixed The value of the variable bound to the parameter.
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return int
      */
-    public function bindParam($stmt, $params, $value)
+    public function bindParam(mixed ...$params): int
     {
         if (!empty($params)) {
-            if (is_array($params)) {
-                $this->params = [];
-                if (Arrays::isMultidimensional($params)) {
-                    foreach ((array) Arrays::arrayValuesRecursive($params) as $key => $param) {
+            $stmt = $params[0];
+            if (isset($params[2]) && is_array($params[2])) {
+                if (Arrays::isMultidimensional($params[2])) {
+                    foreach ((array) Arrays::arrayValuesRecursive($params[2]) as $key => $param) {
                         $this->params[$key] = $param;
-                        $this->affectedRows += ($this->exec($stmt, $param) !== false)
-                            ? $this->numRows($this->getConnection())
-                            : 0;
+                        $this->statement = $this->exec($stmt, $param);
+                        $this->affectedRows += $this->affectedRows($this->getConnection());
                     }
                 } else {
-                    foreach ($params as $key => $val) {
-                        $this->params[$key] = $val;
+                    $referenceParams = [];
+                    foreach ($params[2] as $key => $param) {
+                        $this->params[$key] = $param;
+                        $referenceParams[] = $param;
                     }
-                    $this->affectedRows = ($this->exec($stmt, array_values($this->params)) !== false)
-                        ? $this->numRows($this->getConnection())
-                        : 0;
+                    $this->statement = $this->exec($stmt, $referenceParams);
+                    $this->affectedRows += $this->affectedRows($this->getConnection());
                 }
             } else {
-                $value = match (true) {
-                    is_bool($value) => (bool) $value,
-                    is_int($value) => (int) $value,
-                    is_float($value) => (float) $value,
-                    default => (string) $value,
-                };
-                $this->params = [$params => $value];
-                $this->affectedRows = ($this->exec($stmt, $value) !== false)
-                    ? $this->numRows($this->getConnection())
-                    : 0;
+                $referenceParams = [];
+                $paramValues = [];
+                for ($i = 2; $i < count($params); $i++) {
+                    $paramValues[] = $params[$i];
+                    $referenceParams[] = $params[$i];
+                }
+                preg_match_all('/(:\w+)/', $params[1], $matches);
+                $this->params = array_combine($matches[1], $paramValues);
+                $this->statement = $this->exec($stmt, $referenceParams);
+                $this->affectedRows += $this->affectedRows($this->getConnection());
             }
-        } else {
-            $this->affectedRows = ($this->exec($stmt) !== false) ? $this->numRows($this->getConnection()) : 0;
         }
         return $this->affectedRows ?: 0;
     }
 
     /**
-     * Returns the number of rows returned by an statement.
-     *
-     * @param mixed $params The statement (optional).
-     */
-    public function rowCount(mixed ...$params): int|false
-    {
-        /** @phpstan-ignore-next-line */
-        $stmt = $statement = ibase_prepare($this->getConnection(), Regex::noBinding($params[0]));
-        if (isset($params[1])) {
-            $params = is_array($params[1]) ? $params[1] : [$params[2]];
-            foreach ($params as $param) {
-                $stmt = ibase_execute($statement, $param);
-            }
-        } else {
-            $stmt = ibase_execute($statement);
-        }
-        return count($this->internalFetchAllAssoc($stmt));
-    }
-
-    /**
      * Parses an SQL statement and returns an statement.
      *
-     * @param mixed ...$params The parameters for the ibase_query() function.
+     * @param mixed ...$params The parameters for the query function.
      * @return mixed The statement resulting from the SQL statement.
      */
     private function parse(mixed ...$params): mixed
@@ -499,8 +509,9 @@ class FBirdEngine implements IConnection
     {
         if (!empty($params)) {
             $this->statement = $this->parse(...$params);
-            $this->queriedRows = Types::false2Null($this->rowCount(...$params));
-            $this->affectedRows = $this->numRows($this->getConnection());
+            $this->affectedRows = $this->affectedRows($this->getConnection());
+            array_unshift($params, $this->statement);
+            $this->queriedRows = Types::false2Null($this->numRows(...$params));
         }
         return $this;
     }
@@ -515,22 +526,17 @@ class FBirdEngine implements IConnection
     {
         if (!empty($params)) {
             $this->query = Regex::noBinding($params[0]);
-            /** @phpstan-ignore-next-line */
-            $statement = ibase_prepare($this->getConnection(), $this->query);
+            $stmt = ibase_prepare($this->getConnection(), $this->query);
             if (isset($params[1])) {
-                $param = !empty($params[1]) ? $params[1] : null;
-                $value = !empty($params[2]) ? $params[2] : null;
-                $this->bindParam($statement, $param, $value);
+                array_unshift($params, $stmt);
+                $this->bindParam(...$params);
                 if (!is_resource($this->statement)) {
-                    $this->statement = $statement;
+                    $this->statement = $stmt;
                 } else {
-                    $this->queriedRows = Types::false2Null($this->rowCount(...$params));
+                    $this->queriedRows = Types::false2Null($this->numRows(...$params));
                 }
             } else {
-                $this->exec($statement);
-                if (!$this->affectedRows) {
-                    $this->queriedRows = Types::false2Null($this->rowCount(...$params));
-                }
+                $this->query(...$params);
             }
         }
         return $this;
@@ -544,15 +550,13 @@ class FBirdEngine implements IConnection
      */
     public function exec(mixed ...$params): mixed
     {
-        $stmt = !empty($params[0]) ? $params[0] : null;
-        $data = !empty($params[1]) ?? $params[1];
+        $stmt = $params[0];
+        $data = $params[1];
         if (!is_array($data)) {
-            $data = [$data];
+            return ibase_execute($stmt, $data);
         }
         array_unshift($data, $stmt);
-        return $this->statement = isset($params[1])
-            ? call_user_func_array('ibase_execute', $data)
-            : call_user_func_array('ibase_execute', [$stmt]);
+        return call_user_func_array('ibase_execute', $data);
     }
 
     /**
