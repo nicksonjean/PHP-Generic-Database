@@ -66,6 +66,35 @@ class MySQLiEngine implements IConnection
     private mixed $connection;
 
     /**
+     * Instance of the Statement of the database
+     * @var mixed $statement = null
+     */
+    private mixed $statement = null;
+
+    /**
+     * Affected rows in query post statement
+     * @var ?int $queriedRows = 0
+     */
+    private ?int $queriedRows = 0;
+
+    /**
+     * @var ?int $affectedRows = 0
+     */
+    private ?int $affectedRows = 0;
+
+    /**
+     * Last string query runned
+     * @var string $query = ''
+     */
+    private string $query = '';
+
+    /**
+     * Lasts params query runned
+     * @var array $params = []
+     */
+    private array $params = [];
+
+    /**
      * Triggered when invoking inaccessible methods in an object context
      *
      * @param string $name Name of the method
