@@ -18,10 +18,9 @@ use GenericDatabase\Engine\FBird\Transaction;
 use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Types;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Reflections;
-use GenericDatabase\Helpers\Regex;
+use GenericDatabase\Helpers\Translater;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -398,7 +397,8 @@ class FBirdEngine implements IConnection
      */
     public function numRows(mixed ...$params): int|false
     {
-        $statement = ibase_prepare($this->getConnection(), Regex::noBinding($params[1]));
+        $query = Translater::binding(Translater::escape($params[1], Translater::SQL_DIALECT_DQUOTE));
+        $statement = ibase_prepare($this->getConnection(), $query);
         if (!empty($params)) {
             if (isset($params[2]) && is_array($params[2])) {
                 if (Arrays::isMultidimensional($params[2])) {
@@ -406,19 +406,18 @@ class FBirdEngine implements IConnection
                         $stmt = $this->exec($statement, $param);
                     }
                 } else {
-                    $referenceParams = [];
+                    $paramValues = [];
                     foreach ($params[2] as $param) {
-                        $referenceParams[] = $param;
+                        $paramValues[] = $param;
                     }
-                    $stmt = $this->exec($statement, $referenceParams);
+                    $stmt = $this->exec($statement, $paramValues);
                 }
             } else {
-                $referenceParams = [];
+                $paramValues = [];
                 for ($i = 2; $i < count($params); $i++) {
-                    $referenceParams[] = $params[$i];
+                    $paramValues[] = $params[$i];
                 }
-                preg_match_all('/(:\w+)/', $params[1], $matches);
-                $stmt = $this->exec($statement, $referenceParams);
+                $stmt = $this->exec($statement, $paramValues);
             }
         }
         return count($this->internalFetchAllAssoc($stmt));
@@ -438,11 +437,12 @@ class FBirdEngine implements IConnection
     /**
      * Returns the number of columns in an statement result.
      *
+     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function columnCount(): int|false
+    public function columnCount(mixed ...$params): int|false
     {
-        return ibase_num_fields($this->statement);
+        return ibase_num_fields(...$params);
     }
 
     /**
@@ -472,15 +472,12 @@ class FBirdEngine implements IConnection
                     $this->affectedRows += $this->affectedRows($this->getConnection());
                 }
             } else {
-                $referenceParams = [];
                 $paramValues = [];
                 for ($i = 2; $i < count($params); $i++) {
                     $paramValues[] = $params[$i];
-                    $referenceParams[] = $params[$i];
                 }
-                preg_match_all('/(:\w+)/', $params[1], $matches);
-                $this->params = array_combine($matches[1], $paramValues);
-                $this->statement = $this->exec($stmt, $referenceParams);
+                $this->params = Translater::parameters($params[1], $paramValues);
+                $this->statement = $this->exec($stmt, $paramValues);
                 $this->affectedRows += $this->affectedRows($this->getConnection());
             }
         }
@@ -495,7 +492,7 @@ class FBirdEngine implements IConnection
      */
     private function parse(mixed ...$params): mixed
     {
-        $this->query = Regex::noBinding($params[0]);
+        $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE));
         return ibase_query($this->getConnection(), $this->query);
     }
 
@@ -511,7 +508,7 @@ class FBirdEngine implements IConnection
             $this->statement = $this->parse(...$params);
             $this->affectedRows = $this->affectedRows($this->getConnection());
             array_unshift($params, $this->statement);
-            $this->queriedRows = Types::false2Null($this->numRows(...$params));
+            $this->queriedRows = $this->numRows(...$params);
         }
         return $this;
     }
@@ -525,7 +522,7 @@ class FBirdEngine implements IConnection
     public function prepare(mixed ...$params): static|null
     {
         if (!empty($params)) {
-            $this->query = Regex::noBinding($params[0]);
+            $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE));
             $stmt = ibase_prepare($this->getConnection(), $this->query);
             if (isset($params[1])) {
                 array_unshift($params, $stmt);
@@ -533,7 +530,7 @@ class FBirdEngine implements IConnection
                 if (!is_resource($this->statement)) {
                     $this->statement = $stmt;
                 } else {
-                    $this->queriedRows = Types::false2Null($this->numRows(...$params));
+                    $this->queriedRows = $this->numRows(...$params);
                 }
             } else {
                 $this->query(...$params);

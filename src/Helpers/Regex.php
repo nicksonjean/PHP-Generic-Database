@@ -10,8 +10,14 @@ class Regex
     private static $patterns = [
         'onlyNumbers' =>
         "/^(?:-(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))|(?:0|(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))))(?:.\\d+|)$/",
-        'noBinding' => '/(:[a-zA-Z]{1,})/i'
+        'noBinding' => '/(:[a-zA-Z]{1,})/i',
+        'unQuoted' => '/"([^"]+)"/'
     ];
+
+    public static function unQuoted(string $value): string
+    {
+        return preg_replace(self::$patterns['unQuoted'], '$1', $value);
+    }
 
     /**
      * Check if a value is numeric

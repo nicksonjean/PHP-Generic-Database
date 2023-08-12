@@ -18,9 +18,9 @@ use GenericDatabase\Engine\PgSQL\Transaction;
 use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Types;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Reflections;
+use GenericDatabase\Helpers\Translater;
 use GenericDatabase\Helpers\Regex;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
@@ -414,11 +414,12 @@ class PgSQLEngine implements IConnection
     /**
      * Returns the number of columns in an statement result.
      *
+     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function columnCount(): int|false
+    public function columnCount(mixed ...$params): int|false
     {
-        return pg_num_fields($this->statement);
+        return pg_num_fields(...$params);
     }
 
     /**
@@ -454,8 +455,7 @@ class PgSQLEngine implements IConnection
                 for ($i = 2; $i < count($params); $i++) {
                     $paramValues[] = $params[$i];
                 }
-                preg_match_all('/(:\w+)/', $params[1], $matches);
-                $this->params = array_combine($matches[1], $paramValues);
+                $this->params = Translater::parameters($params[1], $paramValues);
                 $this->exec($stmtname, $paramValues);
                 $this->queriedRows += $this->numRows($this->statement);
                 $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows($this->statement);
@@ -471,7 +471,7 @@ class PgSQLEngine implements IConnection
      */
     private function parse(mixed ...$params): mixed
     {
-        $this->query = Regex::noBinding($params[0], false);
+        $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE), false);
         return pg_query($this->getConnection(), $this->query);
     }
 
@@ -500,7 +500,7 @@ class PgSQLEngine implements IConnection
     public function prepare(mixed ...$params): static|null
     {
         if (!empty($params)) {
-            $this->query = Regex::noBinding($params[0], false);
+            $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE), false);
             if (isset($params[1])) {
                 array_unshift($params, Regex::randomString(18));
                 $this->bindParam(...$params);

@@ -18,9 +18,9 @@ use GenericDatabase\Engine\OCI\Transaction;
 use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Types;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Reflections;
+use GenericDatabase\Helpers\Translater;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -426,8 +426,7 @@ class OCIEngine implements IConnection
                     for ($i = 2; $i < count($params); $i++) {
                         $paramValues[] = $params[$i];
                     }
-                    preg_match_all('/(:\w+)/', $this->query, $matches);
-                    $parameters = array_combine($matches[1], $paramValues);
+                    $parameters = Translater::parameters($params[1], $paramValues);
                     for ($i = 0; $i < count($parameters); $i++) {
                         $key = key($parameters);
                         oci_bind_by_name($stmt, $key, $parameters[$key]);
@@ -454,13 +453,14 @@ class OCIEngine implements IConnection
     }
 
     /**
-     * Returns the number of columns in an OCI statement result.
+     * Returns the number of columns in an statement result.
      *
+     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function columnCount(): int|false
+    public function columnCount(mixed ...$params): int|false
     {
-        return oci_num_fields($this->statement);
+        return oci_num_fields(...$params);
     }
 
     /**
@@ -496,8 +496,7 @@ class OCIEngine implements IConnection
                 for ($i = 2; $i < count($params); $i++) {
                     $paramValues[] = $params[$i];
                 }
-                preg_match_all('/(:\w+)/', $this->query, $matches);
-                $this->params = array_combine($matches[1], $paramValues);
+                $this->params = Translater::parameters($params[1], $paramValues);
                 for ($i = 0; $i < count($this->params); $i++) {
                     $key = key($this->params);
                     oci_bind_by_name($stmt, $key, $this->params[$key]);
@@ -518,7 +517,7 @@ class OCIEngine implements IConnection
      */
     private function parse(mixed ...$params): mixed
     {
-        $this->query = $params[0];
+        $this->query = Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE);
         return oci_parse($this->getConnection(), $this->query);
     }
 
@@ -534,7 +533,7 @@ class OCIEngine implements IConnection
             $this->statement = $this->parse(...$params);
             $this->exec($this->statement);
             array_unshift($params, $this->statement);
-            $this->queriedRows = Types::false2Null($this->numRows(...$params));
+            $this->queriedRows = $this->numRows(...$params);
             $this->affectedRows = $this->affectedRows($this->statement);
         }
         return $this;
@@ -553,12 +552,12 @@ class OCIEngine implements IConnection
             array_unshift($params, $this->statement);
             if (isset($params[1])) {
                 if (!$this->bindParam(...$params)) {
-                    $this->queriedRows = Types::false2Null($this->numRows(...$params));
+                    $this->queriedRows = $this->numRows(...$params);
                 }
             } else {
                 $this->exec($this->statement);
                 if (!$this->affectedRows) {
-                    $this->queriedRows = Types::false2Null($this->numRows(...$params));
+                    $this->queriedRows = $this->numRows(...$params);
                 }
             }
         }

@@ -18,9 +18,9 @@ use GenericDatabase\Engine\SQLSrv\Transaction;
 use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Types;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Reflections;
+use GenericDatabase\Helpers\Translater;
 use GenericDatabase\Helpers\Regex;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
@@ -421,11 +421,12 @@ class SQLSrvEngine implements IConnection
     /**
      * Returns the number of columns in an statement result.
      *
+     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function columnCount(): int|false
+    public function columnCount(mixed ...$params): int|false
     {
-        return sqlsrv_num_fields($this->statement);
+        return sqlsrv_num_fields(...$params);
     }
 
     /**
@@ -483,8 +484,7 @@ class SQLSrvEngine implements IConnection
                 for ($i = 1; $i < count($params); $i++) {
                     $paramValues[] = $params[$i];
                 }
-                preg_match_all('/(:\w+)/', $params[0], $matches);
-                $this->params = array_combine($matches[1], $paramValues);
+                $this->params = Translater::parameters($params[0], $paramValues);
                 for ($i = 0; $i < count($this->params); $i++) {
                     $referenceParams[$i] = array_values($this->params)[$i];
                     $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
@@ -505,7 +505,7 @@ class SQLSrvEngine implements IConnection
      */
     private function parse(mixed ...$params): mixed
     {
-        $this->query = Regex::noBinding($params[0]);
+        $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE));
         $scrollable = Regex::isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD;
         return sqlsrv_query($this->getConnection(), $this->query, [], ['Scrollable' => $scrollable]);
     }
@@ -535,7 +535,7 @@ class SQLSrvEngine implements IConnection
     public function prepare(mixed ...$params): static|null
     {
         if (!empty($params)) {
-            $this->query = Regex::noBinding($params[0]);
+            $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE));
             if (isset($params[1])) {
                 $this->bindParam(...$params);
             } else {
