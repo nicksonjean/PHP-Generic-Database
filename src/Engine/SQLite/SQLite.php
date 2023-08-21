@@ -4,6 +4,50 @@ namespace GenericDatabase\Engine\SQLite;
 
 use GenericDatabase\Helpers\Reflections;
 
+if (!defined('SQLITE_FETCH_NUM')) {
+    define('SQLITE_FETCH_NUM', 8);
+}
+if (!defined('SQLITE_FETCH_OBJ')) {
+    define('SQLITE_FETCH_OBJ', 9);
+}
+if (!defined('SQLITE_FETCH_BOTH')) {
+    define('SQLITE_FETCH_BOTH', 10);
+}
+if (!defined('SQLITE_FETCH_INTO')) {
+    define('SQLITE_FETCH_INTO', 11);
+}
+if (!defined('SQLITE_FETCH_CLASS')) {
+    define('SQLITE_FETCH_CLASS', 12);
+}
+if (!defined('SQLITE_FETCH_ASSOC')) {
+    define('SQLITE_FETCH_ASSOC', 13);
+}
+if (!defined('SQLITE_FETCH_COLUMN')) {
+    define('SQLITE_FETCH_COLUMN', 14);
+}
+
+if (!defined('FETCH_NUM')) {
+    define('FETCH_NUM', 8);
+}
+if (!defined('FETCH_OBJ')) {
+    define('FETCH_OBJ', 9);
+}
+if (!defined('FETCH_BOTH')) {
+    define('FETCH_BOTH', 10);
+}
+if (!defined('FETCH_INTO')) {
+    define('FETCH_INTO', 11);
+}
+if (!defined('FETCH_CLASS')) {
+    define('FETCH_CLASS', 12);
+}
+if (!defined('FETCH_ASSOC')) {
+    define('FETCH_ASSOC', 13);
+}
+if (!defined('FETCH_COLUMN')) {
+    define('FETCH_COLUMN', 14);
+}
+
 class SQLite
 {
     public const ATTR_OPEN_READONLY = 1;

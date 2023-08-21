@@ -421,7 +421,7 @@ class MySQLiEngine implements IConnection
      */
     public function numRows(mixed ...$params): int|false
     {
-        return mysqli_stmt_num_rows(...$params);
+        return mysqli_num_rows(...$params);
     }
 
     /**
@@ -564,6 +564,7 @@ class MySQLiEngine implements IConnection
             : $statement->affected_rows;
         return $this->statement;
     }
+
     /**
      * Fetches the next row from the statement and returns it as an array.
      *

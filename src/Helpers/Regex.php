@@ -10,8 +10,6 @@ class Regex
     private static $patterns = [
         'onlyNumbers' =>
         "/^(?:-(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))|(?:0|(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))))(?:.\\d+|)$/",
-        'noBinding' => '/(:[a-zA-Z]{1,})/i',
-        'unQuoted' => '/"([^"]+)"/'
     ];
 
     public static function unQuoted(string $value): string
@@ -44,23 +42,6 @@ class Regex
             return null;
         }
         return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-    }
-
-    /**
-     * Replace binding param name to another bind type
-     *
-     * @param string $value The SQL Query with binding names
-     * @param bool $bindType The binding type Value
-     * @return string The SQL Query post processed with binding types
-     */
-    public static function noBinding(string $value, bool $bindType = true)
-    {
-        return $bindType
-            ? preg_replace(self::$patterns['noBinding'], '?', $value)
-            :   preg_replace_callback(self::$patterns['noBinding'], function () {
-                static $count = 1;
-                return '$' . $count++;
-            }, $value);
     }
 
     /**
