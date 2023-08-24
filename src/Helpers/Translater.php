@@ -43,10 +43,23 @@ class Translater
     private static function escapeType(string $input, string $escapeChar)
     {
         $forbiddenWords = self::loadForbiddenWords(__DIR__ . './SQLDict.json');
+        $regex = '/(\w+)?\((.+)\)\s/m';
+        $mask = '(_PARAM_) ';
+
+        preg_match_all($regex, $input, $matches, PREG_SET_ORDER, 0);
+
+        if (count($matches) > 0) {
+            if (!in_array($matches[0][1], $forbiddenWords)) {
+                $input = preg_replace($regex, $mask, $input);
+                $pWords = array_map(function ($word) use ($escapeChar) {
+                    return $escapeChar . trim($word) . $escapeChar;
+                }, explode(',', trim($matches[0][2])));
+                $input = str_replace($mask, '(' . implode(', ', $pWords) . ') ', $input);
+            }
+        }
 
         $words = preg_split('/\s+/', $input);
 
-        $insideFunction = false;
         $insideSingleQuote = false;
         $insideDoubleQuote = false;
 

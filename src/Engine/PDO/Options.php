@@ -52,12 +52,16 @@ class Options
                 }
                 $options += [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true];
                 break;
-            // Fall-through intencional
+                // Fall-through intencional
             case 'pgsql':
                 $options += [PDO::ATTR_AUTOCOMMIT => true];
                 break;
             case 'sqlsrv':
-                $options += [PDO::SQLSRV_ATTR_ENCODING => PDO::SQLSRV_ENCODING_SYSTEM];
+                if (PDOEngine::getInstance()->getCharset()) {
+                    $options += [PDO::SQLSRV_ATTR_ENCODING => PDO::SQLSRV_ENCODING_UTF8];
+                } else {
+                    $options += [PDO::SQLSRV_ATTR_ENCODING => PDO::SQLSRV_ENCODING_SYSTEM];
+                }
                 break;
             case 'sqlite':
                 unset(PDOEngine::getInstance()->user, PDOEngine::getInstance()->password);
