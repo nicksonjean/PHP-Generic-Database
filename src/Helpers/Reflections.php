@@ -148,4 +148,19 @@ class Reflections
         }
         return $result;
     }
+
+    /**
+     * @param mixed $args
+     * @return mixed
+     */
+    public static function argsToArray(...$args)
+    {
+        $result = [];
+        foreach ($args as $arg) {
+            foreach ($arg as $name => $value) {
+                $result[$name] = $value;
+            }
+        }
+        return $result;
+    }
 }

@@ -432,7 +432,7 @@ class PDOEngine implements IConnection
      * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of affected rows
      */
-    public function numRows(mixed ...$params): int|false
+    public function queriedRows(mixed ...$params): int|false
     {
         $internalPrepare = function (mixed $preparedParams, $stmt) {
             $types = 0;
@@ -455,6 +455,7 @@ class PDOEngine implements IConnection
             return $stmt;
         };
 
+        $statement = null;
         if (!empty($params)) {
             $stmt = $this->getConnection()->prepare($this->parse($params[1]));
             if (isset($params[2]) && is_array($params[2])) {
@@ -498,7 +499,8 @@ class PDOEngine implements IConnection
      */
     public function columnCount(mixed ...$params): int|false
     {
-        return 0;
+        $statement = $params[0];
+        return $statement->numColumns();
     }
 
     /**
@@ -567,15 +569,14 @@ class PDOEngine implements IConnection
      */
     private function parse(mixed ...$params): mixed
     {
-        return $this->query = match ($this->getDriver()) {
-            'mysql' => Translater::escape($params[0], Translater::SQL_DIALECT_BTICK),
-            'pgsql' => Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE),
-            'sqlsrv' => Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE),
-            'oci' => Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE),
-            'firebird' => Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE),
-            'sqlite' => Translater::escape($params[0], Translater::SQL_DIALECT_NONE),
-            default => Translater::escape($params[0], Translater::SQL_DIALECT_NONE),
+        $driver = $this->getDriver();
+        $dialect = match ($driver) {
+            'mysql' => Translater::SQL_DIALECT_BTICK,
+            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translater::SQL_DIALECT_DQUOTE,
+            'sqlite' => Translater::SQL_DIALECT_NONE,
+            default => Translater::SQL_DIALECT_NONE,
         };
+        return Translater::escape($params[0], $dialect);
     }
 
     /**
@@ -590,8 +591,8 @@ class PDOEngine implements IConnection
         $fetchMode = (empty($params) || !isset($params[1])) ? PDO::FETCH_DEFAULT : $params[1];
         $this->statement = $this->getConnection()->query($this->parse($query), $fetchMode);
         array_unshift($params, $this->statement);
-        $this->queriedRows = Regex::isSelect($this->query) ? $this->numRows(...$params) : 0;
-        $this->affectedRows += !Regex::isSelect($this->query) ? $this->affectedRows() : 0;;
+        $this->queriedRows = Regex::isSelect($this->query) ? $this->queriedRows(...$params) : 0;
+        $this->affectedRows += !Regex::isSelect($this->query) ? $this->affectedRows() : 0;
         return $this;
     }
 
@@ -608,7 +609,7 @@ class PDOEngine implements IConnection
         array_unshift($params, $this->statement);
         if (isset($params[1])) {
             $this->bindParam(...$params);
-            $this->queriedRows = Regex::isSelect($this->query) ? $this->numRows(...$params) : 0;
+            $this->queriedRows = Regex::isSelect($this->query) ? $this->queriedRows(...$params) : 0;
         }
         return $this;
     }
@@ -629,25 +630,30 @@ class PDOEngine implements IConnection
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is PDO_FETCH_BOTH.
-     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch($fetchStyle = PDO_FETCH_BOTH, $fetchArgument = null, $optArg1 = null)
-    {
+    public function fetch(
+        int $fetchStyle = PDO_FETCH_BOTH,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case PDO_FETCH_OBJ:
             case PDO_FETCH_CLASS:
             case FETCH_OBJ:
             case FETCH_CLASS:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : '\stdClass',
+                    isset($optArgs) ? $optArgs : '\stdClass',
                     [],
                     $this->statement,
                 );
             case PDO_FETCH_INTO:
             case FETCH_INTO:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : null,
+                    isset($optArgs) ? $optArgs : null,
                     [],
                     $this->statement,
                 );
@@ -671,11 +677,16 @@ class PDOEngine implements IConnection
     /**
      * Fetches all rows from the statement and returns them as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is PDO_FETCH_ASSOC.
-     * @return array An array containing all rows from the statement.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed An array containing all rows from the statement.
      */
-    public function fetchAll($fetchStyle = PDO_FETCH_ASSOC, $fetchArgument = null, $ctorArgs = null)
-    {
+    public function fetchAll(
+        int $fetchStyle = PDO_FETCH_ASSOC,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case PDO_FETCH_OBJ:
             case PDO_FETCH_CLASS:
@@ -686,7 +697,7 @@ class PDOEngine implements IConnection
                 }
                 return $this->internalFetchAllClassOrObjects(
                     $fetchArgument,
-                    $ctorArgs == null ? [] : $ctorArgs,
+                    $optArgs == null ? [] : $optArgs,
                     $this->statement
                 );
             case PDO_FETCH_COLUMN:

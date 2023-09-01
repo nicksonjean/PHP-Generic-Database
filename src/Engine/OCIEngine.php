@@ -26,6 +26,50 @@ use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
 use GenericDatabase\Traits\Singleton;
 
+if (!defined('OCI_FETCH_NUM')) {
+    define('OCI_FETCH_NUM', 8);
+}
+if (!defined('OCI_FETCH_OBJ')) {
+    define('OCI_FETCH_OBJ', 9);
+}
+if (!defined('OCI_FETCH_BOTH')) {
+    define('OCI_FETCH_BOTH', 10);
+}
+if (!defined('OCI_FETCH_INTO')) {
+    define('OCI_FETCH_INTO', 11);
+}
+if (!defined('OCI_FETCH_CLASS')) {
+    define('OCI_FETCH_CLASS', 12);
+}
+if (!defined('OCI_FETCH_ASSOC')) {
+    define('OCI_FETCH_ASSOC', 13);
+}
+if (!defined('OCI_FETCH_COLUMN')) {
+    define('OCI_FETCH_COLUMN', 14);
+}
+
+if (!defined('FETCH_NUM')) {
+    define('FETCH_NUM', 8);
+}
+if (!defined('FETCH_OBJ')) {
+    define('FETCH_OBJ', 9);
+}
+if (!defined('FETCH_BOTH')) {
+    define('FETCH_BOTH', 10);
+}
+if (!defined('FETCH_INTO')) {
+    define('FETCH_INTO', 11);
+}
+if (!defined('FETCH_CLASS')) {
+    define('FETCH_CLASS', 12);
+}
+if (!defined('FETCH_ASSOC')) {
+    define('FETCH_ASSOC', 13);
+}
+if (!defined('FETCH_COLUMN')) {
+    define('FETCH_COLUMN', 14);
+}
+
 /**
  * Dynamic and Static container class for OCIEngine connections.
  *
@@ -399,12 +443,15 @@ class OCIEngine implements IConnection
      * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of affected rows
      */
-    public function numRows(mixed ...$params): int|false
+    public function queriedRows(mixed ...$params): int|false
     {
-        $stmt = $this->parse($params[1]);
-        if (isset($params[2])) {
-            $parameters = [];
-            if (!empty($params)) {
+
+        $stmt = null;
+        if (!empty($params)) {
+            $stmt = $this->parse($params[1]);
+            if (isset($params[2])) {
+                $parameters = [];
+
                 if (isset($params[2]) && is_array($params[2])) {
                     if (Arrays::isMultidimensional($params[2])) {
                         foreach ($params[2] as $key => $param) {
@@ -434,9 +481,9 @@ class OCIEngine implements IConnection
                     }
                     oci_execute($stmt);
                 }
+            } else {
+                oci_execute($stmt);
             }
-        } else {
-            oci_execute($stmt);
         }
         return count($this->internalFetchAllAssoc($stmt));
     }
@@ -533,7 +580,7 @@ class OCIEngine implements IConnection
             $this->statement = $this->parse(...$params);
             $this->exec($this->statement);
             array_unshift($params, $this->statement);
-            $this->queriedRows = $this->numRows(...$params);
+            $this->queriedRows = $this->queriedRows(...$params);
             $this->affectedRows = $this->affectedRows($this->statement);
         }
         return $this;
@@ -552,12 +599,12 @@ class OCIEngine implements IConnection
             array_unshift($params, $this->statement);
             if (isset($params[1])) {
                 if (!$this->bindParam(...$params)) {
-                    $this->queriedRows = $this->numRows(...$params);
+                    $this->queriedRows = $this->queriedRows(...$params);
                 }
             } else {
                 $this->exec($this->statement);
                 if (!$this->affectedRows) {
-                    $this->queriedRows = $this->numRows(...$params);
+                    $this->queriedRows = $this->queriedRows(...$params);
                 }
             }
         }
@@ -580,25 +627,30 @@ class OCIEngine implements IConnection
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is OCI_FETCH_BOTH.
-     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch($fetchStyle = OCI_FETCH_BOTH, $fetchArgument = null, $optArg1 = null)
-    {
+    public function fetch(
+        int $fetchStyle = OCI_FETCH_BOTH,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case OCI_FETCH_OBJ:
             case OCI_FETCH_CLASS:
             case FETCH_OBJ:
             case FETCH_CLASS:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : '\stdClass',
+                    isset($optArgs) ? $optArgs : '\stdClass',
                     [],
                     $this->statement,
                 );
             case OCI_FETCH_INTO:
             case FETCH_INTO:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : null,
+                    isset($optArgs) ? $optArgs : null,
                     [],
                     $this->statement,
                 );
@@ -620,13 +672,18 @@ class OCIEngine implements IConnection
     }
 
     /**
-     * Fetches all rows from the OCI statement and returns them as an array.
+     * Fetches all rows from the statement and returns them as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is OCI_FETCHSTATEMENT_BY_ROW.
-     * @return array An array containing all rows from the statement.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed An array containing all rows from the statement.
      */
-    public function fetchAll($fetchStyle = OCI_FETCH_ASSOC, $fetchArgument = null, $ctorArgs = null)
-    {
+    public function fetchAll(
+        int $fetchStyle = OCI_FETCH_ASSOC,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case OCI_FETCH_OBJ:
             case OCI_FETCH_CLASS:
@@ -637,7 +694,7 @@ class OCIEngine implements IConnection
                 }
                 return $this->internalFetchAllClassOrObjects(
                     $fetchArgument,
-                    $ctorArgs == null ? [] : $ctorArgs,
+                    $optArgs == null ? [] : $optArgs,
                     $this->statement
                 );
             case OCI_FETCH_COLUMN:

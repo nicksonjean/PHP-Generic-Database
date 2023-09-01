@@ -27,6 +27,50 @@ use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
 use GenericDatabase\Traits\Singleton;
 
+if (!defined('PGSQL_FETCH_NUM')) {
+    define('PGSQL_FETCH_NUM', 8);
+}
+if (!defined('PGSQL_FETCH_OBJ')) {
+    define('PGSQL_FETCH_OBJ', 9);
+}
+if (!defined('PGSQL_FETCH_BOTH')) {
+    define('PGSQL_FETCH_BOTH', 10);
+}
+if (!defined('PGSQL_FETCH_INTO')) {
+    define('PGSQL_FETCH_INTO', 11);
+}
+if (!defined('PGSQL_FETCH_CLASS')) {
+    define('PGSQL_FETCH_CLASS', 12);
+}
+if (!defined('PGSQL_FETCH_ASSOC')) {
+    define('PGSQL_FETCH_ASSOC', 13);
+}
+if (!defined('PGSQL_FETCH_COLUMN')) {
+    define('PGSQL_FETCH_COLUMN', 14);
+}
+
+if (!defined('FETCH_NUM')) {
+    define('FETCH_NUM', 8);
+}
+if (!defined('FETCH_OBJ')) {
+    define('FETCH_OBJ', 9);
+}
+if (!defined('FETCH_BOTH')) {
+    define('FETCH_BOTH', 10);
+}
+if (!defined('FETCH_INTO')) {
+    define('FETCH_INTO', 11);
+}
+if (!defined('FETCH_CLASS')) {
+    define('FETCH_CLASS', 12);
+}
+if (!defined('FETCH_ASSOC')) {
+    define('FETCH_ASSOC', 13);
+}
+if (!defined('FETCH_COLUMN')) {
+    define('FETCH_COLUMN', 14);
+}
+
 /**
  * Dynamic and Static container class for PgSQLEngine connections.
  *
@@ -392,34 +436,31 @@ class PgSQLEngine implements IConnection
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of affected rows
      */
-    public function numRows(mixed ...$params): int|false
+    public function queriedRows(): int|false
     {
-        return pg_num_rows(...$params);
+        return pg_num_rows($this->statement);
     }
 
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of affected rows
      */
-    public function affectedRows(mixed ...$params): int|false
+    public function affectedRows(): int|false
     {
-        return pg_affected_rows(...$params);
+        return pg_affected_rows($this->statement);
     }
 
     /**
      * Returns the number of columns in an statement result.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function columnCount(mixed ...$params): int|false
+    public function columnCount(): int|false
     {
-        return pg_num_fields(...$params);
+        return pg_num_fields($this->statement);
     }
 
     /**
@@ -438,16 +479,16 @@ class PgSQLEngine implements IConnection
                     foreach ((array) Arrays::arrayValuesRecursive($params[2]) as $key => $param) {
                         $this->params[$key] = $param;
                         $this->exec($stmtname, $param);
-                        $this->queriedRows += $this->numRows($this->statement);
-                        $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows($this->statement);
+                        $this->queriedRows += $this->queriedRows();
+                        $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows();
                     }
                 } else {
                     foreach ($params[2] as $key => $val) {
                         $this->params[$key] = $val;
                     }
                     $this->exec($stmtname, array_values($this->params));
-                    $this->queriedRows += $this->numRows($this->statement);
-                    $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows($this->statement);
+                    $this->queriedRows += $this->queriedRows();
+                    $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows();
                 }
             } else {
                 $this->statement = pg_prepare($this->getConnection(), $stmtname, $this->query);
@@ -457,8 +498,8 @@ class PgSQLEngine implements IConnection
                 }
                 $this->params = Translater::parameters($params[1], $paramValues);
                 $this->exec($stmtname, $paramValues);
-                $this->queriedRows += $this->numRows($this->statement);
-                $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows($this->statement);
+                $this->queriedRows += $this->queriedRows();
+                $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows();
             }
         }
     }
@@ -485,8 +526,8 @@ class PgSQLEngine implements IConnection
     {
         if (!empty($params)) {
             $this->statement = $this->parse(...$params);
-            $this->queriedRows += $this->numRows($this->statement);
-            $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows($this->statement);
+            $this->queriedRows += $this->queriedRows();
+            $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows();
         }
         return $this;
     }
@@ -527,25 +568,30 @@ class PgSQLEngine implements IConnection
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is PGSQL_FETCH_BOTH.
-     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch($fetchStyle = PGSQL_FETCH_BOTH, $fetchArgument = null, $optArg1 = null)
-    {
+    public function fetch(
+        int $fetchStyle = PGSQL_FETCH_BOTH,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case PGSQL_FETCH_OBJ:
             case PGSQL_FETCH_CLASS:
             case FETCH_OBJ:
             case FETCH_CLASS:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : '\stdClass',
+                    isset($optArgs) ? $optArgs : '\stdClass',
                     [],
                     $this->statement,
                 );
             case PGSQL_FETCH_INTO:
             case FETCH_INTO:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : null,
+                    isset($optArgs) ? $optArgs : null,
                     [],
                     $this->statement,
                 );
@@ -569,11 +615,16 @@ class PgSQLEngine implements IConnection
     /**
      * Fetches all rows from the statement and returns them as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is PGSQL_FETCH_ASSOC.
-     * @return array An array containing all rows from the statement.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed An array containing all rows from the statement.
      */
-    public function fetchAll($fetchStyle = PGSQL_FETCH_ASSOC, $fetchArgument = null, $ctorArgs = null)
-    {
+    public function fetchAll(
+        int $fetchStyle = PGSQL_FETCH_ASSOC,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case PGSQL_FETCH_OBJ:
             case PGSQL_FETCH_CLASS:
@@ -584,7 +635,7 @@ class PgSQLEngine implements IConnection
                 }
                 return $this->internalFetchAllClassOrObjects(
                     $fetchArgument,
-                    $ctorArgs == null ? [] : $ctorArgs,
+                    $optArgs == null ? [] : $optArgs,
                     $this->statement
                 );
             case PGSQL_FETCH_COLUMN:

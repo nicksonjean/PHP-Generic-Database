@@ -267,7 +267,7 @@ class Connection
      */
     public function fetchAll(mixed ...$params): mixed
     {
-        return $this->getStrategy()->fetch(...$params);
+        return $this->getStrategy()->fetchAll(...$params);
     }
 
     /**

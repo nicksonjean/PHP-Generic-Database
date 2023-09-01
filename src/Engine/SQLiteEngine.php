@@ -27,6 +27,50 @@ use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
 use GenericDatabase\Traits\Singleton;
 
+if (!defined('SQLITE_FETCH_NUM')) {
+    define('SQLITE_FETCH_NUM', 8);
+}
+if (!defined('SQLITE_FETCH_OBJ')) {
+    define('SQLITE_FETCH_OBJ', 9);
+}
+if (!defined('SQLITE_FETCH_BOTH')) {
+    define('SQLITE_FETCH_BOTH', 10);
+}
+if (!defined('SQLITE_FETCH_INTO')) {
+    define('SQLITE_FETCH_INTO', 11);
+}
+if (!defined('SQLITE_FETCH_CLASS')) {
+    define('SQLITE_FETCH_CLASS', 12);
+}
+if (!defined('SQLITE_FETCH_ASSOC')) {
+    define('SQLITE_FETCH_ASSOC', 13);
+}
+if (!defined('SQLITE_FETCH_COLUMN')) {
+    define('SQLITE_FETCH_COLUMN', 14);
+}
+
+if (!defined('FETCH_NUM')) {
+    define('FETCH_NUM', 8);
+}
+if (!defined('FETCH_OBJ')) {
+    define('FETCH_OBJ', 9);
+}
+if (!defined('FETCH_BOTH')) {
+    define('FETCH_BOTH', 10);
+}
+if (!defined('FETCH_INTO')) {
+    define('FETCH_INTO', 11);
+}
+if (!defined('FETCH_CLASS')) {
+    define('FETCH_CLASS', 12);
+}
+if (!defined('FETCH_ASSOC')) {
+    define('FETCH_ASSOC', 13);
+}
+if (!defined('FETCH_COLUMN')) {
+    define('FETCH_COLUMN', 14);
+}
+
 /**
  * Dynamic and Static container class for SQLiteEngine connections.
  *
@@ -381,134 +425,144 @@ class SQLiteEngine implements IConnection
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of affected rows
      */
-    public function numRows(mixed ...$params): int|false
+    public function queriedRows(): int|false
     {
-        $internalPrepare = function (mixed $preparedParams, $stmt) {
-            $types = 0;
-            $index = 0;
-            foreach ($preparedParams as &$arg) {
-                if (is_float($arg)) {
-                    $types = SQLITE3_FLOAT;
-                } elseif (is_integer($arg)) {
-                    $types = SQLITE3_INTEGER;
-                } elseif (is_string($arg)) {
-                    $types = SQLITE3_TEXT;
-                } elseif (is_null($arg)) {
-                    $types = SQLITE3_NULL;
-                } else {
-                    $types = SQLITE3_BLOB;
-                }
-                call_user_func_array([$stmt, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
-                $index++;
-            }
-            return $stmt;
-        };
-
-        if (!empty($params)) {
-            $stmt = $params[0];
-            if (isset($params[2]) && is_array($params[2])) {
-                if (Arrays::isMultidimensional($params[2])) {
-                    foreach ($params[2] as $param) {
-                        $statement = $internalPrepare($param, $stmt);
-                        $stmt = $statement->execute();
-                    }
-                } else {
-                    $statement = $internalPrepare($params[2], $stmt);
-                    $stmt = $statement->execute();
-                }
-            } else {
-                $paramValues = [];
-                for ($i = 2; $i < count($params); $i++) {
-                    $paramValues[] = $params[$i];
-                }
-                $param = Translater::parameters($params[1], $paramValues);
-                $statement = $internalPrepare($param, $stmt);
-                $stmt = $statement->execute();
-            }
+        if (Regex::isSelect($GLOBALS['rowCount']['sqlQuery'])) {
+            $this->bindParam(...$GLOBALS['rowCount']);
+            return count($this->internalFetchAllAssoc($GLOBALS['stmt']));
         }
-        return count($this->internalFetchAllAssoc($stmt));
+        return 0;
     }
 
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @return int The number of affected rows
+     * @return int|false The number of affected rows
      */
     public function affectedRows(): int|false
     {
-        return $this->getConnection()->changes();
+        return $this->affectedRows;
     }
 
     /**
      * Returns the number of columns in an statement result.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function columnCount(mixed ...$params): int|false
+    public function columnCount(): int|false
     {
-        return 0;
+        return $this->statement->numColumns();
+    }
+
+    /**
+     * Binds variables to a prepared statement with specified types.
+     * This method binds variables to a prepared statement based on their types,
+     * allowing for more precise parameter binding.
+     *
+     * @param array &$preparedParams An array containing the parameters to bind.
+     * @param mixed $stmt The prepared statement to bind variables to.
+     * @return mixed The prepared statement with bound variables.
+     */
+    private function internalBindVariable(array &$preparedParams, mixed $stmt): mixed
+    {
+        $types = 0;
+        $index = 0;
+        foreach ($preparedParams as &$arg) {
+            $types = match (true) {
+                is_float($arg) => SQLITE3_FLOAT,
+                is_integer($arg) => SQLITE3_INTEGER,
+                is_string($arg) => SQLITE3_TEXT,
+                is_null($arg) => SQLITE3_NULL,
+                default => SQLITE3_BLOB,
+            };
+            call_user_func_array([$stmt, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
+            $index++;
+        }
+        return $stmt;
     }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return int
+     * @return void
      */
-    public function bindParam(mixed ...$params): int
+    private function internalBindParamArray(mixed ...$params): void
     {
-        $internalPrepare = function (mixed $preparedParams, $stmt) {
-            $types = 0;
-            $index = 0;
-            foreach ($preparedParams as &$arg) {
-                if (is_float($arg)) {
-                    $types = SQLITE3_FLOAT;
-                } elseif (is_integer($arg)) {
-                    $types = SQLITE3_INTEGER;
-                } elseif (is_string($arg)) {
-                    $types = SQLITE3_TEXT;
-                } elseif (is_null($arg)) {
-                    $types = SQLITE3_NULL;
-                } else {
-                    $types = SQLITE3_BLOB;
-                }
-                call_user_func_array([$stmt, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
-                $index++;
+        $this->params = $params['sqlArgs'];
+        if ($params['isMulti']) {
+            foreach ($params['sqlArgs'] as $param) {
+                $statement = $this->internalBindVariable($param, $params['sqlStatement']);
+                (!$params['rowCount']) ? $this->exec($statement) : $GLOBALS['stmt'] = $statement->execute();
+                $this->affectedRows += $this->getConnection()->changes();
             }
-            return $stmt;
-        };
+        } else {
+            $statement = $this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
+            (!$params['rowCount']) ? $this->exec($statement) : $GLOBALS['stmt'] = $statement->execute();
+            $this->affectedRows += $this->getConnection()->changes();
+        }
+    }
 
-        if (!empty($params)) {
-            $stmt = $params[0];
-            if (isset($params[2]) && is_array($params[2])) {
-                $this->params = $params[2];
-                if (Arrays::isMultidimensional($params[2])) {
-                    foreach ($params[2] as $param) {
-                        $statement = $internalPrepare($param, $stmt);
-                        $this->exec($statement);
-                        $this->affectedRows += $this->affectedRows();
-                    }
-                } else {
-                    $statement = $internalPrepare($params[2], $stmt);
-                    $this->exec($statement);
-                    $this->affectedRows += $this->affectedRows();
-                }
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArgs(mixed ...$params): void
+    {
+        $this->params = $params['sqlArgs'];
+        $statement = $this->internalBindVariable($this->params, $params['sqlStatement']);
+        (!$params['rowCount']) ? $this->exec($statement) : $GLOBALS['stmt'] = $statement->execute();
+        $this->affectedRows += $this->getConnection()->changes();
+    }
+
+    /**
+     * This function makes an arguments list
+     *
+     * @param mixed $params Arguments list
+     * @return array
+     */
+    private function makeArgs(mixed ...$params): array
+    {
+        if (array_key_exists(2, $params)) {
+            if (is_array($params[2])) {
+                $isArgs = false;
+                $isArray = true;
+                $isMulti = Arrays::isMultidimensional($params[2]) ? true : false;
+                $sqlArgs = $params[2];
             } else {
-                $paramValues = [];
-                for ($i = 2; $i < count($params); $i++) {
-                    $paramValues[] = $params[$i];
-                }
-                $this->params = Translater::parameters($params[1], $paramValues);
-                $statement = $internalPrepare($this->params, $stmt);
-                $this->exec($statement);
-                $this->affectedRows += $this->affectedRows();
+                $isArgs = true;
+                $isArray = false;
+                $isMulti = false;
+                $sqlArgs = Translater::parameters($params[1], array_slice($params, 2));
             }
         }
-        return 0;
+        return [
+            'sqlStatement' => $params[0],
+            'sqlQuery' => $params[1],
+            'sqlArgs' => $sqlArgs ?? [],
+            'isArray' => $isArray ?? false,
+            'isMulti' => $isMulti ?? false,
+            'isArgs' => $isArgs ?? false
+        ];
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array and args of parameters and values.
+     * @return void
+     */
+    public function bindParam(mixed ...$params): void
+    {
+        if ($params['isArray']) {
+            $this->internalBindParamArray(...$params);
+        } else {
+            $this->internalBindParamArgs(...$params);
+        }
     }
 
     /**
@@ -519,7 +573,8 @@ class SQLiteEngine implements IConnection
      */
     private function parse(mixed ...$params): mixed
     {
-        return $this->query = Translater::escape($params[0], Translater::SQL_DIALECT_NONE);
+        $this->query = Translater::escape($params[0], Translater::SQL_DIALECT_NONE);
+        return $this->query;
     }
 
     /**
@@ -530,11 +585,14 @@ class SQLiteEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $query = $params[0];
-        $this->statement = $this->getConnection()->query($this->parse($query));
-        $stmt = $this->getConnection()->prepare($this->parse($query));
+        $this->statement = $this->getConnection()->query($this->parse(...$params));
+        $stmt = $this->getConnection()->prepare($this->parse(...$params));
         array_unshift($params, $stmt);
-        $this->queriedRows = Regex::isSelect($this->query) ? $this->numRows(...$params) : 0;
+        $this->affectedRows += $this->getConnection()->changes();
+        $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+        if (Regex::isSelect($this->query)) {
+            $this->queriedRows = $this->queriedRows();
+        }
         return $this;
     }
 
@@ -546,12 +604,13 @@ class SQLiteEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $query = $params[0];
-        $stmt = $this->getConnection()->prepare($this->parse($query));
+        $stmt = $this->getConnection()->prepare($this->parse(...$params));
         array_unshift($params, $stmt);
-        if (isset($params[1])) {
-            $this->bindParam(...$params);
-            $this->queriedRows = Regex::isSelect($this->query) ? $this->numRows(...$params) : 0;
+        $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+        $this->bindParam(...$bindParams);
+        $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+        if (Regex::isSelect($this->query)) {
+            $this->queriedRows = $this->queriedRows();
         }
         return $this;
     }
@@ -571,25 +630,30 @@ class SQLiteEngine implements IConnection
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is SQLITE_FETCH_BOTH.
-     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch($fetchStyle = SQLITE_FETCH_BOTH, $fetchArgument = null, $optArg1 = null)
-    {
+    public function fetch(
+        int $fetchStyle = SQLITE_FETCH_BOTH,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case SQLITE_FETCH_OBJ:
             case SQLITE_FETCH_CLASS:
             case FETCH_OBJ:
             case FETCH_CLASS:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : '\stdClass',
+                    isset($optArgs) ? $optArgs : '\stdClass',
                     [],
                     $this->statement,
                 );
             case SQLITE_FETCH_INTO:
             case FETCH_INTO:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : null,
+                    isset($optArgs) ? $optArgs : null,
                     [],
                     $this->statement,
                 );
@@ -613,11 +677,16 @@ class SQLiteEngine implements IConnection
     /**
      * Fetches all rows from the statement and returns them as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is SQLITE_FETCH_ASSOC.
-     * @return array An array containing all rows from the statement.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed An array containing all rows from the statement.
      */
-    public function fetchAll($fetchStyle = SQLITE_FETCH_ASSOC, $fetchArgument = null, $ctorArgs = null)
-    {
+    public function fetchAll(
+        int $fetchStyle = SQLITE_FETCH_ASSOC,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case SQLITE_FETCH_OBJ:
             case SQLITE_FETCH_CLASS:
@@ -628,7 +697,7 @@ class SQLiteEngine implements IConnection
                 }
                 return $this->internalFetchAllClassOrObjects(
                     $fetchArgument,
-                    $ctorArgs == null ? [] : $ctorArgs,
+                    $optArgs == null ? [] : $optArgs,
                     $this->statement
                 );
             case SQLITE_FETCH_COLUMN:

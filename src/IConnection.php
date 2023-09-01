@@ -131,18 +131,22 @@ interface IConnection
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param mixed $params The fetch style (optional)
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    // public function fetch(mixed ...$params): mixed;
+    public function fetch(int $fetchStyle = 10, mixed $fetchArgument = null, mixed $optArgs = null): mixed;
 
     /**
      * Fetches all rows from the statement and returns them as an array.
      *
-     * @param mixed $params The fetch style (optional)
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed An array containing all rows from the statement.
      */
-    // public function fetchAll(mixed ...$params): mixed;
+    public function fetchAll(int $fetchStyle = 13, mixed $fetchArgument = null, mixed $optArgs = null): mixed;
 
     /**
      * This function retrieves an attribute from the database.

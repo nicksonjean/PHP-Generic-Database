@@ -21,10 +21,77 @@ use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Helpers\Translater;
+use GenericDatabase\Helpers\Regex;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
 use GenericDatabase\Traits\Singleton;
+
+if (!defined('FBIRD_FETCH_NUM')) {
+    define('FBIRD_FETCH_NUM', 8);
+}
+if (!defined('FBIRD_FETCH_OBJ')) {
+    define('FBIRD_FETCH_OBJ', 9);
+}
+if (!defined('FBIRD_FETCH_BOTH')) {
+    define('FBIRD_FETCH_BOTH', 10);
+}
+if (!defined('FBIRD_FETCH_INTO')) {
+    define('FBIRD_FETCH_INTO', 11);
+}
+if (!defined('FBIRD_FETCH_CLASS')) {
+    define('FBIRD_FETCH_CLASS', 12);
+}
+if (!defined('FBIRD_FETCH_ASSOC')) {
+    define('FBIRD_FETCH_ASSOC', 13);
+}
+if (!defined('FBIRD_FETCH_COLUMN')) {
+    define('FBIRD_FETCH_COLUMN', 14);
+}
+
+if (!defined('IBASE_FETCH_NUM')) {
+    define('IBASE_FETCH_NUM', 8);
+}
+if (!defined('IBASE_FETCH_OBJ')) {
+    define('IBASE_FETCH_OBJ', 9);
+}
+if (!defined('IBASE_FETCH_BOTH')) {
+    define('IBASE_FETCH_BOTH', 10);
+}
+if (!defined('IBASE_FETCH_INTO')) {
+    define('IBASE_FETCH_INTO', 11);
+}
+if (!defined('IBASE_FETCH_CLASS')) {
+    define('IBASE_FETCH_CLASS', 12);
+}
+if (!defined('IBASE_FETCH_ASSOC')) {
+    define('IBASE_FETCH_ASSOC', 13);
+}
+if (!defined('IBASE_FETCH_COLUMN')) {
+    define('IBASE_FETCH_COLUMN', 14);
+}
+
+if (!defined('FETCH_NUM')) {
+    define('FETCH_NUM', 8);
+}
+if (!defined('FETCH_OBJ')) {
+    define('FETCH_OBJ', 9);
+}
+if (!defined('FETCH_BOTH')) {
+    define('FETCH_BOTH', 10);
+}
+if (!defined('FETCH_INTO')) {
+    define('FETCH_INTO', 11);
+}
+if (!defined('FETCH_CLASS')) {
+    define('FETCH_CLASS', 12);
+}
+if (!defined('FETCH_ASSOC')) {
+    define('FETCH_ASSOC', 13);
+}
+if (!defined('FETCH_COLUMN')) {
+    define('FETCH_COLUMN', 14);
+}
 
 /**
  * Dynamic and Static container class for FBirdEngine connections.
@@ -392,96 +459,163 @@ class FBirdEngine implements IConnection
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of affected rows
      */
-    public function numRows(mixed ...$params): int|false
+    public function queriedRows(): int|false
     {
-        $query = Translater::binding(Translater::escape($params[1], Translater::SQL_DIALECT_DQUOTE));
-        $statement = ibase_prepare($this->getConnection(), $query);
-        if (!empty($params)) {
-            if (isset($params[2]) && is_array($params[2])) {
-                if (Arrays::isMultidimensional($params[2])) {
-                    foreach ((array) Arrays::arrayValuesRecursive($params[2]) as $param) {
-                        $stmt = $this->exec($statement, $param);
-                    }
-                } else {
-                    $paramValues = [];
-                    foreach ($params[2] as $param) {
-                        $paramValues[] = $param;
-                    }
-                    $stmt = $this->exec($statement, $paramValues);
-                }
-            } else {
-                $paramValues = [];
-                for ($i = 2; $i < count($params); $i++) {
-                    $paramValues[] = $params[$i];
-                }
-                $stmt = $this->exec($statement, $paramValues);
-            }
+        if (Regex::isSelect($GLOBALS['rowCount']['sqlQuery'])) {
+            $this->bindParam(...$GLOBALS['rowCount']);
+            return count($this->internalFetchAllAssoc($GLOBALS['stmt']));
         }
-        return count($this->internalFetchAllAssoc($stmt));
+        return 0;
     }
 
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int The number of affected rows
      */
-    public function affectedRows(mixed ...$params): int|false
+    public function affectedRows(): int|false
     {
-        return ibase_affected_rows(...$params);
+        return $this->affectedRows;
     }
 
     /**
      * Returns the number of columns in an statement result.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function columnCount(mixed ...$params): int|false
+    public function columnCount(): int|false
     {
-        return ibase_num_fields(...$params);
+        return ibase_num_fields($this->statement);
+    }
+
+    /**
+     * Binds variables to a prepared statement with specified types.
+     * This method binds variables to a prepared statement based on their types,
+     * allowing for more precise parameter binding.
+     *
+     * @param mixed $data The prepared statement to bind variables to.
+     * @return mixed The prepared statement with bound variables.
+     */
+    private function internalBindVariable(mixed $data): mixed
+    {
+        $data = array_values($data);
+        foreach ($data as $i => $v) {
+            switch (gettype($v)) {
+                case 'boolean':
+                case 'integer':
+                    $data[$i] = (int) $v;
+                    break;
+                case 'string':
+                    $data[$i] = (string) $v;
+                    break;
+                case 'array':
+                    $data[$i] = implode(',', $v);
+                    break;
+                case 'object':
+                    $data[$i] = serialize($data[$i]);
+                    break;
+                case 'resource':
+                    if (is_resource($v) && get_resource_type($v) === 'stream') {
+                        $data[$i] = stream_get_contents($data[$i]);
+                    } else {
+                        $data[$i] = serialize($data[$i]);
+                    }
+                    break;
+                default:
+                    $data[$i] = $v;
+            }
+        }
+        return $data;
     }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return int
+     * @return void
      */
-    public function bindParam(mixed ...$params): int
+    private function internalBindParamArray(mixed ...$params): void
     {
-        if (!empty($params)) {
-            $stmt = $params[0];
-            if (isset($params[2]) && is_array($params[2])) {
-                if (Arrays::isMultidimensional($params[2])) {
-                    foreach ((array) Arrays::arrayValuesRecursive($params[2]) as $key => $param) {
-                        $this->params[$key] = $param;
-                        $this->statement = $this->exec($stmt, $param);
-                        $this->affectedRows += $this->affectedRows($this->getConnection());
-                    }
-                } else {
-                    $referenceParams = [];
-                    foreach ($params[2] as $key => $param) {
-                        $this->params[$key] = $param;
-                        $referenceParams[] = $param;
-                    }
-                    $this->statement = $this->exec($stmt, $referenceParams);
-                    $this->affectedRows += $this->affectedRows($this->getConnection());
-                }
+        $this->params = $params['sqlArgs'];
+        if ($params['isMulti']) {
+            foreach ($params['sqlArgs'] as $param) {
+                $referenceParams = array_values($param);
+                (!$params['rowCount'])
+                    ? $this->statement = $this->exec($params['sqlStatement'], $referenceParams)
+                    : $GLOBALS['stmt'] = $this->exec($GLOBALS['stmt_prepare'], $referenceParams);
+                $this->affectedRows += ibase_affected_rows($this->getConnection());
+            }
+        } else {
+            $referenceParams = array_values($params['sqlArgs']);
+            (!$params['rowCount'])
+                ? $this->statement = $this->exec($params['sqlStatement'], $referenceParams)
+                : $GLOBALS['stmt'] = $this->exec($GLOBALS['stmt_prepare'], $referenceParams);
+            $this->affectedRows += ibase_affected_rows($this->getConnection());
+        }
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArgs(mixed ...$params): void
+    {
+        $this->params = $params['sqlArgs'];
+        $referenceParams = array_values($params['sqlArgs']);
+        (!$params['rowCount'])
+            ? $this->statement = $this->exec($params['sqlStatement'], $referenceParams)
+            : $GLOBALS['stmt'] = $this->exec($GLOBALS['stmt_prepare'], $referenceParams);
+        $this->affectedRows += ibase_affected_rows($this->getConnection());
+    }
+
+    /**
+     * This function makes an arguments list
+     *
+     * @param mixed $params Arguments list
+     * @return array
+     */
+    private function makeArgs(mixed ...$params): array
+    {
+        if (array_key_exists(2, $params)) {
+            if (is_array($params[2])) {
+                $isArgs = false;
+                $isArray = true;
+                $isMulti = Arrays::isMultidimensional($params[2]) ? true : false;
+                $sqlArgs = $params[2];
             } else {
-                $paramValues = [];
-                for ($i = 2; $i < count($params); $i++) {
-                    $paramValues[] = $params[$i];
-                }
-                $this->params = Translater::parameters($params[1], $paramValues);
-                $this->statement = $this->exec($stmt, $paramValues);
-                $this->affectedRows += $this->affectedRows($this->getConnection());
+                $isArgs = true;
+                $isArray = false;
+                $isMulti = false;
+                $sqlArgs = Translater::parameters($params[1], array_slice($params, 2));
             }
         }
-        return $this->affectedRows ?: 0;
+        return [
+            'sqlStatement' => $params[0],
+            'sqlQuery' => $params[1],
+            'sqlArgs' => $sqlArgs ?? [],
+            'isArray' => $isArray ?? false,
+            'isMulti' => $isMulti ?? false,
+            'isArgs' => $isArgs ?? false
+        ];
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    public function bindParam(mixed ...$params): void
+    {
+        if ($params['isArray']) {
+            $this->internalBindParamArray(...$params);
+        } else {
+            $this->internalBindParamArgs(...$params);
+        }
     }
 
     /**
@@ -493,7 +627,7 @@ class FBirdEngine implements IConnection
     private function parse(mixed ...$params): mixed
     {
         $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE));
-        return ibase_query($this->getConnection(), $this->query);
+        return $this->query;
     }
 
     /**
@@ -504,12 +638,14 @@ class FBirdEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        if (!empty($params)) {
-            $this->statement = $this->parse(...$params);
-            $this->affectedRows = $this->affectedRows($this->getConnection());
-            array_unshift($params, $this->statement);
-            $this->queriedRows = $this->numRows(...$params);
-        }
+        $this->statement = ibase_query($this->getConnection(), $this->parse(...$params));
+        /** @phpstan-ignore-next-line */
+        $GLOBALS['stmt_prepare'] = ibase_prepare($this->getConnection(), $this->parse(...$params));
+        array_unshift($params, $this->statement);
+        $GLOBALS['bindParams'] = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+        $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+        $this->affectedRows += ibase_affected_rows($this->getConnection());
+        $this->queriedRows = $this->queriedRows();
         return $this;
     }
 
@@ -521,20 +657,18 @@ class FBirdEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        if (!empty($params)) {
-            $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE));
-            $stmt = ibase_prepare($this->getConnection(), $this->query);
-            if (isset($params[1])) {
-                array_unshift($params, $stmt);
-                $this->bindParam(...$params);
-                if (!is_resource($this->statement)) {
-                    $this->statement = $stmt;
-                } else {
-                    $this->queriedRows = $this->numRows(...$params);
-                }
-            } else {
-                $this->query(...$params);
-            }
+        /** @phpstan-ignore-next-line */
+        $stmt = ibase_prepare($this->getConnection(), $this->parse(...$params));
+        /** @phpstan-ignore-next-line */
+        $GLOBALS['stmt_prepare'] = ibase_prepare($this->getConnection(), $this->parse(...$params));
+        array_unshift($params, $stmt);
+        $GLOBALS['bindParams'] = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+        $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+        $this->bindParam(...$GLOBALS['bindParams']);
+        if (isset($params[1])) {
+            (!is_resource($this->statement)) ? $this->statement = $stmt : $this->queriedRows = $this->queriedRows();
+        } else {
+            $this->query(...$params);
         }
         return $this;
     }
@@ -550,8 +684,9 @@ class FBirdEngine implements IConnection
         $stmt = $params[0];
         $data = $params[1];
         if (!is_array($data)) {
-            return ibase_execute($stmt, $data);
+            $data = [];
         }
+        $data = $this->internalBindVariable($data);
         array_unshift($data, $stmt);
         return call_user_func_array('ibase_execute', $data);
     }
@@ -559,25 +694,30 @@ class FBirdEngine implements IConnection
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is IBASE_FETCH_BOTH.
-     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch($fetchStyle = IBASE_FETCH_BOTH, $fetchArgument = null, $optArg1 = null)
-    {
+    public function fetch(
+        int $fetchStyle = IBASE_FETCH_BOTH,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case IBASE_FETCH_OBJ:
             case IBASE_FETCH_CLASS:
             case FETCH_OBJ:
             case FETCH_CLASS:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : '\stdClass',
+                    isset($optArgs) ? $optArgs : '\stdClass',
                     [],
                     $this->statement,
                 );
             case IBASE_FETCH_INTO:
             case FETCH_INTO:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : null,
+                    isset($optArgs) ? $optArgs : null,
                     [],
                     $this->statement,
                 );
@@ -601,11 +741,16 @@ class FBirdEngine implements IConnection
     /**
      * Fetches all rows from the statement and returns them as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is IBASE_FETCH_ASSOC.
-     * @return array An array containing all rows from the statement.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed An array containing all rows from the statement.
      */
-    public function fetchAll($fetchStyle = IBASE_FETCH_ASSOC, $fetchArgument = null, $ctorArgs = null)
-    {
+    public function fetchAll(
+        int $fetchStyle = IBASE_FETCH_ASSOC,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case IBASE_FETCH_OBJ:
             case IBASE_FETCH_CLASS:
@@ -616,7 +761,7 @@ class FBirdEngine implements IConnection
                 }
                 return $this->internalFetchAllClassOrObjects(
                     $fetchArgument,
-                    $ctorArgs == null ? [] : $ctorArgs,
+                    $optArgs == null ? [] : $optArgs,
                     $this->statement
                 );
             case IBASE_FETCH_COLUMN:

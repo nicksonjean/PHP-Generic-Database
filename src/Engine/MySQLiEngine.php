@@ -21,10 +21,55 @@ use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Helpers\Translater;
+use GenericDatabase\Helpers\Regex;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
 use GenericDatabase\Traits\Singleton;
+
+if (!defined('MYSQLI_FETCH_NUM')) {
+    define('MYSQLI_FETCH_NUM', 8);
+}
+if (!defined('MYSQLI_FETCH_OBJ')) {
+    define('MYSQLI_FETCH_OBJ', 9);
+}
+if (!defined('MYSQLI_FETCH_BOTH')) {
+    define('MYSQLI_FETCH_BOTH', 10);
+}
+if (!defined('MYSQLI_FETCH_INTO')) {
+    define('MYSQLI_FETCH_INTO', 11);
+}
+if (!defined('MYSQLI_FETCH_CLASS')) {
+    define('MYSQLI_FETCH_CLASS', 12);
+}
+if (!defined('MYSQLI_FETCH_ASSOC')) {
+    define('MYSQLI_FETCH_ASSOC', 13);
+}
+if (!defined('MYSQLI_FETCH_COLUMN')) {
+    define('MYSQLI_FETCH_COLUMN', 14);
+}
+
+if (!defined('FETCH_NUM')) {
+    define('FETCH_NUM', 8);
+}
+if (!defined('FETCH_OBJ')) {
+    define('FETCH_OBJ', 9);
+}
+if (!defined('FETCH_BOTH')) {
+    define('FETCH_BOTH', 10);
+}
+if (!defined('FETCH_INTO')) {
+    define('FETCH_INTO', 11);
+}
+if (!defined('FETCH_CLASS')) {
+    define('FETCH_CLASS', 12);
+}
+if (!defined('FETCH_ASSOC')) {
+    define('FETCH_ASSOC', 13);
+}
+if (!defined('FETCH_COLUMN')) {
+    define('FETCH_COLUMN', 14);
+}
 
 /**
  * Dynamic and Static container class for MySQLiEngine connections.
@@ -416,90 +461,140 @@ class MySQLiEngine implements IConnection
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of affected rows
      */
-    public function numRows(mixed ...$params): int|false
+    public function queriedRows(): int|false
     {
-        return mysqli_num_rows(...$params);
+        if (Regex::isSelect($this->query)) {
+            return $this->statement->num_rows;
+        }
+        return 0;
     }
 
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the function.
-     * @return int The number of affected rows
+     * @return int|false The number of affected rows
      */
-    public function affectedRows(mixed ...$params): int|false
+    public function affectedRows(): int|false
     {
-        return mysqli_affected_rows(...$params);
+        return $this->affectedRows;
     }
 
     /**
      * Returns the number of columns in an statement result.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function columnCount(mixed ...$params): int|false
+    public function columnCount(): int|false
     {
-        return mysqli_field_count(...$params);
+        return $this->statement->field_count;
+    }
+
+    /**
+     * Binds variables to a prepared statement with specified types.
+     * This method binds variables to a prepared statement based on their types,
+     * allowing for more precise parameter binding.
+     *
+     * @param array &$preparedParams An array containing the parameters to bind.
+     * @param mixed $stmt The prepared statement to bind variables to.
+     * @return mixed The prepared statement with bound variables.
+     */
+    private function internalBindVariable(array &$preparedParams, mixed $stmt): mixed
+    {
+        $types = '';
+        $referenceParams = [];
+        foreach ($preparedParams as &$arg) {
+            $referenceParams[] = &$arg;
+            $types .= match (true) {
+                is_float($arg) => 'd',
+                is_integer($arg) => 'i',
+                is_string($arg) => 's',
+                default => 'b'
+            };
+        }
+        array_unshift($referenceParams, $types);
+        call_user_func_array([$stmt, 'bind_param'], $referenceParams);
+        return $stmt;
     }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return int
+     * @return void
      */
-    public function bindParam(mixed ...$params): int
+    private function internalBindParamArray(mixed ...$params): void
     {
-        $internalPrepare = function (mixed $preparedParams, $stmt) {
-            $types = '';
-            $referenceParams = [];
-            foreach ($preparedParams as &$arg) {
-                $referenceParams[] = &$arg;
-                if (is_float($arg)) {
-                    $types .= 'd';
-                } elseif (is_integer($arg)) {
-                    $types .= 'i';
-                } elseif (is_string($arg)) {
-                    $types .= 's';
-                } else {
-                    $types .= 'b';
-                }
+        $this->params = $params['sqlArgs'];
+        if ($params['isMulti']) {
+            foreach ($params['sqlArgs'] as $param) {
+                $statement = $this->internalBindVariable($param, $params['sqlStatement']);
+                $this->exec($statement);
             }
-            array_unshift($referenceParams, $types);
-            call_user_func_array([$stmt, 'bind_param'], $referenceParams);
-        };
+        } else {
+            $statement = $this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
+            $this->exec($statement);
+        }
+    }
 
-        if (!empty($params)) {
-            $stmt = $params[0];
-            if (isset($params[2]) && is_array($params[2])) {
-                if (Arrays::isMultidimensional($params[2])) {
-                    foreach ((array) Arrays::arrayValuesRecursive($params[2]) as $key => $param) {
-                        $this->params[$key] = $param;
-                        $internalPrepare($this->params[$key], $stmt);
-                        $this->exec($stmt);
-                    }
-                } else {
-                    foreach ($params[2] as $key => $param) {
-                        $this->params[$key] = $param;
-                    }
-                    $internalPrepare($params[2], $stmt);
-                    $this->exec($stmt);
-                }
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArgs(mixed ...$params): void
+    {
+        $this->params = $params['sqlArgs'];
+        $statement = $this->internalBindVariable($this->params, $params['sqlStatement']);
+        $this->exec($statement);
+    }
+
+    /**
+     * This function makes an arguments list
+     *
+     * @param mixed $params Arguments list
+     * @return array
+     */
+    private function makeArgs(mixed ...$params): array
+    {
+        if (array_key_exists(2, $params)) {
+            if (is_array($params[2])) {
+                $isArgs = false;
+                $isArray = true;
+                $isMulti = Arrays::isMultidimensional($params[2]) ? true : false;
+                $sqlArgs = $params[2];
             } else {
-                $paramValues = [];
-                for ($i = 2; $i < count($params); $i++) {
-                    $paramValues[] = $params[$i];
-                }
-                $this->params = Translater::parameters($params[1], $paramValues);
-                $internalPrepare($this->params, $stmt);
-                $this->exec($stmt);
+                $isArgs = true;
+                $isArray = false;
+                $isMulti = false;
+                $sqlArgs = Translater::parameters($params[1], array_slice($params, 2));
             }
         }
-        return 0;
+        return [
+            'sqlStatement' => $params[0],
+            'sqlQuery' => $params[1],
+            'sqlArgs' => $sqlArgs ?? [],
+            'isArray' => $isArray ?? false,
+            'isMulti' => $isMulti ?? false,
+            'isArgs' => $isArgs ?? false
+        ];
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    public function bindParam(mixed ...$params): void
+    {
+        if ($params['isArray']) {
+            $this->internalBindParamArray(...$params);
+        } else {
+            $this->internalBindParamArgs(...$params);
+        }
     }
 
     /**
@@ -511,8 +606,7 @@ class MySQLiEngine implements IConnection
     private function parse(mixed ...$params): mixed
     {
         $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_BTICK));
-        $resultMode = isset($params[1]) ? (int) $params[1] : MYSQLI_STORE_RESULT;
-        return mysqli_query($this->getConnection(), $this->query, $resultMode);
+        return $this->query;
     }
 
     /**
@@ -523,9 +617,17 @@ class MySQLiEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $query = $params[0];
-        $resultMode = isset($params[1]) ? (int) $params[1] : MYSQLI_STORE_RESULT;
-        $this->statement = $this->parse($query, $resultMode);
+        $this->statement = mysqli_query(
+            $this->getConnection(),
+            $this->parse(...$params),
+            array_key_exists(1, $params) ? (int) $params[1] : MYSQLI_STORE_RESULT
+        );
+        $this->queriedRows = Regex::isSelect($this->query) && get_class($this->statement) === 'mysqli_result'
+            ? $this->statement->num_rows
+            : 0;
+        $this->affectedRows += $this->queriedRows === $this->getConnection()->affected_rows
+            ? 0
+            : $this->getConnection()->affected_rows;
         return $this;
     }
 
@@ -537,11 +639,11 @@ class MySQLiEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_BTICK));
-        $stmt = mysqli_prepare($this->getConnection(), $this->query);
-        if (isset($params[1])) {
-            array_unshift($params, $stmt);
-            $this->bindParam(...$params);
+        $stmt = mysqli_prepare($this->getConnection(), $this->parse(...$params));
+        array_unshift($params, $stmt);
+        if (array_key_exists(2, $params)) {
+            $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+            $this->bindParam(...$bindParams);
         } else {
             $this->exec($stmt);
         }
@@ -558,8 +660,10 @@ class MySQLiEngine implements IConnection
     {
         $statement = $params[0];
         $this->statement = $statement->execute() ? $statement->get_result() : false;
-        $this->queriedRows = get_class($this->statement) === 'mysqli_result' ? $this->statement?->num_rows : 0;
-        $this->affectedRows += $statement->affected_rows === $this->statement?->num_rows
+        $this->queriedRows = $this->statement && get_class($this->statement) === 'mysqli_result'
+            ? $this->statement->num_rows
+            : $statement->num_rows;
+        $this->affectedRows += $statement->affected_rows === $this->queriedRows
             ? 0
             : $statement->affected_rows;
         return $this->statement;
@@ -568,25 +672,30 @@ class MySQLiEngine implements IConnection
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is MYSQLI_FETCH_BOTH.
-     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch($fetchStyle = MYSQLI_FETCH_BOTH, $fetchArgument = null, $optArg1 = null)
-    {
+    public function fetch(
+        int $fetchStyle = MYSQLI_FETCH_BOTH,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case MYSQLI_FETCH_OBJ:
             case MYSQLI_FETCH_CLASS:
             case FETCH_OBJ:
             case FETCH_CLASS:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : '\stdClass',
+                    isset($optArgs) ? $optArgs : '\stdClass',
                     [],
                     $this->statement,
                 );
             case MYSQLI_FETCH_INTO:
             case FETCH_INTO:
                 return $this->internalFetchClassOrObject(
-                    isset($optArg1) ? $optArg1 : null,
+                    isset($optArgs) ? $optArgs : null,
                     [],
                     $this->statement,
                 );
@@ -610,11 +719,16 @@ class MySQLiEngine implements IConnection
     /**
      * Fetches all rows from the statement and returns them as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is MYSQLI_FETCH_ASSOC.
-     * @return array An array containing all rows from the statement.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed An array containing all rows from the statement.
      */
-    public function fetchAll($fetchStyle = MYSQLI_FETCH_ASSOC, $fetchArgument = null, $ctorArgs = null)
-    {
+    public function fetchAll(
+        int $fetchStyle = MYSQLI_FETCH_ASSOC,
+        mixed $fetchArgument = null,
+        mixed $optArgs = null
+    ): mixed {
         switch ($fetchStyle) {
             case MYSQLI_FETCH_OBJ:
             case MYSQLI_FETCH_CLASS:
@@ -625,7 +739,7 @@ class MySQLiEngine implements IConnection
                 }
                 return $this->internalFetchAllClassOrObjects(
                     $fetchArgument,
-                    $ctorArgs == null ? [] : $ctorArgs,
+                    $optArgs == null ? [] : $optArgs,
                     $this->statement
                 );
             case MYSQLI_FETCH_COLUMN:

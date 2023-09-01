@@ -4,50 +4,6 @@ namespace GenericDatabase\Engine\SQLSrv;
 
 use GenericDatabase\Helpers\Reflections;
 
-if (!defined('SQLSRV_FETCH_NUM')) {
-    define('SQLSRV_FETCH_NUM', 8);
-}
-if (!defined('SQLSRV_FETCH_OBJ')) {
-    define('SQLSRV_FETCH_OBJ', 9);
-}
-if (!defined('SQLSRV_FETCH_BOTH')) {
-    define('SQLSRV_FETCH_BOTH', 10);
-}
-if (!defined('SQLSRV_FETCH_INTO')) {
-    define('SQLSRV_FETCH_INTO', 11);
-}
-if (!defined('SQLSRV_FETCH_CLASS')) {
-    define('SQLSRV_FETCH_CLASS', 12);
-}
-if (!defined('SQLSRV_FETCH_ASSOC')) {
-    define('SQLSRV_FETCH_ASSOC', 13);
-}
-if (!defined('SQLSRV_FETCH_COLUMN')) {
-    define('SQLSRV_FETCH_COLUMN', 14);
-}
-
-if (!defined('FETCH_NUM')) {
-    define('FETCH_NUM', 8);
-}
-if (!defined('FETCH_OBJ')) {
-    define('FETCH_OBJ', 9);
-}
-if (!defined('FETCH_BOTH')) {
-    define('FETCH_BOTH', 10);
-}
-if (!defined('FETCH_INTO')) {
-    define('FETCH_INTO', 11);
-}
-if (!defined('FETCH_CLASS')) {
-    define('FETCH_CLASS', 12);
-}
-if (!defined('FETCH_ASSOC')) {
-    define('FETCH_ASSOC', 13);
-}
-if (!defined('FETCH_COLUMN')) {
-    define('FETCH_COLUMN', 14);
-}
-
 class SQLSrv
 {
     public const ATTR_CONNECT_TIMEOUT = 1001;

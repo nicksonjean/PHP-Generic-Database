@@ -4,50 +4,6 @@ namespace GenericDatabase\Engine\MySQLi;
 
 use GenericDatabase\Helpers\Reflections;
 
-if (!defined('MYSQLI_FETCH_NUM')) {
-    define('MYSQLI_FETCH_NUM', 8);
-}
-if (!defined('MYSQLI_FETCH_OBJ')) {
-    define('MYSQLI_FETCH_OBJ', 9);
-}
-if (!defined('MYSQLI_FETCH_BOTH')) {
-    define('MYSQLI_FETCH_BOTH', 10);
-}
-if (!defined('MYSQLI_FETCH_INTO')) {
-    define('MYSQLI_FETCH_INTO', 11);
-}
-if (!defined('MYSQLI_FETCH_CLASS')) {
-    define('MYSQLI_FETCH_CLASS', 12);
-}
-if (!defined('MYSQLI_FETCH_ASSOC')) {
-    define('MYSQLI_FETCH_ASSOC', 13);
-}
-if (!defined('MYSQLI_FETCH_COLUMN')) {
-    define('MYSQLI_FETCH_COLUMN', 14);
-}
-
-if (!defined('FETCH_NUM')) {
-    define('FETCH_NUM', 8);
-}
-if (!defined('FETCH_OBJ')) {
-    define('FETCH_OBJ', 9);
-}
-if (!defined('FETCH_BOTH')) {
-    define('FETCH_BOTH', 10);
-}
-if (!defined('FETCH_INTO')) {
-    define('FETCH_INTO', 11);
-}
-if (!defined('FETCH_CLASS')) {
-    define('FETCH_CLASS', 12);
-}
-if (!defined('FETCH_ASSOC')) {
-    define('FETCH_ASSOC', 13);
-}
-if (!defined('FETCH_COLUMN')) {
-    define('FETCH_COLUMN', 14);
-}
-
 class MySQL
 {
     public const ATTR_OPT_CONNECT_TIMEOUT = 2;
