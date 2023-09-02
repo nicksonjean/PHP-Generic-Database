@@ -590,9 +590,7 @@ class SQLiteEngine implements IConnection
         array_unshift($params, $stmt);
         $this->affectedRows += $this->getConnection()->changes();
         $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
-        if (Regex::isSelect($this->query)) {
-            $this->queriedRows = $this->queriedRows();
-        }
+        $this->queriedRows = $this->queriedRows();
         return $this;
     }
 
@@ -609,9 +607,7 @@ class SQLiteEngine implements IConnection
         $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
         $this->bindParam(...$bindParams);
         $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
-        if (Regex::isSelect($this->query)) {
-            $this->queriedRows = $this->queriedRows();
-        }
+        $this->queriedRows = $this->queriedRows();
         return $this;
     }
 

@@ -21,6 +21,7 @@ use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Helpers\Translater;
+use GenericDatabase\Helpers\Regex;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -440,74 +441,145 @@ class OCIEngine implements IConnection
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of affected rows
      */
-    public function queriedRows(mixed ...$params): int|false
+    public function queriedRows(): int|false
     {
-
-        $stmt = null;
-        if (!empty($params)) {
-            $stmt = $this->parse($params[1]);
-            if (isset($params[2])) {
-                $parameters = [];
-
-                if (isset($params[2]) && is_array($params[2])) {
-                    if (Arrays::isMultidimensional($params[2])) {
-                        foreach ($params[2] as $key => $param) {
-                            $parameters[$key] = $param;
-                            for ($index = 0; $index < count($param); $index++) {
-                                oci_bind_by_name($stmt, array_keys($param)[$index], array_values($param)[$index]);
-                            }
-                            oci_execute($stmt);
-                        }
-                    } else {
-                        foreach ($params[2] as $key => $param) {
-                            $parameters[$key] = $param;
-                            oci_bind_by_name($stmt, $key, $parameters[$key]);
-                        }
-                        oci_execute($stmt);
-                    }
-                } else {
-                    $paramValues = [];
-                    for ($i = 2; $i < count($params); $i++) {
-                        $paramValues[] = $params[$i];
-                    }
-                    $parameters = Translater::parameters($params[1], $paramValues);
-                    for ($i = 0; $i < count($parameters); $i++) {
-                        $key = key($parameters);
-                        oci_bind_by_name($stmt, $key, $parameters[$key]);
-                        next($parameters);
-                    }
-                    oci_execute($stmt);
-                }
-            } else {
-                oci_execute($stmt);
-            }
+        if (Regex::isSelect($GLOBALS['rowCount']['sqlQuery'])) {
+            $this->bindParam(...$GLOBALS['rowCount']);
+            return count($this->internalFetchAllAssoc($GLOBALS['rowCount']['sqlStatement']));
         }
-        return count($this->internalFetchAllAssoc($stmt));
+        return 0;
     }
 
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int The number of affected rows
      */
-    public function affectedRows(mixed ...$params): int|false
+    public function affectedRows(): int|false
     {
-        return oci_num_rows(...$params);
+        return $this->affectedRows;
     }
 
     /**
      * Returns the number of columns in an statement result.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function columnCount(mixed ...$params): int|false
+    public function columnCount(): int|false
     {
-        return oci_num_fields(...$params);
+        return oci_num_fields($this->statement);
+    }
+
+    /**
+     * Binds variables to a prepared statement with specified types.
+     * This method binds variables to a prepared statement based on their types,
+     * allowing for more precise parameter binding.
+     *
+     * @param mixed $statement An array containing the parameters to bind.
+     * @param mixed $param The prepared statement to bind variables to.
+     * @param mixed $value The prepared statement to bind variables to.
+     * @return mixed The prepared statement with bound variables.
+     */
+    private function internalBindVariable(mixed $statement, mixed $param, mixed $value): void
+    {
+        if (is_numeric($value) && is_string($value) && str_contains($value, '.')) {
+            $floatValue = (float) $value;
+            oci_bind_by_name($statement, $param, $floatValue, 8, SQLT_FLT);
+        } elseif (is_string($value)) {
+            $stringValue = (string) $value;
+            oci_bind_by_name($statement, $param, $stringValue, -1);
+        } elseif (is_bool($value)) {
+            $boolValue = (bool) $value;
+            oci_bind_by_name($statement, $param, $boolValue, -1, SQLT_BOL);
+        } elseif (is_int($value)) {
+            $intValue = (int) $value;
+            oci_bind_by_name($statement, $param, $intValue, -1, SQLT_INT);
+        } elseif (is_array($value)) {
+            foreach ($param as $key) {
+                oci_bind_by_name($statement, $key, $value[$key]);
+            }
+        }
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArray(mixed ...$params): void
+    {
+        $this->params = $params['sqlArgs'];
+        if ($params['isMulti']) {
+            foreach ($this->params as $key => $param) {
+                for ($index = 0; $index < count($param); $index++) {
+                    $this->internalBindVariable(
+                        $params['sqlStatement'],
+                        array_keys($param)[$index],
+                        array_values($param)[$index]
+                    );
+                }
+                $this->exec($params['sqlStatement']);
+                $this->affectedRows += oci_num_rows($params['sqlStatement']);
+            }
+        } else {
+            foreach ($params['sqlArgs'] as $key => $param) {
+                $this->internalBindVariable($params['sqlStatement'], $key, $this->params[$key]);
+            }
+            $this->exec($params['sqlStatement']);
+            $this->affectedRows += oci_num_rows($params['sqlStatement']);
+        }
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArgs(mixed ...$params): void
+    {
+        $this->params = $params['sqlArgs'];
+        for ($i = 0; $i < count($this->params); $i++) {
+            $key = key($this->params);
+            $this->internalBindVariable($params['sqlStatement'], $key, $this->params[$key]);
+            next($this->params);
+        }
+        $this->exec($params['sqlStatement']);
+        $this->affectedRows += oci_num_rows($params['sqlStatement']);
+    }
+
+    /**
+     * This function makes an arguments list
+     *
+     * @param mixed $params Arguments list
+     * @return array
+     */
+    private function makeArgs(mixed ...$params): array
+    {
+        if (array_key_exists(2, $params)) {
+            if (is_array($params[2])) {
+                $isArgs = false;
+                $isArray = true;
+                $isMulti = Arrays::isMultidimensional($params[2]) ? true : false;
+                $sqlArgs = $params[2];
+            } else {
+                $isArgs = true;
+                $isArray = false;
+                $isMulti = false;
+                $sqlArgs = Translater::parameters($params[1], array_slice($params, 2));
+            }
+        }
+        return [
+            'sqlStatement' => $params[0],
+            'sqlQuery' => $params[1],
+            'sqlArgs' => $sqlArgs ?? [],
+            'isArray' => $isArray ?? false,
+            'isMulti' => $isMulti ?? false,
+            'isArgs' => $isArgs ?? false
+        ];
     }
 
     /**
@@ -516,44 +588,13 @@ class OCIEngine implements IConnection
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return int
      */
-    public function bindParam(mixed ...$params): int
+    public function bindParam(mixed ...$params): void
     {
-        if (!empty($params)) {
-            $stmt = $params[0];
-            if (isset($params[2]) && is_array($params[2])) {
-                if (Arrays::isMultidimensional($params[2])) {
-                    foreach ($params[2] as $key => $param) {
-                        $this->params[$key] = $param;
-                        for ($index = 0; $index < count($param); $index++) {
-                            oci_bind_by_name($stmt, array_keys($param)[$index], array_values($param)[$index]);
-                        }
-                        $this->exec($stmt);
-                        $this->affectedRows += $this->affectedRows($stmt);
-                    }
-                } else {
-                    foreach ($params[2] as $key => $param) {
-                        $this->params[$key] = $param;
-                        oci_bind_by_name($stmt, $key, $this->params[$key]);
-                    }
-                    $this->exec($stmt);
-                    $this->affectedRows += $this->affectedRows($stmt);
-                }
-            } else {
-                $paramValues = [];
-                for ($i = 2; $i < count($params); $i++) {
-                    $paramValues[] = $params[$i];
-                }
-                $this->params = Translater::parameters($params[1], $paramValues);
-                for ($i = 0; $i < count($this->params); $i++) {
-                    $key = key($this->params);
-                    oci_bind_by_name($stmt, $key, $this->params[$key]);
-                    next($this->params);
-                }
-                $this->exec($stmt);
-                $this->affectedRows += $this->affectedRows($stmt);
-            }
+        if ($params['isArray']) {
+            $this->internalBindParamArray(...$params);
+        } else {
+            $this->internalBindParamArgs(...$params);
         }
-        return $this->affectedRows ?: 0;
     }
 
     /**
@@ -578,35 +619,28 @@ class OCIEngine implements IConnection
     {
         if (!empty($params)) {
             $this->statement = $this->parse(...$params);
-            $this->exec($this->statement);
+            $rowCount = $params;
+            array_unshift($rowCount, $this->parse(...$params));
             array_unshift($params, $this->statement);
-            $this->queriedRows = $this->queriedRows(...$params);
-            $this->affectedRows = $this->affectedRows($this->statement);
+            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            $this->exec($this->statement);
+            $this->queriedRows = $this->queriedRows();
+            $this->affectedRows += oci_num_rows($this->statement);
         }
         return $this;
     }
 
-    /**
-     * This function binds the parameters to a prepared query.
-     *
-     * @param mixed ...$params
-     * @return static|null
-     */
     public function prepare(mixed ...$params): static|null
     {
         if (!empty($params)) {
-            $this->statement = $this->parse($params[0]);
+            $this->statement = $this->parse(...$params);
+            $rowCount = $params;
+            array_unshift($rowCount, $this->parse(...$params));
             array_unshift($params, $this->statement);
-            if (isset($params[1])) {
-                if (!$this->bindParam(...$params)) {
-                    $this->queriedRows = $this->queriedRows(...$params);
-                }
-            } else {
-                $this->exec($this->statement);
-                if (!$this->affectedRows) {
-                    $this->queriedRows = $this->queriedRows(...$params);
-                }
-            }
+            $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            $this->bindParam(...$bindParams);
+            $this->queriedRows = $this->queriedRows();
         }
         return $this;
     }
