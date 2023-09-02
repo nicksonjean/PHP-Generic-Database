@@ -665,7 +665,7 @@ class FBirdEngine implements IConnection
         $GLOBALS['bindParams'] = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
         $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
         $this->bindParam(...$GLOBALS['bindParams']);
-        if (isset($params[1])) {
+        if (array_key_exists(1, $params)) {
             (!is_resource($this->statement)) ? $this->statement = $stmt : $this->queriedRows = $this->queriedRows();
         } else {
             $this->query(...$params);

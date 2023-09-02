@@ -640,14 +640,8 @@ class SQLSrvEngine implements IConnection
     public function prepare(mixed ...$params): static|null
     {
         $bindParams = $this->makeArgs(...$params);
-        if (!empty($params)) {
-            $this->parse(...$params);
-            if (isset($bindParams['sqlArgs'])) {
-                $this->bindParam(...$bindParams);
-            } else {
-                $this->query(...$params);
-            }
-        }
+        $this->parse(...$params);
+        (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
         return $this;
     }
 

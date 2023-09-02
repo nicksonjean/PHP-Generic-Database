@@ -450,7 +450,7 @@ class PgSQLEngine implements IConnection
      */
     public function affectedRows(): int|false
     {
-        return pg_affected_rows($this->statement);
+        return $this->affectedRows;
     }
 
     /**
@@ -469,38 +469,79 @@ class PgSQLEngine implements IConnection
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
+    private function internalBindParamArray(mixed ...$params): void
+    {
+        $this->params = $params['sqlArgs'];
+        if ($params['isMulti']) {
+            foreach ((array) Arrays::arrayValuesRecursive($params['sqlArgs']) as $param) {
+                $this->exec($params['stmtName'], $param);
+                $this->queriedRows += $this->queriedRows();
+                $this->affectedRows += $this->queriedRows !== 0 ? 0 : pg_affected_rows($this->statement);
+            }
+        } else {
+            $this->exec($params['stmtName'], array_values($this->params));
+            $this->queriedRows += $this->queriedRows();
+            $this->affectedRows += $this->queriedRows !== 0 ? 0 : pg_affected_rows($this->statement);
+        }
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArgs(mixed ...$params): void
+    {
+        $this->params = $params['sqlArgs'];
+        $this->exec($params['stmtName'], $this->params);
+        $this->queriedRows += $this->queriedRows();
+        $this->affectedRows += $this->queriedRows !== 0 ? 0 : pg_affected_rows($this->statement);
+    }
+
+    /**
+     * This function makes an arguments list
+     *
+     * @param mixed $params Arguments list
+     * @return array
+     */
+    private function makeArgs(mixed ...$params): array
+    {
+        if (array_key_exists(2, $params)) {
+            if (is_array($params[2])) {
+                $isArgs = false;
+                $isArray = true;
+                $isMulti = Arrays::isMultidimensional($params[2]) ? true : false;
+                $sqlArgs = $params[2];
+            } else {
+                $isArgs = true;
+                $isArray = false;
+                $isMulti = false;
+                $sqlArgs = Translater::parameters($params[1], array_slice($params, 2));
+            }
+        }
+        return [
+            'stmtName' => $params[0],
+            'sqlQuery' => $params[1],
+            'sqlArgs' => $sqlArgs ?? [],
+            'isArray' => $isArray ?? false,
+            'isMulti' => $isMulti ?? false,
+            'isArgs' => $isArgs ?? false
+        ];
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
     public function bindParam(mixed ...$params): void
     {
-        if (!empty($params)) {
-            $stmtname = $params[0];
-            if (is_array($params[2])) {
-                $this->statement = pg_prepare($this->getConnection(), $stmtname, $this->query);
-                if (Arrays::isMultidimensional($params[2])) {
-                    foreach ((array) Arrays::arrayValuesRecursive($params[2]) as $key => $param) {
-                        $this->params[$key] = $param;
-                        $this->exec($stmtname, $param);
-                        $this->queriedRows += $this->queriedRows();
-                        $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows();
-                    }
-                } else {
-                    foreach ($params[2] as $key => $val) {
-                        $this->params[$key] = $val;
-                    }
-                    $this->exec($stmtname, array_values($this->params));
-                    $this->queriedRows += $this->queriedRows();
-                    $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows();
-                }
-            } else {
-                $this->statement = pg_prepare($this->getConnection(), $stmtname, $this->query);
-                $paramValues = [];
-                for ($i = 2; $i < count($params); $i++) {
-                    $paramValues[] = $params[$i];
-                }
-                $this->params = Translater::parameters($params[1], $paramValues);
-                $this->exec($stmtname, $paramValues);
-                $this->queriedRows += $this->queriedRows();
-                $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows();
-            }
+        if ($params['isArray']) {
+            $this->internalBindParamArray(...$params);
+        } else {
+            $this->internalBindParamArgs(...$params);
         }
     }
 
@@ -513,7 +554,7 @@ class PgSQLEngine implements IConnection
     private function parse(mixed ...$params): mixed
     {
         $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE), false);
-        return pg_query($this->getConnection(), $this->query);
+        return $this->query;
     }
 
     /**
@@ -524,11 +565,9 @@ class PgSQLEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        if (!empty($params)) {
-            $this->statement = $this->parse(...$params);
-            $this->queriedRows += $this->queriedRows();
-            $this->affectedRows += $this->queriedRows !== 0 ? 0 : $this->affectedRows();
-        }
+        $this->statement = pg_query($this->getConnection(), $this->parse(...$params));
+        $this->queriedRows += $this->queriedRows();
+        $this->affectedRows += $this->queriedRows !== 0 ? 0 : pg_affected_rows($this->statement);
         return $this;
     }
 
@@ -540,15 +579,11 @@ class PgSQLEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        if (!empty($params)) {
-            $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE), false);
-            if (isset($params[1])) {
-                array_unshift($params, Regex::randomString(18));
-                $this->bindParam(...$params);
-            } else {
-                $this->query(...$params);
-            }
-        }
+        $stmtName = Regex::randomString(18);
+        $this->statement = pg_prepare($this->getConnection(), $stmtName, $this->parse(...$params));
+        array_unshift($params, $stmtName);
+        $bindParams = $this->makeArgs(...$params);
+        (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
         return $this;
     }
 
