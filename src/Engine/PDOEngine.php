@@ -429,58 +429,8 @@ class PDOEngine implements IConnection
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of affected rows
      */
-    public function queriedRows2(mixed ...$params): int|false
-    {
-        $internalPrepare = function (mixed $preparedParams, $stmt) {
-            $types = 0;
-            $index = 0;
-            foreach ($preparedParams as &$arg) {
-                if (is_bool($arg)) {
-                    $types = PDO::PARAM_BOOL;
-                } elseif (is_integer($arg)) {
-                    $types = PDO::PARAM_INT;
-                } elseif (is_string($arg)) {
-                    $types = PDO::PARAM_STR;
-                } elseif (is_null($arg)) {
-                    $types = PDO::PARAM_NULL;
-                } else {
-                    $types = PDO::PARAM_LOB;
-                }
-                call_user_func_array([$stmt, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
-                $index++;
-            }
-            return $stmt;
-        };
-
-        $statement = null;
-        if (!empty($params)) {
-            $stmt = $this->getConnection()->prepare($this->parse($params[1]));
-            if (isset($params[2]) && is_array($params[2])) {
-                if (Arrays::isMultidimensional($params[2])) {
-                    foreach ($params[2] as $param) {
-                        $statement = $internalPrepare($param, $stmt);
-                        $statement->execute();
-                    }
-                } else {
-                    $statement = $internalPrepare($params[2], $stmt);
-                    $statement->execute();
-                }
-            } else {
-                $paramValues = [];
-                for ($i = 2; $i < count($params); $i++) {
-                    $paramValues[] = $params[$i];
-                }
-                $parameters = Translater::parameters($params[1], $paramValues);
-                $statement = $internalPrepare($parameters, $stmt);
-                $statement->execute();
-            }
-        }
-        return count($this->internalFetchAllAssoc($statement));
-    }
-
     public function queriedRows(): int|false
     {
         if (Regex::isSelect($this->query)) {
@@ -614,39 +564,8 @@ class PDOEngine implements IConnection
      * Binds a parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return int
+     * @return void
      */
-    public function bindParam2(mixed ...$params): int
-    {
-        if (!empty($params)) {
-            $stmt = $params[0];
-            if (isset($params[2]) && is_array($params[2])) {
-                $this->params = $params[2];
-                if (Arrays::isMultidimensional($params[2])) {
-                    foreach ($params[2] as $param) {
-                        $statement = $this->internalBindVariable($param, $stmt);
-                        $this->exec($statement);
-                        $this->affectedRows += !Regex::isSelect($this->query) ? $this->affectedRows() : 0;
-                    }
-                } else {
-                    $statement = $this->internalBindVariable($params[2], $stmt);
-                    $this->exec($statement);
-                    $this->affectedRows += !Regex::isSelect($this->query) ? $this->affectedRows() : 0;
-                }
-            } else {
-                $paramValues = [];
-                for ($i = 2; $i < count($params); $i++) {
-                    $paramValues[] = $params[$i];
-                }
-                $this->params = Translater::parameters($params[1], $paramValues);
-                $statement = $this->internalBindVariable($this->params, $stmt);
-                $this->exec($statement);
-                $this->affectedRows += !Regex::isSelect($this->query) ? $this->affectedRows() : 0;
-            }
-        }
-        return 0;
-    }
-
     public function bindParam(mixed ...$params): void
     {
         if ($params['isArray']) {
