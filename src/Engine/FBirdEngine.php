@@ -463,7 +463,7 @@ class FBirdEngine implements IConnection
      */
     public function queriedRows(): int|false
     {
-        if (Regex::isSelect($GLOBALS['rowCount']['sqlQuery'])) {
+        if (Regex::isSelect($this->query)) {
             $this->bindParam(...$GLOBALS['rowCount']);
             return count($this->internalFetchAllAssoc($GLOBALS['stmt']));
         }
@@ -638,14 +638,18 @@ class FBirdEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->statement = ibase_query($this->getConnection(), $this->parse(...$params));
-        /** @phpstan-ignore-next-line */
-        $GLOBALS['stmt_prepare'] = ibase_prepare($this->getConnection(), $this->parse(...$params));
-        array_unshift($params, $this->statement);
-        $GLOBALS['bindParams'] = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
-        $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
-        $this->affectedRows += ibase_affected_rows($this->getConnection());
-        $this->queriedRows = $this->queriedRows();
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $this->statement = ibase_query($this->getConnection(), $this->parse(...$params));
+            /** @phpstan-ignore-next-line */
+            $GLOBALS['stmt_prepare'] = ibase_prepare($this->getConnection(), $this->parse(...$params));
+            array_unshift($params, $this->statement);
+            $GLOBALS['bindParams'] = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+            $this->affectedRows += ibase_affected_rows($this->getConnection());
+            $this->queriedRows = $this->queriedRows();
+        }
         return $this;
     }
 
@@ -657,18 +661,22 @@ class FBirdEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        /** @phpstan-ignore-next-line */
-        $stmt = ibase_prepare($this->getConnection(), $this->parse(...$params));
-        /** @phpstan-ignore-next-line */
-        $GLOBALS['stmt_prepare'] = ibase_prepare($this->getConnection(), $this->parse(...$params));
-        array_unshift($params, $stmt);
-        $GLOBALS['bindParams'] = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
-        $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
-        $this->bindParam(...$GLOBALS['bindParams']);
-        if (array_key_exists(1, $params)) {
-            (!is_resource($this->statement)) ? $this->statement = $stmt : $this->queriedRows = $this->queriedRows();
-        } else {
-            $this->query(...$params);
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            /** @phpstan-ignore-next-line */
+            $stmt = ibase_prepare($this->getConnection(), $this->parse(...$params));
+            /** @phpstan-ignore-next-line */
+            $GLOBALS['stmt_prepare'] = ibase_prepare($this->getConnection(), $this->parse(...$params));
+            array_unshift($params, $stmt);
+            $GLOBALS['bindParams'] = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+            $this->bindParam(...$GLOBALS['bindParams']);
+            if (array_key_exists(1, $params)) {
+                (!is_resource($this->statement)) ? $this->statement = $stmt : $this->queriedRows = $this->queriedRows();
+            } else {
+                $this->query(...$params);
+            }
         }
         return $this;
     }

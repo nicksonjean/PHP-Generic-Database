@@ -618,16 +618,20 @@ class SQLSrvEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->statement = sqlsrv_query(
-            $this->getConnection(),
-            $this->parse(...$params),
-            [],
-            ['Scrollable' => Regex::isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD]
-        );
-        $this->affectedRows += (int) (sqlsrv_rows_affected($this->statement) === -1
-            ? 0
-            : sqlsrv_rows_affected($this->statement));
-        $this->queriedRows += $this->queriedRows();
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $this->statement = sqlsrv_query(
+                $this->getConnection(),
+                $this->parse(...$params),
+                [],
+                ['Scrollable' => Regex::isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD]
+            );
+            $this->affectedRows += (int) (sqlsrv_rows_affected($this->statement) === -1
+                ? 0
+                : sqlsrv_rows_affected($this->statement));
+            $this->queriedRows += $this->queriedRows();
+        }
         return $this;
     }
 
@@ -639,9 +643,13 @@ class SQLSrvEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $bindParams = $this->makeArgs(...$params);
-        $this->parse(...$params);
-        (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $bindParams = $this->makeArgs(...$params);
+            $this->parse(...$params);
+            (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
+        }
         return $this;
     }
 

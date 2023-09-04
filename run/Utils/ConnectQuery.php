@@ -13,10 +13,10 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 // $context = Chainable::nativeFBird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
-$context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
-// $context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
@@ -47,11 +47,11 @@ var_dump($a->fetchAll(FETCH_ASSOC));
 
 // $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE1', ':sigla' => 'T1'], [':nome' => 'TESTE2', ':sigla' => 'T2']]);
 // $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [':nome' => 'TESTE', ':sigla' => 'TE']);
-// $b = $context->prepare('UPDATE estado SET nome = :nome WHERE id = :id', [':nome' => 'TE', ':id' => '163']);
-// $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'PDC', 'TI', 163);
-// $b = $context->prepare('DELETE FROM estado WHERE id IN (:id)', [[':id' => '161'], [':id' => '162'], [':id' => '163']]);
+// $b = $context->prepare('UPDATE estado SET nome = :nome WHERE id = :id', [':nome' => 'TE', ':id' => '210']);
+// $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'PDC', 'TI', 210);
+// $b = $context->prepare('DELETE FROM estado WHERE id IN (:id)', [[':id' => '208'], [':id' => '209'], [':id' => '210']]);
 // $b = $context->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
-// $b = $context->query('DELETE FROM estado WHERE id IN (164)');
+// $b = $context->query('DELETE FROM estado WHERE id IN (223)');
 
 // var_dump($b);
 

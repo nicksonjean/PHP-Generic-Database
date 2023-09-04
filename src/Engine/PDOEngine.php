@@ -432,7 +432,7 @@ class PDOEngine implements IConnection
      * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of affected rows
      */
-    public function queriedRows(mixed ...$params): int|false
+    public function queriedRows2(mixed ...$params): int|false
     {
         $internalPrepare = function (mixed $preparedParams, $stmt) {
             $types = 0;
@@ -481,6 +481,15 @@ class PDOEngine implements IConnection
         return count($this->internalFetchAllAssoc($statement));
     }
 
+    public function queriedRows(): int|false
+    {
+        if (Regex::isSelect($this->query)) {
+            $this->bindParam(...$GLOBALS['rowCount']);
+            return count($this->internalFetchAllAssoc($GLOBALS['rowCount']['sqlStatement']));
+        }
+        return 0;
+    }
+
     /**
      * Returns the number of rows affected by an operation.
      *
@@ -488,19 +497,117 @@ class PDOEngine implements IConnection
      */
     public function affectedRows(): int|false
     {
-        return $this->statement->rowCount();
+        return $this->affectedRows;
     }
 
     /**
      * Returns the number of columns in an statement result.
      *
-     * @param mixed ...$params The parameters required for the function.
      * @return int|false The number of columns in the result or false in case of an error.
      */
-    public function columnCount(mixed ...$params): int|false
+    public function columnCount(): int|false
     {
-        $statement = $params[0];
-        return $statement->numColumns();
+        return $this->statement->columnCount();
+    }
+
+    /**
+     * Binds variables to a prepared statement with specified types.
+     * This method binds variables to a prepared statement based on their types,
+     * allowing for more precise parameter binding.
+     *
+     * @param array &$preparedParams An array containing the parameters to bind.
+     * @param mixed $stmt The prepared statement to bind variables to.
+     * @return mixed The prepared statement with bound variables.
+     */
+    private function internalBindVariable(array &$preparedParams, mixed $stmt): mixed
+    {
+        $types = 0;
+        $index = 0;
+        foreach ($preparedParams as &$arg) {
+            if (is_bool($arg)) {
+                $types = PDO::PARAM_BOOL;
+            } elseif (is_integer($arg)) {
+                $types = PDO::PARAM_INT;
+            } elseif (is_float($arg)) {
+                $types = PDO::PARAM_STR;
+            } elseif (is_string($arg)) {
+                $types = PDO::PARAM_STR;
+            } elseif (is_null($arg)) {
+                $types = PDO::PARAM_NULL;
+            } else {
+                $types = PDO::PARAM_LOB;
+            }
+            call_user_func_array([$stmt, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
+            $index++;
+        }
+        return $stmt;
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArray(mixed ...$params): void
+    {
+        $this->params = $params['sqlArgs'];
+        if ($params['isMulti']) {
+            foreach ($params['sqlArgs'] as $param) {
+                $statement = $this->internalBindVariable($param, $params['sqlStatement']);
+                $this->exec($statement);
+                $this->affectedRows += !Regex::isSelect($this->query) ? $this->statement->rowCount() : 0;
+            }
+        } else {
+            $statement = $this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
+            $this->exec($statement);
+            $this->affectedRows += !Regex::isSelect($this->query) ? $this->statement->rowCount() : 0;
+        }
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArgs(mixed ...$params): void
+    {
+        $this->params = $params['sqlArgs'];
+        $statement = $this->internalBindVariable($this->params, $params['sqlStatement']);
+        $this->exec($statement);
+        $this->affectedRows += !Regex::isSelect($this->query) ? $this->statement->rowCount() : 0;
+    }
+
+    /**
+     * This function makes an arguments list
+     *
+     * @param mixed $params Arguments list
+     * @return array
+     */
+    private function makeArgs(mixed ...$params): array
+    {
+        if (array_key_exists(2, $params)) {
+            if (is_array($params[2])) {
+                $isArgs = false;
+                $isArray = true;
+                $isMulti = Arrays::isMultidimensional($params[2]) ? true : false;
+                $sqlArgs = $params[2];
+            } else {
+                $isArgs = true;
+                $isArray = false;
+                $isMulti = false;
+                $sqlArgs = Translater::parameters($params[1], array_slice($params, 2));
+            }
+        }
+        return [
+            'sqlStatement' => $params[0],
+            'sqlQuery' => $params[1],
+            'sqlArgs' => $sqlArgs ?? [],
+            'isArray' => $isArray ?? false,
+            'isMulti' => $isMulti ?? false,
+            'isArgs' => $isArgs ?? false
+        ];
     }
 
     /**
@@ -509,41 +616,20 @@ class PDOEngine implements IConnection
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return int
      */
-    public function bindParam(mixed ...$params): int
+    public function bindParam2(mixed ...$params): int
     {
-        $internalPrepare = function (mixed $preparedParams, $stmt) {
-            $types = 0;
-            $index = 0;
-            foreach ($preparedParams as &$arg) {
-                if (is_bool($arg)) {
-                    $types = PDO::PARAM_BOOL;
-                } elseif (is_integer($arg)) {
-                    $types = PDO::PARAM_INT;
-                } elseif (is_string($arg)) {
-                    $types = PDO::PARAM_STR;
-                } elseif (is_null($arg)) {
-                    $types = PDO::PARAM_NULL;
-                } else {
-                    $types = PDO::PARAM_LOB;
-                }
-                call_user_func_array([$stmt, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
-                $index++;
-            }
-            return $stmt;
-        };
-
         if (!empty($params)) {
             $stmt = $params[0];
             if (isset($params[2]) && is_array($params[2])) {
                 $this->params = $params[2];
                 if (Arrays::isMultidimensional($params[2])) {
                     foreach ($params[2] as $param) {
-                        $statement = $internalPrepare($param, $stmt);
+                        $statement = $this->internalBindVariable($param, $stmt);
                         $this->exec($statement);
                         $this->affectedRows += !Regex::isSelect($this->query) ? $this->affectedRows() : 0;
                     }
                 } else {
-                    $statement = $internalPrepare($params[2], $stmt);
+                    $statement = $this->internalBindVariable($params[2], $stmt);
                     $this->exec($statement);
                     $this->affectedRows += !Regex::isSelect($this->query) ? $this->affectedRows() : 0;
                 }
@@ -553,12 +639,21 @@ class PDOEngine implements IConnection
                     $paramValues[] = $params[$i];
                 }
                 $this->params = Translater::parameters($params[1], $paramValues);
-                $statement = $internalPrepare($this->params, $stmt);
+                $statement = $this->internalBindVariable($this->params, $stmt);
                 $this->exec($statement);
                 $this->affectedRows += !Regex::isSelect($this->query) ? $this->affectedRows() : 0;
             }
         }
         return 0;
+    }
+
+    public function bindParam(mixed ...$params): void
+    {
+        if ($params['isArray']) {
+            $this->internalBindParamArray(...$params);
+        } else {
+            $this->internalBindParamArgs(...$params);
+        }
     }
 
     /**
@@ -570,13 +665,14 @@ class PDOEngine implements IConnection
     private function parse(mixed ...$params): mixed
     {
         $driver = $this->getDriver();
-        $dialect = match ($driver) {
+        $dialectQuote = match ($driver) {
             'mysql' => Translater::SQL_DIALECT_BTICK,
             'pgsql', 'sqlsrv', 'oci', 'firebird' => Translater::SQL_DIALECT_DQUOTE,
             'sqlite' => Translater::SQL_DIALECT_NONE,
             default => Translater::SQL_DIALECT_NONE,
         };
-        return Translater::escape($params[0], $dialect);
+        $this->query = Translater::escape($params[0], $dialectQuote);
+        return $this->query;
     }
 
     /**
@@ -587,12 +683,18 @@ class PDOEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $query = $params[0];
-        $fetchMode = (empty($params) || !isset($params[1])) ? PDO::FETCH_DEFAULT : $params[1];
-        $this->statement = $this->getConnection()->query($this->parse($query), $fetchMode);
-        array_unshift($params, $this->statement);
-        $this->queriedRows = Regex::isSelect($this->query) ? $this->queriedRows(...$params) : 0;
-        $this->affectedRows += !Regex::isSelect($this->query) ? $this->affectedRows() : 0;
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $fetchMode = (empty($params) || !isset($params[1])) ? PDO::FETCH_DEFAULT : $params[1];
+            $this->statement = $this->getConnection()->query($this->parse(...$params), $fetchMode);
+            $rowCount = $params;
+            array_unshift($rowCount, $this->getConnection()->prepare($this->parse(...$params)));
+            array_unshift($params, $this->statement);
+            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            $this->queriedRows = Regex::isSelect($this->query) ? $this->queriedRows() : 0;
+            $this->affectedRows += !Regex::isSelect($this->query) ? $this->statement->rowCount() : 0;
+        }
         return $this;
     }
 
@@ -604,12 +706,17 @@ class PDOEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $query = $params[0];
-        $this->statement = $this->getConnection()->prepare($this->parse($query));
-        array_unshift($params, $this->statement);
-        if (isset($params[1])) {
-            $this->bindParam(...$params);
-            $this->queriedRows = Regex::isSelect($this->query) ? $this->queriedRows(...$params) : 0;
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $this->statement = $this->getConnection()->prepare($this->parse(...$params));
+            $rowCount = $params;
+            array_unshift($rowCount, $this->getConnection()->prepare($this->parse(...$params)));
+            array_unshift($params, $this->statement);
+            $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            $this->bindParam(...$bindParams);
+            $this->queriedRows = Regex::isSelect($this->query) ? $this->queriedRows() : 0;
         }
         return $this;
     }
@@ -618,13 +725,12 @@ class PDOEngine implements IConnection
      * This function runs an SQL statement and returns the number of affected rows.
      *
      * @param mixed $params Statement to be executed
-     * @return mixed
+     * @return bool
      */
-    public function exec(mixed ...$params): mixed
+    public function exec(mixed ...$params): bool
     {
         $stmt = $params[0];
-        $stmt->execute();
-        return $this->statement;
+        return $stmt->execute();
     }
 
     /**

@@ -617,17 +617,21 @@ class MySQLiEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->statement = mysqli_query(
-            $this->getConnection(),
-            $this->parse(...$params),
-            array_key_exists(1, $params) ? (int) $params[1] : MYSQLI_STORE_RESULT
-        );
-        $this->queriedRows = Regex::isSelect($this->query) && get_class($this->statement) === 'mysqli_result'
-            ? $this->statement->num_rows
-            : 0;
-        $this->affectedRows += $this->queriedRows === $this->getConnection()->affected_rows
-            ? 0
-            : $this->getConnection()->affected_rows;
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $this->statement = mysqli_query(
+                $this->getConnection(),
+                $this->parse(...$params),
+                array_key_exists(1, $params) ? (int) $params[1] : MYSQLI_STORE_RESULT
+            );
+            $this->queriedRows = Regex::isSelect($this->query) && get_class($this->statement) === 'mysqli_result'
+                ? $this->statement->num_rows
+                : 0;
+            $this->affectedRows += $this->queriedRows === $this->getConnection()->affected_rows
+                ? 0
+                : $this->getConnection()->affected_rows;
+        }
         return $this;
     }
 
@@ -639,13 +643,17 @@ class MySQLiEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $stmt = mysqli_prepare($this->getConnection(), $this->parse(...$params));
-        array_unshift($params, $stmt);
-        if (array_key_exists(2, $params)) {
-            $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
-            $this->bindParam(...$bindParams);
-        } else {
-            $this->exec($stmt);
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $stmt = mysqli_prepare($this->getConnection(), $this->parse(...$params));
+            array_unshift($params, $stmt);
+            if (array_key_exists(2, $params)) {
+                $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+                $this->bindParam(...$bindParams);
+            } else {
+                $this->exec($stmt);
+            }
         }
         return $this;
     }

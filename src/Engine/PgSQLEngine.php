@@ -440,7 +440,7 @@ class PgSQLEngine implements IConnection
      */
     public function queriedRows(): int|false
     {
-        return pg_num_rows($this->statement);
+        return $this->queriedRows;
     }
 
     /**
@@ -475,13 +475,13 @@ class PgSQLEngine implements IConnection
         if ($params['isMulti']) {
             foreach ((array) Arrays::arrayValuesRecursive($params['sqlArgs']) as $param) {
                 $this->exec($params['stmtName'], $param);
-                $this->queriedRows += $this->queriedRows();
-                $this->affectedRows += $this->queriedRows !== 0 ? 0 : pg_affected_rows($this->statement);
+                $this->queriedRows += pg_num_rows($this->statement);
+                $this->affectedRows += (Regex::isSelect($this->query)) ? 0 : pg_affected_rows($this->statement);
             }
         } else {
             $this->exec($params['stmtName'], array_values($this->params));
-            $this->queriedRows += $this->queriedRows();
-            $this->affectedRows += $this->queriedRows !== 0 ? 0 : pg_affected_rows($this->statement);
+            $this->queriedRows += pg_num_rows($this->statement);
+            $this->affectedRows += (Regex::isSelect($this->query)) ? 0 : pg_affected_rows($this->statement);
         }
     }
 
@@ -495,8 +495,8 @@ class PgSQLEngine implements IConnection
     {
         $this->params = $params['sqlArgs'];
         $this->exec($params['stmtName'], $this->params);
-        $this->queriedRows += $this->queriedRows();
-        $this->affectedRows += $this->queriedRows !== 0 ? 0 : pg_affected_rows($this->statement);
+        $this->queriedRows += pg_num_rows($this->statement);
+        $this->affectedRows += (Regex::isSelect($this->query)) ? 0 : pg_affected_rows($this->statement);
     }
 
     /**
@@ -565,9 +565,13 @@ class PgSQLEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->statement = pg_query($this->getConnection(), $this->parse(...$params));
-        $this->queriedRows += $this->queriedRows();
-        $this->affectedRows += $this->queriedRows !== 0 ? 0 : pg_affected_rows($this->statement);
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $this->statement = pg_query($this->getConnection(), $this->parse(...$params));
+            $this->queriedRows += pg_num_rows($this->statement);
+            $this->affectedRows += (Regex::isSelect($this->query)) ? 0 : pg_affected_rows($this->statement);
+        }
         return $this;
     }
 
@@ -579,11 +583,15 @@ class PgSQLEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $stmtName = Regex::randomString(18);
-        $this->statement = pg_prepare($this->getConnection(), $stmtName, $this->parse(...$params));
-        array_unshift($params, $stmtName);
-        $bindParams = $this->makeArgs(...$params);
-        (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $stmtName = Regex::randomString(18);
+            $this->statement = pg_prepare($this->getConnection(), $stmtName, $this->parse(...$params));
+            array_unshift($params, $stmtName);
+            $bindParams = $this->makeArgs(...$params);
+            (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
+        }
         return $this;
     }
 

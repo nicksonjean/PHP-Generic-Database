@@ -429,7 +429,7 @@ class SQLiteEngine implements IConnection
      */
     public function queriedRows(): int|false
     {
-        if (Regex::isSelect($GLOBALS['rowCount']['sqlQuery'])) {
+        if (Regex::isSelect($this->query)) {
             $this->bindParam(...$GLOBALS['rowCount']);
             return count($this->internalFetchAllAssoc($GLOBALS['stmt']));
         }
@@ -585,12 +585,16 @@ class SQLiteEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->statement = $this->getConnection()->query($this->parse(...$params));
-        $stmt = $this->getConnection()->prepare($this->parse(...$params));
-        array_unshift($params, $stmt);
-        $this->affectedRows += $this->getConnection()->changes();
-        $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
-        $this->queriedRows = $this->queriedRows();
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $this->statement = $this->getConnection()->query($this->parse(...$params));
+            $stmt = $this->getConnection()->prepare($this->parse(...$params));
+            array_unshift($params, $stmt);
+            $this->affectedRows += $this->getConnection()->changes();
+            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+            $this->queriedRows = $this->queriedRows();
+        }
         return $this;
     }
 
@@ -602,12 +606,16 @@ class SQLiteEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $stmt = $this->getConnection()->prepare($this->parse(...$params));
-        array_unshift($params, $stmt);
-        $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
-        $this->bindParam(...$bindParams);
-        $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
-        $this->queriedRows = $this->queriedRows();
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
+        if (!empty($params)) {
+            $stmt = $this->getConnection()->prepare($this->parse(...$params));
+            array_unshift($params, $stmt);
+            $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+            $this->bindParam(...$bindParams);
+            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+            $this->queriedRows = $this->queriedRows();
+        }
         return $this;
     }
 

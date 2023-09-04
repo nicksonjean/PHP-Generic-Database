@@ -445,7 +445,7 @@ class OCIEngine implements IConnection
      */
     public function queriedRows(): int|false
     {
-        if (Regex::isSelect($GLOBALS['rowCount']['sqlQuery'])) {
+        if (Regex::isSelect($this->query)) {
             $this->bindParam(...$GLOBALS['rowCount']);
             return count($this->internalFetchAllAssoc($GLOBALS['rowCount']['sqlStatement']));
         }
@@ -617,6 +617,8 @@ class OCIEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
         if (!empty($params)) {
             $this->statement = $this->parse(...$params);
             $rowCount = $params;
@@ -632,6 +634,8 @@ class OCIEngine implements IConnection
 
     public function prepare(mixed ...$params): static|null
     {
+        $this->affectedRows = 0;
+        $this->queriedRows = 0;
         if (!empty($params)) {
             $this->statement = $this->parse(...$params);
             $rowCount = $params;
