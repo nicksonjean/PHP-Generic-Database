@@ -501,6 +501,9 @@ class SQLSrvEngine implements IConnection
             $referenceParams = [];
             $preparedParams = [];
             for ($i = 0; $i < count($this->params[0]); $i++) {
+                if (!array_key_exists($i, $referenceParams)) {
+                    $referenceParams[$i] = null;
+                }
                 $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
             }
             $this->statement = $this->internalBindVariable($preparedParams);

@@ -605,7 +605,7 @@ class PDOEngine implements IConnection
         $this->affectedRows = 0;
         $this->queriedRows = 0;
         if (!empty($params)) {
-            $fetchMode = (empty($params) || !isset($params[1])) ? PDO::FETCH_DEFAULT : $params[1];
+            $fetchMode = (array_key_exists(1, $params)) ? $params[1] : PDO::FETCH_DEFAULT;
             $this->statement = $this->getConnection()->query($this->parse(...$params), $fetchMode);
             $rowCount = $params;
             array_unshift($rowCount, $this->getConnection()->prepare($this->parse(...$params)));

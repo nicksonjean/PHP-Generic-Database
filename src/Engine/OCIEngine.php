@@ -480,7 +480,7 @@ class OCIEngine implements IConnection
      * @param mixed $statement An array containing the parameters to bind.
      * @param mixed $param The prepared statement to bind variables to.
      * @param mixed $value The prepared statement to bind variables to.
-     * @return mixed The prepared statement with bound variables.
+     * @return void
      */
     private function internalBindVariable(mixed $statement, mixed $param, mixed $value): void
     {
@@ -586,7 +586,7 @@ class OCIEngine implements IConnection
      * Binds a parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return int
+     * @return void
      */
     public function bindParam(mixed ...$params): void
     {
