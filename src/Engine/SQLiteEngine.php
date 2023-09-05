@@ -120,6 +120,18 @@ class SQLiteEngine implements IConnection
     private mixed $statement = null;
 
     /**
+     * Instance of the Statement of the database
+     * @var mixed $statementCount = null
+     */
+    private static mixed $statementCount = null;
+
+    /**
+     * Instance of the Statement of the database
+     * @var mixed $statementResult = null
+     */
+    private static mixed $statementResult = null;
+
+    /**
      * Affected rows in query post statement
      * @var ?int $queriedRows = 0
      */
@@ -430,8 +442,8 @@ class SQLiteEngine implements IConnection
     public function queriedRows(): int|false
     {
         if (Regex::isSelect($this->query)) {
-            $this->bindParam(...$GLOBALS['rowCount']);
-            return count($this->internalFetchAllAssoc($GLOBALS['stmt']));
+            $this->bindParam(...self::$statementCount);
+            return count($this->internalFetchAllAssoc(self::$statementResult));
         }
         return 0;
     }
@@ -495,12 +507,16 @@ class SQLiteEngine implements IConnection
         if ($params['isMulti']) {
             foreach ($params['sqlArgs'] as $param) {
                 $statement = $this->internalBindVariable($param, $params['sqlStatement']);
-                (!$params['rowCount']) ? $this->exec($statement) : $GLOBALS['stmt'] = $statement->execute();
+                (!$params['rowCount'])
+                    ? $this->statement = $this->exec($statement)
+                    : self::$statementResult = $this->exec($statement);
                 $this->affectedRows += $this->getConnection()->changes();
             }
         } else {
             $statement = $this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
-            (!$params['rowCount']) ? $this->exec($statement) : $GLOBALS['stmt'] = $statement->execute();
+            (!$params['rowCount'])
+                ? $this->statement = $this->exec($statement)
+                : self::$statementResult = $this->exec($statement);
             $this->affectedRows += $this->getConnection()->changes();
         }
     }
@@ -515,7 +531,9 @@ class SQLiteEngine implements IConnection
     {
         $this->params = $params['sqlArgs'];
         $statement = $this->internalBindVariable($this->params, $params['sqlStatement']);
-        (!$params['rowCount']) ? $this->exec($statement) : $GLOBALS['stmt'] = $statement->execute();
+        (!$params['rowCount'])
+            ? $this->statement = $this->exec($statement)
+            : self::$statementResult = $this->exec($statement);
         $this->affectedRows += $this->getConnection()->changes();
     }
 
@@ -592,7 +610,7 @@ class SQLiteEngine implements IConnection
             $stmt = $this->getConnection()->prepare($this->parse(...$params));
             array_unshift($params, $stmt);
             $this->affectedRows += $this->getConnection()->changes();
-            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+            self::$statementCount = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
             $this->queriedRows = $this->queriedRows();
         }
         return $this;
@@ -610,10 +628,12 @@ class SQLiteEngine implements IConnection
         $this->queriedRows = 0;
         if (!empty($params)) {
             $stmt = $this->getConnection()->prepare($this->parse(...$params));
+            $rowCount = $params;
+            array_unshift($rowCount, $this->getConnection()->prepare($this->parse(...$params)));
             array_unshift($params, $stmt);
             $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+            self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
             $this->bindParam(...$bindParams);
-            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
             $this->queriedRows = $this->queriedRows();
         }
         return $this;
@@ -627,8 +647,8 @@ class SQLiteEngine implements IConnection
      */
     public function exec(mixed ...$params): mixed
     {
-        $stmt = $params[0];
-        return $this->statement = $stmt->execute();
+        $statement = $params[0] ?? $this->statement;
+        return $statement->execute();
     }
 
     /**

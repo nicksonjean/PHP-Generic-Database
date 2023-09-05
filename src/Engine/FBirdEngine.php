@@ -142,6 +142,18 @@ class FBirdEngine implements IConnection
     private mixed $statement = null;
 
     /**
+     * Instance of the Statement of the database
+     * @var mixed $statementCount = null
+     */
+    private static mixed $statementCount = null;
+
+    /**
+     * Instance of the Statement of the database
+     * @var mixed $statementResult = null
+     */
+    private static mixed $statementResult = null;
+
+    /**
      * Affected rows in query post statement
      * @var ?int $queriedRows = 0
      */
@@ -464,8 +476,8 @@ class FBirdEngine implements IConnection
     public function queriedRows(): int|false
     {
         if (Regex::isSelect($this->query)) {
-            $this->bindParam(...$GLOBALS['rowCount']);
-            return count($this->internalFetchAllAssoc($GLOBALS['stmt']));
+            $this->bindParam(...self::$statementCount);
+            return count($this->internalFetchAllAssoc(self::$statementResult));
         }
         return 0;
     }
@@ -544,14 +556,14 @@ class FBirdEngine implements IConnection
                 $referenceParams = array_values($param);
                 (!$params['rowCount'])
                     ? $this->statement = $this->exec($params['sqlStatement'], $referenceParams)
-                    : $GLOBALS['stmt'] = $this->exec($GLOBALS['stmt_prepare'], $referenceParams);
+                    : self::$statementResult = $this->exec($params['sqlStatement'], $referenceParams);
                 $this->affectedRows += ibase_affected_rows($this->getConnection());
             }
         } else {
             $referenceParams = array_values($params['sqlArgs']);
             (!$params['rowCount'])
                 ? $this->statement = $this->exec($params['sqlStatement'], $referenceParams)
-                : $GLOBALS['stmt'] = $this->exec($GLOBALS['stmt_prepare'], $referenceParams);
+                : self::$statementResult = $this->exec($params['sqlStatement'], $referenceParams);
             $this->affectedRows += ibase_affected_rows($this->getConnection());
         }
     }
@@ -568,7 +580,7 @@ class FBirdEngine implements IConnection
         $referenceParams = array_values($params['sqlArgs']);
         (!$params['rowCount'])
             ? $this->statement = $this->exec($params['sqlStatement'], $referenceParams)
-            : $GLOBALS['stmt'] = $this->exec($GLOBALS['stmt_prepare'], $referenceParams);
+            : self::$statementResult = $this->exec($params['sqlStatement'], $referenceParams);
         $this->affectedRows += ibase_affected_rows($this->getConnection());
     }
 
@@ -642,11 +654,11 @@ class FBirdEngine implements IConnection
         $this->queriedRows = 0;
         if (!empty($params)) {
             $this->statement = ibase_query($this->getConnection(), $this->parse(...$params));
+            $rowCount = $params;
             /** @phpstan-ignore-next-line */
-            $GLOBALS['stmt_prepare'] = ibase_prepare($this->getConnection(), $this->parse(...$params));
+            array_unshift($rowCount, ibase_prepare($this->getConnection(), $this->parse(...$params)));
             array_unshift($params, $this->statement);
-            $GLOBALS['bindParams'] = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
-            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+            self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
             $this->affectedRows += ibase_affected_rows($this->getConnection());
             $this->queriedRows = $this->queriedRows();
         }
@@ -666,12 +678,13 @@ class FBirdEngine implements IConnection
         if (!empty($params)) {
             /** @phpstan-ignore-next-line */
             $stmt = ibase_prepare($this->getConnection(), $this->parse(...$params));
+            $rowCount = $params;
             /** @phpstan-ignore-next-line */
-            $GLOBALS['stmt_prepare'] = ibase_prepare($this->getConnection(), $this->parse(...$params));
+            array_unshift($rowCount, ibase_prepare($this->getConnection(), $this->parse(...$params)));
             array_unshift($params, $stmt);
-            $GLOBALS['bindParams'] = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
-            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
-            $this->bindParam(...$GLOBALS['bindParams']);
+            $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+            self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            $this->bindParam(...$bindParams);
             if (array_key_exists(1, $params)) {
                 (!is_resource($this->statement)) ? $this->statement = $stmt : $this->queriedRows = $this->queriedRows();
             } else {

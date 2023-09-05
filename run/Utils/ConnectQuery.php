@@ -10,8 +10,8 @@ require_once PATH_ROOT . '/vendor/autoload.php';
 Dotenv::createImmutable(PATH_ROOT)->load();
 
 // $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
-// $context = Chainable::nativeFBird(env: $_ENV, persistent: true, strategy: false)->connect();
-$context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeFBird(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();

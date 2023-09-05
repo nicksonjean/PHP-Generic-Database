@@ -120,6 +120,12 @@ class PDOEngine implements IConnection
     private mixed $statement = null;
 
     /**
+     * Instance of the Statement of the database
+     * @var mixed $statementCount = null
+     */
+    private static mixed $statementCount = null;
+
+    /**
      * Affected rows in query post statement
      * @var ?int $queriedRows = 0
      */
@@ -434,8 +440,8 @@ class PDOEngine implements IConnection
     public function queriedRows(): int|false
     {
         if (Regex::isSelect($this->query)) {
-            $this->bindParam(...$GLOBALS['rowCount']);
-            return count($this->internalFetchAllAssoc($GLOBALS['rowCount']['sqlStatement']));
+            $this->bindParam(...self::$statementCount);
+            return count($this->internalFetchAllAssoc(self::$statementCount['sqlStatement']));
         }
         return 0;
     }
@@ -610,7 +616,7 @@ class PDOEngine implements IConnection
             $rowCount = $params;
             array_unshift($rowCount, $this->getConnection()->prepare($this->parse(...$params)));
             array_unshift($params, $this->statement);
-            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
             $this->queriedRows = Regex::isSelect($this->query) ? $this->queriedRows() : 0;
             $this->affectedRows += !Regex::isSelect($this->query) ? $this->statement->rowCount() : 0;
         }
@@ -633,7 +639,7 @@ class PDOEngine implements IConnection
             array_unshift($rowCount, $this->getConnection()->prepare($this->parse(...$params)));
             array_unshift($params, $this->statement);
             $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
-            $GLOBALS['rowCount'] = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
             $this->bindParam(...$bindParams);
             $this->queriedRows = Regex::isSelect($this->query) ? $this->queriedRows() : 0;
         }
