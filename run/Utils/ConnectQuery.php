@@ -45,7 +45,7 @@ var_dump($a->fetchAll(FETCH_ASSOC));
 //     var_dump($row);
 // }
 
-$b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE1', ':sigla' => 'T1'], [':nome' => 'TESTE2', ':sigla' => 'T2']]);
+// $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE1', ':sigla' => 'T1'], [':nome' => 'TESTE2', ':sigla' => 'T2']]);
 // $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [':nome' => 'TESTE', ':sigla' => 'TE']);
 // $b = $context->prepare('UPDATE estado SET nome = :nome WHERE id = :id', [':nome' => 'TE', ':id' => '210']);
 // $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'PDC', 'TI', 210);
@@ -53,11 +53,11 @@ $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)'
 // $b = $context->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
 // $b = $context->query('DELETE FROM estado WHERE id IN (223)');
 
-var_dump($b);
+// var_dump($b);
 
-var_dump($b->getRows());
-var_dump($b->queriedRows());
-var_dump($b->affectedRows());
+// var_dump($b->getRows());
+// var_dump($b->queriedRows());
+// var_dump($b->affectedRows());
 
 /*
 SQLite: 'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id'

@@ -59,7 +59,13 @@ class Translater
         $insideSingleQuote = false;
         $insideDoubleQuote = false;
 
-        $escapedWords = array_map(function ($word) use ($forbiddenWords, $quote, &$insideFunction, &$insideSingleQuote, &$insideDoubleQuote) {
+        $escapedWords = array_map(function ($word) use (
+            $forbiddenWords,
+            $quote,
+            &$insideFunction,
+            &$insideSingleQuote,
+            &$insideDoubleQuote
+        ) {
             if ($insideFunction && strpos($word, ')') !== false) {
                 $insideFunction = false;
                 return $word;
