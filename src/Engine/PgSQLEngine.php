@@ -150,46 +150,6 @@ class PgSQLEngine implements IConnection
     private array $queryParameters = [];
 
     /**
-     * Fetch one methods array
-     * @var array FETCH_ONE_METHODS = []
-     */
-    private const FETCH_ONE_METHODS = [
-        PGSQL_FETCH_OBJ => 'internalFetchClassOrObject',
-        FETCH_OBJ => 'internalFetchClassOrObject',
-        PGSQL_FETCH_CLASS => 'internalFetchClassOrObject',
-        FETCH_CLASS => 'internalFetchClassOrObject',
-        PGSQL_FETCH_INTO => 'internalFetchClassOrObject',
-        FETCH_INTO => 'internalFetchClassOrObject',
-        PGSQL_FETCH_COLUMN => 'internalFetchColumn',
-        FETCH_COLUMN => 'internalFetchColumn',
-        PGSQL_FETCH_ASSOC => 'internalFetchAssoc',
-        FETCH_ASSOC => 'internalFetchAssoc',
-        PGSQL_FETCH_NUM => 'internalFetchNum',
-        FETCH_NUM => 'internalFetchNum',
-        PGSQL_FETCH_BOTH => 'internalFetchBoth',
-        FETCH_BOTH => 'internalFetchBoth',
-    ];
-
-    /**
-     * Fetch one methods array
-     * @var array FETCH_ALL_METHODS = []
-     */
-    private const FETCH_ALL_METHODS = [
-        PGSQL_FETCH_OBJ => 'internalFetchAllClassOrObjects',
-        FETCH_OBJ => 'internalFetchAllClassOrObjects',
-        PGSQL_FETCH_CLASS => 'internalFetchAllClassOrObjects',
-        FETCH_CLASS => 'internalFetchAllClassOrObjects',
-        PGSQL_FETCH_COLUMN => 'internalFetchAllColumn',
-        FETCH_COLUMN => 'internalFetchAllColumn',
-        PGSQL_FETCH_ASSOC => 'internalFetchAllAssoc',
-        FETCH_ASSOC => 'internalFetchAllAssoc',
-        PGSQL_FETCH_NUM => 'internalFetchAllNum',
-        FETCH_NUM => 'internalFetchAllNum',
-        PGSQL_FETCH_BOTH => 'internalFetchAllBoth',
-        FETCH_BOTH => 'internalFetchAllBoth',
-    ];
-
-    /**
      * Triggered when invoking inaccessible methods in an object context
      *
      * @param string $name Name of the method
@@ -710,12 +670,18 @@ class PgSQLEngine implements IConnection
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
     public function fetch(
-        int $fetchStyle = PGSQL_FETCH_BOTH,
+        int $fetchStyle = FETCH_BOTH,
         mixed $fetchArgument = null,
         mixed $optArgs = null
     ): mixed {
-        $fetchMethod = self::FETCH_ONE_METHODS[$fetchStyle] ?? 'internalFetchBoth';
-        return $this->$fetchMethod(self::$statement, $fetchArgument, $optArgs);
+        return match ($fetchStyle) {
+            9, 11, 12 => $this->internalFetchClassOrObject(self::$statement, $fetchArgument, $optArgs),
+            14 => $this->internalFetchColumn(self::$statement, $fetchArgument),
+            13 => $this->internalFetchAssoc(self::$statement),
+            8 => $this->internalFetchNum(self::$statement),
+            10 => $this->internalFetchBoth(self::$statement),
+            default => $this->internalFetchBoth(self::$statement),
+        };
     }
 
     /**
@@ -727,12 +693,18 @@ class PgSQLEngine implements IConnection
      * @return mixed An array containing all rows from the statement.
      */
     public function fetchAll(
-        int $fetchStyle = PGSQL_FETCH_ASSOC,
+        int $fetchStyle = FETCH_ASSOC,
         mixed $fetchArgument = null,
         mixed $optArgs = null
     ): mixed {
-        $fetchMethod = self::FETCH_ALL_METHODS[$fetchStyle] ?? 'internalFetchAllBoth';
-        return $this->$fetchMethod(self::$statement, $fetchArgument, $optArgs);
+        return match ($fetchStyle) {
+            9, 12 => $this->internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
+            14 => $this->internalFetchAllColumn(self::$statement, $fetchArgument),
+            13 => $this->internalFetchAllAssoc(self::$statement),
+            8 => $this->internalFetchAllNum(self::$statement),
+            10 => $this->internalFetchAllBoth(self::$statement),
+            default => $this->internalFetchAllBoth(self::$statement),
+        };
     }
 
     protected function internalFetchClassOrObject(
