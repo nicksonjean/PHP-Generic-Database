@@ -111,37 +111,83 @@ class SQLSrvEngine implements IConnection
      * Instance of the connection with database
      * @var mixed $connection
      */
-    private mixed $connection;
+    private static mixed $connection;
 
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
      */
-    private mixed $statement = null;
+    private static mixed $statement = null;
 
     /**
-     * Affected rows in query post statement
-     * @var ?int $queriedRows = 0
+     * Count rows in query statement
+     * @var ?int $queryRows = 0
      */
-    private ?int $queriedRows = 0;
+    private ?int $queryRows = 0;
 
     /**
+     * Count columns in query statement
+     * @var ?int $queryColumns = 0
+     */
+    private ?int $queryColumns = 0;
+
+    /**
+     * Affected row in query statement
      * @var ?int $affectedRows = 0
      */
     private ?int $affectedRows = 0;
 
     /**
      * Last string query runned
-     * @var string $query = ''
+     * @var string $queryString = ''
      */
-    private string $query = '';
+    private string $queryString = '';
 
     /**
      * Lasts params query runned
-     * @var array $params = []
+     * @var array $queryParameters = []
      */
-    private array $params = [];
+    private array $queryParameters = [];
 
+    /**
+     * Fetch one methods array
+     * @var array FETCH_ONE_METHODS = []
+     */
+    private const FETCH_ONE_METHODS = [
+        SQLSRV_FETCH_OBJ => 'internalFetchClassOrObject',
+        FETCH_OBJ => 'internalFetchClassOrObject',
+        SQLSRV_FETCH_CLASS => 'internalFetchClassOrObject',
+        FETCH_CLASS => 'internalFetchClassOrObject',
+        SQLSRV_FETCH_INTO => 'internalFetchClassOrObject',
+        FETCH_INTO => 'internalFetchClassOrObject',
+        SQLSRV_FETCH_COLUMN => 'internalFetchColumn',
+        FETCH_COLUMN => 'internalFetchColumn',
+        SQLSRV_FETCH_ASSOC => 'internalFetchAssoc',
+        FETCH_ASSOC => 'internalFetchAssoc',
+        SQLSRV_FETCH_NUM => 'internalFetchNum',
+        FETCH_NUM => 'internalFetchNum',
+        SQLSRV_FETCH_BOTH => 'internalFetchBoth',
+        FETCH_BOTH => 'internalFetchBoth',
+    ];
+
+    /**
+     * Fetch one methods array
+     * @var array FETCH_ALL_METHODS = []
+     */
+    private const FETCH_ALL_METHODS = [
+        SQLSRV_FETCH_OBJ => 'internalFetchAllClassOrObjects',
+        FETCH_OBJ => 'internalFetchAllClassOrObjects',
+        SQLSRV_FETCH_CLASS => 'internalFetchAllClassOrObjects',
+        FETCH_CLASS => 'internalFetchAllClassOrObjects',
+        SQLSRV_FETCH_COLUMN => 'internalFetchAllColumn',
+        FETCH_COLUMN => 'internalFetchAllColumn',
+        SQLSRV_FETCH_ASSOC => 'internalFetchAllAssoc',
+        FETCH_ASSOC => 'internalFetchAllAssoc',
+        SQLSRV_FETCH_NUM => 'internalFetchAllNum',
+        FETCH_NUM => 'internalFetchAllNum',
+        SQLSRV_FETCH_BOTH => 'internalFetchAllBoth',
+        FETCH_BOTH => 'internalFetchAllBoth',
+    ];
     /**
      * Triggered when invoking inaccessible methods in an object context
      *
@@ -317,7 +363,7 @@ class SQLSrvEngine implements IConnection
      */
     public function getConnection(): mixed
     {
-        return $this->connection;
+        return self::$connection;
     }
 
     /**
@@ -328,8 +374,8 @@ class SQLSrvEngine implements IConnection
      */
     public function setConnection(mixed $connection): mixed
     {
-        $this->connection = $connection;
-        return $this->connection;
+        self::$connection = $connection;
+        return self::$connection;
     }
 
     /**
@@ -418,26 +464,53 @@ class SQLSrvEngine implements IConnection
     }
 
     /**
+     * Reset query metadata
+     *
+     * @return void
+     */
+    private function resetMetadata(): void
+    {
+        $this->queryString = '';
+        $this->queryParameters = [];
+        $this->queryRows = 0;
+        $this->queryColumns = 0;
+        $this->affectedRows = 0;
+    }
+
+    /**
      * Returns an array containing the number of queried rows and the number of affected rows.
      *
-     * @return array An associative array with keys 'queriedRows' and 'affectedRows'.
+     * @return array An associative array with keys 'queryRows' and 'affectedRows'.
      */
-    public function getRows()
+    public function queryMetadata()
     {
         return [
-            'queriedRows' => $this->queriedRows,
+            'queryString' => $this->queryString,
+            'queryParameters' => $this->queryParameters ?? null,
+            'queryRows' => $this->queryRows,
+            'queryColumns' => $this->queryColumns,
             'affectedRows' => $this->affectedRows
         ];
     }
 
     /**
-     * Get the parameters associated with this instance.
+     * Returns the query string.
      *
-     * @return mixed The parameters associated with this instance.
+     * @return string The query string associated with this instance.
      */
-    public function getParams()
+    public function queryString(): string
     {
-        return $this->params;
+        return $this->queryString;
+    }
+
+    /**
+     * Returns the parameters associated with this instance.
+     *
+     * @return array|null The parameters associated with this instance.
+     */
+    public function queryParameters(): array|null
+    {
+        return $this->queryParameters;
     }
 
     /**
@@ -445,9 +518,19 @@ class SQLSrvEngine implements IConnection
      *
      * @return int|false The number of affected rows
      */
-    public function queriedRows(): int|false
+    public function queryRows(): int|false
     {
-        return (int) sqlsrv_num_rows($this->statement);
+        return $this->queryRows;
+    }
+
+    /**
+     * Returns the number of columns in an statement result.
+     *
+     * @return int|false The number of columns in the result or false in case of an error.
+     */
+    public function queryColumns(): int|false
+    {
+        return $this->queryColumns;
     }
 
     /**
@@ -461,16 +544,6 @@ class SQLSrvEngine implements IConnection
     }
 
     /**
-     * Returns the number of columns in an statement result.
-     *
-     * @return int|false The number of columns in the result or false in case of an error.
-     */
-    public function columnCount(): int|false
-    {
-        return sqlsrv_num_fields($this->statement);
-    }
-
-    /**
      * Binds variables to a prepared statement with specified types.
      * This method binds variables to a prepared statement based on their types,
      * allowing for more precise parameter binding.
@@ -480,56 +553,66 @@ class SQLSrvEngine implements IConnection
      */
     private function internalBindVariable(mixed $data)
     {
-        return $this->statement = sqlsrv_prepare(
+        return self::$statement = sqlsrv_prepare(
             $this->getConnection(),
-            $this->query,
+            $this->queryString,
             $data,
-            ['Scrollable' => Regex::isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD]
+            ['Scrollable' => Regex::isSelect($this->queryString) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD]
         );
     }
 
     /**
-     * Binds a parameter to a variable in the SQL statement.
+     * Binds a array multiple parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArrayMulti(mixed ...$params): void
+    {
+        $referenceParams = [];
+        $preparedParams = [];
+        for ($i = 0; $i < count($params['sqlArgs'][0]); $i++) {
+            if (!array_key_exists($i, $referenceParams)) {
+                $referenceParams[$i] = null;
+            }
+            $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
+        }
+        self::$statement = $this->internalBindVariable($preparedParams);
+        foreach (Arrays::arrayValuesRecursive($params['sqlArgs']) as $row) {
+            for ($i = 0; $i < count($params['sqlArgs'][0]); $i++) {
+                $referenceParams[$i] = $row[$i];
+            }
+            $this->exec(self::$statement);
+            $this->affectedRows += (int) (sqlsrv_rows_affected(self::$statement) === -1
+                ? 0
+                : sqlsrv_rows_affected(self::$statement));
+        }
+    }
+
+    /**
+     * Binds a array single parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArraySingle(mixed ...$params): void
+    {
+        $this->internalBindParamArgs(...$params);
+    }
+
+    /**
+     * Binds a array parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private function internalBindParamArray(mixed ...$params): void
     {
-        $this->params = $params['sqlArgs'];
+        $this->queryParameters = $params['sqlArgs'];
         if ($params['isMulti']) {
-            $referenceParams = [];
-            $preparedParams = [];
-            for ($i = 0; $i < count($this->params[0]); $i++) {
-                if (!array_key_exists($i, $referenceParams)) {
-                    $referenceParams[$i] = null;
-                }
-                $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
-            }
-            $this->statement = $this->internalBindVariable($preparedParams);
-            foreach (Arrays::arrayValuesRecursive($this->params) as $row) {
-                for ($i = 0; $i < count($this->params[0]); $i++) {
-                    $referenceParams[$i] = $row[$i];
-                }
-                $this->exec($this->statement);
-                $this->affectedRows += (int) (sqlsrv_rows_affected($this->statement) === -1
-                    ? 0
-                    : sqlsrv_rows_affected($this->statement));
-                $this->queriedRows += $this->queriedRows();
-            }
+            $this->internalBindParamArrayMulti(...$params);
         } else {
-            $referenceParams = [];
-            $preparedParams = [];
-            for ($i = 0; $i < count($this->params); $i++) {
-                $referenceParams[$i] = array_values($this->params)[$i];
-                $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
-            }
-            $this->statement = $this->internalBindVariable($preparedParams);
-            $this->exec($this->statement);
-            $this->affectedRows += (int) (sqlsrv_rows_affected($this->statement) === -1
-                ? 0
-                : sqlsrv_rows_affected($this->statement));
-            $this->queriedRows += $this->queriedRows();
+            $this->internalBindParamArraySingle(...$params);
         }
     }
 
@@ -541,19 +624,17 @@ class SQLSrvEngine implements IConnection
      */
     private function internalBindParamArgs(mixed ...$params): void
     {
-        $this->params = $params['sqlArgs'];
         $referenceParams = [];
         $preparedParams = [];
-        for ($i = 0; $i < count($this->params); $i++) {
-            $referenceParams[$i] = array_values($this->params)[$i];
+        for ($i = 0; $i < count($params['sqlArgs']); $i++) {
+            $referenceParams[$i] = array_values($params['sqlArgs'])[$i];
             $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
         }
-        $this->statement = $this->internalBindVariable($preparedParams);
-        $this->exec($this->statement);
-        $this->affectedRows += (int) (sqlsrv_rows_affected($this->statement) === -1
+        self::$statement = $this->internalBindVariable($preparedParams);
+        $this->exec(self::$statement);
+        $this->affectedRows += (int) (sqlsrv_rows_affected(self::$statement) === -1
             ? 0
-            : sqlsrv_rows_affected($this->statement));
-        $this->queriedRows += $this->queriedRows();
+            : sqlsrv_rows_affected(self::$statement));
     }
 
     /**
@@ -594,6 +675,7 @@ class SQLSrvEngine implements IConnection
      */
     public function bindParam(mixed ...$params): void
     {
+        $this->queryParameters = $params['sqlArgs'];
         if ($params['isArray']) {
             $this->internalBindParamArray(...$params);
         } else {
@@ -609,8 +691,8 @@ class SQLSrvEngine implements IConnection
      */
     private function parse(mixed ...$params): mixed
     {
-        $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE));
-        return $this->query;
+        $this->queryString = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE));
+        return $this->queryString;
     }
 
     /**
@@ -621,19 +703,19 @@ class SQLSrvEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->affectedRows = 0;
-        $this->queriedRows = 0;
+        $this->resetMetadata();
         if (!empty($params)) {
-            $this->statement = sqlsrv_query(
+            self::$statement = sqlsrv_query(
                 $this->getConnection(),
                 $this->parse(...$params),
                 [],
-                ['Scrollable' => Regex::isSelect($this->query) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD]
+                ['Scrollable' => Regex::isSelect($this->queryString) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD]
             );
-            $this->affectedRows += (int) (sqlsrv_rows_affected($this->statement) === -1
+            $this->queryRows = (int) sqlsrv_num_rows(self::$statement);
+            $this->queryColumns = (int) sqlsrv_num_fields(self::$statement);
+            $this->affectedRows += (int) (sqlsrv_rows_affected(self::$statement) === -1
                 ? 0
-                : sqlsrv_rows_affected($this->statement));
-            $this->queriedRows += $this->queriedRows();
+                : sqlsrv_rows_affected(self::$statement));
         }
         return $this;
     }
@@ -646,12 +728,13 @@ class SQLSrvEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $this->affectedRows = 0;
-        $this->queriedRows = 0;
+        $this->resetMetadata();
         if (!empty($params)) {
             $bindParams = $this->makeArgs(...$params);
             $this->parse(...$params);
             (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
+            $this->queryRows = (int) sqlsrv_num_rows(self::$statement);
+            $this->queryColumns = (int) sqlsrv_num_fields(self::$statement);
         }
         return $this;
     }
@@ -664,54 +747,26 @@ class SQLSrvEngine implements IConnection
      */
     public function exec(mixed ...$params): mixed
     {
-        $statement = $params[0] ?? $this->statement;
+        $statement = $params[0] ?? self::$statement;
         sqlsrv_execute($statement);
-        return $this->statement = $statement;
+        return self::$statement = $statement;
     }
 
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is SQLSRV_FETCH_BOTH.
-     * @return array|false The next row from the statement as an array, or false if there are no more rows.
+     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
+     * @param mixed $optArgs From the Fetch Into or Fetch Class.
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
     public function fetch(
         int $fetchStyle = SQLSRV_FETCH_BOTH,
         mixed $fetchArgument = null,
         mixed $optArgs = null
     ): mixed {
-        switch ($fetchStyle) {
-            case SQLSRV_FETCH_OBJ:
-            case SQLSRV_FETCH_CLASS:
-            case FETCH_OBJ:
-            case FETCH_CLASS:
-                return $this->internalFetchClassOrObject(
-                    isset($optArgs) ? $optArgs : '\stdClass',
-                    [],
-                    $this->statement,
-                );
-            case SQLSRV_FETCH_INTO:
-            case FETCH_INTO:
-                return $this->internalFetchClassOrObject(
-                    isset($optArgs) ? $optArgs : null,
-                    [],
-                    $this->statement,
-                );
-            case SQLSRV_FETCH_COLUMN:
-            case FETCH_COLUMN:
-                return $this->internalFetchColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
-            case SQLSRV_FETCH_ASSOC:
-            case FETCH_ASSOC:
-                return $this->internalFetchAssoc($this->statement);
-            case SQLSRV_FETCH_NUM:
-            case FETCH_NUM:
-                return $this->internalFetchNum($this->statement);
-            case SQLSRV_FETCH_BOTH:
-            case FETCH_BOTH:
-                return $this->internalFetchBoth($this->statement);
-            default:
-                return $this->internalFetchBoth($this->statement);
-        }
+        $fetchMethod = self::FETCH_ONE_METHODS[$fetchStyle] ?? 'internalFetchBoth';
+        return $this->$fetchMethod(self::$statement, $fetchArgument, $optArgs);
     }
 
     /**
@@ -727,48 +782,19 @@ class SQLSrvEngine implements IConnection
         mixed $fetchArgument = null,
         mixed $optArgs = null
     ): mixed {
-        switch ($fetchStyle) {
-            case SQLSRV_FETCH_OBJ:
-            case SQLSRV_FETCH_CLASS:
-            case FETCH_OBJ:
-            case FETCH_CLASS:
-                if (null === $fetchArgument) {
-                    $fetchArgument = '\stdClass';
-                }
-                return $this->internalFetchAllClassOrObjects(
-                    $fetchArgument,
-                    $optArgs == null ? [] : $optArgs,
-                    $this->statement
-                );
-            case SQLSRV_FETCH_COLUMN:
-            case FETCH_COLUMN:
-                return $this->internalFetchAllColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
-            case SQLSRV_FETCH_ASSOC:
-            case FETCH_ASSOC:
-                return $this->internalFetchAllAssoc($this->statement);
-            case SQLSRV_FETCH_NUM:
-            case FETCH_NUM:
-                return $this->internalFetchAllNum($this->statement);
-            case SQLSRV_FETCH_BOTH:
-            case FETCH_BOTH:
-                return $this->internalFetchAllBoth($this->statement);
-            default:
-                return $this->internalFetchAllBoth($this->statement);
-        }
+        $fetchMethod = self::FETCH_ALL_METHODS[$fetchStyle] ?? 'internalFetchAllBoth';
+        return $this->$fetchMethod(self::$statement, $fetchArgument, $optArgs);
     }
 
     protected function internalFetchClassOrObject(
-        $aClassOrObject,
-        array $constructorArguments = null,
         $statement = null,
+        $constructorArguments = [],
+        $aClassOrObject = '\stdClass',
     ) {
         $rowData = $this->internalFetchAssoc($statement);
+        $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
         if (is_array($rowData)) {
-            return Reflections::createObjectAndSetPropertiesCaseInsenstive(
-                $aClassOrObject,
-                is_array($constructorArguments) ? $constructorArguments : [],
-                $rowData
-            );
+            return Reflections::createObjectAndSetPropertiesCaseInsenstive($aClassOrObject, $fetchArgument, $rowData);
         }
         return $rowData;
     }
@@ -791,8 +817,9 @@ class SQLSrvEngine implements IConnection
     protected function internalFetchColumn($statement = null, $columnIndex = 0)
     {
         $rowData = $this->internalFetchNum($statement);
+        $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
         if (is_array($rowData)) {
-            return isset($rowData[$columnIndex]) ? $rowData[$columnIndex] : null;
+            return isset($rowData[$fetchArgument]) ? $rowData[$fetchArgument] : null;
         }
         return false;
     }
@@ -827,16 +854,21 @@ class SQLSrvEngine implements IConnection
     protected function internalFetchAllColumn($statement = null, $columnIndex = 0)
     {
         $result = [];
-        while ($data = $this->internalFetchColumn($statement, $columnIndex)) {
+        $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
+        while ($data = $this->internalFetchColumn($statement, $fetchArgument)) {
             $result[] = $data;
         }
         return $result;
     }
 
-    protected function internalFetchAllClassOrObjects($aClassOrObject, array $constructorArguments, $statement = null)
-    {
+    protected function internalFetchAllClassOrObjects(
+        $statement = null,
+        $constructorArguments = [],
+        $aClassOrObject = '\sstdClass',
+    ) {
         $result = [];
-        while ($row = $this->internalFetchClassOrObject($aClassOrObject, $constructorArguments, $statement)) {
+        $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
+        while ($row = $this->internalFetchClassOrObject($statement, $fetchArgument, $aClassOrObject)) {
             if ($row !== false) {
                 $result[] = $row;
             }

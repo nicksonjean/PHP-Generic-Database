@@ -111,36 +111,83 @@ class PgSQLEngine implements IConnection
      * Instance of the connection with database
      * @var mixed $connection
      */
-    private mixed $connection;
+    private static mixed $connection;
 
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
      */
-    private mixed $statement = null;
+    private static mixed $statement = null;
 
     /**
-     * Affected rows in query post statement
-     * @var ?int $queriedRows = 0
+     * Count rows in query statement
+     * @var ?int $queryRows = 0
      */
-    private ?int $queriedRows = 0;
+    private ?int $queryRows = 0;
 
     /**
+     * Count columns in query statement
+     * @var ?int $queryColumns = 0
+     */
+    private ?int $queryColumns = 0;
+
+    /**
+     * Affected row in query statement
      * @var ?int $affectedRows = 0
      */
     private ?int $affectedRows = 0;
 
     /**
      * Last string query runned
-     * @var string $query = ''
+     * @var string $queryString = ''
      */
-    private string $query = '';
+    private string $queryString = '';
 
     /**
      * Lasts params query runned
-     * @var array $params = []
+     * @var array $queryParameters = []
      */
-    private array $params = [];
+    private array $queryParameters = [];
+
+    /**
+     * Fetch one methods array
+     * @var array FETCH_ONE_METHODS = []
+     */
+    private const FETCH_ONE_METHODS = [
+        PGSQL_FETCH_OBJ => 'internalFetchClassOrObject',
+        FETCH_OBJ => 'internalFetchClassOrObject',
+        PGSQL_FETCH_CLASS => 'internalFetchClassOrObject',
+        FETCH_CLASS => 'internalFetchClassOrObject',
+        PGSQL_FETCH_INTO => 'internalFetchClassOrObject',
+        FETCH_INTO => 'internalFetchClassOrObject',
+        PGSQL_FETCH_COLUMN => 'internalFetchColumn',
+        FETCH_COLUMN => 'internalFetchColumn',
+        PGSQL_FETCH_ASSOC => 'internalFetchAssoc',
+        FETCH_ASSOC => 'internalFetchAssoc',
+        PGSQL_FETCH_NUM => 'internalFetchNum',
+        FETCH_NUM => 'internalFetchNum',
+        PGSQL_FETCH_BOTH => 'internalFetchBoth',
+        FETCH_BOTH => 'internalFetchBoth',
+    ];
+
+    /**
+     * Fetch one methods array
+     * @var array FETCH_ALL_METHODS = []
+     */
+    private const FETCH_ALL_METHODS = [
+        PGSQL_FETCH_OBJ => 'internalFetchAllClassOrObjects',
+        FETCH_OBJ => 'internalFetchAllClassOrObjects',
+        PGSQL_FETCH_CLASS => 'internalFetchAllClassOrObjects',
+        FETCH_CLASS => 'internalFetchAllClassOrObjects',
+        PGSQL_FETCH_COLUMN => 'internalFetchAllColumn',
+        FETCH_COLUMN => 'internalFetchAllColumn',
+        PGSQL_FETCH_ASSOC => 'internalFetchAllAssoc',
+        FETCH_ASSOC => 'internalFetchAllAssoc',
+        PGSQL_FETCH_NUM => 'internalFetchAllNum',
+        FETCH_NUM => 'internalFetchAllNum',
+        PGSQL_FETCH_BOTH => 'internalFetchAllBoth',
+        FETCH_BOTH => 'internalFetchAllBoth',
+    ];
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -296,7 +343,7 @@ class PgSQLEngine implements IConnection
      */
     public function getConnection(): mixed
     {
-        return $this->connection;
+        return self::$connection;
     }
 
     /**
@@ -307,8 +354,8 @@ class PgSQLEngine implements IConnection
      */
     public function setConnection(mixed $connection): mixed
     {
-        $this->connection = $connection;
-        return $this->connection;
+        self::$connection = $connection;
+        return self::$connection;
     }
 
     /**
@@ -411,26 +458,53 @@ class PgSQLEngine implements IConnection
     }
 
     /**
+     * Reset query metadata
+     *
+     * @return void
+     */
+    private function resetMetadata(): void
+    {
+        $this->queryString = '';
+        $this->queryParameters = [];
+        $this->queryRows = 0;
+        $this->queryColumns = 0;
+        $this->affectedRows = 0;
+    }
+
+    /**
      * Returns an array containing the number of queried rows and the number of affected rows.
      *
-     * @return array An associative array with keys 'queriedRows' and 'affectedRows'.
+     * @return array An associative array with keys 'queryRows' and 'affectedRows'.
      */
-    public function getRows()
+    public function queryMetadata()
     {
         return [
-            'queriedRows' => $this->queriedRows,
+            'queryString' => $this->queryString,
+            'queryParameters' => $this->queryParameters ?? null,
+            'queryRows' => $this->queryRows,
+            'queryColumns' => $this->queryColumns,
             'affectedRows' => $this->affectedRows
         ];
     }
 
     /**
-     * Get the parameters associated with this instance.
+     * Returns the query string.
      *
-     * @return mixed The parameters associated with this instance.
+     * @return string The query string associated with this instance.
      */
-    public function getParams()
+    public function queryString(): string
     {
-        return $this->params;
+        return $this->queryString;
+    }
+
+    /**
+     * Returns the parameters associated with this instance.
+     *
+     * @return array|null The parameters associated with this instance.
+     */
+    public function queryParameters(): array|null
+    {
+        return $this->queryParameters;
     }
 
     /**
@@ -438,9 +512,19 @@ class PgSQLEngine implements IConnection
      *
      * @return int|false The number of affected rows
      */
-    public function queriedRows(): int|false
+    public function queryRows(): int|false
     {
-        return $this->queriedRows;
+        return $this->queryRows;
+    }
+
+    /**
+     * Returns the number of columns in an statement result.
+     *
+     * @return int|false The number of columns in the result or false in case of an error.
+     */
+    public function queryColumns(): int|false
+    {
+        return $this->queryColumns;
     }
 
     /**
@@ -454,13 +538,29 @@ class PgSQLEngine implements IConnection
     }
 
     /**
-     * Returns the number of columns in an statement result.
+     * Binds a array multiple parameter to a variable in the SQL statement.
      *
-     * @return int|false The number of columns in the result or false in case of an error.
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
      */
-    public function columnCount(): int|false
+    private function internalBindParamArrayMulti(mixed ...$params): void
     {
-        return pg_num_fields($this->statement);
+        foreach ((array) Arrays::arrayValuesRecursive($params['sqlArgs']) as $param) {
+            $this->exec($params['stmtName'], $param);
+            $this->affectedRows += (Regex::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
+        }
+    }
+
+    /**
+     * Binds a array single parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    private function internalBindParamArraySingle(mixed ...$params): void
+    {
+        $this->exec($params['stmtName'], array_values($params['sqlArgs']));
+        $this->affectedRows += (Regex::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
     }
 
     /**
@@ -471,17 +571,10 @@ class PgSQLEngine implements IConnection
      */
     private function internalBindParamArray(mixed ...$params): void
     {
-        $this->params = $params['sqlArgs'];
         if ($params['isMulti']) {
-            foreach ((array) Arrays::arrayValuesRecursive($params['sqlArgs']) as $param) {
-                $this->exec($params['stmtName'], $param);
-                $this->queriedRows += pg_num_rows($this->statement);
-                $this->affectedRows += (Regex::isSelect($this->query)) ? 0 : pg_affected_rows($this->statement);
-            }
+            $this->internalBindParamArrayMulti(...$params);
         } else {
-            $this->exec($params['stmtName'], array_values($this->params));
-            $this->queriedRows += pg_num_rows($this->statement);
-            $this->affectedRows += (Regex::isSelect($this->query)) ? 0 : pg_affected_rows($this->statement);
+            $this->internalBindParamArraySingle(...$params);
         }
     }
 
@@ -493,10 +586,8 @@ class PgSQLEngine implements IConnection
      */
     private function internalBindParamArgs(mixed ...$params): void
     {
-        $this->params = $params['sqlArgs'];
-        $this->exec($params['stmtName'], $this->params);
-        $this->queriedRows += pg_num_rows($this->statement);
-        $this->affectedRows += (Regex::isSelect($this->query)) ? 0 : pg_affected_rows($this->statement);
+        $this->exec($params['stmtName'], $params['sqlArgs']);
+        $this->affectedRows += (Regex::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
     }
 
     /**
@@ -538,6 +629,7 @@ class PgSQLEngine implements IConnection
      */
     public function bindParam(mixed ...$params): void
     {
+        $this->queryParameters = $params['sqlArgs'];
         if ($params['isArray']) {
             $this->internalBindParamArray(...$params);
         } else {
@@ -553,8 +645,8 @@ class PgSQLEngine implements IConnection
      */
     private function parse(mixed ...$params): mixed
     {
-        $this->query = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE), false);
-        return $this->query;
+        $this->queryString = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE), false);
+        return $this->queryString;
     }
 
     /**
@@ -565,12 +657,12 @@ class PgSQLEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->affectedRows = 0;
-        $this->queriedRows = 0;
+        $this->resetMetadata();
         if (!empty($params)) {
-            $this->statement = pg_query($this->getConnection(), $this->parse(...$params));
-            $this->queriedRows += pg_num_rows($this->statement);
-            $this->affectedRows += (Regex::isSelect($this->query)) ? 0 : pg_affected_rows($this->statement);
+            self::$statement = pg_query($this->getConnection(), $this->parse(...$params));
+            $this->queryRows = pg_num_rows(self::$statement);
+            $this->queryColumns = pg_num_fields(self::$statement);
+            $this->affectedRows += (Regex::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
         }
         return $this;
     }
@@ -583,14 +675,15 @@ class PgSQLEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $this->affectedRows = 0;
-        $this->queriedRows = 0;
+        $this->resetMetadata();
         if (!empty($params)) {
             $stmtName = Regex::randomString(18);
-            $this->statement = pg_prepare($this->getConnection(), $stmtName, $this->parse(...$params));
+            self::$statement = pg_prepare($this->getConnection(), $stmtName, $this->parse(...$params));
             array_unshift($params, $stmtName);
             $bindParams = $this->makeArgs(...$params);
             (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
+            $this->queryRows = pg_num_rows(self::$statement);
+            $this->queryColumns = pg_num_fields(self::$statement);
         }
         return $this;
     }
@@ -605,7 +698,7 @@ class PgSQLEngine implements IConnection
     {
         $stmtname = !empty($params[0]) ? $params[0] : Regex::randomString(18);
         $param = !empty($params[1]) ? $params[1] : [];
-        return $this->statement = pg_execute($this->getConnection(), $stmtname, $param);
+        return self::$statement = pg_execute($this->getConnection(), $stmtname, $param);
     }
 
     /**
@@ -621,38 +714,8 @@ class PgSQLEngine implements IConnection
         mixed $fetchArgument = null,
         mixed $optArgs = null
     ): mixed {
-        switch ($fetchStyle) {
-            case PGSQL_FETCH_OBJ:
-            case PGSQL_FETCH_CLASS:
-            case FETCH_OBJ:
-            case FETCH_CLASS:
-                return $this->internalFetchClassOrObject(
-                    isset($optArgs) ? $optArgs : '\stdClass',
-                    [],
-                    $this->statement,
-                );
-            case PGSQL_FETCH_INTO:
-            case FETCH_INTO:
-                return $this->internalFetchClassOrObject(
-                    isset($optArgs) ? $optArgs : null,
-                    [],
-                    $this->statement,
-                );
-            case PGSQL_FETCH_COLUMN:
-            case FETCH_COLUMN:
-                return $this->internalFetchColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
-            case PGSQL_FETCH_ASSOC:
-            case FETCH_ASSOC:
-                return $this->internalFetchAssoc($this->statement);
-            case PGSQL_FETCH_NUM:
-            case FETCH_NUM:
-                return $this->internalFetchNum($this->statement);
-            case PGSQL_FETCH_BOTH:
-            case FETCH_BOTH:
-                return $this->internalFetchBoth($this->statement);
-            default:
-                return $this->internalFetchBoth($this->statement);
-        }
+        $fetchMethod = self::FETCH_ONE_METHODS[$fetchStyle] ?? 'internalFetchBoth';
+        return $this->$fetchMethod(self::$statement, $fetchArgument, $optArgs);
     }
 
     /**
@@ -668,48 +731,19 @@ class PgSQLEngine implements IConnection
         mixed $fetchArgument = null,
         mixed $optArgs = null
     ): mixed {
-        switch ($fetchStyle) {
-            case PGSQL_FETCH_OBJ:
-            case PGSQL_FETCH_CLASS:
-            case FETCH_OBJ:
-            case FETCH_CLASS:
-                if (null === $fetchArgument) {
-                    $fetchArgument = '\stdClass';
-                }
-                return $this->internalFetchAllClassOrObjects(
-                    $fetchArgument,
-                    $optArgs == null ? [] : $optArgs,
-                    $this->statement
-                );
-            case PGSQL_FETCH_COLUMN:
-            case FETCH_COLUMN:
-                return $this->internalFetchAllColumn($this->statement, $fetchArgument == null ? 0 : $fetchArgument);
-            case PGSQL_FETCH_ASSOC:
-            case FETCH_ASSOC:
-                return $this->internalFetchAllAssoc($this->statement);
-            case PGSQL_FETCH_NUM:
-            case FETCH_NUM:
-                return $this->internalFetchAllNum($this->statement);
-            case PGSQL_FETCH_BOTH:
-            case FETCH_BOTH:
-                return $this->internalFetchAllBoth($this->statement);
-            default:
-                return $this->internalFetchAllBoth($this->statement);
-        }
+        $fetchMethod = self::FETCH_ALL_METHODS[$fetchStyle] ?? 'internalFetchAllBoth';
+        return $this->$fetchMethod(self::$statement, $fetchArgument, $optArgs);
     }
 
     protected function internalFetchClassOrObject(
-        $aClassOrObject,
-        array $constructorArguments = null,
         $statement = null,
+        $constructorArguments = [],
+        $aClassOrObject = '\stdClass',
     ) {
         $rowData = $this->internalFetchAssoc($statement);
+        $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
         if (is_array($rowData)) {
-            return Reflections::createObjectAndSetPropertiesCaseInsenstive(
-                $aClassOrObject,
-                is_array($constructorArguments) ? $constructorArguments : [],
-                $rowData
-            );
+            return Reflections::createObjectAndSetPropertiesCaseInsenstive($aClassOrObject, $fetchArgument, $rowData);
         }
         return $rowData;
     }
@@ -732,8 +766,9 @@ class PgSQLEngine implements IConnection
     protected function internalFetchColumn($statement = null, $columnIndex = 0)
     {
         $rowData = $this->internalFetchNum($statement);
+        $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
         if (is_array($rowData)) {
-            return isset($rowData[$columnIndex]) ? $rowData[$columnIndex] : null;
+            return isset($rowData[$fetchArgument]) ? $rowData[$fetchArgument] : null;
         }
         return false;
     }
@@ -763,13 +798,18 @@ class PgSQLEngine implements IConnection
 
     protected function internalFetchAllColumn($statement = null, $columnIndex = 0)
     {
-        return pg_fetch_all_columns($statement, $columnIndex);
+        $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
+        return pg_fetch_all_columns($statement, $fetchArgument);
     }
 
-    protected function internalFetchAllClassOrObjects($aClassOrObject, array $constructorArguments, $statement = null)
-    {
+    protected function internalFetchAllClassOrObjects(
+        $statement = null,
+        $constructorArguments = [],
+        $aClassOrObject = '\sstdClass',
+    ) {
         $result = [];
-        while ($row = $this->internalFetchClassOrObject($aClassOrObject, $constructorArguments, $statement)) {
+        $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
+        while ($row = $this->internalFetchClassOrObject($statement, $fetchArgument, $aClassOrObject)) {
             if ($row !== false) {
                 $result[] = $row;
             }
