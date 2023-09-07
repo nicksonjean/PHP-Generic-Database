@@ -568,7 +568,7 @@ class PgSQLEngine implements IConnection
                 $isArgs = true;
                 $isArray = false;
                 $isMulti = false;
-                $sqlArgs = Translater::parameters($params[1], array_slice($params, 2));
+                $sqlArgs = Translater::arguments($params[1], array_slice($params, 2));
             }
         }
         return [
@@ -605,7 +605,10 @@ class PgSQLEngine implements IConnection
      */
     private function parse(mixed ...$params): mixed
     {
-        $this->queryString = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE), false);
+        $this->queryString = Translater::binding(
+            Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE),
+            Translater::BIND_DOLLAR_SIGN
+        );
         return $this->queryString;
     }
 

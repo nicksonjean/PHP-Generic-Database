@@ -652,7 +652,7 @@ class FBirdEngine implements IConnection
                 $isArgs = true;
                 $isArray = false;
                 $isMulti = false;
-                $sqlArgs = Translater::parameters($params[1], array_slice($params, 2));
+                $sqlArgs = Translater::arguments($params[1], array_slice($params, 2));
             }
         }
         return [
@@ -689,7 +689,10 @@ class FBirdEngine implements IConnection
      */
     private function parse(mixed ...$params): mixed
     {
-        $this->queryString = Translater::binding(Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE));
+        $this->queryString = Translater::binding(
+            Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE),
+            Translater::BIND_QUESTION_MARK
+        );
         return $this->queryString;
     }
 

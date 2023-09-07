@@ -625,7 +625,7 @@ class OCIEngine implements IConnection
                 $isArgs = true;
                 $isArray = false;
                 $isMulti = false;
-                $sqlArgs = Translater::parameters($params[1], array_slice($params, 2));
+                $sqlArgs = Translater::arguments($params[1], array_slice($params, 2));
             }
         }
         return [
