@@ -61,7 +61,7 @@ class StaticArray
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
-        return $constructor(...$parameters);
+        return call_user_func_array($constructor, [$parameters]);
     }
 
     /**

@@ -121,7 +121,7 @@ class Translater
     private static function loadForbiddenWords(): array
     {
         if (!isset(self::$forbiddenWords)) {
-            $json = file_get_contents(__DIR__ . './Translater/Dictionary.json');
+            $json = file_get_contents(__DIR__ . '/Translater/Dictionary.json');
             self::$forbiddenWords = json_decode($json, true);
         }
         return self::$forbiddenWords;
