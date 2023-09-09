@@ -3,47 +3,55 @@
 namespace GenericDatabase\Helpers;
 
 /**
- * The `Translater` class is responsible for escaping SQL queries and extracting parameters from them.
- * It supports different SQL dialects and provides methods for binding parameters with question marks or dollar signs.
+ * The `GenericDatabase\Helpers\Translater` class is responsible for
+ * escaping SQL strings and replacing parameters and binds in the SQL queries.
+ * It provides methods to escape SQL strings based on different SQL dialects,
+ * extract SQL arguments, and replace SQL binds with different bind types.
  *
  * Example Usage:
- *
- * Escape an SQL query using the default dialect
+ * <code>
+ * //Escape an SQL query using the default dialect
  * $escapedQuery = Translater::escape("SELECT * FROM users WHERE id = :id");
  *
- * Escape an SQL query using a specific dialect
+ * //Escape an SQL query using a specific dialect
  * $escapedQuery = Translater::escape("SELECT * FROM users WHERE id = :id", Translater::SQL_DIALECT_DQUOTE);
  *
- * Extract parameters from an SQL query
- * $parameters = Translater::parameters("SELECT * FROM users WHERE id = :id");
+ * //Extract parameters from an SQL query
+ * $parameters = Translater::arguments("SELECT * FROM users WHERE id = :id");
  *
- * Bind parameters in an SQL query with question marks
+ * //Bind parameters in an SQL query with question marks
  * $boundQuery = Translater::binding("SELECT * FROM users WHERE id = :id");
  *
- * Bind parameters in an SQL query with dollar signs
- * $boundQuery = Translater::binding("SELECT * FROM users WHERE id = :id", false);
+ * //Bind parameters in an SQL query with dollar signs
+ * $boundQuery = Translater::binding("SELECT * FROM users WHERE id = :id", Translater::BIND_QUESTION_MARK);
+ * </code>
  *
  * Main functionalities:
- * - Escaping SQL queries based on the specified SQL dialect or quote character.
- * - Extracting parameters from SQL queries.
- * - Binding parameters in SQL queries with question marks or dollar signs.
+ * - Escaping SQL strings based on different SQL dialects
+ * - Extracting SQL arguments from an SQL string
+ * - Replacing SQL binds with different bind types
  *
  * Methods:
  * - `escape(string $input, int $dialect = self::SQL_DIALECT_NONE): string`:
- * Escapes the input SQL query based on the specified SQL dialect. Returns the escaped query.
- * - `parameters(string $input, array $values = null): array`: Extracts the parameters from the input SQL query.
- * Returns an array of parameters or a combined array of parameters and values.
- * - `binding(string $value, bool $bindType = true): string`: Binds the parameters in the input SQL query with
- * question marks or dollar signs based on the specified bind type. Returns the bound query.
+ * Escapes the SQL string by replacing parameters with their quoted versions.
+ * - `arguments(string $input, array $values = null): array`:
+ * Extracts the SQL arguments from the input string.
+ * - `binding(string $input, int $bindType = self::BIND_QUESTION_MARK): string`:
+ * Replaces the SQL binds with the specified bind type.
  *
  * Fields:
  * - `SQL_DIALECT_BTICK`: Constant representing the SQL dialect using backticks.
  * - `SQL_DIALECT_DQUOTE`: Constant representing the SQL dialect using double quotes.
  * - `SQL_DIALECT_SQUOTE`: Constant representing the SQL dialect using single quotes.
  * - `SQL_DIALECT_NONE`: Constant representing no SQL dialect.
- * - `patternMap`: Array containing regex patterns for binding and parameter extraction.
- * - `quoteMap`: Array mapping SQL dialects to quote characters.
- * - `forbiddenWords`: Array containing forbidden words loaded from a JSON file.
+ * - `BIND_QUESTION_MARK`: Constant representing the bind type using question marks.
+ * - `BIND_DOLLAR_SIGN`: Constant representing the bind type using dollar signs.
+ * - `patternMap`: Array mapping regex patterns used in the class.
+ * - `quoteMap`: Array mapping SQL dialects to their corresponding quote characters.
+ * - `bindingMap`: Array mapping bind types to their corresponding bind characters.
+ * - `forbiddenWords`: Instance of the reserved word dictionary.
+ *
+ * @package Translater
  */
 class Translater
 {

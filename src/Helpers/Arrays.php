@@ -2,6 +2,113 @@
 
 namespace GenericDatabase\Helpers;
 
+/**
+ * The `GenericDatabase\Helpers\Arrays` class provides a collection of static methods for manipulating arrays in PHP.
+ * It includes functions for finding elements in an array,
+ * combining array indices and values,
+ * determining the type of an array, and more.
+ *
+ * Example Usage:
+ * <code>
+ * //Find elements in array except by keys
+ * $array = ['a' => 1, 'b' => 2, 'c' => 3];
+ * $keys = ['a', 'c'];
+ * $result = Arrays::exceptByKeys($array, $keys);
+ * </code>
+ * `Output: ['b' => 2]`
+ *
+ * <code>
+ * //Find elements in array except by values
+ * $array = ['a', 'b', 'c'];
+ * $values = ['b', 'c'];
+ * $result = Arrays::exceptByValues($array, $values);
+ * </code>
+ * `Output: ['a']`
+ *
+ * <code>
+ * //Find the first element that matches between two arrays
+ * $list = ['apple', 'banana', 'cherry'];
+ * $array = ['a' => 'apple', 'b' => 'banana', 'c' => 'cherry'];
+ * $result = Arrays::matchValues($list, $array);
+ * </code>
+ * `Output: 'apple'`
+ *
+ * <code>
+ * //Iterate the array by combining the indices and values into a new array
+ * $array = ['a' => 1, 'b' => 2, 'c' => 3];
+ * $result = Arrays::recombine($array);
+ * </code>
+ * `Output: ['a' => 1, 'b' => 2, 'c' => 3]`
+ *
+ * <code>
+ * //Iterate through the array combining the values by substituting the indices
+ * //into sequential numbers starting at zero into a new array
+ * $array = ['a', 'b', 'c'];
+ * $result = Arrays::assocToIndex($array);
+ * </code>
+ * `Output: [0 => 'a', 1 => 'b', 2 => 'c']`
+ *
+ * <code>
+ * //Determine if array is indexed or associative
+ * $array = ['a', 'b', 'c'];
+ * $result = Arrays::isAssoc($array);
+ * </code>
+ * `Output: false`
+ *
+ * <code>
+ * //Determine if array is multidimensional
+ * $array = [['a' => 1], ['b' => 2]];
+ * $result = Arrays::isMultidimensional($array);
+ * </code>
+ * `Output: true`
+ *
+ * <code>
+ * //Get array values recursively
+ * $array = ['a' => [1, 2], 'b' => [3, 4]];
+ * $result = Arrays::arrayValuesRecursive($array);
+ * </code>
+ * `Output: [[1, 2], [3, 4]]`
+ *
+ * <code>
+ * //Create an index or list array to an associative array
+ * $array1 = ['a', 'b', 'c'];
+ * $array2 = ['x' => 1, 'y' => 2, 'z' => 3];
+ * $result = Arrays::toBoth($array1, $array2);
+ * </code>
+ * `Output: [0 => 'a', 'a' => 'a', 1 => 'b', 'b' => 'b', 2 => 'c', 'c' => 'c', 'x' => 1, 'y' => 2, 'z' => 3]`
+ *
+ * Main functionalities:
+ * - Finding elements in an array except by keys or values
+ * - Finding the first element that matches between two arrays
+ * - Combining array indices and values into a new array
+ * - Determining if an array is indexed or associative
+ * - Determining if an array is multidimensional
+ * - Getting array values recursively
+ * - Creating an index or list array to an associative array
+ *
+ * Methods:
+ * - `exceptByKeys(array $array, array $keys): array`:
+ * Finds elements in an array except by keys.
+ * - `exceptByValues(array $array, array $values): array`:
+ * Finds elements in an array except by values.
+ * - `matchValues(array $list, array $array, ?string $apply = 'strtolower'): string`:
+ * Finds the first element that matches between two arrays.
+ * - `recombine(array $array): array`:
+ * Combines the indices and values of an array into a new array.
+ * - `assocToIndex(array $array): array`:
+ * Combines the values of an array by substituting the indices
+ * into sequential numbers starting at zero into a new array.
+ * - `isAssoc(mixed $array): bool`:
+ * Determines if an array is indexed or associative.
+ * - `isMultidimensional(array $array): bool`:
+ * Determines if an array is multidimensional.
+ * - `arrayValuesRecursive(array $array): array`:
+ * Gets the array values recursively.
+ * - `toBoth(array ...$arrays): array`:
+ * Creates an index or list array to
+ *
+ * @package GenericDatabase\Helpers
+ */
 class Arrays
 {
     /**

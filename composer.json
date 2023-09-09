@@ -54,10 +54,17 @@
             "@clear:cache",
             "@run:docs"
         ],
-        "lint:analyse": "@run:lint:analyse",
-        "lint:debug": "@run:lint:debug",
+        "lint": [
+            "@lint:check",
+            "@lint:analyse",
+            "@lint:md",
+            "@lint:fix"
+        ],
         "lint:check": "@run:lint:check",
+        "lint:analyse": "@run:lint:analyse",
+        "lint:md": "@run:lint:md",
         "lint:fix": "@run:lint:fix",
+        "lint:debug": "@run:lint:debug",
         "test": "@run:test",
         "test:coverage": [
             "@clear:coverage",

@@ -15,11 +15,11 @@ use GenericDatabase\Engine\OCI\Attributes;
 use GenericDatabase\Engine\OCI\DSN;
 use GenericDatabase\Engine\OCI\Dump;
 use GenericDatabase\Engine\OCI\Transaction;
+use GenericDatabase\Engine\OCI\Statements;
 use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Helpers\Translater;
 use GenericDatabase\Helpers\Regex;
 use GenericDatabase\Traits\Setter;
@@ -487,7 +487,7 @@ class OCIEngine implements IConnection
     {
         if (Regex::isSelect($this->queryString)) {
             $this->bindParam(...self::$statementCount);
-            return count($this->internalFetchAllAssoc(self::$statementCount['sqlStatement']));
+            return count(Statements::internalFetchAllAssoc(self::$statementCount['sqlStatement']));
         }
         return 0;
     }
@@ -733,12 +733,12 @@ class OCIEngine implements IConnection
         mixed $optArgs = null
     ): mixed {
         return match ($fetchStyle) {
-            9, 11, 12 => $this->internalFetchClassOrObject(self::$statement, $fetchArgument, $optArgs),
-            14 => $this->internalFetchColumn(self::$statement, $fetchArgument),
-            13 => $this->internalFetchAssoc(self::$statement),
-            8 => $this->internalFetchNum(self::$statement),
-            10 => $this->internalFetchBoth(self::$statement),
-            default => $this->internalFetchBoth(self::$statement),
+            9, 11, 12 => Statements::internalFetchClassOrObject(self::$statement, $fetchArgument, $optArgs),
+            14 => Statements::internalFetchColumn(self::$statement, $fetchArgument),
+            13 => Statements::internalFetchAssoc(self::$statement),
+            8 => Statements::internalFetchNum(self::$statement),
+            10 => Statements::internalFetchBoth(self::$statement),
+            default => Statements::internalFetchBoth(self::$statement),
         };
     }
 
@@ -756,104 +756,13 @@ class OCIEngine implements IConnection
         mixed $optArgs = null
     ): mixed {
         return match ($fetchStyle) {
-            9, 12 => $this->internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
-            14 => $this->internalFetchAllColumn(self::$statement, $fetchArgument),
-            13 => $this->internalFetchAllAssoc(self::$statement),
-            8 => $this->internalFetchAllNum(self::$statement),
-            10 => $this->internalFetchAllBoth(self::$statement),
-            default => $this->internalFetchAllBoth(self::$statement),
+            9, 12 => Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
+            14 => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
+            13 => Statements::internalFetchAllAssoc(self::$statement),
+            8 => Statements::internalFetchAllNum(self::$statement),
+            10 => Statements::internalFetchAllBoth(self::$statement),
+            default => Statements::internalFetchAllBoth(self::$statement),
         };
-    }
-
-    protected function internalFetchClassOrObject(
-        $statement = null,
-        $constructorArguments = [],
-        $aClassOrObject = '\stdClass',
-    ) {
-        $rowData = $this->internalFetchAssoc($statement);
-        $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
-        if (is_array($rowData)) {
-            return Reflections::createObjectAndSetPropertiesCaseInsenstive($aClassOrObject, $fetchArgument, $rowData);
-        }
-        return $rowData;
-    }
-
-    protected function internalFetchBoth($statement = null)
-    {
-        return oci_fetch_array($statement, OCI_BOTH | OCI_RETURN_NULLS | OCI_RETURN_LOBS);
-    }
-
-    protected function internalFetchAssoc($statement = null)
-    {
-        return oci_fetch_assoc($statement);
-    }
-
-    protected function internalFetchNum($statement = null)
-    {
-        return oci_fetch_row($statement);
-    }
-
-    protected function internalFetchColumn($statement = null, $columnIndex = 0)
-    {
-        $row = oci_fetch_array($statement, OCI_NUM | OCI_RETURN_NULLS | OCI_RETURN_LOBS);
-        $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
-        return $row[$fetchArgument] ?? null;
-    }
-
-    protected function internalFetchAllAssoc($statement = null)
-    {
-        $result = [];
-        oci_fetch_all(
-            $statement,
-            $result,
-            0,
-            -1,
-            OCI_FETCHSTATEMENT_BY_ROW | OCI_RETURN_NULLS | OCI_RETURN_LOBS
-        );
-        return $result;
-    }
-
-    protected function internalFetchAllNum($statement = null)
-    {
-        $result = [];
-        while ($data = $this->internalFetchNum($statement)) {
-            $result[] = $data;
-        }
-        return $result;
-    }
-
-    protected function internalFetchAllBoth($statement = null)
-    {
-        $result = [];
-        while ($data = $this->internalFetchBoth($statement)) {
-            $result[] = $data;
-        }
-        return $result;
-    }
-
-    protected function internalFetchAllColumn($statement = null, $columnIndex = 0)
-    {
-        $result = [];
-        $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
-        while ($data = $this->internalFetchColumn($statement, $fetchArgument)) {
-            $result[] = $data;
-        }
-        return $result;
-    }
-
-    protected function internalFetchAllClassOrObjects(
-        $statement = null,
-        $constructorArguments = [],
-        $aClassOrObject = '\sstdClass',
-    ) {
-        $result = [];
-        $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
-        while ($row = $this->internalFetchClassOrObject($statement, $fetchArgument, $aClassOrObject)) {
-            if ($row !== false) {
-                $result[] = $row;
-            }
-        }
-        return $result;
     }
 
     /**

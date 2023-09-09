@@ -50,6 +50,38 @@ use GenericDatabase\Helpers\XML;
  * @method static Connection|static setException(mixed $value): void
  * @method static Connection|static getException($value = null): mixed
  */
+/**
+ * The `Connection` class is responsible for establishing and managing database connections.
+ * It uses a strategy pattern to support different database engines.
+ * The class provides methods for connecting to a database, executing queries, and managing the connection state.
+ *
+ * Example Usage:
+ * <code>
+ * //Create a new connection instance
+ * $connection = Connection::getInstance();
+ *
+ * //Set the database engine
+ * $connection->engine('pdo');
+ *
+ * //Set connection parameters
+ * $connection->setHost('localhost');
+ * $connection->setPort(3306);
+ * $connection->setUser('root');
+ * $connection->setPassword('password');
+ *
+ * //Connect to the database
+ * $connection->connect();
+ *
+ * //Execute a query
+ * $result = $connection->query('SELECT * FROM users');
+ *
+ * //Fetch all rows from the result set
+ * $rows = $connection->fetchAll($result);
+ *
+ * //Disconnect from the database
+ * $connection->disconnect();
+ * </code>
+ */
 #[AllowDynamicProperties]
 class Connection
 {
@@ -94,28 +126,6 @@ class Connection
     {
         return $this->strategy;
     }
-
-    /**
-     * This method is used to get the database connection instance
-     *
-     * @return Connection
-     */
-    // private function getConnection(): Connection
-    // {
-    //     return $this->getStrategy()->getConnection();
-    // }
-
-    /**
-     * Defines the connection instance by strategy
-     *
-     * @param IConnection $strategy
-     * @return Connection
-     */
-    /** @noinspection PhpUnused */
-    // private function setConnection(IConnection $strategy): Connection
-    // {
-    //     return $this->setStrategy($strategy);
-    // }
 
     /**
      * Triggered when invoking inaccessible methods in an object context

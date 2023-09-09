@@ -16,10 +16,10 @@ use GenericDatabase\Engine\PDO\Attributes;
 use GenericDatabase\Engine\PDO\DSN;
 use GenericDatabase\Engine\PDO\Dump;
 use GenericDatabase\Engine\PDO\Transaction;
+use GenericDatabase\Engine\PDO\Statements;
 use GenericDatabase\Helpers\GenericException;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Helpers\Translater;
 use GenericDatabase\Helpers\Regex;
 use GenericDatabase\Traits\Setter;
@@ -474,7 +474,7 @@ class PDOEngine implements IConnection
     {
         if (Regex::isSelect($this->queryString)) {
             $this->bindParam(...self::$statementCount);
-            return count($this->internalFetchAllAssoc(self::$statementCount['sqlStatement']));
+            return count(Statements::internalFetchAllAssoc(self::$statementCount['sqlStatement']));
         }
         return 0;
     }
@@ -724,12 +724,12 @@ class PDOEngine implements IConnection
         mixed $optArgs = null
     ): mixed {
         return match ($fetchStyle) {
-            9, 11, 12 => $this->internalFetchClassOrObject(self::$statement, $fetchArgument, $optArgs),
-            14 => $this->internalFetchColumn(self::$statement, $fetchArgument),
-            13 => $this->internalFetchAssoc(self::$statement),
-            8 => $this->internalFetchNum(self::$statement),
-            10 => $this->internalFetchBoth(self::$statement),
-            default => $this->internalFetchBoth(self::$statement),
+            9, 11, 12 => Statements::internalFetchClassOrObject(self::$statement, $fetchArgument, $optArgs),
+            14 => Statements::internalFetchColumn(self::$statement, $fetchArgument),
+            13 => Statements::internalFetchAssoc(self::$statement),
+            8 => Statements::internalFetchNum(self::$statement),
+            10 => Statements::internalFetchBoth(self::$statement),
+            default => Statements::internalFetchBoth(self::$statement),
         };
     }
 
@@ -747,103 +747,13 @@ class PDOEngine implements IConnection
         mixed $optArgs = null
     ): mixed {
         return match ($fetchStyle) {
-            9, 12 => $this->internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
-            14 => $this->internalFetchAllColumn(self::$statement, $fetchArgument),
-            13 => $this->internalFetchAllAssoc(self::$statement),
-            8 => $this->internalFetchAllNum(self::$statement),
-            10 => $this->internalFetchAllBoth(self::$statement),
-            default => $this->internalFetchAllBoth(self::$statement),
+            9, 12 => Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
+            14 => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
+            13 => Statements::internalFetchAllAssoc(self::$statement),
+            8 => Statements::internalFetchAllNum(self::$statement),
+            10 => Statements::internalFetchAllBoth(self::$statement),
+            default => Statements::internalFetchAllBoth(self::$statement),
         };
-    }
-
-    protected function internalFetchClassOrObject(
-        $statement = null,
-        $constructorArguments = [],
-        $aClassOrObject = '\stdClass',
-    ) {
-        $rowData = $this->internalFetchAssoc($statement);
-        $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
-        if (is_array($rowData)) {
-            return Reflections::createObjectAndSetPropertiesCaseInsenstive($aClassOrObject, $fetchArgument, $rowData);
-        }
-        return $rowData;
-    }
-
-    protected function internalFetchBoth($statement = null)
-    {
-        return $statement->fetch(PDO::FETCH_BOTH);
-    }
-
-    protected function internalFetchAssoc($statement = null)
-    {
-        return $statement->fetch(PDO::FETCH_ASSOC);
-    }
-
-    protected function internalFetchNum($statement = null)
-    {
-        return $statement->fetch(PDO::FETCH_NUM);
-    }
-
-    protected function internalFetchColumn($statement = null, $columnIndex = 0)
-    {
-        $rowData = $this->internalFetchNum($statement);
-        $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
-        if (is_array($rowData)) {
-            return isset($rowData[$fetchArgument]) ? $rowData[$fetchArgument] : null;
-        }
-        return false;
-    }
-
-    protected function internalFetchAllAssoc($statement = null)
-    {
-        $result = [];
-        while ($data = $this->internalFetchAssoc($statement)) {
-            $result[] = $data;
-        }
-        return $result;
-    }
-
-    protected function internalFetchAllNum($statement = null)
-    {
-        $result = [];
-        while ($data = $this->internalFetchNum($statement)) {
-            $result[] = $data;
-        }
-        return $result;
-    }
-
-    protected function internalFetchAllBoth($statement = null)
-    {
-        $result = [];
-        while ($data = $this->internalFetchBoth($statement)) {
-            $result[] = $data;
-        }
-        return $result;
-    }
-
-    protected function internalFetchAllColumn($statement = null, $columnIndex = 0)
-    {
-        $result = [];
-        $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
-        while ($data = $this->internalFetchColumn($statement, $fetchArgument)) {
-            $result[] = $data;
-        }
-        return $result;
-    }
-
-    protected function internalFetchAllClassOrObjects(
-        $statement = null,
-        $constructorArguments = [],
-        $aClassOrObject = '\sstdClass',
-    ) {
-        $result = [];
-        $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
-        while ($row = $this->internalFetchClassOrObject($statement, $fetchArgument, $aClassOrObject)) {
-            if ($row !== false) {
-                $result[] = $row;
-            }
-        }
-        return $result;
     }
 
     /**

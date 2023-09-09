@@ -8,6 +8,71 @@ use ReflectionObject;
 use ReflectionProperty;
 use GenericDatabase\Helpers\GenericException;
 
+/**
+ * The `GenericDatabase\Helpers\Reflections` class provides various reflection-based
+ * methods to interact with classes and objects in PHP.
+ * It allows you to perform tasks such as getting class instances, retrieving constants and properties,
+ * creating objects, and setting properties in a case-insensitive manner.
+ *
+ * Example Usage:
+ * <code>
+ * // Get a singleton instance of a class
+ * $instance = Translater::getSingletonInstance('ClassName');
+ *
+ * // Check if a method exists in a class
+ * $exists = Translater::isSingletonMethodExits('ClassName');
+ *
+ * // Get a class instance
+ * $classInstance = Translater::getClassInstance('ClassName');
+ *
+ * // Get all constants of a class
+ * $constants = Translater::getClassConstants('ClassName');
+ *
+ * // Get the name of a constant by its value
+ * $constantName = Translater::getClassConstantName('ClassName', $constantValue);
+ *
+ * // Get the value of a class property by its name
+ * $propertyValue = Translater::getClassPropertyName('ClassName', 'propertyName');
+ *
+ * // Create an object and set properties in a case-insensitive manner
+ * $object = Translater::createObjectAndSetPropertiesCaseInsensitive('ClassName', $constructorArgs, $propertyList);
+ *
+ * // Convert multiple arguments into an associative array
+ * $argsArray = Translater::argsToArray($arg1, $arg2, $arg3);
+ * </code>
+ *
+ * Main functionalities:
+ * - Get singleton instances of classes
+ * - Check if a method exists in a class
+ * - Get class instances
+ * - Get all constants of a class
+ * - Get the name of a constant by its value
+ * - Get the value of a class property by its name
+ * - Create objects and set properties in a case-insensitive manner
+ * - Convert multiple arguments into an associative array
+ *
+ * Methods:
+ * - `getSingletonInstance($class)`:
+ * Gets a singleton instance of a class by calling the default method `getInstance` defined in the class.
+ * - `isSingletonMethodExits($class)`:
+ * Checks if the default method `getInstance` exists in a class and is static.
+ * - `getClassInstance($class)`:
+ * Gets a `ReflectionClass` instance for the given class.
+ * - `getClassConstants($class)`:
+ * Gets all constants defined in a class.
+ * - `getClassConstantName($class, $field)`:
+ * Gets the name of a constant in a class by its value.
+ * - `getClassPropertyName($class, $prop)`:
+ * Gets the value of a class property by its name.
+ * - `createObjectAndSetPropertiesCaseInsensitive($classOrObject, $constructorArgArray, $propertyList)`:
+ * Creates an object and sets its properties in a case-insensitive manner.
+ * - `argsToArray(...$args)`:
+ * Converts multiple arguments into an associative array.
+ *
+ * Fields:
+ * - `defaultMethod`:
+ * A static field that stores the default method name (`getInstance`) used for getting singleton instances.
+ */
 class Reflections
 {
     /**
@@ -20,14 +85,15 @@ class Reflections
      * Get singleton instance
      *
      * @param mixed $class The class object or instance
-     * @return mixed
+     * @return mixed The singleton instance of the class
+     * @throws GenericException If the method does not exist in the class
      */
     public static function getSingletonInstance($class): mixed
     {
         try {
             $result = call_user_func($class . '::' . self::$defaultMethod);
         } catch (GenericException $error) {
-            $message = sprintf('Method %s not founded in the class %s', self::$defaultMethod, $class);
+            $message = sprintf('Method %s not found in the class %s', self::$defaultMethod, $class);
             throw new GenericException($message);
         }
         return $result;
@@ -37,15 +103,16 @@ class Reflections
      * Detect if method exists in class
      *
      * @param mixed $class The class object or instance
-     * @return mixed
+     * @return bool A boolean indicating if the method exists and is static
+     * @throws GenericException If the method does not exist or is not static
      */
-    public static function isSingletonMethodExits($class): mixed
+    public static function isSingletonMethodExists($class): bool
     {
         try {
             $method = new ReflectionMethod($class, self::$defaultMethod);
             $result = ($method->isStatic()) ? true : false;
         } catch (GenericException) {
-            $message = sprintf('Method %s not founded in the class %s', self::$defaultMethod, $class);
+            $message = sprintf('Method %s not found in the class %s', self::$defaultMethod, $class);
             throw new GenericException($message);
         }
         return $result;
@@ -55,7 +122,7 @@ class Reflections
      * Get class instance
      *
      * @param mixed $class The class object or instance
-     * @return mixed
+     * @return mixed A ReflectionClass instance for the given class
      */
     public static function getClassInstance($class): mixed
     {
@@ -66,7 +133,7 @@ class Reflections
      * Get all constants of the class
      *
      * @param mixed $class The class object or instance
-     * @return mixed
+     * @return mixed An array of all constants defined in the class
      */
     public static function getClassConstants($class): mixed
     {
@@ -74,11 +141,11 @@ class Reflections
     }
 
     /**
-     * Get all constants of the class by name and value
+     * Get the name of a constant by its value
      *
      * @param mixed $class The class object or instance
-     * @param mixed $field Get the constant name data
-     * @return mixed
+     * @param mixed $field The constant name or value
+     * @return mixed The name of a constant by its value
      */
     public static function getClassConstantName($class, $field): mixed
     {
@@ -86,11 +153,11 @@ class Reflections
     }
 
     /**
-     * Get all property of the class by name
+     * Get the value of a class property by its name
      *
      * @param mixed $class The class object or instance
-     * @param mixed $prop Get the property name data
-     * @return mixed
+     * @param mixed $prop The property name
+     * @return mixed The value of a class property by its name
      */
     public static function getClassPropertyName($class, $prop): mixed
     {
@@ -98,60 +165,86 @@ class Reflections
     }
 
     /**
-     * @param $aClassOrObject
-     * @param array $aConstructorArgArray
-     * @param array $aPropertyList
-     * @return mixed|object|string
+     * Creates an object and sets its properties in a case-insensitive manner.
+     *
+     * @param mixed $classOrObject The class object or instance, or the class name as a string.
+     * @param array $constructorArgArray An array of constructor arguments.
+     * @param array $propertyList An array of properties to be set on the object.
+     * @return mixed|object|string The created object with the properties set in a case-insensitive manner.
      * @throws \ReflectionException
      */
-    public static function createObjectAndSetPropertiesCaseInsenstive(
-        $aClassOrObject,
-        array $aConstructorArgArray,
-        array $aPropertyList
+    public static function createObjectAndSetPropertiesCaseInsensitive(
+        $classOrObject,
+        array $constructorArgArray,
+        array $propertyList
     ) {
-        $callConstructor = false;
-        if (is_object($aClassOrObject)) {
-            $result = $aClassOrObject;
-            $reflector = new ReflectionObject($aClassOrObject);
-        } else {
-            if (!is_string($aClassOrObject)) {
-                $aClassOrObject = '\stdClass';
-            }
-            $classReflector = new ReflectionClass($aClassOrObject);
-            if (method_exists($classReflector, 'newInstanceWithoutConstructor')) {
-                $result = $classReflector->newInstanceWithoutConstructor();
-                $callConstructor = true;
-            } else {
-                $result = $classReflector->newInstance($aConstructorArgArray);
-            }
-            $reflector = new ReflectionObject((object) $result);
-        }
-        $propertyReflections = $reflector->getProperties();
-        foreach ($aPropertyList as $properyName => $propertyValue) {
-            $createNewProperty = true;
-            foreach ($propertyReflections as $propertyReflector) { /* @var $propertyReflector ReflectionProperty */
-                if (strcasecmp($properyName, $propertyReflector->name) == 0) {
-                    $propertyReflector->setValue($result, $propertyValue);
-                    $createNewProperty = false;
-                    break;
-                }
-            }
-            if ($createNewProperty) {
-                $result->$properyName = $propertyValue;
-            }
-        }
-        if ($callConstructor) {
-            $constructor = $reflector->getConstructor();
-            if ($constructor) {
-                $constructor->invokeArgs($result, $aConstructorArgArray);
-            }
-        }
+        $result = self::createObject($classOrObject, $constructorArgArray);
+        self::setPropertiesCaseInsensitive($result, $propertyList);
+
         return $result;
     }
 
     /**
-     * @param mixed $args
-     * @return mixed
+     * Creates an object based on the given class or object.
+     *
+     * @param mixed $classOrObject The class object or instance, or the class name as a string.
+     * @param array $constructorArgArray An array of constructor arguments.
+     * @return mixed|object|string The created object.
+     */
+    private static function createObject($classOrObject, array $constructorArgArray)
+    {
+        if (is_object($classOrObject)) {
+            return $classOrObject;
+        }
+
+        if (!is_string($classOrObject)) {
+            $classOrObject = '\stdClass';
+        }
+
+        $classReflector = new ReflectionClass($classOrObject);
+
+        if (method_exists($classReflector, 'newInstanceWithoutConstructor')) {
+            return $classReflector->newInstanceWithoutConstructor(); //NOSONAR
+        } else {
+            return $classReflector->newInstance($constructorArgArray);
+        }
+    }
+
+    /**
+     * Sets the properties on the object in a case-insensitive manner.
+     *
+     * @param object $object The object to set the properties on.
+     * @param array $propertyList An array of properties to be set on the object.
+     * @return void
+     */
+    private static function setPropertiesCaseInsensitive($object, array $propertyList)
+    {
+        $reflector = new ReflectionObject($object);
+        $propertyReflections = $reflector->getProperties();
+
+        foreach ($propertyList as $propertyName => $propertyValue) {
+            $propertyNameLower = strtolower($propertyName);
+            $propertyFound = false;
+
+            foreach ($propertyReflections as $propertyReflection) {
+                if (strtolower($propertyReflection->name) === $propertyNameLower) {
+                    $propertyReflection->setValue($object, $propertyValue); //NOSONAR
+                    $propertyFound = true;
+                    break;
+                }
+            }
+
+            if (!$propertyFound) {
+                $object->$propertyName = $propertyValue;
+            }
+        }
+    }
+
+    /**
+     * Converts multiple arguments into an associative array.
+     *
+     * @param mixed ...$args The arguments to convert.
+     * @return array The converted associative array.
      */
     public static function argsToArray(...$args)
     {
