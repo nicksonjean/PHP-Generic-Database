@@ -168,7 +168,7 @@ final class CompareTest extends TestCase
 
     public function testInvalidConnection()
     {
-        $invalidConnection = new \stdClass;
+        $invalidConnection = new \stdClass();
 
         $type = Compare::connection($invalidConnection);
 
