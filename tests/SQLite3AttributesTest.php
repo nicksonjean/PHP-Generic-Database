@@ -83,7 +83,7 @@ final class SQLite3AttributesTest extends TestCase
         }
     }
 
-    function testThrowExceptionInvalidAttribute()
+    public function testThrowExceptionInvalidAttribute()
     {
         $this->expectException(CustomException::class);
         $this->expectExceptionMessage("Invalid attribute: INVALID_ATTRIBUTE");
