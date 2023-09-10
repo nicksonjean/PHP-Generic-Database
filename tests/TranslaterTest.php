@@ -1,5 +1,7 @@
 <?php
 
+namespace GenericDatabase\Tests;
+
 use GenericDatabase\Helpers\Translater;
 use PHPUnit\Framework\TestCase;
 

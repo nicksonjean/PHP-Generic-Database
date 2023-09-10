@@ -17,35 +17,35 @@ use GenericDatabase\Helpers\GenericException;
  * Example Usage:
  * <code>
  * // Get a singleton instance of a class
- * $instance = Translater::getSingletonInstance('ClassName');
+ * $instance = Translater::getSingletonInstance(MyClass::class);
  *
  * // Check if a method exists in a class
- * $exists = Translater::isSingletonMethodExits('ClassName');
+ * $exists = Translater::isSingletonMethodExits(MyClass::class);
  *
  * // Get a class instance
- * $classInstance = Translater::getClassInstance('ClassName');
+ * $classInstance = Translater::getClassInstance(MyClass::class);
  *
  * // Get all constants of a class
- * $constants = Translater::getClassConstants('ClassName');
+ * $constants = Translater::getClassConstants(MyClass::class);
  *
  * // Get the name of a constant by its value
- * $constantName = Translater::getClassConstantName('ClassName', $constantValue);
+ * $constantName = Translater::getClassConstantName(MyClass::class, $constantValue);
  *
  * // Get the value of a class property by its name
- * $propertyValue = Translater::getClassPropertyName('ClassName', 'propertyName');
+ * $propertyValue = Translater::getClassPropertyName(MyClass::class, 'propertyName');
  *
  * // Create an object and set properties in a case-insensitive manner
- * $object = Translater::createObjectAndSetPropertiesCaseInsensitive('ClassName', $constructorArgs, $propertyList);
+ * $object = Translater::createObjectAndSetPropertiesCaseInsensitive(MyClass::class, $constructorArgs, $propertyList);
  *
  * // Convert multiple arguments into an associative array
  * $argsArray = Translater::argsToArray($arg1, $arg2, $arg3);
  * </code>
  *
  * Main functionalities:
- * - Get singleton instances of classes
- * - Check if a method exists in a class
- * - Get class instances
- * - Get all constants of a class
+ * - Get the singleton instance of a class by calling a static method
+ * - Check if a method exists and is static in a class
+ * - Get a ReflectionClass instance for a class
+ * - Get all constants defined in a class
  * - Get the name of a constant by its value
  * - Get the value of a class property by its name
  * - Create objects and set properties in a case-insensitive manner
@@ -53,17 +53,19 @@ use GenericDatabase\Helpers\GenericException;
  *
  * Methods:
  * - `getSingletonInstance($class)`:
- * Gets a singleton instance of a class by calling the default method `getInstance` defined in the class.
+ * Retrieves the singleton instance of a class by calling a static method.
+ * Throws an exception if the method does not exist.
  * - `isSingletonMethodExits($class)`:
- * Checks if the default method `getInstance` exists in a class and is static.
+ * Checks if a method exists and is static in a class.
+ * Throws an exception if the method does not exist or is not static.
  * - `getClassInstance($class)`:
- * Gets a `ReflectionClass` instance for the given class.
+ * Returns a `ReflectionClass` instance for the given class.
  * - `getClassConstants($class)`:
- * Gets all constants defined in a class.
+ * Returns an array of all constants defined in the class.
  * - `getClassConstantName($class, $field)`:
- * Gets the name of a constant in a class by its value.
+ * Returns the name of a constant by its value.
  * - `getClassPropertyName($class, $prop)`:
- * Gets the value of a class property by its name.
+ * Returns the value of a class property by its name.
  * - `createObjectAndSetPropertiesCaseInsensitive($classOrObject, $constructorArgArray, $propertyList)`:
  * Creates an object and sets its properties in a case-insensitive manner.
  * - `argsToArray(...$args)`:
@@ -91,7 +93,7 @@ class Reflections
     public static function getSingletonInstance($class): mixed
     {
         try {
-            $result = call_user_func($class . '::' . self::$defaultMethod);
+            $result = $class::{self::$defaultMethod}();
         } catch (GenericException $error) {
             $message = sprintf('Method %s not found in the class %s', self::$defaultMethod, $class);
             throw new GenericException($message);
@@ -149,7 +151,7 @@ class Reflections
      */
     public static function getClassConstantName($class, $field): mixed
     {
-        return array_flip((self::getClassInstance($class))->getConstants())[$field];
+        return array_search($field, (self::getClassInstance($class))->getConstants());
     }
 
     /**
@@ -203,7 +205,7 @@ class Reflections
 
         $classReflector = new ReflectionClass($classOrObject);
 
-        if (method_exists($classReflector, 'newInstanceWithoutConstructor')) {
+        if ($classReflector->hasMethod('newInstanceWithoutConstructor')) {
             return $classReflector->newInstanceWithoutConstructor(); //NOSONAR
         } else {
             return $classReflector->newInstance($constructorArgArray);
@@ -223,11 +225,11 @@ class Reflections
         $propertyReflections = $reflector->getProperties();
 
         foreach ($propertyList as $propertyName => $propertyValue) {
-            $propertyNameLower = strtolower($propertyName);
+            $propertyNameLower = mb_strtolower($propertyName);
             $propertyFound = false;
 
             foreach ($propertyReflections as $propertyReflection) {
-                if (strtolower($propertyReflection->name) === $propertyNameLower) {
+                if (mb_strtolower($propertyReflection->name) === $propertyNameLower) {
                     $propertyReflection->setValue($object, $propertyValue); //NOSONAR
                     $propertyFound = true;
                     break;
