@@ -3,23 +3,8 @@
 namespace GenericDatabase\Tests;
 
 use GenericDatabase\Helpers\Reflections;
+use GenericDatabase\Tests\Reflections\MyClass;
 use PHPUnit\Framework\TestCase;
-
-class MyClass
-{
-    const MY_CONSTANT = 'myConstantValue';
-    public static $myProperty = 'myPropertyValue';
-
-    public static function getInstance()
-    {
-        return new self();
-    }
-}
-
-class InvalidClass
-{
-    // Esta classe não possui o método getInstance
-}
 
 final class ReflectionsTest extends TestCase
 {
