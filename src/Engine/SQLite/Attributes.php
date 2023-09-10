@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\SQLite;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 use SQLite3;
 
 #[AllowDynamicProperties]
@@ -42,7 +42,7 @@ class Attributes
      * Define all SQLite attribute of the connection a ready exist
      *
      * @return void
-     * @throws GenericException
+     * @throws CustomException
      */
     public static function define(): void
     {
@@ -75,7 +75,7 @@ class Attributes
                     : 30,
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => 3,
-                default => throw new GenericException("Invalid attribute: $attribute"),
+                default => throw new CustomException("Invalid attribute: $attribute"),
             };
         }
         SQLiteEngine::getInstance()->setAttributes($result);
