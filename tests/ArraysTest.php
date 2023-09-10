@@ -57,42 +57,33 @@ final class ArraysTest extends TestCase
 
     public function testArrayAssocToIndex()
     {
-        // Arrange
         $array = ['a', 'b', 'c'];
         $expectedResult = [0 => 'a', 1 => 'b', 2 => 'c'];
 
-        // Act
         $result = Arrays::assocToIndex($array);
 
-        // Assert
         $this->assertEquals($expectedResult, $result);
     }
 
     public function testIsArrayAssoc()
     {
-        // Arrange
         $associativeArray = ['a' => 1, 'b' => 2, 'c' => 3];
         $indexedArray = [1, 2, 3];
 
-        // Act
         $isAssociativeArray = Arrays::isAssoc($associativeArray);
         $isIndexedArray = Arrays::isAssoc($indexedArray);
 
-        // Assert
         $this->assertTrue($isAssociativeArray);
         $this->assertFalse($isIndexedArray);
     }
 
     public function testArrayAssocToIndexEmptyArray()
     {
-        // Arrange
         $array = ['a' => 'b'];
         $expectedResult = [0 => 'b'];
 
-        // Act
         $result = Arrays::assocToIndex($array);
 
-        // Assert
         $this->assertEquals($expectedResult, $result);
     }
 
