@@ -20,7 +20,7 @@ use GenericDatabase\Helpers\GenericException;
  * $instance = Translater::getSingletonInstance(MyClass::class);
  *
  * // Check if a method exists in a class
- * $exists = Translater::isSingletonMethodExits(MyClass::class);
+ * $exists = Translater::isSingletonMethodExists(MyClass::class);
  *
  * // Get a class instance
  * $classInstance = Translater::getClassInstance(MyClass::class);
@@ -55,7 +55,7 @@ use GenericDatabase\Helpers\GenericException;
  * - `getSingletonInstance($class)`:
  * Retrieves the singleton instance of a class by calling a static method.
  * Throws an exception if the method does not exist.
- * - `isSingletonMethodExits($class)`:
+ * - `isSingletonMethodExists($class)`:
  * Checks if a method exists and is static in a class.
  * Throws an exception if the method does not exist or is not static.
  * - `getClassInstance($class)`:

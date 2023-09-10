@@ -40,7 +40,7 @@ trait Caller
      */
     public static function __callStatic(string $name, array $arguments): mixed
     {
-        if (Reflections::isSingletonMethodExits(__CLASS__)) {
+        if (Reflections::isSingletonMethodExists(__CLASS__)) {
             $instance = Reflections::getSingletonInstance(__CLASS__);
             $instance::call($name, $arguments);
             return $instance;
