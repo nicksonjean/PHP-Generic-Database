@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 final class ArraysTest extends TestCase
 {
-    public function test_exceptByKeys_happyPath()
+    public function testExceptByKeys()
     {
         $array = ['a' => 1, 'b' => 2, 'c' => 3];
         $keys = ['a', 'c'];
@@ -16,7 +16,7 @@ final class ArraysTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function test_exceptByValues_happyPath()
+    public function testExceptByValue()
     {
         $array = ['a', 'b', 'c'];
         $values = ['b', 'c'];
@@ -27,19 +27,19 @@ final class ArraysTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function test_isMultidimensional_happyPath()
+    public function testIsMultidimensional()
     {
-        $multidimensionalArray = [['a' => 1], ['b' => 2]];
-        $nonMultidimensionalArray = ['a', 'b', 'c'];
+        $multArray = [['a' => 1], ['b' => 2]];
+        $nonMultArray = ['a', 'b', 'c'];
 
-        $multidimensionalResult = Arrays::isMultidimensional($multidimensionalArray);
-        $nonMultidimensionalResult = Arrays::isMultidimensional($nonMultidimensionalArray);
+        $multResult = Arrays::isMultidimensional($multArray);
+        $nonmultResult = Arrays::isMultidimensional($nonMultArray);
 
-        $this->assertTrue($multidimensionalResult);
-        $this->assertFalse($nonMultidimensionalResult);
+        $this->assertTrue($multResult);
+        $this->assertFalse($nonmultResult);
     }
 
-    public function test_arrayValuesRecursive_happyPath()
+    public function testArrayValuesRecursive()
     {
         $array = [];
         $expectedResult = [];
@@ -53,7 +53,7 @@ final class ArraysTest extends TestCase
         );
     }
 
-    public function test_arrayAssocToIndex_happyPath()
+    public function testArrayAssocToIndex()
     {
         // Arrange
         $array = ['a', 'b', 'c'];
@@ -66,7 +66,7 @@ final class ArraysTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function test_isArrayAssoc_happyPath()
+    public function testIsArrayAssoc()
     {
         // Arrange
         $associativeArray = ['a' => 1, 'b' => 2, 'c' => 3];
@@ -81,7 +81,7 @@ final class ArraysTest extends TestCase
         $this->assertFalse($isIndexedArray);
     }
 
-    public function test_arrayAssocToIndex_emptyArray()
+    public function testArrayAssocToIndexEmptyArray()
     {
         // Arrange
         $array = ['a' => 'b'];
@@ -94,7 +94,7 @@ final class ArraysTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function test_arrayValuesRecursive_emptyArray()
+    public function testArrayValuesRecursiveEmptyArray()
     {
         $array = [];
         $expected = [];
@@ -102,7 +102,7 @@ final class ArraysTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_arrayValuesRecursive_nonEmptyArray()
+    public function testArrayValuesRecursiveNonEmptyArray()
     {
         $array = [1];
         $expected = [1];
@@ -110,7 +110,7 @@ final class ArraysTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_isArrayAssoc_emptyArray()
+    public function testIsArrayAssocEmptyArray()
     {
         $array = [];
         $expectedResult = false;
@@ -120,7 +120,7 @@ final class ArraysTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function test_exceptByKeys_emptyArray()
+    public function testExceptByKeysEmptyArray()
     {
         $array = ['a' => 1, 'b' => 2, 'c' => 3];
         $keys = ['a', 'b', 'c'];
@@ -131,7 +131,7 @@ final class ArraysTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function test_exceptByValues_emptyArray()
+    public function testExceptByValuesEmptyArray()
     {
         $array = ['a', 'b', 'c'];
         $values = ['a', 'b', 'c'];

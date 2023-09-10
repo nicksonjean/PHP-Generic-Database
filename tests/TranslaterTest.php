@@ -14,7 +14,7 @@ final class TranslaterTest extends TestCase
         self::$twoParamInputQuery = "SELECT * FROM users WHERE id = :id AND name = :name";
     }
 
-    public function test_translate_sql_query_no_parameters()
+    public function testTranslateSqlQueryNoParameters()
     {
         $input = "SELECT * FROM users";
         $expected = "SELECT * FROM users";
@@ -24,7 +24,7 @@ final class TranslaterTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_translate_sql_query_named_parameters()
+    public function testTranslateSqlQueryNamedParameters()
     {
         $input = self::$twoParamInputQuery;
         $expected = "SELECT * FROM users WHERE id = ? AND name = ?";
@@ -34,7 +34,7 @@ final class TranslaterTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_translate_sql_query_unnamed_parameters()
+    public function testTranslateSqlQueryUnnamedParameters()
     {
         $input = self::$twoParamInputQuery;
         $expected = "SELECT * FROM users WHERE id = ? AND name = ?";
@@ -44,7 +44,7 @@ final class TranslaterTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_translate_sql_query_single_quotes()
+    public function testTranslateSqlQuerySingleQuotes()
     {
         $input = self::$oneParamInputQuery;
         $expected = "SELECT '*' FROM 'users' WHERE 'name' = ?";
@@ -57,7 +57,7 @@ final class TranslaterTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_translate_sql_query_double_quotes()
+    public function testTranslateSqlQueryDoubleQuotes()
     {
         $input = self::$oneParamInputQuery;
         $expected = 'SELECT "*" FROM "users" WHERE "name" = ?';
@@ -70,7 +70,7 @@ final class TranslaterTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_translate_sql_query_backticks()
+    public function testTranslateSqlQueryBackticks()
     {
         $input = self::$oneParamInputQuery;
         $expected = "SELECT `*` FROM `users` WHERE `name` = ?";
@@ -83,7 +83,7 @@ final class TranslaterTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_translate_sql_query_parentheses()
+    public function testTranslateSqlQueryParentheses()
     {
         $input = "SELECT * FROM users WHERE (name = 'John' AND age > 30)";
         $expected = "SELECT * FROM users WHERE (name = 'John' AND age > 30)";
@@ -93,7 +93,7 @@ final class TranslaterTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_translate_sql_query_commas()
+    public function testTranslateSqlQueryCommas()
     {
         $input = "SELECT name, age, email FROM users";
         $expected = "SELECT name, age, email FROM users";
@@ -103,7 +103,7 @@ final class TranslaterTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_translate_sql_query_forbidden_words()
+    public function testTranslateSqlQueryForbiddenWords()
     {
         $input = "SELECT * FROM users WHERE name = 'DELETE'";
         $expected = "SELECT * FROM users WHERE name = 'DELETE'";

@@ -2,10 +2,6 @@
 
 namespace GenericDatabase\Helpers;
 
-use PDO;
-use MySQLi;
-use PgSql\Connection;
-use SQLite3;
 use GenericDatabase\Helpers\ConnectionType as An;
 
 /**
@@ -69,11 +65,11 @@ class Compare
         if (is_resource($cnx)) {
             return self::getResourceConnectionType($cnx);
         } elseif (
-            $cnx instanceof PDO ||
-            $cnx instanceof SQLite3 ||
-            $cnx instanceof MySQLi ||
-            $cnx instanceof Connection ||
-            $cnx instanceof PgSQL\Connection
+            $cnx instanceof \PDO ||
+            $cnx instanceof \SQLite3 ||
+            $cnx instanceof \MySQLi ||
+            $cnx instanceof \GenericDatabase\Connection ||
+            $cnx instanceof \PgSQL\Connection
         ) {
             return self::getObjectConnectionType($cnx);
         } else {
@@ -116,7 +112,7 @@ class Compare
     private static function getObjectConnectionType($cnx)
     {
         $its = fn ($name) => $name->value;
-        $attr = fn ($cnx) => $cnx->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $attr = fn ($cnx) => $cnx->getAttribute(\PDO::ATTR_DRIVER_NAME);
         return match (true) {
             is_a($cnx, $its(An::NAT_MYSQLI)) && get_class($cnx) === $its(An::NAT_MYSQLI) => 'mysqli',
             is_a($cnx, $its(An::NAT_SQLITE)) && get_class($cnx) === $its(An::NAT_SQLITE) => 'sqlite',

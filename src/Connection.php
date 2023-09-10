@@ -21,36 +21,6 @@ use GenericDatabase\Helpers\YAML;
 use GenericDatabase\Helpers\XML;
 
 /**
- * Dynamic and Static container class for Connection connections.
- *
- * @method static Connection|static setEngine(mixed $value): void
- * @method static Connection|static getEngine($value = null): mixed
- * @method static Connection|static setDriver(mixed $value): void
- * @method static Connection|static getDriver($value = null): mixed
- * @method static Connection|static setHost(mixed $value): void
- * @method static Connection|static getHost($value = null): mixed
- * @method static Connection|static setPort(mixed $value): void
- * @method static Connection|static getPort($value = null): mixed
- * @method static Connection|static setUser(mixed $value): void
- * @method static Connection|static getUser($value = null): mixed
- * @method static Connection|static setPassword(mixed $value): void
- * @method static Connection|static getPassword($value = null): mixed
- * @method static Connection|static setDatabase(mixed $value): void
- * @method static Connection|static getDatabase($value = null): mixed
- * @method static Connection|static setOptions(mixed $value): void
- * @method static Connection|static getOptions($value = null): mixed
- * @method static Connection|static setConnected(mixed $value): void
- * @method static Connection|static getConnected($value = null): mixed
- * @method static Connection|static setDsn(mixed $value): void
- * @method static Connection|static getDsn($value = null): mixed
- * @method static Connection|static setAttributes(mixed $value): void
- * @method static Connection|static getAttributes($value = null): mixed
- * @method static Connection|static setCharset(mixed $value): void
- * @method static Connection|static getCharset($value = null): mixed
- * @method static Connection|static setException(mixed $value): void
- * @method static Connection|static getException($value = null): mixed
- */
-/**
  * The `Connection` class is responsible for establishing and managing database connections.
  * It uses a strategy pattern to support different database engines.
  * The class provides methods for connecting to a database, executing queries, and managing the connection state.
@@ -81,6 +51,35 @@ use GenericDatabase\Helpers\XML;
  * //Disconnect from the database
  * $connection->disconnect();
  * </code>
+ *
+ * Dynamic and Static container class for Connection connections.
+ *
+ * @method static Connection|static setEngine(mixed $value): void
+ * @method static Connection|static getEngine($value = null): mixed
+ * @method static Connection|static setDriver(mixed $value): void
+ * @method static Connection|static getDriver($value = null): mixed
+ * @method static Connection|static setHost(mixed $value): void
+ * @method static Connection|static getHost($value = null): mixed
+ * @method static Connection|static setPort(mixed $value): void
+ * @method static Connection|static getPort($value = null): mixed
+ * @method static Connection|static setUser(mixed $value): void
+ * @method static Connection|static getUser($value = null): mixed
+ * @method static Connection|static setPassword(mixed $value): void
+ * @method static Connection|static getPassword($value = null): mixed
+ * @method static Connection|static setDatabase(mixed $value): void
+ * @method static Connection|static getDatabase($value = null): mixed
+ * @method static Connection|static setOptions(mixed $value): void
+ * @method static Connection|static getOptions($value = null): mixed
+ * @method static Connection|static setConnected(mixed $value): void
+ * @method static Connection|static getConnected($value = null): mixed
+ * @method static Connection|static setDsn(mixed $value): void
+ * @method static Connection|static getDsn($value = null): mixed
+ * @method static Connection|static setAttributes(mixed $value): void
+ * @method static Connection|static getAttributes($value = null): mixed
+ * @method static Connection|static setCharset(mixed $value): void
+ * @method static Connection|static getCharset($value = null): mixed
+ * @method static Connection|static setException(mixed $value): void
+ * @method static Connection|static getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class Connection
