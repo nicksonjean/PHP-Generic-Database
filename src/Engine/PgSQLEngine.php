@@ -98,7 +98,6 @@ if (!defined('FETCH_COLUMN')) {
  * @method static PgSQLEngine|static getCharset($value = null): mixed
  * @method static PgSQLEngine|static setException(mixed $value): void
  * @method static PgSQLEngine|static getException($value = null): mixed
- * @property mixed|null $statement
  */
 #[AllowDynamicProperties]
 class PgSQLEngine implements IConnection

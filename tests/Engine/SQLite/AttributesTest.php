@@ -87,12 +87,12 @@ final class AttributesTest extends TestCase
     {
         $this->expectException(CustomException::class);
         $this->expectExceptionMessage("Invalid attribute: INVALID_ATTRIBUTE");
-        $originalAttributeList = Attributes::$attributeList;
+        $origAttributeList = Attributes::$attributeList;
         Attributes::$attributeList[] = 'INVALID_ATTRIBUTE';
         try {
             Attributes::define();
         } finally {
-            Attributes::$attributeList = $originalAttributeList;
+            Attributes::$attributeList = $origAttributeList;
         }
     }
 }

@@ -750,7 +750,7 @@ class SQLSrvEngine implements IConnection
         mixed $fetchArgument = null,
         mixed $optArgs = null
     ): array {
-            return match ($fetchStyle) {
+        return match ($fetchStyle) {
             9, 12 => Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
             14 => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
             13 => Statements::internalFetchAllAssoc(self::$statement),

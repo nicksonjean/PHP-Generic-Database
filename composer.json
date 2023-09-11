@@ -33,8 +33,7 @@
         "ext-xmlreader": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
-        "ext-yaml": "*",
-        "": ""
+        "ext-yaml": "*"
     },    
     "require-dev": {
         "php": "^8.1",
