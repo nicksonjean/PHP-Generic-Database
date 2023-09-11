@@ -6,7 +6,7 @@ use Exception;
 use Throwable;
 use Stringable;
 
-class GenericException extends Exception implements Throwable, Stringable
+class GenericException extends Exception implements Throwable
 {
     /**
      * @var int

@@ -6,7 +6,7 @@ namespace GenericDatabase\Helpers;
  * The `GenericDatabase\Helpers\Arrays` class provides a collection of static methods for manipulating arrays in PHP.
  * It includes functions for finding elements in an array,
  * combining array indices and values,
- * determining the type of an array, and more.
+ * determining the type of array, and more.
  *
  * Example Usage:
  * <code>

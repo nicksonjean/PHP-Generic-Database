@@ -410,9 +410,9 @@ class SQLSrvEngine implements IConnection
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
         $string = $params[0];
         return match (true) {
@@ -443,7 +443,7 @@ class SQLSrvEngine implements IConnection
      *
      * @return array An associative array with keys 'queryRows' and 'affectedRows'.
      */
-    public function queryMetadata()
+    public function queryMetadata(): array
     {
         return [
             'queryString' => $this->queryString,
@@ -485,7 +485,7 @@ class SQLSrvEngine implements IConnection
     }
 
     /**
-     * Returns the number of columns in an statement result.
+     * Returns the number of columns in a statement result.
      *
      * @return int|false The number of columns in the result or false in case of an error.
      */
@@ -510,7 +510,7 @@ class SQLSrvEngine implements IConnection
      * allowing for more precise parameter binding.
      *
      * @param mixed $data The prepared statement to bind variables to.
-     * @return mixed The prepared statement with bound variables.
+     * @return resource|false The prepared statement with bound variables.
      */
     private function internalBindVariable(mixed $data)
     {
@@ -523,7 +523,7 @@ class SQLSrvEngine implements IConnection
     }
 
     /**
-     * Binds a array multiple parameter to a variable in the SQL statement.
+     * Binds an array multiple parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
@@ -551,7 +551,7 @@ class SQLSrvEngine implements IConnection
     }
 
     /**
-     * Binds a array single parameter to a variable in the SQL statement.
+     * Binds an array single parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
@@ -562,7 +562,7 @@ class SQLSrvEngine implements IConnection
     }
 
     /**
-     * Binds a array parameter to a variable in the SQL statement.
+     * Binds an array parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
@@ -610,7 +610,7 @@ class SQLSrvEngine implements IConnection
             if (is_array($params[1])) {
                 $isArgs = false;
                 $isArray = true;
-                $isMulti = Arrays::isMultidimensional($params[1]) ? true : false;
+                $isMulti = Arrays::isMultidimensional($params[1]);
                 $sqlArgs = $params[1];
             } else {
                 $isArgs = true;
@@ -648,13 +648,12 @@ class SQLSrvEngine implements IConnection
      * Parses an SQL statement and returns an statement.
      *
      * @param mixed ...$params The parameters for the query function.
-     * @return mixed The statement resulting from the SQL statement.
+     * @return string The statement resulting from the SQL statement.
      */
-    private function parse(mixed ...$params): mixed
+    private function parse(mixed ...$params): string
     {
         $this->queryString = Translater::binding(
-            Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE),
-            Translater::BIND_QUESTION_MARK
+            Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE)
         );
         return $this->queryString;
     }
@@ -734,7 +733,6 @@ class SQLSrvEngine implements IConnection
             14 => Statements::internalFetchColumn(self::$statement, $fetchArgument),
             13 => Statements::internalFetchAssoc(self::$statement),
             8 => Statements::internalFetchNum(self::$statement),
-            10 => Statements::internalFetchBoth(self::$statement),
             default => Statements::internalFetchBoth(self::$statement),
         };
     }
@@ -745,19 +743,18 @@ class SQLSrvEngine implements IConnection
      * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
-     * @return mixed An array containing all rows from the statement.
+     * @return array An array containing all rows from the statement.
      */
     public function fetchAll(
         int $fetchStyle = FETCH_ASSOC,
         mixed $fetchArgument = null,
         mixed $optArgs = null
-    ): mixed {
-        return match ($fetchStyle) {
+    ): array {
+            return match ($fetchStyle) {
             9, 12 => Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
             14 => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
             13 => Statements::internalFetchAllAssoc(self::$statement),
             8 => Statements::internalFetchAllNum(self::$statement),
-            10 => Statements::internalFetchAllBoth(self::$statement),
             default => Statements::internalFetchAllBoth(self::$statement),
         };
     }

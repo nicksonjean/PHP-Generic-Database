@@ -2,6 +2,8 @@
 
 namespace GenericDatabase\Helpers;
 
+use stdClass;
+
 /**
  * The `GenericDatabase\Helpers\Translater` class is responsible for
  * escaping SQL strings and replacing parameters and binds in the SQL queries.
@@ -90,7 +92,7 @@ class Translater
     /**
      * Regex patterns for use in class
      */
-    private static $patternMap = [
+    private static array $patternMap = [
         'sqlBinds' => '/(:[a-zA-Z]{1,})/i',
         'sqlArgs' => '/(:\w+)/',
         'sqlGroups' => '/(\w+)?\((.+)\)\s/m',
@@ -100,7 +102,7 @@ class Translater
     /**
      * SQL dialect array map
      */
-    private static $quoteMap = [
+    private static array $quoteMap = [
         self::SQL_DIALECT_DQUOTE => '"',
         self::SQL_DIALECT_BTICK => '`',
         self::SQL_DIALECT_SQUOTE => "'",
@@ -110,7 +112,7 @@ class Translater
     /**
      * Bind characters array map
      */
-    private static $bindingMap = [
+    private static array $bindingMap = [
         self::BIND_QUESTION_MARK => '?',
         self::BIND_DOLLAR_SIGN => '$'
     ];
@@ -118,7 +120,7 @@ class Translater
     /**
      * Instance of reserved word dictionary
      */
-    private static $forbiddenWords;
+    private static mixed $forbiddenWords;
 
     /**
      * Load forbidden words from JSON file
@@ -209,8 +211,8 @@ class Translater
      * @param array $forbiddenWords An array of words that should not be processed or enclosed.
      * @param string $quote The quote character used for enclosing words.
      * @param bool &$insideFunction A flag indicating if the word is inside a function.
-     * @param bool &$insideSingleQuote A flag indicating if the word is inside single quotes.
-     * @param bool &$insideDoubleQuote A flag indicating if the word is inside double quotes.
+     * @param bool $insideSingleQuote A flag indicating if the word is inside single quotes.
+     * @param bool $insideDoubleQuote A flag indicating if the word is inside double quotes.
      * @return string The processed word, either as is or enclosed with the quote character.
      */
     private static function processWord(
@@ -218,19 +220,19 @@ class Translater
         array $forbiddenWords,
         string $quote,
         bool &$insideFunction,
-        bool &$insideSingleQuote,
-        bool &$insideDoubleQuote
+        bool $insideSingleQuote,
+        bool $insideDoubleQuote
     ): string {
-        $object = new \stdClass();
+        $object = new stdClass();
 
         $result = match (true) {
-            $insideFunction && strpos($word, ')') !== false => self::processCondition($object, $word, false),
-            !$insideFunction && strpos($word, '(') !== false => self::processCondition($object, $word, true),
-            $insideSingleQuote && strpos($word, "'") !== false => self::processCondition($object, $word, false),
-            !$insideSingleQuote && strpos($word, "'") !== false => self::processCondition($object, $word, true),
-            $insideDoubleQuote && strpos($word, '"') !== false => self::processCondition($object, $word, false),
-            !$insideDoubleQuote && strpos($word, '"') !== false => self::processCondition($object, $word, true),
-            strpos($word, ':') !== false => $word,
+            $insideFunction && str_contains($word, ')') => self::processCondition($object, $word, false),
+            !$insideFunction && str_contains($word, '(') => self::processCondition($object, $word, true),
+            $insideSingleQuote && str_contains($word, "'") => self::processCondition($object, $word, false),
+            !$insideSingleQuote && str_contains($word, "'") => self::processCondition($object, $word, true),
+            $insideDoubleQuote && str_contains($word, '"') => self::processCondition($object, $word, false),
+            !$insideDoubleQuote && str_contains($word, '"') => self::processCondition($object, $word, true),
+            str_contains($word, ':') => $word,
             in_array($word, $forbiddenWords) || $insideFunction || $insideSingleQuote || $insideDoubleQuote => $word,
             default => self::encloseWord($word, $quote),
         };
@@ -244,7 +246,7 @@ class Translater
         return $object->processedWord;
     }
 
-    private static function processCondition(\stdClass $object, string $processedWord, bool $processedCondition)
+    private static function processCondition(stdClass $object, string $processedWord, bool $processedCondition): bool
     {
         $object->processedWord = $processedWord;
         return $processedCondition;
@@ -259,7 +261,7 @@ class Translater
      */
     private static function encloseWord(string $word, string $quote): string
     {
-        return (substr($word, -1) == ',') ? $quote . substr($word, 0, -1) . $quote . ',' : $quote . $word . $quote;
+        return (str_ends_with($word, ',')) ? $quote . substr($word, 0, -1) . $quote . ',' : $quote . $word . $quote;
     }
 
     /**
@@ -288,7 +290,7 @@ class Translater
         if (is_null($values)) {
             return $matches[1];
         }
-        return array_combine($matches[1], (array) $values);
+        return array_combine($matches[1], $values);
     }
 
     /**

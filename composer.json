@@ -1,8 +1,9 @@
 {
     "name": "nicksonjean/php-generic-database",
-    "description": "Classes para Conexão Agnóstica à Bancos de Dados e Exibição de Dados em Componentes de Forma Persistente",
     "type": "library",
-    "license": "proprietary",
+    "description": "Generic Database Connection Class and Query Builder",
+    "keywords": ["dbal","pdo","query","builder","database","connection","generic"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Nickson Jeanmerson",
@@ -28,7 +29,12 @@
         "ext-pgsql": "*",
         "ext-sqlite3": "*",
         "ext-sqlsrv": "*",
-        "vlucas/phpdotenv": "^5.5@dev"
+        "vlucas/phpdotenv": "^5.5@dev",
+        "ext-xmlreader": "*",
+        "ext-libxml": "*",
+        "ext-simplexml": "*",
+        "ext-yaml": "*",
+        "": ""
     },    
     "require-dev": {
         "php": "^8.1",

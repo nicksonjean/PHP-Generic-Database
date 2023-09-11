@@ -17,11 +17,10 @@ class JSON
         }
         set_error_handler(fn (): bool => true, E_WARNING);
         json_decode(file_get_contents($json));
+        restore_error_handler();
         if (json_last_error() === JSON_ERROR_NONE) {
-            restore_error_handler();
             return true;
         }
-        restore_error_handler();
         return false;
     }
 

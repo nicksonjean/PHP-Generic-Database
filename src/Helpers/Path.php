@@ -2,8 +2,6 @@
 
 namespace GenericDatabase\Helpers;
 
-use GenericDatabase\Helpers\GenericException;
-
 class Path
 {
     /**
@@ -12,7 +10,7 @@ class Path
      * @param string $path The relative path
      * @return string
      */
-    public static function toAbsolute($path): string
+    public static function toAbsolute(string $path): string
     {
         if (DIRECTORY_SEPARATOR !== '/') {
             $path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
@@ -44,16 +42,13 @@ class Path
      *
      * @param string $path The path
      * @return bool
+     * @throws CustomException
      */
-    public static function isAbsolute($path): bool
+    public static function isAbsolute(string $path): bool
     {
-        if (!is_string($path)) {
-            $message = sprintf('String expected but was given %s', gettype($path));
-            throw new GenericException($message);
-        }
         if (!ctype_print($path)) {
             $message = 'Path can NOT have non-printable characters or be empty';
-            throw new GenericException($message);
+            throw new CustomException($message);
         }
         $regExp = '%^(?<wrappers>(?:[[:print:]]{2,}://)*)';
         $regExp .= '(?<root>(?:[[:alpha:]]:/|/)?)';
@@ -61,7 +56,7 @@ class Path
         $parts = [];
         if (!preg_match($regExp, $path, $parts)) {
             $message = sprintf('Path is NOT valid, was given %s', $path);
-            throw new GenericException($message);
+            throw new CustomException($message);
         }
         if ('' !== $parts['root']) {
             return true;

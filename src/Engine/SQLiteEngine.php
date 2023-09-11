@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use GenericDatabase\Helpers\CustomException;
 use SQLite3;
 use AllowDynamicProperties;
 use Exception;
@@ -209,7 +210,7 @@ class SQLiteEngine implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return SQLiteEngine
-     * @throws GenericException
+     * @throws CustomException
      */
     private function postConnect(): SQLiteEngine
     {
@@ -437,7 +438,7 @@ class SQLiteEngine implements IConnection
      *
      * @return array An associative array with keys 'queryRows' and 'affectedRows'.
      */
-    public function queryMetadata()
+    public function queryMetadata(): array
     {
         return [
             'queryString' => $this->queryString,
@@ -483,7 +484,7 @@ class SQLiteEngine implements IConnection
     }
 
     /**
-     * Returns the number of columns in an statement result.
+     * Returns the number of columns in a statement result.
      *
      * @return int|false The number of columns in the result or false in case of an error.
      */
@@ -513,7 +514,6 @@ class SQLiteEngine implements IConnection
      */
     private function internalBindVariable(array &$preparedParams, mixed $stmt): mixed
     {
-        $types = 0;
         $index = 0;
         foreach ($preparedParams as &$arg) {
             $types = match (true) {
@@ -530,7 +530,7 @@ class SQLiteEngine implements IConnection
     }
 
     /**
-     * Binds a array multiple parameter to a variable in the SQL statement.
+     * Binds an array multiple parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
@@ -547,7 +547,7 @@ class SQLiteEngine implements IConnection
     }
 
     /**
-     * Binds a array single parameter to a variable in the SQL statement.
+     * Binds an array single parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
@@ -599,7 +599,7 @@ class SQLiteEngine implements IConnection
             if (is_array($params[2])) {
                 $isArgs = false;
                 $isArray = true;
-                $isMulti = Arrays::isMultidimensional($params[2]) ? true : false;
+                $isMulti = Arrays::isMultidimensional($params[2]);
                 $sqlArgs = $params[2];
             } else {
                 $isArgs = true;
@@ -638,11 +638,11 @@ class SQLiteEngine implements IConnection
      * Parses an SQL statement and returns an statement.
      *
      * @param mixed ...$params The parameters for the query function.
-     * @return mixed The statement resulting from the SQL statement.
+     * @return string The statement resulting from the SQL statement.
      */
-    private function parse(mixed ...$params): mixed
+    private function parse(mixed ...$params): string
     {
-        $this->queryString = Translater::escape($params[0], Translater::SQL_DIALECT_NONE);
+        $this->queryString = Translater::escape($params[0]);
         return $this->queryString;
     }
 
@@ -720,7 +720,6 @@ class SQLiteEngine implements IConnection
             14 => Statements::internalFetchColumn(self::$statement, $fetchArgument),
             13 => Statements::internalFetchAssoc(self::$statement),
             8 => Statements::internalFetchNum(self::$statement),
-            10 => Statements::internalFetchBoth(self::$statement),
             default => Statements::internalFetchBoth(self::$statement),
         };
     }
@@ -731,19 +730,18 @@ class SQLiteEngine implements IConnection
      * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
-     * @return mixed An array containing all rows from the statement.
+     * @return array An array containing all rows from the statement.
      */
     public function fetchAll(
         int $fetchStyle = FETCH_ASSOC,
         mixed $fetchArgument = null,
         mixed $optArgs = null
-    ): mixed {
+    ): array {
         return match ($fetchStyle) {
             9, 12 => Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
             14 => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
             13 => Statements::internalFetchAllAssoc(self::$statement),
             8 => Statements::internalFetchAllNum(self::$statement),
-            10 => Statements::internalFetchAllBoth(self::$statement),
             default => Statements::internalFetchAllBoth(self::$statement),
         };
     }

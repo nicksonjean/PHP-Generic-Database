@@ -7,7 +7,7 @@ class Errors
     /**
      * Store a Error
      */
-    private static $error;
+    private static mixed $error;
 
     /**
      * Set error to display_errors directive
@@ -26,7 +26,7 @@ class Errors
      *
      * @return string|false
      */
-    public static function turnOff()
+    public static function turnOff(): mixed
     {
         return self::setError(0);
     }
@@ -36,18 +36,18 @@ class Errors
      *
      * @return string|false
      */
-    public static function turnOn()
+    public static function turnOn(): mixed
     {
         return self::setError(1);
     }
 
     /**
-     * Throw a exception
+     * Throw exception
      *
      * @param object $exception Argument object of the \Exception class
      * @return never
      */
-    public static function throw($exception): never
+    public static function throw(object $exception): never
     {
         die(json_encode(array(
             'message' => $exception->getMessage(),
@@ -56,13 +56,13 @@ class Errors
     }
 
     /**
-     * Launch a new Throw by a exception
+     * Launch a new Throw by exception
      *
      * @param object $exception Argument object of the \Exception class
      * @param object $message Custom string message from exception
      * @return never
      */
-    public static function newThrow($exception, $message): never
+    public static function newThrow(object $exception, object $message): never
     {
         die(json_encode(array(
             'message' => $message,

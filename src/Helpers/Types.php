@@ -2,9 +2,6 @@
 
 namespace GenericDatabase\Helpers;
 
-use GenericDatabase\Helpers\Regex;
-use GenericDatabase\Helpers\Arrays;
-
 class Types
 {
     public static function setConstant($value, $instance, $className, $constantName, $attributes): array
@@ -44,7 +41,7 @@ class Types
         return constant(sprintf("GenericDatabase\Engine\%s\%s::%s", $constantName, $className, $index));
     }
 
-    public static function setType($value)
+    public static function setType($value): bool|int|string
     {
         $length = strlen($value);
         $value = ($value === null) ? '' : $value;
@@ -58,10 +55,5 @@ class Types
             $result = (string) $value;
         }
         return $result;
-    }
-
-    public static function false2Null(mixed $val): mixed
-    {
-        return $val === false ? null : $val;
     }
 }

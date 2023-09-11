@@ -3,10 +3,9 @@
 namespace GenericDatabase\Helpers;
 
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
 use ReflectionObject;
-use ReflectionProperty;
-use GenericDatabase\Helpers\GenericException;
 
 /**
  * The `GenericDatabase\Helpers\Reflections` class provides various reflection-based
@@ -88,15 +87,15 @@ class Reflections
      *
      * @param mixed $class The class object or instance
      * @return mixed The singleton instance of the class
-     * @throws GenericException If the method does not exist in the class
+     * @throws CustomException If the method does not exist in the class
      */
-    public static function getSingletonInstance($class): mixed
+    public static function getSingletonInstance(mixed $class): mixed
     {
         try {
             $result = $class::{self::$defaultMethod}();
-        } catch (GenericException $error) {
+        } catch (GenericException) {
             $message = sprintf('Method %s not found in the class %s', self::$defaultMethod, $class);
-            throw new GenericException($message);
+            throw new CustomException($message);
         }
         return $result;
     }
@@ -106,27 +105,22 @@ class Reflections
      *
      * @param mixed $class The class object or instance
      * @return bool A boolean indicating if the method exists and is static
-     * @throws GenericException If the method does not exist or is not static
+     * @throws ReflectionException
      */
-    public static function isSingletonMethodExists($class): bool
+    public static function isSingletonMethodExists(mixed $class): bool
     {
-        try {
-            $method = new ReflectionMethod($class, self::$defaultMethod);
-            $result = ($method->isStatic()) ? true : false;
-        } catch (GenericException) {
-            $message = sprintf('Method %s not found in the class %s', self::$defaultMethod, $class);
-            throw new GenericException($message);
-        }
-        return $result;
+        $method = new ReflectionMethod($class, self::$defaultMethod);
+        return $method->isStatic();
     }
 
     /**
      * Get class instance
      *
      * @param mixed $class The class object or instance
-     * @return mixed A ReflectionClass instance for the given class
+     * @return ReflectionClass A ReflectionClass instance for the given class
+     * @throws ReflectionException
      */
-    public static function getClassInstance($class): mixed
+    public static function getClassInstance(mixed $class): ReflectionClass
     {
         return new ReflectionClass($class);
     }
@@ -135,9 +129,10 @@ class Reflections
      * Get all constants of the class
      *
      * @param mixed $class The class object or instance
-     * @return mixed An array of all constants defined in the class
+     * @return array An array of all constants defined in the class
+     * @throws ReflectionException
      */
-    public static function getClassConstants($class): mixed
+    public static function getClassConstants(mixed $class): array
     {
         return self::getClassInstance($class)->getConstants();
     }
@@ -147,9 +142,10 @@ class Reflections
      *
      * @param mixed $class The class object or instance
      * @param mixed $field The constant name or value
-     * @return mixed The name of a constant by its value
+     * @return string|int|bool The name of a constant by its value
+     * @throws ReflectionException
      */
-    public static function getClassConstantName($class, $field): mixed
+    public static function getClassConstantName(mixed $class, mixed $field): string|int|bool
     {
         return array_search($field, (self::getClassInstance($class))->getConstants());
     }
@@ -160,10 +156,11 @@ class Reflections
      * @param mixed $class The class object or instance
      * @param mixed $prop The property name
      * @return mixed The value of a class property by its name
+     * @throws ReflectionException
      */
-    public static function getClassPropertyName($class, $prop): mixed
+    public static function getClassPropertyName(mixed $class, mixed $prop): mixed
     {
-        return self::getClassInstance($class)->getProperty($prop)->getValue(null);
+        return self::getClassInstance($class)->getProperty($prop)->getValue();
     }
 
     /**
@@ -172,14 +169,14 @@ class Reflections
      * @param mixed $classOrObject The class object or instance, or the class name as a string.
      * @param array $constructorArgArray An array of constructor arguments.
      * @param array $propertyList An array of properties to be set on the object.
-     * @return mixed|object|string The created object with the properties set in a case-insensitive manner.
-     * @throws \ReflectionException
+     * @return mixed The created object with the properties set in a case-insensitive manner.
+     * @throws ReflectionException
      */
     public static function createObjectAndSetPropertiesCaseInsensitive(
-        $classOrObject,
+        mixed $classOrObject,
         array $constructorArgArray,
         array $propertyList
-    ) {
+    ): mixed {
         $result = self::createObject($classOrObject, $constructorArgArray);
         self::setPropertiesCaseInsensitive($result, $propertyList);
 
@@ -191,9 +188,10 @@ class Reflections
      *
      * @param mixed $classOrObject The class object or instance, or the class name as a string.
      * @param array $constructorArgArray An array of constructor arguments.
-     * @return mixed|object|string The created object.
+     * @return mixed The created object.
+     * @throws ReflectionException
      */
-    private static function createObject($classOrObject, array $constructorArgArray)
+    private static function createObject(mixed $classOrObject, array $constructorArgArray): mixed
     {
         if (is_object($classOrObject)) {
             return $classOrObject;
@@ -219,7 +217,7 @@ class Reflections
      * @param array $propertyList An array of properties to be set on the object.
      * @return void
      */
-    private static function setPropertiesCaseInsensitive($object, array $propertyList)
+    private static function setPropertiesCaseInsensitive(object $object, array $propertyList): void
     {
         $reflector = new ReflectionObject($object);
         $propertyReflections = $reflector->getProperties();
@@ -248,7 +246,7 @@ class Reflections
      * @param mixed ...$args The arguments to convert.
      * @return array The converted associative array.
      */
-    public static function argsToArray(...$args)
+    public static function argsToArray(mixed ...$args): array
     {
         $result = [];
         foreach ($args as $arg) {

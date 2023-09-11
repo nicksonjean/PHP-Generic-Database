@@ -414,9 +414,9 @@ class OCIEngine implements IConnection
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
         $string = $params[0];
         return match (true) {
@@ -447,7 +447,7 @@ class OCIEngine implements IConnection
      *
      * @return array An associative array with keys 'queryRows' and 'affectedRows'.
      */
-    public function queryMetadata()
+    public function queryMetadata(): array
     {
         return [
             'queryString' => $this->queryString,
@@ -493,7 +493,7 @@ class OCIEngine implements IConnection
     }
 
     /**
-     * Returns the number of columns in an statement result.
+     * Returns the number of columns in a statement result.
      *
      * @return int|false The number of columns in the result or false in case of an error.
      */
@@ -505,7 +505,7 @@ class OCIEngine implements IConnection
     /**
      * Returns the number of rows affected by an operation.
      *
-     * @return int The number of affected rows
+     * @return int|false The number of affected rows
      */
     public function affectedRows(): int|false
     {
@@ -528,13 +528,13 @@ class OCIEngine implements IConnection
             $floatValue = (float) $value;
             oci_bind_by_name($statement, $param, $floatValue, 8, SQLT_FLT);
         } elseif (is_string($value)) {
-            $stringValue = (string) $value;
+            $stringValue = $value;
             oci_bind_by_name($statement, $param, $stringValue, -1);
         } elseif (is_bool($value)) {
-            $boolValue = (bool) $value;
+            $boolValue = $value;
             oci_bind_by_name($statement, $param, $boolValue, -1, SQLT_BOL);
         } elseif (is_int($value)) {
-            $intValue = (int) $value;
+            $intValue = $value;
             oci_bind_by_name($statement, $param, $intValue, -1, SQLT_INT);
         } elseif (is_array($value)) {
             foreach ($param as $key) {
@@ -544,7 +544,7 @@ class OCIEngine implements IConnection
     }
 
     /**
-     * Binds a array multiple parameter to a variable in the SQL statement.
+     * Binds an array multiple parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
@@ -565,7 +565,7 @@ class OCIEngine implements IConnection
     }
 
     /**
-     * Binds a array single parameter to a variable in the SQL statement.
+     * Binds an array single parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
@@ -619,7 +619,7 @@ class OCIEngine implements IConnection
             if (is_array($params[2])) {
                 $isArgs = false;
                 $isArray = true;
-                $isMulti = Arrays::isMultidimensional($params[2]) ? true : false;
+                $isMulti = Arrays::isMultidimensional($params[2]);
                 $sqlArgs = $params[2];
             } else {
                 $isArgs = true;
@@ -658,9 +658,9 @@ class OCIEngine implements IConnection
      * Parses an SQL statement and returns an statement.
      *
      * @param mixed ...$params The parameters for the query function.
-     * @return mixed The statement resulting from the SQL statement.
+     * @return resource|false The statement resulting from the SQL statement.
      */
-    private function parse(mixed ...$params): mixed
+    private function parse(mixed ...$params)
     {
         $this->queryString = Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE);
         return oci_parse($this->getConnection(), $this->queryString);
@@ -737,7 +737,6 @@ class OCIEngine implements IConnection
             14 => Statements::internalFetchColumn(self::$statement, $fetchArgument),
             13 => Statements::internalFetchAssoc(self::$statement),
             8 => Statements::internalFetchNum(self::$statement),
-            10 => Statements::internalFetchBoth(self::$statement),
             default => Statements::internalFetchBoth(self::$statement),
         };
     }
@@ -748,19 +747,18 @@ class OCIEngine implements IConnection
      * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
-     * @return mixed An array containing all rows from the statement.
+     * @return array An array containing all rows from the statement.
      */
     public function fetchAll(
         int $fetchStyle = FETCH_ASSOC,
         mixed $fetchArgument = null,
         mixed $optArgs = null
-    ): mixed {
+    ): array {
         return match ($fetchStyle) {
             9, 12 => Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
             14 => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
             13 => Statements::internalFetchAllAssoc(self::$statement),
             8 => Statements::internalFetchAllNum(self::$statement),
-            10 => Statements::internalFetchAllBoth(self::$statement),
             default => Statements::internalFetchAllBoth(self::$statement),
         };
     }

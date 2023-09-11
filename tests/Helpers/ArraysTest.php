@@ -5,6 +5,9 @@ namespace GenericDatabase\Tests\Helpers;
 use GenericDatabase\Helpers\Arrays;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversDefaultClass \GenericDatabase\Helpers\Arrays
+ */
 final class ArraysTest extends TestCase
 {
     public function testExceptByKeys()

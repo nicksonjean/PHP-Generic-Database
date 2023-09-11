@@ -19,6 +19,7 @@ use GenericDatabase\Helpers\JSON;
 use GenericDatabase\Helpers\INI;
 use GenericDatabase\Helpers\YAML;
 use GenericDatabase\Helpers\XML;
+use ReflectionException;
 
 /**
  * The `Connection` class is responsible for establishing and managing database connections.
@@ -155,6 +156,7 @@ class Connection
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
      * @return Connection
+     * @throws ReflectionException
      */
     public static function __callStatic(string $name, array $arguments): Connection
     {
@@ -333,6 +335,7 @@ class Connection
      *
      * @param array $arguments
      * @return Connection
+     * @throws ReflectionException
      */
     private static function callWithByStaticArgs(array $arguments): Connection
     {
@@ -363,6 +366,7 @@ class Connection
      * @param string $format Accept formats json, xml, ini and yaml
      * @param mixed $arguments
      * @return Connection
+     * @throws ReflectionException
      */
     private static function callArgumentsByFormat(string $format, mixed $arguments): Connection
     {

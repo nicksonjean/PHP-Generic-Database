@@ -15,7 +15,7 @@ class INI
         if (!is_string($ini)) {
             return false;
         }
-        return substr($ini, -3) === 'ini' && (parse_ini_file($ini)) ? true : false;
+        return str_ends_with($ini, 'ini') && (parse_ini_file($ini));
     }
 
     /**

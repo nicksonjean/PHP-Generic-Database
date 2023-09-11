@@ -15,7 +15,7 @@ class YAML
         if (!is_string($yaml)) {
             return false;
         }
-        return substr($yaml, -4) === 'yaml' && (yaml_parse_file($yaml)) ? true : false;
+        return str_ends_with($yaml, 'yaml') && (yaml_parse_file($yaml));
     }
 
     /**

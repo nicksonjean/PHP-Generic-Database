@@ -25,6 +25,7 @@ use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
 use GenericDatabase\Traits\Singleton;
+use PgSql\Result;
 
 if (!defined('PGSQL_FETCH_NUM')) {
     define('PGSQL_FETCH_NUM', 8);
@@ -97,6 +98,7 @@ if (!defined('FETCH_COLUMN')) {
  * @method static PgSQLEngine|static getCharset($value = null): mixed
  * @method static PgSQLEngine|static setException(mixed $value): void
  * @method static PgSQLEngine|static getException($value = null): mixed
+ * @property mixed|null $statement
  */
 #[AllowDynamicProperties]
 class PgSQLEngine implements IConnection
@@ -382,18 +384,21 @@ class PgSQLEngine implements IConnection
     public function lastInsertId(?string $name = null): string|int|false
     {
         $filter = sprintf("WHERE column_default LIKE 'nextval%%' AND table_name = '%s'", $name);
-        $query = $this->parse(sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS %s", $filter));
+        $query = pg_query(
+            $this->getConnection(),
+            sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS %s", $filter)
+        );
         $autoKeyRes = pg_fetch_assoc($query);
         if (isset($autoKeyRes['column_name'])) {
             $query = vsprintf(
-                "SELECT pg_catalog.setval(pg_get_serial_sequence('%s', '%s'), COALESCE(MAX(%s))) AS value FROM %s;",
+                "SELECT pg_catalog.setval(pg_get_serial_sequence('%s', '%s'), MAX(%s)) AS value FROM %s;",
                 [$name, $autoKeyRes['column_name'], $autoKeyRes['column_name'], $name]
             );
-            $maxIndex = $this->parse($query);
+            $maxIndex = pg_query($this->getConnection(), $query);
             $maxIndexRes = pg_fetch_assoc($maxIndex);
             return $maxIndexRes['value'];
         } else {
-            return 0;
+            return pg_last_oid(self::$statement);
         }
     }
 
@@ -435,7 +440,7 @@ class PgSQLEngine implements IConnection
      *
      * @return array An associative array with keys 'queryRows' and 'affectedRows'.
      */
-    public function queryMetadata()
+    public function queryMetadata(): array
     {
         return [
             'queryString' => $this->queryString,
@@ -477,7 +482,7 @@ class PgSQLEngine implements IConnection
     }
 
     /**
-     * Returns the number of columns in an statement result.
+     * Returns the number of columns in a statement result.
      *
      * @return int|false The number of columns in the result or false in case of an error.
      */
@@ -497,21 +502,21 @@ class PgSQLEngine implements IConnection
     }
 
     /**
-     * Binds a array multiple parameter to a variable in the SQL statement.
+     * Binds an array multiple parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private function internalBindParamArrayMulti(mixed ...$params): void
     {
-        foreach ((array) Arrays::arrayValuesRecursive($params['sqlArgs']) as $param) {
+        foreach (Arrays::arrayValuesRecursive($params['sqlArgs']) as $param) {
             $this->exec($params['stmtName'], $param);
             $this->affectedRows += (Regex::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
         }
     }
 
     /**
-     * Binds a array single parameter to a variable in the SQL statement.
+     * Binds an array single parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
@@ -561,7 +566,7 @@ class PgSQLEngine implements IConnection
             if (is_array($params[2])) {
                 $isArgs = false;
                 $isArray = true;
-                $isMulti = Arrays::isMultidimensional($params[2]) ? true : false;
+                $isMulti = Arrays::isMultidimensional($params[2]);
                 $sqlArgs = $params[2];
             } else {
                 $isArgs = true;
@@ -600,9 +605,9 @@ class PgSQLEngine implements IConnection
      * Parses an SQL statement and returns an statement.
      *
      * @param mixed ...$params The parameters for the query function.
-     * @return mixed The statement resulting from the SQL statement.
+     * @return string The statement resulting from the SQL statement.
      */
-    private function parse(mixed ...$params): mixed
+    private function parse(mixed ...$params): string
     {
         $this->queryString = Translater::binding(
             Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE),
@@ -654,9 +659,9 @@ class PgSQLEngine implements IConnection
      * This function runs an SQL statement and returns the number of affected rows.
      *
      * @param mixed $params Statement to be executed
-     * @return mixed
+     * @return bool|Result
      */
-    public function exec(mixed ...$params): mixed
+    public function exec(mixed ...$params): bool|Result
     {
         $stmtname = !empty($params[0]) ? $params[0] : Regex::randomString(18);
         $param = !empty($params[1]) ? $params[1] : [];
@@ -681,7 +686,6 @@ class PgSQLEngine implements IConnection
             14 => Statements::internalFetchColumn(self::$statement, $fetchArgument),
             13 => Statements::internalFetchAssoc(self::$statement),
             8 => Statements::internalFetchNum(self::$statement),
-            10 => Statements::internalFetchBoth(self::$statement),
             default => Statements::internalFetchBoth(self::$statement),
         };
     }
@@ -692,19 +696,18 @@ class PgSQLEngine implements IConnection
      * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
-     * @return mixed An array containing all rows from the statement.
+     * @return array An array containing all rows from the statement.
      */
     public function fetchAll(
         int $fetchStyle = FETCH_ASSOC,
         mixed $fetchArgument = null,
         mixed $optArgs = null
-    ): mixed {
+    ): array {
         return match ($fetchStyle) {
             9, 12 => Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
             14 => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
             13 => Statements::internalFetchAllAssoc(self::$statement),
             8 => Statements::internalFetchAllNum(self::$statement),
-            10 => Statements::internalFetchAllBoth(self::$statement),
             default => Statements::internalFetchAllBoth(self::$statement),
         };
     }

@@ -2,17 +2,22 @@
 
 namespace GenericDatabase\Helpers;
 
+use PDO;
+use MySQLi;
+use SQLite3;
+use GenericDatabase\Connection as CNX;
+use PgSQL\Connection as PGCNX;
 use GenericDatabase\Helpers\ConnectionType as An;
 
 /**
  * The `GenericDatabase\Helpers\Compare` class provides methods
- * for determining the type of a given database connection.
- * This class can identify the type of a database connection
+ * for determining the type of given database connection.
+ * This class can identify the type of database connection
  * whether it is a resource connection or an object connection.
  *
- * The code snippet is a part of the Compare class and it contains
+ * The code snippet is a part of the Compare class, and it contains
  * two private methods: getResourceConnectionType and getObjectConnectionType.
- * These methods are used to determine the type of a given database connection,
+ * These methods are used to determine the type of given database connection,
  * whether it is a resource connection or an object connection.
  *
  * Example Usage:
@@ -42,7 +47,7 @@ use GenericDatabase\Helpers\ConnectionType as An;
  * `Output: Database type: Unidentified or invalid connection type.`
  *
  * Main functionalities:
- * - Determines the type of a database connection, whether it is a resource or an object connection.
+ * - Determines the type of database connection, whether it is a resource or an object connection.
  * - Handles various types of database connections, including PDO, MySQLi, SQLite3, and custom connection classes.
  *
  * Methods:
@@ -55,21 +60,21 @@ use GenericDatabase\Helpers\ConnectionType as An;
 class Compare
 {
     /**
-     * Determines the type of a given database connection.
+     * Determines the type of given database connection.
      *
      * @param resource|object $cnx The database connection.
      * @return string The type of the database connection.
      */
-    public static function connection($cnx)
+    public static function connection(mixed $cnx): string
     {
         if (is_resource($cnx)) {
             return self::getResourceConnectionType($cnx);
         } elseif (
-            $cnx instanceof \PDO ||
-            $cnx instanceof \SQLite3 ||
-            $cnx instanceof \MySQLi ||
-            $cnx instanceof \GenericDatabase\Connection ||
-            $cnx instanceof \PgSQL\Connection
+            $cnx instanceof PDO ||
+            $cnx instanceof SQLite3 ||
+            $cnx instanceof MySQLi ||
+            $cnx instanceof CNX ||
+            $cnx instanceof PGCNX
         ) {
             return self::getObjectConnectionType($cnx);
         } else {
@@ -78,12 +83,12 @@ class Compare
     }
 
     /**
-     * Determines the type of a resource connection.
+     * Determines the type of resource connection.
      *
      * @param resource $cnx The resource connection.
      * @return string The type of the resource connection.
      */
-    private static function getResourceConnectionType($cnx)
+    private static function getResourceConnectionType($cnx): string
     {
         $its = fn ($name) => $name->value;
         return match (true) {
@@ -104,15 +109,15 @@ class Compare
     }
 
     /**
-     * Determines the type of an object connection.
+     * Determines the type of object connection.
      *
      * @param object $cnx The object connection.
      * @return string The type of the object connection.
      */
-    private static function getObjectConnectionType($cnx)
+    private static function getObjectConnectionType(object $cnx): string
     {
         $its = fn ($name) => $name->value;
-        $attr = fn ($cnx) => $cnx->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        $attr = fn ($cnx) => $cnx->getAttribute(PDO::ATTR_DRIVER_NAME);
         return match (true) {
             is_a($cnx, $its(An::NAT_MYSQLI)) && get_class($cnx) === $its(An::NAT_MYSQLI) => 'mysqli',
             is_a($cnx, $its(An::NAT_SQLITE)) && get_class($cnx) === $its(An::NAT_SQLITE) => 'sqlite',

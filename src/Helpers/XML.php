@@ -18,29 +18,29 @@ class XML
         if (!is_string($xml)) {
             return false;
         }
-        set_error_handler(fn (): bool => true, E_WARNING);
-        $xml2 = simpleXML_load_file($xml, "SimpleXMLElement", LIBXML_NOCDATA);
-        if ($xml2 === false) {
-            restore_error_handler();
+
+        if (!pathinfo($xml, PATHINFO_EXTENSION)) {
             return false;
-        } else {
-            $xml2 = XMLReader::open($xml);
-            restore_error_handler();
-            return $xml2->setParserProperty(XMLReader::VALIDATE, true) ? true : false;
         }
+
+        set_error_handler(fn (): bool => true, E_WARNING);
+        $lxml = new XMLReader();
+        $lxml->open($xml);
+        restore_error_handler();
+        return $lxml->setParserProperty(XMLReader::VALIDATE, true);
     }
 
     /**
      * Convert data to its appropriate type.
      *
      * @param mixed $data The data to convert.
-     * @return mixed The converted data.
+     * @return string|int|bool|float The converted data.
      */
-    public static function convertData($data): mixed
+    public static function convertData(mixed $data): string|int|bool|float
     {
         $data = trim($data);
         if (is_numeric($data)) {
-            return strpos($data, '.') !== false ? floatval($data) : intval($data);
+            return str_contains($data, '.') ? floatval($data) : intval($data);
         }
         if (strcasecmp($data, 'false') === 0) {
             $data = false;
@@ -55,7 +55,6 @@ class XML
      *
      * @param SimpleXMLElement $xml The SimpleXMLElement object to decode.
      * @param bool|null $attributesKey Whether to use the 'attributes' key in the array or not.
-     * @param bool|null $reduce Whether to reduce the array structure when there is only one child element.
      * @param array|null $alwaysArray An array of element names that should always be treated as arrays.
      * @param array|null $valueKeys The mapping of element names to value keys.
      * @return string|array The decoded XML data as an array or a string.
@@ -63,7 +62,6 @@ class XML
     public static function decodeXML(
         SimpleXMLElement $xml,
         ?bool $attributesKey = true,
-        ?bool $reduce = true,
         ?array $alwaysArray = [],
         ?array $valueKeys = []
     ): string|array {
@@ -73,7 +71,7 @@ class XML
         if ($childrenCount === 0) {
             self::extractValue($xml, $arr, $valueKeys);
         } else {
-            self::processChildren($xml, $arr, $attributesKey, $reduce, $alwaysArray, $valueKeys);
+            self::processChildren($xml, $arr, $attributesKey, $alwaysArray, $valueKeys);
         }
         return $arr;
     }
@@ -89,7 +87,6 @@ class XML
     private static function extractAttributes(SimpleXMLElement $xml, bool $attributesKey, array &$arr): void
     {
         foreach ($xml->attributes() as $key => $value) {
-            $key = strval($key);
             $value = strval($value);
             if ($attributesKey) {
                 $arr['attributes'][$key] = $value;
@@ -123,7 +120,6 @@ class XML
      * @param SimpleXMLElement $xml The SimpleXMLElement object to process the children of.
      * @param array &$arr The array to add the processed children to.
      * @param bool $attributesKey Whether to use the 'attributes' key in the array or not.
-     * @param bool $reduce Whether to reduce the array structure when there is only one child element.
      * @param array $alwaysArray An array of element names that should always be treated as arrays.
      * @param array $valueKeys The mapping of element names to value keys.
      * @return void
@@ -132,7 +128,6 @@ class XML
         SimpleXMLElement $xml,
         array &$arr,
         bool $attributesKey,
-        bool $reduce,
         array $alwaysArray,
         array $valueKeys
     ): void {
@@ -147,13 +142,13 @@ class XML
         foreach ($xml->children() as $child) {
             $name = $child->getName();
             if ($xml->$name->count() > 1 || in_array($name, $alwaysArray, true)) {
-                if ($reduce && $reducible) {
-                    $arr[] = self::decodeXML($child, $attributesKey, $reduce, $alwaysArray, $valueKeys);
+                if ($reducible) {
+                    $arr[] = self::decodeXML($child, $attributesKey, $alwaysArray, $valueKeys);
                 } else {
-                    $arr[$name][] = self::decodeXML($child, $attributesKey, $reduce, $alwaysArray, $valueKeys);
+                    $arr[$name][] = self::decodeXML($child, $attributesKey, $alwaysArray, $valueKeys);
                 }
             } else {
-                $arr[$name] = self::decodeXML($child, $attributesKey, $reduce, $alwaysArray, $valueKeys);
+                $arr[$name] = self::decodeXML($child, $attributesKey, $alwaysArray, $valueKeys);
             }
         }
     }

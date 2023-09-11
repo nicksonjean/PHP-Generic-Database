@@ -7,15 +7,10 @@ class Regex
     /**
      * Regex pattern for only numbers
      */
-    private static $patterns = [
+    private static array $patterns = [
         'onlyNumbers' =>
         "/^(?:-(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))|(?:0|(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))))(?:.\\d+|)$/",
     ];
-
-    public static function unQuoted(string $value): string
-    {
-        return preg_replace(self::$patterns['unQuoted'], '$1', $value);
-    }
 
     /**
      * Check if a value is numeric
@@ -25,7 +20,7 @@ class Regex
      */
     public static function isNumber(string $value): int|false
     {
-        return preg_match(self::$patterns['onlyNumbers'], (string) $value);
+        return preg_match(self::$patterns['onlyNumbers'], $value);
     }
     /**
      * Check "Booleanic" Conditions :)
@@ -50,7 +45,7 @@ class Regex
      * @param int $length The length size of the string
      * @return string The random string generated
      */
-    public static function randomString(int $length)
+    public static function randomString(int $length): string
     {
         $keys = array_merge(range('a', 'z'), range('A', 'Z'));
         $key = '';
