@@ -6,15 +6,15 @@ use PDO;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\PDOEngine;
 use GenericDatabase\Helpers\Path;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 
 #[AllowDynamicProperties]
 class DSN
 {
     /**
-     * @throws GenericException
+     * @throws CustomException
      */
-    public static function parseDsn(): string|GenericException
+    public static function parseDsn(): string|CustomException
     {
         if (!in_array(PDOEngine::getInstance()->getDriver(), PDO::getAvailableDrivers())) {
             $message = sprintf(
@@ -22,7 +22,7 @@ class DSN
                 PDOEngine::getInstance()->getDriver(),
                 implode(', ', PDO::getAvailableDrivers())
             );
-            throw new GenericException($message);
+            throw new CustomException($message);
         }
         $result = null;
         switch (PDOEngine::getInstance()->getDriver()) {

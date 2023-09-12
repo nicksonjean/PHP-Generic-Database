@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Engine\PDO;
 
-use GenericDatabase\Helpers\Regex;
+use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Helpers\Types;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\JSON;
@@ -38,9 +38,9 @@ class Arguments
     {
         $result = [];
         foreach (Arrays::recombine(...$value) as $key => $value) {
-            if (Regex::isNumber($value) && !Regex::isBoolean($value)) {
+            if (Validations::isNumber($value) && !Validations::isBoolean($value)) {
                 $result[constant($key)] = (int) $value;
-            } elseif (Regex::isBoolean($value)) {
+            } elseif (Validations::isBoolean($value)) {
                 $result[constant($key)] = (bool) $value;
             } else {
                 $result[constant($key)] = constant($value);

@@ -16,12 +16,12 @@ use GenericDatabase\Engine\MySQLi\DSN;
 use GenericDatabase\Engine\MySQLi\Dump;
 use GenericDatabase\Engine\MySQLi\Transaction;
 use GenericDatabase\Engine\MySQLi\Statements;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translater;
-use GenericDatabase\Helpers\Regex;
+use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -198,7 +198,7 @@ class MySQLiEngine implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return MySQLiEngine
-     * @throws GenericException
+     * @throws CustomException
      */
     private function postConnect(): MySQLiEngine
     {
@@ -260,7 +260,7 @@ class MySQLiEngine implements IConnection
             return $this;
         } catch (Exception $error) {
             $this->disconnect();
-            Errors::throw($error);
+            die(Errors::throw($error));
         }
     }
 
@@ -305,10 +305,10 @@ class MySQLiEngine implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|GenericException
-     * @throws GenericException
+     * @return string|CustomException
+     * @throws CustomException
      */
-    private function parseDsn(): string|GenericException
+    private function parseDsn(): string|CustomException
     {
         return DSN::parseDsn();
     }
@@ -560,7 +560,9 @@ class MySQLiEngine implements IConnection
         foreach ($params['sqlArgs'] as $param) {
             $statement = $this->internalBindVariable($param, $params['sqlStatement']);
             $this->exec($statement);
-            $this->affectedRows += Regex::isSelect($params['sqlQuery']) ? 0 : $this->getConnection()->affected_rows;
+            $this->affectedRows += Validations::isSelect($params['sqlQuery'])
+                ? 0
+                : $this->getConnection()->affected_rows;
         }
     }
 
@@ -601,7 +603,7 @@ class MySQLiEngine implements IConnection
     {
         $statement = $this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
         $this->exec($statement);
-        $this->affectedRows += Regex::isSelect($params['sqlQuery']) ? 0 : $this->getConnection()->affected_rows;
+        $this->affectedRows += Validations::isSelect($params['sqlQuery']) ? 0 : $this->getConnection()->affected_rows;
     }
 
     /**
@@ -680,10 +682,12 @@ class MySQLiEngine implements IConnection
                 $this->parse(...$params),
                 array_key_exists(1, $params) ? (int) $params[1] : MYSQLI_STORE_RESULT
             );
-            $this->queryRows = Regex::isSelect($this->queryString) && get_class(self::$statement) === 'mysqli_result'
+            $this->queryRows = Validations::isSelect($this->queryString)
+                && get_class(self::$statement) === 'mysqli_result'
                 ? self::$statement->num_rows
                 : 0;
-            $this->queryColumns = Regex::isSelect($this->queryString) && get_class(self::$statement) === 'mysqli_result'
+            $this->queryColumns = Validations::isSelect($this->queryString)
+                && get_class(self::$statement) === 'mysqli_result'
                 ? self::$statement->field_count :
                 0;
             $this->affectedRows += $this->queryRows === $this->getConnection()->affected_rows

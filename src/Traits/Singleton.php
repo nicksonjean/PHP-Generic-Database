@@ -25,7 +25,7 @@ trait Singleton
     /**
      * Create or obtain a singleton instance
      *
-     * @param $instance The instance object to be defined
+     * @param $instance
      * @return self
      */
     public static function setInstance($instance): self

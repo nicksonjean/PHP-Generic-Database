@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use GenericDatabase\Helpers\CustomException;
 use SQLite3;
 use AllowDynamicProperties;
 use Exception;
@@ -17,12 +16,12 @@ use GenericDatabase\Engine\SQLite\DSN;
 use GenericDatabase\Engine\SQLite\Dump;
 use GenericDatabase\Engine\SQLite\Transaction;
 use GenericDatabase\Engine\SQLite\Statements;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translater;
-use GenericDatabase\Helpers\Regex;
+use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -259,7 +258,7 @@ class SQLiteEngine implements IConnection
             return $this;
         } catch (Exception $error) {
             $this->disconnect();
-            Errors::throw($error);
+            die(Errors::throw($error));
         }
     }
 
@@ -304,10 +303,10 @@ class SQLiteEngine implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|GenericException
-     * @throws GenericException
+     * @return string|CustomException
+     * @throws CustomException
      */
-    private function parseDsn(): string|GenericException
+    private function parseDsn(): string|CustomException
     {
         return DSN::parseDsn();
     }
@@ -476,7 +475,7 @@ class SQLiteEngine implements IConnection
      */
     public function queryRows(): int|false
     {
-        if (Regex::isSelect($this->queryString)) {
+        if (Validations::isSelect($this->queryString)) {
             $this->bindParam(...self::$statementCount);
             return count(Statements::internalFetchAllAssoc(self::$statementResult));
         }

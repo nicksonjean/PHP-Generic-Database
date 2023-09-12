@@ -44,6 +44,29 @@ final class ArraysTest extends TestCase
         $this->assertFalse($nonmultResult);
     }
 
+    public function testMatchValues()
+    {
+        $list = ["apple", "banana", "cherry"];
+        $array = ["apple", "Banana", "Cherry"];
+        $expectedResult = "apple";
+
+        $result = Arrays::matchValues($list, $array);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testRecombine()
+    {
+        $array = ['name' => 'John', 'age' => 30, 'city' => 'Las Vegas'];
+        $inputArray = $array;
+        $expectedResult = $array;
+
+        $result = Arrays::recombine($inputArray);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+
     public function testArrayValuesRecursive()
     {
         $array = [];
@@ -56,6 +79,37 @@ final class ArraysTest extends TestCase
             $result,
             'The function did not return the expected result for an empty array.'
         );
+    }
+
+    public function testArrayValuesRecursiveMassiveArrays()
+    {
+        $inputArray = [
+            'name' => 'Robocop',
+            'details' => [
+                'age' => 30,
+                'city' => 'Detroit',
+            ],
+            'hobbies' => [
+                'outdoor' => ['hiking', 'camping'],
+                'indoor' => ['reading', 'cooking'],
+            ],
+        ];
+
+        $expectedResult = [
+            'name' => 'Robocop',
+            'details' => [
+                0 => 30,
+                1 => 'Detroit',
+            ],
+            'hobbies' => [
+                0 => ['hiking', 'camping'],
+                1 => ['reading', 'cooking'],
+            ],
+        ];
+
+        $result = Arrays::arrayValuesRecursive($inputArray);
+
+        $this->assertEquals($expectedResult, $result);
     }
 
     public function testArrayAssocToIndex()
@@ -134,6 +188,16 @@ final class ArraysTest extends TestCase
         $expectedResult = [];
 
         $result = Arrays::exceptByValues($array, $values);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testAssocToIndexCombine()
+    {
+        $array1 = ['fruta' => 'apple', 'veiculo' => 'bicicleta'];
+        $expectedResult = [0 => 'apple', 'fruta' => 'apple', 1 => 'bicicleta', 'veiculo' => 'bicicleta'];
+
+        $result = Arrays::assocToIndexCombine($array1);
 
         $this->assertEquals($expectedResult, $result);
     }

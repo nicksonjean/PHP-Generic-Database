@@ -2,9 +2,9 @@
 
 namespace GenericDatabase\Traits;
 
-use GenericDatabase\Traits\Setter;
-use GenericDatabase\Traits\Getter;
+use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Reflections;
+use ReflectionException;
 
 trait Caller
 {
@@ -37,6 +37,8 @@ trait Caller
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
      * @return mixed
+     * @throws CustomException
+     * @throws ReflectionException
      */
     public static function __callStatic(string $name, array $arguments): mixed
     {

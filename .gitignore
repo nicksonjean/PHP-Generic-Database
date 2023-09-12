@@ -462,8 +462,6 @@ gradle-app.setting
 
 ##### Composer
 composer.phar
-/vendor/
-/trash/
 /interface/langcache
 /db/langcache
 *.stub.php
@@ -494,6 +492,7 @@ composer.lock
 /public/bundles/
 /var/
 /vendor/
+/trash/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

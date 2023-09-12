@@ -4,15 +4,15 @@ namespace GenericDatabase\Engine\MySQLi;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\MySQLiEngine;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 
 #[AllowDynamicProperties]
 class DSN
 {
     /**
-     * @throws GenericException
+     * @throws CustomException
      */
-    public static function parseDsn(): string|GenericException
+    public static function parseDsn(): string|CustomException
     {
         if (!extension_loaded('mysqli')) {
             $message = sprintf(
@@ -20,7 +20,7 @@ class DSN
                 'mysqli',
                 'PHP.ini'
             );
-            throw new GenericException($message);
+            throw new CustomException($message);
         }
 
         $result = sprintf(

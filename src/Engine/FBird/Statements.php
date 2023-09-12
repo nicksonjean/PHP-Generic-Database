@@ -24,7 +24,7 @@ class Statements
     {
         $tmpData = ibase_fetch_assoc($statement, IBASE_TEXT);
         if (is_array($tmpData)) {
-            return Arrays::toBoth($tmpData);
+            return Arrays::assocToIndexCombine($tmpData);
         }
         return false;
     }

@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\SQLSrv;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 
 #[AllowDynamicProperties]
 class Attributes
@@ -45,7 +45,7 @@ class Attributes
      * Define all SQLSrv attribute of the connection a ready exist
      *
      * @return void
-     * @throws GenericException
+     * @throws CustomException
      */
     public static function define(): void
     {
@@ -78,7 +78,7 @@ class Attributes
                 'DEFAULT_FETCH_MODE' => 3,
                 'CHARACTER_SET' => SQLSrvEngine::getInstance()->getCharset(),
                 'COLLATION' => SQLSrvEngine::getInstance()->getCharset() == 'utf8' ? 'unicode_ci_ai' : 'none',
-                default => throw new GenericException("Invalid attribute: $attribute"),
+                default => throw new CustomException("Invalid attribute: $attribute"),
             };
         }
         SQLSrvEngine::getInstance()->setAttributes($result);

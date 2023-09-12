@@ -2,13 +2,49 @@
 
 namespace GenericDatabase\Helpers;
 
+/**
+ * The `GenericDatabase\Helpers\Path` class provides two static methods for working with file paths:
+ * `toAbsolute` and `isAbsolute`. The `toAbsolute` method converts a relative path to an absolute path,
+ * while the `isAbsolute` method checks if a given path is absolute or not.
+ *
+ * Example Usage:
+ * <code>
+ * // Convert a relative path to an absolute path
+ * $relativePath = 'path/to/file.txt';
+ * $absolutePath = Path::toAbsolute($relativePath);
+ * echo $absolutePath;
+ * </code>
+ * `Output: /full/path/to/file.txt`
+ *
+ * <code>
+ * // Check if a path is absolute
+ * $path = '/full/path/to/file.txt';
+ * $isAbsolute = Path::isAbsolute($path);
+ * echo $isAbsolute ? 'Absolute path' : 'Relative path';
+ * </code>
+ * `Output: Absolute path`
+ *
+ * Main functionalities:
+ * - The `toAbsolute` method converts a relative path to an absolute path by replacing the directory
+ * separator with a forward slash ('/') and removing any occurrences of '.' (current directory).
+ * - The `isAbsolute` method checks if a path is absolute by using regular expressions to match the path against a
+ * pattern that includes optional wrappers (e.g., 'http://') and a root (e.g., 'C:/') followed by the path itself.
+ *
+ * Methods:
+ * - `toAbsolute(string $path): string`:
+ * Converts a relative path to an absolute path.
+ * - `isAbsolute(string $path): bool`:
+ * Checks if a path is absolute.
+ *
+ * @package GenericDatabase\Helpers
+ */
 class Path
 {
     /**
      * Convert path from relative to absolute
      *
      * @param string $path The relative path
-     * @return string
+     * @return string The absolute path
      */
     public static function toAbsolute(string $path): string
     {
@@ -41,8 +77,8 @@ class Path
      * Detect if path is absolute
      *
      * @param string $path The path
-     * @return bool
-     * @throws CustomException
+     * @return bool True if the path is absolute, false otherwise
+     * @throws CustomException If the path contains non-printable characters or is empty
      */
     public static function isAbsolute(string $path): bool
     {
@@ -54,10 +90,7 @@ class Path
         $regExp .= '(?<root>(?:[[:alpha:]]:/|/)?)';
         $regExp .= '(?<path>(?:[[:print:]]*))$%';
         $parts = [];
-        if (!preg_match($regExp, $path, $parts)) {
-            $message = sprintf('Path is NOT valid, was given %s', $path);
-            throw new CustomException($message);
-        }
+        preg_match($regExp, $path, $parts);
         if ('' !== $parts['root']) {
             return true;
         }

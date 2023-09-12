@@ -15,12 +15,12 @@ use GenericDatabase\Engine\PgSQL\DSN;
 use GenericDatabase\Engine\PgSQL\Dump;
 use GenericDatabase\Engine\PgSQL\Transaction;
 use GenericDatabase\Engine\PgSQL\Statements;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translater;
-use GenericDatabase\Helpers\Regex;
+use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -197,7 +197,7 @@ class PgSQLEngine implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return PgSQLEngine
-     * @throws GenericException
+     * @throws CustomException
      */
     private function postConnect(): PgSQLEngine
     {
@@ -243,7 +243,7 @@ class PgSQLEngine implements IConnection
             return $this;
         } catch (Exception $error) {
             $this->disconnect();
-            Errors::throw($error);
+            die(Errors::throw($error));
         }
     }
 
@@ -288,10 +288,10 @@ class PgSQLEngine implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|GenericException
-     * @throws GenericException
+     * @return string|CustomException
+     * @throws CustomException
      */
-    private function parseDsn(): string|GenericException
+    private function parseDsn(): string|CustomException
     {
         return DSN::parseDsn();
     }
@@ -510,7 +510,7 @@ class PgSQLEngine implements IConnection
     {
         foreach (Arrays::arrayValuesRecursive($params['sqlArgs']) as $param) {
             $this->exec($params['stmtName'], $param);
-            $this->affectedRows += (Regex::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
+            $this->affectedRows += (Validations::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
         }
     }
 
@@ -523,7 +523,7 @@ class PgSQLEngine implements IConnection
     private function internalBindParamArraySingle(mixed ...$params): void
     {
         $this->exec($params['stmtName'], array_values($params['sqlArgs']));
-        $this->affectedRows += (Regex::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
+        $this->affectedRows += (Validations::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
     }
 
     /**
@@ -550,7 +550,7 @@ class PgSQLEngine implements IConnection
     private function internalBindParamArgs(mixed ...$params): void
     {
         $this->exec($params['stmtName'], $params['sqlArgs']);
-        $this->affectedRows += (Regex::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
+        $this->affectedRows += (Validations::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
     }
 
     /**
@@ -628,7 +628,7 @@ class PgSQLEngine implements IConnection
             self::$statement = pg_query($this->getConnection(), $this->parse(...$params));
             $this->queryRows = pg_num_rows(self::$statement);
             $this->queryColumns = pg_num_fields(self::$statement);
-            $this->affectedRows += (Regex::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
+            $this->affectedRows += (Validations::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
         }
         return $this;
     }
@@ -643,7 +643,7 @@ class PgSQLEngine implements IConnection
     {
         $this->resetMetadata();
         if (!empty($params)) {
-            $stmtName = Regex::randomString(18);
+            $stmtName = Validations::randomString(18);
             self::$statement = pg_prepare($this->getConnection(), $stmtName, $this->parse(...$params));
             array_unshift($params, $stmtName);
             $bindParams = $this->makeArgs(...$params);
@@ -662,7 +662,7 @@ class PgSQLEngine implements IConnection
      */
     public function exec(mixed ...$params): bool|Result
     {
-        $stmtname = !empty($params[0]) ? $params[0] : Regex::randomString(18);
+        $stmtname = !empty($params[0]) ? $params[0] : Validations::randomString(18);
         $param = !empty($params[1]) ? $params[1] : [];
         return self::$statement = pg_execute($this->getConnection(), $stmtname, $param);
     }

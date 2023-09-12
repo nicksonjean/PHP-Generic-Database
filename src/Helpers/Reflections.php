@@ -91,13 +91,10 @@ class Reflections
      */
     public static function getSingletonInstance(mixed $class): mixed
     {
-        try {
-            $result = $class::{self::$defaultMethod}();
-        } catch (GenericException) {
-            $message = sprintf('Method %s not found in the class %s', self::$defaultMethod, $class);
-            throw new CustomException($message);
+        if (!method_exists($class, self::$defaultMethod)) {
+            return false;
         }
-        return $result;
+        return $class::{self::$defaultMethod}();
     }
 
     /**
@@ -197,17 +194,8 @@ class Reflections
             return $classOrObject;
         }
 
-        if (!is_string($classOrObject)) {
-            $classOrObject = '\stdClass';
-        }
-
         $classReflector = new ReflectionClass($classOrObject);
-
-        if ($classReflector->hasMethod('newInstanceWithoutConstructor')) {
-            return $classReflector->newInstanceWithoutConstructor(); //NOSONAR
-        } else {
-            return $classReflector->newInstance($constructorArgArray);
-        }
+        return $classReflector->newInstance($constructorArgArray);
     }
 
     /**

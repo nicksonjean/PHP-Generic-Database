@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\PgSQL;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 
 #[AllowDynamicProperties]
 class Attributes
@@ -55,7 +55,7 @@ class Attributes
      * Define all PgSQL attribute of the connection a ready exist
      *
      * @return void
-     * @throws GenericException
+     * @throws CustomException
      */
     public static function define(): void
     {
@@ -99,7 +99,7 @@ class Attributes
                 'COLLATION' => ($settings['collate'] !== false && property_exists($settings['collate'], 'lc_collate'))
                     ? $settings['collate']->lc_collate
                     : false,
-                default => throw new GenericException("Invalid attribute: $attribute"),
+                default => throw new CustomException("Invalid attribute: $attribute"),
             };
         }
         PgSQLEngine::getInstance()->setAttributes($result);

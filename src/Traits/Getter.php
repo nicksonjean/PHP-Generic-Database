@@ -2,8 +2,6 @@
 
 namespace GenericDatabase\Traits;
 
-use GenericDatabase\Traits\Property;
-
 trait Getter
 {
     use Property;

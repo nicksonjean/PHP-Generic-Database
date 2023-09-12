@@ -30,8 +30,8 @@ class Types
         return str_replace(
             "ATTR",
             $constantName === 'SQLite'
-                ? strtoupper($constantName) . '3'
-                : strtoupper($constantName),
+                ? mb_strtoupper($constantName) . '3'
+                : mb_strtoupper($constantName),
             $index
         );
     }
@@ -45,11 +45,11 @@ class Types
     {
         $length = strlen($value);
         $value = ($value === null) ? '' : $value;
-        if (Regex::isNumber($value) && $length > 1) {
+        if (Validations::isNumber($value) && $length > 1) {
             $result = (int) $value;
         } elseif (($value === '0' || $value === '1') && $length === 1) {
             $result = (bool) $value;
-        } elseif (Regex::isBoolean($value)) {
+        } elseif (Validations::isBoolean($value)) {
             $result = (bool) $value;
         } else {
             $result = (string) $value;

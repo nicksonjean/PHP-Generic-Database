@@ -24,7 +24,7 @@ class Statements
     {
         $tmpData = mysqli_fetch_assoc($statement);
         if (is_array($tmpData)) {
-            return Arrays::toBoth($tmpData);
+            return Arrays::assocToIndexCombine($tmpData);
         }
         return false;
     }

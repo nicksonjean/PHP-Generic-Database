@@ -16,12 +16,12 @@ use GenericDatabase\Engine\SQLSrv\DSN;
 use GenericDatabase\Engine\SQLSrv\Dump;
 use GenericDatabase\Engine\SQLSrv\Transaction;
 use GenericDatabase\Engine\SQLSrv\Statements;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translater;
-use GenericDatabase\Helpers\Regex;
+use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -200,7 +200,7 @@ class SQLSrvEngine implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return SQLSrvEngine
-     * @throws GenericException
+     * @throws CustomException
      */
     private function postConnect(): SQLSrvEngine
     {
@@ -264,7 +264,7 @@ class SQLSrvEngine implements IConnection
             return $this;
         } catch (Exception $error) {
             $this->disconnect();
-            Errors::throw($error);
+            die(Errors::throw($error));
         }
     }
 
@@ -309,10 +309,10 @@ class SQLSrvEngine implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|GenericException
-     * @throws GenericException
+     * @return string|CustomException
+     * @throws CustomException
      */
-    private function parseDsn(): string|GenericException
+    private function parseDsn(): string|CustomException
     {
         return DSN::parseDsn();
     }
@@ -518,7 +518,7 @@ class SQLSrvEngine implements IConnection
             $this->getConnection(),
             $this->queryString,
             $data,
-            ['Scrollable' => Regex::isSelect($this->queryString) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD]
+            ['Scrollable' => Validations::isSelect($this->queryString) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD]
         );
     }
 
@@ -672,7 +672,9 @@ class SQLSrvEngine implements IConnection
                 $this->getConnection(),
                 $this->parse(...$params),
                 [],
-                ['Scrollable' => Regex::isSelect($this->queryString) ? SQLSRV_CURSOR_STATIC : SQLSRV_CURSOR_FORWARD]
+                ['Scrollable' => Validations::isSelect($this->queryString)
+                    ? SQLSRV_CURSOR_STATIC
+                    : SQLSRV_CURSOR_FORWARD]
             );
             $this->queryRows = (int) sqlsrv_num_rows(self::$statement);
             $this->queryColumns = (int) sqlsrv_num_fields(self::$statement);

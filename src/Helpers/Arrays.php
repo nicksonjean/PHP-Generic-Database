@@ -4,9 +4,8 @@ namespace GenericDatabase\Helpers;
 
 /**
  * The `GenericDatabase\Helpers\Arrays` class provides a collection of static methods for manipulating arrays in PHP.
- * It includes functions for finding elements in an array,
- * combining array indices and values,
- * determining the type of array, and more.
+ * It includes functions for finding elements in an array, combining array indices and values, determining the type
+ * of array, and more.
  *
  * Example Usage:
  * <code>
@@ -73,7 +72,7 @@ namespace GenericDatabase\Helpers;
  * //Create an index or list array to an associative array
  * $array1 = ['a', 'b', 'c'];
  * $array2 = ['x' => 1, 'y' => 2, 'z' => 3];
- * $result = Arrays::toBoth($array1, $array2);
+ * $result = Arrays::assocToIndexCombine($array1, $array2);
  * </code>
  * `Output: [0 => 'a', 'a' => 'a', 1 => 'b', 'b' => 'b', 2 => 'c', 'c' => 'c', 'x' => 1, 'y' => 2, 'z' => 3]`
  *
@@ -104,7 +103,7 @@ namespace GenericDatabase\Helpers;
  * Determines if an array is multidimensional.
  * - `arrayValuesRecursive(array $array): array`:
  * Gets the array values recursively.
- * - `toBoth(array ...$arrays): array`:
+ * - `assocToIndexCombine(array ...$arrays): array`:
  * Creates an index or list array to
  *
  * @package GenericDatabase\Helpers
@@ -228,12 +227,14 @@ class Arrays
     }
 
     /**
-     * Create an index or list array to an Assoc array;
+     * Create a numeric and incremental array, from an associative array,
+     * simulating the FETCH_BOTH flag of the fetch or fetchAll method,
+     * combining the associative array with the numeric array into a single array.
      *
      * @param array $arrays The array
      * @return array
      */
-    public static function toBoth(array ...$arrays): array
+    public static function assocToIndexCombine(array ...$arrays): array
     {
         $data = [];
         foreach ($arrays as $array) {

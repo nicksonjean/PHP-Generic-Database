@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\MySQLi;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 
 #[AllowDynamicProperties]
 class Attributes
@@ -51,7 +51,7 @@ class Attributes
     ];
 
     /**
-     * @throws GenericException
+     * @throws CustomException
      */
     public static function getCharsetType(int $type): string
     {
@@ -59,12 +59,12 @@ class Attributes
             self::CLIENT => 'character_set_client',
             self::RESULTS => 'character_set_results',
             self::CONNECTION => 'character_set_connection',
-            default => throw new GenericException("Invalid type: $type"),
+            default => throw new CustomException("Invalid type: $type"),
         };
     }
 
     /**
-     * @throws GenericException
+     * @throws CustomException
      */
     public static function getInverseCharsetType(int $type): string
     {
@@ -72,12 +72,12 @@ class Attributes
             self::CLIENT => 'client',
             self::RESULTS => 'results',
             self::CONNECTION => 'connection',
-            default => throw new GenericException("Invalid type: $type"),
+            default => throw new CustomException("Invalid type: $type"),
         };
     }
 
     /**
-     * @throws GenericException
+     * @throws CustomException
      */
     public static function settings(): array
     {
@@ -131,7 +131,7 @@ class Attributes
     }
 
     /**
-     * @throws GenericException
+     * @throws CustomException
      */
     private static function getVariables(?int $type = self::CONNECTION)
     {
@@ -139,7 +139,7 @@ class Attributes
     }
 
     /**
-     * @throws GenericException
+     * @throws CustomException
      */
     private static function setCharacterSet(): void
     {
@@ -180,7 +180,7 @@ class Attributes
     }
 
     /**
-     * @throws GenericException
+     * @throws CustomException
      */
     private static function setCollation(): void
     {
@@ -253,7 +253,7 @@ class Attributes
      *
      * @param int|null $type
      * @return void
-     * @throws GenericException
+     * @throws CustomException
      */
     public static function define(?int $type = self::CONNECTION): void
     {
@@ -287,7 +287,7 @@ class Attributes
                 'DEFAULT_FETCH_MODE' => self::$fetchMode,
                 'CHARACTER_SET' => self::getVariables($type)['charset'],
                 'COLLATION' => self::getVariables($type)['collation'],
-                default => throw new GenericException("Invalid attribute: $attribute"),
+                default => throw new CustomException("Invalid attribute: $attribute"),
             };
         }
         MySQLiEngine::getInstance()->setAttributes($result);

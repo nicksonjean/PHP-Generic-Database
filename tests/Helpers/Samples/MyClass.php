@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Tests\Helpers\Reflections;
+namespace GenericDatabase\Tests\Helpers\Samples;
 
 class MyClass
 {

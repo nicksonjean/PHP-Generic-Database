@@ -2,25 +2,17 @@
 
 namespace GenericDatabase\Helpers;
 
-class Regex
+class Validations
 {
-    /**
-     * Regex pattern for only numbers
-     */
-    private static array $patterns = [
-        'onlyNumbers' =>
-        "/^(?:-(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))|(?:0|(?:[1-9](?:\\d{0,2}(?:,\\d{3})+|\\d*))))(?:.\\d+|)$/",
-    ];
-
     /**
      * Check if a value is numeric
      *
      * @param string $value Value to be checked
-     * @return int|false True if the value is numeric, false otherwise
+     * @return bool True if the value is numeric, false otherwise
      */
-    public static function isNumber(string $value): int|false
+    public static function isNumber(string $value): bool
     {
-        return preg_match(self::$patterns['onlyNumbers'], $value);
+        return is_numeric($value);
     }
     /**
      * Check "Booleanic" Conditions :)

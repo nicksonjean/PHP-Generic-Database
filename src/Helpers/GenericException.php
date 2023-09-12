@@ -4,7 +4,6 @@ namespace GenericDatabase\Helpers;
 
 use Exception;
 use Throwable;
-use Stringable;
 
 class GenericException extends Exception implements Throwable
 {
@@ -57,15 +56,15 @@ class GenericException extends Exception implements Throwable
      * @param string|null $filename The filename where the exception is thrown.
      * @param int|null $line The line number where the exception is thrown.
      * @param Throwable|null $previous The previous exception used for the exception chaining.
-     * @return mixed
+     * @return void
      */
     public function __construct(
         $message = "",
         $code = 0,
         $severity = E_ERROR,
-        $filename = null,
-        $line = null,
-        $previous = null
+        string $filename = null,
+        int $line = null,
+        Throwable $previous = null
     ) {
         $this->noop($message);
         $this->noop($code);

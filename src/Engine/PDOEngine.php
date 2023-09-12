@@ -17,11 +17,11 @@ use GenericDatabase\Engine\PDO\DSN;
 use GenericDatabase\Engine\PDO\Dump;
 use GenericDatabase\Engine\PDO\Transaction;
 use GenericDatabase\Engine\PDO\Statements;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translater;
-use GenericDatabase\Helpers\Regex;
+use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -190,7 +190,7 @@ class PDOEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return PDOEngine
-     * @throws GenericException
+     * @throws CustomException
      */
     private function preConnect(): PDOEngine
     {
@@ -204,7 +204,7 @@ class PDOEngine implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return PDOEngine
-     * @throws GenericException
+     * @throws CustomException
      */
     private function postConnect(): PDOEngine
     {
@@ -256,7 +256,7 @@ class PDOEngine implements IConnection
             return $this;
         } catch (PDOException | Exception $error) {
             $this->disconnect();
-            Errors::throw($error);
+            die(Errors::throw($error));
         }
     }
 
@@ -472,7 +472,7 @@ class PDOEngine implements IConnection
      */
     public function queryRows(): int|false
     {
-        if (Regex::isSelect($this->queryString)) {
+        if (Validations::isSelect($this->queryString)) {
             $this->bindParam(...self::$statementCount);
             return count(Statements::internalFetchAllAssoc(self::$statementCount['sqlStatement']));
         }
@@ -542,7 +542,7 @@ class PDOEngine implements IConnection
         foreach ($params['sqlArgs'] as $param) {
             $statement = $this->internalBindVariable($param, $params['sqlStatement']);
             $this->exec($statement);
-            $this->affectedRows += !Regex::isSelect($params['sqlQuery']) ? self::$statement->rowCount() : 0;
+            $this->affectedRows += !Validations::isSelect($params['sqlQuery']) ? self::$statement->rowCount() : 0;
         }
     }
 
@@ -583,7 +583,7 @@ class PDOEngine implements IConnection
     {
         $statement = $this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
         $this->exec($statement);
-        $this->affectedRows += !Regex::isSelect($params['sqlQuery']) ? self::$statement->rowCount() : 0;
+        $this->affectedRows += !Validations::isSelect($params['sqlQuery']) ? self::$statement->rowCount() : 0;
     }
 
     /**
@@ -666,9 +666,9 @@ class PDOEngine implements IConnection
             array_unshift($rowCount, $this->getConnection()->prepare($this->parse(...$params)));
             array_unshift($params, self::$statement);
             self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
-            $this->queryRows = Regex::isSelect($this->queryString) ? $this->queryRows() : 0;
+            $this->queryRows = Validations::isSelect($this->queryString) ? $this->queryRows() : 0;
             $this->queryColumns = self::$statement->columnCount();
-            $this->affectedRows += !Regex::isSelect($this->queryString) ? self::$statement->rowCount() : 0;
+            $this->affectedRows += !Validations::isSelect($this->queryString) ? self::$statement->rowCount() : 0;
         }
         return $this;
     }
@@ -690,7 +690,7 @@ class PDOEngine implements IConnection
             $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
             self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
             $this->bindParam(...$bindParams);
-            $this->queryRows = Regex::isSelect($this->queryString) ? $this->queryRows() : 0;
+            $this->queryRows = Validations::isSelect($this->queryString) ? $this->queryRows() : 0;
             $this->queryColumns = self::$statement->columnCount();
         }
         return $this;

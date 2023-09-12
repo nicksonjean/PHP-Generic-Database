@@ -16,12 +16,12 @@ use GenericDatabase\Engine\FBird\DSN;
 use GenericDatabase\Engine\FBird\Dump;
 use GenericDatabase\Engine\FBird\Transaction;
 use GenericDatabase\Engine\FBird\Statements;
-use GenericDatabase\Helpers\GenericException;
+use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translater;
-use GenericDatabase\Helpers\Regex;
+use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Traits\Setter;
 use GenericDatabase\Traits\Getter;
 use GenericDatabase\Traits\Cleaner;
@@ -231,7 +231,7 @@ class FBirdEngine implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return FBirdEngine
-     * @throws GenericException
+     * @throws CustomException
      */
     private function postConnect(): FBirdEngine
     {
@@ -292,7 +292,7 @@ class FBirdEngine implements IConnection
             return $this;
         } catch (Exception $error) {
             $this->disconnect();
-            Errors::throw($error);
+            die(Errors::throw($error));
         }
     }
 
@@ -337,10 +337,10 @@ class FBirdEngine implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|GenericException
-     * @throws GenericException
+     * @return string|CustomException
+     * @throws CustomException
      */
-    private function parseDsn(): string|GenericException
+    private function parseDsn(): string|CustomException
     {
         return DSN::parseDsn();
     }
@@ -509,7 +509,7 @@ class FBirdEngine implements IConnection
      */
     public function queryRows(): int|false
     {
-        if (Regex::isSelect($this->queryString)) {
+        if (Validations::isSelect($this->queryString)) {
             $this->bindParam(...self::$statementCount);
             return count(Statements::internalFetchAllAssoc(self::$statementResult));
         }

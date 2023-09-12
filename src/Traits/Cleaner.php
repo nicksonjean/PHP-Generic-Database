@@ -2,8 +2,6 @@
 
 namespace GenericDatabase\Traits;
 
-use GenericDatabase\Traits\Property;
-
 trait Cleaner
 {
     use Property;
