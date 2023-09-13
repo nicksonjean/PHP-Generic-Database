@@ -29,18 +29,36 @@ use stdClass;
  * </code>
  *
  * Main functionalities:
- * - Escaping SQL strings based on different SQL dialects
- * - Extracting SQL arguments from an SQL string
- * - Replacing SQL binds with different bind types
+ * - Escaping SQL strings by replacing certain characters with their escaped versions.
+ * - Extracting SQL arguments from an SQL string.
+ * - Replacing SQL binds with the specified bind type.
+ * - Processing words based on certain conditions, such as whether they are inside quotes or a function.
+ * - Loading forbidden words from a JSON file and using them to escape the input string.
  *
  * Methods:
- * - `escape(string $input, int $dialect = self::SQL_DIALECT_NONE): string`:
+ * - `loadForbiddenWords():` 
+ * Loads forbidden words from a JSON file and returns them as an array.
+ * - `escapeType(string $input, string $quote):`
+ * Escapes the input string by replacing certain characters with their escaped versions.
+ * - `replaceParameters(string $input, string $quote, array $forbiddenWords):`
+ * Replaces parameters in a given input string and returns the modified string.
+ * - `processWord(string $word, array $forbiddenWords, string $quote, bool &$insideFunction, bool $insideSingleQuote, bool $insideDoubleQuote):`
+ * Processes a word based on certain conditions and returns the processed word.
+ * - `processCondition(stdClass $object, string $processedWord, bool $processedCondition):`
+ * Processes a condition based on certain conditions and returns the processed condition.
+ * - `encloseWord(string $word, string $quote):`
+ * Encloses a word with quotes or backticks, depending on the SQL dialect.
+ * - `escape(string $input, int $dialect = self::SQL_DIALECT_NONE):`
  * Escapes the SQL string by replacing parameters with their quoted versions.
- * - `arguments(string $input, array $values = null): array`:
+ * - `arguments(string $input, array $values = null):`
  * Extracts the SQL arguments from the input string.
- * - `binding(string $input, int $bindType = self::BIND_QUESTION_MARK): string`:
+ * - `binding(string $input, int $bindType = self::BIND_QUESTION_MARK):`
  * Replaces the SQL binds with the specified bind type.
- *
+ * - `bindWithQuestionMark(string $input, string $bindType):`
+ * Replaces the SQL binds with question marks.
+ * - `bindWithDollarSign(string $input, string $bindType):`
+ * Replaces the SQL binds with dollar signs.
+ * 
  * Fields:
  * - `SQL_DIALECT_BTICK`: Constant representing the SQL dialect using backticks.
  * - `SQL_DIALECT_DQUOTE`: Constant representing the SQL dialect using double quotes.
@@ -48,10 +66,10 @@ use stdClass;
  * - `SQL_DIALECT_NONE`: Constant representing no SQL dialect.
  * - `BIND_QUESTION_MARK`: Constant representing the bind type using question marks.
  * - `BIND_DOLLAR_SIGN`: Constant representing the bind type using dollar signs.
- * - `patternMap`: Array mapping regex patterns used in the class.
- * - `quoteMap`: Array mapping SQL dialects to their corresponding quote characters.
- * - `bindingMap`: Array mapping bind types to their corresponding bind characters.
- * - `forbiddenWords`: Instance of the reserved word dictionary.
+ * - `$patternMap`: An array mapping regex patterns used in the class.
+ * - `$quoteMap`: An array mapping SQL dialects to their corresponding quote characters.
+ * - `$bindingMap`: An array mapping bind types to their corresponding bind characters.
+ * - `$forbiddenWords`: An instance of the reserved word dictionary, loaded from a JSON file.
  *
  * @package Translater
  */
