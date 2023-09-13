@@ -33,16 +33,16 @@ use stdClass;
  * - Extracting SQL arguments from an SQL string.
  * - Replacing SQL binds with the specified bind type.
  * - Processing words based on certain conditions, such as whether they are inside quotes or a function.
- * - Loading forbidden words from a JSON file and using them to escape the input string.
+ * - Loading reserved words from a JSON file and using them to escape the input string.
  *
  * Methods:
- * - `loadForbiddenWords():`
- * Loads forbidden words from a JSON file and returns them as an array.
+ * - `loadReservedWords():`
+ * Loads reserved words from a JSON file and returns them as an array.
  * - `escapeType(string $input, string $quote):`
  * Escapes the input string by replacing certain characters with their escaped versions.
- * - `replaceParameters(string $input, string $quote, array $forbiddenWords):`
+ * - `replaceParameters(string $input, string $quote, array $resWords):`
  * Replaces parameters in a given input string and returns the modified string.
- * - `processWord(string $word, array $forbiddenWords, string $quote, bool &$insideFunction, bool $insideSingleQuote, bool $insideDoubleQuote):`
+ * - `processWord(string $word, array $resWords, string $quote, bool &$inFunction, bool $inSingleQt, bool $inDoubleQt):`
  * Processes a word based on certain conditions and returns the processed word.
  * - `processCondition(stdClass $object, string $processedWord, bool $processedCondition):`
  * Processes a condition based on certain conditions and returns the processed condition.
@@ -69,7 +69,7 @@ use stdClass;
  * - `$patternMap`: An array mapping regex patterns used in the class.
  * - `$quoteMap`: An array mapping SQL dialects to their corresponding quote characters.
  * - `$bindingMap`: An array mapping bind types to their corresponding bind characters.
- * - `$forbiddenWords`: An instance of the reserved word dictionary, loaded from a JSON file.
+ * - `$resWords`: An instance of the reserved word dictionary, loaded from a JSON file.
  *
  * @package Translater
  */
@@ -138,28 +138,28 @@ class Translater
     /**
      * Instance of reserved word dictionary
      */
-    private static mixed $forbiddenWords;
+    private static mixed $resWords;
 
     /**
-     * Load forbidden words from JSON file
-     * This method loads the forbidden words from a JSON file and returns them as an array.
+     * Load reserved words from JSON file
+     * This method loads the reserved words from a JSON file and returns them as an array.
      *
-     * @return array The forbidden words
+     * @return array The reserved words
      */
-    private static function loadForbiddenWords(): array
+    private static function loadReservedWords(): array
     {
-        if (!isset(self::$forbiddenWords)) {
+        if (!isset(self::$resWords)) {
             $json = file_get_contents(__DIR__ . '/Translater/Dictionary.json');
-            self::$forbiddenWords = json_decode($json, true);
+            self::$resWords = json_decode($json, true);
         }
-        return self::$forbiddenWords;
+        return self::$resWords;
     }
 
     /**
      * Escape the input string
      *
      * This method escapes the input string by replacing certain characters with their escaped versions.
-     * It uses the `loadForbiddenWords()` method to get the forbidden words and then splits the input
+     * It uses the `loadReservedWords()` method to get the reserved words and then splits the input
      * string into individual words.
      * It then iterates over each word and processes it based on certain conditions, such as whether it
      * is inside quotes or a function.
@@ -171,28 +171,15 @@ class Translater
      */
     private static function escapeType(string $input, string $quote): string
     {
-        $forbiddenWords = self::loadForbiddenWords();
-        $input = self::replaceParameters($input, $quote, $forbiddenWords);
+        $resWords = self::loadReservedWords();
+        $input = self::replaceParameters($input, $quote, $resWords);
         $words = preg_split('/\s+/', $input);
-        $insideSingleQuote = false;
-        $insideDoubleQuote = false;
-        $insideFunction = false;
+        $inSingleQt = false;
+        $inDoubleQt = false;
+        $inFunction = false;
 
-        $escapedWords = array_map(function ($word) use (
-            $forbiddenWords,
-            $quote,
-            &$insideFunction,
-            &$insideSingleQuote,
-            &$insideDoubleQuote
-        ) {
-            return self::processWord(
-                $word,
-                $forbiddenWords,
-                $quote,
-                $insideFunction,
-                $insideSingleQuote,
-                $insideDoubleQuote
-            );
+        $escapedWords = array_map(function ($word) use ($resWords, $quote, &$inFunction, &$inSingleQt, &$inDoubleQt) {
+            return self::processWord($word, $resWords, $quote, $inFunction, $inSingleQt, $inDoubleQt);
         }, $words);
 
         return implode(' ', $escapedWords);
@@ -203,16 +190,16 @@ class Translater
      *
      * @param string $input The input string containing parameters to be replaced.
      * @param string $quote The quote character used for enclosing words.
-     * @param array $forbiddenWords An array of words that should not be processed or enclosed.
+     * @param array $resWords An array of words that should not be processed or enclosed.
      * @return string The modified input string with parameter groups replaced by enclosed words.
      */
-    private static function replaceParameters(string $input, string $quote, array $forbiddenWords): string
+    private static function replaceParameters(string $input, string $quote, array $resWords): string
     {
         $mask = self::$patternMap['sqlMask'];
         return preg_replace_callback(
             self::$patternMap['sqlGroups'],
-            function ($matches) use ($mask, $quote, $forbiddenWords) {
-                if (!empty($matches) && !in_array($matches[1], $forbiddenWords)) {
+            function ($matches) use ($mask, $quote, $resWords) {
+                if (!empty($matches) && !in_array($matches[1], $resWords)) {
                     $pWords = array_map(fn ($word) => $quote . trim($word) . $quote, explode(',', trim($matches[2])));
                     return str_replace($mask, '(' . implode(', ', $pWords) . ') ', $matches[0]);
                 }
@@ -226,37 +213,37 @@ class Translater
      * Processes a word based on certain conditions and returns the processed word.
      *
      * @param string $word The word to be processed.
-     * @param array $forbiddenWords An array of words that should not be processed or enclosed.
+     * @param array $resWords An array of words that should not be processed or enclosed.
      * @param string $quote The quote character used for enclosing words.
-     * @param bool &$insideFunction A flag indicating if the word is inside a function.
-     * @param bool $insideSingleQuote A flag indicating if the word is inside single quotes.
-     * @param bool $insideDoubleQuote A flag indicating if the word is inside double quotes.
+     * @param bool &$inFunction A flag indicating if the word is inside a function.
+     * @param bool $inSingleQt A flag indicating if the word is inside single quotes.
+     * @param bool $inDoubleQt A flag indicating if the word is inside double quotes.
      * @return string The processed word, either as is or enclosed with the quote character.
      */
     private static function processWord(
         string $word,
-        array $forbiddenWords,
+        array $resWords,
         string $quote,
-        bool &$insideFunction,
-        bool $insideSingleQuote,
-        bool $insideDoubleQuote
+        bool &$inFunction,
+        bool $inSingleQt,
+        bool $inDoubleQt
     ): string {
         $object = new stdClass();
 
         $result = match (true) {
-            $insideFunction && str_contains($word, ')') => self::processCondition($object, $word, false),
-            !$insideFunction && str_contains($word, '(') => self::processCondition($object, $word, true),
-            $insideSingleQuote && str_contains($word, "'") => self::processCondition($object, $word, false),
-            !$insideSingleQuote && str_contains($word, "'") => self::processCondition($object, $word, true),
-            $insideDoubleQuote && str_contains($word, '"') => self::processCondition($object, $word, false),
-            !$insideDoubleQuote && str_contains($word, '"') => self::processCondition($object, $word, true),
+            $inFunction && str_contains($word, ')') => self::processCondition($object, $word, false),
+            !$inFunction && str_contains($word, '(') => self::processCondition($object, $word, true),
+            $inSingleQt && str_contains($word, "'") => self::processCondition($object, $word, false),
+            !$inSingleQt && str_contains($word, "'") => self::processCondition($object, $word, true),
+            $inDoubleQt && str_contains($word, '"') => self::processCondition($object, $word, false),
+            !$inDoubleQt && str_contains($word, '"') => self::processCondition($object, $word, true),
             str_contains($word, ':') => $word,
-            in_array($word, $forbiddenWords) || $insideFunction || $insideSingleQuote || $insideDoubleQuote => $word,
+            in_array($word, $resWords) || $inFunction || $inSingleQt || $inDoubleQt => $word,
             default => self::encloseWord($word, $quote),
         };
 
         if (is_bool($result)) {
-            $insideFunction = $result;
+            $inFunction = $result;
         } else {
             $object->processedWord = $result;
         }
