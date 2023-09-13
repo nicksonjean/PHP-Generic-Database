@@ -1,0 +1,5 @@
+IndexIgnore *.stub.php composer.* phpmd.* phpunit.* phpstan.* config.php /trash /vendor /assets /cache /resources /scripts /tests /src
+<FilesMatch "^\.">
+Order allow,deny
+Deny from all
+</FilesMatch>

@@ -1,0 +1,11 @@
+engine: fbird
+host: localhost
+port: 3050
+database: ../../resources/DB.FDB
+user: sysdba
+password: masterkey
+charset: utf8
+options:
+  - 'FBird::ATTR_PERSISTENT': true
+    'FBird::ATTR_CONNECT_TIMEOUT': 28800
+exception: true

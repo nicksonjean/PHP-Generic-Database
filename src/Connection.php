@@ -12,7 +12,7 @@ use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Engine\PDOEngine;
-use GenericDatabase\Traits\Singleton;
+use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\JSON;

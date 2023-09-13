@@ -22,10 +22,10 @@ use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translater;
 use GenericDatabase\Helpers\Validations;
-use GenericDatabase\Traits\Setter;
-use GenericDatabase\Traits\Getter;
-use GenericDatabase\Traits\Cleaner;
-use GenericDatabase\Traits\Singleton;
+use GenericDatabase\Shared\Setter;
+use GenericDatabase\Shared\Getter;
+use GenericDatabase\Shared\Cleaner;
+use GenericDatabase\Shared\Singleton;
 
 if (!defined('OCI_FETCH_NUM')) {
     define('OCI_FETCH_NUM', 8);

@@ -7,7 +7,7 @@ use MySQLi;
 use SQLite3;
 use GenericDatabase\Connection as CNX;
 use PgSQL\Connection as PGCNX;
-use GenericDatabase\Helpers\ConnectionType as An;
+use GenericDatabase\Core\Types as An;
 
 /**
  * The `GenericDatabase\Helpers\Compare` class provides methods

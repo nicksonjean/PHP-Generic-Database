@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+	<host>localhost</host>
+	<port>3050</port>
+	<database>../../resources/DB.FDB</database>
+	<user>sysdba</user>
+	<password>masterkey</password>
+	<charset>utf8</charset>
+	<options>
+		<option name="FBird::ATTR_PERSISTENT">true</option>
+		<option name="FBird::ATTR_CONNECT_TIMEOUT">28800</option>
+	</options>
+	<exception>true</exception>
+</root>
