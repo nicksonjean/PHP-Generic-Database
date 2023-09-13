@@ -15,7 +15,7 @@ class Options
         $result = [];
 
         foreach (Reflections::getClassConstants('GenericDatabase\Engine\SQLite\SQLite') as $value) {
-            $attribute = "SQLite::ATTR_" . strtoupper($value);
+            $attribute = "SQLite::ATTR_" . mb_strtoupper($value);
             $attributeValue = SQLiteEngine::getInstance()->getAttribute($attribute);
 
             if ($attributeValue === true && in_array($attribute, $options)) {

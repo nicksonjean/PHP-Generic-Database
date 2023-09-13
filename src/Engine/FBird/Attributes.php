@@ -69,7 +69,7 @@ class Attributes
             $line = trim($line);
             if (strlen($line) > 0) {
                 [$name, $value] = explode('|', $line . '|', 2);
-                $name = str_replace(' ', '_', strtolower(trim($name)));
+                $name = str_replace(' ', '_', mb_strtolower(trim($name)));
                 $results[$name] = trim($value) ?: null;
             }
         }

@@ -159,7 +159,7 @@ class PgSQLEngine implements IConnection
     public function __call(string $name, array $arguments): PgSQLEngine|string|int|bool|array|null
     {
         $method = substr($name, 0, 3);
-        $field = strtolower(substr($name, 3));
+        $field = mb_strtolower(substr($name, 3));
         if ($method == 'set') {
             $this->__set($field, ...$arguments);
         } elseif ($method == 'get') {

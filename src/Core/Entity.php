@@ -50,4 +50,9 @@ enum Entity: string
      * The fully qualified class name of the SQLite database engine class.
      */
     case CLASS_SQLITE_ENGINE = 'GenericDatabase\Engine\SQLiteEngine';
+
+    /**
+     * The fully qualified class name of the internal classes databases.
+     */
+    case CASE_INTERNAL_CLASS = 'GenericDatabase\Engine\%s\%s::%s';
 }

@@ -3,7 +3,7 @@
 namespace GenericDatabase\Engine\PDO;
 
 use GenericDatabase\Helpers\Validations;
-use GenericDatabase\Helpers\Types;
+use GenericDatabase\Helpers\Generators;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\JSON;
 use GenericDatabase\Helpers\INI;
@@ -57,7 +57,7 @@ class Arguments
      */
     private static function setType(mixed $value): string|int|bool
     {
-        return Types::setType($value);
+        return Generators::setType($value);
     }
 
     /**
@@ -94,7 +94,7 @@ class Arguments
         };
         if ($data) {
             foreach ($data as $key => $value) {
-                if (strtolower($key) === 'options') {
+                if (mb_strtolower($key) === 'options') {
                     call_user_func_array(
                         [PDOEngine::getInstance(), 'set' . ucfirst($key)],
                         [self::setConstant(($format === 'json' || $format === 'yaml') ? $value : [$value])]

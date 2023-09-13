@@ -137,7 +137,7 @@ class Connection
     public function __call(string $name, array $arguments): Connection
     {
         $method = substr($name, 0, 3);
-        $field = strtolower(substr($name, 3));
+        $field = mb_strtolower(substr($name, 3));
         if ($field === 'engine' && !empty($arguments)) {
             $this->initFactory(...$arguments);
         }
@@ -388,7 +388,7 @@ class Connection
             )
         );
         foreach (Arrays::recombine($data) as $key => $value) {
-            if (strtolower($key) === 'options') {
+            if (mb_strtolower($key) === 'options') {
                 self::call(
                     self::getInstance()->getStrategy(),
                     'set' . ucfirst($key),

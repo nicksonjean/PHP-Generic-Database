@@ -90,7 +90,7 @@ namespace GenericDatabase\Helpers;
  * Finds elements in an array except by keys.
  * - `exceptByValues(array $array, array $values): array`:
  * Finds elements in an array except by values.
- * - `matchValues(array $list, array $array, ?string $apply = 'strtolower'): string`:
+ * - `matchValues(array $list, array $array, ?string $apply = 'mb_strtolower'): string`:
  * Finds the first element that matches between two arrays.
  * - `recombine(array $array): array`:
  * Combines the indices and values of an array into a new array.
@@ -142,7 +142,7 @@ class Arrays
      * @param string|null $apply Filter to be applied
      * @return string
      */
-    public static function matchValues(array $list, array $array, ?string $apply = 'strtolower'): string
+    public static function matchValues(array $list, array $array, ?string $apply = 'mb_strtolower'): string
     {
         $engine = array_map(
             'unserialize',

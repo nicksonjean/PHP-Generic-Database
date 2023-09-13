@@ -55,6 +55,6 @@ class Validations
     public static function isSelect(string $stmt): bool
     {
         $trimMaskWithParams = "( \t\n\r\0\x0B";
-        return 'SELECT' === strtoupper(substr(ltrim($stmt, $trimMaskWithParams), 0, 6));
+        return 'SELECT' === mb_strtoupper(substr(ltrim($stmt, $trimMaskWithParams), 0, 6));
     }
 }

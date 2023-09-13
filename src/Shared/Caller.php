@@ -21,7 +21,7 @@ trait Caller
     public function __call(string $name, array $arguments): mixed
     {
         $method = substr($name, 0, 3);
-        $field = strtolower(substr($name, 3));
+        $field = mb_strtolower(substr($name, 3));
         if ($method == 'set') {
             $this->__set($field, ...$arguments);
             return $this;
