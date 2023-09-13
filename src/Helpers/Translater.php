@@ -36,7 +36,7 @@ use stdClass;
  * - Loading forbidden words from a JSON file and using them to escape the input string.
  *
  * Methods:
- * - `loadForbiddenWords():` 
+ * - `loadForbiddenWords():`
  * Loads forbidden words from a JSON file and returns them as an array.
  * - `escapeType(string $input, string $quote):`
  * Escapes the input string by replacing certain characters with their escaped versions.
@@ -58,7 +58,7 @@ use stdClass;
  * Replaces the SQL binds with question marks.
  * - `bindWithDollarSign(string $input, string $bindType):`
  * Replaces the SQL binds with dollar signs.
- * 
+ *
  * Fields:
  * - `SQL_DIALECT_BTICK`: Constant representing the SQL dialect using backticks.
  * - `SQL_DIALECT_DQUOTE`: Constant representing the SQL dialect using double quotes.
