@@ -87,7 +87,7 @@ class Errors
      * Throw a custom exception with the specified error message and display the error message and location.
      *
      * @param object $exception The exception to throw.
-     * @param string $message = null The custom error message.
+     * @param string|null $message = null The custom error message.
      * @return string|false This method always throws an exception and does not return.
      */
     public static function throw(object $exception, ?string $message = null): string|false

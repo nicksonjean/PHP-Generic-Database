@@ -2,9 +2,6 @@
 
 namespace GenericDatabase\Shared;
 
-use GenericDatabase\Shared\Property;
-use GenericDatabase\Shared\Singleton;
-
 trait Transporter
 {
     use Property;
@@ -33,6 +30,6 @@ trait Transporter
      */
     public function __wakeup()
     {
-        return $this->getInstance();
+        $this->getInstance();
     }
 }
