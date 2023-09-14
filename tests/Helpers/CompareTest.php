@@ -8,7 +8,7 @@ use Dotenv\Dotenv;
 
 final class CompareTest extends TestCase
 {
-    private static $env = [];
+    private static array $env = [];
 
     public static function setUpBeforeClass(): void
     {
@@ -19,7 +19,7 @@ final class CompareTest extends TestCase
 
     public static function tearDownAfterClass(): void
     {
-        self::$env = null;
+        self::$env = [];
     }
 
     public function testNativeMysqliConnection()

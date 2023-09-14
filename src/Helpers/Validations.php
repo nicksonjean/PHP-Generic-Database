@@ -2,6 +2,61 @@
 
 namespace GenericDatabase\Helpers;
 
+/**
+ * The `GenericDatabase\Helpers\Validations` class provides several static methods for performing common validation
+ * tasks. These methods include checking if a value is numeric, checking "Booleanic" conditions, generating random
+ * strings, and detecting if a query is a SELECT statement.
+ *
+ * Example Usage:
+ * <code>
+ * // Check if a value is numeric
+ * $value = '123';
+ * $isNumber = Validations::isNumber($value);
+ * echo $isNumber ? 'Numeric' : 'Not numeric';
+ * </code>
+ * `Output: Numeric`
+ *
+ * <code>
+ * // Check "Booleanic" conditions
+ * $value = 'true';
+ * $isBoolean = Validations::isBoolean($value);
+ * echo $isBoolean ? 'True' : 'False';
+ * </code>
+ * `Output: True`
+ *
+ * <code>
+ * // Generate a random string
+ * $length = 10;
+ * $randomString = Validations::randomString($length);
+ * echo $randomString;
+ * </code>
+ * `Output: Random string of length 10`
+ *
+ * <code>
+ * // Detect if a query is a SELECT statement
+ * $stmt = 'SELECT * FROM table';
+ * $isSelect = Validations::isSelect($stmt);
+ * echo $isSelect ? 'SELECT statement' : 'Not a SELECT statement';
+ * </code>
+ * `Output: SELECT statement`
+ *
+ * Main functionalities:
+ * - The `isNumber` method checks if a value is numeric by using the is_numeric function.
+ * - The `isBoolean` method checks "Booleanic" conditions
+ * by using the `filter_var` function with the `FILTER_VALIDATE_BOOLEAN` flag.
+ * - The `randomString` method generates a random string of a specified length by selecting
+ * random characters from an array of letters.
+ * - The `isSelect` method detects if a query is a SELECT statement by checking if the query
+ * starts with the word "SELECT" (case-insensitive).
+ *
+ * Methods:
+ * - `isNumber(string $value): bool`: Checks if a value is numeric.
+ * - `isBoolean(mixed $value): mixed`: Checks "Booleanic" conditions.
+ * - `randomString(int $length): string`: Generates a random string of a specified length.
+ * - `isSelect(string $stmt): bool`: Detects if a query is a SELECT statement.
+ *
+ * @package GenericDatabase\Helpers
+ */
 class Validations
 {
     /**

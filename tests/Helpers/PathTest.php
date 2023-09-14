@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
  */
 final class PathTest extends TestCase
 {
-
     public function testIsAbsoluteWithEmptyPath()
     {
         $emptyPath = '';

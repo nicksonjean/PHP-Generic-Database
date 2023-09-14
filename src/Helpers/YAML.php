@@ -2,6 +2,38 @@
 
 namespace GenericDatabase\Helpers;
 
+/**
+ * The `GenericDatabase\Helpers\YAML` class provides validation and parsing functionalities for YAML strings.
+ * It contains two static methods: isValidYAML and parseYAML.
+ *
+ * Example Usage:
+ * <code>
+ * // Validate a YAML string
+ * $yaml = 'example.yaml';
+ * $isValidYAML = \GenericDatabase\Helpers\YAML::isValidYAML($yaml);
+ * </code>
+ * `$isValidYAML will be true if the YAML string is valid, false otherwise`
+ *
+ * <code>
+ * // Parse a YAML string
+ * $value = 'true';
+ * $yaml = 'example.yaml';
+ * $parsedYAML = \GenericDatabase\Helpers\YAML::parseYAML($yaml);
+ * </code>
+ * `$parsedYAML will be an array containing the parsed YAML data`
+ *
+ * Main functionalities:
+ * - The `isValidYAML` method checks if a YAML string is valid by verifying that it is a string and ends
+ * with the extension '.yaml'. It also uses the `yaml_parse_file` function to further validate the YAML syntax.
+ * - The `parseYAML` method parses a valid YAML string by using the `yaml_parse_file` function and returns the
+ * parsed data as an array.
+ *
+ * Methods:
+ * - `isValidYAML(mixed $yaml): bool`: Checks if a YAML string is valid.
+ * - `parseYAML(string $yaml): array`: Parses a valid YAML string and returns the parsed data as an array.
+ *
+ * @package GenericDatabase\Helpers
+ */
 class YAML
 {
     /**
