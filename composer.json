@@ -52,13 +52,17 @@
         "code-lts/doctum": "^5.5",
         "phpmd/phpmd": "@stable",
         "squizlabs/php_codesniffer": "^3.7.2",
-        "phpstan/phpstan": "^1.10.25"
+        "phpstan/phpstan": "^1.10.25",
+        "phpro/grumphp": "v2.x-dev"
     },
     "config": {
         "sort-packages": true,
         "optimize-autoloader": true,
         "platform": {
             "php": "8.1"
+        },
+        "allow-plugins": {
+            "phpro/grumphp": true
         }
     },
     "scripts": {

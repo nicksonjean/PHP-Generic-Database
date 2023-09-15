@@ -8,19 +8,19 @@ PHP-Generic-Database é um conjunto de classes php para conexão, exibição e m
 
 Atualmente o PHP-Generic-Database suporte os seguintes mecanismos/banco de bados:
 
-- mysqli
+- MySQLi
   - MySQL e MariaDB Nativos
-- pgsql
+- PgSQL
   - PostgreSQL Nativo
-- fbird
+- FBird/IBase
   - Firebird/Interbase Nativos
-- sqlite
+- SQLite
   - SQLite Nativo
-- oci
+- OCI8
   - Oracle Nativo
-- sqlsvr
+- SQLSvr
   - SQLServer Nativo
-- pdo
+- PDO
   - MySQL/MariaDB
   - PostgreSQL
   - Firebird/Interbase
@@ -36,8 +36,8 @@ Atualmente o PHP-Generic-Database suporte os seguintes mecanismos/banco de bados
 ## Configuração
 
 - DLLs/SO Compiladas de cada mecanismo de banco de dados para cada versão do PHP
-  - Pacote de DLLs para a versão do [PHP 8.1](https://github.com/nicksonjean/PHP-Generic-Database/blob/main/resources/DLL/PHP8.1/PHP8.1.zip)
-  - Pacote de DLLs para a versão do [PHP 8.2](https://github.com/nicksonjean/PHP-Generic-Database/blob/main/resources/DLL/PHP8.2/PHP8.2.zip)
+  - Pacote de DLLs para a versão do [PHP 8.1](./assets/DLL/PHP8.1/PHP8.1.zip)
+  - Pacote de DLLs para a versão do [PHP 8.2](./assets/DLL/PHP8.2/PHP8.2.zip)
 - Configuração do php.ini
 
 ## Instalação Manual

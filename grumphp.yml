@@ -1,0 +1,13 @@
+grumphp:
+  tasks:
+    phpunit:
+    phpmd: 
+      report_format: text
+      ruleset: [phpmd.xml]
+      triggered_by: ['php']
+    phpcs:
+      ignore_patterns: ['resources/','assets/','build/']
+      standard: [phpcs.xml]
+      triggered_by: [php]
+    phpstan:
+      configuration: phpstan.neon

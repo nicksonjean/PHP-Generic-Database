@@ -40,8 +40,8 @@ class Attributes
     public static function define(): void
     {
         set_error_handler(
-            function ($message) {
-                throw new CustomException($message);
+            function ($code, $message) {
+                throw new CustomException(message: $message, code: $code);
             }
         );
 
