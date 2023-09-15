@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <tagA>AAA</tagA>
+    <tagB>bbb</tagB>
+    <options>
+        <option name="opcao1">true</option>
+        <option name="opcao2">42</option>
+    </options>
+</root>

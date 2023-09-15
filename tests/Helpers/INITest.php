@@ -53,7 +53,7 @@ final class INITest extends TestCase
         $this->assertFalse($isValid);
     }
 
-    public function testParseINIWithInvalidINIFile()
+    public function testParseIniWithInvalidIniFile()
     {
         $ini = 'tests/Helpers/Samples/INI/Valid.ini';
         $result = INI::parseINI($ini);
