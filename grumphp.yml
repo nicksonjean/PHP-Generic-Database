@@ -6,7 +6,8 @@ grumphp:
       config_file: phpunit.xml
       exclude_group: ['resources/','assets/','build/']
       always_execute: false
-    phpmd: 
+      order: null
+    phpmd:
       whitelist_patterns: [/^src\/(.*)/,/^samples\/(.*)/,/^tests\/(.*)/]
       report_format: text
       exclude: ['resources/','assets/','build/']

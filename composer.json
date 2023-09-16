@@ -46,15 +46,15 @@
     },
     "require-dev": {
         "php": "^8.1",
+        "code-lts/doctum": "^5.5",
         "composer/semver": "^3.3",
+        "pcov/clobber": "^2.0",
+        "phpmd/phpmd": "@stable",
+        "phpro/grumphp": "v2.x-dev",
+        "phpstan/phpstan": "^1.10.25",
         "phpunit/php-code-coverage": "^10.0",
         "phpunit/phpunit": "^10.0",
-        "pcov/clobber": "^2.0",
-        "code-lts/doctum": "^5.5",
-        "phpmd/phpmd": "@stable",
-        "squizlabs/php_codesniffer": "^3.7.2",
-        "phpstan/phpstan": "^1.10.25",
-        "phpro/grumphp": "v2.x-dev"
+        "squizlabs/php_codesniffer": "^3.7.2"
     },
     "config": {
         "sort-packages": true,

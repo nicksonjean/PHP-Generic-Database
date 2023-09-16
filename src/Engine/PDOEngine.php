@@ -719,9 +719,9 @@ class PDOEngine implements IConnection
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return mixed
+     * @return int|bool
      */
-    public function errorCode(mixed $inst = null): mixed
+    public function errorCode(mixed $inst = null): int|bool
     {
         return $this->getConnection()->errorCode() || $inst;
     }
@@ -730,9 +730,9 @@ class PDOEngine implements IConnection
      * This function returns an array containing error information about the last operation performed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return mixed
+     * @return string|bool
      */
-    public function errorInfo(mixed $inst = null): mixed
+    public function errorInfo(mixed $inst = null): string|bool
     {
         return $this->getConnection()->errorInfo() || $inst;
     }

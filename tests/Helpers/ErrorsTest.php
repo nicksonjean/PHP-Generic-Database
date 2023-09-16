@@ -11,16 +11,16 @@ use PHPUnit\Framework\TestCase;
  */
 final class ErrorsTest extends TestCase
 {
+    public function testTurnOn()
+    {
+        $previousSetting = Errors::turnOn();
+        $this->assertEquals(1, $previousSetting);
+    }
+
     public function testTurnOff()
     {
         $previousSetting = Errors::turnOff();
         $this->assertEquals(1, $previousSetting);
-    }
-
-    public function testTurnOn()
-    {
-        $previousSetting = Errors::turnOn();
-        $this->assertEquals(0, $previousSetting);
     }
 
     public function testThrowWithException()

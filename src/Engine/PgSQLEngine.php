@@ -676,9 +676,9 @@ class PgSQLEngine implements IConnection
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
      * @param ?mixed $inst = null
-     * @return string
+     * @return string|bool
      */
-    public function errorCode(mixed $inst = null): string
+    public function errorCode(mixed $inst = null): string|bool
     {
         return pg_last_error($this->getConnection()) ? pg_last_error($this->getConnection()) : $inst;
     }
@@ -687,9 +687,9 @@ class PgSQLEngine implements IConnection
      * This function returns an array containing error information about the last operation performed by the database.
      *
      * @param ?mixed $inst = null
-     * @return string
+     * @return string|bool
      */
-    public function errorInfo(mixed $inst = null): string
+    public function errorInfo(mixed $inst = null): string|bool
     {
         return pg_last_error($this->getConnection()) ? pg_last_error($this->getConnection()) : $inst;
     }

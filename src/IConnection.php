@@ -169,15 +169,15 @@ interface IConnection
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return mixed
+     * @return int|string|array|bool|null
      */
-    public function errorCode(mixed $inst = null): mixed;
+    public function errorCode(mixed $inst = null): int|string|array|bool|null;
 
     /**
      * This function returns an array containing error information about the last operation performed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return mixed
+     * @return string|array|null|false
      */
-    public function errorInfo(mixed $inst = null): mixed;
+    public function errorInfo(mixed $inst = null): string|array|bool|null;
 }

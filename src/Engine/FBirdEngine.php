@@ -365,7 +365,7 @@ class FBirdEngine implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return ($name) ? $name : 0;
+        return !is_null($name) ? $name : 0;
     }
 
     /**
@@ -750,9 +750,9 @@ class FBirdEngine implements IConnection
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return int|false
+     * @return int|bool
      */
-    public function errorCode(mixed $inst = null): int|false
+    public function errorCode(mixed $inst = null): int|bool
     {
         return (ibase_errcode()) ? ibase_errcode() : (int) $inst;
     }
@@ -761,9 +761,9 @@ class FBirdEngine implements IConnection
      * This function returns an array containing error information about the last operation performed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return array|false
+     * @return array|bool
      */
-    public function errorInfo(mixed $inst = null): array|false
+    public function errorInfo(mixed $inst = null): array|bool
     {
         $errorCode = $this->errorCode() || $inst;
         $result = false;
