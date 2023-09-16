@@ -27,72 +27,6 @@ use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
 
-if (!defined('FBIRD_FETCH_NUM')) {
-    define('FBIRD_FETCH_NUM', 8);
-}
-if (!defined('FBIRD_FETCH_OBJ')) {
-    define('FBIRD_FETCH_OBJ', 9);
-}
-if (!defined('FBIRD_FETCH_BOTH')) {
-    define('FBIRD_FETCH_BOTH', 10);
-}
-if (!defined('FBIRD_FETCH_INTO')) {
-    define('FBIRD_FETCH_INTO', 11);
-}
-if (!defined('FBIRD_FETCH_CLASS')) {
-    define('FBIRD_FETCH_CLASS', 12);
-}
-if (!defined('FBIRD_FETCH_ASSOC')) {
-    define('FBIRD_FETCH_ASSOC', 13);
-}
-if (!defined('FBIRD_FETCH_COLUMN')) {
-    define('FBIRD_FETCH_COLUMN', 14);
-}
-
-if (!defined('IBASE_FETCH_NUM')) {
-    define('IBASE_FETCH_NUM', 8);
-}
-if (!defined('IBASE_FETCH_OBJ')) {
-    define('IBASE_FETCH_OBJ', 9);
-}
-if (!defined('IBASE_FETCH_BOTH')) {
-    define('IBASE_FETCH_BOTH', 10);
-}
-if (!defined('IBASE_FETCH_INTO')) {
-    define('IBASE_FETCH_INTO', 11);
-}
-if (!defined('IBASE_FETCH_CLASS')) {
-    define('IBASE_FETCH_CLASS', 12);
-}
-if (!defined('IBASE_FETCH_ASSOC')) {
-    define('IBASE_FETCH_ASSOC', 13);
-}
-if (!defined('IBASE_FETCH_COLUMN')) {
-    define('IBASE_FETCH_COLUMN', 14);
-}
-
-if (!defined('FETCH_NUM')) {
-    define('FETCH_NUM', 8);
-}
-if (!defined('FETCH_OBJ')) {
-    define('FETCH_OBJ', 9);
-}
-if (!defined('FETCH_BOTH')) {
-    define('FETCH_BOTH', 10);
-}
-if (!defined('FETCH_INTO')) {
-    define('FETCH_INTO', 11);
-}
-if (!defined('FETCH_CLASS')) {
-    define('FETCH_CLASS', 12);
-}
-if (!defined('FETCH_ASSOC')) {
-    define('FETCH_ASSOC', 13);
-}
-if (!defined('FETCH_COLUMN')) {
-    define('FETCH_COLUMN', 14);
-}
-
 /**
  * Dynamic and Static container class for FBirdEngine connections.
  *
@@ -101,7 +35,7 @@ if (!defined('FETCH_COLUMN')) {
  * @method static FBirdEngine|static setHost(mixed $value): void
  * @method static FBirdEngine|static getHost($value = null): mixed
  * @method static FBirdEngine|static setPort(mixed $value): void
- * @method static FBirdEngine|static getPort($value = null): mixed
+ * @method static FBirdEngine|static getPort($value = null): int
  * @method static FBirdEngine|static setUser(mixed $value): void
  * @method static FBirdEngine|static getUser($value = null): mixed
  * @method static FBirdEngine|static setPassword(mixed $value): void
@@ -431,7 +365,7 @@ class FBirdEngine implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return 0;
+        return ($name) ? $name : 0;
     }
 
     /**
@@ -638,31 +572,12 @@ class FBirdEngine implements IConnection
      * This function makes an arguments list
      *
      * @param mixed $params Arguments list
+     * @param mixed $driver Driver name
      * @return array
      */
-    private function makeArgs(mixed ...$params): array
+    private function makeArgs(mixed $driver, mixed ...$params): array
     {
-        if (array_key_exists(2, $params)) {
-            if (is_array($params[2])) {
-                $isArgs = false;
-                $isArray = true;
-                $isMulti = Arrays::isMultidimensional($params[2]);
-                $sqlArgs = $params[2];
-            } else {
-                $isArgs = true;
-                $isArray = false;
-                $isMulti = false;
-                $sqlArgs = Translater::arguments($params[1], array_slice($params, 2));
-            }
-        }
-        return [
-            'sqlStatement' => $params[0],
-            'sqlQuery' => $params[1],
-            'sqlArgs' => $sqlArgs ?? [],
-            'isArray' => $isArray ?? false,
-            'isMulti' => $isMulti ?? false,
-            'isArgs' => $isArgs ?? false
-        ];
+        return Arrays::makeArgs($driver, ...$params);
     }
 
     /**
@@ -703,6 +618,7 @@ class FBirdEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
+        $driver = Compare::connection($this->getConnection());
         $this->resetMetadata();
         if (!empty($params)) {
             self::$statement = ibase_query($this->getConnection(), $this->parse(...$params));
@@ -711,7 +627,7 @@ class FBirdEngine implements IConnection
             $statement = ibase_prepare($this->getConnection(), $this->parse(...$params));
             array_unshift($rowCount, $statement);
             array_unshift($params, self::$statement);
-            self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            self::$statementCount = array_merge($this->makeArgs($driver, ...$rowCount), ['rowCount' => true]);
             $this->queryRows = $this->queryRows();
             $this->queryColumns = ibase_num_fields($statement);
             $this->affectedRows += ibase_affected_rows($this->getConnection());
@@ -727,6 +643,7 @@ class FBirdEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
+        $driver = Compare::connection($this->getConnection());
         $this->resetMetadata();
         if (!empty($params)) {
             /** @phpstan-ignore-next-line */
@@ -735,8 +652,8 @@ class FBirdEngine implements IConnection
             /** @phpstan-ignore-next-line */
             array_unshift($rowCount, ibase_prepare($this->getConnection(), $this->parse(...$params)));
             array_unshift($params, $statement);
-            $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
-            self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            $bindParams = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => false]);
+            self::$statementCount = array_merge($this->makeArgs($driver, ...$rowCount), ['rowCount' => true]);
             $this->bindParam(...$bindParams);
             $this->queryRows = $this->queryRows();
             $this->queryColumns = ibase_num_fields($statement);
@@ -837,7 +754,7 @@ class FBirdEngine implements IConnection
      */
     public function errorCode(mixed $inst = null): int|false
     {
-        return ibase_errcode();
+        return (ibase_errcode()) ? ibase_errcode() : (int) $inst;
     }
 
     /**
@@ -848,7 +765,7 @@ class FBirdEngine implements IConnection
      */
     public function errorInfo(mixed $inst = null): array|false
     {
-        $errorCode = $this->errorCode();
+        $errorCode = $this->errorCode() || $inst;
         $result = false;
         if ($errorCode) {
             $result = [

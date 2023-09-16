@@ -1,4 +1,4 @@
-IndexIgnore *.stub.php composer.* phpmd.* phpunit.* phpstan.* config.php /trash /vendor /assets /cache /resources /scripts /tests /src
+IndexIgnore *.stub.php composer.* php*.xml grumphp.* phpstan.* config.php /trash /vendor /assets /cache /resources /scripts /tests /src
 <FilesMatch "^\.">
 Order allow,deny
 Deny from all

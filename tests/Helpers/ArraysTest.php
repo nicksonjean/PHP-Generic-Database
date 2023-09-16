@@ -10,6 +10,10 @@ use PHPUnit\Framework\TestCase;
  */
 final class ArraysTest extends TestCase
 {
+    private static string $defaultQuery = 'SELECT * FROM users WHERE id = :id AND name = :name';
+
+    private static array $defaultParams = [':id' => 1, ':name' => 'John'];
+
     public function testExceptByKeys()
     {
         $array = ['a' => 1, 'b' => 2, 'c' => 3];
@@ -198,6 +202,70 @@ final class ArraysTest extends TestCase
         $expectedResult = [0 => 'apple', 'fruta' => 'apple', 1 => 'bicicleta', 'veiculo' => 'bicicleta'];
 
         $result = Arrays::assocToIndexCombine($array1);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testMakeArgsDefault()
+    {
+        $params = [
+            'sql statement',
+            self::$defaultQuery,
+            self::$defaultParams
+        ];
+
+        $result = Arrays::makeArgs('other_driver', ...$params);
+
+        $expectedResult = [
+            'sqlStatement' => 'sql statement',
+            'sqlQuery' => self::$defaultQuery,
+            'sqlArgs' => self::$defaultParams,
+            'isArray' => true,
+            'isMulti' => false,
+            'isArgs' => false
+        ];
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testMakeArrayForSqlsrv()
+    {
+        $params = [
+            self::$defaultQuery,
+            self::$defaultParams,
+        ];
+
+        $result = Arrays::makeArgs('sqlsrv', ...$params);
+
+        $expectedResult = [
+            'sqlStatement' => null,
+            'sqlQuery' => self::$defaultQuery,
+            'sqlArgs' => self::$defaultParams,
+            'isArray' => true,
+            'isMulti' => false,
+            'isArgs' => false
+        ];
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testMakeArgsForSqlsrv()
+    {
+        $params = [
+            self::$defaultQuery,
+            1, 'John',
+        ];
+
+        $result = Arrays::makeArgs('sqlsrv', ...$params);
+
+        $expectedResult = [
+            'sqlStatement' => null,
+            'sqlQuery' => self::$defaultQuery,
+            'sqlArgs' => self::$defaultParams,
+            'isArray' => false,
+            'isMulti' => false,
+            'isArgs' => true
+        ];
 
         $this->assertEquals($expectedResult, $result);
     }

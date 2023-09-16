@@ -27,50 +27,6 @@ use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
 
-if (!defined('SQLITE_FETCH_NUM')) {
-    define('SQLITE_FETCH_NUM', 8);
-}
-if (!defined('SQLITE_FETCH_OBJ')) {
-    define('SQLITE_FETCH_OBJ', 9);
-}
-if (!defined('SQLITE_FETCH_BOTH')) {
-    define('SQLITE_FETCH_BOTH', 10);
-}
-if (!defined('SQLITE_FETCH_INTO')) {
-    define('SQLITE_FETCH_INTO', 11);
-}
-if (!defined('SQLITE_FETCH_CLASS')) {
-    define('SQLITE_FETCH_CLASS', 12);
-}
-if (!defined('SQLITE_FETCH_ASSOC')) {
-    define('SQLITE_FETCH_ASSOC', 13);
-}
-if (!defined('SQLITE_FETCH_COLUMN')) {
-    define('SQLITE_FETCH_COLUMN', 14);
-}
-
-if (!defined('FETCH_NUM')) {
-    define('FETCH_NUM', 8);
-}
-if (!defined('FETCH_OBJ')) {
-    define('FETCH_OBJ', 9);
-}
-if (!defined('FETCH_BOTH')) {
-    define('FETCH_BOTH', 10);
-}
-if (!defined('FETCH_INTO')) {
-    define('FETCH_INTO', 11);
-}
-if (!defined('FETCH_CLASS')) {
-    define('FETCH_CLASS', 12);
-}
-if (!defined('FETCH_ASSOC')) {
-    define('FETCH_ASSOC', 13);
-}
-if (!defined('FETCH_COLUMN')) {
-    define('FETCH_COLUMN', 14);
-}
-
 /**
  * Dynamic and Static container class for SQLiteEngine connections.
  *
@@ -397,7 +353,7 @@ class SQLiteEngine implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return $this->getConnection()->lastInsertRowID();
+        return $this->getConnection()->lastInsertRowID() ?? $name;
     }
 
     /**
@@ -590,31 +546,12 @@ class SQLiteEngine implements IConnection
      * This function makes an arguments list
      *
      * @param mixed $params Arguments list
+     * @param mixed $driver Driver name
      * @return array
      */
-    private function makeArgs(mixed ...$params): array
+    private function makeArgs(mixed $driver, mixed ...$params): array
     {
-        if (array_key_exists(2, $params)) {
-            if (is_array($params[2])) {
-                $isArgs = false;
-                $isArray = true;
-                $isMulti = Arrays::isMultidimensional($params[2]);
-                $sqlArgs = $params[2];
-            } else {
-                $isArgs = true;
-                $isArray = false;
-                $isMulti = false;
-                $sqlArgs = Translater::arguments($params[1], array_slice($params, 2));
-            }
-        }
-        return [
-            'sqlStatement' => $params[0],
-            'sqlQuery' => $params[1],
-            'sqlArgs' => $sqlArgs ?? [],
-            'isArray' => $isArray ?? false,
-            'isMulti' => $isMulti ?? false,
-            'isArgs' => $isArgs ?? false
-        ];
+        return Arrays::makeArgs($driver, ...$params);
     }
 
     /**
@@ -653,12 +590,13 @@ class SQLiteEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
+        $driver = Compare::connection($this->getConnection());
         $this->resetMetadata();
         if (!empty($params)) {
             self::$statement = $this->getConnection()->query($this->parse(...$params));
             $statment = $this->getConnection()->prepare($this->parse(...$params));
             array_unshift($params, $statment);
-            self::$statementCount = array_merge($this->makeArgs(...$params), ['rowCount' => true]);
+            self::$statementCount = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => true]);
             $this->queryRows = $this->queryRows();
             $this->queryColumns = self::$statement->numColumns();
             $this->affectedRows += $this->getConnection()->changes();
@@ -674,14 +612,15 @@ class SQLiteEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
+        $driver = Compare::connection($this->getConnection());
         $this->resetMetadata();
         if (!empty($params)) {
             $statement = $this->getConnection()->prepare($this->parse(...$params));
             $rowCount = $params;
             array_unshift($rowCount, $this->getConnection()->prepare($this->parse(...$params)));
             array_unshift($params, $statement);
-            $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
-            self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            $bindParams = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => false]);
+            self::$statementCount = array_merge($this->makeArgs($driver, ...$rowCount), ['rowCount' => true]);
             $this->bindParam(...$bindParams);
             $this->queryRows = $this->queryRows();
             $this->queryColumns = self::$statement->numColumns();
@@ -776,7 +715,7 @@ class SQLiteEngine implements IConnection
      */
     public function errorCode(mixed $inst = null): mixed
     {
-        return $this->getConnection()->lastErrorCode();
+        return $this->getConnection()->lastErrorCode() ?? $inst;
     }
 
     /**
@@ -787,6 +726,6 @@ class SQLiteEngine implements IConnection
      */
     public function errorInfo(mixed $inst = null): mixed
     {
-        return $this->getConnection()->lastErrorMsg();
+        return $this->getConnection()->lastErrorMsg() ?? $inst;
     }
 }

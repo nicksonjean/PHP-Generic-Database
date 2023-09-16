@@ -5,5 +5,5 @@ parameters:
 	paths:
 		- src/
 		- tests/
-	ignoreErrors:
-		- '#Call to an undefined static method [a-zA-Z0-9\\_]+::new\(\)#'
+	excludePaths:
+		- samples/

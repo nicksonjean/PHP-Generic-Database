@@ -27,50 +27,6 @@ use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
 
-if (!defined('OCI_FETCH_NUM')) {
-    define('OCI_FETCH_NUM', 8);
-}
-if (!defined('OCI_FETCH_OBJ')) {
-    define('OCI_FETCH_OBJ', 9);
-}
-if (!defined('OCI_FETCH_BOTH')) {
-    define('OCI_FETCH_BOTH', 10);
-}
-if (!defined('OCI_FETCH_INTO')) {
-    define('OCI_FETCH_INTO', 11);
-}
-if (!defined('OCI_FETCH_CLASS')) {
-    define('OCI_FETCH_CLASS', 12);
-}
-if (!defined('OCI_FETCH_ASSOC')) {
-    define('OCI_FETCH_ASSOC', 13);
-}
-if (!defined('OCI_FETCH_COLUMN')) {
-    define('OCI_FETCH_COLUMN', 14);
-}
-
-if (!defined('FETCH_NUM')) {
-    define('FETCH_NUM', 8);
-}
-if (!defined('FETCH_OBJ')) {
-    define('FETCH_OBJ', 9);
-}
-if (!defined('FETCH_BOTH')) {
-    define('FETCH_BOTH', 10);
-}
-if (!defined('FETCH_INTO')) {
-    define('FETCH_INTO', 11);
-}
-if (!defined('FETCH_CLASS')) {
-    define('FETCH_CLASS', 12);
-}
-if (!defined('FETCH_ASSOC')) {
-    define('FETCH_ASSOC', 13);
-}
-if (!defined('FETCH_COLUMN')) {
-    define('FETCH_COLUMN', 14);
-}
-
 /**
  * Dynamic and Static container class for OCIEngine connections.
  *
@@ -407,7 +363,7 @@ class OCIEngine implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return 0;
+        return $name;
     }
 
     /**
@@ -611,31 +567,12 @@ class OCIEngine implements IConnection
      * This function makes an arguments list
      *
      * @param mixed $params Arguments list
+     * @param mixed $driver Driver name
      * @return array
      */
-    private function makeArgs(mixed ...$params): array
+    private function makeArgs(mixed $driver, mixed ...$params): array
     {
-        if (array_key_exists(2, $params)) {
-            if (is_array($params[2])) {
-                $isArgs = false;
-                $isArray = true;
-                $isMulti = Arrays::isMultidimensional($params[2]);
-                $sqlArgs = $params[2];
-            } else {
-                $isArgs = true;
-                $isArray = false;
-                $isMulti = false;
-                $sqlArgs = Translater::arguments($params[1], array_slice($params, 2));
-            }
-        }
-        return [
-            'sqlStatement' => $params[0],
-            'sqlQuery' => $params[1],
-            'sqlArgs' => $sqlArgs ?? [],
-            'isArray' => $isArray ?? false,
-            'isMulti' => $isMulti ?? false,
-            'isArgs' => $isArgs ?? false
-        ];
+        return Arrays::makeArgs($driver, ...$params);
     }
 
     /**
@@ -674,13 +611,14 @@ class OCIEngine implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
+        $driver = Compare::connection($this->getConnection());
         $this->resetMetadata();
         if (!empty($params)) {
             self::$statement = $this->parse(...$params);
             $rowCount = $params;
             array_unshift($rowCount, $this->parse(...$params));
             array_unshift($params, self::$statement);
-            self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            self::$statementCount = array_merge($this->makeArgs($driver, ...$rowCount), ['rowCount' => true]);
             $this->exec(self::$statement);
             $this->queryRows = $this->queryRows();
             $this->queryColumns = oci_num_fields(self::$statement);
@@ -691,14 +629,15 @@ class OCIEngine implements IConnection
 
     public function prepare(mixed ...$params): static|null
     {
+        $driver = Compare::connection($this->getConnection());
         $this->resetMetadata();
         if (!empty($params)) {
             self::$statement = $this->parse(...$params);
             $rowCount = $params;
             array_unshift($rowCount, $this->parse(...$params));
             array_unshift($params, self::$statement);
-            $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
-            self::$statementCount = array_merge($this->makeArgs(...$rowCount), ['rowCount' => true]);
+            $bindParams = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => false]);
+            self::$statementCount = array_merge($this->makeArgs($driver, ...$rowCount), ['rowCount' => true]);
             $this->bindParam(...$bindParams);
             $this->queryRows = $this->queryRows();
             $this->queryColumns = oci_num_fields(self::$statement);

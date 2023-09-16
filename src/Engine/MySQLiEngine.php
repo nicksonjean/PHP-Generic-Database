@@ -27,50 +27,6 @@ use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
 
-if (!defined('MYSQLI_FETCH_NUM')) {
-    define('MYSQLI_FETCH_NUM', 8);
-}
-if (!defined('MYSQLI_FETCH_OBJ')) {
-    define('MYSQLI_FETCH_OBJ', 9);
-}
-if (!defined('MYSQLI_FETCH_BOTH')) {
-    define('MYSQLI_FETCH_BOTH', 10);
-}
-if (!defined('MYSQLI_FETCH_INTO')) {
-    define('MYSQLI_FETCH_INTO', 11);
-}
-if (!defined('MYSQLI_FETCH_CLASS')) {
-    define('MYSQLI_FETCH_CLASS', 12);
-}
-if (!defined('MYSQLI_FETCH_ASSOC')) {
-    define('MYSQLI_FETCH_ASSOC', 13);
-}
-if (!defined('MYSQLI_FETCH_COLUMN')) {
-    define('MYSQLI_FETCH_COLUMN', 14);
-}
-
-if (!defined('FETCH_NUM')) {
-    define('FETCH_NUM', 8);
-}
-if (!defined('FETCH_OBJ')) {
-    define('FETCH_OBJ', 9);
-}
-if (!defined('FETCH_BOTH')) {
-    define('FETCH_BOTH', 10);
-}
-if (!defined('FETCH_INTO')) {
-    define('FETCH_INTO', 11);
-}
-if (!defined('FETCH_CLASS')) {
-    define('FETCH_CLASS', 12);
-}
-if (!defined('FETCH_ASSOC')) {
-    define('FETCH_ASSOC', 13);
-}
-if (!defined('FETCH_COLUMN')) {
-    define('FETCH_COLUMN', 14);
-}
-
 /**
  * Dynamic and Static container class for MySQLiEngine connections.
  *
@@ -610,31 +566,12 @@ class MySQLiEngine implements IConnection
      * This function makes an arguments list
      *
      * @param mixed $params Arguments list
+     * @param mixed $driver Driver name
      * @return array
      */
-    private function makeArgs(mixed ...$params): array
+    private function makeArgs(mixed $driver, mixed ...$params): array
     {
-        if (array_key_exists(2, $params)) {
-            if (is_array($params[2])) {
-                $isArgs = false;
-                $isArray = true;
-                $isMulti = Arrays::isMultidimensional($params[2]);
-                $sqlArgs = $params[2];
-            } else {
-                $isArgs = true;
-                $isArray = false;
-                $isMulti = false;
-                $sqlArgs = Translater::arguments($params[1], array_slice($params, 2));
-            }
-        }
-        return [
-            'sqlStatement' => $params[0],
-            'sqlQuery' => $params[1],
-            'sqlArgs' => $sqlArgs ?? [],
-            'isArray' => $isArray ?? false,
-            'isMulti' => $isMulti ?? false,
-            'isArgs' => $isArgs ?? false
-        ];
+        return Arrays::makeArgs($driver, ...$params);
     }
 
     /**
@@ -705,12 +642,13 @@ class MySQLiEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
+        $driver = Compare::connection($this->getConnection());
         $this->resetMetadata();
         if (!empty($params)) {
             $statement = mysqli_prepare($this->getConnection(), $this->parse(...$params));
             array_unshift($params, $statement);
             if (array_key_exists(2, $params)) {
-                $bindParams = array_merge($this->makeArgs(...$params), ['rowCount' => false]);
+                $bindParams = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => false]);
                 $this->bindParam(...$bindParams);
             } else {
                 $this->exec($statement);
@@ -813,7 +751,7 @@ class MySQLiEngine implements IConnection
      */
     public function errorCode(mixed $inst = null): mixed
     {
-        return $this->getConnection()->errno;
+        return $this->getConnection()->errno || $inst;
     }
 
     /**
@@ -824,6 +762,6 @@ class MySQLiEngine implements IConnection
      */
     public function errorInfo(mixed $inst = null): mixed
     {
-        return $this->getConnection()->error;
+        return $this->getConnection()->error || $inst;
     }
 }

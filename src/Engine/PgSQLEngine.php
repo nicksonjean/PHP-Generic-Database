@@ -27,50 +27,6 @@ use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
 use PgSql\Result;
 
-if (!defined('PGSQL_FETCH_NUM')) {
-    define('PGSQL_FETCH_NUM', 8);
-}
-if (!defined('PGSQL_FETCH_OBJ')) {
-    define('PGSQL_FETCH_OBJ', 9);
-}
-if (!defined('PGSQL_FETCH_BOTH')) {
-    define('PGSQL_FETCH_BOTH', 10);
-}
-if (!defined('PGSQL_FETCH_INTO')) {
-    define('PGSQL_FETCH_INTO', 11);
-}
-if (!defined('PGSQL_FETCH_CLASS')) {
-    define('PGSQL_FETCH_CLASS', 12);
-}
-if (!defined('PGSQL_FETCH_ASSOC')) {
-    define('PGSQL_FETCH_ASSOC', 13);
-}
-if (!defined('PGSQL_FETCH_COLUMN')) {
-    define('PGSQL_FETCH_COLUMN', 14);
-}
-
-if (!defined('FETCH_NUM')) {
-    define('FETCH_NUM', 8);
-}
-if (!defined('FETCH_OBJ')) {
-    define('FETCH_OBJ', 9);
-}
-if (!defined('FETCH_BOTH')) {
-    define('FETCH_BOTH', 10);
-}
-if (!defined('FETCH_INTO')) {
-    define('FETCH_INTO', 11);
-}
-if (!defined('FETCH_CLASS')) {
-    define('FETCH_CLASS', 12);
-}
-if (!defined('FETCH_ASSOC')) {
-    define('FETCH_ASSOC', 13);
-}
-if (!defined('FETCH_COLUMN')) {
-    define('FETCH_COLUMN', 14);
-}
-
 /**
  * Dynamic and Static container class for PgSQLEngine connections.
  *
@@ -509,7 +465,7 @@ class PgSQLEngine implements IConnection
     private function internalBindParamArrayMulti(mixed ...$params): void
     {
         foreach (Arrays::arrayValuesRecursive($params['sqlArgs']) as $param) {
-            $this->exec($params['stmtName'], $param);
+            $this->exec($params['sqlStatement'], $param);
             $this->affectedRows += (Validations::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
         }
     }
@@ -522,7 +478,7 @@ class PgSQLEngine implements IConnection
      */
     private function internalBindParamArraySingle(mixed ...$params): void
     {
-        $this->exec($params['stmtName'], array_values($params['sqlArgs']));
+        $this->exec($params['sqlStatement'], array_values($params['sqlArgs']));
         $this->affectedRows += (Validations::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
     }
 
@@ -549,7 +505,7 @@ class PgSQLEngine implements IConnection
      */
     private function internalBindParamArgs(mixed ...$params): void
     {
-        $this->exec($params['stmtName'], $params['sqlArgs']);
+        $this->exec($params['sqlStatement'], $params['sqlArgs']);
         $this->affectedRows += (Validations::isSelect($this->queryString)) ? 0 : pg_affected_rows(self::$statement);
     }
 
@@ -557,31 +513,12 @@ class PgSQLEngine implements IConnection
      * This function makes an arguments list
      *
      * @param mixed $params Arguments list
+     * @param mixed $driver Driver name
      * @return array
      */
-    private function makeArgs(mixed ...$params): array
+    private function makeArgs(mixed $driver, mixed ...$params): array
     {
-        if (array_key_exists(2, $params)) {
-            if (is_array($params[2])) {
-                $isArgs = false;
-                $isArray = true;
-                $isMulti = Arrays::isMultidimensional($params[2]);
-                $sqlArgs = $params[2];
-            } else {
-                $isArgs = true;
-                $isArray = false;
-                $isMulti = false;
-                $sqlArgs = Translater::arguments($params[1], array_slice($params, 2));
-            }
-        }
-        return [
-            'stmtName' => $params[0],
-            'sqlQuery' => $params[1],
-            'sqlArgs' => $sqlArgs ?? [],
-            'isArray' => $isArray ?? false,
-            'isMulti' => $isMulti ?? false,
-            'isArgs' => $isArgs ?? false
-        ];
+        return Arrays::makeArgs($driver, ...$params);
     }
 
     /**
@@ -641,12 +578,13 @@ class PgSQLEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
+        $driver = Compare::connection($this->getConnection());
         $this->resetMetadata();
         if (!empty($params)) {
             $stmtName = Validations::randomString(18);
             self::$statement = pg_prepare($this->getConnection(), $stmtName, $this->parse(...$params));
             array_unshift($params, $stmtName);
-            $bindParams = $this->makeArgs(...$params);
+            $bindParams = $this->makeArgs($driver, ...$params);
             (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
             $this->queryRows = pg_num_rows(self::$statement);
             $this->queryColumns = pg_num_fields(self::$statement);
@@ -742,7 +680,7 @@ class PgSQLEngine implements IConnection
      */
     public function errorCode(mixed $inst = null): string
     {
-        return pg_last_error($this->getConnection());
+        return pg_last_error($this->getConnection()) ? pg_last_error($this->getConnection()) : $inst;
     }
 
     /**
@@ -753,6 +691,6 @@ class PgSQLEngine implements IConnection
      */
     public function errorInfo(mixed $inst = null): string
     {
-        return pg_last_error($this->getConnection());
+        return pg_last_error($this->getConnection()) ? pg_last_error($this->getConnection()) : $inst;
     }
 }

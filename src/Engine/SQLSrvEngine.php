@@ -27,50 +27,6 @@ use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
 
-if (!defined('SQLSRV_FETCH_NUM')) {
-    define('SQLSRV_FETCH_NUM', 8);
-}
-if (!defined('SQLSRV_FETCH_OBJ')) {
-    define('SQLSRV_FETCH_OBJ', 9);
-}
-if (!defined('SQLSRV_FETCH_BOTH')) {
-    define('SQLSRV_FETCH_BOTH', 10);
-}
-if (!defined('SQLSRV_FETCH_INTO')) {
-    define('SQLSRV_FETCH_INTO', 11);
-}
-if (!defined('SQLSRV_FETCH_CLASS')) {
-    define('SQLSRV_FETCH_CLASS', 12);
-}
-if (!defined('SQLSRV_FETCH_ASSOC')) {
-    define('SQLSRV_FETCH_ASSOC', 13);
-}
-if (!defined('SQLSRV_FETCH_COLUMN')) {
-    define('SQLSRV_FETCH_COLUMN', 14);
-}
-
-if (!defined('FETCH_NUM')) {
-    define('FETCH_NUM', 8);
-}
-if (!defined('FETCH_OBJ')) {
-    define('FETCH_OBJ', 9);
-}
-if (!defined('FETCH_BOTH')) {
-    define('FETCH_BOTH', 10);
-}
-if (!defined('FETCH_INTO')) {
-    define('FETCH_INTO', 11);
-}
-if (!defined('FETCH_CLASS')) {
-    define('FETCH_CLASS', 12);
-}
-if (!defined('FETCH_ASSOC')) {
-    define('FETCH_ASSOC', 13);
-}
-if (!defined('FETCH_COLUMN')) {
-    define('FETCH_COLUMN', 14);
-}
-
 /**
  * Dynamic and Static container class for SQLSrvEngine connections.
  *
@@ -403,7 +359,7 @@ class SQLSrvEngine implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return 0;
+        return $name;
     }
 
     /**
@@ -602,30 +558,12 @@ class SQLSrvEngine implements IConnection
      * This function makes an arguments list
      *
      * @param mixed $params Arguments list
+     * @param mixed $driver Driver name
      * @return array
      */
-    private function makeArgs(mixed ...$params): array
+    private function makeArgs(mixed $driver, mixed ...$params): array
     {
-        if (array_key_exists(1, $params)) {
-            if (is_array($params[1])) {
-                $isArgs = false;
-                $isArray = true;
-                $isMulti = Arrays::isMultidimensional($params[1]);
-                $sqlArgs = $params[1];
-            } else {
-                $isArgs = true;
-                $isArray = false;
-                $isMulti = false;
-                $sqlArgs = Translater::arguments($params[0], array_slice($params, 1));
-            }
-        }
-        return [
-            'sqlQuery' => $params[0],
-            'sqlArgs' => $sqlArgs ?? [],
-            'isArray' => $isArray ?? false,
-            'isMulti' => $isMulti ?? false,
-            'isArgs' => $isArgs ?? false
-        ];
+        return Arrays::makeArgs($driver, ...$params);
     }
 
     /**
@@ -693,9 +631,10 @@ class SQLSrvEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
+        $driver = Compare::connection($this->getConnection());
         $this->resetMetadata();
         if (!empty($params)) {
-            $bindParams = $this->makeArgs(...$params);
+            $bindParams = $this->makeArgs($driver, ...$params);
             $this->parse(...$params);
             (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
             $this->queryRows = (int) sqlsrv_num_rows(self::$statement);

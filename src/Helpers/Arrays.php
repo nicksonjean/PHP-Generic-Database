@@ -2,6 +2,8 @@
 
 namespace GenericDatabase\Helpers;
 
+use GenericDatabase\Connection;
+
 /**
  * The `GenericDatabase\Helpers\Arrays` class provides a collection of static methods for manipulating arrays in PHP.
  * It includes functions for finding elements in an array, combining array indices and values, determining the type
@@ -246,5 +248,40 @@ class Arrays
             }
         }
         return $data;
+    }
+
+    /**
+     * This function makes an arguments list
+     *
+     * @param mixed $params Arguments list
+     * @return array
+     */
+    public static function makeArgs(mixed $driver, mixed ...$params): array
+    {
+        $index = ['isMulti' => 2, 'isArgs' => 1];
+        if ($driver === 'sqlsrv') {
+            $index = ['isMulti' => 1, 'isArgs' => 0];
+        }
+        if (array_key_exists($index['isMulti'], $params)) {
+            if (is_array($params[$index['isMulti']])) {
+                $isArgs = false;
+                $isArray = true;
+                $isMulti = self::isMultidimensional($params[$index['isMulti']]);
+                $sqlArgs = $params[$index['isMulti']];
+            } else {
+                $isArgs = true;
+                $isArray = false;
+                $isMulti = false;
+                $sqlArgs = Translater::arguments($params[$index['isArgs']], array_slice($params, $index['isMulti']));
+            }
+        }
+        return [
+            'sqlStatement' => ($driver === 'sqlsrv') ? null : $params[0],
+            'sqlQuery' => ($driver === 'sqlsrv') ? $params[0] : $params[1],
+            'sqlArgs' => $sqlArgs ?? [],
+            'isArray' => $isArray ?? false,
+            'isMulti' => $isMulti ?? false,
+            'isArgs' => $isArgs ?? false
+        ];
     }
 }

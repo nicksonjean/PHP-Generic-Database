@@ -20,6 +20,7 @@
     ],
     "minimum-stability": "dev",
     "autoload": {
+        "files": [ "src/Core/Consts.php" ],
         "psr-4": {
             "GenericDatabase\\": "src/"
         }
@@ -113,7 +114,7 @@
         "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
         "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
         "run:coverage": "php -d pcov.directory=src vendor/bin/phpunit tests --colors=always --configuration phpunit.xml --do-not-cache-result --coverage-html build/coverage --coverage-clover build/logs/clover.xml",
-        "run:copy": "php scripts/copy.php --source=./scripts/pre-commit --dest=./.git/hooks/pre-commit",
+        "run:grum": "php ./vendor/bin/grumphp git:pre-commit",
         "run:env": "php -r \"@copy('.env.example', '.env');\"",
         "clear:cache": "php scripts/eraser.php --dest=./cache/",
         "clear:docs": "php scripts/eraser.php --dest=./build/docs/",
@@ -124,7 +125,7 @@
         "post-update-cmd": [
             "@run:lint:setup",
             "@run:env",
-            "@run:copy"
+            "@run:grum"
         ]
     }
 }
