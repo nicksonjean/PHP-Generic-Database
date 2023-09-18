@@ -55,4 +55,9 @@ enum Entity: string
      * The fully qualified class name of the internal classes databases.
      */
     case CASE_INTERNAL_CLASS = 'GenericDatabase\Engine\%s\%s::%s';
+
+    /**
+     * The fully qualified arguments class name of the internal classes databases.
+     */
+    case CASE_ARGUMENT_CLASS = 'GenericDatabase\Engine\%s\Arguments';
 }

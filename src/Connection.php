@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GenericDatabase;
 
 use AllowDynamicProperties;
+use GenericDatabase\Core\Entity;
 use GenericDatabase\Engine\FBirdEngine;
 use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Engine\OCIEngine;
@@ -22,9 +23,9 @@ use GenericDatabase\Helpers\XML;
 use ReflectionException;
 
 /**
- * The `Connection` class is responsible for establishing and managing database connections.
- * It uses a strategy pattern to support different database engines.
- * The class provides methods for connecting to a database, executing queries, and managing the connection state.
+ * The `GenericDatabase\Connection` class is responsible for establishing and managing database connections.
+ * It uses a strategy pattern to support different database engines. The class provides methods for connecting
+ * to a database, executing queries, fetching results, and managing the connection state.
  *
  * Example Usage:
  * <code>
@@ -341,7 +342,7 @@ class Connection
     {
         $argumentClass = Reflections::getClassPropertyName(
             sprintf(
-                "GenericDatabase\Engine\%s\Arguments",
+                Entity::CASE_ARGUMENT_CLASS->value,
                 Arrays::matchValues(self::$engineList, $arguments)
             ),
             'argumentList'
@@ -383,7 +384,7 @@ class Connection
         self::call(self::getInstance(), 'initFactory', Arrays::assocToIndex(Arrays::recombine($data)));
         $instance = Reflections::getClassInstance(
             sprintf(
-                "GenericDatabase\Engine\%s\Arguments",
+                Entity::CASE_ARGUMENT_CLASS->value,
                 Arrays::matchValues(self::$engineList, Arrays::assocToIndex(Arrays::recombine($data)))
             )
         );

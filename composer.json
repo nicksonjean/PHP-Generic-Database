@@ -20,7 +20,9 @@
     ],
     "minimum-stability": "dev",
     "autoload": {
-        "files": [ "src/Core/Consts.php" ],
+        "files": [
+            "src/Core/Consts.php"
+        ],
         "psr-4": {
             "GenericDatabase\\": "src/"
         }
@@ -49,6 +51,7 @@
         "code-lts/doctum": "^5.5",
         "composer/semver": "^3.3",
         "pcov/clobber": "^2.0",
+        "php-parallel-lint/php-parallel-lint": "dev-develop",
         "phpmd/phpmd": "@stable",
         "phpro/grumphp": "v2.x-dev",
         "phpstan/phpstan": "^1.10.25",
@@ -73,59 +76,55 @@
             "@run:docs"
         ],
         "lint": [
-            "@lint:check",
-            "@lint:analyse",
-            "@lint:md",
-            "@lint:fix"
+            "@phpcs",
+            "@phpcbf",
+            "@phpmd",
+            "@phpstan",
+            "@phplint"
         ],
-        "lint:check": "@run:lint:check",
-        "lint:analyse": "@run:lint:analyse",
-        "lint:md": "@run:lint:md",
-        "lint:fix": "@run:lint:fix",
-        "lint:debug": "@run:lint:debug",
         "test": "@run:test",
         "test:coverage": [
-            "@clear:coverage",
-            "@run:coverage"
+            "@clear:test:coverage",
+            "@run:test:coverage"
         ],
         "clear": [
             "composer clearcache",
             "composer dump-autoload -o",
+            "@clear:env",
             "@clear:lock",
             "@clear:vendor",
-            "@clear:trash"
+            "@clear:build",
+            "@clear:trash",
+            "@clear:git"
         ],
         "setup": [
             "@clear",
             "composer install"
         ],
-        "run:lint:setup": [
-            "php vendor/bin/phpcs --config-set colors 1",
-            "php vendor/bin/phpcs --config-set tab_width 2",
-            "php vendor/bin/phpcs --config-set ignore_errors_on_exit 1",
-            "php vendor/bin/phpcs --config-set ignore_warnings_on_exit 1"
-        ],
-        "run:lint:debug": "php vendor/bin/phpstan --memory-limit=-1 --ansi --xdebug analyze -c ./phpstan.neon",
-        "run:lint:analyse": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
-        "run:lint:md": "php vendor/bin/phpmd src/,tests/ ansi phpmd.xml",
-        "run:lint:check": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 src/",
-        "run:lint:fix": "php vendor/bin/phpcbf --ignore-annotations --standard=PSR12 src/",
+        "phpstan": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
+        "phpmd": "php vendor/bin/phpmd src/,tests/ ansi phpmd.xml",
+        "phpcs": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 src/",
+        "phpcbf": "php vendor/bin/phpcbf --ignore-annotations --standard=PSR12 src/",
+        "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude pdo.stub.php --exclude vendor .",
         "run:docs": "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors",
         "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
         "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
-        "run:coverage": "php -d pcov.directory=src vendor/bin/phpunit tests --colors=always --configuration phpunit.xml --do-not-cache-result --coverage-html build/coverage --coverage-clover build/logs/clover.xml",
-        "run:grum": "php ./vendor/bin/grumphp git:pre-commit",
-        "run:env": "php -r \"@copy('.env.example', '.env');\"",
+        "run:test:coverage": "php -d pcov.directory=src vendor/bin/phpunit tests --colors=always --configuration phpunit.xml --do-not-cache-result --coverage-html build/coverage --coverage-clover build/logs/clover.xml",
+        "run:env": "php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
         "clear:cache": "php scripts/eraser.php --dest=./cache/",
         "clear:docs": "php scripts/eraser.php --dest=./build/docs/",
-        "clear:coverage": "php scripts/eraser.php --dest=./build/coverage/",
+        "clear:test:coverage": "php scripts/eraser.php --dest=./build/coverage/",
         "clear:vendor": "php scripts/eraser.php --dest=./vendor/",
+        "clear:build": "php scripts/eraser.php --dest=./build/",
         "clear:trash": "php -r \"@rmdir('./vendor/');\"",
         "clear:lock": "php -r \"@unlink('composer.lock');\"",
+        "clear:env": "php -r \"@unlink('.env');\"",
+        "clear:git": [
+            "php -r \"@unlink('.git/hooks/commit-msg');\"",
+            "php -r \"@unlink('.git/hooks/pre-commit');\""
+        ],
         "post-update-cmd": [
-            "@run:lint:setup",
-            "@run:env",
-            "@run:grum"
+            "@run:env"
         ]
     }
 }
