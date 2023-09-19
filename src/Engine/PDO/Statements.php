@@ -85,7 +85,7 @@ class Statements
     public static function internalFetchAllClassOrObjects(
         $statement = null,
         $constructorArguments = [],
-        $aClassOrObject = '\sstdClass',
+        $aClassOrObject = '\stdClass',
     ) {
         $result = [];
         $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;

@@ -48,29 +48,64 @@ final class ReflectionsTest extends TestCase
         $this->assertEquals('myPropertyValue', $value);
     }
 
-    public function testCreateObjectAndSetPropertiesCaseInsensitiveWithObject()
+    public function testCreateObjectWithReflectionObject()
     {
-        $object = new \stdClass();
-        $constructorArgs = ['arg1', 'arg2'];
-        $propertyList = ['Name' => 'John', 'Age' => 30];
+        $classOrObject = new \stdClass();
+        $constructorArgArray = [];
 
-        $result = Reflections::createObjectAndSetPropertiesCaseInsensitive($object, $constructorArgs, $propertyList);
+        $method = new \ReflectionMethod(self::REFCLASS, 'createObject');
+        $method->setAccessible(true); // NOSONAR
+        $result = $method->invokeArgs(null, [$classOrObject, $constructorArgArray]);
 
-        $this->assertSame($object, $result);
-        $this->assertEquals('John', $result->Name);
-        $this->assertEquals(30, $result->Age);
+        $this->assertInstanceOf('ReflectionObject', $result);
+    }
+
+    public function testCreateObjectWithNull()
+    {
+        $constructorArgArray = [];
+
+        $method = new \ReflectionMethod(self::REFCLASS, 'createObject');
+        $method->setAccessible(true); // NOSONAR
+        $result = $method->invokeArgs(null, [null, $constructorArgArray]);
+
+        $this->assertInstanceOf(\stdClass::class, $result);
+    }
+
+    public function testCreateObjectWithNewInstance()
+    {
+        $classOrObject = 'GenericDatabase\Tests\Helpers\Samples\MyClass';
+        $constructorArgArray = [];
+
+        $method = new \ReflectionMethod(self::REFCLASS, 'createObject');
+        $method->setAccessible(true); // NOSONAR
+        $result = $method->invokeArgs(null, [$classOrObject, $constructorArgArray]);
+
+        $this->assertInstanceOf(MyClass::class, $result);
     }
 
     public function testCreateObjectWithObject()
     {
-        $object = new \stdClass();
-        $constructorArgs = ['arg1', 'arg2'];
+        $constructorArgs = ['name' => 'John', 'age' => 25];
+        $propertyList = ['name' => 'Doe', 'age' => 30];
 
+        $object = Reflections::createObjectAndSetPropertiesCaseInsensitive(
+            MyClassNonInstance::class,
+            $constructorArgs,
+            $propertyList
+        );
+
+        $this->assertInstanceOf(MyClassNonInstance::class, $object);
+        $this->assertEquals('Doe', $object->name);
+        $this->assertEquals(30, $object->age);
+    }
+
+    public function testCreateObjectWithoutConstructor()
+    {
         $method = new \ReflectionMethod(self::REFCLASS, 'createObject');
         $method->setAccessible(true); // NOSONAR
-        $result = $method->invokeArgs(null, [$object, $constructorArgs]);
+        $object = $method->invokeArgs(null, [MyClass::class, []]);
 
-        $this->assertSame($object, $result);
+        $this->assertInstanceOf(MyClass::class, $object);
     }
 
     public function testCreateObjectWithClassName()

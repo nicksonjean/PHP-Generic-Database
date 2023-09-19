@@ -44,11 +44,11 @@ var_dump([
     $a->affectedRows()
 ]);
 
-var_dump($a->fetchAll(FETCH_BOTH));
+// var_dump($a->fetchAll(FETCH_OBJ));
 
-// while ($row = $a->fetch(FETCH_BOTH)) {
-//     var_dump($row);
-// }
+while ($row = $a->fetch(FETCH_OBJ)) {
+    echo vsprintf("<pre>%s, %s/%s</pre>", [$row->Codigo, $row->Estado, $row->Sigla]);
+}
 
 // $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE1', ':sigla' => 'T1'], [':nome' => 'TESTE2', ':sigla' => 'T2']]);
 // $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [':nome' => 'TESTE', ':sigla' => 'TE']);

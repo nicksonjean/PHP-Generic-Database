@@ -163,14 +163,14 @@ class Reflections
     /**
      * Creates an object and sets its properties in a case-insensitive manner.
      *
-     * @param mixed $classOrObject The class object or instance, or the class name as a string.
+     * @param $classOrObject The class object or instance, or the class name as a string.
      * @param array $constructorArgArray An array of constructor arguments.
      * @param array $propertyList An array of properties to be set on the object.
-     * @return mixed The created object with the properties set in a case-insensitive manner.
-     * @throws ReflectionException
+     * @return mixed|object|string The created object with the properties set in a case-insensitive manner.
+     * @throws \ReflectionException
      */
     public static function createObjectAndSetPropertiesCaseInsensitive(
-        mixed $classOrObject,
+        $classOrObject,
         array $constructorArgArray,
         array $propertyList
     ): mixed {
@@ -191,11 +191,19 @@ class Reflections
     private static function createObject(mixed $classOrObject, array $constructorArgArray): mixed
     {
         if (is_object($classOrObject)) {
-            return $classOrObject;
+            $result = new ReflectionObject($classOrObject);
+        } else {
+            if (!is_string($classOrObject)) {
+                $classOrObject = '\stdClass';
+            }
+            $classReflector = new ReflectionClass($classOrObject);
+            if (method_exists($classReflector, 'newInstanceWithoutConstructor') && empty($constructorArgArray)) {
+                $result = $classReflector->newInstanceWithoutConstructor(); //NOSONAR
+            } else {
+                $result = $classReflector->newInstance($constructorArgArray);
+            }
         }
-
-        $classReflector = new ReflectionClass($classOrObject);
-        return $classReflector->newInstance($constructorArgArray);
+        return $result;
     }
 
     /**
