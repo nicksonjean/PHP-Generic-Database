@@ -284,4 +284,13 @@ class Arrays
             'isArgs' => $isArgs ?? false
         ];
     }
+
+    public static function arrayToNamedArgs(array $parameters): array
+    {
+        $namedArguments = [];
+        foreach ($parameters as $key => $value) {
+            $namedArguments[$key] = $value;
+        }
+        return $namedArguments;
+    }
 }

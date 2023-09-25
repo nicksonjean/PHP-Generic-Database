@@ -1,5 +1,8 @@
 <?php
 
+use GenericDatabase\Connection;
+use GenericDatabase\Engine\MySQLi\MySQL;
+use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Modules\Chainable;
 use Dotenv\Dotenv;
 

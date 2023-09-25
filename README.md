@@ -1,63 +1,153 @@
-# PHP-Generic-Database ![PHP Supported Version](https://img.shields.io/badge/php-%3E%3D8.1-blue)
+# PHP-Generic-Database
 
-![IOUU](./assets/topology.png)
+<p align="center">
+    <img src="./assets/logo.png" width="256">
+</p>
 
-PHP-Generic-Database é um conjunto de classes php para conexão, exibição e manipulação genérica de dados de um banco de dados, possitibilitando centralizar o padronizar todos os mais variados tipos e comportamentos de cada banco de dados em um único formato, utilizando o padrão Strategy.
+<p align="center">
+    <img alt="PHP >= 8.1" src="https://img.shields.io/badge/php->=8.1-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white">
+    <img alt="License" src="https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge&color=purple">
+</p>
 
-## Bancos de Dados Suportados
+PHP-Generic-Database is a set of PHP classes for connecting, displaying and generically manipulating data from a database, making it possible to centralize or standardize all the most varied types and behaviors of each database in a single format, using the standard Strategy, heavily inspired by [Medoo](https://medoo.in/) and [Dibi](https://dibiphp.com/en/).
 
-Atualmente o PHP-Generic-Database suporte os seguintes mecanismos/banco de bados:
+## Supported Databases
 
-- MySQLi
-  - MySQL e MariaDB Nativos
-- PgSQL
-  - PostgreSQL Nativo
-- FBird/IBase
-  - Firebird/Interbase Nativos
-- SQLite
-  - SQLite Nativo
-- OCI8
-  - Oracle Nativo
-- SQLSvr
-  - SQLServer Nativo
-- PDO
-  - MySQL/MariaDB
-  - PostgreSQL
-  - Firebird/Interbase
-  - SQLite
-  - Oracle
-  - SQLServer
+PHP-Generic-Database currently supports the following mechanisms/database:
 
-## Dependências
+![MariaDB](https://img.shields.io/badge/MariaDB-BA7257?style=for-the-badge&logo=mariadb&logoColor=white)
+![MySQL](https://img.shields.io/badge/mysql-E48E00.svg?style=for-the-badge&logo=mysql&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/postgresql-31648C.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
+![MicrosoftSQLServer](https://img.shields.io/badge/SQL%20Server-72818C?style=for-the-badge&logo=microsoft%20sql%20server&logoColor=white)
+![Oracle](https://img.shields.io/badge/Oracle-C84734?style=for-the-badge&logo=oracle&logoColor=white)
+![Firebird](https://img.shields.io/badge/Firebird-F5B60F?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAArlBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8tivQqAAAAOXRSTlMABdgSNvzr30vz5MKyDA/4vS3vrpoJysadgHVVTyLoeWplRjAoFqSQb1o7qKGWioZBHdHPYKV9t4Mw5y1WAAAC70lEQVRYw+2X2XqiQBCF2ZFFUUARV9xinGiM0Szn/V9sBDLprg7QJt83d/lvEk6niuqq6qKj/PJf6SwvE/36I4uPTz+wHh/Tca+T/9o2Rn4ST9rfMTdetCF561MEc7i62bwbDKeieNoCvnGLuT6Et65aOMVArEvtWxYWdWt/NLgtiX0Ku1e/2o+B90b7PbyO0sQ9sG9YjvCmSkK8AA+1i3fwCntZDHc1S++wO4qcIXCszj/MFcnYurpmqg1MqupvYcQ/T204/rhd+SZYelUBnsW9BoA7bJXb4j0lVWkwgCUJNAOelgkAq3scG62YWxsD+CM66CJhD5uD5oaAq7nIPbhu6Lzy2bGA7tcAxp8PKxccYeu6AZqLBwCG2AJW/zOdM1DuTgplATELHQcvXJZFrJ1wqgA4pGcmwIVlII9g5nVDMEbEQQ8QeuEAcE20TjBvXx09gkGO8SpXDnzNBghJa3z8OedhQFJeKConzGBXDiHmwFU5fVkkhqvDPCBtyHTmwOYd7HIlmDPBB84V9iPUbCEtJJ8JGqCJ1p3LAByPdPAAxMQBZn1iPt0K3UQmpV1IDhNMwCRfglcHlDfaBgUmHwE5ixsPIr2vKYBDcoCUjRYNIkdhJIk5iEwg4U62iCccpZKIq1cAmCc2LgTcDSmPBYh9sMpT/u/5DAGTTh8fJRYvJ6zX1hDpilO95Mz35jZXdmQH1T2kR5/ykJw+ltVFUwQ7m8lkyLTDXLrPf83AINNE7c35+gYbhSfOtXDDIiAM0tHWZy8nR4l0Z1TuRg7rXKE4C1YFCWx+kBCCXv7VkFP1eT0Uuq0rHiSwyhDa7sfKK+QE06o7GAr0NeRkNZeXcnMaJNTekrbl4j0k0JuU2E6BLqtD0nDvfiw+WYvm9xN7kcwEDMVHPXtVclV/ht3uD1CDkyky1NQ8K/2aGKKpcgPTB19XRk7F7lvKjRjLq5u9SazDl2//57ROB2HuxHRcbzvRlR+g7iJN8+JspfzSwF/pPxQTLGx+KwAAAABJRU5ErkJggg==)
+![Interbase](https://img.shields.io/badge/Interbase-ED1F35?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANEAAADRCAMAAABl5KfdAAAAgVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9d3yJTAAAAKnRSTlMAMpXxm6Hg1Puql/fKss+e7GqK6eLGwKPdu3HYeua3g3VSkGHzWkKlSX+etyczAAAE0UlEQVR42uzZ2XKqQBSF4bUdGASN4BBn45ys93/AUyIGpRFMDBzo4rvxyqJ+pXsXDWq1Wq1Wq9VqtVqtVqvVbsmUZyZ0YTO0gRZmFq++oIMRI4LqO1qMuKi+FqnXX+TyloFsctiuzIFDlnJzlAHvfCCdNNwm71koE+G9PVLItmcxwRvKY8OYxuOc9pAPdFEaM8bJo5wBVeWbyevnfm3xDaZ5R1lsqRAoNiOyIkENKlx1LxiwykGUWM+KrE7QlioDtw4mqxS0ZoIFIoshKxX0wUjSdPWbrFbQjklmCG0d/jCI5KDr7Xb4T4QJJoKLjsVngyLhd+Y7QSGyg/oeLhoWfxEEeN6cgeaosSk6y2Kc5ePCd/jzoChqNuLFcOoXWNVn3AkXsz6f1kYyOS0ZmnQXhWSZjBkJApshXwmKiN/jlWOe8l5aU94bCgLS48tBEfGmTQbCpXXMLavFe+vo9PG1IJW0Dd5YTn3JIWuW/PDwxheCUsja5Z1J90ty3LfnEmbu8wgKyaHb5x3HtGeSx75tLRCQOfMJikhHuUbTbR2ULBG/65qGYbr2+rnmoXrDyYo5BKnkY+wwbjDeiiD0aRu85Yw8ZBnz21IQWDO3IJXYS56pS0uOK4cq512QSjnxESP3IHVU/eX1GOqF5V0WEqSOqj2ft//MLppF71eKD1JHlcoTMRmxM4rGCIjJAoOyR1WsQHijh0cWDvs7BDrMUMhh8HlUqXwAcHhjiYck/FiWIujBqDLVR7gl0tksTdCZLGJRvUVLrUxxbJYr6Oy4ZAYbD61YviAAbWbYINnB4a+0kbcN0zlINGZZgwBhuhNUnlXiIOCT6STpebyca+iq87PN4bgvexAwYRorPoPKHwRhqg9EZFCFIGDENC6+NViNIMhze4OYVQkCBkzjIeCxOkEZy32Ms1WVgrDLvO2kz99roXDCdJM5qxUEOExXuSD0eaVJEIYM6RL0XaRN0LVIn6CwSKOgS5FOQTBIahV0LtIrCIZuQTB0C4KhWxAM3YJg6BYEQ7cgGLoFwdAtCBPdgjDnX+mgHFzdgtDVLQgd3YLg6RYE0S0IcHQLQk+3IHR0C4LoFgT0dQuCzRc0UEKiWxAw1y0Inm5B/9q7u90EgSAMwy9OqhKtISJGG2tNf5O5/wtsTdvYhD2yHjAf89zBm4WFBV2gUQvipBYEj2pBvKsFwVYtCOZqQbypBUGtFgQztSBo1IJgoRYEc7UgWKgFgakFQaMWBK1aEGzUgmCnFgSzoe/Hdn2S0OaOS7kiOr8Y6O6TN1jUdsS2929CG7/ee8+K2ASTar2ku0wKYDKKpOiX2lovqdO71Lbesye0ahB/obypk/c9ENpWbrlUeZ8R2sH7toS2874DkVXjeJYS+w6v8oITka38y6C/5HGTrXhqImvlJodnV7soVS43SDO5QVrLDVKl91qplRuko5esievgJVPiqlzusJt7yQdxTb2kIa5O7rCrB/1f5WtMvGhHWC8ud9i17mqrc3N3sQf7pjZ/g4mdSICJnUjlpCOx9ZM2BGdiJxJgckWY0EL2h2lNDWemcrN6YTpvKX6Z1tRwZoP8Ove/mNRkx5mJvBv7w1R+znVhAk9Wy0mv6DCBZWwp6QklSzetINC4YUgppZRSSimllMbqE+pyG80XO1J+AAAAAElFTkSuQmCC)
 
-- PHP >= 8.1
-- Composer
+## Features
 
-## Configuração
+- **Lightweight** - Portable with only one file.
+- **Agnostic** - It can be used in different ways, supporting chainable methods, fluent design, dynamic arguments and static array.
+- **Easy** - Easy to learn and use, with a friendly construction.
+- **Powerful** - Supports various common and complex SQL queries, data mapping and prevents SQL injection.
+- **Compatible** - Supports MySQL/MariaDB, SQLSrv/MSSQL, Interbase/Firebird, PostgreSQL, Oracle, SQLite, and more.
+- **Friendly** - Works well with every PHP framework, such as Laravel, Codeigniter, Yii, Slim, and frameworks that support singleton extension or composer.
+- **Free** - Under the MIT license, you can use it anywhere, for whatever purpose.
 
-- DLLs/SO Compiladas de cada mecanismo de banco de dados para cada versão do PHP
-  - Pacote de DLLs para a versão do [PHP 8.1](./assets/DLL/PHP8.1/PHP8.1.zip)
-  - Pacote de DLLs para a versão do [PHP 8.2](./assets/DLL/PHP8.2/PHP8.2.zip)
-- Configuração do php.ini
+## Requirements
 
-## Instalação Manual
+- **PHP >= 8.1**
+- **Composer**
+- **Native Extensions**
+  - **MySQL/MariaDB** ***(MySQLi)*** _[php_mysqli.dll/so]_
+  - **PostgreSQL** ***(PgSQL)*** _[php_pgsql.dll/so]_
+  - **Oracle** ***(OCI8)*** _[php_oci8_19.dll/so]_
+  - **SQLSrv/MSSQL** ***(sqlsrv, mssql, dblib)*** _[php_sqlsrv.dll/so]_
+  - **Firebird/Interbase** ***(ibase: gds/fbird: fds)*** _[php_interbase.dll/so]_
+  - **SQLite** ***(SQLite3)*** _[php_sqlite3.dll/so]_
+- **PDO Extensions**
+  - **MySQL/MariaDB** ***(MySQL)*** _[php_pdo_mysql.dll/so]_
+  - **PostgreSQL** ***(PgSQL)*** _[php_pdo_pgsql.dll/so]_
+  - **Oracle** ***(OCI)*** _[php_pdo_oci.dll/so]_
+  - **SQLSrv*** ***(sqlsrv, mssql, dblib)*** _[php_pdo_sqlsrv.dll/so]_
+  - **Firebird/Interbase** ***(ibase: gds/fbird: fds)*** _[php_pdo_firebird.dll/so]_
+  - **SQLite** ***(SQLite)*** _[php_pdo_sqlite.dll/so]_
 
-1) Certifique-se que o Composer esteja instalado, caso contrário, instale a partir do [site oficial](https://getcomposer.org/download/).
-2) Certifique-se que o Git esteja instalado, caso contrário, instale a partir do [site oficial](https://git-scm.com/downloads).
-3) Depois de instalado o Composer e o Git, clone este repositório com a linha de comando abaixo:
+## PHP Settings
 
-```bash
-git clone https://github.com/nicksonjean/PHP-Generic-Database.git
+- DLLs/SO Compiled from each database engine for each PHP version.
+  - DLL package for [PHP 8.1](./assets/DLL/PHP8.1/PHP8.1.zip) version.
+  - DLL package for [PHP 8.2](./assets/DLL/PHP8.2/PHP8.2.zip) version.
+- PHP.ini configuration
+
+## Extension Instalation
+
+1) Edit the php.ini file and remove the &#039;;&#039; for the database extension you want to install.
+2) The .dll is for Windows and the .so is for Linux/UNIX.
+3) Uncomment the lines of the extensions you want to enable.
+
+From
+
+```ini
+;extension=php_pdo_mysql.dll
+;extension=php_pdo_mysql.so
 ```
 
-4) Em seguida execute o seguinte comando para instalar todos pacotes e as dependências deste projeto:
+To
 
-```bash
-composer install
+```ini
+extension=php_pdo_mysql.dll
+extension=php_pdo_mysql.so
 ```
 
-5) [Opcional] Caso precise reinstalar execute o seguinte comando:
+4) Save it, and restart the PHP or Apache/Nginx server.
+5) If the extension is installed successfully, you can find it on phpinfo() output.
+
+## Manual Installation
+
+1) Make sure Composer is installed, otherwise install from the [official website](https://getcomposer.org/download/).
+2) Make sure Git is installed, otherwise install from the [official website](https://git-scm.com/downloads).
+3) After Composer and Git are installed, clone this repository with the command line below:
 
 ```bash
-composer setup
+$ git clone https://github.com/nicksonjean/PHP-Generic-Database.git
 ```
+
+4) Then run the following command to install all packages and dependencies for this project:
+
+```bash
+$ composer install
+```
+
+5) [Optional] If you need to reinstall, run the following command:
+
+```bash
+$ composer setup
+```
+
+## Installation via Composer
+
+1) Make sure Composer is installed, otherwise install from the [official website](https://getcomposer.org/download/).
+2) After Composer are installed, clone this repository with the command line below:
+3) Add PHP-Generic-Database to the composer.json configuration file.
+
+```bash
+$ composer require nicksonjean/php-generic-database
+```
+
+4) And update the composer
+
+```bash
+$ composer update
+```
+## Documentation
+
+### How to use
+
+Below is a series of readmes containing examples of how to use the lib and a [topology image](./assets/topology.png) of the native drivers and pdo.
+
+- Strategy: [Connection.md](./readme/Connection.md)
+- Native
+  - MySQLi: [MySQLiEngine.md](./readme/MySQLiEngine.md)
+  - FBird: [FBirdEngine.md](./readme/FBirdEngine.md)
+  - OCI8: [OCIEngine.md](./readme/OCIEngine.md)
+  - PgSQL: [PgSQLEngine.md](./readme/PgSQLEngine.md)
+  - SQLSrv: [SQLSrvEngine.md](./readme/SQLSrvEngine.md)
+  - SQLite3: [SQLiteEngine.md](./readme/SQLiteEngine.md)
+- PDO: [PDOEngine.md](./readme/PDOEngine.md)
+- Statements: [Statements.md](./readme/Statements.md)
+- Fetches: [Fetches.md](./readme/Fetches.md)
+
+## License
+
+PHP-Generic-Database is released under the MIT license.
+
+## ToDo
+
+- [x] Improved use of the Static Arguments format, now using named arguments.
+- [x] Implement fetch and fetchAll methods.
+- [ ] Add transaction, commit and rollback support.
+- [ ] Added compatibility for SyBase Database.
+- [ ] Added compatibility for dBase Databases.
+- [ ] Added compatibility ODBC engine.
+- [ ] Query builder creation.

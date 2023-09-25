@@ -161,13 +161,14 @@ class Connection
      */
     public static function __callStatic(string $name, array $arguments): Connection
     {
+        $argumentsFile = Arrays::assocToIndex(Arrays::recombine($arguments));
         return match ($name) {
             'new' => match (true) {
-                JSON::isValidJSON(...$arguments) => self::callArgumentsByFormat('json', $arguments),
-                YAML::isValidYAML(...$arguments) => self::callArgumentsByFormat('yaml', $arguments),
-                INI::isValidINI(...$arguments) => self::callArgumentsByFormat('ini', $arguments),
-                XML::isValidXML(...$arguments) => self::callArgumentsByFormat('xml', $arguments),
-                default => Arrays::isAssoc(...$arguments)
+                JSON::isValidJSON(...$argumentsFile) => self::callArgumentsByFormat('json', $argumentsFile),
+                YAML::isValidYAML(...$argumentsFile) => self::callArgumentsByFormat('yaml', $argumentsFile),
+                INI::isValidINI(...$argumentsFile) => self::callArgumentsByFormat('ini', $argumentsFile),
+                XML::isValidXML(...$argumentsFile) => self::callArgumentsByFormat('xml', $argumentsFile),
+                default => Arrays::isAssoc(...$argumentsFile)
                     ? self::callWithByStaticArray(...$arguments)
                     : self::callWithByStaticArgs($arguments)
             },
@@ -340,25 +341,7 @@ class Connection
      */
     private static function callWithByStaticArgs(array $arguments): Connection
     {
-        $argumentClass = Reflections::getClassPropertyName(
-            sprintf(
-                Entity::CASE_ARGUMENT_CLASS->value,
-                Arrays::matchValues(self::$engineList, $arguments)
-            ),
-            'argumentList'
-        );
-        $argumentList = array_merge(['Engine'], $argumentClass);
-        if ($arguments[0] === 'pdo' && $arguments[1] === 'sqlite') {
-            $clonedArgumentList = Arrays::exceptByValues($argumentList, ['Host', 'Port', 'User', 'Password']);
-            foreach ($arguments as $key => $value) {
-                self::call(self::getInstance(), 'set' . $clonedArgumentList[$key], [$value]);
-            }
-        } else {
-            foreach ($arguments as $key => $value) {
-                self::call(self::getInstance(), 'set' . $argumentList[$key], [$value]);
-            }
-        }
-        return self::getInstance();
+        return self::callWithByStaticArray($arguments);
     }
 
     /**

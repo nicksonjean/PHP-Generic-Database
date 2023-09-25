@@ -14,21 +14,6 @@ use GenericDatabase\Engine\PDOEngine;
 class Arguments
 {
     /**
-     * array property for use in magic setter and getter in order
-     */
-    private static array $argumentList = [
-        'Driver',
-        'Host',
-        'Port',
-        'Database',
-        'User',
-        'Password',
-        'Charset',
-        'Options',
-        'Exception'
-    ];
-
-    /**
      * Transform variables in constants
      *
      * @param array $value
@@ -109,28 +94,6 @@ class Arguments
     }
 
     /**
-     * This method is used when all parameters are used in the static arguments format
-     *
-     * @param array $arguments
-     * @return PDOEngine
-     */
-    private static function callWithByStaticArgs(array $arguments): PDOEngine
-    {
-        if ($arguments[0] === 'sqlite') {
-            self::resetArgs($arguments[0]);
-            $clonedArgumentList = Arrays::exceptByValues(self::$argumentList, ['Host', 'Port', 'User', 'Password']);
-            foreach ($arguments as $key => $value) {
-                call_user_func_array([PDOEngine::getInstance(), 'set' . $clonedArgumentList[$key]], [$value]);
-            }
-        } else {
-            foreach ($arguments as $key => $value) {
-                call_user_func_array([PDOEngine::getInstance(), 'set' . self::$argumentList[$key]], [$value]);
-            }
-        }
-        return PDOEngine::getInstance();
-    }
-
-    /**
      * This method is used when all parameters are used in the static array format
      *
      * @param array $arguments
@@ -146,6 +109,17 @@ class Arguments
     }
 
     /**
+     * This method is used when all parameters are used in the static arguments format
+     *
+     * @param array $arguments
+     * @return PDOEngine
+     */
+    private static function callWithByStaticArgs(array $arguments): PDOEngine
+    {
+        return self::callWithByStaticArray($arguments);
+    }
+
+    /**
      * This method works like a factory and is responsible for identifying
      * the way in which the class is instantiated, as well as its arguments.
      *
@@ -155,14 +129,14 @@ class Arguments
      */
     public static function call(string $name, array $arguments): PDOEngine
     {
-        self::resetArgs($arguments[0]);
+        $argumentsFile = Arrays::assocToIndex(Arrays::recombine($arguments));
         return match ($name) {
             'new' => match (true) {
-                JSON::isValidJSON(...$arguments) => self::callArgumentsByFormat('json', $arguments),
-                YAML::isValidYAML(...$arguments) => self::callArgumentsByFormat('yaml', $arguments),
-                INI::isValidINI(...$arguments) => self::callArgumentsByFormat('ini', $arguments),
-                XML::isValidXML(...$arguments) => self::callArgumentsByFormat('xml', $arguments),
-                default => Arrays::isAssoc(...$arguments)
+                JSON::isValidJSON(...$argumentsFile) => self::callArgumentsByFormat('json', $argumentsFile),
+                YAML::isValidYAML(...$argumentsFile) => self::callArgumentsByFormat('yaml', $argumentsFile),
+                INI::isValidINI(...$argumentsFile) => self::callArgumentsByFormat('ini', $argumentsFile),
+                XML::isValidXML(...$argumentsFile) => self::callArgumentsByFormat('xml', $argumentsFile),
+                default => Arrays::isAssoc(...$argumentsFile)
                     ? self::callWithByStaticArray(...$arguments)
                     : self::callWithByStaticArgs($arguments)
             },

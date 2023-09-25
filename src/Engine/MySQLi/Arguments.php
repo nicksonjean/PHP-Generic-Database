@@ -13,20 +13,6 @@ use GenericDatabase\Engine\MySQLiEngine;
 class Arguments
 {
     /**
-     * array property for use in magic setter and getter in order
-     */
-    private static array $argumentList = [
-        'Host',
-        'Port',
-        'Database',
-        'User',
-        'Password',
-        'Charset',
-        'Options',
-        'Exception'
-    ];
-
-    /**
      * Transform variables in constants
      *
      * @param array $value
@@ -109,10 +95,7 @@ class Arguments
      */
     private static function callWithByStaticArgs(array $arguments): MySQLiEngine
     {
-        foreach ($arguments as $key => $value) {
-            call_user_func_array([MySQLiEngine::getInstance(), 'set' . self::$argumentList[$key]], [$value]);
-        }
-        return MySQLiEngine::getInstance();
+        return self::callWithByStaticArray($arguments);
     }
 
     /**
@@ -125,13 +108,14 @@ class Arguments
      */
     public static function call(string $name, array $arguments): MySQLiEngine
     {
+        $argumentsFile = Arrays::assocToIndex(Arrays::recombine($arguments));
         return match ($name) {
             'new' => match (true) {
-                JSON::isValidJSON(...$arguments) => self::callArgumentsByFormat('json', $arguments),
-                YAML::isValidYAML(...$arguments) => self::callArgumentsByFormat('yaml', $arguments),
-                INI::isValidINI(...$arguments) => self::callArgumentsByFormat('ini', $arguments),
-                XML::isValidXML(...$arguments) => self::callArgumentsByFormat('xml', $arguments),
-                default => Arrays::isAssoc(...$arguments)
+                JSON::isValidJSON(...$argumentsFile) => self::callArgumentsByFormat('json', $argumentsFile),
+                YAML::isValidYAML(...$argumentsFile) => self::callArgumentsByFormat('yaml', $argumentsFile),
+                INI::isValidINI(...$argumentsFile) => self::callArgumentsByFormat('ini', $argumentsFile),
+                XML::isValidXML(...$argumentsFile) => self::callArgumentsByFormat('xml', $argumentsFile),
+                default => Arrays::isAssoc(...$argumentsFile)
                     ? self::callWithByStaticArray(...$arguments)
                     : self::callWithByStaticArgs($arguments)
             },

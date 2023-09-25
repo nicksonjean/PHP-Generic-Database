@@ -38,16 +38,16 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_MYSQLI_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'mysqli';
+            $parameters['engine'] = 'mysqli';
         }
         $parameters = array_merge($parameters, [
-            $env['MYSQL_HOST'],
-            (int)$env['MYSQL_PORT'],
-            $env['MYSQL_DATABASE'],
-            $env['MYSQL_USER'],
-            $env['MYSQL_PASSWORD'],
-            'utf8',
-            [
+            'host' => $env['MYSQL_HOST'],
+            'port' => (int) $env['MYSQL_PORT'],
+            'database' => $env['MYSQL_DATABASE'],
+            'user' => $env['MYSQL_USER'],
+            'password' => $env['MYSQL_PASSWORD'],
+            'charset' => 'utf8',
+            'options' => [
                 MySQL::ATTR_PERSISTENT => $persistent,
                 MySQL::ATTR_AUTOCOMMIT => true,
                 MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
@@ -57,7 +57,7 @@ class StaticArgs
                 MySQL::ATTR_OPT_READ_TIMEOUT => 30,
                 MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -79,22 +79,22 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PGSQL_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'pgsql';
+            $parameters['engine'] = 'pgsql';
         }
         $parameters = array_merge($parameters, [
-            $env['PGSQL_HOST'],
-            (int)$env['PGSQL_PORT'],
-            $env['PGSQL_DATABASE'],
-            $env['PGSQL_USER'],
-            $env['PGSQL_PASSWORD'],
-            'utf8',
-            [
+            'host' => $env['PGSQL_HOST'],
+            'port' => (int)$env['PGSQL_PORT'],
+            'database' => $env['PGSQL_DATABASE'],
+            'user' => $env['PGSQL_USER'],
+            'password' => $env['PGSQL_PASSWORD'],
+            'charset' => 'utf8',
+            'options' => [
                 PgSQL::ATTR_PERSISTENT => $persistent,
                 PgSQL::ATTR_CONNECT_ASYNC => true,
                 PgSQL::ATTR_CONNECT_FORCE_NEW => true,
                 PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -116,20 +116,20 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLSRV_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'sqlsrv';
+            $parameters['engine'] = 'sqlsrv';
         }
         $parameters = array_merge($parameters, [
-            $env['SQLSRV_HOST'],
-            (int)$env['SQLSRV_PORT'],
-            $env['SQLSRV_DATABASE'],
-            $env['SQLSRV_USER'],
-            $env['SQLSRV_PASSWORD'],
-            'utf8',
-            [
+            'host' => $env['SQLSRV_HOST'],
+            'port' => (int)$env['SQLSRV_PORT'],
+            'database' => $env['SQLSRV_DATABASE'],
+            'user' => $env['SQLSRV_USER'],
+            'password' => $env['SQLSRV_PASSWORD'],
+            'charset' => 'utf8',
+            'options' => [
                 SQLSrv::ATTR_PERSISTENT => $persistent,
                 SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -151,20 +151,20 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_OCI_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'oci';
+            $parameters['engine'] = 'oci';
         }
         $parameters = array_merge($parameters, [
-            $env['OCI_HOST'],
-            (int)$env['OCI_PORT'],
-            $env['OCI_DATABASE'],
-            $env['OCI_USER'],
-            $env['OCI_PASSWORD'],
-            'utf8',
-            [
+            'host' => $env['OCI_HOST'],
+            'port' => (int)$env['OCI_PORT'],
+            'database' => $env['OCI_DATABASE'],
+            'user' => $env['OCI_USER'],
+            'password' => $env['OCI_PASSWORD'],
+            'charset' => 'utf8',
+            'options' => [
                 OCI::ATTR_PERSISTENT => $persistent,
                 OCI::ATTR_CONNECT_TIMEOUT => 28800,
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -186,20 +186,20 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_FBIRD_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'fbird';
+            $parameters['engine'] = 'fbird';
         }
         $parameters = array_merge($parameters, [
-            $env['FBIRD_HOST'],
-            (int)$env['FBIRD_PORT'],
-            $env['FBIRD_DATABASE'],
-            $env['FBIRD_USER'],
-            $env['FBIRD_PASSWORD'],
-            'utf8',
-            [
+            'host' => $env['FBIRD_HOST'],
+            'port' => (int)$env['FBIRD_PORT'],
+            'database' => $env['FBIRD_DATABASE'],
+            'user' => $env['FBIRD_USER'],
+            'password' => $env['FBIRD_PASSWORD'],
+            'charset' => 'utf8',
+            'options' => [
                 FBird::ATTR_PERSISTENT => $persistent,
                 FBird::ATTR_CONNECT_TIMEOUT => 28800,
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -221,12 +221,12 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'sqlite';
+            $parameters['engine'] = 'sqlite';
         }
         $parameters = array_merge($parameters, [
-            $env['SQLITE_DATABASE'],
-            'utf8',
-            [
+            'database' => $env['SQLITE_DATABASE'],
+            'charset' => 'utf8',
+            'options' => [
                 SQLite::ATTR_OPEN_READONLY => false,
                 SQLite::ATTR_OPEN_READWRITE => true,
                 SQLite::ATTR_OPEN_CREATE => true,
@@ -234,7 +234,7 @@ class StaticArgs
                 SQLite::ATTR_PERSISTENT => $persistent,
                 SQLite::ATTR_AUTOCOMMIT => true
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -256,12 +256,12 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'sqlite';
+            $parameters['engine'] = 'sqlite';
         }
         $parameters = array_merge($parameters, [
-            $env['SQLITE_DATABASE_MEMORY'],
-            'utf8',
-            [
+            'database' => $env['SQLITE_DATABASE_MEMORY'],
+            'charset' => 'utf8',
+            'options' => [
                 SQLite::ATTR_OPEN_READONLY => false,
                 SQLite::ATTR_OPEN_READWRITE => true,
                 SQLite::ATTR_OPEN_CREATE => true,
@@ -269,7 +269,7 @@ class StaticArgs
                 SQLite::ATTR_PERSISTENT => $persistent,
                 SQLite::ATTR_AUTOCOMMIT => true
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -291,22 +291,22 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'pdo';
+            $parameters['engine'] = 'pdo';
         }
         $parameters = array_merge($parameters, [
-            'mysql',
-            $env['MYSQL_HOST'],
-            (int)$env['MYSQL_PORT'],
-            $env['MYSQL_DATABASE'],
-            $env['MYSQL_USER'],
-            $env['MYSQL_PASSWORD'],
-            'utf8',
-            [
+            'driver' => 'mysql',
+            'host' => $env['MYSQL_HOST'],
+            'port' => (int)$env['MYSQL_PORT'],
+            'database' => $env['MYSQL_DATABASE'],
+            'user' => $env['MYSQL_USER'],
+            'password' => $env['MYSQL_PASSWORD'],
+            'charset' => 'utf8',
+            'options' => [
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -328,22 +328,22 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'pdo';
+            $parameters['engine'] = 'pdo';
         }
         $parameters = array_merge($parameters, [
-            'pgsql',
-            $env['PGSQL_HOST'],
-            (int)$env['PGSQL_PORT'],
-            $env['PGSQL_DATABASE'],
-            $env['PGSQL_USER'],
-            $env['PGSQL_PASSWORD'],
-            'utf8',
-            [
+            'driver' => 'pgsql',
+            'host' => $env['PGSQL_HOST'],
+            'port' => (int)$env['PGSQL_PORT'],
+            'database' => $env['PGSQL_DATABASE'],
+            'user' => $env['PGSQL_USER'],
+            'password' => $env['PGSQL_PASSWORD'],
+            'charset' => 'utf8',
+            'options' => [
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -363,21 +363,21 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'pdo';
+            $parameters['engine'] = 'pdo';
         }
         $parameters = array_merge($parameters, [
-            'sqlsrv',
-            $env['SQLSRV_HOST'],
-            (int)$env['SQLSRV_PORT'],
-            $env['SQLSRV_DATABASE'],
-            $env['SQLSRV_USER'],
-            $env['SQLSRV_PASSWORD'],
-            'utf8',
-            [
+            'driver' => 'sqlsrv',
+            'host' => $env['SQLSRV_HOST'],
+            'port' => (int)$env['SQLSRV_PORT'],
+            'database' => $env['SQLSRV_DATABASE'],
+            'user' => $env['SQLSRV_USER'],
+            'password' => $env['SQLSRV_PASSWORD'],
+            'charset' => 'utf8',
+            'options' => [
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -399,22 +399,22 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'pdo';
+            $parameters['engine'] = 'pdo';
         }
         $parameters = array_merge($parameters, [
-            'oci',
-            $env['OCI_HOST'],
-            (int)$env['OCI_PORT'],
-            $env['OCI_DATABASE'],
-            $env['OCI_USER'],
-            $env['OCI_PASSWORD'],
-            'utf8',
-            [
+            'driver' => 'oci',
+            'host' => $env['OCI_HOST'],
+            'port' => (int)$env['OCI_PORT'],
+            'database' => $env['OCI_DATABASE'],
+            'user' => $env['OCI_USER'],
+            'password' => $env['OCI_PASSWORD'],
+            'charset' => 'utf8',
+            'options' => [
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -436,22 +436,22 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'pdo';
+            $parameters['engine'] = 'pdo';
         }
         $parameters = array_merge($parameters, [
-            'firebird',
-            $env['FBIRD_HOST'],
-            (int)$env['FBIRD_PORT'],
-            $env['FBIRD_DATABASE'],
-            $env['FBIRD_USER'],
-            $env['FBIRD_PASSWORD'],
-            'utf8',
-            [
+            'driver' => 'firebird',
+            'host' => $env['FBIRD_HOST'],
+            'port' => (int)$env['FBIRD_PORT'],
+            'database' => $env['FBIRD_DATABASE'],
+            'user' => $env['FBIRD_USER'],
+            'password' => $env['FBIRD_PASSWORD'],
+            'charset' => 'utf8',
+            'options' => [
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -473,18 +473,18 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'pdo';
+            $parameters['engine'] = 'pdo';
         }
         $parameters = array_merge($parameters, [
-            'sqlite',
-            $env['SQLITE_DATABASE'],
-            'utf8',
-            [
+            'driver' => 'sqlite',
+            'database' => $env['SQLITE_DATABASE'],
+            'charset' => 'utf8',
+            'options' => [
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -506,18 +506,18 @@ class StaticArgs
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters[0] = 'pdo';
+            $parameters['engine'] = 'pdo';
         }
         $parameters = array_merge($parameters, [
-            'sqlite',
-            $env['SQLITE_DATABASE_MEMORY'],
-            'utf8',
-            [
+            'driver' => 'sqlite',
+            'database' => $env['SQLITE_DATABASE_MEMORY'],
+            'charset' => 'utf8',
+            'options' => [
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            true
+            'exception' => true
         ]);
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
