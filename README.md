@@ -50,7 +50,7 @@ PHP-Generic-Database currently supports the following mechanisms/database:
   - **MySQL/MariaDB** ***(MySQL)*** _[php_pdo_mysql.dll/so]_
   - **PostgreSQL** ***(PgSQL)*** _[php_pdo_pgsql.dll/so]_
   - **Oracle** ***(OCI)*** _[php_pdo_oci.dll/so]_
-  - **SQLSrv*** ***(sqlsrv, mssql, dblib)*** _[php_pdo_sqlsrv.dll/so]_
+  - **SQLSrv/MSSQL** ***(sqlsrv, mssql, dblib)*** _[php_pdo_sqlsrv.dll/so]_
   - **Firebird/Interbase** ***(ibase: gds/fbird: fds)*** _[php_pdo_firebird.dll/so]_
   - **SQLite** ***(SQLite)*** _[php_pdo_sqlite.dll/so]_
 
@@ -125,7 +125,7 @@ $ composer update
 
 ### How to use
 
-Below is a series of readmes containing examples of how to use the lib and a [topology image](./assets/topology.png) of the native drivers and pdo.
+Below is a series of readmes containing examples of how to use the lib and a [topology](./assets/topology.png) image of the native drivers and pdo.
 
 - Strategy: [Connection.md](./readme/Connection.md)
 - Native
