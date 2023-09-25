@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-    <img alt="PHP >= 8.1" src="https://img.shields.io/badge/php->=8.1-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white">
+    <img alt="PHP - &gt;=8.1" src="https://img.shields.io/badge/PHP-%3E=8.1-777BB4?style=for-the-badge&logo=php&logoColor=white">
     <img alt="License" src="https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge&color=purple">
 </p>
 
