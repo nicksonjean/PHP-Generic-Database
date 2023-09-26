@@ -40,19 +40,19 @@ PHP-Generic-Database currently supports the following mechanisms/database:
 - **PHP >= 8.1**
 - **Composer**
 - **Native Extensions**
-  - **MySQL/MariaDB** ***(MySQLi)*** _[php_mysqli.dll/so]_
-  - **PostgreSQL** ***(PgSQL)*** _[php_pgsql.dll/so]_
-  - **Oracle** ***(OCI8)*** _[php_oci8_19.dll/so]_
-  - **SQLSrv/MSSQL** ***(sqlsrv, mssql, dblib)*** _[php_sqlsrv.dll/so]_
-  - **Firebird/Interbase** ***(ibase: gds/fbird: fds)*** _[php_interbase.dll/so]_
-  - **SQLite** ***(SQLite3)*** _[php_sqlite3.dll/so]_
+  - **MySQL/MariaDB** ***(MySQLi)*** *[php_mysqli.dll/so]*
+  - **PostgreSQL** ***(PgSQL)*** *[php_pgsql.dll/so]*
+  - **Oracle** ***(OCI8)*** *[php_oci8_19.dll/so]*
+  - **SQLSrv/MSSQL** ***(sqlsrv, mssql, dblib)*** *[php_sqlsrv.dll/so]*
+  - **Firebird/Interbase** ***(ibase: gds/fbird: fds)*** *[php_interbase.dll/so]*
+  - **SQLite** ***(SQLite3)*** *[php_sqlite3.dll/so]*
 - **PDO Extensions**
-  - **MySQL/MariaDB** ***(MySQL)*** _[php_pdo_mysql.dll/so]_
-  - **PostgreSQL** ***(PgSQL)*** _[php_pdo_pgsql.dll/so]_
-  - **Oracle** ***(OCI)*** _[php_pdo_oci.dll/so]_
-  - **SQLSrv/MSSQL** ***(sqlsrv, mssql, dblib)*** _[php_pdo_sqlsrv.dll/so]_
-  - **Firebird/Interbase** ***(ibase: gds/fbird: fds)*** _[php_pdo_firebird.dll/so]_
-  - **SQLite** ***(SQLite)*** _[php_pdo_sqlite.dll/so]_
+  - **MySQL/MariaDB** ***(MySQL)*** *[php_pdo_mysql.dll/so]*
+  - **PostgreSQL** ***(PgSQL)*** *[php_pdo_pgsql.dll/so]*
+  - **Oracle** ***(OCI)*** *[php_pdo_oci.dll/so]*
+  - **SQLSrv/MSSQL** ***(sqlsrv, mssql, dblib)*** *[php_pdo_sqlsrv.dll/so]*
+  - **Firebird/Interbase** ***(ibase: gds/fbird: fds)*** *[php_pdo_firebird.dll/so]*
+  - **SQLite** ***(SQLite)*** *[php_pdo_sqlite.dll/so]*
 
 ## PHP Settings
 
@@ -121,6 +121,7 @@ $ composer require nicksonjean/php-generic-database
 ```bash
 $ composer update
 ```
+
 ## Documentation
 
 ### How to use
@@ -138,14 +139,14 @@ Below is a series of readmes containing examples of how to use the lib and a [to
     - [Fluent.md](./readme/Connection/Modules/Fluent.md)
     - [StaticArgs.md](./readme/Connection/Modules/StaticArgs.md)
     - [StaticArray.md](./readme/Connection/Modules/StaticArray.md)
-  - Engines:
-    - MySQLi: [MySQLiEngine.md](./readme/Engines/MySQLiEngine.md)
-    - FBird: [FBirdEngine.md](./readme/Engines/FBirdEngine.md)
-    - OCI8: [OCIEngine.md](./readme/Engines/OCIEngine.md)
-    - PgSQL: [PgSQLEngine.md](./readme/Engines/PgSQLEngine.md)
-    - SQLSrv: [SQLSrvEngine.md](./readme/Engines/SQLSrvEngine.md)
-    - SQLite3: [SQLiteEngine.md](./readme/Engines/SQLiteEngine.md)
-    - PDO: [PDOEngine.md](./readme/Engines/PDOEngine.md)
+- Engines:
+  - MySQLi: [MySQLiEngine.md](./readme/Engines/MySQLiEngine.md)
+  - FBird: [FBirdEngine.md](./readme/Engines/FBirdEngine.md)
+  - OCI8: [OCIEngine.md](./readme/Engines/OCIEngine.md)
+  - PgSQL: [PgSQLEngine.md](./readme/Engines/PgSQLEngine.md)
+  - SQLSrv: [SQLSrvEngine.md](./readme/Engines/SQLSrvEngine.md)
+  - SQLite3: [SQLiteEngine.md](./readme/Engines/SQLiteEngine.md)
+  - PDO: [PDOEngine.md](./readme/Engines/PDOEngine.md)
 - Statements: [Statements.md](./readme/Statements.md)
 - Fetches: [Fetches.md](./readme/Fetches.md)
 
