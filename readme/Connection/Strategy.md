@@ -6,10 +6,30 @@ The `GenericDatabase\Connection` class is responsible for establishing and manag
 
 ## Example Usage
 
-### Chainable Design
+### Load Class and Types Explicitly
 
 ```php
-// Create a new database connection using MySQLi engine in the chainable design format
+// Explicit and simplified module loading with all environment variables
+use GenericDatabase\Connection;
+use GenericDatabase\Engine\MySQli\MySQL;
+use GenericDatabase\Engine\PgSQL\PgSQL;
+use GenericDatabase\Engine\SQLSrv\SQLSrv;
+use GenericDatabase\Engine\OCI\OCI;
+use GenericDatabase\Engine\FBird\FBird;
+use GenericDatabase\Engine\SQLite\SQLite;
+use PDO;
+
+define("PATH_ROOT", dirname(__DIR__, 2));
+
+require_once PATH_ROOT . '/vendor/autoload.php';
+
+Dotenv::createImmutable(PATH_ROOT)->load();
+```
+
+### Chainable Methods
+
+```php
+// Create a new database connection using MySQLi engine in the chainable methods format
 $connection = new Connection();
 $connection
 ->setEngine('mysqli')
@@ -29,7 +49,8 @@ $connection
     MySQL::ATTR_OPT_READ_TIMEOUT => 30,
     MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
 ])
-->setException(true);
+->setException(true)
+->connect();
 ```
 
 ### Fluent Design
@@ -54,7 +75,8 @@ $connection = Connection
     MySQL::ATTR_OPT_READ_TIMEOUT => 30,
     MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
 ])
-::setException(true);
+::setException(true)
+->connect();
 ```
 
 ### Static Arguments
@@ -80,7 +102,8 @@ $connection = Connection::new(
         MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
     ],
     exception: true
-);
+)
+->connect();
 ```
 
 ### Static Array
@@ -106,25 +129,8 @@ $connection = Connection::new([
         MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
     ],
     'exception' => true
-]);
-```
-
-### The Remaining Commands
-
-```php
-// Connect to the database
-$connection->connect();
-
-// Execute a query
-$connection->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id NOT IN(25, 26, 27) ORDER BY id');
-
-// Fetch all rows from the result set
-while ($row = $connection->fetch(FETCH_OBJ)) {
-    echo vsprintf("<pre>%s, %s/%s</pre>", [$row->Codigo, $row->Estado, $row->Sigla]);
-}
-
-// Disconnect from the database
-$connection->disconnect();
+])
+->connect();
 ```
 
 ## Code Analysis

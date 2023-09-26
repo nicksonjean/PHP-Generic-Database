@@ -127,15 +127,25 @@ $ composer update
 
 Below is a series of readmes containing examples of how to use the lib and a [topology](./assets/topology.png) image of the native drivers and pdo.
 
-- Strategy: [Connection.md](./readme/Connection.md)
-- Native
-  - MySQLi: [MySQLiEngine.md](./readme/MySQLiEngine.md)
-  - FBird: [FBirdEngine.md](./readme/FBirdEngine.md)
-  - OCI8: [OCIEngine.md](./readme/OCIEngine.md)
-  - PgSQL: [PgSQLEngine.md](./readme/PgSQLEngine.md)
-  - SQLSrv: [SQLSrvEngine.md](./readme/SQLSrvEngine.md)
-  - SQLite3: [SQLiteEngine.md](./readme/SQLiteEngine.md)
-- PDO: [PDOEngine.md](./readme/PDOEngine.md)
+- Connection:
+  - Strategy:
+    - [Chainable.md](./readme/Connection/Strategy/Chainable.md)
+    - [Fluent.md](./readme/Connection/Strategy/Fluent.md)
+    - [StaticArgs.md](./readme/Connection/Strategy/StaticArgs.md)
+    - [StaticArray.md](./readme/Connection/Strategy/StaticArray.md)
+  - Modules:
+    - [Chainable.md](./readme/Connection/Modules/Chainable.md)
+    - [Fluent.md](./readme/Connection/Modules/Fluent.md)
+    - [StaticArgs.md](./readme/Connection/Modules/StaticArgs.md)
+    - [StaticArray.md](./readme/Connection/Modules/StaticArray.md)
+  - Engines:
+    - MySQLi: [MySQLiEngine.md](./readme/Engines/MySQLiEngine.md)
+    - FBird: [FBirdEngine.md](./readme/Engines/FBirdEngine.md)
+    - OCI8: [OCIEngine.md](./readme/Engines/OCIEngine.md)
+    - PgSQL: [PgSQLEngine.md](./readme/Engines/PgSQLEngine.md)
+    - SQLSrv: [SQLSrvEngine.md](./readme/Engines/SQLSrvEngine.md)
+    - SQLite3: [SQLiteEngine.md](./readme/Engines/SQLiteEngine.md)
+    - PDO: [PDOEngine.md](./readme/Engines/PDOEngine.md)
 - Statements: [Statements.md](./readme/Statements.md)
 - Fetches: [Fetches.md](./readme/Fetches.md)
 
