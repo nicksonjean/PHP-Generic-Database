@@ -1,63 +1,122 @@
-## Summary
-This code defines the `FBirdEngine` class, which is responsible for connecting to and interacting with a Firebird database. It includes methods for establishing a connection, executing queries, fetching results, and managing transactions.
+# FBirdEngine
+
+## FBirdEngine Connection
+
+The `GenericDatabase\FBirdEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
+
+### Load Class and Types Explicitly
+
 ```php
-// Create an instance of the FBirdEngine class
-$engine = new FBirdEngine();
+// Explicit and simplified module loading with all environment variables
+use GenericDatabase\FBirdEngine;
+use GenericDatabase\Engine\FBird\FBird;
 
-// Set the connection parameters
-$engine->setHost('localhost');
-$engine->setUser('username');
-$engine->setPassword('password');
-$engine->setDatabase('database');
-$engine->setPort(3050);
+define("PATH_ROOT", dirname(__DIR__, 2));
 
-// Connect to the database
-$engine->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
 
-// Execute a query
-$engine->query('SELECT * FROM users');
+Dotenv::createImmutable(PATH_ROOT)->load();
+```
 
-// Fetch the results
-$results = $engine->fetchAll();
+### Chainable Methods
 
-// Close the connection
-$engine->disconnect();
+```php
+// Create a new database connection using MySQLi engine in the chainable methods format
+$connection = new FBirdEngine();
+$connection
+->setHost($_ENV['FBIRD_HOST'])
+->setPort((int)$_ENV['FBIRD_PORT'])
+->setDatabase($_ENV['FBIRD_DATABASE'])
+->setUser($_ENV['FBIRD_USER'])
+->setPassword($_ENV['FBIRD_PASSWORD'])
+->setCharset($_ENV['FBIRD_CHARSET'])
+->setOptions([
+    FBird::ATTR_PERSISTENT => true,
+    FBird::ATTR_CONNECT_TIMEOUT => 28800,
+])
+->setException(true)
+->connect();
+```
+
+### Fluent Design
+
+```php
+// Create a new database connection using MySQLi engine in the fluent design format
+$connection = FBirdEngine
+::setHost($_ENV['FBIRD_HOST'])
+::setPort((int)$_ENV['FBIRD_PORT'])
+::setDatabase($_ENV['FBIRD_DATABASE'])
+::setUser($_ENV['FBIRD_USER'])
+::setPassword($_ENV['FBIRD_PASSWORD'])
+::setCharset($_ENV['FBIRD_CHARSET'])
+::setOptions([
+    FBird::ATTR_PERSISTENT => true,
+    FBird::ATTR_CONNECT_TIMEOUT => 28800,
+])
+::setException(true)
+->connect();
+```
+
+### Static Arguments
+
+```php
+// Create a new database connection using MySQLi engine in the static arguments format
+$connection = FBirdEngine::new(
+    host: $_ENV['FBIRD_HOST'],
+    port: (int)$_ENV['FBIRD_PORT'],
+    database: $_ENV['FBIRD_DATABASE'],
+    user: $_ENV['FBIRD_USER'],
+    password: $_ENV['FBIRD_PASSWORD'],
+    charset: 'utf8',
+    options: [
+        FBird::ATTR_PERSISTENT => true,
+        FBird::ATTR_CONNECT_TIMEOUT => 28800,
+    ],
+    exception: true
+)
+->connect();
+```
+
+### Static Array
+
+```php
+// Create a new database connection using MySQLi engine in the static array format
+$connection = FBirdEngine::new([
+    'host' => $_ENV['FBIRD_HOST'],
+    'port' => (int)$_ENV['FBIRD_PORT'],
+    'database' => $_ENV['FBIRD_DATABASE'],
+    'user' => $_ENV['FBIRD_USER'],
+    'password' => $_ENV['FBIRD_PASSWORD'],
+    'charset' => 'utf8',
+    'options' => [
+        FBird::ATTR_PERSISTENT => true,
+        FBird::ATTR_CONNECT_TIMEOUT => 28800,
+    ],
+    'exception' => true
+])
+->connect();
 ```
 
 ## Code Analysis
+
 ### Main functionalities
-- Establishing a connection to a Firebird database
-- Executing SQL queries and fetching results
-- Managing transactions (begin, commit, rollback)
-- Importing SQL dumps from files
-- Retrieving metadata about executed queries (number of rows, columns, affected rows)
-- Binding parameters to prepared statements
-- Handling errors and retrieving error information
-___
-### Methods
-- `connect()`: Establishes a connection to the database.
-- `disconnect()`: Closes the connection to the database.
-- `query($sql)`: Executes an SQL query and returns the result set.
-- `fetchAll($fetchStyle)`: Fetches all rows from the result set and returns them as an array.
-- `beginTransaction()`: Starts a new transaction.
-- `commit()`: Commits the changes made during the transaction.
-- `rollback()`: Rolls back the changes made during the transaction.
-- `loadFromFile($file)`: Imports an SQL dump from a file.
-- `queryMetadata()`: Returns metadata about the last executed query.
-- `bindParam($params)`: Binds parameters to a prepared statement.
-- `errorCode()`: Returns the SQLSTATE code for the last operation.
-- `errorInfo()`: Returns an array with error information about the last operation.
-___
-### Fields
-- `$connection`: Instance of the connection with the database.
-- `$statement`: Instance of the statement of the database.
-- `$statementCount`: Instance of the statement of the database for counting rows.
-- `$statementResult`: Instance of the statement of the database for fetching results.
-- `$queryRows`: Number of rows in the last executed query.
-- `$queryColumns`: Number of columns in the last executed query.
-- `$affectedRows`: Number of affected rows in the last executed query.
-- `$queryString`: Last executed SQL query.
-- `$queryParameters`: Last executed query parameters.
-___
+
+- Establishing and managing database connections
+- Supporting different database engines through the strategy pattern
+- Executing queries and fetching results
+- Managing the connection state (connecting, disconnecting, checking if connected)
+
+### Public Methods
+
+- `connect(): Connection`: Establishes a database connection using the strategy instance.
+- `ping(): bool`: Pings the database server to check if the connection is still active.
+- `disconnect(): void`: Disconnects from the database.
+- `isConnected(): bool`: Checks if the connection is established.
+- `quote(mixed ...$params): mixed`: Quotes a string for use in an SQL statement.
+- `prepare(mixed ...$params): mixed`: Binds parameters to a prepared query.
+- `query(mixed ...$params): mixed`: Executes an SQL statement and returns the result set.
+- `exec(mixed ...$params): mixed`: Executes an SQL statement and returns the number of affected rows.
+- `fetch(mixed ...$params): mixed`: Fetches the next row from the result set.
+- `fetchAll(mixed ...$params): mixed`: Fetches all rows from the result set.

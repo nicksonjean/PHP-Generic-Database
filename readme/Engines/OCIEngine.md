@@ -1,82 +1,122 @@
-## Summary
-This code defines the `OCIEngine` class, which is responsible for connecting to an Oracle database using the OCI (Oracle Call Interface) extension. It provides methods for establishing a connection, executing SQL statements, fetching data, and managing transactions.
+# OCIEngine
+
+## OCIEngine Connection
+
+The `GenericDatabase\OCIEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
+
+### Load Class and Types Explicitly
+
 ```php
-// Create an instance of the OCIEngine class
-$ociEngine = new OCIEngine();
+// Explicit and simplified module loading with all environment variables
+use GenericDatabase\OCIEngine;
+use GenericDatabase\Engine\OCI\OCI;
 
-// Set the connection options
-$ociEngine->setOptions([
-  'ATTR_PERSISTENT' => true,
-  'ATTR_AUTOCOMMIT' => false
-]);
+define("PATH_ROOT", dirname(__DIR__, 2));
 
-// Connect to the database
-$ociEngine->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
 
-// Execute a query
-$ociEngine->query('SELECT * FROM users');
+Dotenv::createImmutable(PATH_ROOT)->load();
+```
 
-// Fetch all rows from the result set
-$rows = $ociEngine->fetchAll();
+### Chainable Methods
 
-// Disconnect from the database
-$ociEngine->disconnect();
+```php
+// Create a new database connection using MySQLi engine in the chainable methods format
+$connection = new OCIEngine();
+$connection
+->setHost($_ENV['OCI_HOST'])
+->setPort((int)$_ENV['OCI_PORT'])
+->setDatabase($_ENV['OCI_DATABASE'])
+->setUser($_ENV['OCI_USER'])
+->setPassword($_ENV['OCI_PASSWORD'])
+->setCharset($_ENV['OCI_CHARSET'])
+->setOptions([
+    OCI::ATTR_PERSISTENT => true,
+    OCI::ATTR_CONNECT_TIMEOUT => 28800,
+])
+->setException(true)
+->connect();
+```
+
+### Fluent Design
+
+```php
+// Create a new database connection using MySQLi engine in the fluent design format
+$connection = OCIEngine
+::setHost($_ENV['OCI_HOST'])
+::setPort((int)$_ENV['OCI_PORT'])
+::setDatabase($_ENV['OCI_DATABASE'])
+::setUser($_ENV['OCI_USER'])
+::setPassword($_ENV['OCI_PASSWORD'])
+::setCharset($_ENV['OCI_CHARSET'])
+::setOptions([
+    OCI::ATTR_PERSISTENT => true,
+    OCI::ATTR_CONNECT_TIMEOUT => 28800,
+])
+::setException(true)
+->connect();
+```
+
+### Static Arguments
+
+```php
+// Create a new database connection using MySQLi engine in the static arguments format
+$connection = OCIEngine::new(
+    host: $_ENV['OCI_HOST'],
+    port: (int)$_ENV['OCI_PORT'],
+    database: $_ENV['OCI_DATABASE'],
+    user: $_ENV['OCI_USER'],
+    password: $_ENV['OCI_PASSWORD'],
+    charset: 'utf8',
+    options: [
+        OCI::ATTR_PERSISTENT => true,
+        OCI::ATTR_CONNECT_TIMEOUT => 28800,
+    ],
+    exception: true
+)
+->connect();
+```
+
+### Static Array
+
+```php
+// Create a new database connection using MySQLi engine in the static array format
+$connection = OCIEngine::new([
+    'host' => $_ENV['OCI_HOST'],
+    'port' => (int)$_ENV['OCI_PORT'],
+    'database' => $_ENV['OCI_DATABASE'],
+    'user' => $_ENV['OCI_USER'],
+    'password' => $_ENV['OCI_PASSWORD'],
+    'charset' => 'utf8',
+    'options' => [
+        OCI::ATTR_PERSISTENT => true,
+        OCI::ATTR_CONNECT_TIMEOUT => 28800,
+    ],
+    'exception' => true
+])
+->connect();
 ```
 
 ## Code Analysis
+
 ### Main functionalities
-- Establishing a connection to an Oracle database
-- Executing SQL statements
-- Fetching data from the result set
-- Managing transactions (begin, commit, rollback)
-- Handling errors and exceptions
-___
-### Methods
-- `__call(string $name, array $arguments): OCIEngine|string|int|bool|array|null`: Handles the invocation of inaccessible methods in an object context. It allows for dynamic method calls to set or get properties of the OCIEngine class.
-- `__callStatic(string $name, array $arguments): OCIEngine`: Handles the invocation of inaccessible methods in a static context. It delegates the method call to the `Arguments::call()` method.
-- `preConnect(): OCIEngine`: Prepares the connection options before connecting to the database.
-- `postConnect(): OCIEngine`: Updates the date late binding of the connection after connecting to the database.
-- `realConnect(string $host, string $user, string $password, string $database, mixed $port, string $charset): OCIEngine`: Creates a new instance of the OCIEngine connection and establishes the connection with the database.
-- `connect(): OCIEngine`: Establishes a database connection and sets the connection instance.
-- `ping(): bool`: Pings the server connection to check if it is still alive.
+
+- Establishing and managing database connections
+- Supporting different database engines through the strategy pattern
+- Executing queries and fetching results
+- Managing the connection state (connecting, disconnecting, checking if connected)
+
+### Public Methods
+
+- `connect(): Connection`: Establishes a database connection using the strategy instance.
+- `ping(): bool`: Pings the database server to check if the connection is still active.
 - `disconnect(): void`: Disconnects from the database.
-- `isConnected(): bool`: Returns true if the connection is established.
-- `parseDsn(): string|CustomException`: Parses the DSN (Data Source Name) from the DSN class.
-- `getConnection(): mixed`: Returns the database connection instance.
-- `setConnection(mixed $connection): mixed`: Sets the database connection instance.
-- `loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int`: Imports an SQL dump from a file.
-- `beginTransaction(): bool`: Starts a new transaction.
-- `commit(): bool`: Commits the changes made during the transaction.
-- `rollback(): bool`: Rolls back the changes made during the transaction.
-- `inTransaction(): bool`: Returns true if a transaction is currently active.
-- `lastInsertId(?string $name = null): string|int|false`: Returns the last ID generated by an auto-increment column.
-- `quote(mixed ...$params): string|int`: Quotes a string for use in an SQL statement.
-- `queryMetadata(): array`: Returns an array containing the query metadata (query string, parameters, rows, columns, affected rows).
-- `queryString(): string`: Returns the query string associated with the instance.
-- `queryParameters(): array|null`: Returns the parameters associated with the instance.
-- `queryRows(): int|false`: Returns the number of rows affected by the query.
-- `queryColumns(): int|false`: Returns the number of columns in the result set.
-- `affectedRows(): int|false`: Returns the number of rows affected by an operation.
-- `bindParam(mixed ...$params): void`: Binds parameters to a prepared statement.
-- `query(mixed ...$params): static|null`: Executes an SQL statement and returns the result set as a statement object.
-- `prepare(mixed ...$params): static|null`: Prepares an SQL statement for execution.
-- `exec(mixed ...$params): bool`: Executes an SQL statement and returns the number of affected rows.
-- `fetch(int $fetchStyle = FETCH_BOTH, mixed $fetchArgument = null, mixed $optArgs = null): mixed`: Fetches the next row from the result set.
-- `fetchAll(int $fetchStyle = FETCH_ASSOC, mixed $fetchArgument = null, mixed $optArgs = null): array`: Fetches all rows from the result set.
-- `getAttribute(mixed $name): mixed`: Retrieves an attribute from the database.
-- `setAttribute(mixed $name, mixed $value): void`: Sets an attribute for the database.
-- `errorCode(mixed $inst = null): int|bool`: Returns the SQLSTATE code for the last operation.
-- `errorInfo(mixed $inst = null): string|bool`: Returns an array containing error information about the last operation.
-___
-### Fields
-- `private static mixed $connection`: Instance of the connection with the database.
-- `private static mixed $statement = null`: Instance of the statement of the database.
-- `private static mixed $statementCount = null`: Instance of the statement of the database.
-- `private ?int $queryRows = 0`: Number of rows in the query statement.
-- `private ?int $queryColumns = 0`: Number of columns in the query statement.
-- `private ?int $affectedRows = 0`: Number of affected rows in the query statement.
-- `private string $queryString = ''`: Last executed query string.
-- `private array $queryParameters = []`: Last executed query parameters.
-___
+- `isConnected(): bool`: Checks if the connection is established.
+- `quote(mixed ...$params): mixed`: Quotes a string for use in an SQL statement.
+- `prepare(mixed ...$params): mixed`: Binds parameters to a prepared query.
+- `query(mixed ...$params): mixed`: Executes an SQL statement and returns the result set.
+- `exec(mixed ...$params): mixed`: Executes an SQL statement and returns the number of affected rows.
+- `fetch(mixed ...$params): mixed`: Fetches the next row from the result set.
+- `fetchAll(mixed ...$params): mixed`: Fetches all rows from the result set.

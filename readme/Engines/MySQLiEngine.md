@@ -1,83 +1,146 @@
-## Summary
-The `MySQLiEngine` class is a implementation of the `IConnection` interface and provides functionality for connecting to a MySQL database using the MySQLi extension. It includes methods for establishing a connection, executing queries, fetching results, and managing transactions.
+# MySQLiEngine
+
+## MySQLiEngine Connection
+
+The `GenericDatabase\MySQLiEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
+
+### Load Class and Types Explicitly
+
 ```php
-// Create an instance of the MySQLiEngine class
-$engine = new MySQLiEngine();
+// Explicit and simplified module loading with all environment variables
+use GenericDatabase\MySQLiEngine;
+use GenericDatabase\Engine\MySQli\MySQL;
 
-// Set the connection options
-$engine->setOptions([
-  'host' => 'localhost',
-  'user' => 'root',
-  'password' => 'password',
-  'database' => 'mydatabase',
-  'port' => 3306
-]);
+define("PATH_ROOT", dirname(__DIR__, 2));
 
-// Connect to the database
-$engine->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
 
-// Execute a query
-$engine->query('SELECT * FROM users');
+Dotenv::createImmutable(PATH_ROOT)->load();
+```
 
-// Fetch the results
-$results = $engine->fetchAll();
+### Chainable Methods
 
-// Close the connection
-$engine->disconnect();
+```php
+// Create a new database connection using MySQLi engine in the chainable methods format
+$connection = new MySQLiEngine();
+$connection
+->setHost($_ENV['MYSQL_HOST'])
+->setPort((int)$_ENV['MYSQL_PORT'])
+->setDatabase($_ENV['MYSQL_DATABASE'])
+->setUser($_ENV['MYSQL_USER'])
+->setPassword($_ENV['MYSQL_PASSWORD'])
+->setCharset($_ENV['MYSQL_CHARSET'])
+->setOptions([
+    MySQL::ATTR_PERSISTENT => false,
+    MySQL::ATTR_AUTOCOMMIT => true,
+    MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
+    MySQL::ATTR_SET_CHARSET_NAME => "utf8",
+    MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
+    MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
+    MySQL::ATTR_OPT_READ_TIMEOUT => 30,
+    MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
+])
+->setException(true)
+->connect();
+```
+
+### Fluent Design
+
+```php
+// Create a new database connection using MySQLi engine in the fluent design format
+$connection = MySQLiEngine
+::setHost($_ENV['MYSQL_HOST'])
+::setPort((int)$_ENV['MYSQL_PORT'])
+::setDatabase($_ENV['MYSQL_DATABASE'])
+::setUser($_ENV['MYSQL_USER'])
+::setPassword($_ENV['MYSQL_PASSWORD'])
+::setCharset($_ENV['MYSQL_CHARSET'])
+::setOptions([
+    MySQL::ATTR_PERSISTENT => false,
+    MySQL::ATTR_AUTOCOMMIT => true,
+    MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
+    MySQL::ATTR_SET_CHARSET_NAME => "utf8",
+    MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
+    MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
+    MySQL::ATTR_OPT_READ_TIMEOUT => 30,
+    MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
+])
+::setException(true)
+->connect();
+```
+
+### Static Arguments
+
+```php
+// Create a new database connection using MySQLi engine in the static arguments format
+$connection = MySQLiEngine::new(
+    host: $_ENV['MYSQL_HOST'],
+    port: (int)$_ENV['MYSQL_PORT'],
+    database: $_ENV['MYSQL_DATABASE'],
+    user: $_ENV['MYSQL_USER'],
+    password: $_ENV['MYSQL_PASSWORD'],
+    charset: 'utf8',
+    options: [
+        MySQL::ATTR_PERSISTENT => false,
+        MySQL::ATTR_AUTOCOMMIT => true,
+        MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
+        MySQL::ATTR_SET_CHARSET_NAME => "utf8",
+        MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
+        MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
+        MySQL::ATTR_OPT_READ_TIMEOUT => 30,
+        MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
+    ],
+    exception: true
+)
+->connect();
+```
+
+### Static Array
+
+```php
+// Create a new database connection using MySQLi engine in the static array format
+$connection = MySQLiEngine::new([
+    'host' => $_ENV['MYSQL_HOST'],
+    'port' => (int)$_ENV['MYSQL_PORT'],
+    'database' => $_ENV['MYSQL_DATABASE'],
+    'user' => $_ENV['MYSQL_USER'],
+    'password' => $_ENV['MYSQL_PASSWORD'],
+    'charset' => 'utf8',
+    'options' => [
+        MySQL::ATTR_PERSISTENT => false,
+        MySQL::ATTR_AUTOCOMMIT => true,
+        MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
+        MySQL::ATTR_SET_CHARSET_NAME => "utf8",
+        MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
+        MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
+        MySQL::ATTR_OPT_READ_TIMEOUT => 30,
+        MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
+    ],
+    'exception' => true
+])
+->connect();
 ```
 
 ## Code Analysis
+
 ### Main functionalities
-- Establishing a connection to a MySQL database
-- Executing SQL queries
-- Fetching and manipulating query results
-- Managing transactions
-___
-### Methods
-- `__call(string $name, array $arguments): MySQLiEngine|string|int|bool|array|null`: Handles method calls for setting and getting properties dynamically.
-- `__callStatic(string $name, array $arguments): MySQLiEngine`: Handles static method calls.
-- `preConnect(): MySQLiEngine`: Prepares the connection options before connecting.
-- `postConnect(): MySQLiEngine`: Performs post-connection setup.
-- `realConnect(string $host, string $user, string $password, string $database, mixed $port): MySQLiEngine`: Creates a new instance of the MySQLi connection and connects to the database.
-- `connect(): MySQLiEngine`: Establishes a database connection.
-- `ping(): bool`: Pings the database server to check the connection status.
+
+- Establishing and managing database connections
+- Supporting different database engines through the strategy pattern
+- Executing queries and fetching results
+- Managing the connection state (connecting, disconnecting, checking if connected)
+
+### Public Methods
+
+- `connect(): Connection`: Establishes a database connection using the strategy instance.
+- `ping(): bool`: Pings the database server to check if the connection is still active.
 - `disconnect(): void`: Disconnects from the database.
-- `isConnected(): bool`: Checks if a connection is established.
-- `parseDsn(): string|CustomException`: Parses the DSN from the DSN class.
-- `getConnection(): mixed`: Gets the database connection instance.
-- `setConnection(mixed $connection): mixed`: Sets the database connection instance.
-- `loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int`: Imports an SQL dump from a file.
-- `beginTransaction(): bool`: Starts a new transaction.
-- `commit(): bool`: Commits the changes made during a transaction.
-- `rollback(): bool`: Rolls back the changes made during a transaction.
-- `inTransaction(): bool`: Checks if a transaction is currently active.
-- `lastInsertId(?string $name = null): string|int|false`: Retrieves the last auto-increment ID generated during a transaction.
+- `isConnected(): bool`: Checks if the connection is established.
 - `quote(mixed ...$params): mixed`: Quotes a string for use in an SQL statement.
-- `queryMetadata(): array`: Returns metadata about the last executed query.
-- `queryString(): string`: Returns the query string of the last executed query.
-- `queryParameters(): array|null`: Returns the parameters of the last executed query.
-- `queryRows(): int|false`: Returns the number of rows affected by the last executed query.
-- `queryColumns(): int|false`: Returns the number of columns in the result of the last executed query.
-- `affectedRows(): int|false`: Returns the number of rows affected by the last executed query.
-- `bindParam(mixed ...$params): void`: Binds parameters to a prepared statement.
-- `query(mixed ...$params): static|null`: Executes an SQL statement and returns the result set.
-- `prepare(mixed ...$params): static|null`: Prepares an SQL statement for execution.
+- `prepare(mixed ...$params): mixed`: Binds parameters to a prepared query.
+- `query(mixed ...$params): mixed`: Executes an SQL statement and returns the result set.
 - `exec(mixed ...$params): mixed`: Executes an SQL statement and returns the number of affected rows.
-- `fetch(int $fetchStyle = FETCH_BOTH, mixed $fetchArgument = null, mixed $optArgs = null): mixed`: Fetches the next row from the result set.
-- `fetchAll(int $fetchStyle = FETCH_ASSOC, mixed $fetchArgument = null, mixed $optArgs = null): array`: Fetches all rows from the result set.
-- `getAttribute(mixed $name): mixed`: Retrieves an attribute from the database.
-- `setAttribute(mixed $name, mixed $value): void`: Sets an attribute on the database.
-- `errorCode(mixed $inst = null): int|bool`: Retrieves the SQLSTATE code for the last operation.
-- `errorInfo(mixed $inst = null): string|bool`: Retrieves error information for the last operation.
-___
-### Fields
-- `private static mixed $connection`: Instance of the database connection.
-- `private static mixed $statement = null`: Instance of the database statement.
-- `private ?int $queryRows = 0`: Number of rows in the last executed query.
-- `private ?int $queryColumns = 0`: Number of columns in the last executed query.
-- `private ?int $affectedRows = 0`: Number of affected rows in the last executed query.
-- `private string $queryString = ''`: Last executed query string.
-- `private array $queryParameters = []`: Last executed query parameters.
-___
+- `fetch(mixed ...$params): mixed`: Fetches the next row from the result set.
+- `fetchAll(mixed ...$params): mixed`: Fetches all rows from the result set.

@@ -1,57 +1,122 @@
-## Summary
-The `SQLSrvEngine` class is a database engine implementation that connects to a SQL Server database using the SQLSRV extension. It provides methods for establishing a connection, executing SQL statements, fetching data, and managing transactions.
+# SQLSrvEngine
+
+## SQLSrvEngine Connection
+
+The `GenericDatabase\SQLSrvEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
+
+### Load Class and Types Explicitly
+
 ```php
-// Create an instance of the SQLSrvEngine class
-$engine = new SQLSrvEngine();
+// Explicit and simplified module loading with all environment variables
+use GenericDatabase\SQLSrvEngine;
+use GenericDatabase\Engine\SQLSrv\SQLSrv;
 
-// Set the connection parameters
-$engine->setHost('localhost');
-$engine->setUser('username');
-$engine->setPassword('password');
-$engine->setDatabase('database');
+define("PATH_ROOT", dirname(__DIR__, 2));
 
-// Connect to the database
-$engine->connect();
+require_once PATH_ROOT . '/vendor/autoload.php';
 
-// Execute a query
-$engine->query('SELECT * FROM users');
+Dotenv::createImmutable(PATH_ROOT)->load();
+```
 
-// Fetch the results
-$results = $engine->fetchAll();
+### Chainable Methods
 
-// Disconnect from the database
-$engine->disconnect();
+```php
+// Create a new database connection using MySQLi engine in the chainable methods format
+$connection = new SQLSrvEngine();
+$connection
+->setHost($_ENV['SQLSRV_HOST'])
+->setPort((int)$_ENV['SQLSRV_PORT'])
+->setDatabase($_ENV['SQLSRV_DATABASE'])
+->setUser($_ENV['SQLSRV_USER'])
+->setPassword($_ENV['SQLSRV_PASSWORD'])
+->setCharset($_ENV['SQLSRV_CHARSET'])
+->setOptions([
+    SQLSrv::ATTR_PERSISTENT => true,
+    SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
+])
+->setException(true)
+->connect();
+```
+
+### Fluent Design
+
+```php
+// Create a new database connection using MySQLi engine in the fluent design format
+$connection = SQLSrvEngine
+::setHost($_ENV['SQLSRV_HOST'])
+::setPort((int)$_ENV['SQLSRV_PORT'])
+::setDatabase($_ENV['SQLSRV_DATABASE'])
+::setUser($_ENV['SQLSRV_USER'])
+::setPassword($_ENV['SQLSRV_PASSWORD'])
+::setCharset($_ENV['SQLSRV_CHARSET'])
+::setOptions([
+    SQLSrv::ATTR_PERSISTENT => true,
+    SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
+])
+::setException(true)
+->connect();
+```
+
+### Static Arguments
+
+```php
+// Create a new database connection using MySQLi engine in the static arguments format
+$connection = SQLSrvEngine::new(
+    host: $_ENV['SQLSRV_HOST'],
+    port: (int)$_ENV['SQLSRV_PORT'],
+    database: $_ENV['SQLSRV_DATABASE'],
+    user: $_ENV['SQLSRV_USER'],
+    password: $_ENV['SQLSRV_PASSWORD'],
+    charset: 'utf8',
+    options: [
+        SQLSrv::ATTR_PERSISTENT => true,
+        SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
+    ],
+    exception: true
+)
+->connect();
+```
+
+### Static Array
+
+```php
+// Create a new database connection using MySQLi engine in the static array format
+$connection = SQLSrvEngine::new([
+    'host' => $_ENV['SQLSRV_HOST'],
+    'port' => (int)$_ENV['SQLSRV_PORT'],
+    'database' => $_ENV['SQLSRV_DATABASE'],
+    'user' => $_ENV['SQLSRV_USER'],
+    'password' => $_ENV['SQLSRV_PASSWORD'],
+    'charset' => 'utf8',
+    'options' => [
+        SQLSrv::ATTR_PERSISTENT => true,
+        SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
+    ],
+    'exception' => true
+])
+->connect();
 ```
 
 ## Code Analysis
+
 ### Main functionalities
-- Establishing a connection to a SQL Server database
-- Executing SQL statements and retrieving results
-- Managing transactions
-- Handling errors and exceptions
-___
-### Methods
-- `connect()`: Establishes a connection to the database.
-- `disconnect()`: Disconnects from the database.
-- `query($sql)`: Executes an SQL statement and returns the result set.
-- `fetchAll($fetchStyle)`: Fetches all rows from the result set.
-- `beginTransaction()`: Starts a new transaction.
-- `commit()`: Commits the changes made during a transaction.
-- `rollback()`: Rolls back the changes made during a transaction.
-- `lastInsertId($name)`: Returns the last auto-generated ID.
-- `quote($value)`: Quotes a string for use in an SQL statement.
-- `setAttribute($name, $value)`: Sets an attribute for the database connection.
-- `errorCode()`: Returns the SQLSTATE code for the last operation.
-- `errorInfo()`: Returns an array containing error information.
-___
-### Fields
-- `$connection`: The instance of the database connection.
-- `$statement`: The instance of the SQL statement.
-- `$queryRows`: The number of rows in the result set.
-- `$queryColumns`: The number of columns in the result set.
-- `$affectedRows`: The number of affected rows by the last operation.
-- `$queryString`: The last executed SQL query.
-- `$queryParameters`: The parameters used in the last executed query.
-___
+
+- Establishing and managing database connections
+- Supporting different database engines through the strategy pattern
+- Executing queries and fetching results
+- Managing the connection state (connecting, disconnecting, checking if connected)
+
+### Public Methods
+
+- `connect(): Connection`: Establishes a database connection using the strategy instance.
+- `ping(): bool`: Pings the database server to check if the connection is still active.
+- `disconnect(): void`: Disconnects from the database.
+- `isConnected(): bool`: Checks if the connection is established.
+- `quote(mixed ...$params): mixed`: Quotes a string for use in an SQL statement.
+- `prepare(mixed ...$params): mixed`: Binds parameters to a prepared query.
+- `query(mixed ...$params): mixed`: Executes an SQL statement and returns the result set.
+- `exec(mixed ...$params): mixed`: Executes an SQL statement and returns the number of affected rows.
+- `fetch(mixed ...$params): mixed`: Fetches the next row from the result set.
+- `fetchAll(mixed ...$params): mixed`: Fetches all rows from the result set.

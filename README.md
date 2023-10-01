@@ -53,6 +53,11 @@ PHP-Generic-Database currently supports the following mechanisms/database:
   - **SQLSrv/MSSQL** ***(sqlsrv, mssql, dblib)*** *[php_pdo_sqlsrv.dll/so]*
   - **Firebird/Interbase** ***(ibase: gds/fbird: fds)*** *[php_pdo_firebird.dll/so]*
   - **SQLite** ***(SQLite)*** *[php_pdo_sqlite.dll/so]*
+- **Optional External Formats**
+  - **INI** ***(php native compilation)***
+  - **XML** ***(ext-libxml, ext-xmlreader, ext-simplexml)***
+  - **JSON** ***(php native compilation)***
+  - **YAML** ***(ext-yaml)***
 
 ## PHP Settings
 
@@ -146,7 +151,11 @@ Below is a series of readmes containing examples of how to use the lib and a [to
   - PgSQL: [PgSQLEngine.md](./readme/Engines/PgSQLEngine.md)
   - SQLSrv: [SQLSrvEngine.md](./readme/Engines/SQLSrvEngine.md)
   - SQLite3: [SQLiteEngine.md](./readme/Engines/SQLiteEngine.md)
-  - PDO: [PDOEngine.md](./readme/Engines/PDOEngine.md)
+  - PDO:
+    - [Chainable.md](./readme/Engines/PDOEngine/Chainable.md)
+    - [Fluent.md](./readme/Engines/PDOEngine/Fluent.md)
+    - [StaticArgs.md](./readme/Engines/PDOEngine/StaticArgs.md)
+    - [StaticArray.md](./readme/Engines/PDOEngine/StaticArray.md)
 - Statements: [Statements.md](./readme/Statements.md)
 - Fetches: [Fetches.md](./readme/Fetches.md)
 

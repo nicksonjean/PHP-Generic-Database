@@ -1,52 +1,130 @@
-## Summary
-The `PgSQLEngine` class is a database engine implementation for PostgreSQL. It provides methods for connecting to a database, executing SQL statements, fetching data, and managing transactions.
+# PgSQLEngine
+
+## PgSQLEngine Connection
+
+The `GenericDatabase\PgSQLEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
+
+### Load Class and Types Explicitly
+
 ```php
-// Create an instance of the PgSQLEngine class
-$engine = new PgSQLEngine();
+// Explicit and simplified module loading with all environment variables
+use GenericDatabase\PgSQLEngine;
+use GenericDatabase\Engine\PgSQL\PgSQL;
 
-// Connect to the database
-$engine->connect();
+define("PATH_ROOT", dirname(__DIR__, 2));
 
-// Execute a query
-$engine->query('SELECT * FROM users');
+require_once PATH_ROOT . '/vendor/autoload.php';
 
-// Fetch all rows from the result set
-$rows = $engine->fetchAll();
+Dotenv::createImmutable(PATH_ROOT)->load();
+```
 
-// Close the database connection
-$engine->disconnect();
+### Chainable Methods
+
+```php
+// Create a new database connection using MySQLi engine in the chainable methods format
+$connection = new PgSQLEngine();
+$connection
+->setHost($_ENV['PGSQL_HOST'])
+->setPort((int)$_ENV['PGSQL_PORT'])
+->setDatabase($_ENV['PGSQL_DATABASE'])
+->setUser($_ENV['PGSQL_USER'])
+->setPassword($_ENV['PGSQL_PASSWORD'])
+->setCharset($_ENV['PGSQL_CHARSET'])
+->setOptions([
+    PgSQL::ATTR_PERSISTENT => true,
+    PgSQL::ATTR_CONNECT_ASYNC => true,
+    PgSQL::ATTR_CONNECT_FORCE_NEW => true,
+    PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
+])
+->setException(true)
+->connect();
+```
+
+### Fluent Design
+
+```php
+// Create a new database connection using MySQLi engine in the fluent design format
+$connection = PgSQLEngine
+::setHost($_ENV['PGSQL_HOST'])
+::setPort((int)$_ENV['PGSQL_PORT'])
+::setDatabase($_ENV['PGSQL_DATABASE'])
+::setUser($_ENV['PGSQL_USER'])
+::setPassword($_ENV['PGSQL_PASSWORD'])
+::setCharset($_ENV['PGSQL_CHARSET'])
+::setOptions([
+    PgSQL::ATTR_PERSISTENT => true,
+    PgSQL::ATTR_CONNECT_ASYNC => true,
+    PgSQL::ATTR_CONNECT_FORCE_NEW => true,
+    PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
+])
+::setException(true)
+->connect();
+```
+
+### Static Arguments
+
+```php
+// Create a new database connection using MySQLi engine in the static arguments format
+$connection = PgSQLEngine::new(
+    host: $_ENV['PGSQL_HOST'],
+    port: (int)$_ENV['PGSQL_PORT'],
+    database: $_ENV['PGSQL_DATABASE'],
+    user: $_ENV['PGSQL_USER'],
+    password: $_ENV['PGSQL_PASSWORD'],
+    charset: 'utf8',
+    options: [
+        PgSQL::ATTR_PERSISTENT => true,
+        PgSQL::ATTR_CONNECT_ASYNC => true,
+        PgSQL::ATTR_CONNECT_FORCE_NEW => true,
+        PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
+    ],
+    exception: true
+)
+->connect();
+```
+
+### Static Array
+
+```php
+// Create a new database connection using MySQLi engine in the static array format
+$connection = PgSQLEngine::new([
+    'host' => $_ENV['PGSQL_HOST'],
+    'port' => (int)$_ENV['PGSQL_PORT'],
+    'database' => $_ENV['PGSQL_DATABASE'],
+    'user' => $_ENV['PGSQL_USER'],
+    'password' => $_ENV['PGSQL_PASSWORD'],
+    'charset' => 'utf8',
+    'options' => [
+        PgSQL::ATTR_PERSISTENT => true,
+        PgSQL::ATTR_CONNECT_ASYNC => true,
+        PgSQL::ATTR_CONNECT_FORCE_NEW => true,
+        PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
+    ],
+    'exception' => true
+])
+->connect();
 ```
 
 ## Code Analysis
+
 ### Main functionalities
-- Establishing a connection to a PostgreSQL database
-- Executing SQL statements and retrieving result sets
-- Fetching rows from the result set
-- Managing transactions (begin, commit, rollback)
-- Handling errors and retrieving error information
-___
-### Methods
-- `connect()`: Establishes a connection to the database.
-- `disconnect()`: Closes the database connection.
-- `query($sql)`: Executes an SQL statement and returns the result set.
-- `fetchAll($fetchStyle)`: Fetches all rows from the result set and returns them as an array.
-- `beginTransaction()`: Starts a new transaction.
-- `commit()`: Commits the changes made during the transaction.
-- `rollback()`: Rolls back the changes made during the transaction.
-- `lastInsertId($name)`: Returns the last inserted ID.
-- `quote($string)`: Quotes a string for use in an SQL statement.
-- `setAttribute($name, $value)`: Sets an attribute for the database connection.
-- `errorCode()`: Returns the SQLSTATE code for the last operation.
-- `errorInfo()`: Returns an array containing error information for the last operation.
-___
-### Fields
-- `$connection`: The instance of the database connection.
-- `$statement`: The instance of the SQL statement.
-- `$queryRows`: The number of rows in the result set.
-- `$queryColumns`: The number of columns in the result set.
-- `$affectedRows`: The number of affected rows by the last operation.
-- `$queryString`: The last executed SQL query string.
-- `$queryParameters`: The parameters used in the last executed SQL query.
-___
+
+- Establishing and managing database connections
+- Supporting different database engines through the strategy pattern
+- Executing queries and fetching results
+- Managing the connection state (connecting, disconnecting, checking if connected)
+
+### Public Methods
+
+- `connect(): Connection`: Establishes a database connection using the strategy instance.
+- `ping(): bool`: Pings the database server to check if the connection is still active.
+- `disconnect(): void`: Disconnects from the database.
+- `isConnected(): bool`: Checks if the connection is established.
+- `quote(mixed ...$params): mixed`: Quotes a string for use in an SQL statement.
+- `prepare(mixed ...$params): mixed`: Binds parameters to a prepared query.
+- `query(mixed ...$params): mixed`: Executes an SQL statement and returns the result set.
+- `exec(mixed ...$params): mixed`: Executes an SQL statement and returns the number of affected rows.
+- `fetch(mixed ...$params): mixed`: Fetches the next row from the result set.
+- `fetchAll(mixed ...$params): mixed`: Fetches all rows from the result set.
