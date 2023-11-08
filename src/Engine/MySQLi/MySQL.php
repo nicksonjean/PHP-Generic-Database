@@ -3,6 +3,7 @@
 namespace GenericDatabase\Engine\MySQLi;
 
 use GenericDatabase\Helpers\Reflections;
+use ReflectionException;
 
 class MySQL
 {
@@ -18,6 +19,9 @@ class MySQL
 
     protected static array $data = [];
 
+    /**
+     * @throws ReflectionException
+     */
     public static function getAttribute(mixed $name): mixed
     {
         if (isset(self::$data[$name])) {
@@ -32,6 +36,9 @@ class MySQL
         return $result;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function setAttribute(mixed $name, mixed $value): void
     {
         if (is_null($name)) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
@@ -30,30 +31,30 @@ use GenericDatabase\Shared\Singleton;
 /**
  * Dynamic and Static container class for MySQLiEngine connections.
  *
- * @method static MySQLiEngine|static setDriver(mixed $value): void
- * @method static MySQLiEngine|static getDriver($value = null): mixed
- * @method static MySQLiEngine|static setHost(mixed $value): void
- * @method static MySQLiEngine|static getHost($value = null): mixed
- * @method static MySQLiEngine|static setPort(mixed $value): void
- * @method static MySQLiEngine|static getPort($value = null): mixed
- * @method static MySQLiEngine|static setUser(mixed $value): void
- * @method static MySQLiEngine|static getUser($value = null): mixed
- * @method static MySQLiEngine|static setPassword(mixed $value): void
- * @method static MySQLiEngine|static getPassword($value = null): mixed
- * @method static MySQLiEngine|static setDatabase(mixed $value): void
- * @method static MySQLiEngine|static getDatabase($value = null): mixed
- * @method static MySQLiEngine|static setOptions(mixed $value): void
- * @method static MySQLiEngine|static getOptions($value = null): mixed
+ * @method static MySQLiEngine|void setDriver(mixed $value): void
+ * @method static MySQLiEngine|string getDriver($value = null): string
+ * @method static MySQLiEngine|void setHost(mixed $value): void
+ * @method static MySQLiEngine|string getHost($value = null): string
+ * @method static MySQLiEngine|void setPort(mixed $value): void
+ * @method static MySQLiEngine|int getPort($value = null): int
+ * @method static MySQLiEngine|void setUser(mixed $value): void
+ * @method static MySQLiEngine|string getUser($value = null): string
+ * @method static MySQLiEngine|void setPassword(mixed $value): void
+ * @method static MySQLiEngine|string getPassword($value = null): string
+ * @method static MySQLiEngine|void setDatabase(mixed $value): void
+ * @method static MySQLiEngine|string getDatabase($value = null): string
+ * @method static MySQLiEngine|void setOptions(mixed $value): void
+ * @method static MySQLiEngine|array|null getOptions($value = null): array|null
  * @method static MySQLiEngine|static setConnected(mixed $value): void
- * @method static MySQLiEngine|static getConnected($value = null): mixed
- * @method static MySQLiEngine|static setDsn(mixed $value): void
- * @method static MySQLiEngine|static getDsn($value = null): mixed
- * @method static MySQLiEngine|static setAttributes(mixed $value): void
- * @method static MySQLiEngine|static getAttributes($value = null): mixed
- * @method static MySQLiEngine|static setCharset(mixed $value): void
- * @method static MySQLiEngine|static getCharset($value = null): mixed
- * @method static MySQLiEngine|static setException(mixed $value): void
- * @method static MySQLiEngine|static getException($value = null): mixed
+ * @method static MySQLiEngine|mixed getConnected($value = null): mixed
+ * @method static MySQLiEngine|void setDsn(mixed $value): void
+ * @method static MySQLiEngine|mixed getDsn($value = null): mixed
+ * @method static MySQLiEngine|void setAttributes(mixed $value): void
+ * @method static MySQLiEngine|mixed getAttributes($value = null): mixed
+ * @method static MySQLiEngine|void setCharset(mixed $value): void
+ * @method static MySQLiEngine|string getCharset($value = null): string
+ * @method static MySQLiEngine|void setException(mixed $value): void
+ * @method static MySQLiEngine|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class MySQLiEngine implements IConnection
@@ -130,6 +131,7 @@ class MySQLiEngine implements IConnection
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
      * @return MySQLiEngine
+     * @throws ReflectionException
      */
     public static function __callStatic(string $name, array $arguments): MySQLiEngine
     {
@@ -140,6 +142,7 @@ class MySQLiEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return MySQLiEngine
+     * @throws ReflectionException
      */
     private function preConnect(): MySQLiEngine
     {
@@ -175,10 +178,10 @@ class MySQLiEngine implements IConnection
      * @throws Exception
      */
     private function realConnect(
-        string $host,
-        string $user,
-        #[SensitiveParameter] string $password,
-        string $database,
+        mixed $host,
+        mixed $user,
+        #[SensitiveParameter] mixed $password,
+        mixed $database,
         mixed $port
     ): MySQLiEngine {
         if (!$this->getHost()) {
@@ -205,10 +208,10 @@ class MySQLiEngine implements IConnection
                 ->preConnect()
                 ->setInstance($this)
                 ->realConnect(
-                    (string) $this->getHost(),
-                    (string) $this->getUser(),
-                    (string) $this->getPassword(),
-                    (string) $this->getDatabase(),
+                    $this->getHost(),
+                    $this->getUser(),
+                    $this->getPassword(),
+                    $this->getDatabase(),
                     $this->getPort()
                 )
                 ->postConnect()
@@ -683,6 +686,7 @@ class MySQLiEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
+     * @throws ReflectionException
      */
     public function fetch(
         int $fetchStyle = FETCH_BOTH,
@@ -705,6 +709,7 @@ class MySQLiEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array An array containing all rows from the statement.
+     * @throws ReflectionException
      */
     public function fetchAll(
         int $fetchStyle = FETCH_ASSOC,
@@ -725,6 +730,7 @@ class MySQLiEngine implements IConnection
      *
      * @param mixed $name The attribute name
      * @return mixed
+     * @throws ReflectionException
      */
     public function getAttribute(mixed $name): mixed
     {
@@ -737,6 +743,7 @@ class MySQLiEngine implements IConnection
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
      * @return void
+     * @throws ReflectionException
      */
     public function setAttribute(mixed $name, mixed $value): void
     {

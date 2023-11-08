@@ -3,8 +3,12 @@
 namespace GenericDatabase\Tests\Helpers;
 
 use GenericDatabase\Helpers\Compare;
+use MySQLi;
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
+use SQLite3;
+use stdClass;
 
 final class CompareTest extends TestCase
 {
@@ -24,7 +28,7 @@ final class CompareTest extends TestCase
 
     public function testNativeMysqliConnection()
     {
-        $connection = new \MySQLi(
+        $connection = new MySQLi(
             self::$env['MYSQL_HOST'],
             self::$env['MYSQL_USER'],
             self::$env['MYSQL_PASSWORD'],
@@ -87,7 +91,7 @@ final class CompareTest extends TestCase
 
     public function testNativeSqlite3MemoryConnection()
     {
-        $sqlite3Connection = new \SQLite3(":memory:");
+        $sqlite3Connection = new SQLite3(":memory:");
 
         $connectionType = Compare::connection($sqlite3Connection);
 
@@ -96,7 +100,7 @@ final class CompareTest extends TestCase
 
     public function testPdoMysqlConnection()
     {
-        $connection = new \PDO(
+        $connection = new PDO(
             sprintf(
                 "mysql:host=%s;dbname=%s",
                 self::$env['MYSQL_HOST'],
@@ -113,7 +117,7 @@ final class CompareTest extends TestCase
 
     public function testPdoPgsqlConnection()
     {
-        $connection = new \PDO(
+        $connection = new PDO(
             sprintf(
                 "pgsql:host=%s;dbname=%s",
                 self::$env['PGSQL_HOST'],
@@ -130,7 +134,7 @@ final class CompareTest extends TestCase
 
     public function testPdoSqlsrvConnection()
     {
-        $connection = new \PDO(
+        $connection = new PDO(
             sprintf(
                 "sqlsrv:server=%s;database=%s",
                 self::$env['SQLSRV_HOST'],
@@ -147,7 +151,7 @@ final class CompareTest extends TestCase
 
     public function testPdoOciConnection()
     {
-        $connection = new \PDO(
+        $connection = new PDO(
             sprintf(
                 "oci:host=%s;dbname=%s",
                 self::$env['OCI_HOST'],
@@ -164,7 +168,7 @@ final class CompareTest extends TestCase
 
     public function testPdoSqliteMemoryConnection()
     {
-        $connection = new \PDO('sqlite::memory:');
+        $connection = new PDO('sqlite::memory:');
 
         $connectionType = Compare::connection($connection);
 
@@ -173,7 +177,7 @@ final class CompareTest extends TestCase
 
     public function testInvalidConnection()
     {
-        $invalidConnection = new \stdClass();
+        $invalidConnection = new stdClass();
 
         $type = Compare::connection($invalidConnection);
 

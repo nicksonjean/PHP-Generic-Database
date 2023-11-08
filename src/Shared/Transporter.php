@@ -2,10 +2,11 @@
 
 namespace GenericDatabase\Shared;
 
+use GenericDatabase\Shared\Property;
+
 trait Transporter
 {
     use Property;
-    use Singleton;
 
     /**
      * Sleep instance uesd by serialize/unserialize
@@ -16,7 +17,7 @@ trait Transporter
     {
         $vars = get_class_vars(get_class($this));
         foreach ($vars as $field => $value) {
-            if (!empty($value)) {
+            if ($field === 'property' && $field !== '' && $value !== '') {
                 $this->property[$field] = $value;
             }
         }
@@ -24,12 +25,17 @@ trait Transporter
     }
 
     /**
-     * __wakeup instance uesd by serialize/unserialize
+     * Wakeup instance uesd by serialize/unserialize
      *
      * @return void
      */
     public function __wakeup()
     {
-        $this->getInstance();
+        self::$instance = null;
+        if (isset($this->property) && is_array($this->property)) {
+            foreach ($this->property as $field => $value) {
+                $this->{$field} = $value;
+            }
+        }
     }
 }

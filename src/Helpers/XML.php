@@ -82,9 +82,10 @@ class XML
             restore_error_handler();
             $result = false;
         } else {
-            $lxml = XMLReader::open($xml);
+            $lxml = new XMLReader();
+            $lxml->open($xml);
             restore_error_handler();
-            $result = $lxml->setParserProperty(XMLReader::VALIDATE, true) ? true : false;
+            $result = $lxml->setParserProperty(XMLReader::VALIDATE, true);
         }
         return $result;
     }
@@ -93,13 +94,13 @@ class XML
      * Convert data to its appropriate type.
      *
      * @param mixed $data The data to convert.
-     * @return mixed The converted data.
+     * @return string|int|bool|float The converted data.
      */
-    private static function convertData($data): mixed
+    private static function convertData(mixed $data): string|int|bool|float
     {
         $data = trim($data);
         if (is_numeric($data)) {
-            return strpos($data, '.') !== false ? floatval($data) : intval($data);
+            return str_contains($data, '.') ? floatval($data) : intval($data);
         }
         if (strcasecmp($data, 'false') === 0) {
             $data = false;

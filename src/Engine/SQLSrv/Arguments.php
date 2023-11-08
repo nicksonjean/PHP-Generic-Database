@@ -9,6 +9,7 @@ use GenericDatabase\Helpers\INI;
 use GenericDatabase\Helpers\YAML;
 use GenericDatabase\Helpers\XML;
 use GenericDatabase\Engine\SQLSrvEngine;
+use ReflectionException;
 
 class Arguments
 {
@@ -17,6 +18,7 @@ class Arguments
      *
      * @param array $value
      * @return array
+     * @throws ReflectionException
      */
     private static function setConstant(array $value): array
     {
@@ -48,6 +50,7 @@ class Arguments
      * @param string $format Accept formats json, xml, ini and yaml
      * @param mixed $arguments
      * @return SQLSrvEngine
+     * @throws ReflectionException
      */
     private static function callArgumentsByFormat(string $format, mixed $arguments): SQLSrvEngine
     {
@@ -105,6 +108,7 @@ class Arguments
      * @param string $name
      * @param array $arguments
      * @return SQLSrvEngine
+     * @throws ReflectionException
      */
     public static function call(string $name, array $arguments): SQLSrvEngine
     {

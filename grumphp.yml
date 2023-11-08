@@ -23,6 +23,7 @@ grumphp:
       memory_limit: "-1"
       triggered_by: ['php']
       configuration: phpstan.neon
+      use_grumphp_paths: true
     phplint:
       exclude: ['resources/','assets/','build/']
       short_open_tag: false

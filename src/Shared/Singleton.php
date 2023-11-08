@@ -39,7 +39,7 @@ trait Singleton
      *
      * @return void
      */
-    protected function clearInstance(): void
+    public static function clearInstance(): void
     {
         self::$instance = null;
     }

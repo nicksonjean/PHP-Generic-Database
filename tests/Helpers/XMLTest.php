@@ -5,6 +5,8 @@ namespace GenericDatabase\Tests\Helpers;
 use GenericDatabase\Helpers\XML;
 use GenericDatabase\Helpers\Path;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionException;
 
 final class XMLTest extends TestCase
 {
@@ -27,9 +29,12 @@ final class XMLTest extends TestCase
     }
 
 
+    /**
+     * @throws ReflectionException
+     */
     public function testConvertedToAppropriateType()
     {
-        $reflectionClass = new \ReflectionClass(XML::class);
+        $reflectionClass = new ReflectionClass(XML::class);
         $method = $reflectionClass->getMethod('convertData');
         $method->setAccessible(true); //NOSONAR
 
@@ -50,12 +55,15 @@ final class XMLTest extends TestCase
         $this->assertTrue($result);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testSimpleXmlElementObjectIsDecodedIntoArray()
     {
         $xml = 'tests/Helpers/Samples/XML/Easy.xml';
         $objXML = simplexml_load_file($xml);
 
-        $reflectionClass = new \ReflectionClass(XML::class);
+        $reflectionClass = new ReflectionClass(XML::class);
         $method = $reflectionClass->getMethod('decodeXML');
         $method->setAccessible(true); //NOSONAR
 

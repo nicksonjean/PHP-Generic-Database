@@ -3,6 +3,7 @@
 namespace GenericDatabase\Engine\FBird;
 
 use GenericDatabase\Helpers\Reflections;
+use ReflectionException;
 
 class FBird
 {
@@ -13,6 +14,9 @@ class FBird
 
     protected static array $data = [];
 
+    /**
+     * @throws ReflectionException
+     */
     public static function getAttribute(mixed $name): mixed
     {
         if (isset(self::$data[$name])) {
@@ -27,6 +31,9 @@ class FBird
         return $result;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function setAttribute(mixed $name, mixed $value): void
     {
         if (is_null($name)) {

@@ -99,7 +99,9 @@ class DSN
             case 'ibase':
             case 'firebird':
                 if (!Path::isAbsolute(PDOEngine::getInstance()->getDatabase())) {
-                    PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
+                    PDOEngine::getInstance()->setDatabase(Path::toAbsolute(
+                        PDOEngine::getInstance()->getDatabase()
+                    ));
                 }
                 $result = sprintf(
                     "%s:dbname=%s/%s:%s;charset=%s",
@@ -115,9 +117,11 @@ class DSN
                 if (
                     !Path::isAbsolute(
                         PDOEngine::getInstance()->getDatabase()
-                    ) && PDOEngine::getInstance()->getDatabase() !== 'memory'
+                    ) && PDOEngine::getInstance()->getDatabase() != 'memory'
                 ) {
-                    PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
+                    PDOEngine::getInstance()->setDatabase(Path::toAbsolute(
+                        PDOEngine::getInstance()->getDatabase()
+                    ));
                     $result = sprintf(
                         "%s:%s",
                         PDOEngine::getInstance()->getDriver(),
@@ -135,9 +139,11 @@ class DSN
                 if (
                     !Path::isAbsolute(
                         PDOEngine::getInstance()->getDatabase()
-                    ) && PDOEngine::getInstance()->getDatabase() !== 'memory'
+                    ) && PDOEngine::getInstance()->getDatabase() != 'memory'
                 ) {
-                    PDOEngine::getInstance()->setDatabase(Path::toAbsolute(PDOEngine::getInstance()->getDatabase()));
+                    PDOEngine::getInstance()->setDatabase(Path::toAbsolute(
+                        PDOEngine::getInstance()->getDatabase()
+                    ));
                     $result = sprintf(
                         "%s:%s",
                         PDOEngine::getInstance()->getDriver(),
@@ -145,7 +151,7 @@ class DSN
                     );
                 }
         }
-        PDOEngine::getInstance()->setDsn((string) $result);
+        PDOEngine::getInstance()->setDsn($result);
         return $result;
     }
 }

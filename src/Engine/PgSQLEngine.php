@@ -26,34 +26,35 @@ use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
 use PgSql\Result;
+use ReflectionException;
 
 /**
  * Dynamic and Static container class for PgSQLEngine connections.
  *
- * @method static PgSQLEngine|static setDriver(mixed $value): void
- * @method static PgSQLEngine|static getDriver($value = null): mixed
- * @method static PgSQLEngine|static setHost(mixed $value): void
- * @method static PgSQLEngine|static getHost($value = null): mixed
- * @method static PgSQLEngine|static setPort(mixed $value): void
- * @method static PgSQLEngine|static getPort($value = null): mixed
- * @method static PgSQLEngine|static setUser(mixed $value): void
- * @method static PgSQLEngine|static getUser($value = null): mixed
- * @method static PgSQLEngine|static setPassword(mixed $value): void
- * @method static PgSQLEngine|static getPassword($value = null): mixed
- * @method static PgSQLEngine|static setDatabase(mixed $value): void
- * @method static PgSQLEngine|static getDatabase($value = null): mixed
- * @method static PgSQLEngine|static setOptions(mixed $value): void
- * @method static PgSQLEngine|static getOptions($value = null): mixed
+ * @method static PgSQLEngine|void setDriver(mixed $value): void
+ * @method static PgSQLEngine|string getDriver($value = null): string
+ * @method static PgSQLEngine|void setHost(mixed $value): void
+ * @method static PgSQLEngine|string getHost($value = null): string
+ * @method static PgSQLEngine|void setPort(mixed $value): void
+ * @method static PgSQLEngine|int getPort($value = null): int
+ * @method static PgSQLEngine|void setUser(mixed $value): void
+ * @method static PgSQLEngine|string getUser($value = null): string
+ * @method static PgSQLEngine|void setPassword(mixed $value): void
+ * @method static PgSQLEngine|string getPassword($value = null): string
+ * @method static PgSQLEngine|void setDatabase(mixed $value): void
+ * @method static PgSQLEngine|string getDatabase($value = null): string
+ * @method static PgSQLEngine|void setOptions(mixed $value): void
+ * @method static PgSQLEngine|array|null getOptions($value = null): array|null
  * @method static PgSQLEngine|static setConnected(mixed $value): void
- * @method static PgSQLEngine|static getConnected($value = null): mixed
- * @method static PgSQLEngine|static setDsn(mixed $value): void
- * @method static PgSQLEngine|static getDsn($value = null): mixed
- * @method static PgSQLEngine|static setAttributes(mixed $value): void
- * @method static PgSQLEngine|static getAttributes($value = null): mixed
- * @method static PgSQLEngine|static setCharset(mixed $value): void
- * @method static PgSQLEngine|static getCharset($value = null): mixed
- * @method static PgSQLEngine|static setException(mixed $value): void
- * @method static PgSQLEngine|static getException($value = null): mixed
+ * @method static PgSQLEngine|mixed getConnected($value = null): mixed
+ * @method static PgSQLEngine|void setDsn(mixed $value): void
+ * @method static PgSQLEngine|mixed getDsn($value = null): mixed
+ * @method static PgSQLEngine|void setAttributes(mixed $value): void
+ * @method static PgSQLEngine|mixed getAttributes($value = null): mixed
+ * @method static PgSQLEngine|void setCharset(mixed $value): void
+ * @method static PgSQLEngine|string getCharset($value = null): string
+ * @method static PgSQLEngine|void setException(mixed $value): void
+ * @method static PgSQLEngine|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class PgSQLEngine implements IConnection
@@ -130,6 +131,7 @@ class PgSQLEngine implements IConnection
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
      * @return PgSQLEngine
+     * @throws ReflectionException
      */
     public static function __callStatic(string $name, array $arguments): PgSQLEngine
     {
@@ -140,6 +142,7 @@ class PgSQLEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return PgSQLEngine
+     * @throws ReflectionException
      */
     private function preConnect(): PgSQLEngine
     {
@@ -339,6 +342,7 @@ class PgSQLEngine implements IConnection
     public function lastInsertId(?string $name = null): string|int|false
     {
         $filter = sprintf("WHERE column_default LIKE 'nextval%%' AND table_name = '%s'", $name);
+        /** @var \PgSql\Result $query */
         $query = pg_query(
             $this->getConnection(),
             sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS %s", $filter)
@@ -349,6 +353,7 @@ class PgSQLEngine implements IConnection
                 "SELECT pg_catalog.setval(pg_get_serial_sequence('%s', '%s'), MAX(%s)) AS value FROM %s;",
                 [$name, $autoKeyRes['column_name'], $autoKeyRes['column_name'], $name]
             );
+            /** @var \PgSql\Result $maxIndex */
             $maxIndex = pg_query($this->getConnection(), $query);
             $maxIndexRes = pg_fetch_assoc($maxIndex);
             return $maxIndexRes['value'];
@@ -612,6 +617,7 @@ class PgSQLEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
+     * @throws ReflectionException
      */
     public function fetch(
         int $fetchStyle = FETCH_BOTH,
@@ -634,6 +640,7 @@ class PgSQLEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array An array containing all rows from the statement.
+     * @throws ReflectionException
      */
     public function fetchAll(
         int $fetchStyle = FETCH_ASSOC,
@@ -654,6 +661,7 @@ class PgSQLEngine implements IConnection
      *
      * @param mixed $name The attribute name
      * @return mixed
+     * @throws ReflectionException
      */
     public function getAttribute(mixed $name): mixed
     {
@@ -666,6 +674,7 @@ class PgSQLEngine implements IConnection
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
      * @return void
+     * @throws ReflectionException
      */
     public function setAttribute(mixed $name, mixed $value): void
     {

@@ -101,11 +101,12 @@
             "@clear",
             "composer install"
         ],
+        "grumphp": "php ./vendor/bin/grumphp -n run",
         "phpstan": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
         "phpmd": "php vendor/bin/phpmd src/,tests/ ansi phpmd.xml",
         "phpcs": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 src/",
         "phpcbf": "php vendor/bin/phpcbf --ignore-annotations --standard=PSR12 src/",
-        "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude pdo.stub.php --exclude vendor .",
+        "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude pdo.stub.php --exclude pgsql.stub.php --exclude vendor .",
         "run:docs": "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors",
         "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
         "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",

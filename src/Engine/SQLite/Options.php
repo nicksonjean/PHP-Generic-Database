@@ -4,11 +4,15 @@ namespace GenericDatabase\Engine\SQLite;
 
 use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Helpers\Reflections;
+use ReflectionException;
 
 class Options
 {
     private static array $options = [];
 
+    /**
+     * @throws ReflectionException
+     */
     public static function flags(): int
     {
         $options = Options::getOptions();
@@ -56,6 +60,7 @@ class Options
      *
      * @param ?array $options = null
      * @return void
+     * @throws ReflectionException
      */
     public static function setOptions(?array $options = null): void
     {

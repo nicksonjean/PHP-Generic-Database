@@ -3,6 +3,7 @@
 namespace GenericDatabase\Engine\SQLSrv;
 
 use GenericDatabase\Helpers\Reflections;
+use ReflectionException;
 
 class SQLSrv
 {
@@ -11,6 +12,9 @@ class SQLSrv
 
     protected static array $data = [];
 
+    /**
+     * @throws ReflectionException
+     */
     public static function getAttribute(mixed $name): mixed
     {
         if (isset(self::$data[$name])) {
@@ -25,6 +29,9 @@ class SQLSrv
         return $result;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function setAttribute(mixed $name, mixed $value): void
     {
         if (is_null($name)) {

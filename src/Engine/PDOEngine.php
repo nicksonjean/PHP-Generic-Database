@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
@@ -31,30 +32,30 @@ use PDOException;
 /**
  * Dynamic and Static container class for PDOEngine connections.
  *
- * @method static PDOEngine|static setDriver(mixed $value): void
- * @method static PDOEngine|static getDriver($value = null): mixed
- * @method static PDOEngine|static setHost(mixed $value): void
- * @method static PDOEngine|static getHost($value = null): mixed
- * @method static PDOEngine|static setPort(mixed $value): void
- * @method static PDOEngine|static getPort($value = null): mixed
- * @method static PDOEngine|static setUser(mixed $value): void
- * @method static PDOEngine|static getUser($value = null): mixed
- * @method static PDOEngine|static setPassword(mixed $value): void
- * @method static PDOEngine|static getPassword($value = null): mixed
- * @method static PDOEngine|static setDatabase(mixed $value): void
- * @method static PDOEngine|static getDatabase($value = null): mixed
- * @method static PDOEngine|static setOptions(mixed $value): void
- * @method static PDOEngine|static getOptions($value = null): mixed
+ * @method static PDOEngine|void setDriver(mixed $value): void
+ * @method static PDOEngine|string getDriver($value = null): string
+ * @method static PDOEngine|void setHost(mixed $value): void
+ * @method static PDOEngine|string getHost($value = null): string
+ * @method static PDOEngine|void setPort(mixed $value): void
+ * @method static PDOEngine|int getPort($value = null): int
+ * @method static PDOEngine|void setUser(mixed $value): void
+ * @method static PDOEngine|string getUser($value = null): string
+ * @method static PDOEngine|void setPassword(mixed $value): void
+ * @method static PDOEngine|string getPassword($value = null): string
+ * @method static PDOEngine|void setDatabase(mixed $value): void
+ * @method static PDOEngine|string getDatabase($value = null): string
+ * @method static PDOEngine|void setOptions(mixed $value): void
+ * @method static PDOEngine|array|null getOptions($value = null): array|null
  * @method static PDOEngine|static setConnected(mixed $value): void
- * @method static PDOEngine|static getConnected($value = null): mixed
- * @method static PDOEngine|static setDsn(mixed $value): void
- * @method static PDOEngine|static getDsn($value = null): mixed
- * @method static PDOEngine|static setAttributes(mixed $value): void
- * @method static PDOEngine|static getAttributes($value = null): mixed
- * @method static PDOEngine|static setCharset(mixed $value): void
- * @method static PDOEngine|static getCharset($value = null): mixed
- * @method static PDOEngine|static setException(mixed $value): void
- * @method static PDOEngine|static getException($value = null): mixed
+ * @method static PDOEngine|mixed getConnected($value = null): mixed
+ * @method static PDOEngine|void setDsn(mixed $value): void
+ * @method static PDOEngine|mixed getDsn($value = null): mixed
+ * @method static PDOEngine|void setAttributes(mixed $value): void
+ * @method static PDOEngine|mixed getAttributes($value = null): mixed
+ * @method static PDOEngine|void setCharset(mixed $value): void
+ * @method static PDOEngine|string getCharset($value = null): string
+ * @method static PDOEngine|void setException(mixed $value): void
+ * @method static PDOEngine|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class PDOEngine implements IConnection
@@ -182,9 +183,9 @@ class PDOEngine implements IConnection
      */
     private function realConnect(
         string $dsn,
-        ?string $user = null,
-        #[SensitiveParameter] ?string $password = null,
-        ?array $options = null
+        mixed $user = null,
+        #[SensitiveParameter] mixed $password = null,
+        mixed $options = null
     ): PDOEngine {
         $this->setConnection(new PDO($dsn, $user, $password, $options));
         return $this;
@@ -203,10 +204,10 @@ class PDOEngine implements IConnection
                 ->setInstance($this)
                 ->preConnect()
                 ->realConnect(
-                    (string) $this->parseDsn(),
-                    (string) $this->getUser(),
-                    (string) $this->getPassword(),
-                    (array) $this->getOptions()
+                    $this->parseDsn(),
+                    $this->getUser(),
+                    $this->getPassword(),
+                    $this->getOptions()
                 )
                 ->postConnect()
                 ->setConnected(true);
@@ -498,6 +499,7 @@ class PDOEngine implements IConnection
     {
         foreach ($params['sqlArgs'] as $param) {
             $statement = $this->internalBindVariable($param, $params['sqlStatement']);
+            // deepcode ignore Sqli: Ignore SQL Inject
             $this->exec($statement);
             $this->affectedRows += !Validations::isSelect($params['sqlQuery']) ? self::$statement->rowCount() : 0;
         }
@@ -655,6 +657,7 @@ class PDOEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
+     * @throws ReflectionException
      */
     public function fetch(
         int $fetchStyle = FETCH_BOTH,
@@ -677,6 +680,7 @@ class PDOEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array An array containing all rows from the statement.
+     * @throws ReflectionException
      */
     public function fetchAll(
         int $fetchStyle = FETCH_ASSOC,

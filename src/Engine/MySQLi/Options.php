@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\MySQLi;
 
 use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Helpers\Reflections;
+use ReflectionException;
 
 class Options
 {
@@ -30,6 +31,7 @@ class Options
      *
      * @param ?array $options = null
      * @return void
+     * @throws ReflectionException
      */
     public static function setOptions(?array $options = null): void
     {

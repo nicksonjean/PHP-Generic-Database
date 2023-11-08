@@ -18,6 +18,9 @@ final class PathTest extends TestCase
         Path::isAbsolute($emptyPath);
     }
 
+    /**
+     * @throws CustomException
+     */
     public function testIsAbsoluteWithValidAbsolutePath()
     {
         $absolutePath = '/var/www/html';
@@ -25,6 +28,9 @@ final class PathTest extends TestCase
         $this->assertTrue($result);
     }
 
+    /**
+     * @throws CustomException
+     */
     public function testIsAbsoluteWithValidWindowsAbsolutePath()
     {
         $windowsAbsolutePath = 'C:/Users/User/Documents';
@@ -32,6 +38,9 @@ final class PathTest extends TestCase
         $this->assertTrue($result);
     }
 
+    /**
+     * @throws CustomException
+     */
     public function testIsAbsoluteWithRelativePath()
     {
         $relativePath = 'path/to/some/file.txt';
@@ -46,6 +55,9 @@ final class PathTest extends TestCase
         Path::isAbsolute($invalidPath);
     }
 
+    /**
+     * @throws CustomException
+     */
     public function testThrowsExceptionForInvalidPath()
     {
         $result = Path::isAbsolute('relative-path');

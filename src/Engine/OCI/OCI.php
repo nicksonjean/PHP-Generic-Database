@@ -3,6 +3,7 @@
 namespace GenericDatabase\Engine\OCI;
 
 use GenericDatabase\Helpers\Reflections;
+use ReflectionException;
 
 class OCI
 {
@@ -11,6 +12,9 @@ class OCI
 
     protected static array $data = [];
 
+    /**
+     * @throws ReflectionException
+     */
     public static function getAttribute(mixed $name): mixed
     {
         if (isset(self::$data[$name])) {
@@ -25,6 +29,9 @@ class OCI
         return $result;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function setAttribute(mixed $name, mixed $value): void
     {
         if (is_null($name)) {

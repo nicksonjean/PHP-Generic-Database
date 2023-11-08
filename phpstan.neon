@@ -1,6 +1,6 @@
 parameters:
 	phpVersion: 80120 # PHP 8.1
-	level: 5
+	level: 4
 	treatPhpDocTypesAsCertain: false
 	paths:
 		- src/

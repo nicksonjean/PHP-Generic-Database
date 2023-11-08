@@ -3,7 +3,6 @@
 namespace GenericDatabase\Shared;
 
 use GenericDatabase\Helpers\CustomException;
-use GenericDatabase\Helpers\Reflections;
 use ReflectionException;
 
 trait Caller
@@ -42,9 +41,9 @@ trait Caller
      */
     public static function __callStatic(string $name, array $arguments): mixed
     {
-        if (Reflections::isSingletonMethodExists(__CLASS__)) {
-            $instance = Reflections::getSingletonInstance(__CLASS__);
-            $instance::call($name, $arguments);
+        if (method_exists(static::class, 'call')) {
+            $instance = new static();
+            $instance->call($name, $arguments);
             return $instance;
         }
         return null;

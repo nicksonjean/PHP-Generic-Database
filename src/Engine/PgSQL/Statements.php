@@ -3,9 +3,13 @@
 namespace GenericDatabase\Engine\PgSQL;
 
 use GenericDatabase\Helpers\Reflections;
+use ReflectionException;
 
 class Statements
 {
+    /**
+     * @throws ReflectionException
+     */
     public static function internalFetchClassOrObject(
         $statement = null,
         $constructorArguments = [],
@@ -19,17 +23,17 @@ class Statements
         return $rowData;
     }
 
-    public static function internalFetchBoth($statement = null)
+    public static function internalFetchBoth($statement = null): bool|array
     {
         return pg_fetch_array($statement);
     }
 
-    public static function internalFetchAssoc($statement = null)
+    public static function internalFetchAssoc($statement = null): bool|array
     {
         return pg_fetch_assoc($statement);
     }
 
-    public static function internalFetchNum($statement = null)
+    public static function internalFetchNum($statement = null): bool|array
     {
         return pg_fetch_row($statement);
     }
@@ -39,17 +43,17 @@ class Statements
         $rowData = self::internalFetchNum($statement);
         $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
         if (is_array($rowData)) {
-            return isset($rowData[$fetchArgument]) ? $rowData[$fetchArgument] : null;
+            return $rowData[$fetchArgument] ?? null;
         }
         return false;
     }
 
-    public static function internalFetchAllAssoc($statement = null)
+    public static function internalFetchAllAssoc($statement = null): array
     {
         return pg_fetch_all($statement);
     }
 
-    public static function internalFetchAllNum($statement = null)
+    public static function internalFetchAllNum($statement = null): array
     {
         $result = [];
         while ($data = self::internalFetchNum($statement)) {
@@ -58,7 +62,7 @@ class Statements
         return $result;
     }
 
-    public static function internalFetchAllBoth($statement = null)
+    public static function internalFetchAllBoth($statement = null): array
     {
         $result = [];
         while ($data = self::internalFetchBoth($statement)) {
@@ -67,23 +71,24 @@ class Statements
         return $result;
     }
 
-    public static function internalFetchAllColumn($statement = null, $columnIndex = 0)
+    public static function internalFetchAllColumn($statement = null, $columnIndex = 0): array
     {
         $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
         return pg_fetch_all_columns($statement, $fetchArgument);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function internalFetchAllClassOrObjects(
         $statement = null,
         $constructorArguments = [],
         $aClassOrObject = '\stdClass',
-    ) {
+    ): array {
         $result = [];
         $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
         while ($row = self::internalFetchClassOrObject($statement, $fetchArgument, $aClassOrObject)) {
-            if ($row !== false) {
-                $result[] = $row;
-            }
+            $result[] = $row;
         }
         return $result;
     }

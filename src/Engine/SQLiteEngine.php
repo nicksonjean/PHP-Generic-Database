@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use ReflectionException;
 use SQLite3;
 use AllowDynamicProperties;
 use Exception;
@@ -30,30 +31,30 @@ use GenericDatabase\Shared\Singleton;
 /**
  * Dynamic and Static container class for SQLiteEngine connections.
  *
- * @method static SQLiteEngine|static setDriver(mixed $value): void
- * @method static SQLiteEngine|static getDriver($value = null): mixed
- * @method static SQLiteEngine|static setHost(mixed $value): void
- * @method static SQLiteEngine|static getHost($value = null): mixed
- * @method static SQLiteEngine|static setPort(mixed $value): void
- * @method static SQLiteEngine|static getPort($value = null): mixed
- * @method static SQLiteEngine|static setUser(mixed $value): void
- * @method static SQLiteEngine|static getUser($value = null): mixed
- * @method static SQLiteEngine|static setPassword(mixed $value): void
- * @method static SQLiteEngine|static getPassword($value = null): mixed
- * @method static SQLiteEngine|static setDatabase(mixed $value): void
- * @method static SQLiteEngine|static getDatabase($value = null): mixed
- * @method static SQLiteEngine|static setOptions(mixed $value): void
- * @method static SQLiteEngine|static getOptions($value = null): mixed
+ * @method static SQLiteEngine|void setDriver(mixed $value): void
+ * @method static SQLiteEngine|string getDriver($value = null): string
+ * @method static SQLiteEngine|void setHost(mixed $value): void
+ * @method static SQLiteEngine|string getHost($value = null): string
+ * @method static SQLiteEngine|void setPort(mixed $value): void
+ * @method static SQLiteEngine|int getPort($value = null): int
+ * @method static SQLiteEngine|void setUser(mixed $value): void
+ * @method static SQLiteEngine|string getUser($value = null): string
+ * @method static SQLiteEngine|void setPassword(mixed $value): void
+ * @method static SQLiteEngine|string getPassword($value = null): string
+ * @method static SQLiteEngine|void setDatabase(mixed $value): void
+ * @method static SQLiteEngine|string getDatabase($value = null): string
+ * @method static SQLiteEngine|void setOptions(mixed $value): void
+ * @method static SQLiteEngine|array|null getOptions($value = null): array|null
  * @method static SQLiteEngine|static setConnected(mixed $value): void
- * @method static SQLiteEngine|static getConnected($value = null): mixed
- * @method static SQLiteEngine|static setDsn(mixed $value): void
- * @method static SQLiteEngine|static getDsn($value = null): mixed
- * @method static SQLiteEngine|static setAttributes(mixed $value): void
- * @method static SQLiteEngine|static getAttributes($value = null): mixed
- * @method static SQLiteEngine|static setCharset(mixed $value): void
- * @method static SQLiteEngine|static getCharset($value = null): mixed
- * @method static SQLiteEngine|static setException(mixed $value): void
- * @method static SQLiteEngine|static getException($value = null): mixed
+ * @method static SQLiteEngine|mixed getConnected($value = null): mixed
+ * @method static SQLiteEngine|void setDsn(mixed $value): void
+ * @method static SQLiteEngine|mixed getDsn($value = null): mixed
+ * @method static SQLiteEngine|void setAttributes(mixed $value): void
+ * @method static SQLiteEngine|mixed getAttributes($value = null): mixed
+ * @method static SQLiteEngine|void setCharset(mixed $value): void
+ * @method static SQLiteEngine|string getCharset($value = null): string
+ * @method static SQLiteEngine|void setException(mixed $value): void
+ * @method static SQLiteEngine|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class SQLiteEngine implements IConnection
@@ -142,6 +143,7 @@ class SQLiteEngine implements IConnection
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
      * @return SQLiteEngine
+     * @throws ReflectionException
      */
     public static function __callStatic(string $name, array $arguments): SQLiteEngine
     {
@@ -152,6 +154,7 @@ class SQLiteEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return SQLiteEngine
+     * @throws ReflectionException
      */
     private function preConnect(): SQLiteEngine
     {
@@ -177,12 +180,12 @@ class SQLiteEngine implements IConnection
     /**
      * This method is responsible for creating a new instance of the SQLiteEngine connection.
      *
-     * @param string $database The path of the database file
+     * @param mixed $database The path of the database file
      * @param int|null $flags = null Flags of the database behavior
      * @return SQLiteEngine
      * @throws Exception
      */
-    private function realConnect(string $database, int $flags = null): SQLiteEngine
+    private function realConnect(mixed $database, int $flags = null): SQLiteEngine
     {
         if (!$flags) {
             $flags = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE;
@@ -206,7 +209,7 @@ class SQLiteEngine implements IConnection
                 ->setInstance($this)
                 ->setDsn($this->parseDsn())
                 ->realConnect(
-                    (string) $this->getDatabase(),
+                    $this->getDatabase(),
                     Options::flags()
                 )
                 ->postConnect()
@@ -647,6 +650,7 @@ class SQLiteEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
+     * @throws ReflectionException
      */
     public function fetch(
         int $fetchStyle = FETCH_BOTH,
@@ -669,6 +673,7 @@ class SQLiteEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array An array containing all rows from the statement.
+     * @throws ReflectionException
      */
     public function fetchAll(
         int $fetchStyle = FETCH_ASSOC,
@@ -689,6 +694,7 @@ class SQLiteEngine implements IConnection
      *
      * @param mixed $name The attribute name
      * @return mixed
+     * @throws ReflectionException
      */
     public function getAttribute(mixed $name): mixed
     {
@@ -701,6 +707,7 @@ class SQLiteEngine implements IConnection
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
      * @return void
+     * @throws ReflectionException
      */
     public function setAttribute(mixed $name, mixed $value): void
     {

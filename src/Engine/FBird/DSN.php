@@ -25,7 +25,9 @@ class DSN
         }
 
         if (!Path::isAbsolute(FBirdEngine::getInstance()->getDatabase())) {
-            FBirdEngine::getInstance()->setDatabase(Path::toAbsolute(FBirdEngine::getInstance()->getDatabase()));
+            FBirdEngine::getInstance()->setDatabase(Path::toAbsolute(
+                FBirdEngine::getInstance()->getDatabase()
+            ));
         }
 
         $result = sprintf(

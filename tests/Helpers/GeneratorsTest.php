@@ -5,6 +5,8 @@ namespace GenericDatabase\Tests\Helpers;
 use GenericDatabase\Helpers\Generators;
 use GenericDatabase\Engine\MySQLiEngine;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * @coversDefaultClass \GenericDatabase\Helpers\Arrays
@@ -59,9 +61,12 @@ final class GeneratorsTest extends TestCase
         $this->assertEquals(1, Generators::setType('1'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGenerateKeyName()
     {
-        $reflectionClass = new \ReflectionClass(Generators::class);
+        $reflectionClass = new ReflectionClass(Generators::class);
         $method = $reflectionClass->getMethod('generateKeyName');
         $method->setAccessible(true); //NOSONAR
         $resultA = $method->invokeArgs(null, ['ATTR_USER', 'SQLite']);
@@ -71,9 +76,12 @@ final class GeneratorsTest extends TestCase
         $this->assertEquals('MYSQL_PASS', $resultB);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGenerateOptionKey()
     {
-        $reflectionClass = new \ReflectionClass(Generators::class);
+        $reflectionClass = new ReflectionClass(Generators::class);
         $method = $reflectionClass->getMethod('generateOptionKey');
         $method->setAccessible(true); //NOSONAR
         $resultA = $method->invokeArgs(null, ['MySQL', 'MySQLi', 'ATTR_PERSISTENT']);

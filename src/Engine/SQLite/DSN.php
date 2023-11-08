@@ -27,9 +27,11 @@ class DSN
         if (
             !Path::isAbsolute(
                 SQLiteEngine::getInstance()->getDatabase()
-            ) && SQLiteEngine::getInstance()->getDatabase() !== 'memory'
+            ) && SQLiteEngine::getInstance()->getDatabase() != 'memory'
         ) {
-            SQLiteEngine::getInstance()->setDatabase(Path::toAbsolute(SQLiteEngine::getInstance()->getDatabase()));
+            SQLiteEngine::getInstance()->setDatabase(Path::toAbsolute(
+                SQLiteEngine::getInstance()->getDatabase()
+            ));
             $result = sprintf(
                 "sqlite:%s",
                 SQLiteEngine::getInstance()->getDatabase()

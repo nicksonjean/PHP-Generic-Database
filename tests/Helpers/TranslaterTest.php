@@ -4,6 +4,8 @@ namespace GenericDatabase\Tests\Helpers;
 
 use GenericDatabase\Helpers\Translater;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionException;
 
 final class TranslaterTest extends TestCase
 {
@@ -92,13 +94,16 @@ final class TranslaterTest extends TestCase
         $this->assertEquals([':id' => 1, ':name' => 'John'], $arguments);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testReplaceParameters()
     {
         $input = "INSERT INTO estado (id) VALUES (:id)";
         $quote = '"';
         $forbiddenWords = ['INSERT', 'INTO', 'VALUES'];
 
-        $reflectionClass = new \ReflectionClass(Translater::class);
+        $reflectionClass = new ReflectionClass(Translater::class);
         $method = $reflectionClass->getMethod('replaceParameters');
         $method->setAccessible(true); //NOSONAR
 
@@ -107,13 +112,16 @@ final class TranslaterTest extends TestCase
         $this->assertStringContainsString('id', $result);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testReplaceParametersWithNoMatches()
     {
         $input = "INSERT INTO estado (id) VALUES (:id)";
         $quote = '';
         $forbiddenWords = [''];
 
-        $reflectionClass = new \ReflectionClass(Translater::class);
+        $reflectionClass = new ReflectionClass(Translater::class);
         $method = $reflectionClass->getMethod('replaceParameters');
         $method->setAccessible(true); //NOSONAR
 

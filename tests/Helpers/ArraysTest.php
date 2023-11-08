@@ -167,11 +167,10 @@ final class ArraysTest extends TestCase
     public function testIsArrayAssocEmptyArray()
     {
         $array = [];
-        $expectedResult = false;
 
         $result = Arrays::isAssoc($array);
 
-        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals(false, $result);
     }
 
     public function testExceptByKeysEmptyArray()

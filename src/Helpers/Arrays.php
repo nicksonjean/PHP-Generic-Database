@@ -2,8 +2,6 @@
 
 namespace GenericDatabase\Helpers;
 
-use GenericDatabase\Connection;
-
 /**
  * The `GenericDatabase\Helpers\Arrays` class provides a collection of static methods for manipulating arrays in PHP.
  * It includes functions for finding elements in an array, combining array indices and values, determining the type
@@ -253,6 +251,7 @@ class Arrays
     /**
      * This function makes an arguments list
      *
+     * @param mixed $driver
      * @param mixed $params Arguments list
      * @return array
      */
@@ -283,14 +282,5 @@ class Arrays
             'isMulti' => $isMulti ?? false,
             'isArgs' => $isArgs ?? false
         ];
-    }
-
-    public static function arrayToNamedArgs(array $parameters): array
-    {
-        $namedArguments = [];
-        foreach ($parameters as $key => $value) {
-            $namedArguments[$key] = $value;
-        }
-        return $namedArguments;
     }
 }

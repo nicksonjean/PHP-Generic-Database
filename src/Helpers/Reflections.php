@@ -16,28 +16,28 @@ use ReflectionObject;
  * Example Usage:
  * <code>
  * // Get a singleton instance of a class
- * $instance = Translater::getSingletonInstance(MyClass::class);
+ * $instance = Reflections::getSingletonInstance(MyClass::class);
  *
  * // Check if a method exists in a class
- * $exists = Translater::isSingletonMethodExists(MyClass::class);
+ * $exists = Reflections::isSingletonMethodExists(MyClass::class);
  *
  * // Get a class instance
- * $classInstance = Translater::getClassInstance(MyClass::class);
+ * $classInstance = Reflections::getClassInstance(MyClass::class);
  *
  * // Get all constants of a class
- * $constants = Translater::getClassConstants(MyClass::class);
+ * $constants = Reflections::getClassConstants(MyClass::class);
  *
  * // Get the name of a constant by its value
- * $constantName = Translater::getClassConstantName(MyClass::class, $constantValue);
+ * $constantName = Reflections::getClassConstantName(MyClass::class, $constantValue);
  *
  * // Get the value of a class property by its name
- * $propertyValue = Translater::getClassPropertyName(MyClass::class, 'propertyName');
+ * $propertyValue = Reflections::getClassPropertyName(MyClass::class, 'propertyName');
  *
  * // Create an object and set properties in a case-insensitive manner
- * $object = Translater::createObjectAndSetPropertiesCaseInsensitive(MyClass::class, $constructorArgs, $propertyList);
+ * $object = Reflections::createObjectAndSetPropertiesCaseInsensitive(MyClass::class, $constructorArgs, $propertyList);
  *
  * // Convert multiple arguments into an associative array
- * $argsArray = Translater::argsToArray($arg1, $arg2, $arg3);
+ * $argsArray = Reflections::argsToArray($arg1, $arg2, $arg3);
  * </code>
  *
  * Main functionalities:
@@ -106,8 +106,7 @@ class Reflections
      */
     public static function isSingletonMethodExists(mixed $class): bool
     {
-        $method = new ReflectionMethod($class, self::$defaultMethod);
-        return $method->isStatic();
+        return (bool) new ReflectionMethod($class, self::$defaultMethod);
     }
 
     /**
@@ -163,14 +162,14 @@ class Reflections
     /**
      * Creates an object and sets its properties in a case-insensitive manner.
      *
-     * @param $classOrObject The class object or instance, or the class name as a string.
+     * @param mixed $classOrObject The class object or instance, or the class name as a string.
      * @param array $constructorArgArray An array of constructor arguments.
      * @param array $propertyList An array of properties to be set on the object.
      * @return mixed|object|string The created object with the properties set in a case-insensitive manner.
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function createObjectAndSetPropertiesCaseInsensitive(
-        $classOrObject,
+        mixed $classOrObject,
         array $constructorArgArray,
         array $propertyList
     ): mixed {
@@ -184,6 +183,17 @@ class Reflections
      * Creates an object based on the given class or object.
      *
      * @param mixed $classOrObject The class object or instance, or the class name as a string.
+     * @return ReflectionObject The created object.
+     */
+    private static function createReflectionObject(mixed $classOrObject): ReflectionObject
+    {
+        return new ReflectionObject($classOrObject);
+    }
+
+    /**
+     * Creates an object based on the given class or object.
+     *
+     * @param mixed $classOrObject The class object or instance, or the class name as a string.
      * @param array $constructorArgArray An array of constructor arguments.
      * @return mixed The created object.
      * @throws ReflectionException
@@ -191,7 +201,7 @@ class Reflections
     private static function createObject(mixed $classOrObject, array $constructorArgArray): mixed
     {
         if (is_object($classOrObject)) {
-            $result = new ReflectionObject($classOrObject);
+            $result = self::createReflectionObject($classOrObject);
         } else {
             if (!is_string($classOrObject)) {
                 $classOrObject = '\stdClass';
@@ -215,7 +225,7 @@ class Reflections
      */
     private static function setPropertiesCaseInsensitive(object $object, array $propertyList): void
     {
-        $reflector = new ReflectionObject($object);
+        $reflector = self::createReflectionObject($object);
         $propertyReflections = $reflector->getProperties();
 
         foreach ($propertyList as $propertyName => $propertyValue) {
@@ -224,7 +234,7 @@ class Reflections
 
             foreach ($propertyReflections as $propertyReflection) {
                 if (mb_strtolower($propertyReflection->name) === $propertyNameLower) {
-                    $propertyReflection->setValue($object, $propertyValue); //NOSONAR
+                    $propertyReflection->setValue($object, $propertyValue);
                     $propertyFound = true;
                     break;
                 }

@@ -6,7 +6,7 @@ use GenericDatabase\Core\Entity;
 
 /**
  * The `GenericDatabase\Helpers\Generators` class provides methods
- * forgenerating options and determining the type of values.
+ * for generating options and determining the type of values.
  *
  * Example Usage:
  * <code>
@@ -33,14 +33,14 @@ use GenericDatabase\Core\Entity;
  * Main functionalities:
  * - Setting a constant and generating options based on a provided value,
  * instance, class name, constant name, and attributes.
- * - Determining the type of a value based on its characteristics.
+ * - Determining the type of value based on its characteristics.
  *
  * Methods:
  * - `setConstant($value, $instance, $className, $constantName, $attributes)`:
  * Sets a constant and generates options based on the provided value, instance,
  * class name, constant name, and attributes. Returns the generated options as an array.
  * - `setType($value)`:
- * Determines the type of a value based on its characteristics.
+ * Determines the type of value based on its characteristics.
  * Returns the determined type as a boolean, integer, or string.
  *
  * @package GenericDatabase\Helpers
@@ -58,8 +58,13 @@ class Generators
      * @param array $attributes The attributes to check against.
      * @return array The generated options.
      */
-    public static function setConstant($value, $instance, $className, $constantName, $attributes): array
-    {
+    public static function setConstant(
+        array $value,
+        mixed $instance,
+        string $className,
+        string $constantName,
+        array $attributes
+    ): array {
         $options = [];
 
         foreach (Arrays::recombine(...$value) as $key => $value) {
@@ -80,12 +85,12 @@ class Generators
     }
 
     /**
-     * Determines the type of a value based on its characteristics.
+     * Determines the type of value based on its characteristics.
      *
      * @param mixed $value The value to determine the type of.
      * @return bool|int|string The determined type of the value.
      */
-    public static function setType($value): bool|int|string
+    public static function setType(mixed $value): bool|int|string
     {
         $length = strlen($value);
         $value = ($value === null) ? '' : $value;
@@ -108,7 +113,7 @@ class Generators
      * @param string $constantName The constant name to include in the key name.
      * @return string The generated key name.
      */
-    private static function generateKeyName($index, $constantName): string
+    private static function generateKeyName(string $index, string $constantName): string
     {
         return str_replace(
             "ATTR",
@@ -127,7 +132,7 @@ class Generators
      * @param string $index The index to include in the option key.
      * @return string The generated option key.
      */
-    private static function generateOptionKey($className, $constantName, $index): string
+    private static function generateOptionKey(string $className, string $constantName, string $index): string
     {
         return constant(sprintf(Entity::CASE_INTERNAL_CLASS->value, $constantName, $className, $index));
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
@@ -30,30 +31,30 @@ use GenericDatabase\Shared\Singleton;
 /**
  * Dynamic and Static container class for OCIEngine connections.
  *
- * @method static OCIEngine|static setDriver(mixed $value): void
- * @method static OCIEngine|static getDriver($value = null): mixed
- * @method static OCIEngine|static setHost(mixed $value): void
- * @method static OCIEngine|static getHost($value = null): mixed
- * @method static OCIEngine|static setPort(mixed $value): void
- * @method static OCIEngine|static getPort($value = null): mixed
- * @method static OCIEngine|static setUser(mixed $value): void
- * @method static OCIEngine|static getUser($value = null): mixed
- * @method static OCIEngine|static setPassword(mixed $value): void
- * @method static OCIEngine|static getPassword($value = null): mixed
- * @method static OCIEngine|static setDatabase(mixed $value): void
- * @method static OCIEngine|static getDatabase($value = null): mixed
- * @method static OCIEngine|static setOptions(mixed $value): void
- * @method static OCIEngine|static getOptions($value = null): mixed
+ * @method static OCIEngine|void setDriver(mixed $value): void
+ * @method static OCIEngine|string getDriver($value = null): string
+ * @method static OCIEngine|void setHost(mixed $value): void
+ * @method static OCIEngine|string getHost($value = null): string
+ * @method static OCIEngine|void setPort(mixed $value): void
+ * @method static OCIEngine|int getPort($value = null): int
+ * @method static OCIEngine|void setUser(mixed $value): void
+ * @method static OCIEngine|string getUser($value = null): string
+ * @method static OCIEngine|void setPassword(mixed $value): void
+ * @method static OCIEngine|string getPassword($value = null): string
+ * @method static OCIEngine|void setDatabase(mixed $value): void
+ * @method static OCIEngine|string getDatabase($value = null): string
+ * @method static OCIEngine|void setOptions(mixed $value): void
+ * @method static OCIEngine|array|null getOptions($value = null): array|null
  * @method static OCIEngine|static setConnected(mixed $value): void
- * @method static OCIEngine|static getConnected($value = null): mixed
- * @method static OCIEngine|static setDsn(mixed $value): void
- * @method static OCIEngine|static getDsn($value = null): mixed
- * @method static OCIEngine|static setAttributes(mixed $value): void
- * @method static OCIEngine|static getAttributes($value = null): mixed
- * @method static OCIEngine|static setCharset(mixed $value): void
- * @method static OCIEngine|static getCharset($value = null): mixed
- * @method static OCIEngine|static setException(mixed $value): void
- * @method static OCIEngine|static getException($value = null): mixed
+ * @method static OCIEngine|mixed getConnected($value = null): mixed
+ * @method static OCIEngine|void setDsn(mixed $value): void
+ * @method static OCIEngine|mixed getDsn($value = null): mixed
+ * @method static OCIEngine|void setAttributes(mixed $value): void
+ * @method static OCIEngine|mixed getAttributes($value = null): mixed
+ * @method static OCIEngine|void setCharset(mixed $value): void
+ * @method static OCIEngine|string getCharset($value = null): string
+ * @method static OCIEngine|void setException(mixed $value): void
+ * @method static OCIEngine|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class OCIEngine implements IConnection
@@ -136,6 +137,7 @@ class OCIEngine implements IConnection
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
      * @return OCIEngine
+     * @throws ReflectionException
      */
     public static function __callStatic(string $name, array $arguments): OCIEngine
     {
@@ -146,6 +148,7 @@ class OCIEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return OCIEngine
+     * @throws ReflectionException
      */
     private function preConnect(): OCIEngine
     {
@@ -181,12 +184,12 @@ class OCIEngine implements IConnection
      * @throws Exception
      */
     private function realConnect(
-        string $host,
-        string $user,
-        #[SensitiveParameter] string $password,
-        string $database,
+        mixed $host,
+        mixed $user,
+        #[SensitiveParameter] mixed $password,
+        mixed $database,
         mixed $port,
-        string $charset
+        mixed $charset
     ): OCIEngine {
         $dsn = vsprintf('%s:%s/%s', [$host, $port, $database]);
         $this->setConnection(
@@ -211,12 +214,12 @@ class OCIEngine implements IConnection
                 ->setInstance($this)
                 ->setDsn($this->parseDsn())
                 ->realConnect(
-                    (string) $this->getHost(),
-                    (string) $this->getUser(),
-                    (string) $this->getPassword(),
-                    (string) $this->getDatabase(),
+                    $this->getHost(),
+                    $this->getUser(),
+                    $this->getPassword(),
+                    $this->getDatabase(),
                     $this->getPort(),
-                    (string) $this->getCharset()
+                    $this->getCharset()
                 )
                 ->postConnect()
                 ->setConnected(true);
@@ -665,6 +668,7 @@ class OCIEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
+     * @throws ReflectionException
      */
     public function fetch(
         int $fetchStyle = FETCH_BOTH,
@@ -687,6 +691,7 @@ class OCIEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array An array containing all rows from the statement.
+     * @throws ReflectionException
      */
     public function fetchAll(
         int $fetchStyle = FETCH_ASSOC,
@@ -707,6 +712,7 @@ class OCIEngine implements IConnection
      *
      * @param mixed $name The attribute name
      * @return mixed
+     * @throws ReflectionException
      */
     public function getAttribute(mixed $name): mixed
     {
@@ -719,6 +725,7 @@ class OCIEngine implements IConnection
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
      * @return void
+     * @throws ReflectionException
      */
     public function setAttribute(mixed $name, mixed $value): void
     {

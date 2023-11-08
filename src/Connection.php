@@ -337,7 +337,6 @@ class Connection
      *
      * @param array $arguments
      * @return Connection
-     * @throws ReflectionException
      */
     private static function callWithByStaticArgs(array $arguments): Connection
     {

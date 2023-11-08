@@ -3,9 +3,13 @@
 namespace GenericDatabase\Engine\SQLSrv;
 
 use GenericDatabase\Helpers\Reflections;
+use ReflectionException;
 
 class Statements
 {
+    /**
+     * @throws ReflectionException
+     */
     public static function internalFetchClassOrObject(
         $statement = null,
         $constructorArguments = [],
@@ -19,17 +23,17 @@ class Statements
         return $rowData;
     }
 
-    public static function internalFetchBoth($statement = null)
+    public static function internalFetchBoth($statement = null): bool|array|null
     {
         return sqlsrv_fetch_array($statement, SQLSRV_FETCH_BOTH);
     }
 
-    public static function internalFetchAssoc($statement = null)
+    public static function internalFetchAssoc($statement = null): bool|array|null
     {
         return sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC);
     }
 
-    public static function internalFetchNum($statement = null)
+    public static function internalFetchNum($statement = null): bool|array|null
     {
         return sqlsrv_fetch_array($statement, SQLSRV_FETCH_NUMERIC);
     }
@@ -39,12 +43,12 @@ class Statements
         $rowData = self::internalFetchNum($statement);
         $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
         if (is_array($rowData)) {
-            return isset($rowData[$fetchArgument]) ? $rowData[$fetchArgument] : null;
+            return $rowData[$fetchArgument] ?? null;
         }
         return false;
     }
 
-    public static function internalFetchAllAssoc($statement = null)
+    public static function internalFetchAllAssoc($statement = null): array
     {
         $result = [];
         while ($data = self::internalFetchAssoc($statement)) {
@@ -53,7 +57,7 @@ class Statements
         return $result;
     }
 
-    public static function internalFetchAllNum($statement = null)
+    public static function internalFetchAllNum($statement = null): array
     {
         $result = [];
         while ($data = self::internalFetchNum($statement)) {
@@ -62,7 +66,7 @@ class Statements
         return $result;
     }
 
-    public static function internalFetchAllBoth($statement = null)
+    public static function internalFetchAllBoth($statement = null): array
     {
         $result = [];
         while ($data = self::internalFetchBoth($statement)) {
@@ -71,7 +75,7 @@ class Statements
         return $result;
     }
 
-    public static function internalFetchAllColumn($statement = null, $columnIndex = 0)
+    public static function internalFetchAllColumn($statement = null, $columnIndex = 0): array
     {
         $result = [];
         $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
@@ -81,17 +85,18 @@ class Statements
         return $result;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public static function internalFetchAllClassOrObjects(
         $statement = null,
         $constructorArguments = [],
         $aClassOrObject = '\stdClass',
-    ) {
+    ): array {
         $result = [];
         $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
         while ($row = self::internalFetchClassOrObject($statement, $fetchArgument, $aClassOrObject)) {
-            if ($row !== false) {
-                $result[] = $row;
-            }
+            $result[] = $row;
         }
         return $result;
     }

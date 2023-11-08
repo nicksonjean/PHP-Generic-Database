@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
@@ -30,30 +31,30 @@ use GenericDatabase\Shared\Singleton;
 /**
  * Dynamic and Static container class for FBirdEngine connections.
  *
- * @method static FBirdEngine|static setDriver(mixed $value): void
- * @method static FBirdEngine|static getDriver($value = null): mixed
- * @method static FBirdEngine|static setHost(mixed $value): void
- * @method static FBirdEngine|static getHost($value = null): mixed
- * @method static FBirdEngine|static setPort(mixed $value): void
- * @method static FBirdEngine|static getPort($value = null): int
- * @method static FBirdEngine|static setUser(mixed $value): void
- * @method static FBirdEngine|static getUser($value = null): mixed
- * @method static FBirdEngine|static setPassword(mixed $value): void
- * @method static FBirdEngine|static getPassword($value = null): mixed
- * @method static FBirdEngine|static setDatabase(mixed $value): void
- * @method static FBirdEngine|static getDatabase($value = null): mixed
- * @method static FBirdEngine|static setOptions(mixed $value): void
- * @method static FBirdEngine|static getOptions($value = null): mixed
+ * @method static FBirdEngine|void setDriver(mixed $value): void
+ * @method static FBirdEngine|string getDriver($value = null): string
+ * @method static FBirdEngine|void setHost(mixed $value): void
+ * @method static FBirdEngine|string getHost($value = null): string
+ * @method static FBirdEngine|void setPort(mixed $value): void
+ * @method static FBirdEngine|int getPort($value = null): int
+ * @method static FBirdEngine|void setUser(mixed $value): void
+ * @method static FBirdEngine|string getUser($value = null): string
+ * @method static FBirdEngine|void setPassword(mixed $value): void
+ * @method static FBirdEngine|string getPassword($value = null): string
+ * @method static FBirdEngine|void setDatabase(mixed $value): void
+ * @method static FBirdEngine|string getDatabase($value = null): string
+ * @method static FBirdEngine|void setOptions(mixed $value): void
+ * @method static FBirdEngine|array|null getOptions($value = null): array|null
  * @method static FBirdEngine|static setConnected(mixed $value): void
- * @method static FBirdEngine|static getConnected($value = null): mixed
- * @method static FBirdEngine|static setDsn(mixed $value): void
- * @method static FBirdEngine|static getDsn($value = null): mixed
- * @method static FBirdEngine|static setAttributes(mixed $value): void
- * @method static FBirdEngine|static getAttributes($value = null): mixed
- * @method static FBirdEngine|static setCharset(mixed $value): void
- * @method static FBirdEngine|static getCharset($value = null): mixed
- * @method static FBirdEngine|static setException(mixed $value): void
- * @method static FBirdEngine|static getException($value = null): mixed
+ * @method static FBirdEngine|mixed getConnected($value = null): mixed
+ * @method static FBirdEngine|void setDsn(mixed $value): void
+ * @method static FBirdEngine|mixed getDsn($value = null): mixed
+ * @method static FBirdEngine|void setAttributes(mixed $value): void
+ * @method static FBirdEngine|mixed getAttributes($value = null): mixed
+ * @method static FBirdEngine|void setCharset(mixed $value): void
+ * @method static FBirdEngine|string getCharset($value = null): string
+ * @method static FBirdEngine|void setException(mixed $value): void
+ * @method static FBirdEngine|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
 class FBirdEngine implements IConnection
@@ -142,6 +143,7 @@ class FBirdEngine implements IConnection
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
      * @return FBirdEngine
+     * @throws ReflectionException
      */
     public static function __callStatic(string $name, array $arguments): FBirdEngine
     {
@@ -152,6 +154,7 @@ class FBirdEngine implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return FBirdEngine
+     * @throws ReflectionException
      */
     private function preConnect(): FBirdEngine
     {
@@ -177,19 +180,19 @@ class FBirdEngine implements IConnection
     /**
      * This method is responsible for creating a new instance of the FBirdEngine connection.
      *
-     * @param string $host The host of the database
-     * @param string $user The user of the database
-     * @param string $password The password of the database
-     * @param string $database The name of the database
+     * @param mixed $host The host of the database
+     * @param mixed $user The user of the database
+     * @param mixed $password The password of the database
+     * @param mixed $database The name of the database
      * @param mixed $port The port of the database
      * @return FBirdEngine
      * @throws Exception
      */
     private function realConnect(
-        string $host,
-        string $user,
-        #[SensitiveParameter] string $password,
-        string $database,
+        mixed $host,
+        mixed $user,
+        #[SensitiveParameter] mixed $password,
+        mixed $database,
         mixed $port
     ): FBirdEngine {
         $dsn = vsprintf('%s/%s:%s', [$host, $port, $database]);
@@ -215,10 +218,10 @@ class FBirdEngine implements IConnection
                 ->setInstance($this)
                 ->setDsn($this->parseDsn())
                 ->realConnect(
-                    (string) $this->getHost(),
-                    (string) $this->getUser(),
-                    (string) $this->getPassword(),
-                    (string) $this->getDatabase(),
+                    $this->getHost(),
+                    $this->getUser(),
+                    $this->getPassword(),
+                    $this->getDatabase(),
                     $this->getPort()
                 )
                 ->postConnect()
@@ -686,6 +689,7 @@ class FBirdEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
+     * @throws ReflectionException
      */
     public function fetch(
         int $fetchStyle = FETCH_BOTH,
@@ -708,6 +712,7 @@ class FBirdEngine implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array An array containing all rows from the statement.
+     * @throws ReflectionException
      */
     public function fetchAll(
         int $fetchStyle = FETCH_ASSOC,
@@ -728,6 +733,7 @@ class FBirdEngine implements IConnection
      *
      * @param mixed $name The attribute name
      * @return mixed
+     * @throws ReflectionException
      */
     public function getAttribute(mixed $name): mixed
     {
@@ -740,6 +746,7 @@ class FBirdEngine implements IConnection
      * @param mixed $name The attribute name
      * @param mixed $value The attribute value
      * @return void
+     * @throws ReflectionException
      */
     public function setAttribute(mixed $name, mixed $value): void
     {
