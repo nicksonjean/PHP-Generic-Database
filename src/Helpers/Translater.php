@@ -79,33 +79,33 @@ class Translater
      * SQL Dialect used by MySQL, MariaDB, Percona and Other Forks,
      * also as Drizzle, Derby H2, HSQLDB and SQLite
      */
-    public const SQL_DIALECT_BTICK = 1;
+    final public const SQL_DIALECT_BTICK = 1;
 
     /**
      * SQL Dialect used by IBM DB2, Firebird, PostgreSQL, Oracle,
      * also as Microsoft SQL Server and Sybase
      */
-    public const SQL_DIALECT_DQUOTE = 2;
+    final public const SQL_DIALECT_DQUOTE = 2;
 
     /**
      * SQL Dialect used by Cassandra, MongoDB and other Hybrid, Databases.
      */
-    public const SQL_DIALECT_SQUOTE = 3;
+    final public const SQL_DIALECT_SQUOTE = 3;
 
     /**
      * For none SQL Dialect and bypass character escape.
      */
-    public const SQL_DIALECT_NONE = 4;
+    final public const SQL_DIALECT_NONE = 4;
 
     /**
      * For the dialects that need question marks notation
      */
-    public const BIND_QUESTION_MARK = 1;
+    final public const BIND_QUESTION_MARK = 1;
 
     /**
      * For the dialects that need dollar sign notation
      */
-    public const BIND_DOLLAR_SIGN = 2;
+    final public const BIND_DOLLAR_SIGN = 2;
 
     /**
      * Regex patterns for use in class

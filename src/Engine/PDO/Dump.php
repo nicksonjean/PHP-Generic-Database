@@ -46,13 +46,11 @@ class Dump
         while (($string = fgets($handle)) !== false) {
             $size += strlen($string);
 
-            $uncomment = function ($string = '') {
-                return preg_replace(
-                    (string) self::$regex['unicode'],
-                    ' ',
-                    (($string == '') ?  '' : preg_replace((string) self::$regex['uncomment'], '', $string))
-                );
-            };
+            $uncomment = fn($string = '') => preg_replace(
+                (string) self::$regex['unicode'],
+                ' ',
+                (($string == '') ?  '' : preg_replace((string) self::$regex['uncomment'], '', (string) $string))
+            );
 
             if (strlen($uncomment($string)) > 1) {
                 if (!strncasecmp($uncomment($string), "DELIMITER ", 10)) {
@@ -71,7 +69,7 @@ class Dump
             }
         }
 
-        if (rtrim($sql) !== '') {
+        if (rtrim((string) $sql) !== '') {
             PDOEngine::getInstance()->exec($sql);
             $count++;
             if ($onProgress) {

@@ -24,11 +24,11 @@ class Attributes
 
     private const RX_ERROR = "[%d] %s\n";
 
-    public const CLIENT = 0;
+    final public const CLIENT = 0;
 
-    public const RESULTS = 1;
+    final public const RESULTS = 1;
 
-    public const CONNECTION = 2;
+    final public const CONNECTION = 2;
 
     /**
      * static attributes constants

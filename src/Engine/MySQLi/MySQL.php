@@ -7,15 +7,15 @@ use ReflectionException;
 
 class MySQL
 {
-    public const ATTR_OPT_CONNECT_TIMEOUT = 2;
-    public const ATTR_OPT_READ_TIMEOUT = 3;
-    public const ATTR_INIT_COMMAND = 1002;
-    public const ATTR_SET_CHARSET_NAME = 4;
-    public const ATTR_READ_DEFAULT_GROUP = 1007;
-    public const ATTR_OPT_INT_AND_FLOAT_NATIVE = 1011;
-    public const ATTR_OPT_SSL_VERIFY_SERVER_CERT = 1012;
-    public const ATTR_PERSISTENT = 13;
-    public const ATTR_AUTOCOMMIT = 14;
+    final public const ATTR_OPT_CONNECT_TIMEOUT = 2;
+    final public const ATTR_OPT_READ_TIMEOUT = 3;
+    final public const ATTR_INIT_COMMAND = 1002;
+    final public const ATTR_SET_CHARSET_NAME = 4;
+    final public const ATTR_READ_DEFAULT_GROUP = 1007;
+    final public const ATTR_OPT_INT_AND_FLOAT_NATIVE = 1011;
+    final public const ATTR_OPT_SSL_VERIFY_SERVER_CERT = 1012;
+    final public const ATTR_PERSISTENT = 13;
+    final public const ATTR_AUTOCOMMIT = 14;
 
     protected static array $data = [];
 
@@ -26,7 +26,7 @@ class MySQL
     {
         if (isset(self::$data[$name])) {
             if (is_int($name)) {
-                $result = self::$data[Reflections::getClassConstantName(__CLASS__, $name)];
+                $result = self::$data[Reflections::getClassConstantName(self::class, $name)];
             } else {
                 $result = self::$data[$name];
             }
@@ -44,7 +44,7 @@ class MySQL
         if (is_null($name)) {
             self::$data[] = $value;
         } elseif (is_int($name)) {
-            self::$data[Reflections::getClassConstantName(__CLASS__, $name)] = $value;
+            self::$data[Reflections::getClassConstantName(self::class, $name)] = $value;
         } else {
             self::$data[$name] = $value;
         }

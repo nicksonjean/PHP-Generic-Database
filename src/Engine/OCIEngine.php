@@ -152,9 +152,9 @@ class OCIEngine implements IConnection
      */
     private function preConnect(): OCIEngine
     {
-        Options::setOptions((array) $this->getOptions());
+        Options::setOptions((array) static::getOptions());
         $options = Options::getOptions();
-        $this->setOptions($options);
+        static::setOptions($options);
         return $this;
     }
 
@@ -214,12 +214,12 @@ class OCIEngine implements IConnection
                 ->setInstance($this)
                 ->setDsn($this->parseDsn())
                 ->realConnect(
-                    $this->getHost(),
-                    $this->getUser(),
-                    $this->getPassword(),
-                    $this->getDatabase(),
-                    $this->getPort(),
-                    $this->getCharset()
+                    static::getHost(),
+                    static::getUser(),
+                    static::getPassword(),
+                    static::getDatabase(),
+                    static::getPort(),
+                    static::getCharset()
                 )
                 ->postConnect()
                 ->setConnected(true);
@@ -249,7 +249,7 @@ class OCIEngine implements IConnection
     public function disconnect(): void
     {
         if ($this->isConnected()) {
-            $this->setConnected(false);
+            static::setConnected(false);
             if (!Options::getOptions(OCI::ATTR_PERSISTENT)) {
                 if (Compare::connection($this->getConnection()) === 'oci') {
                     oci_close($this->getConnection());
@@ -266,7 +266,7 @@ class OCIEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'oci') && $this->getConnected();
+        return (Compare::connection($this->getConnection()) === 'oci') && static::getConnected();
     }
 
     /**
@@ -383,7 +383,7 @@ class OCIEngine implements IConnection
             is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
             is_bool($string) => $string ? '1' : '0',
             is_null($string) => 'NULL',
-            default => "'" . str_replace("'", "''", $string) . "'",
+            default => "'" . str_replace("'", "''", (string) $string) . "'",
         };
     }
 

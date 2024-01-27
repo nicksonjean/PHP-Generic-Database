@@ -7,12 +7,12 @@ use ReflectionException;
 
 class SQLite
 {
-    public const ATTR_OPEN_READONLY = 1;
-    public const ATTR_OPEN_READWRITE = 2;
-    public const ATTR_OPEN_CREATE = 4;
-    public const ATTR_CONNECT_TIMEOUT = 12;
-    public const ATTR_PERSISTENT = 13;
-    public const ATTR_AUTOCOMMIT = 14;
+    final public const ATTR_OPEN_READONLY = 1;
+    final public const ATTR_OPEN_READWRITE = 2;
+    final public const ATTR_OPEN_CREATE = 4;
+    final public const ATTR_CONNECT_TIMEOUT = 12;
+    final public const ATTR_PERSISTENT = 13;
+    final public const ATTR_AUTOCOMMIT = 14;
 
     /**
      * Data to Get and Setter for Attribute
@@ -27,7 +27,7 @@ class SQLite
     {
         if (isset(self::$data[$name])) {
             if (is_int($name)) {
-                $result = self::$data[Reflections::getClassConstantName(__CLASS__, $name)];
+                $result = self::$data[Reflections::getClassConstantName(self::class, $name)];
             } else {
                 $result = self::$data[$name];
             }
@@ -45,7 +45,7 @@ class SQLite
         if (is_null($name)) {
             self::$data[] = $value;
         } elseif (is_int($name)) {
-            self::$data[Reflections::getClassConstantName(__CLASS__, $name)] = $value;
+            self::$data[Reflections::getClassConstantName(self::class, $name)] = $value;
         } else {
             self::$data[$name] = $value;
         }

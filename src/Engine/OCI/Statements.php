@@ -16,7 +16,7 @@ class Statements
         $aClassOrObject = '\stdClass',
     ) {
         $rowData = self::internalFetchAssoc($statement);
-        $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
+        $fetchArgument = $constructorArguments ?? [];
         if (is_array($rowData)) {
             return Reflections::createObjectAndSetPropertiesCaseInsensitive($aClassOrObject, $fetchArgument, $rowData);
         }
@@ -41,7 +41,7 @@ class Statements
     public static function internalFetchColumn($statement = null, $columnIndex = 0)
     {
         $row = oci_fetch_array($statement, OCI_NUM | OCI_RETURN_NULLS | OCI_RETURN_LOBS);
-        $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
+        $fetchArgument = $columnIndex ?? 0;
         return $row[$fetchArgument] ?? null;
     }
 
@@ -79,7 +79,7 @@ class Statements
     public static function internalFetchAllColumn($statement = null, $columnIndex = 0): array
     {
         $result = [];
-        $fetchArgument = $columnIndex === null ? 0 : $columnIndex;
+        $fetchArgument = $columnIndex ?? 0;
         while ($data = self::internalFetchColumn($statement, $fetchArgument)) {
             $result[] = $data;
         }
@@ -95,7 +95,7 @@ class Statements
         $aClassOrObject = '\stdClass',
     ): array {
         $result = [];
-        $fetchArgument = $constructorArguments === null ? [] : $constructorArguments;
+        $fetchArgument = $constructorArguments ?? [];
         while ($row = self::internalFetchClassOrObject($statement, $fetchArgument, $aClassOrObject)) {
             $result[] = $row;
         }

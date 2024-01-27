@@ -1,0 +1,132 @@
+version: "3.9"
+
+networks:
+  internal:
+    name: internal
+    driver: bridge
+
+services:
+  php:
+    container_name: php-generic-database
+    env_file:
+      - .env.docker
+    build: .
+    ports:
+      - "8080:80"
+      - "443:443"
+    networks:
+      - internal
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    env_file:
+      - .env.docker
+    restart: always
+    ports:
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
+    volumes:
+      - /var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - internal
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    env_file:
+      - .env.docker
+    restart: always
+    ports:
+      - "${PGSQL_PORT}:${PGSQL_PORT}"
+    volumes:
+      - /var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${PGSQL_DATABASE}
+      POSTGRES_USER: ${PGSQL_USER}
+      POSTGRES_PASSWORD: ${PGSQL_PASSWORD}
+    networks:
+      - internal
+
+  sqlsrv:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: sqlsrv
+    env_file:
+      - .env.docker
+    restart: always
+    ports:
+      - "${SQLSRV_PORT}:${SQLSRV_PORT}"
+    volumes:
+      - /var/opt/mssql/
+      - /var/opt/sqlserver/data
+      - /var/opt/sqlserver/log
+      - /var/opt/sqlserver/backup
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: ${SQLSRV_PASSWORD}
+      MSSQL_PID: "Express"
+    networks:
+      - internal
+
+  oracle:
+    image: gvenzl/oracle-xe:latest
+    container_name: oracle
+    env_file:
+      - .env.docker
+    restart: always
+    ports:
+      - "${OCI_PORT}:${OCI_PORT}"
+    volumes:
+      - /opt/oracle/oradata
+      - /opt/oracle/backup
+    environment:
+      ORACLE_ALLOW_REMOTE: true
+      APP_USER: ${OCI_USER}
+      APP_USER_PASSWORD: ${OCI_PASSWORD}
+      ORACLE_PASSWORD: ${OCI_PASSWORD}
+    networks:
+      - internal
+
+  firebird:
+    image: jacobalberty/firebird:v3.0
+    container_name: firebird
+    env_file:
+      - .env.docker
+    restart: always
+    ports:
+      - "3050:3050"
+    volumes:
+      - ./resources/firebird:/firebird/data
+      - /opt/firebird/data
+      - /opt/firebird/restore
+      - /opt/firebird/system
+      - /opt/firebird/etc
+      - /opt/firebird/log
+      - /var/firebird/run
+    environment:
+      ISC_USER: ${FBIRD_USER}
+      ISC_PASSWORD: ${FBIRD_PASSWORD}
+    networks:
+      - internal
+
+  # mongodb:
+  #   image: mongo:latest
+  #   container_name: mongodb
+  #   ports:
+  #     - 27017:27017
+  #   networks:
+  #     - internal
+
+  # mongo-express:
+  #   image: mongo-express:latest
+  #   container_name: mongo-express
+  #   ports:
+  #     - "8081:8081"
+  #   depends_on:
+  #     - mongodb

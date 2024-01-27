@@ -152,9 +152,9 @@ class PDOEngine implements IConnection
      */
     private function preConnect(): PDOEngine
     {
-        Options::setOptions((array) $this->getOptions());
+        Options::setOptions((array) static::getOptions());
         $options = Options::getOptions();
-        $this->setOptions($options);
+        static::setOptions($options);
         return $this;
     }
 
@@ -205,9 +205,9 @@ class PDOEngine implements IConnection
                 ->preConnect()
                 ->realConnect(
                     $this->parseDsn(),
-                    $this->getUser(),
-                    $this->getPassword(),
-                    $this->getOptions()
+                    static::getUser(),
+                    static::getPassword(),
+                    static::getOptions()
                 )
                 ->postConnect()
                 ->setConnected(true);
@@ -226,9 +226,9 @@ class PDOEngine implements IConnection
     public function ping(): bool
     {
         $query = 'SELECT 1';
-        if ($this->getDriver() == 'oci') {
+        if (static::getDriver() == 'oci') {
             $query .= ' FROM DUAL';
-        } elseif ($this->getDriver() == 'ibase' || $this->getDriver() == 'firebird') {
+        } elseif (static::getDriver() == 'ibase' || static::getDriver() == 'firebird') {
             $query .= ' FROM RDB$DATABASE';
         }
         return $this->query($query) !== false;
@@ -242,7 +242,7 @@ class PDOEngine implements IConnection
     public function disconnect(): void
     {
         if ($this->getConnection() !== null && $this->ping()) {
-            $this->setConnected(false);
+            static::setConnected(false);
             if (!$this->getAttribute(PDO::ATTR_PERSISTENT)) {
                 $this->setConnection(null);
             }
@@ -256,7 +256,7 @@ class PDOEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return ($this->getConnection() !== null) && $this->getConnected();
+        return ($this->getConnection() !== null) && static::getConnected();
     }
 
     /**
@@ -580,7 +580,7 @@ class PDOEngine implements IConnection
      */
     private function parse(mixed ...$params): string
     {
-        $driver = $this->getDriver();
+        $driver = static::getDriver();
         $dialectQuote = match ($driver) {
             'mysql' => Translater::SQL_DIALECT_BTICK,
             'pgsql', 'sqlsrv', 'oci', 'firebird' => Translater::SQL_DIALECT_DQUOTE,

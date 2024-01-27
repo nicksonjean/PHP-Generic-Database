@@ -188,12 +188,8 @@ class Arrays
         if (!is_array($array) || empty($array)) {
             return false;
         }
-
-        reset($array);
-        $firstKey = key($array);
-
-        end($array);
-        $lastKey = key($array);
+        $firstKey = array_key_first($array);
+        $lastKey = array_key_last($array);
 
         return $firstKey !== 0 || $lastKey !== count($array) - 1 || array_values($array) !== $array;
     }
@@ -251,7 +247,6 @@ class Arrays
     /**
      * This function makes an arguments list
      *
-     * @param mixed $driver
      * @param mixed $params Arguments list
      * @return array
      */

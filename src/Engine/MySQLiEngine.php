@@ -147,9 +147,9 @@ class MySQLiEngine implements IConnection
     private function preConnect(): MySQLiEngine
     {
         $this->setConnection(mysqli_init());
-        Options::setOptions((array) $this->getOptions());
+        Options::setOptions((array) static::getOptions());
         $options = Options::getOptions();
-        $this->setOptions($options);
+        static::setOptions($options);
         return $this;
     }
 
@@ -184,11 +184,11 @@ class MySQLiEngine implements IConnection
         mixed $database,
         mixed $port
     ): MySQLiEngine {
-        if (!$this->getHost()) {
+        if (!static::getHost()) {
             $host = (string) !Options::getOptions(MySQL::ATTR_PERSISTENT)
                 ? $host
                 : 'p:' . $host;
-            $this->setHost($host);
+            static::setHost($host);
         }
         $this->parseDsn();
         $this->getConnection()->real_connect($host, $user, $password, $database, $port);
@@ -208,11 +208,11 @@ class MySQLiEngine implements IConnection
                 ->preConnect()
                 ->setInstance($this)
                 ->realConnect(
-                    $this->getHost(),
-                    $this->getUser(),
-                    $this->getPassword(),
-                    $this->getDatabase(),
-                    $this->getPort()
+                    static::getHost(),
+                    static::getUser(),
+                    static::getPassword(),
+                    static::getDatabase(),
+                    static::getPort()
                 )
                 ->postConnect()
                 ->setConnected(true);
@@ -241,7 +241,7 @@ class MySQLiEngine implements IConnection
     public function disconnect(): void
     {
         if ($this->isConnected()) {
-            $this->setConnected(false);
+            static::setConnected(false);
             if (!Options::getOptions(MySQL::ATTR_PERSISTENT)) {
                 if (Compare::connection($this->getConnection()) === 'mysqli') {
                     mysqli_close($this->getConnection());
@@ -258,7 +258,7 @@ class MySQLiEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'mysqli') && $this->getConnected();
+        return (Compare::connection($this->getConnection()) === 'mysqli') && static::getConnected();
     }
 
     /**
@@ -394,7 +394,7 @@ class MySQLiEngine implements IConnection
         $quote = $params[1];
         if (is_array($string)) {
             return array_map(fn ($str) => $this->quote($str, $quote), $string);
-        } elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", $string)) {
+        } elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", (string) $string)) {
             return $string;
         }
         $quoted = fn ($str) => $this->getConnection()->real_escape_string($str);
@@ -622,14 +622,13 @@ class MySQLiEngine implements IConnection
                 $this->parse(...$params),
                 array_key_exists(1, $params) ? (int) $params[1] : MYSQLI_STORE_RESULT
             );
-            $this->queryRows = Validations::isSelect($this->queryString)
-                && get_class(self::$statement) === 'mysqli_result'
-                ? self::$statement->num_rows
-                : 0;
-            $this->queryColumns = Validations::isSelect($this->queryString)
-                && get_class(self::$statement) === 'mysqli_result'
-                ? self::$statement->field_count :
-                0;
+            if (is_object(self::$statement) && self::$statement::class === 'mysqli_result') {
+                $this->queryRows = self::$statement->num_rows;
+                $this->queryColumns = self::$statement->field_count;
+            } else {
+                $this->queryRows = 0;
+                $this->queryColumns = 0;
+            }
             $this->affectedRows += $this->queryRows === $this->getConnection()->affected_rows
                 ? 0
                 : $this->getConnection()->affected_rows;
@@ -656,10 +655,10 @@ class MySQLiEngine implements IConnection
             } else {
                 $this->exec($statement);
             }
-            $this->queryRows = self::$statement && get_class(self::$statement) === 'mysqli_result'
+            $this->queryRows = self::$statement && self::$statement::class === 'mysqli_result'
                 ? self::$statement->num_rows
                 : $statement->num_rows;
-            $this->queryColumns = self::$statement && get_class(self::$statement) === 'mysqli_result'
+            $this->queryColumns = self::$statement && self::$statement::class === 'mysqli_result'
                 ? self::$statement->field_count
                 : $statement->field_count;
         }

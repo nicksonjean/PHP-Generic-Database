@@ -146,9 +146,9 @@ class PgSQLEngine implements IConnection
      */
     private function preConnect(): PgSQLEngine
     {
-        Options::setOptions((array) $this->getOptions());
+        Options::setOptions((array) static::getOptions());
         $options = Options::getOptions();
-        $this->setOptions($options);
+        static::setOptions($options);
         return $this;
     }
 
@@ -224,7 +224,7 @@ class PgSQLEngine implements IConnection
     public function disconnect(): void
     {
         if ($this->isConnected()) {
-            $this->setConnected(false);
+            static::setConnected(false);
             if (!Options::getOptions(PgSQL::ATTR_PERSISTENT)) {
                 if (Compare::connection($this->getConnection()) === 'pgsql') {
                     pg_close($this->getConnection());
@@ -241,7 +241,7 @@ class PgSQLEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'pgsql') && $this->getConnected();
+        return (Compare::connection($this->getConnection()) === 'pgsql') && static::getConnected();
     }
 
     /**
@@ -374,10 +374,10 @@ class PgSQLEngine implements IConnection
         $quote = $params[1];
         if (is_array($string)) {
             return array_map(fn ($str) => $this->quote($str, $quote), $string);
-        } elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", $string)) {
+        } elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", (string) $string)) {
             return $string;
         }
-        $quoted = fn ($str) => pg_escape_string($this->getConnection(), $str);
+        $quoted = fn ($str) => pg_escape_string($this->getConnection(), (string) $str);
         return ($quote) ? "'" . $quoted($string) . "'" : $quoted($string);
     }
 
@@ -689,7 +689,7 @@ class PgSQLEngine implements IConnection
      */
     public function errorCode(mixed $inst = null): string|bool
     {
-        return pg_last_error($this->getConnection()) ? pg_last_error($this->getConnection()) : $inst;
+        return pg_last_error($this->getConnection()) ?: $inst;
     }
 
     /**
@@ -700,6 +700,6 @@ class PgSQLEngine implements IConnection
      */
     public function errorInfo(mixed $inst = null): string|bool
     {
-        return pg_last_error($this->getConnection()) ? pg_last_error($this->getConnection()) : $inst;
+        return pg_last_error($this->getConnection()) ?: $inst;
     }
 }

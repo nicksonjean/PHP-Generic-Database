@@ -499,3 +499,5 @@ composer.lock
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+/adminer/
+db-test.php

@@ -36,7 +36,7 @@ enum Types: string
     /**
      * PgSql Connection
      */
-    case NAT_PGSQL = 'PgSql\Connection';
+    case NAT_PGSQL = \PgSql\Connection::class;
 
     /**
      * Microsoft SQL Server link

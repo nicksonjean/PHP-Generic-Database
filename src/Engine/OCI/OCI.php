@@ -7,8 +7,8 @@ use ReflectionException;
 
 class OCI
 {
-    public const ATTR_CONNECT_TIMEOUT = 1001;
-    public const ATTR_PERSISTENT = 13;
+    final public const ATTR_CONNECT_TIMEOUT = 1001;
+    final public const ATTR_PERSISTENT = 13;
 
     protected static array $data = [];
 
@@ -19,7 +19,7 @@ class OCI
     {
         if (isset(self::$data[$name])) {
             if (is_int($name)) {
-                $result = self::$data[Reflections::getClassConstantName(__CLASS__, $name)];
+                $result = self::$data[Reflections::getClassConstantName(self::class, $name)];
             } else {
                 $result = self::$data[$name];
             }
@@ -37,7 +37,7 @@ class OCI
         if (is_null($name)) {
             self::$data[] = $value;
         } elseif (is_int($name)) {
-            self::$data[Reflections::getClassConstantName(__CLASS__, $name)] = $value;
+            self::$data[Reflections::getClassConstantName(self::class, $name)] = $value;
         } else {
             self::$data[$name] = $value;
         }

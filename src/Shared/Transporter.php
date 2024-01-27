@@ -15,7 +15,7 @@ trait Transporter
      */
     public function __sleep(): array
     {
-        $vars = get_class_vars(get_class($this));
+        $vars = get_class_vars($this::class);
         foreach ($vars as $field => $value) {
             if ($field === 'property' && $field !== '' && $value !== '') {
                 $this->property[$field] = $value;

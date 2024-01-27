@@ -92,9 +92,10 @@ class Errors
      */
     public static function throw(object $exception, ?string $message = null): string|false
     {
-        return json_encode(array(
-            'message' => (is_null($message)) ? $exception->getMessage() : $message,
-            'location' => "{$exception->getFile()}:{$exception->getLine()}"
-        ));
+        return json_encode(
+            ['message' => (is_null($message))
+                ? $exception->getMessage()
+                : $message, 'location' => "{$exception->getFile()}:{$exception->getLine()}"]
+        );
     }
 }

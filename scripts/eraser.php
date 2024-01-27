@@ -10,7 +10,7 @@ foreach ($argv as $arg) {
     }
 }
 if (isset($result['--dest']) && is_dir($result['--dest'])) {
-    $result['--dest'] = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $result['--dest']);
+    $result['--dest'] = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $result['--dest']);
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
         $cmd = sprintf('rmdir /s /q %s', $result['--dest']);
     } else {

@@ -98,7 +98,7 @@ class XML
      */
     private static function convertData(mixed $data): string|int|bool|float
     {
-        $data = trim($data);
+        $data = trim((string) $data);
         if (is_numeric($data)) {
             return str_contains($data, '.') ? floatval($data) : intval($data);
         }
@@ -135,7 +135,7 @@ class XML
         foreach ($objXML->xpath('//options/option') as $value) {
             $options[((string) $value->attributes()->name)] = self::convertData((string) $value);
         }
-        $options = array('options' => $options);
+        $options = ['options' => $options];
         $result['options'] = $options['options'];
         unset($options['options']);
         libxml_use_internal_errors(false);

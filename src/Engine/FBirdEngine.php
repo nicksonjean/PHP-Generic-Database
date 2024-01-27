@@ -158,9 +158,9 @@ class FBirdEngine implements IConnection
      */
     private function preConnect(): FBirdEngine
     {
-        Options::setOptions((array) $this->getOptions());
+        Options::setOptions((array) static::getOptions());
         $options = Options::getOptions();
-        $this->setOptions($options);
+        static::setOptions($options);
         return $this;
     }
 
@@ -218,11 +218,11 @@ class FBirdEngine implements IConnection
                 ->setInstance($this)
                 ->setDsn($this->parseDsn())
                 ->realConnect(
-                    $this->getHost(),
-                    $this->getUser(),
-                    $this->getPassword(),
-                    $this->getDatabase(),
-                    $this->getPort()
+                    static::getHost(),
+                    static::getUser(),
+                    static::getPassword(),
+                    static::getDatabase(),
+                    static::getPort()
                 )
                 ->postConnect()
                 ->setConnected(true);
@@ -251,7 +251,7 @@ class FBirdEngine implements IConnection
     public function disconnect(): void
     {
         if ($this->isConnected()) {
-            $this->setConnected(false);
+            static::setConnected(false);
             if (!Options::getOptions(FBird::ATTR_PERSISTENT)) {
                 if (Compare::connection($this->getConnection()) === 'fbird/ibase') {
                     ibase_close($this->getConnection());
@@ -268,7 +268,7 @@ class FBirdEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'fbird/ibase') && $this->getConnected();
+        return (Compare::connection($this->getConnection()) === 'fbird/ibase') && static::getConnected();
     }
 
     /**
@@ -385,7 +385,7 @@ class FBirdEngine implements IConnection
             is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
             is_bool($string) => $string ? '1' : '0',
             is_null($string) => 'NULL',
-            default => "'" . str_replace("'", "''", $string) . "'",
+            default => "'" . str_replace("'", "''", (string) $string) . "'",
         };
     }
 
@@ -761,7 +761,7 @@ class FBirdEngine implements IConnection
      */
     public function errorCode(mixed $inst = null): int|bool
     {
-        return (ibase_errcode()) ? ibase_errcode() : (int) $inst;
+        return ibase_errcode() ?: (int) $inst;
     }
 
     /**

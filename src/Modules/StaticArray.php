@@ -24,9 +24,6 @@ use PDO;
 class StaticArray
 {
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|MySQLiEngine
      */
     public static function nativeMySQLi(
@@ -65,9 +62,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|PgSQLEngine
      */
     public static function nativePgSQL(
@@ -102,9 +96,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|SQLSrvEngine
      */
     public static function nativeSQLSrv(
@@ -137,9 +128,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|OCIEngine
      */
     public static function nativeOCI(
@@ -172,9 +160,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|FBirdEngine
      */
     public static function nativeFBird(
@@ -207,9 +192,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|SQLiteEngine
      */
     public static function nativeSQLite(
@@ -242,9 +224,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|SQLiteEngine
      */
     public static function nativeMemory(
@@ -277,9 +256,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoMySQL(
@@ -314,9 +290,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoPgSQL(
@@ -351,8 +324,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoSQLSrv(
@@ -385,9 +356,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoOCI(
@@ -422,9 +390,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoFirebird(
@@ -459,9 +424,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoSQLite(
@@ -492,9 +454,6 @@ class StaticArray
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoMemory(

@@ -109,7 +109,6 @@ class Connection
     /**
      * Defines the strategy instance
      *
-     * @param IConnection $strategy
      * @return Connection
      */
     private function setStrategy(IConnection $strategy): Connection
@@ -231,7 +230,6 @@ class Connection
     /**
      * This function binds the parameters to a prepared query.
      *
-     * @param mixed ...$params
      * @return mixed
      */
     public function prepare(mixed ...$params): mixed
@@ -286,7 +284,6 @@ class Connection
     /**
      * Factory that replaces the __constructor and defines the Strategy through the engine parameter
      *
-     * @param mixed $params
      * @return void
      */
     private function initFactory(mixed $params): void
@@ -307,9 +304,6 @@ class Connection
     /**
      * Determines arguments type by calling to default type
      *
-     * @param mixed $instance
-     * @param mixed $name
-     * @param mixed $arguments
      * @return Connection
      */
     private static function call(mixed $instance, mixed $name, mixed $arguments): Connection
@@ -321,7 +315,6 @@ class Connection
     /**
      * This method is used when all parameters are used in the static array format
      *
-     * @param array $arguments
      * @return Connection
      */
     private static function callWithByStaticArray(array $arguments): Connection
@@ -335,7 +328,6 @@ class Connection
     /**
      * This method is used when all parameters are used in the static arguments format
      *
-     * @param array $arguments
      * @return Connection
      */
     private static function callWithByStaticArgs(array $arguments): Connection
@@ -347,7 +339,6 @@ class Connection
      * Determines arguments type by calling to format type
      *
      * @param string $format Accept formats json, xml, ini and yaml
-     * @param mixed $arguments
      * @return Connection
      * @throws ReflectionException
      */

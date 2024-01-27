@@ -146,11 +146,11 @@ class SQLSrvEngine implements IConnection
      */
     private function preConnect(): SQLSrvEngine
     {
-        Options::setOptions((array) $this->getOptions());
+        Options::setOptions((array) static::getOptions());
         $options = Options::getOptions();
-        $this->setOptions($options);
-        if ($this->getCharset()) {
-            $this->setCharset(($this->getCharset() == 'utf8') ? 'UTF-8' : $this->getCharset());
+        static::setOptions($options);
+        if (static::getCharset()) {
+            static::setCharset((static::getCharset() == 'utf8') ? 'UTF-8' : static::getCharset());
         }
         return $this;
     }
@@ -188,8 +188,8 @@ class SQLSrvEngine implements IConnection
     ): SQLSrvEngine {
         $serverName = vsprintf('%s,%s', [$host, $port]);
         $connectionInfo = ["Database" => $database, "UID" => $user, "PWD" => $password];
-        if ($this->getCharset()) {
-            $connectionInfo['CharacterSet'] = $this->getCharset();
+        if (static::getCharset()) {
+            $connectionInfo['CharacterSet'] = static::getCharset();
         }
         if (Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)) {
             $connectionInfo['LoginTimeout'] = Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT);
@@ -212,11 +212,11 @@ class SQLSrvEngine implements IConnection
                 ->setInstance($this)
                 ->setDsn((string)$this->parseDsn())
                 ->realConnect(
-                    $this->getHost(),
-                    $this->getUser(),
-                    $this->getPassword(),
-                    $this->getDatabase(),
-                    $this->getPort()
+                    static::getHost(),
+                    static::getUser(),
+                    static::getPassword(),
+                    static::getDatabase(),
+                    static::getPort()
                 )
                 ->postConnect()
                 ->setConnected(true);
@@ -245,7 +245,7 @@ class SQLSrvEngine implements IConnection
     public function disconnect(): void
     {
         if ($this->isConnected()) {
-            $this->setConnected(false);
+            static::setConnected(false);
             if (!Options::getOptions(SQLSrv::ATTR_PERSISTENT)) {
                 if (Compare::connection($this->getConnection()) === 'sqlsrv') {
                     sqlsrv_close($this->getConnection());
@@ -262,7 +262,7 @@ class SQLSrvEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'sqlsrv') && $this->getConnected();
+        return (Compare::connection($this->getConnection()) === 'sqlsrv') && static::getConnected();
     }
 
     /**
@@ -379,7 +379,7 @@ class SQLSrvEngine implements IConnection
             is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
             is_bool($string) => $string ? '1' : '0',
             is_null($string) => 'NULL',
-            default => "'" . str_replace("'", "''", $string) . "'",
+            default => "'" . str_replace("'", "''", (string) $string) . "'",
         };
     }
 

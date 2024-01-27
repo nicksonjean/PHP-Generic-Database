@@ -53,6 +53,9 @@ PHP-Generic-Database currently supports the following mechanisms/database:
   - **SQLSrv/MSSQL** ***(sqlsrv, mssql, dblib)*** *[php_pdo_sqlsrv.dll/so]*
   - **Firebird/Interbase** ***(ibase: gds/fbird: fds)*** *[php_pdo_firebird.dll/so]*
   - **SQLite** ***(SQLite)*** *[php_pdo_sqlite.dll/so]*
+  - **ODBC** ***(ODBC/MDB)*** *[php_pdo_obdc.dll/so]*
+- **ODBC Externsions**
+  - **ODBC** ***(ODBC/MDB)*** *[php_obdc.dll/so]*
 - **Optional External Formats**
   - **INI** ***(php native compilation)***
   - **XML** ***(ext-libxml, ext-xmlreader, ext-simplexml)***
@@ -61,18 +64,18 @@ PHP-Generic-Database currently supports the following mechanisms/database:
 
 ## PHP Settings
 
-- DLLs/SO Compiled from each database engine for each PHP version.
+- DLLs Compiled from each database engine for each PHP version.
   - DLL package for [PHP 8.1](./assets/DLL/PHP8.1/PHP8.1.zip) version.
   - DLL package for [PHP 8.2](./assets/DLL/PHP8.2/PHP8.2.zip) version.
 - PHP.ini configuration and extension instalation.
 
 ## Extension Instalation
 
-1) Edit the php.ini file and remove the &#039;;&#039; for the database extension you want to install.
-2) The .dll is for Windows and the .so is for Linux/UNIX.
-3) Uncomment the lines of the extensions you want to enable.
+  1) Edit the php.ini file and remove the &#039;;&#039; for the database extension you want to install.
+  2) The .dll is for Windows and the .so is for Linux/UNIX.
+  3) Uncomment the lines of the extensions you want to enable.
 
-From
+- From
 
 ```ini
 ;extension=php_pdo_mysql.dll
@@ -86,7 +89,7 @@ extension=php_pdo_mysql.dll
 extension=php_pdo_mysql.so
 ```
 
-4) Save it, and restart the PHP or Apache/Nginx server.
+4) Save it, and restart the PHP or Apache Server.
 5) If the extension is installed successfully, you can find it on phpinfo() output.
 
 ## Manual Installation
@@ -110,6 +113,18 @@ $ composer install
 ```bash
 $ composer setup
 ```
+
+## Installation via Docker
+
+1) Make sure Docker Desktop is installed, otherwise install from the [official website](https://www.docker.com/products/docker-desktop/).
+2) Create an account to use Docker Desktop/Hub, and be able to clone containers hosted on the Docker network.
+3) Once logged in to Docker Hub and with Docker Desktop open on your system, run the command below:
+
+```bash
+$ docker pull php-generic-database:8.1-full
+```
+
+4) Docker will download, install and configure a Debian-Like Linux Custom Image as Apache and with PHP 8.1 with all Extensions properly configured.
 
 ## Installation via Composer
 
@@ -165,10 +180,19 @@ PHP-Generic-Database is released under the MIT license.
 
 ## ToDo
 
-- [x] Improved use of the Static Arguments format, now using named arguments.
-- [x] Implement fetch and fetchAll methods.
-- [ ] Add transaction, commit and rollback support.
-- [ ] Added compatibility for SyBase Database.
-- [ ] Added compatibility for dBase Databases.
-- [ ] Added compatibility ODBC engine.
-- [ ] Query builder creation.
+- Infrastructure
+  - [x] Creation of the Container in Docker.
+  - [ ] Creation of Migrations between all Databases.
+- Source
+  - Connection
+    - [x] Possibility of use with Fluent Design and Chained Methods.
+    - [x] Improved use of the Static Arguments format, now using array by key and value for arguments.
+    - [x] Improved use of the Static Arguments format, now using named arguments.
+  - [x] Implement fetch and fetchAll methods.
+  - [ ] Add transaction, commit and rollback support.
+  - [ ] Added compatibility for ODBC engine.
+  - [ ] Added compatibility for MongoDB Database.
+  - [ ] Added compatibility for Cassandra Database.
+  - [ ] Added compatibility for SyBase Database.
+  - [ ] Added compatibility for dBase Database.
+  - [ ] Query builder creation.

@@ -52,10 +52,8 @@ class Path
             $path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
         }
         $search = explode('/', $path);
-        $search = array_filter($search, function ($part) {
-            return $part !== '.';
-        });
-        $append = array();
+        $search = array_filter($search, fn($part) => $part !== '.');
+        $append = [];
         $match = false;
         while (count($search) > 0) {
             $match = realpath(implode('/', $search));

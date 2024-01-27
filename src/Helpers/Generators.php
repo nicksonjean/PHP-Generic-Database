@@ -92,8 +92,8 @@ class Generators
      */
     public static function setType(mixed $value): bool|int|string
     {
-        $length = strlen($value);
-        $value = ($value === null) ? '' : $value;
+        $length = strlen((string) $value);
+        $value ??= '';
         if (Validations::isNumber($value) && $length > 1) {
             $result = (int) $value;
         } elseif (($value === '0' || $value === '1') && $length === 1) {

@@ -32,20 +32,6 @@
             "GenericDatabase\\Tests\\": "tests/"
         }
     },
-    "require": {
-        "ext-interbase": "*",
-        "ext-mysqli": "*",
-        "ext-oci8": "*",
-        "ext-pdo": "*",
-        "ext-pgsql": "*",
-        "ext-sqlite3": "*",
-        "ext-sqlsrv": "*",
-        "vlucas/phpdotenv": "^5.5@dev",
-        "ext-xmlreader": "*",
-        "ext-libxml": "*",
-        "ext-simplexml": "*",
-        "ext-yaml": "*"
-    },
     "require-dev": {
         "php": "^8.1",
         "code-lts/doctum": "^5.5",
@@ -57,7 +43,9 @@
         "phpstan/phpstan": "^1.10.25",
         "phpunit/php-code-coverage": "^10.0",
         "phpunit/phpunit": "^10.0",
-        "squizlabs/php_codesniffer": "^3.7.2"
+        "rector/rector": "dev-main",
+        "squizlabs/php_codesniffer": "^3.7.2",
+        "vlucas/phpdotenv": "^5.5@dev"
     },
     "config": {
         "sort-packages": true,
@@ -76,6 +64,7 @@
             "@run:docs"
         ],
         "lint": [
+            "@rector",
             "@phpcs",
             "@phpcbf",
             "@phpmd",
@@ -102,6 +91,7 @@
             "composer install"
         ],
         "grumphp": "php ./vendor/bin/grumphp -n run",
+        "rector": "php vendor/bin/rector",
         "phpstan": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
         "phpmd": "php vendor/bin/phpmd src/,tests/ ansi phpmd.xml",
         "phpcs": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 src/",
