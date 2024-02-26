@@ -8,7 +8,6 @@ use GenericDatabase\Helpers\INI;
 
 class TextFile
 {
-
   private $folderPath;
   private $separator;
 

@@ -383,11 +383,11 @@ class RegexDateTime
             'format' => $format,
             'dsp' => $dsp,
             'tsp' => $tsp,
-            'dtsp' => $dtspp,
+            'dtsp' => $dtsp,
             'msp' => $msp,
             'tzsp' => $tzsp
         ) = self::setSeparators($inputData);
-        return self::buildMask($input, $format, $dsp, $tsp, $dtspp, $msp, $tzsp);
+        return self::buildMask($input, $format, $dsp, $tsp, $dtsp, $msp, $tzsp);
     }
 
     /**
@@ -397,7 +397,7 @@ class RegexDateTime
      * @param string $format
      * @param string|null $dsp
      * @param string|null $tsp
-     * @param string|null $dtspp
+     * @param string|null $dtsp
      * @param string|null $msp
      * @param string|null $tzsp
      * @return string
@@ -407,60 +407,60 @@ class RegexDateTime
         string $format,
         ?string $dsp,
         ?string $tsp,
-        ?string $dtspp,
+        ?string $dtsp,
         ?string $msp,
         ?string $tzsp
     ): string {
         $length = strlen($input);
         return match (true) {
-            $length === 5  && !$dtspp && !$msp && !$tzsp => self::buildTimeMask($format, $tsp),
-            $length === 8  && !$dtspp &&  $msp && !$tzsp => self::buildTimeWithMeridiemMask($format, $tsp, $msp),
-            $length === 12 && !$dtspp && !$msp &&  $tzsp => self::buildTimeWithTimespanMask($format, $tsp, $tzsp),
-            $length === 8  && !$dtspp && !$msp && !$tzsp => self::buildTimeWithSecondsMask($format, $tsp),
-            $length === 11 && !$dtspp &&  $msp && !$tzsp => self::buildTimeWithSecondsAndMeridiemMask(
+            $length === 5  && !$dtsp && !$msp && !$tzsp => self::buildTimeMask($format, $tsp),
+            $length === 8  && !$dtsp &&  $msp && !$tzsp => self::buildTimeWithMeridiemMask($format, $tsp, $msp),
+            $length === 12 && !$dtsp && !$msp &&  $tzsp => self::buildTimeWithTimespanMask($format, $tsp, $tzsp),
+            $length === 8  && !$dtsp && !$msp && !$tzsp => self::buildTimeWithSecondsMask($format, $tsp),
+            $length === 11 && !$dtsp &&  $msp && !$tzsp => self::buildTimeWithSecondsAndMeridiemMask(
                 $format,
                 $tsp,
                 $msp
             ),
-            $length === 15 && !$dtspp && !$msp &&  $tzsp => self::buildTimeWithSecondsAndTimespanMask(
+            $length === 15 && !$dtsp && !$msp &&  $tzsp => self::buildTimeWithSecondsAndTimespanMask(
                 $format,
                 $tsp,
                 $tzsp
             ),
-            $length === 10 && !$dtspp && !$msp && !$tzsp => self::buildDateMask($format, $dsp),
-            $length === 16 &&  $dtspp && !$msp && !$tzsp => self::buildDateTimeMask($format, $dsp, $tsp, $dtspp),
-            $length === 19 &&  $dtspp &&  $msp && !$tzsp => self::buildDateTimeWithSecondsWithMeridiemMask(
+            $length === 10 && !$dtsp && !$msp && !$tzsp => self::buildDateMask($format, $dsp),
+            $length === 16 &&  $dtsp && !$msp && !$tzsp => self::buildDateTimeMask($format, $dsp, $tsp, $dtsp),
+            $length === 19 &&  $dtsp &&  $msp && !$tzsp => self::buildDateTimeWithSecondsWithMeridiemMask(
                 $format,
                 $dsp,
                 $tsp,
-                $dtspp,
+                $dtsp,
                 $msp
             ),
-            $length === 19 && $dtspp && !$msp && !$tzsp => self::buildDateTimeWithSecondsMask(
+            $length === 19 && $dtsp && !$msp && !$tzsp => self::buildDateTimeWithSecondsMask(
                 $format,
                 $dsp,
                 $tsp,
-                $dtspp
+                $dtsp
             ),
-            $length === 23 && $dtspp && !$msp && !$tzsp => self::buildDateTimeWithTimespanMask(
+            $length === 23 && $dtsp && !$msp && !$tzsp => self::buildDateTimeWithTimespanMask(
                 $format,
                 $dsp,
                 $tsp,
-                $dtspp,
+                $dtsp,
                 $tzsp
             ),
-            $length === 22 && $dtspp && $msp && !$tzsp => self::buildDateTimeWithSecondsAndMeridiemMask(
+            $length === 22 && $dtsp && $msp && !$tzsp => self::buildDateTimeWithSecondsAndMeridiemMask(
                 $format,
                 $dsp,
                 $tsp,
-                $dtspp,
+                $dtsp,
                 $msp
             ),
-            $length === 26 && $dtspp && !$msp && $tzsp => self::buildDateTimeWithSecondsAndTimespanMask(
+            $length === 26 && $dtsp && !$msp && $tzsp => self::buildDateTimeWithSecondsAndTimespanMask(
                 $format,
                 $dsp,
                 $tsp,
-                $dtspp,
+                $dtsp,
                 $tzsp
             ),
             default => '',
