@@ -10,7 +10,7 @@ final class YAMLTest extends TestCase
 {
     public function testValidYamlString()
     {
-        $yaml = 'tests/Helpers/Samples/YAML/Complex.yaml';
+        $yaml = 'tests/Helpers/Samples/yaml/Complex.yaml';
         $isValid = YAML::isValidYAML(Path::toAbsolute($yaml));
         $this->assertTrue($isValid);
     }
@@ -52,7 +52,7 @@ stuff:
   foo: bar
   bar: foo
 END;
-        $yaml = 'tests/Helpers/Samples/YAML/Simple.yaml';
+        $yaml = 'tests/Helpers/Samples/yaml/Simple.yaml';
         $parser = YAML::parseYAML($yaml);
         $this->assertEquals(yaml_parse($expected), $parser);
     }

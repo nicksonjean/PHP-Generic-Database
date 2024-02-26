@@ -15,7 +15,7 @@ use GenericDatabase\Engine\MySQli\MySQL;
 use GenericDatabase\Engine\PgSQL\PgSQL;
 use GenericDatabase\Engine\SQLSrv\SQLSrv;
 use GenericDatabase\Engine\OCI\OCI;
-use GenericDatabase\Engine\FBird\FBird;
+use GenericDatabase\Engine\Firebird\Firebird;
 use GenericDatabase\Engine\SQLite\SQLite;
 use PDO;
 

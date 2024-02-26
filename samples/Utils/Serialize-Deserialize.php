@@ -62,7 +62,7 @@ $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
-// $context = Chainable::nativeFBird(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 // $context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
@@ -122,8 +122,8 @@ while ($row = $a->fetch(FETCH_OBJ)) {
 /*
 SQLite: 'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id'
 MySQL:  'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id'
-FBird:  'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM "estado" ORDER BY "id"'
+Firebird:  'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM "estado" ORDER BY "id"'
 PgSQL:  'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM "estado" ORDER BY "id"'
 SQLSrv: 'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM "estado" ORDER BY "id"'
-Oracle: 'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM HR."estado" ORDER BY "id"'
+OCI: 'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM HR."estado" ORDER BY "id"'
 */

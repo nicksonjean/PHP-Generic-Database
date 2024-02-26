@@ -2,48 +2,48 @@
 
 namespace GenericDatabase\Core;
 
-if (!defined('FBIRD_FETCH_NUM')) {
-    define('FBIRD_FETCH_NUM', 8);
+if (!defined('FIREBIRD_FETCH_NUM')) {
+    define('FIREBIRD_FETCH_NUM', 8);
 }
-if (!defined('FBIRD_FETCH_OBJ')) {
-    define('FBIRD_FETCH_OBJ', 9);
+if (!defined('FIREBIRD_FETCH_OBJ')) {
+    define('FIREBIRD_FETCH_OBJ', 9);
 }
-if (!defined('FBIRD_FETCH_BOTH')) {
-    define('FBIRD_FETCH_BOTH', 10);
+if (!defined('FIREBIRD_FETCH_BOTH')) {
+    define('FIREBIRD_FETCH_BOTH', 10);
 }
-if (!defined('FBIRD_FETCH_INTO')) {
-    define('FBIRD_FETCH_INTO', 11);
+if (!defined('FIREBIRD_FETCH_INTO')) {
+    define('FIREBIRD_FETCH_INTO', 11);
 }
-if (!defined('FBIRD_FETCH_CLASS')) {
-    define('FBIRD_FETCH_CLASS', 12);
+if (!defined('FIREBIRD_FETCH_CLASS')) {
+    define('FIREBIRD_FETCH_CLASS', 12);
 }
-if (!defined('FBIRD_FETCH_ASSOC')) {
-    define('FBIRD_FETCH_ASSOC', 13);
+if (!defined('FIREBIRD_FETCH_ASSOC')) {
+    define('FIREBIRD_FETCH_ASSOC', 13);
 }
-if (!defined('FBIRD_FETCH_COLUMN')) {
-    define('FBIRD_FETCH_COLUMN', 14);
+if (!defined('FIREBIRD_FETCH_COLUMN')) {
+    define('FIREBIRD_FETCH_COLUMN', 14);
 }
 
-if (!defined('IBASE_FETCH_NUM')) {
-    define('IBASE_FETCH_NUM', 8);
+if (!defined('INTERBASE_FETCH_NUM')) {
+    define('INTERBASE_FETCH_NUM', 8);
 }
-if (!defined('IBASE_FETCH_OBJ')) {
-    define('IBASE_FETCH_OBJ', 9);
+if (!defined('INTERBASE_FETCH_OBJ')) {
+    define('INTERBASE_FETCH_OBJ', 9);
 }
-if (!defined('IBASE_FETCH_BOTH')) {
-    define('IBASE_FETCH_BOTH', 10);
+if (!defined('INTERBASE_FETCH_BOTH')) {
+    define('INTERBASE_FETCH_BOTH', 10);
 }
-if (!defined('IBASE_FETCH_INTO')) {
-    define('IBASE_FETCH_INTO', 11);
+if (!defined('INTERBASE_FETCH_INTO')) {
+    define('INTERBASE_FETCH_INTO', 11);
 }
-if (!defined('IBASE_FETCH_CLASS')) {
-    define('IBASE_FETCH_CLASS', 12);
+if (!defined('INTERBASE_FETCH_CLASS')) {
+    define('INTERBASE_FETCH_CLASS', 12);
 }
-if (!defined('IBASE_FETCH_ASSOC')) {
-    define('IBASE_FETCH_ASSOC', 13);
+if (!defined('INTERBASE_FETCH_ASSOC')) {
+    define('INTERBASE_FETCH_ASSOC', 13);
 }
-if (!defined('IBASE_FETCH_COLUMN')) {
-    define('IBASE_FETCH_COLUMN', 14);
+if (!defined('INTERBASE_FETCH_COLUMN')) {
+    define('INTERBASE_FETCH_COLUMN', 14);
 }
 
 if (!defined('MYSQLI_FETCH_NUM')) {

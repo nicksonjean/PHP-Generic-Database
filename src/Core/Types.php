@@ -46,32 +46,32 @@ enum Types: string
     /**
      * Firebird link
      */
-    case NAT_FBIRD = 'Firebird link';
+    case NAT_FIREBIRD = 'Firebird link';
 
     /**
      * InterBase link
      */
-    case NAT_IBASE = 'InterBase link';
+    case NAT_INTERBASE = 'InterBase link';
 
     /**
      * Persistent Firebird link
      */
-    case NAT_FBIRD_PERSISTENT = 'Firebird persistent link';
+    case NAT_FIREBIRD_PERSISTENT = 'Firebird persistent link';
 
     /**
      * Persistent InterBase link
      */
-    case NAT_IBASE_PERSISTENT = 'InterBase persistent link';
+    case NAT_INTERBASE_PERSISTENT = 'InterBase persistent link';
 
     /**
      * Firebird/InterBase link
      */
-    case NAT_FBIRD_IBASE = 'Firebird/InterBase link';
+    case NAT_FIREBIRD_INTERBASE = 'Firebird/InterBase link';
 
     /**
      * Persistent Firebird/InterBase link
      */
-    case NAT_FBIRD_IBASE_PERSISTENT = 'Firebird/InterBase persistent link';
+    case NAT_FIREBIRD_INTERBASE_PERSISTENT = 'Firebird/InterBase persistent link';
 
     /**
      * Sybase link
@@ -116,7 +116,7 @@ enum Types: string
     /**
      * PDO Firebird driver
      */
-    case PDO_FBIRD = 'firebird';
+    case PDO_FIREBIRD = 'firebird';
 
     /**
      * PDO IBM driver

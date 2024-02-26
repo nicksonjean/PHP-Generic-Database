@@ -58,8 +58,8 @@ $connection = StaticArgs::nativeOCI(
 ```
 
 ```php
-// Create a new database connection using FBird/IBase engine for Firebird/Interbase dialects in the static arguments methods format
-$connection = StaticArgs::nativeFBird(
+// Create a new database connection using Firebird/Interbase engine for Firebird/Interbase dialects in the static arguments methods format
+$connection = StaticArgs::nativeFirebird(
     env: $_ENV,
     persistent: true,
     strategy: true
@@ -120,7 +120,7 @@ $connection = StaticArgs::pdoOCI(
 ```
 
 ```php
-// Create a new database connection using PDO FBird/IBase engine for Firebird/Interbase dialects in the static arguments methods format
+// Create a new database connection using PDO Firebird/Interbase engine for Firebird/Interbase dialects in the static arguments methods format
 $connection = StaticArgs::pdoFirebird(
     env: $_ENV,
     persistent: true,

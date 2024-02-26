@@ -201,12 +201,12 @@ RUN \
   && docker-php-ext-configure odbc --with-unixODBC=shared,/usr \
   && docker-php-ext-install odbc
 
-# Download Oracle Instant Client
+# Download OCI Instant Client
 ADD https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-basic-linux.x64-21.1.0.0.0.zip /tmp/
 ADD https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-sdk-linux.x64-21.1.0.0.0.zip /tmp/
 ADD https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-sqlplus-linux.x64-21.1.0.0.0.zip /tmp/
 
-# Unzip Oracle Instant Client
+# Unzip OCI Instant Client
 RUN \
   unzip /tmp/instantclient-basic-linux.x64-*.zip -d /usr/local/ \
   && unzip /tmp/instantclient-sdk-linux.x64-*.zip -d /usr/local/ \
@@ -249,6 +249,7 @@ COPY ./phpinfo.php /var/www/html/phpinfo.php
 
 # Test Database Connections
 COPY ./db-test.php /var/www/html/db-test.php
+COPY ./odbc.php /var/www/html/odbc.php
 
 # Copy environment variables
 COPY ./.env.docker /var/www/html/.env
@@ -276,30 +277,30 @@ RUN \
   && echo 'SetEnv MYSQL_USER ${MYSQL_USER}' >> /etc/apache2/conf-enabled/environment.conf \
   && echo 'SetEnv MYSQL_PASSWORD ${MYSQL_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf \
   && echo 'SetEnv MYSQL_CHARSET ${MYSQL_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv PGSQL_HOST ${PGSQL_HOST}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv PGSQL_PORT ${PGSQL_PORT}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv PGSQL_DATABASE ${PGSQL_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv PGSQL_USER ${PGSQL_USER}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv PGSQL_PASSWORD ${PGSQL_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv PGSQL_CHARSET ${PGSQL_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv SQLSRV_HOST ${SQLSRV_HOST}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv SQLSRV_PORT ${SQLSRV_PORT}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv SQLSRV_DATABASE ${SQLSRV_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv SQLSRV_USER ${SQLSRV_USER}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv SQLSRV_PASSWORD ${SQLSRV_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv SQLSRV_CHARSET ${SQLSRV_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv OCI_HOST ${OCI_HOST}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv OCI_PORT ${OCI_PORT}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv OCI_DATABASE ${OCI_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv OCI_USER ${OCI_USER}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv OCI_PASSWORD ${OCI_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv OCI_CHARSET ${OCI_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv FBIRD_HOST ${FBIRD_HOST}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv FBIRD_PORT ${FBIRD_PORT}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv FBIRD_DATABASE ${FBIRD_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv FBIRD_USER ${FBIRD_USER}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv FBIRD_PASSWORD ${FBIRD_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf \
-  && echo 'SetEnv FBIRD_CHARSET ${FBIRD_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv POSTGRESQL_HOST ${POSTGRESQL_HOST}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv POSTGRESQL_PORT ${POSTGRESQL_PORT}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv POSTGRESQL_DATABASE ${POSTGRESQL_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv POSTGRESQL_USER ${POSTGRESQL_USER}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv POSTGRESQL_PASSWORD ${POSTGRESQL_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv POSTGRESQL_CHARSET ${POSTGRESQL_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv SQLSERVER_HOST ${SQLSERVER_HOST}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv SQLSERVER_PORT ${SQLSERVER_PORT}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv SQLSERVER_DATABASE ${SQLSERVER_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv SQLSERVER_USER ${SQLSERVER_USER}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv SQLSERVER_PASSWORD ${SQLSERVER_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv SQLSERVER_CHARSET ${SQLSERVER_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv ORACLE_HOST ${ORACLE_HOST}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv ORACLE_PORT ${ORACLE_PORT}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv ORACLE_DATABASE ${ORACLE_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv ORACLE_USER ${ORACLE_USER}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv ORACLE_PASSWORD ${ORACLE_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv ORACLE_CHARSET ${ORACLE_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv FIREBIRD_HOST ${FIREBIRD_HOST}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv FIREBIRD_PORT ${FIREBIRD_PORT}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv FIREBIRD_DATABASE ${FIREBIRD_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv FIREBIRD_USER ${FIREBIRD_USER}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv FIREBIRD_PASSWORD ${FIREBIRD_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf \
+  && echo 'SetEnv FIREBIRD_CHARSET ${FIREBIRD_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf \
   && echo 'SetEnv SQLITE_DATABASE ${SQLITE_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf \
   && echo 'SetEnv SQLITE_DATABASE_MEMORY ${SQLITE_DATABASE_MEMORY}' >> /etc/apache2/conf-enabled/environment.conf \
   && echo 'SetEnv SQLITE_CHARSET ${SQLITE_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf

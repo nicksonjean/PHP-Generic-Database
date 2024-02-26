@@ -12,7 +12,7 @@ final class XMLTest extends TestCase
 {
     public function testValidXmlReturnsTrue()
     {
-        $xml = 'tests/Helpers/Samples/XML/Simple.xml';
+        $xml = 'tests/Helpers/Samples/xml/Simple.xml';
         $result = XML::isValidXML(Path::toAbsolute($xml));
         $this->assertTrue($result);
     }
@@ -23,7 +23,7 @@ final class XMLTest extends TestCase
         $result = XML::isValidXML($xml);
         $this->assertFalse($result);
 
-        $xml = 'tests/Helpers/Samples/XML/Invalid.xml';
+        $xml = 'tests/Helpers/Samples/xml/Invalid.xml';
         $result = XML::isValidXML($xml);
         $this->assertFalse($result);
     }
@@ -60,7 +60,7 @@ final class XMLTest extends TestCase
      */
     public function testSimpleXmlElementObjectIsDecodedIntoArray()
     {
-        $xml = 'tests/Helpers/Samples/XML/Easy.xml';
+        $xml = 'tests/Helpers/Samples/xml/Easy.xml';
         $objXML = simplexml_load_file($xml);
 
         $reflectionClass = new ReflectionClass(XML::class);
@@ -79,7 +79,7 @@ final class XMLTest extends TestCase
 
     public function testParseXml()
     {
-        $xml = 'tests/Helpers/Samples/XML/Parsed.xml';
+        $xml = 'tests/Helpers/Samples/xml/Parsed.xml';
         $result = XML::parseXML($xml);
 
         $expected = [

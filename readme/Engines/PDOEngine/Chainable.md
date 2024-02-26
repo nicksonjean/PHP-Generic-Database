@@ -105,11 +105,11 @@ $connection
 $connection = new PDOEngine();
 $connection
 ->setDriver('firebird')
-->setHost($_ENV['FBIRD_HOST'])
-->setPort(+$_ENV['FBIRD_PORT'])
-->setDatabase($_ENV['FBIRD_DATABASE'])
-->setUser($_ENV['FBIRD_USER'])
-->setPassword($_ENV['FBIRD_PASSWORD'])
+->setHost($_ENV['FIREBIRD_HOST'])
+->setPort(+$_ENV['FIREBIRD_PORT'])
+->setDatabase($_ENV['FIREBIRD_DATABASE'])
+->setUser($_ENV['FIREBIRD_USER'])
+->setPassword($_ENV['FIREBIRD_PASSWORD'])
 ->setCharset('utf8')
 ->setOptions([
     PDO::ATTR_PERSISTENT => true,

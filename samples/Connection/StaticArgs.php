@@ -38,7 +38,7 @@ try {
 }
 
 try {
-    $context = StaticArgs::nativeFBird(env: $_ENV, persistent: true, strategy: true)->connect();
+    $context = StaticArgs::nativeFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
     var_dump($context);
 } catch (Exception $e) {
     var_dump($e);

@@ -1,0 +1,30 @@
+[
+    [
+        "Y~DS~m~DS~d~DTS~H~TS~i~TS~s~MTS~A",
+        "yyyy~DS~MM~DS~dd~DTS~HH~TS~mm~TS~ss~MTS~tt"
+    ],
+    [
+        "Y~DS~m~DS~d~DTS~H~TS~i~TS~s~TTS~P",
+        "yyyy~DS~MM~DS~dd~DTS~HH~TS~mm~TS~s~TTS~zzz"
+    ],
+    [
+        "Y~DS~m~DS~d~DTS~H~TS~i~TS~s",
+        "yyyy~DS~MM~DS~dd~DTS~HH~TS~mm~TS~ss"
+    ],
+    [
+        "Y~DS~m~DS~d~DTS~H~TS~i~MTS~A",
+        "yyyy~DS~MM~DS~dd~DTS~HH~TS~mm~MTS~tt"
+    ],
+    [
+        "Y~DS~m~DS~d~DTS~H~TS~i~TTS~P",
+        "yyyy~DS~MM~DS~dd~DTS~HH~TS~mm~TTS~zzz"
+    ],
+    [
+        "Y~DS~m~DS~d~DTS~H~TS~i",
+        "yyyy~DS~MM~DS~dd~DTS~HH~TS~mm"
+    ],
+    [
+        "Y~DS~m~DS~d",
+        "yyyy~DS~MM~DS~dd"
+    ]
+]

@@ -101,11 +101,11 @@ $oci = PDOEngine::new([
 // Create a new database connection using PDO engine with mysql driver in the static array format
 $firebird = PDOEngine::new([
     'driver' => 'firebird',
-    'host' => $_ENV['FBIRD_HOST'],
-    'port' => +$_ENV['FBIRD_PORT'],
-    'database' => $_ENV['FBIRD_DATABASE'],
-    'user' => $_ENV['FBIRD_USER'],
-    'password' => $_ENV['FBIRD_PASSWORD'],
+    'host' => $_ENV['FIREBIRD_HOST'],
+    'port' => +$_ENV['FIREBIRD_PORT'],
+    'database' => $_ENV['FIREBIRD_DATABASE'],
+    'user' => $_ENV['FIREBIRD_USER'],
+    'password' => $_ENV['FIREBIRD_PASSWORD'],
     'charset' => 'utf8',
     'options' => [
         PDO::ATTR_PERSISTENT => true,

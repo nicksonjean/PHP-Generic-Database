@@ -9,13 +9,13 @@ use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Engine\OCIEngine;
-use GenericDatabase\Engine\FBirdEngine;
+use GenericDatabase\Engine\FirebirdEngine;
 use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Engine\MySQLi\MySQL;
 use GenericDatabase\Engine\PgSQL\PgSQL;
 use GenericDatabase\Engine\SQLSrv\SQLSrv;
 use GenericDatabase\Engine\OCI\OCI;
-use GenericDatabase\Engine\FBird\FBird;
+use GenericDatabase\Engine\Firebird\Firebird;
 use GenericDatabase\Engine\SQLite\SQLite;
 use GenericDatabase\Engine\PDOEngine;
 use GenericDatabase\Core\Entity;
@@ -160,29 +160,29 @@ class StaticArray
     }
 
     /**
-     * @return Connection|FBirdEngine
+     * @return Connection|FirebirdEngine
      */
-    public static function nativeFBird(
+    public static function nativeFirebird(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|FBirdEngine {
-        /** @var Connection|FBirdEngine $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_FBIRD_ENGINE->value;
+    ): Connection|FirebirdEngine {
+        /** @var Connection|FirebirdEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_FIREBIRD_ENGINE->value;
         $parameters = [];
         if ($strategy) {
-            $parameters['engine'] = 'fbird';
+            $parameters['engine'] = 'firebird';
         }
         $parameters = array_merge($parameters, [
-            'host' => $env['FBIRD_HOST'],
-            'port' => (int)$env['FBIRD_PORT'],
-            'database' => $env['FBIRD_DATABASE'],
-            'user' => $env['FBIRD_USER'],
-            'password' => $env['FBIRD_PASSWORD'],
+            'host' => $env['FIREBIRD_HOST'],
+            'port' => (int)$env['FIREBIRD_PORT'],
+            'database' => $env['FIREBIRD_DATABASE'],
+            'user' => $env['FIREBIRD_USER'],
+            'password' => $env['FIREBIRD_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
-                FBird::ATTR_PERSISTENT => $persistent,
-                FBird::ATTR_CONNECT_TIMEOUT => 28800,
+                Firebird::ATTR_PERSISTENT => $persistent,
+                Firebird::ATTR_CONNECT_TIMEOUT => 28800,
             ],
             'exception' => true
         ]);
@@ -405,11 +405,11 @@ class StaticArray
         }
         $parameters = array_merge($parameters, [
             'driver' => 'firebird',
-            'host' => $env['FBIRD_HOST'],
-            'port' => (int)$env['FBIRD_PORT'],
-            'database' => $env['FBIRD_DATABASE'],
-            'user' => $env['FBIRD_USER'],
-            'password' => $env['FBIRD_PASSWORD'],
+            'host' => $env['FIREBIRD_HOST'],
+            'port' => (int)$env['FIREBIRD_PORT'],
+            'database' => $env['FIREBIRD_DATABASE'],
+            'user' => $env['FIREBIRD_USER'],
+            'password' => $env['FIREBIRD_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
                 PDO::ATTR_PERSISTENT => $persistent,

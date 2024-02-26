@@ -13,14 +13,14 @@ final class JSONTest extends TestCase
 {
     public function testValidJsonString()
     {
-        $json = 'tests/Helpers/Samples/JSON/ValidObject.json';
+        $json = 'tests/Helpers/Samples/json/ValidObject.json';
         $isValid = JSON::isValidJSON(Path::toAbsolute($json));
         $this->assertTrue($isValid);
     }
 
     public function testEmptyObjectJsonString()
     {
-        $json = 'tests/Helpers/Samples/JSON/EmptyObject.json';
+        $json = 'tests/Helpers/Samples/json/EmptyObject.json';
         $isValid = JSON::isValidJSON($json);
         $this->assertTrue($isValid);
     }
@@ -41,63 +41,63 @@ final class JSONTest extends TestCase
 
     public function testSingleNumericArrayJsonString()
     {
-        $json = 'tests/Helpers/Samples/JSON/SingleNumericArray.json';
+        $json = 'tests/Helpers/Samples/json/SingleNumericArray.json';
         $isValid = JSON::isValidJSON($json);
         $this->assertTrue($isValid);
     }
 
     public function testMultipleValuesJsonString()
     {
-        $json = 'tests/Helpers/Samples/JSON/MultipleObject.json';
+        $json = 'tests/Helpers/Samples/json/MultipleObject.json';
         $isValid = JSON::isValidJSON($json);
         $this->assertTrue($isValid);
     }
 
     public function testInvalidJsonString()
     {
-        $json = 'tests/Helpers/Samples/JSON/InvalidObject.json';
+        $json = 'tests/Helpers/Samples/json/InvalidObject.json';
         $isValid = JSON::isValidJSON($json);
         $this->assertFalse($isValid);
     }
 
     public function testJsonWithUnicodeCharacter()
     {
-        $json = 'tests/Helpers/Samples/JSON/UnicodeObjectString.json';
+        $json = 'tests/Helpers/Samples/json/UnicodeObjectString.json';
         $isValid = JSON::isValidJSON($json);
         $this->assertTrue($isValid);
     }
 
     public function testValidJsonStringWithNumericValue()
     {
-        $json = 'tests/Helpers/Samples/JSON/NumericObject.json';
+        $json = 'tests/Helpers/Samples/json/NumericObject.json';
         $isValid = JSON::isValidJSON($json);
         $this->assertTrue($isValid);
     }
 
     public function testValidJsonStringWithBooleanValue()
     {
-        $json = 'tests/Helpers/Samples/JSON/ObjectBoolean.json';
+        $json = 'tests/Helpers/Samples/json/ObjectBoolean.json';
         $isValid = JSON::isValidJSON($json);
         $this->assertTrue($isValid);
     }
 
     public function testValidJsonStringWithNullValue()
     {
-        $json = 'tests/Helpers/Samples/JSON/ObjectNull.json';
+        $json = 'tests/Helpers/Samples/json/ObjectNull.json';
         $isValid = JSON::isValidJSON($json);
         $this->assertTrue($isValid);
     }
 
     public function testValidJsonArrayString()
     {
-        $json = 'tests/Helpers/Samples/JSON/MultipleNumericArray.json';
+        $json = 'tests/Helpers/Samples/json/MultipleNumericArray.json';
         $isValid = JSON::isValidJSON($json);
         $this->assertTrue($isValid);
     }
 
     public function testNestedJsonString()
     {
-        $json = 'tests/Helpers/Samples/JSON/NestedObject.json';
+        $json = 'tests/Helpers/Samples/json/NestedObject.json';
         $expectedResult = [
             "name" => "John",
             "age" => 30,
@@ -116,7 +116,7 @@ final class JSONTest extends TestCase
 
     public function testLargeNumberOfElements()
     {
-        $json = 'tests/Helpers/Samples/JSON/ManyObjects.json';
+        $json = 'tests/Helpers/Samples/json/ManyObjects.json';
         $expectedArray = [
             "name" => "John",
             "age" => 30,

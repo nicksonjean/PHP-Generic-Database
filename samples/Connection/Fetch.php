@@ -100,7 +100,7 @@ while ($row = $testD->fetch(FETCH_BOTH)) {
     var_dump($row);
 }
 
-$contextE = Chainable::nativeFBird(env: $_ENV, persistent: true, strategy: true)->connect();
+$contextE = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
 
 $testE = $contextE->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id');
 

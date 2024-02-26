@@ -6,6 +6,6 @@ define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$sqlite = SQLiteEngine::new(PATH_ROOT . '/resources/YAML/sqlite.yaml')->connect();
+$sqlite = SQLiteEngine::new(PATH_ROOT . '/resources/dsn/yaml/sqlite.yaml')->connect();
 
 var_dump($sqlite);

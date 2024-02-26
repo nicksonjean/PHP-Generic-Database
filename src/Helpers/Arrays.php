@@ -245,6 +245,42 @@ class Arrays
     }
 
     /**
+     * Flatten a array
+     *
+     * @param array $array array The array to flatten items from
+     * @return array
+     */
+    public static function arrayFlatten(array $array): array
+    {
+        $result = [];
+        foreach ($array as $subarray) {
+            foreach ($subarray as $key => $value) {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Group items from an array together by some criteria or value.
+     *
+     * @param array $arr array The array to group items from
+     * @param string|callable $criteria string|callable The key to group by or a function the returns a key to group by.
+     * @return array
+     */
+    public static function arrayGroupBy(array $arr, string|callable $criteria): array
+    {
+        return array_reduce($arr, function ($accumulator, $item) use ($criteria) {
+            $key = (is_callable($criteria)) ? $criteria($item) : $item[$criteria];
+            if (!array_key_exists($key, $accumulator)) {
+                $accumulator[$key] = [];
+            }
+            array_push($accumulator[$key], $item);
+            return $accumulator;
+        }, []);
+    }
+
+    /**
      * This function makes an arguments list
      *
      * @param mixed $params Arguments list

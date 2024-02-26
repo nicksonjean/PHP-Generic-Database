@@ -59,4 +59,44 @@ class INI
     {
         return (array) parse_ini_file($ini, false, INI_SCANNER_TYPED);
     }
+
+    /**
+     * Parse an INI file and return its contents as an associative array.
+     *
+     * @param string $filepath The path to the INI file.
+     * @return array The contents of the INI file as an associative array.
+     */
+    public static function parseIniFile(string $filepath): array
+    {
+        $ini = file($filepath);
+        $result = [];
+        $section = '';
+
+        foreach ($ini as $line) {
+            $line = trim($line);
+
+            if ($line === '' || $line[0] === ';') {
+                continue;
+            }
+
+            if ($line[0] === '[') {
+                $section = trim($line, "[]");
+                continue;
+            }
+
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+
+                if ($section === '') {
+                    $result[$key] = $value;
+                } else {
+                    $result[$section][$key] = $value;
+                }
+            }
+        }
+
+        return $result;
+    }
 }

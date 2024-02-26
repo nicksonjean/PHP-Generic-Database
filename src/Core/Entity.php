@@ -34,7 +34,7 @@ enum Entity: string
     /**
      * The fully qualified class name of the Firebird database engine class.
      */
-    case CLASS_FBIRD_ENGINE = \GenericDatabase\Engine\FBirdEngine::class;
+    case CLASS_FIREBIRD_ENGINE = \GenericDatabase\Engine\FirebirdEngine::class;
 
     /**
      * The fully qualified class name of the Oracle database engine class.

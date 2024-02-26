@@ -6,7 +6,7 @@ namespace GenericDatabase;
 
 use AllowDynamicProperties;
 use GenericDatabase\Core\Entity;
-use GenericDatabase\Engine\FBirdEngine;
+use GenericDatabase\Engine\FirebirdEngine;
 use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Engine\OCIEngine;
 use GenericDatabase\Engine\PgSQLEngine;
@@ -97,7 +97,7 @@ class Connection
         'PgSQL',
         'SQLSrv',
         'OCI',
-        'FBird',
+        'Firebird',
         'SQLite'
     ];
 
@@ -294,7 +294,7 @@ class Connection
             'pgsql' => new PgSQLEngine(),
             'sqlsrv' => new SQLSrvEngine(),
             'oci' => new OCIEngine(),
-            'fbird' => new FBirdEngine(),
+            'firebird' => new FirebirdEngine(),
             'sqlite' => new SQLiteEngine(),
             default => null,
         };

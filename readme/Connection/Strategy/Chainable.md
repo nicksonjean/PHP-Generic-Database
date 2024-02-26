@@ -15,7 +15,7 @@ use GenericDatabase\Engine\MySQli\MySQL;
 use GenericDatabase\Engine\PgSQL\PgSQL;
 use GenericDatabase\Engine\SQLSrv\SQLSrv;
 use GenericDatabase\Engine\OCI\OCI;
-use GenericDatabase\Engine\FBird\FBird;
+use GenericDatabase\Engine\Firebird\Firebird;
 use GenericDatabase\Engine\SQLite\SQLite;
 use PDO;
 
@@ -113,19 +113,19 @@ $connection
 ```
 
 ```php
-// Create a new database connection using FBird/IBase engine for Firebird/Interbase dialects in the chainable methods format
+// Create a new database connection using Firebird/Interbase engine for Firebird/Interbase dialects in the chainable methods format
 $connection = new Connection();
 $connection
-->setEngine('fbird')
-->setHost($_ENV['FBIRD_HOST'])
-->setPort((int)$_ENV['FBIRD_PORT'])
-->setDatabase($_ENV['FBIRD_DATABASE'])
-->setUser($_ENV['FBIRD_USER'])
-->setPassword($_ENV['FBIRD_PASSWORD'])
+->setEngine('firebird')
+->setHost($_ENV['FIREBIRD_HOST'])
+->setPort((int)$_ENV['FIREBIRD_PORT'])
+->setDatabase($_ENV['FIREBIRD_DATABASE'])
+->setUser($_ENV['FIREBIRD_USER'])
+->setPassword($_ENV['FIREBIRD_PASSWORD'])
 ->setCharset('utf8')
 ->setOptions([
-    FBird::ATTR_PERSISTENT => true,
-    FBird::ATTR_CONNECT_TIMEOUT => 28800,
+    Firebird::ATTR_PERSISTENT => true,
+    Firebird::ATTR_CONNECT_TIMEOUT => 28800,
 ])
 ->setException(true)
 ->connect();
@@ -253,16 +253,16 @@ $connection
 ```
 
 ```php
-// Create a new database connection using PDO FBird/IBase engine for Firebird/Interbase dialects in the chainable methods format
+// Create a new database connection using PDO Firebird/Interbase engine for Firebird/Interbase dialects in the chainable methods format
 $connection = new Connection();
 $connection
 ->setEngine('pdo')
 ->setDriver('firebird')
-->setHost($_ENV['FBIRD_HOST'])
-->setPort((int)$_ENV['FBIRD_PORT'])
-->setDatabase($_ENV['FBIRD_DATABASE'])
-->setUser($_ENV['FBIRD_USER'])
-->setPassword($_ENV['FBIRD_PASSWORD'])
+->setHost($_ENV['FIREBIRD_HOST'])
+->setPort((int)$_ENV['FIREBIRD_PORT'])
+->setDatabase($_ENV['FIREBIRD_DATABASE'])
+->setUser($_ENV['FIREBIRD_USER'])
+->setPassword($_ENV['FIREBIRD_PASSWORD'])
 ->setCharset('utf8')
 ->setOptions([
     PDO::ATTR_PERSISTENT => true,

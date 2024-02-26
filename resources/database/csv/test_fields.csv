@@ -1,0 +1,2 @@
+﻿field_inc;field_int;field_char;field_varchar;field_enum;field_set;field_date;field_time;field_year;field_datetime;field_timestamp;field_decimal;field_float;field_double;field_bit;field_binary;field_blob;field_base64;field_varbinary;field_null
+1;1;1;1;

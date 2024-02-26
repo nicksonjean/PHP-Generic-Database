@@ -98,12 +98,12 @@ class Compare
             is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_MYSQL) => 'mysql',
             is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_MSSQL) => 'mssql',
             is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_SYBASE) => 'sybase',
-            is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_FBIRD) => 'fbird',
-            is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_IBASE) => 'ibase',
-            is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_FBIRD_PERSISTENT)
-                || $its(An::NAT_IBASE_PERSISTENT) => 'fbird/ibase',
-            is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_FBIRD_IBASE)
-                || $its(An::NAT_FBIRD_IBASE_PERSISTENT) => 'fbird/ibase',
+            is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_FIREBIRD) => 'firebird',
+            is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_INTERBASE) => 'ibase',
+            is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_FIREBIRD_PERSISTENT)
+                || $its(An::NAT_INTERBASE_PERSISTENT) => 'firebird/ibase',
+            is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_FIREBIRD_INTERBASE)
+                || $its(An::NAT_FIREBIRD_INTERBASE_PERSISTENT) => 'firebird/ibase',
             default => 'Unidentified or invalid connection type, instance or resource.',
         };
     }
@@ -127,7 +127,7 @@ class Compare
             is_a($cnx, 'PDO') && $cnx::class === 'PDO' && $attr($cnx) === $its(An::PDO_SQLITE) => 'PDO sqlite',
             is_a($cnx, 'PDO') && $cnx::class === 'PDO' && $attr($cnx) === $its(An::PDO_SQLSRV) => 'PDO sqlsrv',
             is_a($cnx, 'PDO') && $cnx::class === 'PDO' && $attr($cnx) === $its(An::PDO_OCI) => 'PDO oci',
-            is_a($cnx, 'PDO') && $cnx::class === 'PDO' && $attr($cnx) === $its(An::PDO_FBIRD) => 'PDO firebird',
+            is_a($cnx, 'PDO') && $cnx::class === 'PDO' && $attr($cnx) === $its(An::PDO_FIREBIRD) => 'PDO firebird',
             is_a($cnx, 'PDO') && $cnx::class === 'PDO' && $attr($cnx) === $its(An::PDO_IBM) => 'PDO ibm',
             is_a($cnx, 'PDO') && $cnx::class === 'PDO' && $attr($cnx) === $its(An::PDO_INFORMIX) => 'PDO informix',
             is_a($cnx, 'PDO') && $cnx::class === 'PDO' && $attr($cnx) === $its(An::PDO_MSSQL) => 'PDO mssql',

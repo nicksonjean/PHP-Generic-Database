@@ -89,13 +89,13 @@
         <mxCell id="PGMGp03bp6BhcSgx_8ge-4" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/PHP-logo.svg/1280px-PHP-logo.svg.png;" vertex="1" parent="1">
           <mxGeometry x="1570" y="30" width="162.96" height="88" as="geometry" />
         </mxCell>
-        <mxCell id="PGMGp03bp6BhcSgx_8ge-6" value="PDO_PGSQL" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database.svg;" vertex="1" parent="1">
+        <mxCell id="PGMGp03bp6BhcSgx_8ge-6" value="PDO_POSTGRESQL" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database.svg;" vertex="1" parent="1">
           <mxGeometry x="1990" y="222" width="50" height="37" as="geometry" />
         </mxCell>
         <mxCell id="1Fea3Wt-JbB9k_HLA01O-1" value="PDO_MYSQL" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database.svg;" vertex="1" parent="1">
           <mxGeometry x="1990" y="342" width="50" height="37" as="geometry" />
         </mxCell>
-        <mxCell id="kRUG98bXeqK9gkMj7q0V-1" value="PDO_OCI" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database.svg;" vertex="1" parent="1">
+        <mxCell id="kRUG98bXeqK9gkMj7q0V-1" value="PDO_ORACLE" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database.svg;" vertex="1" parent="1">
           <mxGeometry x="1990" y="462" width="50" height="37" as="geometry" />
         </mxCell>
         <mxCell id="n-B3Uku4WorzWj2vgB-U-1" value="PDO_SQLITE" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database.svg;" vertex="1" parent="1">
@@ -107,7 +107,7 @@
         <mxCell id="3MODCe2cNf-eOVYtsztj-1" value="PDO_FIREBIRD" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database.svg;" vertex="1" parent="1">
           <mxGeometry x="1990" y="702" width="50" height="37" as="geometry" />
         </mxCell>
-        <mxCell id="xD35NUfzb2-DA053A32k-1" value="PDO_SQLSRV" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database.svg;" vertex="1" parent="1">
+        <mxCell id="xD35NUfzb2-DA053A32k-1" value="PDO_SQLSERVER" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database.svg;" vertex="1" parent="1">
           <mxGeometry x="1990" y="822" width="50" height="37" as="geometry" />
         </mxCell>
         <mxCell id="T21VbiOO1Z6tBEr9Bk53-35" value="" style="group" vertex="1" connectable="0" parent="1">
@@ -338,7 +338,7 @@
         <mxCell id="YyGu09PVjq9pH7-yLzv2-19" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;" vertex="1" parent="1">
           <mxGeometry x="-826" y="201" width="823" height="769" as="geometry" />
         </mxCell>
-        <mxCell id="oCwPVvaeC9X8CA2SFeaB-2" value="PGSQL" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" vertex="1" parent="1">
+        <mxCell id="oCwPVvaeC9X8CA2SFeaB-2" value="POSTGRESQL" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" vertex="1" parent="1">
           <mxGeometry x="23" y="868" width="80" height="80" as="geometry" />
         </mxCell>
         <mxCell id="YyGu09PVjq9pH7-yLzv2-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" edge="1" parent="1" source="oCwPVvaeC9X8CA2SFeaB-4" target="oCwPVvaeC9X8CA2SFeaB-9">
@@ -401,7 +401,7 @@
         <mxCell id="oCwPVvaeC9X8CA2SFeaB-10" value="" style="whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=3;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="23" y="523" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="oCwPVvaeC9X8CA2SFeaB-21" value="&lt;br&gt;PDO_PGSQL" style="sketch=0;outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.gear;" vertex="1" parent="1">
+        <mxCell id="oCwPVvaeC9X8CA2SFeaB-21" value="&lt;br&gt;PDO_POSTGRESQL" style="sketch=0;outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.gear;" vertex="1" parent="1">
           <mxGeometry x="32" y="533" width="62" height="62" as="geometry" />
         </mxCell>
         <mxCell id="oCwPVvaeC9X8CA2SFeaB-23" value="" style="whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=3;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;" vertex="1" parent="1">
@@ -413,7 +413,7 @@
         <mxCell id="oCwPVvaeC9X8CA2SFeaB-25" value="" style="whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=3;fillColor=#76608a;strokeColor=#432D57;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="303" y="524" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="oCwPVvaeC9X8CA2SFeaB-26" value="&lt;br&gt;PDO_OCI" style="sketch=0;outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.gear;" vertex="1" parent="1">
+        <mxCell id="oCwPVvaeC9X8CA2SFeaB-26" value="&lt;br&gt;PDO_ORACLE" style="sketch=0;outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.gear;" vertex="1" parent="1">
           <mxGeometry x="312" y="534" width="62" height="62" as="geometry" />
         </mxCell>
         <mxCell id="oCwPVvaeC9X8CA2SFeaB-27" value="" style="whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=3;fillColor=#e51400;strokeColor=#B20000;fontColor=#ffffff;" vertex="1" parent="1">
@@ -425,19 +425,19 @@
         <mxCell id="oCwPVvaeC9X8CA2SFeaB-29" value="" style="whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=3;fillColor=#6d8764;strokeColor=#3A5431;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="583" y="526" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="oCwPVvaeC9X8CA2SFeaB-30" value="&lt;br&gt;PDO_FBIRD" style="sketch=0;outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.gear;" vertex="1" parent="1">
+        <mxCell id="oCwPVvaeC9X8CA2SFeaB-30" value="&lt;br&gt;PDO_FIREBIRD" style="sketch=0;outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.gear;" vertex="1" parent="1">
           <mxGeometry x="592" y="536" width="62" height="62" as="geometry" />
         </mxCell>
         <mxCell id="oCwPVvaeC9X8CA2SFeaB-31" value="" style="whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=3;fillColor=#d80073;strokeColor=#A50040;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="723" y="527" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="oCwPVvaeC9X8CA2SFeaB-32" value="&lt;br&gt;PDO_SQLSRV" style="sketch=0;outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.gear;" vertex="1" parent="1">
+        <mxCell id="oCwPVvaeC9X8CA2SFeaB-32" value="&lt;br&gt;PDO_SQLSERVER" style="sketch=0;outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.gear;" vertex="1" parent="1">
           <mxGeometry x="732" y="537" width="62" height="62" as="geometry" />
         </mxCell>
         <mxCell id="oCwPVvaeC9X8CA2SFeaB-34" value="&lt;br&gt;MYSQL&lt;br&gt;MARIADB" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" vertex="1" parent="1">
           <mxGeometry x="163" y="868" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="oCwPVvaeC9X8CA2SFeaB-35" value="OCI" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#76608a;fontColor=#ffffff;strokeColor=#432D57;" vertex="1" parent="1">
+        <mxCell id="oCwPVvaeC9X8CA2SFeaB-35" value="ORACLE" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#76608a;fontColor=#ffffff;strokeColor=#432D57;" vertex="1" parent="1">
           <mxGeometry x="303" y="868" width="80" height="80" as="geometry" />
         </mxCell>
         <mxCell id="oCwPVvaeC9X8CA2SFeaB-36" value="SQLITE" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" vertex="1" parent="1">
@@ -446,7 +446,7 @@
         <mxCell id="oCwPVvaeC9X8CA2SFeaB-37" value="&lt;br&gt;FIREBIRD&lt;br&gt;INTERBASE" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" vertex="1" parent="1">
           <mxGeometry x="583" y="868" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="oCwPVvaeC9X8CA2SFeaB-38" value="SQLSRV" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#d80073;strokeColor=#A50040;fontColor=#ffffff;" vertex="1" parent="1">
+        <mxCell id="oCwPVvaeC9X8CA2SFeaB-38" value="SQLSERVER" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#d80073;strokeColor=#A50040;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="723" y="868" width="80" height="80" as="geometry" />
         </mxCell>
         <mxCell id="YyGu09PVjq9pH7-yLzv2-1" value="DRIVERS" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
@@ -483,13 +483,13 @@
         <mxCell id="YyGu09PVjq9pH7-yLzv2-2" value="NATIVE" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=3;" vertex="1" parent="1">
           <mxGeometry x="-460" y="350" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="YyGu09PVjq9pH7-yLzv2-4" value="PGSQL" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" vertex="1" parent="1">
+        <mxCell id="YyGu09PVjq9pH7-yLzv2-4" value="POSTGRESQL" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" vertex="1" parent="1">
           <mxGeometry x="-800" y="868" width="80" height="80" as="geometry" />
         </mxCell>
         <mxCell id="YyGu09PVjq9pH7-yLzv2-5" value="MYSQL" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" vertex="1" parent="1">
           <mxGeometry x="-660" y="868" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="YyGu09PVjq9pH7-yLzv2-6" value="OCI" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#76608a;fontColor=#ffffff;strokeColor=#432D57;" vertex="1" parent="1">
+        <mxCell id="YyGu09PVjq9pH7-yLzv2-6" value="ORACLE" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#76608a;fontColor=#ffffff;strokeColor=#432D57;" vertex="1" parent="1">
           <mxGeometry x="-520" y="868" width="80" height="80" as="geometry" />
         </mxCell>
         <mxCell id="YyGu09PVjq9pH7-yLzv2-7" value="SQLITE" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" vertex="1" parent="1">
@@ -498,7 +498,7 @@
         <mxCell id="YyGu09PVjq9pH7-yLzv2-8" value="&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;FIREBIRD&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;INTERBASE" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" vertex="1" parent="1">
           <mxGeometry x="-240" y="868" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="YyGu09PVjq9pH7-yLzv2-9" value="SQLSRV" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#d80073;strokeColor=#A50040;fontColor=#ffffff;" vertex="1" parent="1">
+        <mxCell id="YyGu09PVjq9pH7-yLzv2-9" value="SQLSERVER" style="strokeWidth=3;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;fillColor=#d80073;strokeColor=#A50040;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="-100" y="868" width="80" height="80" as="geometry" />
         </mxCell>
         <mxCell id="Vzq0NdkCnxSdfZiENDh0-3" value="php_oci8.dll/so" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="1">

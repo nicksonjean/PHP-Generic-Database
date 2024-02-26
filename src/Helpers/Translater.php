@@ -149,8 +149,10 @@ class Translater
     private static function loadReservedWords(): array
     {
         if (!isset(self::$resWords)) {
-            $json = file_get_contents(__DIR__ . '/Translater/Dictionary.json');
-            self::$resWords = json_decode($json, true);
+            $json = __DIR__ . DIRECTORY_SEPARATOR . 'Translater' . DIRECTORY_SEPARATOR . 'Dictionary.json';
+            self::$resWords = json_decode(
+                file_get_contents($json)
+            );
         }
         return self::$resWords;
     }

@@ -6,6 +6,6 @@ define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$mysql = MySQLiEngine::new(PATH_ROOT . '/resources/INI/mysqli.ini')->connect();
+$mysql = MySQLiEngine::new(PATH_ROOT . '/resources/dsn/ini/mysqli.ini')->connect();
 
 var_dump($mysql);

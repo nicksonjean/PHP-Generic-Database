@@ -58,8 +58,8 @@ $connection = Fluent::nativeOCI(
 ```
 
 ```php
-// Create a new database connection using FBird/IBase engine for Firebird/Interbase dialects in the fluent methods format
-$connection = Fluent::nativeFBird(
+// Create a new database connection using Firebird/Interbase engine for Firebird/Interbase dialects in the fluent methods format
+$connection = Fluent::nativeFirebird(
     env: $_ENV,
     persistent: true,
     strategy: true
@@ -120,7 +120,7 @@ $connection = Fluent::pdoOCI(
 ```
 
 ```php
-// Create a new database connection using PDO FBird/IBase engine for Firebird/Interbase dialects in the fluent methods format
+// Create a new database connection using PDO Firebird/Interbase engine for Firebird/Interbase dialects in the fluent methods format
 $connection = Fluent::pdoFirebird(
     env: $_ENV,
     persistent: true,

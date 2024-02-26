@@ -15,7 +15,7 @@ use GenericDatabase\Engine\MySQli\MySQL;
 use GenericDatabase\Engine\PgSQL\PgSQL;
 use GenericDatabase\Engine\SQLSrv\SQLSrv;
 use GenericDatabase\Engine\OCI\OCI;
-use GenericDatabase\Engine\FBird\FBird;
+use GenericDatabase\Engine\Firebird\Firebird;
 use GenericDatabase\Engine\SQLite\SQLite;
 use PDO;
 
@@ -113,18 +113,18 @@ $connection = Connection::new([
 ```
 
 ```php
-// Create a new database connection using FBird/IBase engine for Firebird/Interbase dialects in the static array format
+// Create a new database connection using Firebird/Interbase engine for Firebird/Interbase dialects in the static array format
 $connection = Connection::new([
-    'engine' => 'fbird',
-    'host' => $_ENV['FBIRD_HOST'],
-    'port' => (int)$_ENV['FBIRD_PORT'],
-    'database' => $_ENV['FBIRD_DATABASE'],
-    'user' => $_ENV['FBIRD_USER'],
-    'password' => $_ENV['FBIRD_PASSWORD'],
+    'engine' => 'firebird',
+    'host' => $_ENV['FIREBIRD_HOST'],
+    'port' => (int)$_ENV['FIREBIRD_PORT'],
+    'database' => $_ENV['FIREBIRD_DATABASE'],
+    'user' => $_ENV['FIREBIRD_USER'],
+    'password' => $_ENV['FIREBIRD_PASSWORD'],
     'charset' => 'utf8',
     'options' => [
-        FBird::ATTR_PERSISTENT => true,
-        FBird::ATTR_CONNECT_TIMEOUT => 28800,
+        Firebird::ATTR_PERSISTENT => true,
+        Firebird::ATTR_CONNECT_TIMEOUT => 28800,
     ],
     'exception' => true
 ])
@@ -232,7 +232,7 @@ $connection = Connection::new([
 ```
 
 ```php
-// Create a new database connection using PDO OCI engine in the static array format
+// Create a new database connection using PDO ORACLE engine in the static array format
 $connection = Connection::new([
     'engine' => 'pdo',
     'driver' => 'oci',
@@ -253,15 +253,15 @@ $connection = Connection::new([
 ```
 
 ```php
-// Create a new database connection using PDO FBird/IBase engine for Firebird/Interbase dialects in the static array format
+// Create a new database connection using PDO Firebird/Interbase engine for Firebird/Interbase dialects in the static array format
 $connection = Connection::new([
     'engine' => 'pdo',
     'driver' => 'firebird',
-    'host' => $_ENV['FBIRD_HOST'],
-    'port' => (int)$_ENV['FBIRD_PORT'],
-    'database' => $_ENV['FBIRD_DATABASE'],
-    'user' => $_ENV['FBIRD_USER'],
-    'password' => $_ENV['FBIRD_PASSWORD'],
+    'host' => $_ENV['FIREBIRD_HOST'],
+    'port' => (int)$_ENV['FIREBIRD_PORT'],
+    'database' => $_ENV['FIREBIRD_DATABASE'],
+    'user' => $_ENV['FIREBIRD_USER'],
+    'password' => $_ENV['FIREBIRD_PASSWORD'],
     'charset' => 'utf8',
     'options' => [
         PDO::ATTR_PERSISTENT => true,

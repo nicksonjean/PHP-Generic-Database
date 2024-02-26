@@ -117,5 +117,8 @@
         "post-update-cmd": [
             "@run:env"
         ]
+    },
+    "require": {
+        "amphp/windows-registry": "1.x-dev"
     }
 }

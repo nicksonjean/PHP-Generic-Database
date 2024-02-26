@@ -58,8 +58,8 @@ $connection = StaticArray::nativeOCI(
 ```
 
 ```php
-// Create a new database connection using FBird/IBase engine for Firebird/Interbase dialects in the static array methods format
-$connection = StaticArray::nativeFBird(
+// Create a new database connection using Firebird/Interbase engine for Firebird/Interbase dialects in the static array methods format
+$connection = StaticArray::nativeFirebird(
     env: $_ENV,
     persistent: true,
     strategy: true
@@ -120,7 +120,7 @@ $connection = StaticArray::pdoOCI(
 ```
 
 ```php
-// Create a new database connection using PDO FBird/IBase engine for Firebird/Interbase dialects in the static array methods format
+// Create a new database connection using PDO Firebird/Interbase engine for Firebird/Interbase dialects in the static array methods format
 $connection = StaticArray::pdoFirebird(
     env: $_ENV,
     persistent: true,

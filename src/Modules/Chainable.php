@@ -9,13 +9,13 @@ use GenericDatabase\Engine\MySQLiEngine;
 use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Engine\OCIEngine;
-use GenericDatabase\Engine\FBirdEngine;
+use GenericDatabase\Engine\FirebirdEngine;
 use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Engine\MySQLi\MySQL;
 use GenericDatabase\Engine\PgSQL\PgSQL;
 use GenericDatabase\Engine\SQLSrv\SQLSrv;
 use GenericDatabase\Engine\OCI\OCI;
-use GenericDatabase\Engine\FBird\FBird;
+use GenericDatabase\Engine\Firebird\Firebird;
 use GenericDatabase\Engine\SQLite\SQLite;
 use GenericDatabase\Engine\PDOEngine;
 use PDO;
@@ -147,28 +147,28 @@ class Chainable
     }
 
     /**
-     * @return Connection|FBirdEngine
+     * @return Connection|FirebirdEngine
      */
-    public static function nativeFBird(
+    public static function nativeFirebird(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|FBirdEngine {
+    ): Connection|FirebirdEngine {
         if ($strategy) {
             $instance = new Connection();
-            $instance->setEngine('fbird');
+            $instance->setEngine('firebird');
         } else {
-            $instance = new FBirdEngine();
+            $instance = new FirebirdEngine();
         }
-        $instance->setHost($env['FBIRD_HOST'])
-            ->setPort((int)$env['FBIRD_PORT'])
-            ->setDatabase($env['FBIRD_DATABASE'])
-            ->setUser($env['FBIRD_USER'])
-            ->setPassword($env['FBIRD_PASSWORD'])
-            ->setCharset($env['FBIRD_CHARSET'])
+        $instance->setHost($env['FIREBIRD_HOST'])
+            ->setPort((int)$env['FIREBIRD_PORT'])
+            ->setDatabase($env['FIREBIRD_DATABASE'])
+            ->setUser($env['FIREBIRD_USER'])
+            ->setPassword($env['FIREBIRD_PASSWORD'])
+            ->setCharset($env['FIREBIRD_CHARSET'])
             ->setOptions([
-                FBird::ATTR_PERSISTENT => $persistent,
-                FBird::ATTR_CONNECT_TIMEOUT => 28800,
+                Firebird::ATTR_PERSISTENT => $persistent,
+                Firebird::ATTR_CONNECT_TIMEOUT => 28800,
             ])
             ->setException(true);
 
@@ -370,12 +370,12 @@ class Chainable
             $instance = new PDOEngine();
         }
         $instance->setDriver('firebird')
-            ->setHost($env['FBIRD_HOST'])
-            ->setPort((int)$env['FBIRD_PORT'])
-            ->setDatabase($env['FBIRD_DATABASE'])
-            ->setUser($env['FBIRD_USER'])
-            ->setPassword($env['FBIRD_PASSWORD'])
-            ->setCharset($env['FBIRD_CHARSET'])
+            ->setHost($env['FIREBIRD_HOST'])
+            ->setPort((int)$env['FIREBIRD_PORT'])
+            ->setDatabase($env['FIREBIRD_DATABASE'])
+            ->setUser($env['FIREBIRD_USER'])
+            ->setPassword($env['FIREBIRD_PASSWORD'])
+            ->setCharset($env['FIREBIRD_CHARSET'])
             ->setOptions([
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,

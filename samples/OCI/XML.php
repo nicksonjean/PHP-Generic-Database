@@ -6,6 +6,6 @@ define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$oci = OCIEngine::new(PATH_ROOT . '/resources/XML/oci.xml')->connect();
+$oci = OCIEngine::new(PATH_ROOT . '/resources/dsn/xml/oci.xml')->connect();
 
 var_dump($oci);
