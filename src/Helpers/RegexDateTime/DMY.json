@@ -1,30 +1,30 @@
 [
     [
-        "d~DS~m~DS~Y~DTS~H~TS~i~TS~s~MTS~A",
-        "dd~DS~MM~DS~yyyy~DTS~HH~TS~mm~TS~ss~MTS~tt"
+        "d~DSP~m~DSP~Y~DTSP~H~TSP~i~TSP~s~MSP~A",
+        "dd~DSP~MM~DSP~yyyy~DTSP~HH~TSP~mm~TSP~ss~MSP~tt"
     ],
     [
-        "d~DS~m~DS~Y~DTS~H~TS~i~TS~s~TTS~P",
-        "dd~DS~MM~DS~yyyy~DTS~HH~TS~mm~TS~s~TTS~zzz"
+        "d~DSP~m~DSP~Y~DTSP~H~TSP~i~TSP~s~TZSP~P",
+        "dd~DSP~MM~DSP~yyyy~DTSP~HH~TSP~mm~TSP~s~TZSP~zzz"
     ],
     [
-        "d~DS~m~DS~Y~DTS~H~TS~i~TS~s",
-        "dd~DS~MM~DS~yyyy~DTS~HH~TS~mm~TS~ss"
+        "d~DSP~m~DSP~Y~DTSP~H~TSP~i~TSP~s",
+        "dd~DSP~MM~DSP~yyyy~DTSP~HH~TSP~mm~TSP~ss"
     ],
     [
-        "d~DS~m~DS~Y~DTS~H~TS~i~MTS~A",
-        "dd~DS~MM~DS~yyyy~DTS~HH~TS~mm~MTS~tt"
+        "d~DSP~m~DSP~Y~DTSP~H~TSP~i~MSP~A",
+        "dd~DSP~MM~DSP~yyyy~DTSP~HH~TSP~mm~MSP~tt"
     ],
     [
-        "d~DS~m~DS~Y~DTS~H~TS~i~TTS~P",
-        "dd~DS~MM~DS~yyyy~DTS~HH~TS~mm~TTS~zzz"
+        "d~DSP~m~DSP~Y~DTSP~H~TSP~i~TZSP~P",
+        "dd~DSP~MM~DSP~yyyy~DTSP~HH~TSP~mm~TZSP~zzz"
     ],
     [
-        "d~DS~m~DS~Y~DTS~H~TS~i",
-        "dd~DS~MM~DS~yyyy~DTS~HH~TS~mm"
+        "d~DSP~m~DSP~Y~DTSP~H~TSP~i",
+        "dd~DSP~MM~DSP~yyyy~DTSP~HH~TSP~mm"
     ],
     [
-        "d~DS~m~DS~Y",
-        "dd~DS~MM~DS~yyyy"
+        "d~DSP~m~DSP~Y",
+        "dd~DSP~MM~DSP~yyyy"
     ]
 ]

@@ -211,10 +211,11 @@ class RegexDateTime
      */
     private static function regexYDM(): string
     {
-        return '^(?:' . self::YEAR . self::YEAR_SEPARATOR . '?' . '(?:(?:(?:' . self::DAYS_31 . self::DAYS_31_SEPARATOR .
-            '?' . self::MONTHS_31 . ')|(?:' . self::DAYS_30 . self::DAYS_30_SEPARATOR . '?' . self::MONTHS_30 . ')|(?:' .
-            self::DAYS_28 . self::DAYS_28_SEPARATOR . '?' . self::MONTHS_28 . ')))|(?:' . self::LEAP_YEAR .
-            self::LEAP_YEAR_SEPARATOR . '?' . self::LEAP_DAY . self::LEAP_DAY_SEPARATOR . '?' . self::LEAP_MONTH . '))$';
+        return '^(?:' . self::YEAR . self::YEAR_SEPARATOR . '?' . '(?:(?:(?:' . self::DAYS_31 .
+            self::DAYS_31_SEPARATOR . '?' . self::MONTHS_31 . ')|(?:' . self::DAYS_30 . self::DAYS_30_SEPARATOR . '?' .
+            self::MONTHS_30 . ')|(?:' . self::DAYS_28 . self::DAYS_28_SEPARATOR . '?' . self::MONTHS_28 . ')))|(?:' .
+            self::LEAP_YEAR . self::LEAP_YEAR_SEPARATOR . '?' . self::LEAP_DAY . self::LEAP_DAY_SEPARATOR . '?' .
+            self::LEAP_MONTH . '))$';
     }
 
     /**
@@ -224,10 +225,11 @@ class RegexDateTime
      */
     private static function regexYMD(): string
     {
-        return '^(?:' . self::YEAR . self::YEAR_SEPARATOR . '?' . '(?:(?:(?:' . self::MONTHS_31 . self::MONTHS_31_SEPARATOR
-            . '?' . self::DAYS_31 . ')|(?:' . self::MONTHS_30 . self::MONTHS_30_SEPARATOR . '?' . self::DAYS_30 . ')|(?:' .
-            self::MONTHS_28 . self::MONTHS_28_SEPARATOR . '?' . self::DAYS_28 . ')))|(?:' . self::LEAP_YEAR .
-            self::LEAP_YEAR_SEPARATOR . '?' . self::LEAP_MONTH . self::LEAP_MONTH_SEPARATOR . '?' . self::LEAP_DAY . '))$';
+        return '^(?:' . self::YEAR . self::YEAR_SEPARATOR . '?' . '(?:(?:(?:' . self::MONTHS_31 .
+            self::MONTHS_31_SEPARATOR . '?' . self::DAYS_31 . ')|(?:' . self::MONTHS_30 . self::MONTHS_30_SEPARATOR .
+            '?' . self::DAYS_30 . ')|(?:' . self::MONTHS_28 . self::MONTHS_28_SEPARATOR . '?' . self::DAYS_28 .
+            ')))|(?:' . self::LEAP_YEAR . self::LEAP_YEAR_SEPARATOR . '?' . self::LEAP_MONTH .
+            self::LEAP_MONTH_SEPARATOR . '?' . self::LEAP_DAY . '))$';
     }
 
     /**
@@ -237,10 +239,11 @@ class RegexDateTime
      */
     private static function regexMDY(): string
     {
-        return '^(?:(?:(?:' . self::MONTHS_31 . self::MONTHS_31_SEPARATOR . '?' . self::DAYS_31 . ')|(?:' . self::MONTHS_30
-            . self::MONTHS_30_SEPARATOR . '?' . self::DAYS_30 . ')|(?:' . self::MONTHS_28 . self::MONTHS_28_SEPARATOR . '?' .
-            self::DAYS_28 . '))' . self::DAYS_28_SEPARATOR . '?' . self::YEAR . '|(?:(?:' . self::LEAP_MONTH .
-            self::LEAP_MONTH_SEPARATOR . '?' . self::LEAP_DAY . self::LEAP_DAY_SEPARATOR . '?' . self::LEAP_YEAR . ')))$';
+        return '^(?:(?:(?:' . self::MONTHS_31 . self::MONTHS_31_SEPARATOR . '?' . self::DAYS_31 . ')|(?:' .
+            self::MONTHS_30 . self::MONTHS_30_SEPARATOR . '?' . self::DAYS_30 . ')|(?:' . self::MONTHS_28 .
+            self::MONTHS_28_SEPARATOR . '?' . self::DAYS_28 . '))' . self::DAYS_28_SEPARATOR . '?' . self::YEAR .
+            '|(?:(?:' . self::LEAP_MONTH . self::LEAP_MONTH_SEPARATOR . '?' . self::LEAP_DAY .
+            self::LEAP_DAY_SEPARATOR . '?' . self::LEAP_YEAR . ')))$';
     }
 
     /**
@@ -250,16 +253,18 @@ class RegexDateTime
      */
     private static function regexDMY(): string
     {
-        return '^(?:(?:(?:' . self::DAYS_31 . self::DAYS_31_SEPARATOR . '?' . self::MONTHS_31 . ')|(?:' . self::DAYS_30 .
-            self::DAYS_30_SEPARATOR . '?' . self::MONTHS_30 . ')|(?:' . self::DAYS_28 . self::DAYS_28_SEPARATOR . '?' .
-            self::MONTHS_28 . '))' . self::MONTHS_28_SEPARATOR . '?' . self::YEAR . '|(?:(?:' . self::LEAP_DAY .
-            self::LEAP_DAY_SEPARATOR . '?' . self::LEAP_MONTH . self::LEAP_MONTH_SEPARATOR . '?' . self::LEAP_YEAR . ')))$';
+        return '^(?:(?:(?:' . self::DAYS_31 . self::DAYS_31_SEPARATOR . '?' . self::MONTHS_31 . ')|(?:' .
+            self::DAYS_30 . self::DAYS_30_SEPARATOR . '?' . self::MONTHS_30 . ')|(?:' . self::DAYS_28 .
+            self::DAYS_28_SEPARATOR . '?' . self::MONTHS_28 . '))' . self::MONTHS_28_SEPARATOR . '?' . self::YEAR .
+            '|(?:(?:' . self::LEAP_DAY . self::LEAP_DAY_SEPARATOR . '?' . self::LEAP_MONTH .
+            self::LEAP_MONTH_SEPARATOR . '?' . self::LEAP_YEAR . ')))$';
     }
 
     /**
      * Get the date and time regular expression pattern.
      *
      * @return string The date and time regular expression pattern.
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private static function regexYDMHMS(): string
     {
@@ -274,6 +279,7 @@ class RegexDateTime
      * Get the date and time regular expression pattern.
      *
      * @return string The date and time regular expression pattern.
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private static function regexYMDHMS(): string
     {
@@ -288,6 +294,7 @@ class RegexDateTime
      * Get the date and time regular expression pattern.
      *
      * @return string The date and time regular expression pattern.
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private static function regexMDYHMS(): string
     {
@@ -302,6 +309,7 @@ class RegexDateTime
      * Get the date and time regular expression pattern.
      *
      * @return string The date and time regular expression pattern.
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private static function regexDMYHMS(): string
     {
@@ -354,11 +362,11 @@ class RegexDateTime
         return [
             'flatInputData' => $flatInputData,
             'format' => self::getSeparators(['format'], $flatInputData),
-            'ds' => self::getSeparators(['date_separator'], $flatInputData),
-            'ts' => self::getSeparators(['time_separator'], $flatInputData),
-            'dts' => self::getSeparators(['date_time_separator'], $flatInputData),
-            'mts' => self::getSeparators(['meridiem_separator'], $flatInputData),
-            'tts' => self::getSeparators(['timezone_separator'], $flatInputData),
+            'dsp' => self::getSeparators(['date_separator'], $flatInputData),
+            'tsp' => self::getSeparators(['time_separator'], $flatInputData),
+            'dtsp' => self::getSeparators(['date_time_separator'], $flatInputData),
+            'msp' => self::getSeparators(['meridiem_separator'], $flatInputData),
+            'tzsp' => self::getSeparators(['timezone_separator'], $flatInputData),
         ];
     }
 
@@ -373,13 +381,13 @@ class RegexDateTime
         $input = array_keys($inputData)[0];
         list(
             'format' => $format,
-            'ds' => $ds,
-            'ts' => $ts,
-            'dts' => $dts,
-            'mts' => $mts,
-            'tts' => $tts
+            'dsp' => $dsp,
+            'tsp' => $tsp,
+            'dtsp' => $dtspp,
+            'msp' => $msp,
+            'tzsp' => $tzsp
         ) = self::setSeparators($inputData);
-        return self::buildMask($input, $format, $ds, $ts, $dts, $mts, $tts);
+        return self::buildMask($input, $format, $dsp, $tsp, $dtspp, $msp, $tzsp);
     }
 
     /**
@@ -387,60 +395,73 @@ class RegexDateTime
      *
      * @param string $input
      * @param string $format
-     * @param string|null $ds
-     * @param string|null $ts
-     * @param string|null $dts
-     * @param string|null $mts
-     * @param string|null $tts
+     * @param string|null $dsp
+     * @param string|null $tsp
+     * @param string|null $dtspp
+     * @param string|null $msp
+     * @param string|null $tzsp
      * @return string
      */
     private static function buildMask(
         string $input,
         string $format,
-        ?string $ds,
-        ?string $ts,
-        ?string $dts,
-        ?string $mts,
-        ?string $tts
+        ?string $dsp,
+        ?string $tsp,
+        ?string $dtspp,
+        ?string $msp,
+        ?string $tzsp
     ): string {
         $length = strlen($input);
         return match (true) {
-            $length === 5  && !$dts && !$mts && !$tts => self::buildTimeMask($format, $ts),
-            $length === 8  && !$dts &&  $mts && !$tts => self::buildTimeWithMeridiemMask($format, $ts, $mts),
-            $length === 12 && !$dts && !$mts &&  $tts => self::buildTimeWithTimespanMask($format, $ts, $tts),
-            $length === 8  && !$dts && !$mts && !$tts => self::buildTimeWithSecondsMask($format, $ts),
-            $length === 11 && !$dts &&  $mts && !$tts => self::buildTimeWithSecondsAndMeridiemMask($format, $ts, $mts),
-            $length === 15 && !$dts && !$mts &&  $tts => self::buildTimeWithSecondsAndTimespanMask($format, $ts, $tts),
-            $length === 10 && !$dts && !$mts && !$tts => self::buildDateMask($format, $ds),
-            $length === 16 &&  $dts && !$mts && !$tts => self::buildDateTimeMask($format, $ds, $ts, $dts),
-            $length === 19 &&  $dts &&  $mts && !$tts => self::buildDateTimeWithSecondsWithMeridiemMask(
+            $length === 5  && !$dtspp && !$msp && !$tzsp => self::buildTimeMask($format, $tsp),
+            $length === 8  && !$dtspp &&  $msp && !$tzsp => self::buildTimeWithMeridiemMask($format, $tsp, $msp),
+            $length === 12 && !$dtspp && !$msp &&  $tzsp => self::buildTimeWithTimespanMask($format, $tsp, $tzsp),
+            $length === 8  && !$dtspp && !$msp && !$tzsp => self::buildTimeWithSecondsMask($format, $tsp),
+            $length === 11 && !$dtspp &&  $msp && !$tzsp => self::buildTimeWithSecondsAndMeridiemMask(
                 $format,
-                $ds,
-                $ts,
-                $dts,
-                $mts
+                $tsp,
+                $msp
             ),
-            $length === 19 && $dts && !$mts && !$tts => self::buildDateTimeWithSecondsMask($format, $ds, $ts, $dts),
-            $length === 23 && $dts && !$mts && !$tts => self::buildDateTimeWithTimespanMask(
+            $length === 15 && !$dtspp && !$msp &&  $tzsp => self::buildTimeWithSecondsAndTimespanMask(
                 $format,
-                $ds,
-                $ts,
-                $dts,
-                $tts
+                $tsp,
+                $tzsp
             ),
-            $length === 22 && $dts && $mts && !$tts => self::buildDateTimeWithSecondsAndMeridiemMask(
+            $length === 10 && !$dtspp && !$msp && !$tzsp => self::buildDateMask($format, $dsp),
+            $length === 16 &&  $dtspp && !$msp && !$tzsp => self::buildDateTimeMask($format, $dsp, $tsp, $dtspp),
+            $length === 19 &&  $dtspp &&  $msp && !$tzsp => self::buildDateTimeWithSecondsWithMeridiemMask(
                 $format,
-                $ds,
-                $ts,
-                $dts,
-                $mts
+                $dsp,
+                $tsp,
+                $dtspp,
+                $msp
             ),
-            $length === 26 && $dts && !$mts && $tts => self::buildDateTimeWithSecondsAndTimespanMask(
+            $length === 19 && $dtspp && !$msp && !$tzsp => self::buildDateTimeWithSecondsMask(
                 $format,
-                $ds,
-                $ts,
-                $dts,
-                $tts
+                $dsp,
+                $tsp,
+                $dtspp
+            ),
+            $length === 23 && $dtspp && !$msp && !$tzsp => self::buildDateTimeWithTimespanMask(
+                $format,
+                $dsp,
+                $tsp,
+                $dtspp,
+                $tzsp
+            ),
+            $length === 22 && $dtspp && $msp && !$tzsp => self::buildDateTimeWithSecondsAndMeridiemMask(
+                $format,
+                $dsp,
+                $tsp,
+                $dtspp,
+                $msp
+            ),
+            $length === 26 && $dtspp && !$msp && $tzsp => self::buildDateTimeWithSecondsAndTimespanMask(
+                $format,
+                $dsp,
+                $tsp,
+                $dtspp,
+                $tzsp
             ),
             default => '',
         };
@@ -450,13 +471,13 @@ class RegexDateTime
      * Builds the time mask based on the format and time separator.
      *
      * @param string $format
-     * @param string $ts
+     * @param string $tsp
      * @return string
      */
-    private static function buildTimeMask(string $format, string $ts): string
+    private static function buildTimeMask(string $format, string $tsp): string
     {
         return match ($format) {
-            'hms' => "H{$ts}i",
+            'hms' => "H{$tsp}i",
             default => '',
         };
     }
@@ -465,14 +486,14 @@ class RegexDateTime
      * Builds the time mask with meridiem based on the format, time separator, and meridiem separator.
      *
      * @param string $format
-     * @param string $ts
-     * @param string|null $mts
+     * @param string $tsp
+     * @param string|null $msp
      * @return string
      */
-    private static function buildTimeWithMeridiemMask(string $format, string $ts, ?string $mts): string
+    private static function buildTimeWithMeridiemMask(string $format, string $tsp, ?string $msp): string
     {
         return match ($format) {
-            'hms' => "H{$ts}i{$mts}A",
+            'hms' => "H{$tsp}i{$msp}A",
             default => '',
         };
     }
@@ -481,14 +502,14 @@ class RegexDateTime
      * Builds the time mask with timespan based on the format, time separator, and timespan separator.
      *
      * @param string $format
-     * @param string $ts
-     * @param string $tts
+     * @param string $tsp
+     * @param string $tzsp
      * @return string
      */
-    private static function buildTimeWithTimespanMask(string $format, string $ts, string $tts): string
+    private static function buildTimeWithTimespanMask(string $format, string $tsp, string $tzsp): string
     {
         return match ($format) {
-            'hms' => "H{$ts}i{$tts}P",
+            'hms' => "H{$tsp}i{$tzsp}P",
             default => '',
         };
     }
@@ -497,13 +518,13 @@ class RegexDateTime
      * Builds the time mask with seconds based on the format and time separator.
      *
      * @param string $format
-     * @param string $ts
+     * @param string $tsp
      * @return string
      */
-    private static function buildTimeWithSecondsMask(string $format, string $ts): string
+    private static function buildTimeWithSecondsMask(string $format, string $tsp): string
     {
         return match ($format) {
-            'hms' => "H{$ts}i{$ts}s",
+            'hms' => "H{$tsp}i{$tsp}s",
             default => '',
         };
     }
@@ -512,14 +533,14 @@ class RegexDateTime
      * Builds the time mask with seconds and meridiem based on the format, time separator, and meridiem separator.
      *
      * @param string $format
-     * @param string $ts
-     * @param string|null $mts
+     * @param string $tsp
+     * @param string|null $msp
      * @return string
      */
-    private static function buildTimeWithSecondsAndMeridiemMask(string $format, string $ts, ?string $mts): string
+    private static function buildTimeWithSecondsAndMeridiemMask(string $format, string $tsp, ?string $msp): string
     {
         return match ($format) {
-            'hms' => "H{$ts}i{$ts}s{$mts}A",
+            'hms' => "H{$tsp}i{$tsp}s{$msp}A",
             default => '',
         };
     }
@@ -528,14 +549,14 @@ class RegexDateTime
      * Builds the time mask with seconds and timespan based on the format, time separator, and timespan separator.
      *
      * @param string $format
-     * @param string $ts
-     * @param string $tts
+     * @param string $tsp
+     * @param string $tzsp
      * @return string
      */
-    private static function buildTimeWithSecondsAndTimespanMask(string $format, string $ts, string $tts): string
+    private static function buildTimeWithSecondsAndTimespanMask(string $format, string $tsp, string $tzsp): string
     {
         return match ($format) {
-            'hms' => "H{$ts}i{$ts}s{$tts}P",
+            'hms' => "H{$tsp}i{$tsp}s{$tzsp}P",
             default => '',
         };
     }
@@ -544,16 +565,16 @@ class RegexDateTime
      * Builds the date mask based on the format and date separator.
      *
      * @param string $format
-     * @param string $ds
+     * @param string $dsp
      * @return string
      */
-    private static function buildDateMask(string $format, string $ds): string
+    private static function buildDateMask(string $format, string $dsp): string
     {
         return match ($format) {
-            'ymd' => "Y{$ds}m{$ds}d",
-            'ydm' => "Y{$ds}d{$ds}m",
-            'dmy' => "d{$ds}m{$ds}Y",
-            'mdy' => "m{$ds}d{$ds}Y",
+            'ymd' => "Y{$dsp}m{$dsp}d",
+            'ydm' => "Y{$dsp}d{$dsp}m",
+            'dmy' => "d{$dsp}m{$dsp}Y",
+            'mdy' => "m{$dsp}d{$dsp}Y",
             default => '',
         };
     }
@@ -562,18 +583,18 @@ class RegexDateTime
      * Builds the date-time mask based on the format, date separator, time separator, and date-time separator.
      *
      * @param string $format
-     * @param string $ds
-     * @param string $ts
-     * @param string $dts
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
      * @return string
      */
-    private static function buildDateTimeMask(string $format, string $ds, string $ts, string $dts): string
+    private static function buildDateTimeMask(string $format, string $dsp, string $tsp, string $dtsp): string
     {
         return match ($format) {
-            'ymd' => "Y{$ds}m{$ds}d{$dts}H{$ts}i",
-            'ydm' => "Y{$ds}d{$ds}m{$dts}H{$ts}i",
-            'dmy' => "d{$ds}m{$ds}Y{$dts}H{$ts}i",
-            'mdy' => "m{$ds}d{$ds}Y{$dts}H{$ts}i",
+            'ymd' => "Y{$dsp}m{$dsp}d{$dtsp}H{$tsp}i",
+            'ydm' => "Y{$dsp}d{$dsp}m{$dtsp}H{$tsp}i",
+            'dmy' => "d{$dsp}m{$dsp}Y{$dtsp}H{$tsp}i",
+            'mdy' => "m{$dsp}d{$dsp}Y{$dtsp}H{$tsp}i",
             default => '',
         };
     }
@@ -583,24 +604,24 @@ class RegexDateTime
      * date-time separator, and meridiem separator.
      *
      * @param string $format
-     * @param string $ds
-     * @param string $ts
-     * @param string $dts
-     * @param string|null $mts
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
+     * @param string|null $msp
      * @return string
      */
     private static function buildDateTimeWithSecondsWithMeridiemMask(
         string $format,
-        string $ds,
-        string $ts,
-        string $dts,
-        ?string $mts
+        string $dsp,
+        string $tsp,
+        string $dtsp,
+        ?string $msp
     ): string {
         return match ($format) {
-            'ymd' => "Y{$ds}m{$ds}d{$dts}H{$ts}i{$mts}A",
-            'ydm' => "Y{$ds}d{$ds}m{$dts}H{$ts}i{$mts}A",
-            'dmy' => "d{$ds}m{$ds}Y{$dts}H{$ts}i{$mts}A",
-            'mdy' => "m{$ds}d{$ds}Y{$dts}H{$ts}i{$mts}A",
+            'ymd' => "Y{$dsp}m{$dsp}d{$dtsp}H{$tsp}i{$msp}A",
+            'ydm' => "Y{$dsp}d{$dsp}m{$dtsp}H{$tsp}i{$msp}A",
+            'dmy' => "d{$dsp}m{$dsp}Y{$dtsp}H{$tsp}i{$msp}A",
+            'mdy' => "m{$dsp}d{$dsp}Y{$dtsp}H{$tsp}i{$msp}A",
             default => '',
         };
     }
@@ -610,24 +631,24 @@ class RegexDateTime
      * date-time separator, and meridiem separator.
      *
      * @param string $format
-     * @param string $ds
-     * @param string $ts
-     * @param string $dts
-     * @param string|null $mts
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
+     * @param string|null $msp
      * @return string
      */
     private static function buildDateTimeWithSecondsAndMeridiemMask(
         string $format,
-        string $ds,
-        string $ts,
-        string $dts,
-        ?string $mts
+        string $dsp,
+        string $tsp,
+        string $dtsp,
+        ?string $msp
     ): string {
         return match ($format) {
-            'ymd' => "Y{$ds}m{$ds}d{$dts}H{$ts}i{$ts}s{$mts}A",
-            'ydm' => "Y{$ds}d{$ds}m{$dts}H{$ts}i{$ts}s{$mts}A",
-            'dmy' => "d{$ds}m{$ds}Y{$dts}H{$ts}i{$ts}s{$mts}A",
-            'mdy' => "m{$ds}d{$ds}Y{$dts}H{$ts}i{$ts}s{$mts}A",
+            'ymd' => "Y{$dsp}m{$dsp}d{$dtsp}H{$tsp}i{$tsp}s{$msp}A",
+            'ydm' => "Y{$dsp}d{$dsp}m{$dtsp}H{$tsp}i{$tsp}s{$msp}A",
+            'dmy' => "d{$dsp}m{$dsp}Y{$dtsp}H{$tsp}i{$tsp}s{$msp}A",
+            'mdy' => "m{$dsp}d{$dsp}Y{$dtsp}H{$tsp}i{$tsp}s{$msp}A",
             default => '',
         };
     }
@@ -637,18 +658,18 @@ class RegexDateTime
      * separator.
      *
      * @param string $format
-     * @param string $ds
-     * @param string $ts
-     * @param string $dts
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
      * @return string
      */
-    private static function buildDateTimeWithSecondsMask(string $format, string $ds, string $ts, string $dts): string
+    private static function buildDateTimeWithSecondsMask(string $format, string $dsp, string $tsp, string $dtsp): string
     {
         return match ($format) {
-            'ymd' => "Y{$ds}m{$ds}d{$dts}H{$ts}i{$ts}s",
-            'ydm' => "Y{$ds}d{$ds}m{$dts}H{$ts}i{$ts}s",
-            'dmy' => "d{$ds}m{$ds}Y{$dts}H{$ts}i{$ts}s",
-            'mdy' => "m{$ds}d{$ds}Y{$dts}H{$ts}i{$ts}s",
+            'ymd' => "Y{$dsp}m{$dsp}d{$dtsp}H{$tsp}i{$tsp}s",
+            'ydm' => "Y{$dsp}d{$dsp}m{$dtsp}H{$tsp}i{$tsp}s",
+            'dmy' => "d{$dsp}m{$dsp}Y{$dtsp}H{$tsp}i{$tsp}s",
+            'mdy' => "m{$dsp}d{$dsp}Y{$dtsp}H{$tsp}i{$tsp}s",
             default => '',
         };
     }
@@ -657,24 +678,24 @@ class RegexDateTime
      * separator, and timespan separator.
      *
      * @param string $format
-     * @param string $ds
-     * @param string $ts
-     * @param string $dts
-     * @param string $tts
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
+     * @param string $tzsp
      * @return string
      */
     private static function buildDateTimeWithTimespanMask(
         string $format,
-        string $ds,
-        string $ts,
-        string $dts,
-        string $tts
+        string $dsp,
+        string $tsp,
+        string $dtsp,
+        string $tzsp
     ): string {
         return match ($format) {
-            'ymd' => "Y{$ds}m{$ds}d{$dts}H{$ts}i{$tts}P",
-            'ydm' => "Y{$ds}d{$ds}m{$dts}H{$ts}i{$tts}P",
-            'dmy' => "d{$ds}m{$ds}Y{$dts}H{$ts}i{$tts}P",
-            'mdy' => "m{$ds}d{$ds}Y{$dts}H{$ts}i{$tts}P",
+            'ymd' => "Y{$dsp}m{$dsp}d{$dtsp}H{$tsp}i{$tzsp}P",
+            'ydm' => "Y{$dsp}d{$dsp}m{$dtsp}H{$tsp}i{$tzsp}P",
+            'dmy' => "d{$dsp}m{$dsp}Y{$dtsp}H{$tsp}i{$tzsp}P",
+            'mdy' => "m{$dsp}d{$dsp}Y{$dtsp}H{$tsp}i{$tzsp}P",
             default => '',
         };
     }
@@ -684,24 +705,24 @@ class RegexDateTime
      * date-time separator, and timespan separator.
      *
      * @param string $format
-     * @param string $ds
-     * @param string $ts
-     * @param string $dts
-     * @param string|null $tts
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
+     * @param string|null $tzsp
      * @return string
      */
     private static function buildDateTimeWithSecondsAndTimespanMask(
         string $format,
-        string $ds,
-        string $ts,
-        string $dts,
-        ?string $tts
+        string $dsp,
+        string $tsp,
+        string $dtsp,
+        ?string $tzsp
     ): string {
         return match ($format) {
-            'ymd' => "Y{$ds}m{$ds}d{$dts}H{$ts}i{$ts}s{$tts}P",
-            'ydm' => "Y{$ds}d{$ds}m{$dts}H{$ts}i{$ts}s{$tts}P",
-            'dmy' => "d{$ds}m{$ds}Y{$dts}H{$ts}i{$ts}s{$tts}P",
-            'mdy' => "m{$ds}d{$ds}Y{$dts}H{$ts}i{$ts}s{$tts}P",
+            'ymd' => "Y{$dsp}m{$dsp}d{$dtsp}H{$tsp}i{$tsp}s{$tzsp}P",
+            'ydm' => "Y{$dsp}d{$dsp}m{$dtsp}H{$tsp}i{$tsp}s{$tzsp}P",
+            'dmy' => "d{$dsp}m{$dsp}Y{$dtsp}H{$tsp}i{$tsp}s{$tzsp}P",
+            'mdy' => "m{$dsp}d{$dsp}Y{$dtsp}H{$tsp}i{$tsp}s{$tzsp}P",
             default => '',
         };
     }
@@ -716,11 +737,11 @@ class RegexDateTime
     {
         list(
             'flatInputData' => $flatInputData,
-            'ds' => $ds,
-            'ts' => $ts,
-            'dts' => $dts,
-            'mts' => $mts,
-            'tts' => $tts
+            'dsp' => $dsp,
+            'tsp' => $tsp,
+            'dtsp' => $dtsp,
+            'msp' => $msp,
+            'tzsp' => $tzsp
         ) = self::setSeparators($inputData);
         $json = __DIR__ .
             DIRECTORY_SEPARATOR .
@@ -730,8 +751,8 @@ class RegexDateTime
             '.json';
         self::$pattern = json_decode(
             str_replace(
-                ['~DS~', '~TS~', '~DTS~', '~MTS~', '~TTS~'],
-                [$ds, $ts, $dts, $mts, $tts],
+                ['~DSP~', '~TSP~', '~DTSP~', '~MSP~', '~TZSP~'],
+                [$dsp, $tsp, $dtsp, $msp, $tzsp],
                 file_get_contents($json)
             )
         );
