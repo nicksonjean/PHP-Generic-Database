@@ -500,7 +500,7 @@ final class RegexDateTimeTest extends TestCase
                 'time_separator' => ':',
                 'parsed' => [
                     'php_mask' => 'Y-d-m H:i:s P',
-                    'iso_mask' => 'yyyy-dd-MM HH:mm:s zzz',
+                    'iso_mask' => 'yyyy-dd-MM HH:mm:ss zzz',
                     'warnings' => [],
                     'year' => 2023,
                     'month' => 2,
