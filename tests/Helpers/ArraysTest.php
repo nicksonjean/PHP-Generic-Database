@@ -268,4 +268,48 @@ final class ArraysTest extends TestCase
 
         $this->assertEquals($expectedResult, $result);
     }
+
+    public function testGroupByStringKey()
+    {
+        $arr = [
+            ['name' => 'John', 'age' => 20],
+            ['name' => 'Mary', 'age' => 25],
+            ['name' => 'Bob', 'age' => 30],
+            ['name' => 'Alice', 'age' => 35],
+        ];
+
+        $expected = [
+            'John' => [['name' => 'John', 'age' => 20]],
+            'Mary' => [['name' => 'Mary', 'age' => 25]],
+            'Bob' => [['name' => 'Bob', 'age' => 30]],
+            'Alice' => [['name' => 'Alice', 'age' => 35]],
+        ];
+
+        $result = Arrays::arrayGroupBy($arr, 'name');
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGroupByCallableKey()
+    {
+        $arr = [
+            ['name' => 'John', 'age' => 20],
+            ['name' => 'Mary', 'age' => 25],
+            ['name' => 'Bob', 'age' => 30],
+            ['name' => 'Alice', 'age' => 35],
+        ];
+
+        $expected = [
+            20 => [['name' => 'John', 'age' => 20]],
+            25 => [['name' => 'Mary', 'age' => 25]],
+            30 => [['name' => 'Bob', 'age' => 30]],
+            35 => [['name' => 'Alice', 'age' => 35]],
+        ];
+
+        $result = Arrays::arrayGroupBy($arr, function ($item) {
+            return $item['age'];
+        });
+
+        $this->assertEquals($expected, $result);
+    }
 }

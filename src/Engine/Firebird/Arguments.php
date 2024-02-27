@@ -66,7 +66,9 @@ class Arguments
                         [self::setConstant(($format === 'json' || $format === 'yaml') ? $value : [$value])]
                     );
                 } else {
-                    call_user_func_array([FirebirdEngine::getInstance(), 'set' . ucfirst($key)], [self::setType($value)]);
+                    call_user_func_array([
+                        FirebirdEngine::getInstance(), 'set' . ucfirst($key)
+                    ], [self::setType($value)]);
                 }
             }
         }

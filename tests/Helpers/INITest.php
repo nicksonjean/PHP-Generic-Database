@@ -59,4 +59,33 @@ final class INITest extends TestCase
         $result = INI::parseINI($ini);
         $this->assertEquals(['name' => 'John Doe', 'organization' => 'Acme Widgets Inc.'], $result);
     }
+
+    public function testWithCustomParserWithIniValidIniFile()
+    {
+        $ini = 'tests/Helpers/Samples/ini/Valid.ini';
+        $result = INI::parseIniFile($ini);
+        $this->assertEquals(['owner' => ['name' => 'John Doe', 'organization' => 'Acme Widgets Inc.']], $result);
+    }
+
+    public function testWithCustomParserWithIniEmptyIniFile()
+    {
+        $ini = 'tests/Helpers/Samples/ini/EmptyLine.ini';
+        $result = INI::parseIniFile($ini);
+        $this->assertEquals([], $result);
+    }
+
+    public function testParseIniWithSectionButNoKeyValuePairs()
+    {
+        $filepath = 'tests/Helpers/Samples/ini/SectionOnly.ini';
+        $expectedResult = [];
+        $result = INI::parseIniFile($filepath);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testWithCustomParserWithACommentedIniEmptyIniFile()
+    {
+        $ini = 'tests/Helpers/Samples/ini/NoSection.ini';
+        $result = INI::parseIniFile($ini);
+        $this->assertEquals(['name' => 'John Doe', 'organization' => 'Acme Widgets Inc.'], $result);
+    }
 }

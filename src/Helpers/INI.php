@@ -84,8 +84,8 @@ class INI
                 continue;
             }
 
-            if (strpos($line, '=') !== false) {
-                list($key, $value) = explode('=', $line, 2);
+            if (str_contains($line, '=')) {
+                [$key, $value] = explode('=', $line, 2);
                 $key = trim($key);
                 $value = trim($value);
 

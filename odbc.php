@@ -569,7 +569,6 @@ if (extension_loaded('odbc')) {
 }
 
 // https://stackoverflow.com/questions/18556047/php-odbc-connect-to-access-mdb-file-another-server
-// https://stackoverflow.com/questions/63707927/how-to-connect-to-microsoft-access-database-from-another-computer-through-odbc-c
 // https://gist.github.com/treffynnon/294738
 // https://github.com/mpericay/apicollector/blob/master/lib/db/class.odbc.php
 // https://snipplr.com/view/24916/php-connection-class-odbc-v1
