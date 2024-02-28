@@ -3,7 +3,7 @@
 namespace GenericDatabase\Tests\Modules;
 
 use PHPUnit\Framework\TestCase;
-use GenericDatabase\Modules\Chainable;
+use GenericDatabase\Modules\StaticArray;
 use GenericDatabase\Connection;
 use GenericDatabase\Engine\OCIEngine;
 use GenericDatabase\Engine\PgSQLEngine;
@@ -13,7 +13,7 @@ use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Engine\FirebirdEngine;
 use GenericDatabase\Engine\PDOEngine;
 
-class ChainableTest extends TestCase
+class StaticArrayTest extends TestCase
 {
     private array $mysqlEnv;
     private array $pgsqlEnv;
@@ -77,127 +77,127 @@ class ChainableTest extends TestCase
     }
     public function testNativeMysqliAndStrategyMysqli()
     {
-        $native = Chainable::nativeMySQLi($this->mysqlEnv, false, false);
+        $native = StaticArray::nativeMySQLi($this->mysqlEnv, false, false);
         $this->assertInstanceOf(MySQLiEngine::class, $native);
 
-        $strategy = Chainable::nativeMySQLi($this->mysqlEnv, false, true);
+        $strategy = StaticArray::nativeMySQLi($this->mysqlEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testNativePgsqlAndStrategyPgsql()
     {
-        $native = Chainable::nativePgSQL($this->pgsqlEnv, false, false);
+        $native = StaticArray::nativePgSQL($this->pgsqlEnv, false, false);
         $this->assertInstanceOf(PgSQLEngine::class, $native);
 
-        $strategy = Chainable::nativePgSQL($this->pgsqlEnv, false, true);
+        $strategy = StaticArray::nativePgSQL($this->pgsqlEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testNativeSqlsrvAndStrategySqlsrv()
     {
-        $native = Chainable::nativeSQLSrv($this->sqlsrvEnv, false, false);
+        $native = StaticArray::nativeSQLSrv($this->sqlsrvEnv, false, false);
         $this->assertInstanceOf(SQLSrvEngine::class, $native);
 
-        $strategy = Chainable::nativeSQLSrv($this->sqlsrvEnv, false, true);
+        $strategy = StaticArray::nativeSQLSrv($this->sqlsrvEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testNativeOciAndStrategyOci()
     {
-        $native = Chainable::nativeOci($this->ociEnv, false, false);
+        $native = StaticArray::nativeOci($this->ociEnv, false, false);
         $this->assertInstanceOf(OCIEngine::class, $native);
 
-        $strategy = Chainable::nativeOci($this->ociEnv, false, true);
+        $strategy = StaticArray::nativeOci($this->ociEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testNativeFirebirdAndStrategyFirebird()
     {
-        $native = Chainable::nativeFirebird($this->firebirdEnv, false, false);
+        $native = StaticArray::nativeFirebird($this->firebirdEnv, false, false);
         $this->assertInstanceOf(FirebirdEngine::class, $native);
 
-        $strategy = Chainable::nativeFirebird($this->firebirdEnv, false, true);
+        $strategy = StaticArray::nativeFirebird($this->firebirdEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testNativeSqliteAndStrategySqlite()
     {
-        $native = Chainable::nativeSQLite($this->sqliteEnv, false, false);
+        $native = StaticArray::nativeSQLite($this->sqliteEnv, false, false);
         $this->assertInstanceOf(SQLiteEngine::class, $native);
 
-        $strategy = Chainable::nativeSQLite($this->sqliteEnv, false, true);
+        $strategy = StaticArray::nativeSQLite($this->sqliteEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testNativeMemoryAndStrategyMemory()
     {
-        $native = Chainable::nativeMemory($this->sqliteEnv, false, false);
+        $native = StaticArray::nativeMemory($this->sqliteEnv, false, false);
         $this->assertInstanceOf(SqliteEngine::class, $native);
 
-        $strategy = Chainable::nativeMemory($this->sqliteEnv, false, true);
+        $strategy = StaticArray::nativeMemory($this->sqliteEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testPdoMysqliAndStrategyMysqli()
     {
-        $pdo = Chainable::pdoMySQL($this->mysqlEnv, false, false);
+        $pdo = StaticArray::pdoMySQL($this->mysqlEnv, false, false);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
-        $strategy = Chainable::pdoMySQL($this->mysqlEnv, false, true);
+        $strategy = StaticArray::pdoMySQL($this->mysqlEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testPdoPgsqlAndStrategyPgsql()
     {
-        $pdo = Chainable::pdoPgSQL($this->pgsqlEnv, false, false);
+        $pdo = StaticArray::pdoPgSQL($this->pgsqlEnv, false, false);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
-        $strategy = Chainable::pdoPgSQL($this->pgsqlEnv, false, true);
+        $strategy = StaticArray::pdoPgSQL($this->pgsqlEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testPdoSqlsrvAndStrategySqlsrv()
     {
-        $pdo = Chainable::pdoSQLSrv($this->sqlsrvEnv, false);
+        $pdo = StaticArray::pdoSQLSrv($this->sqlsrvEnv, false);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
-        $strategy = Chainable::pdoSQLSrv($this->sqlsrvEnv, true);
+        $strategy = StaticArray::pdoSQLSrv($this->sqlsrvEnv, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testPdoOciAndStrategyOci()
     {
-        $pdo = Chainable::pdoOci($this->ociEnv, false, false);
+        $pdo = StaticArray::pdoOci($this->ociEnv, false, false);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
-        $strategy = Chainable::pdoOci($this->ociEnv, false, true);
+        $strategy = StaticArray::pdoOci($this->ociEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testPdoFirebirdAndStrategyFirebird()
     {
-        $pdo = Chainable::pdoFirebird($this->firebirdEnv, false, false);
+        $pdo = StaticArray::pdoFirebird($this->firebirdEnv, false, false);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
-        $strategy = Chainable::pdoFirebird($this->firebirdEnv, false, true);
+        $strategy = StaticArray::pdoFirebird($this->firebirdEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testPdoSqliteAndStrategySqlite()
     {
-        $pdo = Chainable::pdoSQLite($this->sqliteEnv, false, false);
+        $pdo = StaticArray::pdoSQLite($this->sqliteEnv, false, false);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
-        $strategy = Chainable::pdoSQLite($this->sqliteEnv, false, true);
+        $strategy = StaticArray::pdoSQLite($this->sqliteEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 
     public function testPdoMemoryAndStrategyMemory()
     {
-        $pdo = Chainable::pdoMemory($this->sqliteEnv, false, false);
+        $pdo = StaticArray::pdoMemory($this->sqliteEnv, false, false);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
-        $strategy = Chainable::pdoMemory($this->sqliteEnv, false, true);
+        $strategy = StaticArray::pdoMemory($this->sqliteEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 }

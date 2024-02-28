@@ -342,7 +342,7 @@ class PgSQLEngine implements IConnection
     public function lastInsertId(?string $name = null): string|int|false
     {
         $filter = sprintf("WHERE column_default LIKE 'nextval%%' AND table_name = '%s'", $name);
-        /** @var \PgSql\Result $query */
+        /** @var Result $query */
         $query = pg_query(
             $this->getConnection(),
             sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS %s", $filter)
@@ -353,7 +353,7 @@ class PgSQLEngine implements IConnection
                 "SELECT pg_catalog.setval(pg_get_serial_sequence('%s', '%s'), MAX(%s)) AS value FROM %s;",
                 [$name, $autoKeyRes['column_name'], $autoKeyRes['column_name'], $name]
             );
-            /** @var \PgSql\Result $maxIndex */
+            /** @var Result $maxIndex */
             $maxIndex = pg_query($this->getConnection(), $query);
             $maxIndexRes = pg_fetch_assoc($maxIndex);
             return $maxIndexRes['value'];

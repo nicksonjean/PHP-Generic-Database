@@ -27,6 +27,11 @@
             "GenericDatabase\\": "src/"
         }
     },
+    "require": {
+        "ext-mysqli": "*",
+        "ext-sqlite3": "*",
+        "amphp/windows-registry": "1.x-dev"
+    },
     "autoload-dev": {
         "psr-4": {
             "GenericDatabase\\Tests\\": "tests/"
@@ -117,8 +122,5 @@
         "post-update-cmd": [
             "@run:env"
         ]
-    },
-    "require": {
-        "amphp/windows-registry": "1.x-dev"
     }
 }
