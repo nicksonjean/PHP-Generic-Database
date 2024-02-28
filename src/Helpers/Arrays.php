@@ -283,6 +283,7 @@ class Arrays
     /**
      * This function makes an arguments list
      *
+     * @param mixed $driver
      * @param mixed $params Arguments list
      * @return array
      */

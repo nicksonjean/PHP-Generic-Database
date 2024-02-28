@@ -77,7 +77,7 @@ class StaticArgsTest extends TestCase
     }
     public function testNativeMysqliAndStrategyMysqli()
     {
-        $native = StaticArgs::nativeMySQLi($this->mysqlEnv, false, false);
+        $native = StaticArgs::nativeMySQLi($this->mysqlEnv);
         $this->assertInstanceOf(MySQLiEngine::class, $native);
 
         $strategy = StaticArgs::nativeMySQLi($this->mysqlEnv, false, true);
@@ -86,7 +86,7 @@ class StaticArgsTest extends TestCase
 
     public function testNativePgsqlAndStrategyPgsql()
     {
-        $native = StaticArgs::nativePgSQL($this->pgsqlEnv, false, false);
+        $native = StaticArgs::nativePgSQL($this->pgsqlEnv);
         $this->assertInstanceOf(PgSQLEngine::class, $native);
 
         $strategy = StaticArgs::nativePgSQL($this->pgsqlEnv, false, true);
@@ -95,7 +95,7 @@ class StaticArgsTest extends TestCase
 
     public function testNativeSqlsrvAndStrategySqlsrv()
     {
-        $native = StaticArgs::nativeSQLSrv($this->sqlsrvEnv, false, false);
+        $native = StaticArgs::nativeSQLSrv($this->sqlsrvEnv);
         $this->assertInstanceOf(SQLSrvEngine::class, $native);
 
         $strategy = StaticArgs::nativeSQLSrv($this->sqlsrvEnv, false, true);
@@ -104,7 +104,7 @@ class StaticArgsTest extends TestCase
 
     public function testNativeOciAndStrategyOci()
     {
-        $native = StaticArgs::nativeOci($this->ociEnv, false, false);
+        $native = StaticArgs::nativeOci($this->ociEnv);
         $this->assertInstanceOf(OCIEngine::class, $native);
 
         $strategy = StaticArgs::nativeOci($this->ociEnv, false, true);
@@ -113,7 +113,7 @@ class StaticArgsTest extends TestCase
 
     public function testNativeFirebirdAndStrategyFirebird()
     {
-        $native = StaticArgs::nativeFirebird($this->firebirdEnv, false, false);
+        $native = StaticArgs::nativeFirebird($this->firebirdEnv);
         $this->assertInstanceOf(FirebirdEngine::class, $native);
 
         $strategy = StaticArgs::nativeFirebird($this->firebirdEnv, false, true);
@@ -122,7 +122,7 @@ class StaticArgsTest extends TestCase
 
     public function testNativeSqliteAndStrategySqlite()
     {
-        $native = StaticArgs::nativeSQLite($this->sqliteEnv, false, false);
+        $native = StaticArgs::nativeSQLite($this->sqliteEnv);
         $this->assertInstanceOf(SQLiteEngine::class, $native);
 
         $strategy = StaticArgs::nativeSQLite($this->sqliteEnv, false, true);
@@ -131,7 +131,7 @@ class StaticArgsTest extends TestCase
 
     public function testNativeMemoryAndStrategyMemory()
     {
-        $native = StaticArgs::nativeMemory($this->sqliteEnv, false, false);
+        $native = StaticArgs::nativeMemory($this->sqliteEnv);
         $this->assertInstanceOf(SqliteEngine::class, $native);
 
         $strategy = StaticArgs::nativeMemory($this->sqliteEnv, false, true);
@@ -140,7 +140,7 @@ class StaticArgsTest extends TestCase
 
     public function testPdoMysqliAndStrategyMysqli()
     {
-        $pdo = StaticArgs::pdoMySQL($this->mysqlEnv, false, false);
+        $pdo = StaticArgs::pdoMySQL($this->mysqlEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArgs::pdoMySQL($this->mysqlEnv, false, true);
@@ -149,7 +149,7 @@ class StaticArgsTest extends TestCase
 
     public function testPdoPgsqlAndStrategyPgsql()
     {
-        $pdo = StaticArgs::pdoPgSQL($this->pgsqlEnv, false, false);
+        $pdo = StaticArgs::pdoPgSQL($this->pgsqlEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArgs::pdoPgSQL($this->pgsqlEnv, false, true);
@@ -158,7 +158,7 @@ class StaticArgsTest extends TestCase
 
     public function testPdoSqlsrvAndStrategySqlsrv()
     {
-        $pdo = StaticArgs::pdoSQLSrv($this->sqlsrvEnv, false);
+        $pdo = StaticArgs::pdoSQLSrv($this->sqlsrvEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArgs::pdoSQLSrv($this->sqlsrvEnv, true);
@@ -167,7 +167,7 @@ class StaticArgsTest extends TestCase
 
     public function testPdoOciAndStrategyOci()
     {
-        $pdo = StaticArgs::pdoOci($this->ociEnv, false, false);
+        $pdo = StaticArgs::pdoOci($this->ociEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArgs::pdoOci($this->ociEnv, false, true);
@@ -176,7 +176,7 @@ class StaticArgsTest extends TestCase
 
     public function testPdoFirebirdAndStrategyFirebird()
     {
-        $pdo = StaticArgs::pdoFirebird($this->firebirdEnv, false, false);
+        $pdo = StaticArgs::pdoFirebird($this->firebirdEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArgs::pdoFirebird($this->firebirdEnv, false, true);
@@ -185,7 +185,7 @@ class StaticArgsTest extends TestCase
 
     public function testPdoSqliteAndStrategySqlite()
     {
-        $pdo = StaticArgs::pdoSQLite($this->sqliteEnv, false, false);
+        $pdo = StaticArgs::pdoSQLite($this->sqliteEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArgs::pdoSQLite($this->sqliteEnv, false, true);
@@ -194,7 +194,7 @@ class StaticArgsTest extends TestCase
 
     public function testPdoMemoryAndStrategyMemory()
     {
-        $pdo = StaticArgs::pdoMemory($this->sqliteEnv, false, false);
+        $pdo = StaticArgs::pdoMemory($this->sqliteEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArgs::pdoMemory($this->sqliteEnv, false, true);

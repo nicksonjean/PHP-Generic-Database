@@ -77,7 +77,7 @@ class FluentTest extends TestCase
     }
     public function testNativeMysqliAndStrategyMysqli()
     {
-        $native = Fluent::nativeMySQLi($this->mysqlEnv, false, false);
+        $native = Fluent::nativeMySQLi($this->mysqlEnv);
         $this->assertInstanceOf(MySQLiEngine::class, $native);
 
         $strategy = Fluent::nativeMySQLi($this->mysqlEnv, false, true);
@@ -86,7 +86,7 @@ class FluentTest extends TestCase
 
     public function testNativePgsqlAndStrategyPgsql()
     {
-        $native = Fluent::nativePgSQL($this->pgsqlEnv, false, false);
+        $native = Fluent::nativePgSQL($this->pgsqlEnv);
         $this->assertInstanceOf(PgSQLEngine::class, $native);
 
         $strategy = Fluent::nativePgSQL($this->pgsqlEnv, false, true);
@@ -95,7 +95,7 @@ class FluentTest extends TestCase
 
     public function testNativeSqlsrvAndStrategySqlsrv()
     {
-        $native = Fluent::nativeSQLSrv($this->sqlsrvEnv, false, false);
+        $native = Fluent::nativeSQLSrv($this->sqlsrvEnv);
         $this->assertInstanceOf(SQLSrvEngine::class, $native);
 
         $strategy = Fluent::nativeSQLSrv($this->sqlsrvEnv, false, true);
@@ -104,7 +104,7 @@ class FluentTest extends TestCase
 
     public function testNativeOciAndStrategyOci()
     {
-        $native = Fluent::nativeOci($this->ociEnv, false, false);
+        $native = Fluent::nativeOci($this->ociEnv);
         $this->assertInstanceOf(OCIEngine::class, $native);
 
         $strategy = Fluent::nativeOci($this->ociEnv, false, true);
@@ -113,7 +113,7 @@ class FluentTest extends TestCase
 
     public function testNativeFirebirdAndStrategyFirebird()
     {
-        $native = Fluent::nativeFirebird($this->firebirdEnv, false, false);
+        $native = Fluent::nativeFirebird($this->firebirdEnv);
         $this->assertInstanceOf(FirebirdEngine::class, $native);
 
         $strategy = Fluent::nativeFirebird($this->firebirdEnv, false, true);
@@ -122,7 +122,7 @@ class FluentTest extends TestCase
 
     public function testNativeSqliteAndStrategySqlite()
     {
-        $native = Fluent::nativeSQLite($this->sqliteEnv, false, false);
+        $native = Fluent::nativeSQLite($this->sqliteEnv);
         $this->assertInstanceOf(SQLiteEngine::class, $native);
 
         $strategy = Fluent::nativeSQLite($this->sqliteEnv, false, true);
@@ -131,7 +131,7 @@ class FluentTest extends TestCase
 
     public function testNativeMemoryAndStrategyMemory()
     {
-        $native = Fluent::nativeMemory($this->sqliteEnv, false, false);
+        $native = Fluent::nativeMemory($this->sqliteEnv);
         $this->assertInstanceOf(SqliteEngine::class, $native);
 
         $strategy = Fluent::nativeMemory($this->sqliteEnv, false, true);
@@ -140,7 +140,7 @@ class FluentTest extends TestCase
 
     public function testPdoMysqliAndStrategyMysqli()
     {
-        $pdo = Fluent::pdoMySQL($this->mysqlEnv, false, false);
+        $pdo = Fluent::pdoMySQL($this->mysqlEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Fluent::pdoMySQL($this->mysqlEnv, false, true);
@@ -149,7 +149,7 @@ class FluentTest extends TestCase
 
     public function testPdoPgsqlAndStrategyPgsql()
     {
-        $pdo = Fluent::pdoPgSQL($this->pgsqlEnv, false, false);
+        $pdo = Fluent::pdoPgSQL($this->pgsqlEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Fluent::pdoPgSQL($this->pgsqlEnv, false, true);
@@ -158,7 +158,7 @@ class FluentTest extends TestCase
 
     public function testPdoSqlsrvAndStrategySqlsrv()
     {
-        $pdo = Fluent::pdoSQLSrv($this->sqlsrvEnv, false);
+        $pdo = Fluent::pdoSQLSrv($this->sqlsrvEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Fluent::pdoSQLSrv($this->sqlsrvEnv, true);
@@ -167,7 +167,7 @@ class FluentTest extends TestCase
 
     public function testPdoOciAndStrategyOci()
     {
-        $pdo = Fluent::pdoOci($this->ociEnv, false, false);
+        $pdo = Fluent::pdoOci($this->ociEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Fluent::pdoOci($this->ociEnv, false, true);
@@ -176,7 +176,7 @@ class FluentTest extends TestCase
 
     public function testPdoFirebirdAndStrategyFirebird()
     {
-        $pdo = Fluent::pdoFirebird($this->firebirdEnv, false, false);
+        $pdo = Fluent::pdoFirebird($this->firebirdEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Fluent::pdoFirebird($this->firebirdEnv, false, true);
@@ -185,7 +185,7 @@ class FluentTest extends TestCase
 
     public function testPdoSqliteAndStrategySqlite()
     {
-        $pdo = Fluent::pdoSQLite($this->sqliteEnv, false, false);
+        $pdo = Fluent::pdoSQLite($this->sqliteEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Fluent::pdoSQLite($this->sqliteEnv, false, true);
@@ -194,7 +194,7 @@ class FluentTest extends TestCase
 
     public function testPdoMemoryAndStrategyMemory()
     {
-        $pdo = Fluent::pdoMemory($this->sqliteEnv, false, false);
+        $pdo = Fluent::pdoMemory($this->sqliteEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Fluent::pdoMemory($this->sqliteEnv, false, true);

@@ -16,6 +16,7 @@ class Arguments
     /**
      * Transform variables in constants
      *
+     * @param array $value
      * @return array
      * @throws ReflectionException
      */
@@ -35,6 +36,7 @@ class Arguments
     /**
      * Determines the type that will receive treatment
      *
+     * @param mixed $value
      * @return string|int|bool
      */
     private static function setType(mixed $value): string|int|bool
@@ -46,6 +48,7 @@ class Arguments
      * Determines arguments type by calling to format type
      *
      * @param string $format Accept formats json, xml, ini and yaml
+     * @param mixed $arguments
      * @return SQLSrvEngine
      * @throws ReflectionException
      */
@@ -76,6 +79,7 @@ class Arguments
     /**
      * This method is used when all parameters are used in the static array format
      *
+     * @param array $arguments
      * @return SQLSrvEngine
      */
     private static function callWithByStaticArray(array $arguments): SQLSrvEngine
@@ -89,6 +93,7 @@ class Arguments
     /**
      * This method is used when all parameters are used in the static arguments format
      *
+     * @param array $arguments
      * @return SQLSrvEngine
      */
     private static function callWithByStaticArgs(array $arguments): SQLSrvEngine
@@ -100,6 +105,8 @@ class Arguments
      * This method works like a factory and is responsible for identifying
      * the way in which the class is instantiated, as well as its arguments.
      *
+     * @param string $name
+     * @param array $arguments
      * @return SQLSrvEngine
      * @throws ReflectionException
      */

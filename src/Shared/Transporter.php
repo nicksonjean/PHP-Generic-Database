@@ -2,13 +2,11 @@
 
 namespace GenericDatabase\Shared;
 
-use GenericDatabase\Shared\Property;
-
 trait Transporter
 {
     use Property;
 
-    private static $instance = null;
+    private static mixed $instance = null;
 
     /**
      * Sleep instance used by serialize/unserialize
@@ -19,7 +17,7 @@ trait Transporter
     {
         $vars = get_class_vars($this::class);
         foreach ($vars as $field => $value) {
-            if ($field === 'property' && $field !== '' && $value !== '') {
+            if ($field === 'property' && $value !== '') {
                 $this->property[$field] = $value;
             }
         }
@@ -33,7 +31,7 @@ trait Transporter
      */
     public function __wakeup()
     {
-        if (isset($this->property) && is_array($this->property)) {
+        if (isset($this->property)) {
             foreach ($this->property as $field => $value) {
                 $this->{$field} = $value;
             }

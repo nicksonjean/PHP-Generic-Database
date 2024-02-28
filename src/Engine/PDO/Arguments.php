@@ -16,6 +16,7 @@ class Arguments
     /**
      * Transform variables in constants
      *
+     * @param array $value
      * @return array
      */
     private static function setConstant(array $value): array
@@ -36,6 +37,7 @@ class Arguments
     /**
      * Determines the type that will receive treatment
      *
+     * @param mixed $value
      * @return string|int|bool
      */
     private static function setType(mixed $value): string|int|bool
@@ -46,6 +48,7 @@ class Arguments
     /**
      * Remove unused objects from PDO SQLite
      *
+     * @param mixed $driver
      * @return void
      */
     private static function resetArgs(mixed $driver): void
@@ -62,6 +65,7 @@ class Arguments
      * Determines arguments type by calling to format type
      *
      * @param string $format Accept formats json, xml, ini and yaml
+     * @param mixed $arguments
      * @return PDOEngine
      */
     private static function callArgumentsByFormat(string $format, mixed $arguments): PDOEngine
@@ -92,6 +96,7 @@ class Arguments
     /**
      * This method is used when all parameters are used in the static array format
      *
+     * @param array $arguments
      * @return PDOEngine
      */
     private static function callWithByStaticArray(array $arguments): PDOEngine
@@ -106,6 +111,7 @@ class Arguments
     /**
      * This method is used when all parameters are used in the static arguments format
      *
+     * @param array $arguments
      * @return PDOEngine
      */
     private static function callWithByStaticArgs(array $arguments): PDOEngine
@@ -117,6 +123,8 @@ class Arguments
      * This method works like a factory and is responsible for identifying
      * the way in which the class is instantiated, as well as its arguments.
      *
+     * @param string $name
+     * @param array $arguments
      * @return PDOEngine
      */
     public static function call(string $name, array $arguments): PDOEngine

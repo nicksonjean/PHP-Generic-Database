@@ -43,7 +43,7 @@ class CallerTraitTest extends TestCase
         $this->assertNull($this->objectUsingCaller->nonExistingMethod());
     }
 
-    public function testCallStaticWithExistingMethod2()
+    public function testCallStaticWithExistingMethod()
     {
         $objectUsingCaller = new class()
         {

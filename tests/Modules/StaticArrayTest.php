@@ -77,7 +77,7 @@ class StaticArrayTest extends TestCase
     }
     public function testNativeMysqliAndStrategyMysqli()
     {
-        $native = StaticArray::nativeMySQLi($this->mysqlEnv, false, false);
+        $native = StaticArray::nativeMySQLi($this->mysqlEnv);
         $this->assertInstanceOf(MySQLiEngine::class, $native);
 
         $strategy = StaticArray::nativeMySQLi($this->mysqlEnv, false, true);
@@ -86,7 +86,7 @@ class StaticArrayTest extends TestCase
 
     public function testNativePgsqlAndStrategyPgsql()
     {
-        $native = StaticArray::nativePgSQL($this->pgsqlEnv, false, false);
+        $native = StaticArray::nativePgSQL($this->pgsqlEnv);
         $this->assertInstanceOf(PgSQLEngine::class, $native);
 
         $strategy = StaticArray::nativePgSQL($this->pgsqlEnv, false, true);
@@ -95,7 +95,7 @@ class StaticArrayTest extends TestCase
 
     public function testNativeSqlsrvAndStrategySqlsrv()
     {
-        $native = StaticArray::nativeSQLSrv($this->sqlsrvEnv, false, false);
+        $native = StaticArray::nativeSQLSrv($this->sqlsrvEnv);
         $this->assertInstanceOf(SQLSrvEngine::class, $native);
 
         $strategy = StaticArray::nativeSQLSrv($this->sqlsrvEnv, false, true);
@@ -104,7 +104,7 @@ class StaticArrayTest extends TestCase
 
     public function testNativeOciAndStrategyOci()
     {
-        $native = StaticArray::nativeOci($this->ociEnv, false, false);
+        $native = StaticArray::nativeOci($this->ociEnv);
         $this->assertInstanceOf(OCIEngine::class, $native);
 
         $strategy = StaticArray::nativeOci($this->ociEnv, false, true);
@@ -113,7 +113,7 @@ class StaticArrayTest extends TestCase
 
     public function testNativeFirebirdAndStrategyFirebird()
     {
-        $native = StaticArray::nativeFirebird($this->firebirdEnv, false, false);
+        $native = StaticArray::nativeFirebird($this->firebirdEnv);
         $this->assertInstanceOf(FirebirdEngine::class, $native);
 
         $strategy = StaticArray::nativeFirebird($this->firebirdEnv, false, true);
@@ -122,7 +122,7 @@ class StaticArrayTest extends TestCase
 
     public function testNativeSqliteAndStrategySqlite()
     {
-        $native = StaticArray::nativeSQLite($this->sqliteEnv, false, false);
+        $native = StaticArray::nativeSQLite($this->sqliteEnv);
         $this->assertInstanceOf(SQLiteEngine::class, $native);
 
         $strategy = StaticArray::nativeSQLite($this->sqliteEnv, false, true);
@@ -131,7 +131,7 @@ class StaticArrayTest extends TestCase
 
     public function testNativeMemoryAndStrategyMemory()
     {
-        $native = StaticArray::nativeMemory($this->sqliteEnv, false, false);
+        $native = StaticArray::nativeMemory($this->sqliteEnv);
         $this->assertInstanceOf(SqliteEngine::class, $native);
 
         $strategy = StaticArray::nativeMemory($this->sqliteEnv, false, true);
@@ -140,7 +140,7 @@ class StaticArrayTest extends TestCase
 
     public function testPdoMysqliAndStrategyMysqli()
     {
-        $pdo = StaticArray::pdoMySQL($this->mysqlEnv, false, false);
+        $pdo = StaticArray::pdoMySQL($this->mysqlEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArray::pdoMySQL($this->mysqlEnv, false, true);
@@ -149,7 +149,7 @@ class StaticArrayTest extends TestCase
 
     public function testPdoPgsqlAndStrategyPgsql()
     {
-        $pdo = StaticArray::pdoPgSQL($this->pgsqlEnv, false, false);
+        $pdo = StaticArray::pdoPgSQL($this->pgsqlEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArray::pdoPgSQL($this->pgsqlEnv, false, true);
@@ -158,7 +158,7 @@ class StaticArrayTest extends TestCase
 
     public function testPdoSqlsrvAndStrategySqlsrv()
     {
-        $pdo = StaticArray::pdoSQLSrv($this->sqlsrvEnv, false);
+        $pdo = StaticArray::pdoSQLSrv($this->sqlsrvEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArray::pdoSQLSrv($this->sqlsrvEnv, true);
@@ -167,7 +167,7 @@ class StaticArrayTest extends TestCase
 
     public function testPdoOciAndStrategyOci()
     {
-        $pdo = StaticArray::pdoOci($this->ociEnv, false, false);
+        $pdo = StaticArray::pdoOci($this->ociEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArray::pdoOci($this->ociEnv, false, true);
@@ -176,7 +176,7 @@ class StaticArrayTest extends TestCase
 
     public function testPdoFirebirdAndStrategyFirebird()
     {
-        $pdo = StaticArray::pdoFirebird($this->firebirdEnv, false, false);
+        $pdo = StaticArray::pdoFirebird($this->firebirdEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArray::pdoFirebird($this->firebirdEnv, false, true);
@@ -185,7 +185,7 @@ class StaticArrayTest extends TestCase
 
     public function testPdoSqliteAndStrategySqlite()
     {
-        $pdo = StaticArray::pdoSQLite($this->sqliteEnv, false, false);
+        $pdo = StaticArray::pdoSQLite($this->sqliteEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArray::pdoSQLite($this->sqliteEnv, false, true);
@@ -194,7 +194,7 @@ class StaticArrayTest extends TestCase
 
     public function testPdoMemoryAndStrategyMemory()
     {
-        $pdo = StaticArray::pdoMemory($this->sqliteEnv, false, false);
+        $pdo = StaticArray::pdoMemory($this->sqliteEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = StaticArray::pdoMemory($this->sqliteEnv, false, true);

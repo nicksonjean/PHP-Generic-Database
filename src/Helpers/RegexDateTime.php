@@ -333,6 +333,8 @@ class RegexDateTime
     /**
      * Returns the separators from the given indexes in the string array.
      *
+     * @param array $indexes
+     * @param array $string
      * @return string|array|null
      */
     private static function getSeparators(array $indexes, array $string): string|array|null
@@ -348,6 +350,7 @@ class RegexDateTime
     /**
      * Sets the separators from the input data array.
      *
+     * @param array $inputData
      * @return array
      */
     private static function setSeparators(array $inputData): array
@@ -367,6 +370,7 @@ class RegexDateTime
     /**
      * Sets the mask based on the input data array.
      *
+     * @param array $inputData
      * @return string
      */
     private static function setMask(array $inputData): string
@@ -386,6 +390,8 @@ class RegexDateTime
     /**
      *  Builds the mask based on the input, format, and separators.
      *
+     * @param string $input
+     * @param string $format
      * @param string|null $dsp
      * @param string|null $tsp
      * @param string|null $dtsp
@@ -461,6 +467,8 @@ class RegexDateTime
     /**
      * Builds the time mask based on the format and time separator.
      *
+     * @param string $format
+     * @param string $tsp
      * @return string
      */
     private static function buildTimeMask(string $format, string $tsp): string
@@ -474,6 +482,8 @@ class RegexDateTime
     /**
      * Builds the time mask with meridiem based on the format, time separator, and meridiem separator.
      *
+     * @param string $format
+     * @param string $tsp
      * @param string|null $msp
      * @return string
      */
@@ -488,6 +498,9 @@ class RegexDateTime
     /**
      * Builds the time mask with timespan based on the format, time separator, and timespan separator.
      *
+     * @param string $format
+     * @param string $tsp
+     * @param string $tzsp
      * @return string
      */
     private static function buildTimeWithTimespanMask(string $format, string $tsp, string $tzsp): string
@@ -501,6 +514,8 @@ class RegexDateTime
     /**
      * Builds the time mask with seconds based on the format and time separator.
      *
+     * @param string $format
+     * @param string $tsp
      * @return string
      */
     private static function buildTimeWithSecondsMask(string $format, string $tsp): string
@@ -514,6 +529,8 @@ class RegexDateTime
     /**
      * Builds the time mask with seconds and meridiem based on the format, time separator, and meridiem separator.
      *
+     * @param string $format
+     * @param string $tsp
      * @param string|null $msp
      * @return string
      */
@@ -528,6 +545,9 @@ class RegexDateTime
     /**
      * Builds the time mask with seconds and timespan based on the format, time separator, and timespan separator.
      *
+     * @param string $format
+     * @param string $tsp
+     * @param string $tzsp
      * @return string
      */
     private static function buildTimeWithSecondsAndTimespanMask(string $format, string $tsp, string $tzsp): string
@@ -541,6 +561,8 @@ class RegexDateTime
     /**
      * Builds the date mask based on the format and date separator.
      *
+     * @param string $format
+     * @param string $dsp
      * @return string
      */
     private static function buildDateMask(string $format, string $dsp): string
@@ -557,6 +579,10 @@ class RegexDateTime
     /**
      * Builds the date-time mask based on the format, date separator, time separator, and date-time separator.
      *
+     * @param string $format
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
      * @return string
      */
     private static function buildDateTimeMask(string $format, string $dsp, string $tsp, string $dtsp): string
@@ -574,6 +600,10 @@ class RegexDateTime
      * Builds the date-time mask with seconds and meridiem based on the format, date separator, time separator,
      * date-time separator, and meridiem separator.
      *
+     * @param string $format
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
      * @param string|null $msp
      * @return string
      */
@@ -597,6 +627,10 @@ class RegexDateTime
      * Builds the date-time mask with seconds, meridiem based on the format, date separator, time separator,
      * date-time separator, and meridiem separator.
      *
+     * @param string $format
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
      * @param string|null $msp
      * @return string
      */
@@ -620,6 +654,10 @@ class RegexDateTime
      * Builds the date-time mask with seconds based on the format, date separator, time separator, and date-time
      * separator.
      *
+     * @param string $format
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
      * @return string
      */
     private static function buildDateTimeWithSecondsMask(string $format, string $dsp, string $tsp, string $dtsp): string
@@ -637,6 +675,11 @@ class RegexDateTime
      * Builds the date-time mask with timespan based on the format, date separator, time separator, date-time
      * separator, and timespan separator.
      *
+     * @param string $format
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
+     * @param string $tzsp
      * @return string
      */
     private static function buildDateTimeWithTimespanMask(
@@ -659,6 +702,10 @@ class RegexDateTime
      * Builds the date-time mask with seconds and timespan based on the format, date separator, time separator,
      * date-time separator, and timespan separator.
      *
+     * @param string $format
+     * @param string $dsp
+     * @param string $tsp
+     * @param string $dtsp
      * @param string|null $tzsp
      * @return string
      */
@@ -681,6 +728,7 @@ class RegexDateTime
     /**
      * Loads the mask file based on the input data array.
      *
+     * @param array $inputData
      * @return array
      */
     private static function loadMaskFile(array $inputData): array
@@ -712,6 +760,7 @@ class RegexDateTime
     /**
      * Gets the mask based on the input data array.
      *
+     * @param array $inputData
      * @return array
      */
     private static function getMask(array $inputData): array
@@ -741,6 +790,8 @@ class RegexDateTime
     /**
      * Fetches the separators from the result array based on the input and separator types.
      *
+     * @param array $result
+     * @param string $input
      * @return void
      */
     private static function fetchSeparators(array &$result, string $input): void
@@ -758,6 +809,7 @@ class RegexDateTime
     /**
      * Gets the pattern based on the input.
      *
+     * @param string $input
      * @return array
      */
     public static function getPattern(string $input): array

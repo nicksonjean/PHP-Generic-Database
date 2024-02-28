@@ -77,7 +77,7 @@ class ChainableTest extends TestCase
     }
     public function testNativeMysqliAndStrategyMysqli()
     {
-        $native = Chainable::nativeMySQLi($this->mysqlEnv, false, false);
+        $native = Chainable::nativeMySQLi($this->mysqlEnv);
         $this->assertInstanceOf(MySQLiEngine::class, $native);
 
         $strategy = Chainable::nativeMySQLi($this->mysqlEnv, false, true);
@@ -86,7 +86,7 @@ class ChainableTest extends TestCase
 
     public function testNativePgsqlAndStrategyPgsql()
     {
-        $native = Chainable::nativePgSQL($this->pgsqlEnv, false, false);
+        $native = Chainable::nativePgSQL($this->pgsqlEnv);
         $this->assertInstanceOf(PgSQLEngine::class, $native);
 
         $strategy = Chainable::nativePgSQL($this->pgsqlEnv, false, true);
@@ -95,7 +95,7 @@ class ChainableTest extends TestCase
 
     public function testNativeSqlsrvAndStrategySqlsrv()
     {
-        $native = Chainable::nativeSQLSrv($this->sqlsrvEnv, false, false);
+        $native = Chainable::nativeSQLSrv($this->sqlsrvEnv);
         $this->assertInstanceOf(SQLSrvEngine::class, $native);
 
         $strategy = Chainable::nativeSQLSrv($this->sqlsrvEnv, false, true);
@@ -104,7 +104,7 @@ class ChainableTest extends TestCase
 
     public function testNativeOciAndStrategyOci()
     {
-        $native = Chainable::nativeOci($this->ociEnv, false, false);
+        $native = Chainable::nativeOci($this->ociEnv);
         $this->assertInstanceOf(OCIEngine::class, $native);
 
         $strategy = Chainable::nativeOci($this->ociEnv, false, true);
@@ -113,7 +113,7 @@ class ChainableTest extends TestCase
 
     public function testNativeFirebirdAndStrategyFirebird()
     {
-        $native = Chainable::nativeFirebird($this->firebirdEnv, false, false);
+        $native = Chainable::nativeFirebird($this->firebirdEnv);
         $this->assertInstanceOf(FirebirdEngine::class, $native);
 
         $strategy = Chainable::nativeFirebird($this->firebirdEnv, false, true);
@@ -122,7 +122,7 @@ class ChainableTest extends TestCase
 
     public function testNativeSqliteAndStrategySqlite()
     {
-        $native = Chainable::nativeSQLite($this->sqliteEnv, false, false);
+        $native = Chainable::nativeSQLite($this->sqliteEnv);
         $this->assertInstanceOf(SQLiteEngine::class, $native);
 
         $strategy = Chainable::nativeSQLite($this->sqliteEnv, false, true);
@@ -131,7 +131,7 @@ class ChainableTest extends TestCase
 
     public function testNativeMemoryAndStrategyMemory()
     {
-        $native = Chainable::nativeMemory($this->sqliteEnv, false, false);
+        $native = Chainable::nativeMemory($this->sqliteEnv);
         $this->assertInstanceOf(SqliteEngine::class, $native);
 
         $strategy = Chainable::nativeMemory($this->sqliteEnv, false, true);
@@ -140,7 +140,7 @@ class ChainableTest extends TestCase
 
     public function testPdoMysqliAndStrategyMysqli()
     {
-        $pdo = Chainable::pdoMySQL($this->mysqlEnv, false, false);
+        $pdo = Chainable::pdoMySQL($this->mysqlEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Chainable::pdoMySQL($this->mysqlEnv, false, true);
@@ -149,7 +149,7 @@ class ChainableTest extends TestCase
 
     public function testPdoPgsqlAndStrategyPgsql()
     {
-        $pdo = Chainable::pdoPgSQL($this->pgsqlEnv, false, false);
+        $pdo = Chainable::pdoPgSQL($this->pgsqlEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Chainable::pdoPgSQL($this->pgsqlEnv, false, true);
@@ -158,7 +158,7 @@ class ChainableTest extends TestCase
 
     public function testPdoSqlsrvAndStrategySqlsrv()
     {
-        $pdo = Chainable::pdoSQLSrv($this->sqlsrvEnv, false);
+        $pdo = Chainable::pdoSQLSrv($this->sqlsrvEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Chainable::pdoSQLSrv($this->sqlsrvEnv, true);
@@ -167,7 +167,7 @@ class ChainableTest extends TestCase
 
     public function testPdoOciAndStrategyOci()
     {
-        $pdo = Chainable::pdoOci($this->ociEnv, false, false);
+        $pdo = Chainable::pdoOci($this->ociEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Chainable::pdoOci($this->ociEnv, false, true);
@@ -176,7 +176,7 @@ class ChainableTest extends TestCase
 
     public function testPdoFirebirdAndStrategyFirebird()
     {
-        $pdo = Chainable::pdoFirebird($this->firebirdEnv, false, false);
+        $pdo = Chainable::pdoFirebird($this->firebirdEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Chainable::pdoFirebird($this->firebirdEnv, false, true);
@@ -185,7 +185,7 @@ class ChainableTest extends TestCase
 
     public function testPdoSqliteAndStrategySqlite()
     {
-        $pdo = Chainable::pdoSQLite($this->sqliteEnv, false, false);
+        $pdo = Chainable::pdoSQLite($this->sqliteEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Chainable::pdoSQLite($this->sqliteEnv, false, true);
@@ -194,7 +194,7 @@ class ChainableTest extends TestCase
 
     public function testPdoMemoryAndStrategyMemory()
     {
-        $pdo = Chainable::pdoMemory($this->sqliteEnv, false, false);
+        $pdo = Chainable::pdoMemory($this->sqliteEnv);
         $this->assertInstanceOf(PDOEngine::class, $pdo);
 
         $strategy = Chainable::pdoMemory($this->sqliteEnv, false, true);
