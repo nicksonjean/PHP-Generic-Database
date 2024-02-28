@@ -46,10 +46,14 @@ class Dump
         while (($string = fgets($handle)) !== false) {
             $size += strlen($string);
 
-            $uncomment = fn($string = '') => preg_replace(
+            $uncomment = fn ($string = '') => preg_replace(
                 (string) self::$regex['unicode'],
                 ' ',
-                ((string) (($string == '') ?  '' : preg_replace((string) self::$regex['uncomment'], '', (string) $string)))
+                (
+                    (string) (($string == '') ?
+                        '' :
+                        preg_replace((string) self::$regex['uncomment'], '', (string) $string))
+                )
             );
 
             if (strlen((string) $uncomment($string)) > 1) {
