@@ -3,9 +3,6 @@
 use PHPUnit\Framework\TestCase;
 use GenericDatabase\Shared\Caller;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class CallerTraitTest extends TestCase
 {
     private $objectUsingCaller;
