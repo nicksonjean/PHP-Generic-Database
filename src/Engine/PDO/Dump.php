@@ -69,7 +69,7 @@ class Dump
             }
         }
 
-        if (rtrim((string) $sql) !== '') {
+        if (rtrim($sql) !== '') {
             PDOEngine::getInstance()->exec($sql);
             $count++;
             if ($onProgress) {

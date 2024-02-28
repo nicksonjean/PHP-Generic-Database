@@ -275,7 +275,7 @@ class Arrays
             if (!array_key_exists($key, $accumulator)) {
                 $accumulator[$key] = [];
             }
-            array_push($accumulator[$key], $item);
+            $accumulator[$key][] = $item;
             return $accumulator;
         }, []);
     }

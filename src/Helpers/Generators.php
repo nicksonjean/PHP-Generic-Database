@@ -101,7 +101,7 @@ class Generators
         } elseif (Validations::isBoolean($value)) {
             $result = (bool) $value;
         } else {
-            $result = (string) $value;
+            $result = $value;
         }
         return $result;
     }

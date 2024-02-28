@@ -18,7 +18,7 @@ class Options
         $options = Options::getOptions();
         $result = [];
 
-        foreach (Reflections::getClassConstants(\GenericDatabase\Engine\SQLite\SQLite::class) as $value) {
+        foreach (Reflections::getClassConstants(SQLite::class) as $value) {
             $attribute = "SQLite::ATTR_" . mb_strtoupper((string) $value);
             $attributeValue = SQLiteEngine::getInstance()->getAttribute($attribute);
 
@@ -64,7 +64,7 @@ class Options
      */
     public static function setOptions(?array $options = null): void
     {
-        $class = \GenericDatabase\Engine\SQLite\SQLite::class;
+        $class = SQLite::class;
         foreach (Reflections::getClassConstants($class) as $key => $value) {
             $index = in_array($value, array_keys($options));
             if ($index !== false) {

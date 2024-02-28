@@ -86,10 +86,10 @@ class Reflections
      * Get singleton instance
      *
      * @param mixed $class The class object or instance
-     * @return mixed The singleton instance of the class
+     * @return object|false The singleton instance of the class
      * @throws CustomException If the method does not exist in the class
      */
-    public static function getSingletonInstance(mixed $class): mixed
+    public static function getSingletonInstance(mixed $class): object|false
     {
         if (!method_exists($class, self::$defaultMethod)) {
             return false;

@@ -35,7 +35,7 @@ class Options
      */
     public static function setOptions(?array $options = null): void
     {
-        $class = \GenericDatabase\Engine\MySQli\MySQL::class; // @phpstan-ignore-line
+        $class = MySQL::class;
         foreach (Reflections::getClassConstants($class) as $key => $value) {
             $index = in_array($value, array_keys($options));
             if ($index !== false) {

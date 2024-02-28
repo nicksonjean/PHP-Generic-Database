@@ -622,7 +622,7 @@ class MySQLiEngine implements IConnection
                 $this->parse(...$params),
                 array_key_exists(1, $params) ? (int) $params[1] : MYSQLI_STORE_RESULT
             );
-            if (is_object(self::$statement) && get_class(self::$statement) === 'mysqli_result') {
+            if (is_object(self::$statement) && self::$statement::class === 'mysqli_result') {
                 $this->queryRows = self::$statement->num_rows;
                 $this->queryColumns = self::$statement->field_count;
             } else {
@@ -655,10 +655,10 @@ class MySQLiEngine implements IConnection
             } else {
                 $this->exec($statement);
             }
-            $this->queryRows = self::$statement && get_class(self::$statement) === 'mysqli_result'
+            $this->queryRows = self::$statement && self::$statement::class === 'mysqli_result'
                 ? self::$statement->num_rows
                 : $statement->num_rows;
-            $this->queryColumns = self::$statement && get_class(self::$statement) === 'mysqli_result'
+            $this->queryColumns = self::$statement && self::$statement::class === 'mysqli_result'
                 ? self::$statement->field_count
                 : $statement->field_count;
         }

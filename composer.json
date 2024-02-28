@@ -30,6 +30,10 @@
     "require": {
         "ext-mysqli": "*",
         "ext-sqlite3": "*",
+        "ext-yaml": "*",
+        "ext-xmlreader": "*",
+        "ext-simplexml": "*",
+        "ext-libxml": "*",
         "amphp/windows-registry": "1.x-dev"
     },
     "autoload-dev": {

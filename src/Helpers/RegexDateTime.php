@@ -2,9 +2,6 @@
 
 namespace GenericDatabase\Helpers;
 
-use GenericDatabase\Helpers\Strings;
-use GenericDatabase\Helpers\Arrays;
-
 /**
 
  * The `GenericDatabase\Helpers\RegexDateTime` class provides regular expression
@@ -126,7 +123,7 @@ class RegexDateTime
     private const LEAP_YEAR =
     '(?<leap_year>(?:\d{2}(?:0[48]|[2468][048]|[13579][26]))|(?:(?:[02468][048])|[13579][26])00)';
     private const YEAR = '(?<year>(?:\d{4}|(?:(?:0[48]|[2468][048]|[13579][26]))))';
-    private static $separators = [
+    private static array $separators = [
         'dateSeparators' => [
             'day_28_separator', 'day_30_separator', 'day_31_separator', 'month_28_separator',
             'month_30_separator', 'month_31_separator', 'leap_day_separator', 'leap_month_separator',
@@ -165,7 +162,7 @@ class RegexDateTime
      * @param int $term The end position.
      * @return string The regular expression pattern.
      */
-    private static function getRegex($regex, $init = 1, $term = 0): string
+    private static function getRegex(string $regex, int $init = 1, int $term = 0): string
     {
         return substr($regex, $init - 1, strlen($regex) - $term);
     }
@@ -351,9 +348,9 @@ class RegexDateTime
     /**
      * Sets the separators from the input data array.
      *
-     * @return mixed
+     * @return array
      */
-    private static function setSeparators(array $inputData): mixed
+    private static function setSeparators(array $inputData): array
     {
         $flatInputData = Arrays::arrayFlatten($inputData);
         return [
@@ -635,6 +632,7 @@ class RegexDateTime
             default => '',
         };
     }
+
     /**
      * Builds the date-time mask with timespan based on the format, date separator, time separator, date-time
      * separator, and timespan separator.
@@ -745,8 +743,9 @@ class RegexDateTime
      *
      * @return void
      */
-    private static function fetchSeparators(array &$result, string $input, array $separatorTypes): void
+    private static function fetchSeparators(array &$result, string $input): void
     {
+        $separatorTypes = ['date', 'date_time', 'time', 'meridiem', 'timezone'];
         foreach ($separatorTypes as $separatorType) {
             $separatorList = self::$separators[Strings::toCamelize($separatorType) . 'Separators'];
             self::$separators[$separatorType] = self::getSeparators($separatorList, $result[$input]);
@@ -773,7 +772,7 @@ class RegexDateTime
                     }
                 }
                 $result[$input]['format'] = $mask;
-                self::fetchSeparators($result, $input, ['date', 'date_time', 'time', 'meridiem', 'timezone']);
+                self::fetchSeparators($result, $input);
             }
         }
         $result[$input]['parsed'] = self::getMask($result);
