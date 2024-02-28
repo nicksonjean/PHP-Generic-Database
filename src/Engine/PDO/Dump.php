@@ -49,13 +49,13 @@ class Dump
             $uncomment = fn($string = '') => preg_replace(
                 (string) self::$regex['unicode'],
                 ' ',
-                (($string == '') ?  '' : preg_replace((string) self::$regex['uncomment'], '', (string) $string))
+                ((string) (($string == '') ?  '' : preg_replace((string) self::$regex['uncomment'], '', (string) $string)))
             );
 
-            if (strlen($uncomment($string)) > 1) {
-                if (!strncasecmp($uncomment($string), "DELIMITER ", 10)) {
-                    $delimiter = trim(substr($uncomment($string), 10));
-                } elseif (str_ends_with($trim = rtrim($uncomment($string)), $delimiter)) {
+            if (strlen((string) $uncomment($string)) > 1) {
+                if (!strncasecmp((string) $uncomment($string), "DELIMITER ", 10)) {
+                    $delimiter = trim(substr((string) $uncomment($string), 10));
+                } elseif (str_ends_with($trim = rtrim((string) $uncomment($string)), $delimiter)) {
                     $sql .= substr($trim, 0, -strlen($delimiter));
                     PDOEngine::getInstance()->exec($sql);
                     $sql = '';

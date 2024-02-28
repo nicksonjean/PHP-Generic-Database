@@ -3,6 +3,9 @@
 use PHPUnit\Framework\TestCase;
 use GenericDatabase\Shared\Caller;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CallerTraitTest extends TestCase
 {
     private $objectUsingCaller;
@@ -45,7 +48,6 @@ class CallerTraitTest extends TestCase
 
     public function testCallStaticWithExistingMethod2()
     {
-        // Crie uma classe de exemplo que usa a trait Caller
         $objectUsingCaller = new class()
         {
             use Caller;
@@ -56,7 +58,6 @@ class CallerTraitTest extends TestCase
             }
         };
 
-        // Teste a chamada estática de um método existente
         $result = $objectUsingCaller::__callStatic('setName', [null]);
         $this->assertEquals(null, $result);
     }
@@ -74,7 +75,6 @@ class CallerTraitTest extends TestCase
         };
 
         $result = $obj->__callStatic('someMethod', ['arg1', 'arg2']);
-
         $this->assertInstanceOf(get_class($obj), $result);
     }
 }

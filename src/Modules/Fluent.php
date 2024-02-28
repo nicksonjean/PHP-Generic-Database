@@ -24,6 +24,9 @@ use PDO;
 class Fluent
 {
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|MySQLiEngine
      */
     public static function nativeMySQLi(
@@ -58,6 +61,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|PgSQLEngine
      */
     public static function nativePgSQL(
@@ -88,6 +94,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|SQLSrvEngine
      */
     public static function nativeSQLSrv(
@@ -117,6 +126,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|OCIEngine
      */
     public static function nativeOCI(
@@ -145,6 +157,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|FirebirdEngine
      */
     public static function nativeFirebird(
@@ -173,6 +188,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|SQLiteEngine
      */
     public static function nativeSQLite(
@@ -201,6 +219,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|SQLiteEngine
      */
     public static function nativeMemory(
@@ -229,6 +250,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoMySQL(
@@ -259,6 +283,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoPgSQL(
@@ -290,6 +317,8 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoSQLSrv(
@@ -319,6 +348,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoOCI(
@@ -350,6 +382,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoFirebird(
@@ -381,6 +416,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoSQLite(
@@ -408,6 +446,9 @@ class Fluent
     }
 
     /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
      * @return Connection|PDOEngine
      */
     public static function pdoMemory(
