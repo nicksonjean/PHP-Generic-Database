@@ -41,10 +41,9 @@ trait Caller
      */
     public static function __callStatic(string $name, array $arguments): mixed
     {
-        // @phpstan-ignore-next-line
         if (method_exists(static::class, 'call')) {
             $instance = new static();
-            $instance->call($name, $arguments); // @phpstan-ignore-line
+            $instance->call($name, $arguments);
             return $instance;
         }
         return null;

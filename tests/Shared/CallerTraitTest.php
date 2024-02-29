@@ -1,29 +1,20 @@
 <?php
 
+namespace GenericDatabase\Tests\Shared;
+
 use PHPUnit\Framework\TestCase;
-use GenericDatabase\Shared\Caller;
+use GenericDatabase\Tests\Shared\Samples\CallerTestClass;
+use GenericDatabase\Tests\Shared\Samples\CallerTestStaticClass;
 
 class CallerTraitTest extends TestCase
 {
     private $objectUsingCaller;
+    private $objectUsingCalling;
 
     protected function setUp(): void
     {
-        $this->objectUsingCaller = new class
-        {
-            use Caller;
-            private $attributes = [];
-
-            public function __set($name, $value)
-            {
-                $this->attributes[$name] = $value;
-            }
-
-            public function __get($name)
-            {
-                return $this->attributes[$name] ?? null;
-            }
-        };
+        $this->objectUsingCaller = new CallerTestClass();
+        $this->objectUsingCalling = new CallerTestStaticClass();
     }
 
     public function testCallSetMethod()
@@ -43,34 +34,27 @@ class CallerTraitTest extends TestCase
         $this->assertNull($this->objectUsingCaller->nonExistingMethod());
     }
 
-    // public function testCallStaticWithExistingMethod()
-    // {
-    //     $objectUsingCaller = new class()
-    //     {
-    //         use Caller;
+    public function testCallStaticWithCallMethod()
+    {
+        $result = $this->objectUsingCaller->__callStatic('call', ['arg1', 'arg2']);
+        $this->assertInstanceOf(get_class($this->objectUsingCaller), $result);
+    }
 
-    //         public static function setName(string $name)
-    //         {
-    //             return $name;
-    //         }
-    //     };
+    public function testCallStaticWithNonExistingCallMethod()
+    {
+        $result = $this->objectUsingCalling::__callStatic('nonExistentMethod', [null]);
+        $this->assertEquals(null, $result);
+    }
 
-    //     $result = $objectUsingCaller::__callStatic('setName', [null]);
-    //     $this->assertEquals(null, $result);
-    // }
+    public function testCallStaticWithNonExistingMethod()
+    {
+        $result = $this->objectUsingCalling::__callStatic('nonExistingMethod', [null]);
+        $this->assertNull($result);
+    }
 
-    // public function testCallStaticWithCallMethodAndNonExistsMethod()
-    // {
-    //     $obj = new class
-    //     {
-    //         use Caller;
-    //         public function call($name, $arguments)
-    //         {
-    //             return $name . ' ' . implode(' ', $arguments);
-    //         }
-    //     };
-
-    //     $result = $obj->__callStatic('someMethod', ['arg1', 'arg2']);
-    //     $this->assertInstanceOf(get_class($obj), $result);
-    // }
+    public function testCallStaticReturnsNullForNonExistentMethod()
+    {
+        $result = $this->objectUsingCalling::__callStatic('nonExistentMethod', []);
+        $this->assertNull($result);
+    }
 }
