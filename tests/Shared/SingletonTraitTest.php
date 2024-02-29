@@ -3,12 +3,7 @@
 namespace GenericDatabase\Tests\Shared;
 
 use PHPUnit\Framework\TestCase;
-use GenericDatabase\Shared\Singleton;
-
-class SingletonStub
-{
-    use Singleton;
-}
+use GenericDatabase\Tests\Shared\Samples\SingletonStub;
 
 class SingletonTraitTest extends TestCase
 {
