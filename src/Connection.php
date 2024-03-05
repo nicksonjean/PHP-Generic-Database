@@ -133,9 +133,9 @@ class Connection
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return Connection
+     * @return Connection|string|int|bool|array|null
      */
-    public function __call(string $name, array $arguments): Connection
+    public function __call(string $name, array $arguments): Connection|string|int|bool|array|null
     {
         $method = substr($name, 0, 3);
         $field = mb_strtolower(substr($name, 3));
@@ -143,12 +143,11 @@ class Connection
             $this->initFactory(...$arguments);
         }
         if ($method == 'set') {
-            self::call($this->getStrategy(), 'set' . ucfirst($field), [...$arguments]);
-            return $this;
+            call_user_func_array([$this->getStrategy(), 'set' . ucfirst($field)], [...$arguments]);
         } elseif ($method == 'get') {
-            self::call($this->getStrategy(), 'get' . ucfirst($field), [...$arguments]);
+            return call_user_func_array([$this->getStrategy(), 'get' . ucfirst($field)], [...$arguments]);
         }
-        return self::getInstance();
+        return $this;
     }
 
     /**

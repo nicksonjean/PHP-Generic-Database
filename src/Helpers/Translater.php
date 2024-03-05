@@ -197,13 +197,12 @@ class Translater
      */
     private static function replaceParameters(string $input, string $quote, array $resWords): string
     {
-        $mask = self::$patternMap['sqlMask'];
         return preg_replace_callback(
             self::$patternMap['sqlGroups'],
-            function ($matches) use ($mask, $quote, $resWords) {
+            function ($matches) use ($quote, $resWords) {
                 if (!empty($matches) && !in_array($matches[1], $resWords)) {
                     $pWords = array_map(fn ($word) => $quote . trim($word) . $quote, explode(',', trim($matches[2])));
-                    return str_replace($mask, '(' . implode(', ', $pWords) . ') ', $matches[0]);
+                    return '(' . implode(', ', $pWords) . ') ';
                 }
                 return $matches[0];
             },
@@ -218,8 +217,8 @@ class Translater
      * @param array $resWords An array of words that should not be processed or enclosed.
      * @param string $quote The quote character used for enclosing words.
      * @param bool &$inFunction A flag indicating if the word is inside a function.
-     * @param bool $inSingleQt A flag indicating if the word is inside single quotes.
-     * @param bool $inDoubleQt A flag indicating if the word is inside double quotes.
+     * @param bool &$inSingleQt A flag indicating if the word is inside single quotes.
+     * @param bool &$inDoubleQt A flag indicating if the word is inside double quotes.
      * @return string The processed word, either as is or enclosed with the quote character.
      */
     private static function processWord(
@@ -227,8 +226,8 @@ class Translater
         array $resWords,
         string $quote,
         bool &$inFunction,
-        bool $inSingleQt,
-        bool $inDoubleQt
+        bool &$inSingleQt,
+        bool &$inDoubleQt
     ): string {
         $object = new stdClass();
 
@@ -240,7 +239,8 @@ class Translater
             $inDoubleQt && str_contains($word, '"') => self::processCondition($object, $word, false),
             !$inDoubleQt && str_contains($word, '"') => self::processCondition($object, $word, true),
             str_contains($word, ':') => $word,
-            in_array($word, $resWords) || $inFunction || $inSingleQt || $inDoubleQt => $word,
+            in_array($word, $resWords) => $word,
+            is_numeric($word) || preg_match('/\d{1,}/im', $word) => $word,
             default => self::encloseWord($word, $quote),
         };
 
@@ -253,6 +253,14 @@ class Translater
         return $object->processedWord;
     }
 
+    /**
+     * Processes a condition based on certain conditions and returns the processed condition.
+     *
+     * @param stdClass $object The object containing the processed word and the processed condition.
+     * @param string $processedWord The processed word.
+     * @param bool $processedCondition The processed condition.
+     * @return bool The processed condition.
+     */
     private static function processCondition(stdClass $object, string $processedWord, bool $processedCondition): bool
     {
         $object->processedWord = $processedWord;

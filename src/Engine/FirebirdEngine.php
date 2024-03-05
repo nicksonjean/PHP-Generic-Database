@@ -268,7 +268,8 @@ class FirebirdEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'firebird/ibase') && static::getConnected();
+        return (Compare::connection($this->getConnection()) === 'firebird/ibase') &&
+            $this->getInstance()->getConnected();
     }
 
     /**
@@ -673,7 +674,7 @@ class FirebirdEngine implements IConnection
     public function exec(mixed ...$params): mixed
     {
         $stmt = $params[0];
-        $data = $params[1];
+        $data = $params[1] ?? false;
         if (!is_array($data)) {
             $data = [];
         }

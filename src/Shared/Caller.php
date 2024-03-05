@@ -43,7 +43,7 @@ trait Caller
     {
         if (method_exists(static::class, 'call')) {
             $instance = new static();
-            $instance->call($name, $arguments);
+            $instance->call($name, $arguments); // @phpstan-ignore-line
             return $instance;
         }
         return null;

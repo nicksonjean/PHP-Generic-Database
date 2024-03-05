@@ -256,7 +256,7 @@ class PDOEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return ($this->getConnection() !== null) && static::getConnected();
+        return ($this->getConnection() !== null) && $this->getInstance()->getConnected();
     }
 
     /**

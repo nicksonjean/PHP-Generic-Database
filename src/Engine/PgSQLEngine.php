@@ -241,7 +241,7 @@ class PgSQLEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'pgsql') && static::getConnected();
+        return (Compare::connection($this->getConnection()) === 'pgsql') && $this->getInstance()->getConnected();
     }
 
     /**
@@ -371,7 +371,7 @@ class PgSQLEngine implements IConnection
     public function quote(mixed ...$params): mixed
     {
         $string = $params[0];
-        $quote = $params[1];
+        $quote = $params[1] ?? false;
         if (is_array($string)) {
             return array_map(fn ($str) => $this->quote($str, $quote), $string);
         } elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", (string) $string)) {

@@ -241,7 +241,10 @@ class SQLiteEngine implements IConnection
         if ($this->isConnected()) {
             static::setConnected(false);
             if (!Options::getOptions(SQLite::ATTR_PERSISTENT)) {
-                if (Compare::connection($this->getConnection()) === 'sqlite3') {
+                if (
+                    Compare::connection($this->getConnection()) === 'sqlite'
+                    || Compare::connection($this->getConnection()) === 'sqlite3'
+                ) {
                     $this->getConnection()->close();
                 }
                 $this->setConnection(null);
@@ -256,7 +259,8 @@ class SQLiteEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'sqlite3') && static::getConnected();
+        return (Compare::connection($this->getConnection()) === 'sqlite'
+            || Compare::connection($this->getConnection()) === 'sqlite3') && $this->getInstance()->getConnected();
     }
 
     /**

@@ -262,7 +262,7 @@ class SQLSrvEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'sqlsrv') && static::getConnected();
+        return (Compare::connection($this->getConnection()) === 'sqlsrv') && $this->getInstance()->getConnected();
     }
 
     /**

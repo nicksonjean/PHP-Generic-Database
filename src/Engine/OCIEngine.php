@@ -237,8 +237,7 @@ class OCIEngine implements IConnection
      */
     public function ping(): bool
     {
-        $result = $this->query('SELECT 1 FROM DUAL');
-        return $this->exec($result) !== false;
+        return $this->exec($this->parse('SELECT 1 FROM DUAL')) !== false;
     }
 
     /**
@@ -266,7 +265,7 @@ class OCIEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'oci') && static::getConnected();
+        return (Compare::connection($this->getConnection()) === 'oci') && $this->getInstance()->getConnected();
     }
 
     /**
