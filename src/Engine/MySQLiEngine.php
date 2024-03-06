@@ -259,7 +259,7 @@ class MySQLiEngine implements IConnection
     public function isConnected(): bool
     {
         return (Compare::connection($this->getConnection()) === 'mysqli') &&
-            $this->getConnected();
+            $this->getInstance()->getConnected();
     }
 
     /**
