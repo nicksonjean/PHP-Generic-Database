@@ -1,7 +1,8 @@
 <?php
 
-use GenericDatabase\Modules\Chainable;
 use Dotenv\Dotenv;
+use GenericDatabase\Connection;
+use GenericDatabase\Modules\Chainable;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
 
@@ -28,7 +29,7 @@ var_dump([
     $testA->affectedRows()
 ]);
 
-while ($row = $testA->fetch(FETCH_BOTH)) {
+while ($row = $testA->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
 
@@ -51,7 +52,7 @@ var_dump([
     $testB->affectedRows()
 ]);
 
-while ($row = $testB->fetch(FETCH_BOTH)) {
+while ($row = $testB->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
 
@@ -71,7 +72,7 @@ var_dump([
     $testC->affectedRows()
 ]);
 
-while ($row = $testC->fetch(FETCH_BOTH)) {
+while ($row = $testC->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
 
@@ -96,7 +97,7 @@ var_dump([
     $testD->affectedRows()
 ]);
 
-while ($row = $testD->fetch(FETCH_BOTH)) {
+while ($row = $testD->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
 
@@ -116,7 +117,7 @@ var_dump([
     $testE->affectedRows()
 ]);
 
-while ($row = $testE->fetch(FETCH_BOTH)) {
+while ($row = $testE->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
 
@@ -138,6 +139,6 @@ var_dump([
     $testF->affectedRows()
 ]);
 
-while ($row = $testF->fetch(FETCH_BOTH)) {
+while ($row = $testF->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }

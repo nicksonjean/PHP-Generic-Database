@@ -26,6 +26,17 @@ class ConnectionPgsqlTest extends TestCase
         $this->connection = Chainable::nativePgSQL($this->pgsqlEnv, false, true);
     }
 
+    public function testConnectionConstants()
+    {
+        $this->assertSame(8, Connection::FETCH_NUM);
+        $this->assertSame(9, Connection::FETCH_OBJ);
+        $this->assertSame(10, Connection::FETCH_BOTH);
+        $this->assertSame(11, Connection::FETCH_INTO);
+        $this->assertSame(12, Connection::FETCH_CLASS);
+        $this->assertSame(13, Connection::FETCH_ASSOC);
+        $this->assertSame(14, Connection::FETCH_COLUMN);
+    }
+
     public function testConnectionSingleton()
     {
         $connection1 = Connection::getInstance();

@@ -26,6 +26,22 @@ class PgsqlEngineTest extends TestCase
         $this->connection = Chainable::nativePgSQL($this->pgsqlEnv, false, false);
     }
 
+    public function testConnectionConstants()
+    {
+        $this->assertSame(8, PgSQLEngine::FETCH_NUM);
+        $this->assertSame(9, PgSQLEngine::FETCH_OBJ);
+        $this->assertSame(10, PgSQLEngine::FETCH_BOTH);
+        $this->assertSame(11, PgSQLEngine::FETCH_INTO);
+        $this->assertSame(12, PgSQLEngine::FETCH_CLASS);
+        $this->assertSame(13, PgSQLEngine::FETCH_ASSOC);
+        $this->assertSame(14, PgSQLEngine::FETCH_COLUMN);
+    }
+
+    public function testConnection()
+    {
+        $this->assertInstanceOf(PgSQLEngine::class, $this->connection);
+    }
+
     public function testConnectionSingleton()
     {
         $connection1 = PgSQLEngine::getInstance();

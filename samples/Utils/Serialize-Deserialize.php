@@ -95,7 +95,7 @@ var_dump([
 
 // var_dump($a->fetchAll(FETCH_OBJ));
 
-while ($row = $a->fetch(FETCH_OBJ)) {
+while ($row = $a->fetch(Connection::FETCH_OBJ)) {
     echo vsprintf("<pre>%s, %s/%s</pre>", [$row->Codigo, $row->Estado, $row->Sigla]);
 }
 

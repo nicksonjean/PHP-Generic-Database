@@ -26,6 +26,22 @@ class OCIEngineTest extends TestCase
         $this->connection = Chainable::nativeOCI($this->ociEnv, false, false);
     }
 
+    public function testConnectionConstants()
+    {
+        $this->assertSame(8, OCIEngine::FETCH_NUM);
+        $this->assertSame(9, OCIEngine::FETCH_OBJ);
+        $this->assertSame(10, OCIEngine::FETCH_BOTH);
+        $this->assertSame(11, OCIEngine::FETCH_INTO);
+        $this->assertSame(12, OCIEngine::FETCH_CLASS);
+        $this->assertSame(13, OCIEngine::FETCH_ASSOC);
+        $this->assertSame(14, OCIEngine::FETCH_COLUMN);
+    }
+
+    public function testConnection()
+    {
+        $this->assertInstanceOf(OCIEngine::class, $this->connection);
+    }
+
     public function testConnectionSingleton()
     {
         $connection1 = OCIEngine::getInstance();

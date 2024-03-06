@@ -26,6 +26,22 @@ class FirebirdEngineTest extends TestCase
         $this->connection = Chainable::nativeFirebird($this->firebirdEnv, false, false);
     }
 
+    public function testConnectionConstants()
+    {
+        $this->assertSame(8, FirebirdEngine::FETCH_NUM);
+        $this->assertSame(9, FirebirdEngine::FETCH_OBJ);
+        $this->assertSame(10, FirebirdEngine::FETCH_BOTH);
+        $this->assertSame(11, FirebirdEngine::FETCH_INTO);
+        $this->assertSame(12, FirebirdEngine::FETCH_CLASS);
+        $this->assertSame(13, FirebirdEngine::FETCH_ASSOC);
+        $this->assertSame(14, FirebirdEngine::FETCH_COLUMN);
+    }
+
+    public function testConnection()
+    {
+        $this->assertInstanceOf(FirebirdEngine::class, $this->connection);
+    }
+
     public function testConnectionSingleton()
     {
         $connection1 = FirebirdEngine::getInstance();

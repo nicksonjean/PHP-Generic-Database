@@ -88,6 +88,14 @@ class Connection
 {
     use Singleton;
 
+    public const FETCH_NUM = 8;
+    public const FETCH_OBJ = 9;
+    public const FETCH_BOTH = 10;
+    public const FETCH_INTO = 11;
+    public const FETCH_CLASS = 12;
+    public const FETCH_ASSOC = 13;
+    public const FETCH_COLUMN = 14;
+
     /**
      * Array property for use in magic setter and getter in order
      */

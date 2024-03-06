@@ -26,6 +26,22 @@ class MysqliEngineTest extends TestCase
         $this->connection = Chainable::nativeMySQLi($this->mysqlEnv, false, false);
     }
 
+    public function testConnectionConstants()
+    {
+        $this->assertSame(8, MySQLiEngine::FETCH_NUM);
+        $this->assertSame(9, MySQLiEngine::FETCH_OBJ);
+        $this->assertSame(10, MySQLiEngine::FETCH_BOTH);
+        $this->assertSame(11, MySQLiEngine::FETCH_INTO);
+        $this->assertSame(12, MySQLiEngine::FETCH_CLASS);
+        $this->assertSame(13, MySQLiEngine::FETCH_ASSOC);
+        $this->assertSame(14, MySQLiEngine::FETCH_COLUMN);
+    }
+
+    public function testConnection()
+    {
+        $this->assertInstanceOf(MySQLiEngine::class, $this->connection);
+    }
+
     public function testConnectionSingleton()
     {
         $connection1 = MySQLiEngine::getInstance();

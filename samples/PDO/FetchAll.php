@@ -1,7 +1,8 @@
 <?php
 
-use GenericDatabase\Modules\Chainable;
 use Dotenv\Dotenv;
+use GenericDatabase\Connection;
+use GenericDatabase\Modules\Chainable;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
 
@@ -28,7 +29,7 @@ var_dump([
     $testA->affectedRows()
 ]);
 
-var_dump($testA->fetchAll(FETCH_BOTH));
+var_dump($testA->fetchAll(Connection::FETCH_BOTH));
 
 $contextB = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 
@@ -49,7 +50,7 @@ var_dump([
     $testB->affectedRows()
 ]);
 
-var_dump($testB->fetchAll(FETCH_BOTH));
+var_dump($testB->fetchAll(Connection::FETCH_BOTH));
 
 $contextC = Chainable::pdoSQLSrv(env: $_ENV, strategy: false)->connect();
 
@@ -67,7 +68,7 @@ var_dump([
     $testC->affectedRows()
 ]);
 
-var_dump($testC->fetchAll(FETCH_BOTH));
+var_dump($testC->fetchAll(Connection::FETCH_BOTH));
 
 $contextD = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 
@@ -90,7 +91,7 @@ var_dump([
     $testD->affectedRows()
 ]);
 
-var_dump($testD->fetchAll(FETCH_BOTH));
+var_dump($testD->fetchAll(Connection::FETCH_BOTH));
 
 $contextE = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 
@@ -108,7 +109,7 @@ var_dump([
     $testE->affectedRows()
 ]);
 
-var_dump($testE->fetchAll(FETCH_BOTH));
+var_dump($testE->fetchAll(Connection::FETCH_BOTH));
 
 $contextF = Chainable::pdoSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
@@ -128,4 +129,4 @@ var_dump([
     $testF->affectedRows()
 ]);
 
-var_dump($testF->fetchAll(FETCH_BOTH));
+var_dump($testF->fetchAll(Connection::FETCH_BOTH));

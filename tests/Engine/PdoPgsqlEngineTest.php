@@ -26,6 +26,22 @@ class PdoPgsqlEngineTest extends TestCase
         $this->connection = Chainable::pdoPgSQL($this->pgsqlEnv, false, false);
     }
 
+    public function testConnectionConstants()
+    {
+        $this->assertSame(8, PDOEngine::FETCH_NUM);
+        $this->assertSame(9, PDOEngine::FETCH_OBJ);
+        $this->assertSame(10, PDOEngine::FETCH_BOTH);
+        $this->assertSame(11, PDOEngine::FETCH_INTO);
+        $this->assertSame(12, PDOEngine::FETCH_CLASS);
+        $this->assertSame(13, PDOEngine::FETCH_ASSOC);
+        $this->assertSame(14, PDOEngine::FETCH_COLUMN);
+    }
+
+    public function testConnection()
+    {
+        $this->assertInstanceOf(PDOEngine::class, $this->connection);
+    }
+
     public function testConnectionSingleton()
     {
         $connection1 = PDOEngine::getInstance();

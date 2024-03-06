@@ -1,7 +1,8 @@
 <?php
 
-use GenericDatabase\Modules\Chainable;
 use Dotenv\Dotenv;
+use GenericDatabase\Connection;
+use GenericDatabase\Modules\Chainable;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
 
@@ -28,7 +29,7 @@ var_dump([
     $testA->affectedRows()
 ]);
 
-var_dump($testA->fetchAll(FETCH_BOTH));
+var_dump($testA->fetchAll(Connection::FETCH_BOTH));
 
 $testB = $context->prepare(
     'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :idA AND id <= :idB',
@@ -47,7 +48,7 @@ var_dump([
     $testB->affectedRows()
 ]);
 
-var_dump($testB->fetchAll(FETCH_BOTH));
+var_dump($testB->fetchAll(Connection::FETCH_BOTH));
 
 $testC = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id = :id', '27');
 
@@ -63,7 +64,7 @@ var_dump([
     $testC->affectedRows()
 ]);
 
-var_dump($testC->fetchAll(FETCH_BOTH));
+var_dump($testC->fetchAll(Connection::FETCH_BOTH));
 
 $testD = $context->prepare(
     'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id IN(:idA, :idB, :idC)',
@@ -84,7 +85,7 @@ var_dump([
     $testD->affectedRows()
 ]);
 
-var_dump($testD->fetchAll(FETCH_BOTH));
+var_dump($testD->fetchAll(Connection::FETCH_BOTH));
 
 $testE = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id');
 
@@ -100,7 +101,7 @@ var_dump([
     $testE->affectedRows()
 ]);
 
-var_dump($testE->fetchAll(FETCH_BOTH));
+var_dump($testE->fetchAll(Connection::FETCH_BOTH));
 
 $testF = $context->query(
     'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id NOT IN(25, 26, 27) ORDER BY id'
@@ -118,4 +119,4 @@ var_dump([
     $testF->affectedRows()
 ]);
 
-var_dump($testF->fetchAll(FETCH_BOTH));
+var_dump($testF->fetchAll(Connection::FETCH_BOTH));

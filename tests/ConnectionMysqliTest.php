@@ -26,6 +26,17 @@ class ConnectionMysqliTest extends TestCase
         $this->connection = Chainable::nativeMySQLi($this->mysqlEnv, false, true);
     }
 
+    public function testConnectionConstants()
+    {
+        $this->assertSame(8, Connection::FETCH_NUM);
+        $this->assertSame(9, Connection::FETCH_OBJ);
+        $this->assertSame(10, Connection::FETCH_BOTH);
+        $this->assertSame(11, Connection::FETCH_INTO);
+        $this->assertSame(12, Connection::FETCH_CLASS);
+        $this->assertSame(13, Connection::FETCH_ASSOC);
+        $this->assertSame(14, Connection::FETCH_COLUMN);
+    }
+
     public function testConnectionSingleton()
     {
         $connection1 = Connection::getInstance();
@@ -42,15 +53,15 @@ class ConnectionMysqliTest extends TestCase
         $this->assertInstanceOf(Connection::class, $this->connection);
     }
 
-    public function testIsConnected()
-    {
-        $connected = $this->connection->isConnected();
-        $this->assertTrue($connected);
-    }
-
     public function testPing()
     {
         $connected = $this->connection->ping();
+        $this->assertTrue($connected);
+    }
+
+    public function testIsConnected()
+    {
+        $connected = $this->connection->isConnected();
         $this->assertTrue($connected);
     }
 

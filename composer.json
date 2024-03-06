@@ -20,9 +20,6 @@
     ],
     "minimum-stability": "dev",
     "autoload": {
-        "files": [
-            "src/Core/Consts.php"
-        ],
         "psr-4": {
             "GenericDatabase\\": "src/"
         }

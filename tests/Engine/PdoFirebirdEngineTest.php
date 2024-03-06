@@ -8,19 +8,38 @@ use GenericDatabase\Modules\Chainable;
 
 class PdoFirebirdEngineTest extends TestCase
 {
-    private array $sqliteEnv;
+    private array $firebirdEnv;
 
     private $connection;
 
     protected function setUp(): void
     {
-        $this->sqliteEnv = [
-            'SQLITE_DATABASE' => "./resources/database/sqlite/DB.SQLITE",
-            'SQLITE_DATABASE_MEMORY' => "memory",
-            'SQLITE_CHARSET' => "utf8",
+        $this->firebirdEnv = [
+            'FIREBIRD_HOST' => "localhost",
+            'FIREBIRD_PORT' => 3050,
+            'FIREBIRD_DATABASE' => "./resources/database/firebird/DB.FDB",
+            'FIREBIRD_USER' => "sysdba",
+            'FIREBIRD_PASSWORD' => "masterkey",
+            'FIREBIRD_CHARSET' => "utf8",
         ];
 
-        $this->connection = Chainable::pdoSQLite($this->sqliteEnv, false, false);
+        $this->connection = Chainable::pdoFirebird($this->firebirdEnv, false, false);
+    }
+
+    public function testConnectionConstants()
+    {
+        $this->assertSame(8, PDOEngine::FETCH_NUM);
+        $this->assertSame(9, PDOEngine::FETCH_OBJ);
+        $this->assertSame(10, PDOEngine::FETCH_BOTH);
+        $this->assertSame(11, PDOEngine::FETCH_INTO);
+        $this->assertSame(12, PDOEngine::FETCH_CLASS);
+        $this->assertSame(13, PDOEngine::FETCH_ASSOC);
+        $this->assertSame(14, PDOEngine::FETCH_COLUMN);
+    }
+
+    public function testConnection()
+    {
+        $this->assertInstanceOf(PDOEngine::class, $this->connection);
     }
 
     public function testConnectionSingleton()

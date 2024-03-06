@@ -23,6 +23,22 @@ class SqliteEngineTest extends TestCase
         $this->connection = Chainable::nativeSQLite($this->sqliteEnv, false, false);
     }
 
+    public function testConnectionConstants()
+    {
+        $this->assertSame(8, SQLiteEngine::FETCH_NUM);
+        $this->assertSame(9, SQLiteEngine::FETCH_OBJ);
+        $this->assertSame(10, SQLiteEngine::FETCH_BOTH);
+        $this->assertSame(11, SQLiteEngine::FETCH_INTO);
+        $this->assertSame(12, SQLiteEngine::FETCH_CLASS);
+        $this->assertSame(13, SQLiteEngine::FETCH_ASSOC);
+        $this->assertSame(14, SQLiteEngine::FETCH_COLUMN);
+    }
+
+    public function testConnection()
+    {
+        $this->assertInstanceOf(SQLiteEngine::class, $this->connection);
+    }
+
     public function testConnectionSingleton()
     {
         $connection1 = SQLiteEngine::getInstance();

@@ -26,6 +26,22 @@ class SqlsrvEngineTest extends TestCase
         $this->connection = Chainable::nativeSQLSrv($this->sqlsrvEnv, false, false);
     }
 
+    public function testConnectionConstants()
+    {
+        $this->assertSame(8, SQLSrvEngine::FETCH_NUM);
+        $this->assertSame(9, SQLSrvEngine::FETCH_OBJ);
+        $this->assertSame(10, SQLSrvEngine::FETCH_BOTH);
+        $this->assertSame(11, SQLSrvEngine::FETCH_INTO);
+        $this->assertSame(12, SQLSrvEngine::FETCH_CLASS);
+        $this->assertSame(13, SQLSrvEngine::FETCH_ASSOC);
+        $this->assertSame(14, SQLSrvEngine::FETCH_COLUMN);
+    }
+
+    public function testConnection()
+    {
+        $this->assertInstanceOf(SQLSrvEngine::class, $this->connection);
+    }
+
     public function testConnectionSingleton()
     {
         $connection1 = SQLSrvEngine::getInstance();

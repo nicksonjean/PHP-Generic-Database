@@ -64,6 +64,14 @@ class SQLSrvEngine implements IConnection
     use Cleaner;
     use Singleton;
 
+    public const FETCH_NUM = 8;
+    public const FETCH_OBJ = 9;
+    public const FETCH_BOTH = 10;
+    public const FETCH_INTO = 11;
+    public const FETCH_CLASS = 12;
+    public const FETCH_ASSOC = 13;
+    public const FETCH_COLUMN = 14;
+
     /**
      * Instance of the connection with database
      * @var mixed $connection
@@ -669,7 +677,7 @@ class SQLSrvEngine implements IConnection
      * @throws ReflectionException
      */
     public function fetch(
-        int $fetchStyle = FETCH_BOTH,
+        int $fetchStyle = self::FETCH_BOTH,
         mixed $fetchArgument = null,
         mixed $optArgs = null
     ): mixed {
@@ -692,7 +700,7 @@ class SQLSrvEngine implements IConnection
      * @throws ReflectionException
      */
     public function fetchAll(
-        int $fetchStyle = FETCH_ASSOC,
+        int $fetchStyle = self::FETCH_ASSOC,
         mixed $fetchArgument = null,
         mixed $optArgs = null
     ): array {
