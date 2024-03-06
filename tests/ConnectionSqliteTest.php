@@ -6,24 +6,21 @@ use PHPUnit\Framework\TestCase;
 use GenericDatabase\Connection;
 use GenericDatabase\Modules\Chainable;
 
-class ConnectionMysqliTest extends TestCase
+class ConnectionSqliteTest extends TestCase
 {
-    private array $mysqlEnv;
+    private array $sqliteEnv;
 
     private $connection;
 
     protected function setUp(): void
     {
-        $this->mysqlEnv = [
-            'MYSQL_HOST' => 'localhost',
-            'MYSQL_PORT' => '3306',
-            'MYSQL_DATABASE' => 'demodev',
-            'MYSQL_USER' => 'root',
-            'MYSQL_PASSWORD' => 'masterkey',
-            'MYSQL_CHARSET' => 'utf8',
+        $this->sqliteEnv = [
+            'SQLITE_DATABASE' => "./resources/database/sqlite/DB.SQLITE",
+            'SQLITE_DATABASE_MEMORY' => "memory",
+            'SQLITE_CHARSET' => "utf8",
         ];
 
-        $this->connection = Chainable::nativeMySQLi($this->mysqlEnv, false, true);
+        $this->connection = Chainable::nativeSQLite($this->sqliteEnv, false, true);
     }
 
     public function testConnectionSingleton()
@@ -42,28 +39,28 @@ class ConnectionMysqliTest extends TestCase
         $this->assertInstanceOf(Connection::class, $this->connection);
     }
 
-    public function testIsConnected()
-    {
-        $connected = $this->connection->isConnected();
-        $this->assertTrue($connected);
-    }
-
     public function testPing()
     {
         $connected = $this->connection->ping();
         $this->assertTrue($connected);
     }
 
+    public function testIsConnected()
+    {
+        $connected = $this->connection->isConnected();
+        $this->assertTrue($connected);
+    }
+
     public function testQuoteString()
     {
         $quotedString = $this->connection->quote("O'Hare's Pub");
-        $this->assertEquals("O\'Hare\'s Pub", $quotedString);
+        $this->assertEquals("'O''Hare''s Pub'", $quotedString);
     }
 
     public function testGetEngine()
     {
         $engine = $this->connection->getEngine();
-        $this->assertEquals("mysqli", $engine);
+        $this->assertEquals("sqlite", $engine);
     }
 
     public function testPrepare()

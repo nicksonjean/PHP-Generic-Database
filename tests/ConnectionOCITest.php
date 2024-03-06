@@ -6,24 +6,24 @@ use PHPUnit\Framework\TestCase;
 use GenericDatabase\Connection;
 use GenericDatabase\Modules\Chainable;
 
-class ConnectionMysqliTest extends TestCase
+class ConnectionOCITest extends TestCase
 {
-    private array $mysqlEnv;
+    private array $ociEnv;
 
     private $connection;
 
     protected function setUp(): void
     {
-        $this->mysqlEnv = [
-            'MYSQL_HOST' => 'localhost',
-            'MYSQL_PORT' => '3306',
-            'MYSQL_DATABASE' => 'demodev',
-            'MYSQL_USER' => 'root',
-            'MYSQL_PASSWORD' => 'masterkey',
-            'MYSQL_CHARSET' => 'utf8',
+        $this->ociEnv = [
+            'OCI_HOST' => "localhost",
+            'OCI_PORT' => 1521,
+            'OCI_DATABASE' => "xe",
+            'OCI_USER' => "hr",
+            'OCI_PASSWORD' => "masterkey",
+            'OCI_CHARSET' => "utf8",
         ];
 
-        $this->connection = Chainable::nativeMySQLi($this->mysqlEnv, false, true);
+        $this->connection = Chainable::nativeOCI($this->ociEnv, false, true);
     }
 
     public function testConnectionSingleton()
@@ -42,28 +42,28 @@ class ConnectionMysqliTest extends TestCase
         $this->assertInstanceOf(Connection::class, $this->connection);
     }
 
-    public function testIsConnected()
-    {
-        $connected = $this->connection->isConnected();
-        $this->assertTrue($connected);
-    }
-
     public function testPing()
     {
         $connected = $this->connection->ping();
         $this->assertTrue($connected);
     }
 
+    public function testIsConnected()
+    {
+        $connected = $this->connection->isConnected();
+        $this->assertTrue($connected);
+    }
+
     public function testQuoteString()
     {
         $quotedString = $this->connection->quote("O'Hare's Pub");
-        $this->assertEquals("O\'Hare\'s Pub", $quotedString);
+        $this->assertEquals("'O''Hare''s Pub'", $quotedString);
     }
 
     public function testGetEngine()
     {
         $engine = $this->connection->getEngine();
-        $this->assertEquals("mysqli", $engine);
+        $this->assertEquals("oci", $engine);
     }
 
     public function testPrepare()
@@ -99,10 +99,8 @@ class ConnectionMysqliTest extends TestCase
 
     public function testExec()
     {
-        $stmt1 = $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
-        $this->connection->exec($stmt1);
-        $stmt2 = $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
-        $this->connection->exec($stmt2);
+        $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
+        $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
         $this->assertInstanceOf(Connection::class, $this->connection);
     }
 
