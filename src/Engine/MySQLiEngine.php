@@ -258,7 +258,8 @@ class MySQLiEngine implements IConnection
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'mysqli') && $this->getInstance()->getConnected();
+        return (Compare::connection($this->getConnection()) === 'mysqli') &&
+            $this->getConnected();
     }
 
     /**
@@ -688,7 +689,7 @@ class MySQLiEngine implements IConnection
      * @throws ReflectionException
      */
     public function fetch(
-        int $fetchStyle = FETCH_BOTH,
+        int $fetchStyle = FETCH_ASSOC,
         mixed $fetchArgument = null,
         mixed $optArgs = null
     ): mixed {
