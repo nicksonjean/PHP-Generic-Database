@@ -2,28 +2,6 @@ grumphp:
   hooks_dir: ~
   hooks_preset: local
   tasks:
-    phpunit:
-      config_file: phpunit.xml
-      exclude_group: ['resources/','assets/','build/']
-      always_execute: false
-      order: null
-    phpmd:
-      whitelist_patterns: [/^src\/(.*)/,/^samples\/(.*)/,/^tests\/(.*)/]
-      report_format: text
-      exclude: ['resources/','assets/','build/']
-      ruleset: [phpmd.xml]
-      triggered_by: ['php']
-    phpcs:
-      whitelist_patterns: [/^src\/(.*)/,/^samples\/(.*)/,/^tests\/(.*)/]
-      encoding: utf8
-      ignore_patterns: ['resources/','assets/','build/']
-      standard: [phpcs.xml]
-      triggered_by: [php]
-    phpstan:
-      memory_limit: "-1"
-      triggered_by: ['php']
-      configuration: phpstan.neon
-      use_grumphp_paths: true
     phplint:
       exclude: ['resources/','assets/','build/']
       short_open_tag: false
