@@ -6,24 +6,24 @@ use PHPUnit\Framework\TestCase;
 use GenericDatabase\Connection;
 use GenericDatabase\Modules\Chainable;
 
-class ConnectionMysqliTest extends TestCase
+class ConnectionPgsqlTest extends TestCase
 {
-    private array $mysqlEnv;
+    private array $pgsqlEnv;
 
     private $connection;
 
     protected function setUp(): void
     {
-        $this->mysqlEnv = [
-            'MYSQL_HOST' => 'localhost',
-            'MYSQL_PORT' => '3306',
-            'MYSQL_DATABASE' => 'demodev',
-            'MYSQL_USER' => 'root',
-            'MYSQL_PASSWORD' => 'masterkey',
-            'MYSQL_CHARSET' => 'utf8',
+        $this->pgsqlEnv = [
+            'PGSQL_HOST' => "localhost",
+            'PGSQL_PORT' => 5432,
+            'PGSQL_DATABASE' => "postgres",
+            'PGSQL_USER' => "postgres",
+            'PGSQL_PASSWORD' => "masterkey",
+            'PGSQL_CHARSET' => "utf8",
         ];
 
-        $this->connection = Chainable::nativeMySQLi($this->mysqlEnv, false, true);
+        $this->connection = Chainable::nativePgSQL($this->pgsqlEnv, false, true);
     }
 
     public function testConnectionConstants()
@@ -46,16 +46,16 @@ class ConnectionMysqliTest extends TestCase
         $this->assertInstanceOf(Connection::class, $connection2);
         $this->assertSame($connection1, $connection2);
 
-        $ini = Connection::new('./resources/dsn/ini/stg_mysqli.ini');
+        $ini = Connection::new('./resources/dsn/ini/stg_pgsql.ini');
         $this->assertInstanceOf(Connection::class, $ini);
 
-        $json = Connection::new('./resources/dsn/json/stg_mysqli.json');
+        $json = Connection::new('./resources/dsn/json/stg_pgsql.json');
         $this->assertInstanceOf(Connection::class, $json);
 
-        $xml = Connection::new('./resources/dsn/xml/stg_mysqli.xml');
+        $xml = Connection::new('./resources/dsn/xml/stg_pgsql.xml');
         $this->assertInstanceOf(Connection::class, $xml);
 
-        $yaml = Connection::new('./resources/dsn/yaml/stg_mysqli.yaml');
+        $yaml = Connection::new('./resources/dsn/yaml/stg_pgsql.yaml');
         $this->assertInstanceOf(Connection::class, $yaml);
     }
 
@@ -80,13 +80,13 @@ class ConnectionMysqliTest extends TestCase
     public function testQuoteString()
     {
         $quotedString = $this->connection->quote("O'Hare's Pub");
-        $this->assertEquals("O\'Hare\'s Pub", $quotedString);
+        $this->assertEquals("O''Hare''s Pub", $quotedString);
     }
 
     public function testGetEngine()
     {
         $engine = $this->connection->getEngine();
-        $this->assertEquals("mysqli", $engine);
+        $this->assertEquals("pgsql", $engine);
     }
 
     public function testPrepare()
@@ -122,10 +122,8 @@ class ConnectionMysqliTest extends TestCase
 
     public function testExec()
     {
-        $stmt1 = $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
-        $this->connection->exec($stmt1);
-        $stmt2 = $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
-        $this->connection->exec($stmt2);
+        $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
+        $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
         $this->assertInstanceOf(Connection::class, $this->connection);
     }
 
