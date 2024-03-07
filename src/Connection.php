@@ -33,7 +33,7 @@ use ReflectionException;
  * $connection = Connection::getInstance();
  *
  * //Set the database engine
- * $connection->engine('pdo');
+ * $connection->setEngine('pdo');
  *
  * //Set connection parameters
  * $connection->setHost('localhost');

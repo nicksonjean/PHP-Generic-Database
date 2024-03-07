@@ -2,6 +2,11 @@ grumphp:
   hooks_dir: ~
   hooks_preset: local
   tasks:
+    phpunit:
+      config_file: phpunit.xml
+      exclude_group: ['resources/','assets/','build/']
+      always_execute: false
+      order: null
     phpmd:
       whitelist_patterns: [/^src\/(.*)/,/^samples\/(.*)/,/^tests\/(.*)/]
       report_format: text
