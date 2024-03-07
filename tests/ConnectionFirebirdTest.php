@@ -46,16 +46,16 @@ class ConnectionFirebirdTest extends TestCase
         $this->assertInstanceOf(Connection::class, $connection2);
         $this->assertSame($connection1, $connection2);
 
-        $ini = Connection::new('./resources/dsn/ini/stg_mysqli.ini');
+        $ini = Connection::new('./resources/dsn/ini/stg_firebird.ini');
         $this->assertInstanceOf(Connection::class, $ini);
 
-        $json = Connection::new('./resources/dsn/json/stg_mysqli.json');
+        $json = Connection::new('./resources/dsn/json/stg_firebird.json');
         $this->assertInstanceOf(Connection::class, $json);
 
-        $xml = Connection::new('./resources/dsn/xml/stg_mysqli.xml');
+        $xml = Connection::new('./resources/dsn/xml/stg_firebird.xml');
         $this->assertInstanceOf(Connection::class, $xml);
 
-        $yaml = Connection::new('./resources/dsn/yaml/stg_mysqli.yaml');
+        $yaml = Connection::new('./resources/dsn/yaml/stg_firebird.yaml');
         $this->assertInstanceOf(Connection::class, $yaml);
     }
 
