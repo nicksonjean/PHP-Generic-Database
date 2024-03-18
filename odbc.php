@@ -124,8 +124,6 @@ var_dump(ODBC::getDriverSettings());
 var_dump(ODBC::getAliasByDriver('oci', null));
 var_dump(ODBC::getDriverSettingsByDriver(ODBC::getAliasByDriver('oci', null)));
 
-die();
-
 // foreach ($tests as $test) {
 //     var_dump(RegexDateTime::getPattern($test));
 // }
