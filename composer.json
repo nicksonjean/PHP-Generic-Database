@@ -5,7 +5,18 @@
     "keywords": [
         "dbal",
         "pdo",
+        "odbc",
+        "sqlsrv",
+        "oci",
+        "oracle",
+        "firebird",
+        "interbase",
+        "mysql",
+        "mysqli",
+        "sqlite",
+        "sqlite3",
         "query",
+        "prepare",
         "builder",
         "database",
         "connection",
@@ -25,13 +36,14 @@
         }
     },
     "require": {
-        "ext-mysqli": "*",
-        "ext-sqlite3": "*",
-        "ext-yaml": "*",
-        "ext-xmlreader": "*",
-        "ext-simplexml": "*",
         "ext-libxml": "*",
-        "amphp/windows-registry": "1.x-dev"
+        "ext-mysqli": "*",
+        "ext-simplexml": "*",
+        "ext-sqlite3": "*",
+        "ext-xmlreader": "*",
+        "ext-yaml": "*",
+        "symfony/polyfill-php82": "1.x-dev",
+        "symfony/polyfill-php83": "1.x-dev"
     },
     "autoload-dev": {
         "psr-4": {

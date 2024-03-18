@@ -48,13 +48,13 @@ final class AttributesTest extends TestCase
         Attributes::define();
         $attributes = self::$instance->getAttributes();
         $expectedAttributes = [
-            'AUTOCOMMIT' => 0,
+            'AUTOCOMMIT' => false,
             'ERRMODE' => 1,
             'CASE' => 0,
             'CLIENT_VERSION' => self::$settings['versionString'],
             'CONNECTION_STATUS' => 'Connection OK in memory; waiting to send.',
             'PERSISTENT' => 0,
-            'SERVER_INFO' => '',
+            'SERVER_INFO' => self::$settings,
             'SERVER_VERSION' => self::$settings['versionNumber'],
             'TIMEOUT' => 28800,
             'EMULATE_PREPARES' => true,

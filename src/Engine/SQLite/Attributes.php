@@ -49,11 +49,12 @@ class Attributes
         $settings = self::settings();
         $result = [];
         $keys = array_keys(self::$attributeList);
-        $memory = SQLiteEngine::getInstance()->getDatabase() == 'memory' ? '' : ' via File';
+        $dbType = SQLiteEngine::getInstance()->getDatabase() == 'memory' ? '' : ' via File';
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT', 'CASE' => 0,
+                'AUTOCOMMIT' => false,
+                'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['versionString'],
                 'CONNECTION_STATUS' => (Compare::connection(
@@ -62,13 +63,13 @@ class Attributes
                     ? sprintf(
                         'Connection OK in %s%s; waiting to send.',
                         SQLiteEngine::getInstance()->getDatabase(),
-                        $memory
+                        $dbType
                     )
                     : 'Connection failed;',
                 'PERSISTENT' => (int) !Options::getOptions(SQLite::ATTR_PERSISTENT)
                     ? 0
                     : (int) Options::getOptions(SQLite::ATTR_PERSISTENT),
-                'SERVER_INFO' => '',
+                'SERVER_INFO' => $settings,
                 'SERVER_VERSION' => $settings['versionNumber'],
                 'TIMEOUT' =>  (int) Options::getOptions(SQLite::ATTR_CONNECT_TIMEOUT)
                     ? Options::getOptions(SQLite::ATTR_CONNECT_TIMEOUT)

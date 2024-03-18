@@ -361,7 +361,6 @@ fabric.properties
 
 ##### Eclipse
 .metadata
-bin/
 tmp/
 *.tmp
 *.bak
@@ -501,3 +500,4 @@ composer.lock
 ###< phpunit/phpunit ###
 /adminer/
 db-test.php
+odbc.php

@@ -55,7 +55,8 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT', 'CASE' => 0,
+                'AUTOCOMMIT' => false,
+                'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['client_version'],
                 'CONNECTION_STATUS' => (Compare::connection(

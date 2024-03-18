@@ -22,6 +22,11 @@ enum Entity: string
     case CLASS_PDO_ENGINE = \GenericDatabase\Engine\PDOEngine::class;
 
     /**
+     * The fully qualified class name of the ODBC database engine class.
+     */
+    case CLASS_ODBC_ENGINE = \GenericDatabase\Engine\ODBCEngine::class;
+
+    /**
      * The fully qualified class name of the MySQLi database engine class.
      */
     case CLASS_MYSQLI_ENGINE = \GenericDatabase\Engine\MySQLiEngine::class;

@@ -52,15 +52,16 @@ class Options
     }
 
     /**
-     * This method is responsible for set options after connect in database
+     * This method is responsible for set options after connect in database,
+     * more informations in https://www.php.net/manual/en/sqlsrv.configuration.php
      *
      * @return void
      */
     public static function define(): void
     {
         foreach (array_keys(self::getOptions()) as $key) {
-            if ($key === 'ATTR_PERSISTENT' && ini_get('sqlsrv.persistent_timeout') !== '1') {
-                ini_set('sqlsrv.persistent_timeout ', Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT));
+            if ($key === 'ATTR_CONNECT_TIMEOUT' && ini_get('sqlsrv.persistent_timeout') !== '1') {
+                ini_set('sqlsrv.persistent_timeout', Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT));
             }
         }
     }

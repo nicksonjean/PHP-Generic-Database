@@ -42,20 +42,28 @@ PHP-Generic-Database currently supports the following mechanisms/database:
 - **Native Extensions**
   - **MySQL/MariaDB** ***(MySQLi)*** *[php_mysqli.dll/so]*
   - **PgSQL** ***(PgSQL)*** *[php_pgsql.dll/so]*
-  - **OCI** ***(ORACLE8)*** *[php_oci8_19.dll/so]*
-  - **SQLSrv/MSSQL** ***(sqlsrv, mssql, dblib)*** *[php_sqlsrv.dll/so]*
-  - **Firebird/Interbase** ***(ibase: gds/firebird: fds)*** *[php_interbase.dll/so]*
+  - **OCI** ***(ORACLE8)*** *[php_oci8_***.dll/so]*
+  - **SQLSrv** ***(sqlsrv)*** *[php_sqlsrv.dll/so]*
+  - **Firebird/Interbase** ***(ibase: gds | firebird: fds)*** *[php_interbase.dll/so]*
   - **SQLite** ***(SQLite3)*** *[php_sqlite3.dll/so]*
 - **PDO Extensions**
   - **MySQL/MariaDB** ***(MySQL)*** *[php_pdo_mysql.dll/so]*
   - **PgSQL** ***(PgSQL)*** *[php_pdo_pgsql.dll/so]*
   - **OCI** ***(ORACLE)*** *[php_pdo_oci.dll/so]*
-  - **SQLSrv/MSSQL** ***(sqlsrv, mssql, dblib)*** *[php_pdo_sqlsrv.dll/so]*
-  - **Firebird/Interbase** ***(ibase: gds/firebird: fds)*** *[php_pdo_firebird.dll/so]*
+  - **SQLSrv** ***(sqlsrv)*** *[php_pdo_sqlsrv.dll/so]*
+  - **Firebird/Interbase** ***(ibase: gds | firebird: fds)*** *[php_pdo_firebird.dll/so]*
   - **SQLite** ***(SQLite)*** *[php_pdo_sqlite.dll/so]*
-  - **ODBC** ***(ODBC/MDB)*** *[php_pdo_obdc.dll/so]*
+  - **ODBC** ***(ODBC)*** *[php_pdo_obdc.dll/so]*
 - **ODBC Externsions**
-  - **ODBC** ***(ODBC/MDB)*** *[php_obdc.dll/so]*
+  - **MySQL/MariaDB** ***(MySQL)*** *[myodbc8a.dll/so]*
+  - **PgSQL** ***(PgSQL)*** *[psqlodbc30a.dll/so]*
+  - **OCI** ***(ORACLE)*** *[sqora32.dll/so]*
+  - **SQLSrv** ***(sqlsrv)*** *[sqlsrv32.dll/so]*
+  - **Firebird/Interbase** ***(ibase: gds | firebird: fds)*** *[odbcFb.dll/so]*
+  - **SQLite** ***(SQLite)*** *[sqlite3odbc.dll/so]*
+  - **Access** ***(Access)*** *[aceodbc.dll/so]*
+  - **Excel** ***(Excel)*** *[aceodexl.dll/so]*
+  - **Text** ***(Text)*** *[aceodtxt.dll/so]*
 - **Optional External Formats**
   - **INI** ***(php native compilation)***
   - **XML** ***(ext-libxml, ext-xmlreader, ext-simplexml)***
@@ -99,19 +107,19 @@ extension=php_pdo_mysql.so
 3) After Composer and Git are installed, clone this repository with the command line below:
 
 ```bash
-$ git clone https://github.com/nicksonjean/PHP-Generic-Database.git
+git clone https://github.com/nicksonjean/PHP-Generic-Database.git
 ```
 
 4) Then run the following command to install all packages and dependencies for this project:
 
 ```bash
-$ composer install
+composer install
 ```
 
 5) [Optional] If you need to reinstall, run the following command:
 
 ```bash
-$ composer setup
+composer setup
 ```
 
 ## Installation via Docker
@@ -121,7 +129,7 @@ $ composer setup
 3) Once logged in to Docker Hub and with Docker Desktop open on your system, run the command below:
 
 ```bash
-$ docker pull php-generic-database:8.1-full
+docker pull php-generic-database:8.1-full
 ```
 
 4) Docker will download, install and configure a Debian-Like Linux Custom Image as Apache and with PHP 8.1 with all Extensions properly configured.
@@ -133,13 +141,13 @@ $ docker pull php-generic-database:8.1-full
 3) Add PHP-Generic-Database to the composer.json configuration file.
 
 ```bash
-$ composer require nicksonjean/php-generic-database
+composer require nicksonjean/php-generic-database
 ```
 
 4) And update the composer
 
 ```bash
-$ composer update
+composer update
 ```
 
 ## Documentation
@@ -171,6 +179,11 @@ Below is a series of readmes containing examples of how to use the lib and a [to
     - [Fluent.md](./readme/Engines/PDOEngine/Fluent.md)
     - [StaticArgs.md](./readme/Engines/PDOEngine/StaticArgs.md)
     - [StaticArray.md](./readme/Engines/PDOEngine/StaticArray.md)
+  - ODBC:
+    - [Chainable.md](./readme/Engines/ODBCEngine/Chainable.md)
+    - [Fluent.md](./readme/Engines/ODBCEngine/Fluent.md)
+    - [StaticArgs.md](./readme/Engines/ODBCEngine/StaticArgs.md)
+    - [StaticArray.md](./readme/Engines/ODBCEngine/StaticArray.md)
 - Statements: [Statements.md](./readme/Statements.md)
 - Fetches: [Fetches.md](./readme/Fetches.md)
 
@@ -186,11 +199,13 @@ PHP-Generic-Database is released under the MIT license.
 - Source
   - Connection
     - [x] Possibility of use with Fluent Design and Chained Methods.
-    - [x] Improved use of the Static Arguments format, now using array by key and value for arguments.
-    - [x] Improved use of the Static Arguments format, now using named arguments.
+    - [x] Improved use of the Static Calling format, now using array by key and value for arguments.
+    - [x] Improved use of the Static Calling format, now using named arguments.
+    - [ ] Adjust in Attribute DEFAULT_FETCH_MODE
   - [x] Implement fetch and fetchAll methods.
   - [ ] Add transaction, commit and rollback support.
-  - [ ] Added compatibility for ODBC engine.
+  - [x] Added compatibility for PDO engine.
+  - [x] Added compatibility for ODBC engine.
   - [ ] Added compatibility for MongoDB Database.
   - [ ] Added compatibility for Cassandra Database.
   - [ ] Added compatibility for SyBase Database.

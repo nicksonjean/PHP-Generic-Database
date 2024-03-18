@@ -120,7 +120,8 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT', 'CASE' => 0,
+                'AUTOCOMMIT' => false,
+                'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['server_version'],
                 'CONNECTION_STATUS' => (Compare::connection(
@@ -134,7 +135,8 @@ class Attributes
                 'PERSISTENT' => (int) !Options::getOptions(Firebird::ATTR_PERSISTENT)
                     ? 0
                     : (int) Options::getOptions(Firebird::ATTR_PERSISTENT),
-                'SERVER_INFO', 'SERVER_VERSION' => $settings['server_info'],
+                'SERVER_INFO' => $settings['server_info'],
+                'SERVER_VERSION' => $settings['server_info'],
                 'TIMEOUT' =>  (int) Options::getOptions(Firebird::ATTR_CONNECT_TIMEOUT)
                     ? Options::getOptions(Firebird::ATTR_CONNECT_TIMEOUT)
                     : 30,

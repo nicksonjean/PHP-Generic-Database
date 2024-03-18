@@ -106,3 +106,73 @@ try {
 } catch (Exception $e) {
     var_dump($e);
 }
+
+try {
+    $context = Fluent::odbcMySQL(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Fluent::odbcPgSQL(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Fluent::odbcSQLSrv(env: $_ENV, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Fluent::odbcOCI(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Fluent::odbcFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Fluent::odbcAccess(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Fluent::odbcExcel(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Fluent::odbcText(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Fluent::odbcSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Fluent::odbcMemory(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}

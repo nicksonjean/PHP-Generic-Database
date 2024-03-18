@@ -92,6 +92,8 @@ class Compare
     {
         $its = fn ($name) => $name->value;
         return match (true) {
+            is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_ODBC) => 'odbc',
+            is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_ODBC_PERSISTENT) => 'odbc',
             is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_OCI) => 'oci',
             is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_OCI_PERSISTENT) => 'oci',
             is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_SQLSRV_PERSISTENT) => 'sqlsrv',

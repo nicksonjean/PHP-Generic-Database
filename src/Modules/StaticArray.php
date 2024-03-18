@@ -4,21 +4,23 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Modules;
 
+use GenericDatabase\Core\Entity;
 use GenericDatabase\Connection;
 use GenericDatabase\Engine\MySQLiEngine;
-use GenericDatabase\Engine\PgSQLEngine;
-use GenericDatabase\Engine\SQLSrvEngine;
-use GenericDatabase\Engine\OCIEngine;
-use GenericDatabase\Engine\FirebirdEngine;
-use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Engine\MySQLi\MySQL;
+use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Engine\PgSQL\PgSQL;
+use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Engine\SQLSrv\SQLSrv;
+use GenericDatabase\Engine\OCIEngine;
 use GenericDatabase\Engine\OCI\OCI;
+use GenericDatabase\Engine\FirebirdEngine;
 use GenericDatabase\Engine\Firebird\Firebird;
+use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Engine\SQLite\SQLite;
+use GenericDatabase\Engine\ODBCEngine;
+use GenericDatabase\Engine\ODBC\ODBC;
 use GenericDatabase\Engine\PDOEngine;
-use GenericDatabase\Core\Entity;
 use PDO;
 
 class StaticArray
@@ -516,6 +518,358 @@ class StaticArray
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+            ],
+            'exception' => true
+        ]);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return call_user_func_array($constructor, [...$parameters]);
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcMySQL(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        /** @var Connection|ODBCEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $parameters = [];
+        if ($strategy) {
+            $parameters['engine'] = 'odbc';
+        }
+        $parameters = array_merge($parameters, [
+            'driver' => 'mysql',
+            'host' => $env['MYSQL_HOST'],
+            'port' => (int)$env['MYSQL_PORT'],
+            'database' => $env['MYSQL_DATABASE'],
+            'user' => $env['MYSQL_USER'],
+            'password' => $env['MYSQL_PASSWORD'],
+            'charset' => $env['MYSQL_CHARSET'],
+            'options' => [
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ],
+            'exception' => true
+        ]);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return call_user_func_array($constructor, [...$parameters]);
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcPgSQL(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        /** @var Connection|ODBCEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $parameters = [];
+        if ($strategy) {
+            $parameters['engine'] = 'odbc';
+        }
+        $parameters = array_merge($parameters, [
+            'driver' => 'pgsql',
+            'host' => $env['PGSQL_HOST'],
+            'port' => (int)$env['PGSQL_PORT'],
+            'database' => $env['PGSQL_DATABASE'],
+            'user' => $env['PGSQL_USER'],
+            'password' => $env['PGSQL_PASSWORD'],
+            'charset' => $env['PGSQL_CHARSET'],
+            'options' => [
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ],
+            'exception' => true
+        ]);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return call_user_func_array($constructor, [...$parameters]);
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcSQLSrv(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        /** @var Connection|ODBCEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $parameters = [];
+        if ($strategy) {
+            $parameters['engine'] = 'odbc';
+        }
+        $parameters = array_merge($parameters, [
+            'driver' => 'sqlsrv',
+            'host' => $env['SQLSRV_HOST'],
+            'port' => (int)$env['SQLSRV_PORT'],
+            'database' => $env['SQLSRV_DATABASE'],
+            'user' => $env['SQLSRV_USER'],
+            'password' => $env['SQLSRV_PASSWORD'],
+            'charset' => $env['SQLSRV_CHARSET'],
+            'options' => [
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ],
+            'exception' => true
+        ]);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return call_user_func_array($constructor, [...$parameters]);
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcOCI(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        /** @var Connection|ODBCEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $parameters = [];
+        if ($strategy) {
+            $parameters['engine'] = 'odbc';
+        }
+        $parameters = array_merge($parameters, [
+            'driver' => 'oci',
+            'host' => $env['OCI_HOST'],
+            'port' => (int)$env['OCI_PORT'],
+            'database' => $env['OCI_DATABASE'],
+            'user' => $env['OCI_USER'],
+            'password' => $env['OCI_PASSWORD'],
+            'charset' => $env['OCI_CHARSET'],
+            'options' => [
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ],
+            'exception' => true
+        ]);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return call_user_func_array($constructor, [...$parameters]);
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcFirebird(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        /** @var Connection|ODBCEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $parameters = [];
+        if ($strategy) {
+            $parameters['engine'] = 'odbc';
+        }
+        $parameters = array_merge($parameters, [
+            'driver' => 'firebird',
+            'host' => $env['FIREBIRD_HOST'],
+            'port' => (int)$env['FIREBIRD_PORT'],
+            'database' => $env['FIREBIRD_DATABASE'],
+            'user' => $env['FIREBIRD_USER'],
+            'password' => $env['FIREBIRD_PASSWORD'],
+            'charset' => $env['FIREBIRD_CHARSET'],
+            'options' => [
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ],
+            'exception' => true
+        ]);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return call_user_func_array($constructor, [...$parameters]);
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcSQLite(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        /** @var Connection|ODBCEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $parameters = [];
+        if ($strategy) {
+            $parameters['engine'] = 'odbc';
+        }
+        $parameters = array_merge($parameters, [
+            'driver' => 'sqlite',
+            'database' => $env['SQLITE_DATABASE'],
+            'charset' => $env['SQLITE_CHARSET'],
+            'options' => [
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ],
+            'exception' => true
+        ]);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return call_user_func_array($constructor, [...$parameters]);
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcAccess(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        /** @var Connection|ODBCEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $parameters = [];
+        if ($strategy) {
+            $parameters['engine'] = 'odbc';
+        }
+        $parameters = array_merge($parameters, [
+            'driver' => 'access',
+            'database' => $env['ACCESS_DATABASE'],
+            'user' => $env['ACCESS_USER'],
+            'password' => $env['ACCESS_PASSWORD'],
+            'charset' => $env['ACCESS_CHARSET'],
+            'options' => [
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ],
+            'exception' => true
+        ]);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return call_user_func_array($constructor, [...$parameters]);
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcExcel(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        /** @var Connection|ODBCEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $parameters = [];
+        if ($strategy) {
+            $parameters['engine'] = 'odbc';
+        }
+        $parameters = array_merge($parameters, [
+            'driver' => 'excel',
+            'database' => $env['EXCEL_DATABASE'],
+            'charset' => $env['EXCEL_CHARSET'],
+            'options' => [
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ],
+            'exception' => true
+        ]);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return call_user_func_array($constructor, [...$parameters]);
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcText(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        /** @var Connection|ODBCEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $parameters = [];
+        if ($strategy) {
+            $parameters['engine'] = 'odbc';
+        }
+        $parameters = array_merge($parameters, [
+            'driver' => 'text',
+            'database' => $env['TEXT_DATABASE'],
+            'charset' => $env['TEXT_CHARSET'],
+            'options' => [
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ],
+            'exception' => true
+        ]);
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+        return call_user_func_array($constructor, [...$parameters]);
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcMemory(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        /** @var Connection|ODBCEngine $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $parameters = [];
+        if ($strategy) {
+            $parameters['engine'] = 'odbc';
+        }
+        $parameters = array_merge($parameters, [
+            'driver' => 'sqlite',
+            'database' => $env['SQLITE_DATABASE_MEMORY'],
+            'charset' => $env['SQLITE_CHARSET'],
+            'options' => [
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
             ],
             'exception' => true
         ]);

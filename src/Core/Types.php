@@ -74,6 +74,16 @@ enum Types: string
     case NAT_FIREBIRD_INTERBASE_PERSISTENT = 'Firebird/InterBase persistent link';
 
     /**
+     * MySQL link
+     */
+    case NAT_ODBC = 'odbc link';
+
+    /**
+     * ODBC extension
+     */
+    case NAT_ODBC_PERSISTENT = 'odbc link persistent';
+
+    /**
      * Sybase link
      */
     case NAT_SYBASE = 'sybase link';

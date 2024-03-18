@@ -35,23 +35,29 @@ $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id');
 $a = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id NOT IN(25, 26, 27) ORDER BY id');
 
-var_dump($a);
+// var_dump($a);
 
-var_dump($a->queryMetadata());
+// var_dump($a->queryMetadata());
 
-var_dump([
-    $a->queryString(),
-    $a->queryParameters(),
-    $a->queryRows(),
-    $a->queryColumns(),
-    $a->affectedRows()
-]);
+// var_dump([
+//     $a->queryString(),
+//     $a->queryParameters(),
+//     $a->queryRows(),
+//     $a->queryColumns(),
+//     $a->affectedRows()
+// ]);
 
 // var_dump($a->fetchAll(Connection::FETCH_OBJ));
+// var_dump($a->fetchAll(Connection::FETCH_ASSOC));
+// var_dump($a->fetchAll(Connection::FETCH_BOTH));
+// var_dump($a->fetchAll(Connection::FETCH_NUM));
+// var_dump($a->fetchAll(Connection::FETCH_COLUMN));
+// var_dump($a->fetchAll(Connection::FETCH_CLASS));
+var_dump($a->fetchAll(Connection::FETCH_INTO));
 
-while ($row = $a->fetch(Connection::FETCH_OBJ)) {
-    echo vsprintf("<pre>%s, %s/%s</pre>", [$row->Codigo, $row->Estado, $row->Sigla]);
-}
+// while ($row = $a->fetch(Connection::FETCH_OBJ)) {
+//     echo vsprintf("<pre>%s, %s/%s</pre>", [$row->Codigo, $row->Estado, $row->Sigla]);
+// }
 
 // $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE1', ':sigla' => 'T1'], [':nome' => 'TESTE2', ':sigla' => 'T2']]);
 // $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [':nome' => 'TESTE', ':sigla' => 'TE']);

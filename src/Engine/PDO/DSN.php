@@ -16,6 +16,14 @@ class DSN
      */
     public static function parseDsn(): string|CustomException
     {
+        if (!extension_loaded('pdo')) {
+            $message = sprintf(
+                "Invalid or not loaded '%s' extension in '%s' settings",
+                'pdo',
+                'PHP.ini'
+            );
+            throw new CustomException($message);
+        }
         if (!in_array(PDOEngine::getInstance()->getDriver(), PDO::getAvailableDrivers())) {
             $message = sprintf(
                 "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
@@ -74,7 +82,7 @@ class DSN
                 break;
 
             case 'mssql':
-                if (PHP_OS == 'WIN') {
+                if (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     PDOEngine::getInstance()->setDriver('sqlsrv');
                     $result = sprintf(
                         "%s:server=%s,%s;database=%s",

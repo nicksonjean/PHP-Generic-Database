@@ -52,7 +52,8 @@ class Options
     }
 
     /**
-     * This method is responsible for set options after connect in database
+     * This method is responsible for set options after connect in database,
+     * more informations in https://www.php.net/manual/en/mysqli.configuration.php
      *
      * @return void
      */

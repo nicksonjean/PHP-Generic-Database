@@ -52,14 +52,15 @@ class Options
     }
 
     /**
-     * This method is responsible for set options after connect in database
+     * This method is responsible for set options after connect in database,
+     * more informations in https://www.php.net/manual/en/oci8.configuration.php
      *
      * @return void
      */
     public static function define(): void
     {
         foreach (array_keys(self::getOptions()) as $key) {
-            if ($key === 'ATTR_PERSISTENT' && ini_get('oci8.persistent_timeout') !== '1') {
+            if ($key === 'ATTR_CONNECT_TIMEOUT' && ini_get('oci8.persistent_timeout') !== '1') {
                 ini_set('oci8.persistent_timeout ', Options::getOptions(OCI::ATTR_CONNECT_TIMEOUT));
             }
         }

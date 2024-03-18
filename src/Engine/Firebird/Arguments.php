@@ -63,7 +63,7 @@ class Arguments
         };
         if ($data) {
             foreach ($data as $key => $value) {
-                if (strtolower($key) === 'options') {
+                if (mb_strtolower($key) === 'options') {
                     call_user_func_array(
                         [FirebirdEngine::getInstance(), 'set' . ucfirst($key)],
                         [self::setConstant(($format === 'json' || $format === 'yaml') ? $value : [$value])]

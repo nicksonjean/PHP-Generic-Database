@@ -249,6 +249,7 @@ COPY ./phpinfo.php /var/www/html/phpinfo.php
 
 # Test Database Connections
 COPY ./db-test.php /var/www/html/db-test.php
+COPY ./odbc.php /var/www/html/odbc.php
 
 # Copy environment variables
 COPY ./.env.docker /var/www/html/.env

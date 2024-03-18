@@ -4,21 +4,23 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Modules;
 
+use GenericDatabase\Core\Entity;
 use GenericDatabase\Connection;
 use GenericDatabase\Engine\MySQLiEngine;
-use GenericDatabase\Engine\PgSQLEngine;
-use GenericDatabase\Engine\SQLSrvEngine;
-use GenericDatabase\Engine\OCIEngine;
-use GenericDatabase\Engine\FirebirdEngine;
-use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Engine\MySQLi\MySQL;
+use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Engine\PgSQL\PgSQL;
+use GenericDatabase\Engine\SQLSrvEngine;
 use GenericDatabase\Engine\SQLSrv\SQLSrv;
+use GenericDatabase\Engine\OCIEngine;
 use GenericDatabase\Engine\OCI\OCI;
+use GenericDatabase\Engine\FirebirdEngine;
 use GenericDatabase\Engine\Firebird\Firebird;
+use GenericDatabase\Engine\SQLiteEngine;
 use GenericDatabase\Engine\SQLite\SQLite;
+use GenericDatabase\Engine\ODBCEngine;
+use GenericDatabase\Engine\ODBC\ODBC;
 use GenericDatabase\Engine\PDOEngine;
-use GenericDatabase\Core\Entity;
 use PDO;
 
 class Fluent
@@ -469,6 +471,326 @@ class Fluent
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcMySQL(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'odbc');
+        }
+        /** @var Connection|ODBCEngine $className */
+        $instance = $className::setDriver('mysql');
+        $instance
+            ::setHost($env['MYSQL_HOST'])
+            ::setPort((int)$env['MYSQL_PORT'])
+            ::setDatabase($env['MYSQL_DATABASE'])
+            ::setUser($env['MYSQL_USER'])
+            ::setPassword($env['MYSQL_PASSWORD'])
+            ::setCharset($env['MYSQL_CHARSET'])
+            ::setOptions([
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcPgSQL(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'odbc');
+        }
+        /** @var Connection|ODBCEngine $className */
+        $instance = $className::setDriver('pgsql');
+        $instance
+            ::setHost($env['PGSQL_HOST'])
+            ::setPort((int)$env['PGSQL_PORT'])
+            ::setDatabase($env['PGSQL_DATABASE'])
+            ::setUser($env['PGSQL_USER'])
+            ::setPassword($env['PGSQL_PASSWORD'])
+            ::setCharset($env['PGSQL_CHARSET'])
+            ::setOptions([
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
+    /**
+     * @param array $env
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcSQLSrv(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'odbc');
+        }
+        /** @var Connection|ODBCEngine $className */
+        $instance = $className::setDriver('sqlsrv');
+        $instance
+            ::setHost($env['SQLSRV_HOST'])
+            ::setPort((int)$env['SQLSRV_PORT'])
+            ::setDatabase($env['SQLSRV_DATABASE'])
+            ::setUser($env['SQLSRV_USER'])
+            ::setPassword($env['SQLSRV_PASSWORD'])
+            ::setCharset($env['SQLSRV_CHARSET'])
+            ::setOptions([
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcOCI(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'odbc');
+        }
+        /** @var Connection|ODBCEngine $className */
+        $instance = $className::setDriver('oci');
+        $instance
+            ::setHost($env['OCI_HOST'])
+            ::setPort((int)$env['OCI_PORT'])
+            ::setDatabase($env['OCI_DATABASE'])
+            ::setUser($env['OCI_USER'])
+            ::setPassword($env['OCI_PASSWORD'])
+            ::setCharset($env['OCI_CHARSET'])
+            ::setOptions([
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcFirebird(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'odbc');
+        }
+        /** @var Connection|ODBCEngine $className */
+        $instance = $className::setDriver('firebird');
+        $instance
+            ::setHost($env['FIREBIRD_HOST'])
+            ::setPort((int)$env['FIREBIRD_PORT'])
+            ::setDatabase($env['FIREBIRD_DATABASE'])
+            ::setUser($env['FIREBIRD_USER'])
+            ::setPassword($env['FIREBIRD_PASSWORD'])
+            ::setCharset($env['FIREBIRD_CHARSET'])
+            ::setOptions([
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcSQLite(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'odbc');
+        }
+        /** @var Connection|ODBCEngine $className */
+        $instance = $className::setDriver('sqlite');
+        $instance
+            ::setDatabase($env['SQLITE_DATABASE'])
+            ::setCharset($env['SQLITE_CHARSET'])
+            ::setOptions([
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcAccess(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'odbc');
+        }
+        /** @var Connection|ODBCEngine $className */
+        $instance = $className::setDriver('access');
+        $instance
+            ::setDatabase($env['ACCESS_DATABASE'])
+            ::setUser($env['ACCESS_USER'])
+            ::setPassword($env['ACCESS_PASSWORD'])
+            ::setCharset($env['ACCESS_CHARSET'])
+            ::setOptions([
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcExcel(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'odbc');
+        }
+        /** @var Connection|ODBCEngine $className */
+        $instance = $className::setDriver('excel');
+        $instance
+            ::setDatabase($env['EXCEL_DATABASE'])
+            ::setCharset($env['EXCEL_CHARSET'])
+            ::setOptions([
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcText(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'odbc');
+        }
+        /** @var Connection|ODBCEngine $className */
+        $instance = $className::setDriver('text');
+        $instance
+            ::setDatabase($env['TEXT_DATABASE'])
+            ::setCharset($env['TEXT_CHARSET'])
+            ::setOptions([
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
+    /**
+     * @param array $env
+     * @param bool $persistent
+     * @param bool $strategy
+     * @return Connection|ODBCEngine
+     */
+    public static function odbcMemory(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|ODBCEngine {
+        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'odbc');
+        }
+        /** @var Connection|ODBCEngine $className */
+        $instance = $className::setDriver('sqlite');
+        $instance
+            ::setDatabase($env['SQLITE_DATABASE_MEMORY'])
+            ::setCharset($env['SQLITE_CHARSET'])
+            ::setOptions([
+                ODBC::ATTR_PERSISTENT => $persistent,
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
             ])
             ::setException(true);
 
