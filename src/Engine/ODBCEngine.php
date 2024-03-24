@@ -64,14 +64,6 @@ class ODBCEngine implements IConnection
     use Cleaner;
     use Singleton;
 
-    public const FETCH_NUM = 8;
-    public const FETCH_OBJ = 9;
-    public const FETCH_BOTH = 10;
-    public const FETCH_INTO = 11;
-    public const FETCH_CLASS = 12;
-    public const FETCH_ASSOC = 13;
-    public const FETCH_COLUMN = 14;
-
     /**
      * Instance of the connection with database
      * @var mixed $connection
@@ -283,7 +275,7 @@ class ODBCEngine implements IConnection
      */
     private function parseDsn(): string|Exception
     {
-        return DSN::parseDsn();
+        return DSN::parse();
     }
 
     /**
@@ -453,7 +445,7 @@ class ODBCEngine implements IConnection
     {
         if (Validations::isSelect($this->queryString)) {
             $this->bindParam(...self::$statementCount);
-            return count(Statements::internalFetchAllAssoc(self::$statementResult));
+            return count(Statements::internalFetchAllAssoc(self::$statementCount['sqlStatement']));
         }
         return 0;
     }
@@ -531,7 +523,7 @@ class ODBCEngine implements IConnection
             (!$params['rowCount'])
                 ? self::$statement = $this->exec($params['sqlStatement'], $referenceParams)
                 : self::$statementResult = $this->exec($params['sqlStatement'], $referenceParams);
-            $this->affectedRows += odbc_num_rows(self::$statement || self::$statementResult);
+            $this->affectedRows += odbc_num_rows(self::$statement);
         }
     }
 
@@ -570,10 +562,15 @@ class ODBCEngine implements IConnection
     private function internalBindParamArgs(mixed ...$params): void
     {
         $referenceParams = array_values($params['sqlArgs']);
-        (!$params['rowCount'])
-            ? self::$statement = $this->exec($params['sqlStatement'], $referenceParams)
-            : self::$statementResult = $this->exec($params['sqlStatement'], $referenceParams);
-        $this->affectedRows += odbc_num_rows(self::$statement || self::$statementResult);
+        if (!$params['rowCount']) {
+            $this->exec($params['sqlStatement'], $referenceParams);
+        } else {
+            $this->exec($params['sqlStatement'], $referenceParams);
+        }
+        // (!$params['rowCount'])
+        //     ? self::$statement = $this->exec($params['sqlStatement'], $referenceParams)
+        //     : self::$statementResult = $this->exec($params['sqlStatement'], $referenceParams);
+        // $this->affectedRows += odbc_num_rows(self::$statement);
     }
 
     /**
@@ -612,8 +609,15 @@ class ODBCEngine implements IConnection
      */
     private function parse(mixed ...$params): string
     {
+        $driver = static::getDriver();
+        $dialectQuote = match ($driver) {
+            'mysql' => Translater::SQL_DIALECT_BTICK,
+            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translater::SQL_DIALECT_DQUOTE,
+            default => Translater::SQL_DIALECT_DQUOTE,
+        };
         $this->queryString = Translater::binding(
-            Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE)
+            Translater::escape(reset($params), $dialectQuote),
+            Translater::BIND_QUESTION_MARK
         );
         return $this->queryString;
     }
@@ -628,10 +632,15 @@ class ODBCEngine implements IConnection
     {
         $this->resetMetadata();
         if (!empty($params)) {
-            self::$statement = odbc_exec(
-                $this->getConnection(),
-                $this->parse(...$params)
-            );
+            self::$statement = odbc_exec($this->getConnection(), $this->parse(...$params));
+            $rowCount = $params;
+            self::$statementResult = odbc_prepare($this->getConnection(), $this->parse(...$params));
+            array_unshift($rowCount, self::$statementResult);
+            array_unshift($params, self::$statement);
+            self::$statementCount = array_merge($this->makeArgs('', ...$rowCount), ['rowCount' => true]);
+            $this->queryRows = $this->queryRows();
+            $this->queryColumns = odbc_num_fields(self::$statement);
+            $this->affectedRows += odbc_num_rows(self::$statement);
         }
         return $this;
     }
@@ -644,17 +653,17 @@ class ODBCEngine implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $driver = Compare::connection($this->getConnection());
         $this->resetMetadata();
         if (!empty($params)) {
-            $statement = odbc_prepare($this->getConnection(), $this->parse(...$params));
-            array_unshift($params, $statement);
-            if (array_key_exists(2, $params)) {
-                $bindParams = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => false]);
-                $this->bindParam(...$bindParams);
-            } else {
-                $this->exec($statement);
-            }
+            self::$statement = odbc_prepare($this->getConnection(), $this->parse(...$params));
+            $rowCount = $params;
+            array_unshift($rowCount, odbc_prepare($this->getConnection(), $this->parse(...$params)));
+            array_unshift($params, self::$statement);
+            $bindParams = array_merge($this->makeArgs('', ...$params), ['rowCount' => false]);
+            self::$statementCount = array_merge($this->makeArgs('', ...$rowCount), ['rowCount' => true]);
+            $this->bindParam(...$bindParams);
+            $this->queryRows = $this->queryRows();
+            $this->queryColumns = odbc_num_fields(self::$statement);
         }
         return $this;
     }
@@ -667,35 +676,32 @@ class ODBCEngine implements IConnection
      */
     public function exec(mixed ...$params): mixed
     {
-        $stmt = $params[0];
+        $statement = $params[0];
         $data = $params[1] ?? false;
-        if (!is_array($data)) {
-            $data = [];
-        }
         $data = $this->internalBindVariable($data);
-        array_unshift($data, $stmt);
-        return call_user_func_array('odbc_execute', $data);
+        return odbc_execute($statement, $data);
     }
 
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param int $fetchStyle The fetch style.
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
      * @throws ReflectionException
      */
-    public function fetch(
-        int $fetchStyle = self::FETCH_BOTH,
-        mixed $fetchArgument = null,
-        mixed $optArgs = null
-    ): mixed {
-        return match ($fetchStyle) {
-            9, 11, 12 => Statements::internalFetchClassOrObject(self::$statement, $fetchArgument, $optArgs),
-            14 => Statements::internalFetchColumn(self::$statement, $fetchArgument),
-            13 => Statements::internalFetchAssoc(self::$statement),
-            8 => Statements::internalFetchNum(self::$statement),
+    public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    {
+        $fetch = is_null($fetchStyle) ? Options::getOptions(ODBC::ATTR_DEFAULT_FETCH_MODE) : $fetchStyle;
+        return match ($fetch) {
+            ODBC::FETCH_OBJ,
+            ODBC::FETCH_INTO,
+            ODBC::FETCH_CLASS => Statements::internalFetchClassOrObject(self::$statement, $fetchArgument, $optArgs),
+            ODBC::FETCH_COLUMN => Statements::internalFetchColumn(self::$statement, $fetchArgument),
+            ODBC::FETCH_ASSOC => Statements::internalFetchAssoc(self::$statement),
+            ODBC::FETCH_NUM => Statements::internalFetchNum(self::$statement),
+            ODBC::FETCH_BOTH => Statements::internalFetchBoth(self::$statement),
             default => Statements::internalFetchBoth(self::$statement),
         };
     }
@@ -703,22 +709,22 @@ class ODBCEngine implements IConnection
     /**
      * Fetches all rows from the statement and returns them as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
+     * @param int $fetchStyle The fetch style.
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
-     * @return array An array containing all rows from the statement.
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
      * @throws ReflectionException
      */
-    public function fetchAll(
-        int $fetchStyle = self::FETCH_ASSOC,
-        mixed $fetchArgument = null,
-        mixed $optArgs = null
-    ): array {
-        return match ($fetchStyle) {
-            9, 12 => Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
-            14 => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
-            13 => Statements::internalFetchAllAssoc(self::$statement),
-            8 => Statements::internalFetchAllNum(self::$statement),
+    public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    {
+        $fetch = is_null($fetchStyle) ? Options::getOptions(ODBC::ATTR_DEFAULT_FETCH_MODE) : $fetchStyle;
+        return match ($fetch) {
+            ODBC::FETCH_OBJ,
+            ODBC::FETCH_CLASS => Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
+            ODBC::FETCH_COLUMN => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
+            ODBC::FETCH_ASSOC => Statements::internalFetchAllAssoc(self::$statement),
+            ODBC::FETCH_NUM => Statements::internalFetchAllNum(self::$statement),
+            ODBC::FETCH_BOTH => Statements::internalFetchAllBoth(self::$statement),
             default => Statements::internalFetchAllBoth(self::$statement),
         };
     }

@@ -9,6 +9,7 @@
   <options>
 		<option name="OCI::ATTR_PERSISTENT">true</option>
 		<option name="OCI::ATTR_CONNECT_TIMEOUT">28800</option>
+    <option name="OCI::ATTR_DEFAULT_FETCH_MODE">OCI::FETCH_OBJ</option>
   </options>
   <exception>true</exception>
 </root>

@@ -1,137 +1,138 @@
 {
-    "name": "nicksonjean/php-generic-database",
-    "type": "library",
-    "description": "Generic Database Connection Class and Query Builder",
-    "keywords": [
-        "dbal",
-        "pdo",
-        "odbc",
-        "sqlsrv",
-        "oci",
-        "oracle",
-        "firebird",
-        "interbase",
-        "mysql",
-        "mysqli",
-        "sqlite",
-        "sqlite3",
-        "query",
-        "prepare",
-        "builder",
-        "database",
-        "connection",
-        "generic"
-    ],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Nickson Jeanmerson",
-            "email": "nickson.jeanmrson@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "autoload": {
-        "psr-4": {
-            "GenericDatabase\\": "src/"
-        }
-    },
-    "require": {
-        "ext-libxml": "*",
-        "ext-mysqli": "*",
-        "ext-simplexml": "*",
-        "ext-sqlite3": "*",
-        "ext-xmlreader": "*",
-        "ext-yaml": "*",
-        "symfony/polyfill-php82": "1.x-dev",
-        "symfony/polyfill-php83": "1.x-dev"
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "GenericDatabase\\Tests\\": "tests/"
-        }
-    },
-    "require-dev": {
-        "php": "^8.1",
-        "code-lts/doctum": "^5.5",
-        "composer/semver": "^3.3",
-        "pcov/clobber": "^2.0",
-        "php-parallel-lint/php-parallel-lint": "dev-develop",
-        "phpmd/phpmd": "3.x-dev",
-        "phpro/grumphp": "v2.x-dev",
-        "phpstan/phpstan": "^1.10.25",
-        "phpunit/php-code-coverage": "^10.0",
-        "phpunit/phpunit": "^10.0",
-        "squizlabs/php_codesniffer": "^3.7.2",
-        "vlucas/phpdotenv": "^5.5@dev"
-    },
-    "config": {
-        "sort-packages": true,
-        "optimize-autoloader": true,
-        "platform": {
-            "php": "8.1"
-        },
-        "allow-plugins": {
-            "phpro/grumphp": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
-    },
-    "scripts": {
-        "docs": [
-            "@clear:docs",
-            "@clear:cache",
-            "@run:docs"
-        ],
-        "lint": [
-            "@phpcs",
-            "@phpcbf",
-            "@phpmd",
-            "@phpstan",
-            "@phplint"
-        ],
-        "test": "@run:test",
-        "test:coverage": [
-            "@clear:test:coverage",
-            "@run:test:coverage"
-        ],
-        "clear": [
-            "composer clearcache",
-            "composer dump-autoload -o",
-            "@clear:env",
-            "@clear:lock",
-            "@clear:vendor",
-            "@clear:build",
-            "@clear:trash",
-            "@clear:git"
-        ],
-        "setup": [
-            "@clear",
-            "composer install"
-        ],
-        "grumphp": "php ./vendor/bin/grumphp -n run",
-        "phpstan": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
-        "phpmd": "php vendor/bin/phpmd src/,samples/,tests/ ansi --color phpmd.xml",
-        "phpcs": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 src/ tests/",
-        "phpcbf": "php vendor/bin/phpcbf --ignore-annotations --standard=PSR12 src/ tests/",
-        "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude pdo.stub.php --exclude pgsql.stub.php --exclude vendor .",
-        "run:docs": "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors",
-        "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
-        "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
-        "run:test:coverage": "php -d pcov.directory=src vendor/bin/phpunit tests --colors=always --configuration phpunit.xml --do-not-cache-result --coverage-html build/coverage --coverage-clover build/logs/clover.xml",
-        "run:env": "php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-        "clear:cache": "php scripts/eraser.php --dest=./cache/",
-        "clear:docs": "php scripts/eraser.php --dest=./build/docs/",
-        "clear:test:coverage": "php scripts/eraser.php --dest=./build/coverage/",
-        "clear:vendor": "php scripts/eraser.php --dest=./vendor/",
-        "clear:build": "php scripts/eraser.php --dest=./build/",
-        "clear:trash": "php -r \"@rmdir('./vendor/');\"",
-        "clear:lock": "php -r \"@unlink('composer.lock');\"",
-        "clear:env": "php -r \"@unlink('.env');\"",
-        "clear:git": [
-            "php -r \"@unlink('.git/hooks/commit-msg');\"",
-            "php -r \"@unlink('.git/hooks/pre-commit');\""
-        ],
-        "post-update-cmd": [
-            "@run:env"
-        ]
+  "name": "nicksonjean/php-generic-database",
+  "type": "library",
+  "description": "Generic Database Connection Class and Query Builder",
+  "keywords": [
+    "dbal",
+    "pdo",
+    "odbc",
+    "sqlsrv",
+    "oci",
+    "oracle",
+    "firebird",
+    "interbase",
+    "mysql",
+    "mysqli",
+    "sqlite",
+    "sqlite3",
+    "query",
+    "prepare",
+    "builder",
+    "database",
+    "connection",
+    "generic"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Nickson Jeanmerson",
+      "email": "nickson.jeanmrson@gmail.com"
     }
+  ],
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "GenericDatabase\\": "src/"
+    }
+  },
+  "require": {
+    "ext-libxml": "*",
+    "ext-mysqli": "*",
+    "ext-simplexml": "*",
+    "ext-sqlite3": "*",
+    "ext-xmlreader": "*",
+    "ext-yaml": "*",
+    "nette/neon": "^3.5@dev",
+    "vlucas/phpdotenv": "^5.5@dev",
+    "symfony/polyfill-php82": "1.x-dev",
+    "symfony/polyfill-php83": "1.x-dev"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "GenericDatabase\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "php": "^8.1",
+    "code-lts/doctum": "^5.5",
+    "composer/semver": "^3.3",
+    "pcov/clobber": "^2.0",
+    "php-parallel-lint/php-parallel-lint": "dev-develop",
+    "phpmd/phpmd": "3.x-dev",
+    "phpro/grumphp": "v2.x-dev",
+    "phpstan/phpstan": "^1.10.25",
+    "phpunit/php-code-coverage": "^10.0",
+    "phpunit/phpunit": "^10.0",
+    "squizlabs/php_codesniffer": "^3.7.2"
+  },
+  "config": {
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "platform": {
+      "php": "8.1"
+    },
+    "allow-plugins": {
+      "phpro/grumphp": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "scripts": {
+    "docs": [
+      "@clear:docs",
+      "@clear:cache",
+      "@run:docs"
+    ],
+    "lint": [
+      "@phpcs",
+      "@phpcbf",
+      "@phpmd",
+      "@phpstan",
+      "@phplint"
+    ],
+    "test": "@run:test",
+    "test:coverage": [
+      "@clear:test:coverage",
+      "@run:test:coverage"
+    ],
+    "clear": [
+      "composer clearcache",
+      "composer dump-autoload -o",
+      "@clear:env",
+      "@clear:lock",
+      "@clear:vendor",
+      "@clear:build",
+      "@clear:trash",
+      "@clear:git"
+    ],
+    "setup": [
+      "@clear",
+      "composer install"
+    ],
+    "grumphp": "php ./vendor/bin/grumphp -n run",
+    "phpstan": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
+    "phpmd": "php vendor/bin/phpmd src/,samples/,tests/ ansi --color phpmd.xml",
+    "phpcs": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 src/ tests/",
+    "phpcbf": "php vendor/bin/phpcbf --ignore-annotations --standard=PSR12 src/ tests/",
+    "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude pdo.stub.php --exclude pgsql.stub.php --exclude vendor .",
+    "run:docs": "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors",
+    "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
+    "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
+    "run:test:coverage": "php -d pcov.directory=src vendor/bin/phpunit tests --colors=always --configuration phpunit.xml --do-not-cache-result --coverage-html build/coverage --coverage-clover build/logs/clover.xml",
+    "run:env": "php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+    "clear:cache": "php scripts/eraser.php --dest=./cache/",
+    "clear:docs": "php scripts/eraser.php --dest=./build/docs/",
+    "clear:test:coverage": "php scripts/eraser.php --dest=./build/coverage/",
+    "clear:vendor": "php scripts/eraser.php --dest=./vendor/",
+    "clear:build": "php scripts/eraser.php --dest=./build/",
+    "clear:trash": "php -r \"@rmdir('./vendor/');\"",
+    "clear:lock": "php -r \"@unlink('composer.lock');\"",
+    "clear:env": "php -r \"@unlink('.env');\"",
+    "clear:git": [
+      "php -r \"@unlink('.git/hooks/commit-msg');\"",
+      "php -r \"@unlink('.git/hooks/pre-commit');\""
+    ],
+    "post-update-cmd": [
+      "@run:env"
+    ]
+  }
 }

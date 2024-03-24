@@ -8,7 +8,8 @@
   "options": [
     {
       "Firebird::ATTR_PERSISTENT": true,
-      "Firebird::ATTR_CONNECT_TIMEOUT": 28800
+      "Firebird::ATTR_CONNECT_TIMEOUT": 28800,
+      "Firebird::ATTR_DEFAULT_FETCH_MODE": "Firebird::FETCH_OBJ"
     }
   ],
   "exception": true

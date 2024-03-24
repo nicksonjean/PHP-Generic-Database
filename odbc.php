@@ -119,10 +119,12 @@ $tests = [
     "13:45"
 ];
 
+// var_dump(DSN::load());
 // var_dump(ODBC::getAvailableDrivers());
-var_dump(ODBC::getDriverSettings());
-var_dump(ODBC::getAliasByDriver('oci', null));
-var_dump(ODBC::getDriverSettingsByDriver(ODBC::getAliasByDriver('oci', null)));
+// var_dump(ODBC::getAvailableAliases());
+// var_dump(ODBC::getDriverSettings());
+// var_dump(ODBC::getAliasByDriver('oci', null));
+// var_dump(ODBC::getDriverSettingsByDriver(ODBC::getAliasByDriver('oci', null)));
 
 // foreach ($tests as $test) {
 //     var_dump(RegexDateTime::getPattern($test));
@@ -296,8 +298,18 @@ if (extension_loaded('odbc')) {
 
         $odbcMysql = odbc_connect($mysql, "root", "masterkey");
         // var_dump($odbcMysql);
+
         // $resultMysql = odbc_exec($odbcMysql, "SELECT id as Codigo, nome as Estado, sigla as UF FROM estado WHERE id > 10");
         // var_dump(ODBC::fetchAll($resultMysql));
+
+
+        // $pstmt = odbc_prepare($odbcMysql, "SELECT id as Codigo, nome as Estado, sigla as UF FROM estado WHERE id > 10");
+        // $res = odbc_execute($pstmt);
+
+        $pstmt = odbc_prepare($odbcMysql, "SELECT id as Codigo, nome as Estado, sigla as UF FROM estado WHERE id > ?");
+        $res = odbc_execute($pstmt, array("10"));
+        var_dump(ODBC::fetchAll($pstmt));
+
 
         $odbcSqlite = odbc_connect($sqlite3, "", "");
         // var_dump($odbcSqlite);

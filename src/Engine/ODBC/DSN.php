@@ -4,17 +4,28 @@ namespace GenericDatabase\Engine\ODBC;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\ODBCEngine;
-use GenericDatabase\Engine\ODBC\ODBC;
 use GenericDatabase\Helpers\Path;
 use GenericDatabase\Helpers\CustomException;
 
 #[AllowDynamicProperties]
 class DSN
 {
+    private static array $dsnFile;
+
+    public static function load(): array
+    {
+        if (!isset(self::$dsnFile)) {
+            $dsep = DIRECTORY_SEPARATOR;
+            $json = dirname(__DIR__, 2) . $dsep . 'Helpers' . $dsep . 'ODBC' . $dsep . 'DSN.json';
+            self::$dsnFile = json_decode(file_get_contents($json), true);
+        }
+        return self::$dsnFile;
+    }
+
     /**
      * @throws CustomException
      */
-    public static function parseDsn(): string|CustomException
+    public static function parse(): string|CustomException
     {
         if (!extension_loaded('odbc')) {
             $message = sprintf(
@@ -25,14 +36,14 @@ class DSN
             throw new CustomException($message);
         }
 
-        // if (!in_array(ODBCEngine::getInstance()->getDriver(), ODBC::getAvailableDrivers())) {
-        //     $message = sprintf(
-        //         "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
-        //         ODBCEngine::getInstance()->getDriver(),
-        //         implode(', ', ODBC::getAvailableDrivers())
-        //     );
-        //     throw new CustomException($message);
-        // }
+        if (!in_array(ODBCEngine::getInstance()->getDriver(), ODBC::getAvailableDrivers())) {
+            $message = sprintf(
+                "Driver '%s' is invalid, set the driver property with one of these options: '%s'",
+                ODBCEngine::getInstance()->getDriver(),
+                implode(', ', ODBC::getAvailableDrivers())
+            );
+            throw new CustomException($message);
+        }
 
         $result = null;
         switch (ODBCEngine::getInstance()->getDriver()) {
@@ -105,7 +116,7 @@ class DSN
                 }
                 $result = sprintf(
                     "Driver={%s};UID=%s;PWD=%s;DBNAME=%s/%s:%s;Charset=%s;AUTOQUOTED=YES;",
-                    ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver(), null),
+                    ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver()),
                     ODBCEngine::getInstance()->getUser(),
                     ODBCEngine::getInstance()->getPassword(),
                     ODBCEngine::getInstance()->getHost(),
@@ -126,14 +137,14 @@ class DSN
                     ));
                     $result = sprintf(
                         "Driver={%s};Database=%s;LongNames=0;Timeout=1000;NoTXN=0;SyncPragma=NORMAL;Charset=%s",
-                        ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver(), null),
+                        ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver()),
                         ODBCEngine::getInstance()->getDatabase(),
                         ODBCEngine::getInstance()->getCharset()
                     );
                 } else {
                     $result = sprintf(
                         "Driver={%s};Database=:%s:;LongNames=0;Timeout=1000;NoTXN=0;SyncPragma=NORMAL;Charset=%s",
-                        ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver(), null),
+                        ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver()),
                         ODBCEngine::getInstance()->getDatabase(),
                         ODBCEngine::getInstance()->getCharset()
                     );
@@ -142,7 +153,7 @@ class DSN
             case 'oci':
                 $result = sprintf(
                     "Driver={%s};Server=%s:%s/%s;UID=%s;PWD=%s;Charset=%s;",
-                    ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver(), null),
+                    ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver()),
                     ODBCEngine::getInstance()->getHost(),
                     ODBCEngine::getInstance()->getPort(),
                     ODBCEngine::getInstance()->getDatabase(),
@@ -155,7 +166,7 @@ class DSN
             case 'pgsql':
                 $result = sprintf(
                     "Driver={%s};Server=%s;Port=%s;Database=%s;UID=%s;PWD=%s;Charset=%s;",
-                    ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver(), null),
+                    ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver()),
                     ODBCEngine::getInstance()->getHost(),
                     ODBCEngine::getInstance()->getPort(),
                     ODBCEngine::getInstance()->getDatabase(),
@@ -171,7 +182,7 @@ class DSN
             case 'sqlsrv':
                 $result = sprintf(
                     "Driver={%s};Server=%s,%s;Database=%s;UID=%s;PWD=%s;Trusted_Connection=YES;Charset=%s;",
-                    ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver(), null),
+                    ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver()),
                     ODBCEngine::getInstance()->getHost(),
                     ODBCEngine::getInstance()->getPort(),
                     ODBCEngine::getInstance()->getDatabase(),
@@ -184,7 +195,7 @@ class DSN
             case 'mysql':
                 $result = sprintf(
                     "Driver={%s};Server=%s;Port=%s;Database=%s;User=%s;Password=%s;Charset=%s;Option=3;",
-                    ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver(), null),
+                    ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver()),
                     ODBCEngine::getInstance()->getHost(),
                     ODBCEngine::getInstance()->getPort(),
                     ODBCEngine::getInstance()->getDatabase(),
@@ -204,7 +215,7 @@ class DSN
                     ));
                     $result = sprintf(
                         "Driver={%s};Database=:%s:;LongNames=0;Timeout=1000;NoTXN=0;SyncPragma=NORMAL;Charset=%s",
-                        ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver(), null),
+                        ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver()),
                         ODBCEngine::getInstance()->getDatabase(),
                         ODBCEngine::getInstance()->getCharset()
                     );

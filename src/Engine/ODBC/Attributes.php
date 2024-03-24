@@ -33,14 +33,13 @@ class Attributes
     private static function settings(): array
     {
         return [
-            ...ODBC::getDriverSettingsByDriver(ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver(), null)),
-            'Alias' => ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver(), null)
+            ...ODBC::getDriverSettingsByDriver(ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver())),
+            'Alias' => ODBC::getAliasByDriver(ODBCEngine::getInstance()->getDriver())
         ];
     }
 
     private static function status(): string
     {
-        $dbType = '';
         $dbFiles = ['sqlite', 'access', 'excel', 'text'];
         if (in_array(ODBCEngine::getInstance()->getDriver(), $dbFiles)) {
             $dbType = ODBCEngine::getInstance()->getDatabase() . ' via File';
@@ -69,21 +68,20 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => false,
+                'AUTOCOMMIT' => Options::getOptions(ODBC::ATTR_AUTOCOMMIT) ?? false,
                 'CASE' => 0,
                 'ERRMODE' => 1,
-                'CLIENT_VERSION' => $settings['DriverODBCVer'] ?? '',
+                'CLIENT_VERSION', 'SERVER_VERSION' => $settings['DriverODBCVer'] ?? '',
                 'CONNECTION_STATUS' => self::status(),
                 'PERSISTENT' => (int) !Options::getOptions(ODBC::ATTR_PERSISTENT)
                     ? 0
                     : (int) Options::getOptions(ODBC::ATTR_PERSISTENT),
                 'SERVER_INFO' => $settings,
-                'SERVER_VERSION' => $settings['DriverODBCVer'] ?? '',
                 'TIMEOUT' => (int) Options::getOptions(ODBC::ATTR_CONNECT_TIMEOUT)
                     ? Options::getOptions(ODBC::ATTR_CONNECT_TIMEOUT)
                     : $settings['CPTimeout'] ?? '',
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => 3,
+                'DEFAULT_FETCH_MODE' => Options::getOptions(ODBC::ATTR_DEFAULT_FETCH_MODE) ?? ODBC::FETCH_BOTH,
                 'CHARACTER_SET' => ODBCEngine::getInstance()->getCharset() ?? '',
                 'COLLATION' => ODBCEngine::getInstance()->getCharset() ?? '',
                 default => throw new CustomException("Invalid attribute: $attribute"),

@@ -57,7 +57,8 @@ class StaticArgs
                 MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
                 MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
                 MySQL::ATTR_OPT_READ_TIMEOUT => 30,
-                MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
+                MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M",
+                MySQL::ATTR_DEFAULT_FETCH_MODE => MySQL::FETCH_OBJ
             ],
             'exception' => true
         ]);
@@ -95,6 +96,7 @@ class StaticArgs
                 PgSQL::ATTR_CONNECT_ASYNC => true,
                 PgSQL::ATTR_CONNECT_FORCE_NEW => true,
                 PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
+                PgSQL::ATTR_DEFAULT_FETCH_MODE => PgSQL::FETCH_OBJ
             ],
             'exception' => true
         ]);
@@ -130,6 +132,7 @@ class StaticArgs
             'options' => [
                 SQLSrv::ATTR_PERSISTENT => $persistent,
                 SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
+                SQLSrv::ATTR_DEFAULT_FETCH_MODE => SQLSrv::FETCH_OBJ
             ],
             'exception' => true
         ]);
@@ -165,6 +168,7 @@ class StaticArgs
             'options' => [
                 OCI::ATTR_PERSISTENT => $persistent,
                 OCI::ATTR_CONNECT_TIMEOUT => 28800,
+                OCI::ATTR_DEFAULT_FETCH_MODE => OCI::FETCH_OBJ
             ],
             'exception' => true
         ]);
@@ -200,6 +204,7 @@ class StaticArgs
             'options' => [
                 Firebird::ATTR_PERSISTENT => $persistent,
                 Firebird::ATTR_CONNECT_TIMEOUT => 28800,
+                Firebird::ATTR_DEFAULT_FETCH_MODE => Firebird::FETCH_OBJ
             ],
             'exception' => true
         ]);
@@ -234,7 +239,8 @@ class StaticArgs
                 SQLite::ATTR_OPEN_CREATE => true,
                 SQLite::ATTR_CONNECT_TIMEOUT => 28800,
                 SQLite::ATTR_PERSISTENT => $persistent,
-                SQLite::ATTR_AUTOCOMMIT => true
+                SQLite::ATTR_AUTOCOMMIT => true,
+                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ
             ],
             'exception' => true
         ]);
@@ -269,7 +275,8 @@ class StaticArgs
                 SQLite::ATTR_OPEN_CREATE => true,
                 SQLite::ATTR_CONNECT_TIMEOUT => 28800,
                 SQLite::ATTR_PERSISTENT => $persistent,
-                SQLite::ATTR_AUTOCOMMIT => true
+                SQLite::ATTR_AUTOCOMMIT => true,
+                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ
             ],
             'exception' => true
         ]);

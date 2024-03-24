@@ -3,6 +3,7 @@
 namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
+use GenericDatabase\Engine\PgSQL\PgSQL;
 use GenericDatabase\Engine\PgSQLEngine;
 use GenericDatabase\Modules\Chainable;
 
@@ -28,13 +29,15 @@ class PgsqlEngineTest extends TestCase
 
     public function testConnectionConstants()
     {
-        $this->assertSame(8, PgSQLEngine::FETCH_NUM);
-        $this->assertSame(9, PgSQLEngine::FETCH_OBJ);
-        $this->assertSame(10, PgSQLEngine::FETCH_BOTH);
-        $this->assertSame(11, PgSQLEngine::FETCH_INTO);
-        $this->assertSame(12, PgSQLEngine::FETCH_CLASS);
-        $this->assertSame(13, PgSQLEngine::FETCH_ASSOC);
-        $this->assertSame(14, PgSQLEngine::FETCH_COLUMN);
+        $this->assertSame(1, PgSQL::FETCH_LAZY);
+        $this->assertSame(2, PgSQL::FETCH_ASSOC);
+        $this->assertSame(3, PgSQL::FETCH_NUM);
+        $this->assertSame(4, PgSQL::FETCH_BOTH);
+        $this->assertSame(5, PgSQL::FETCH_OBJ);
+        $this->assertSame(6, PgSQL::FETCH_BOUND);
+        $this->assertSame(7, PgSQL::FETCH_COLUMN);
+        $this->assertSame(8, PgSQL::FETCH_CLASS);
+        $this->assertSame(9, PgSQL::FETCH_INTO);
     }
 
     public function testConnection()

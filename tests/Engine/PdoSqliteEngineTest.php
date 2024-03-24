@@ -3,6 +3,7 @@
 namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
+use PDO;
 use GenericDatabase\Engine\PDO\DSN;
 use GenericDatabase\Engine\PDOEngine;
 use GenericDatabase\Modules\Chainable;
@@ -27,13 +28,15 @@ class PdoSqliteEngineTest extends TestCase
 
     public function testConnectionConstants()
     {
-        $this->assertSame(8, PDOEngine::FETCH_NUM);
-        $this->assertSame(9, PDOEngine::FETCH_OBJ);
-        $this->assertSame(10, PDOEngine::FETCH_BOTH);
-        $this->assertSame(11, PDOEngine::FETCH_INTO);
-        $this->assertSame(12, PDOEngine::FETCH_CLASS);
-        $this->assertSame(13, PDOEngine::FETCH_ASSOC);
-        $this->assertSame(14, PDOEngine::FETCH_COLUMN);
+        $this->assertSame(1, PDO::FETCH_LAZY);
+        $this->assertSame(2, PDO::FETCH_ASSOC);
+        $this->assertSame(3, PDO::FETCH_NUM);
+        $this->assertSame(4, PDO::FETCH_BOTH);
+        $this->assertSame(5, PDO::FETCH_OBJ);
+        $this->assertSame(6, PDO::FETCH_BOUND);
+        $this->assertSame(7, PDO::FETCH_COLUMN);
+        $this->assertSame(8, PDO::FETCH_CLASS);
+        $this->assertSame(9, PDO::FETCH_INTO);
     }
 
     public function testConnection()
@@ -124,7 +127,7 @@ class PdoSqliteEngineTest extends TestCase
         $originalDriver = PDOEngine::getInstance()->getDriver();
         PDOEngine::getInstance()->setDriver('invalid_driver');
         $this->expectException(CustomException::class);
-        DSN::parseDsn();
+        DSN::parse();
         PDOEngine::getInstance()->setDriver($originalDriver);
     }
 

@@ -79,9 +79,9 @@ PHP-Generic-Database currently supports the following mechanisms/database:
 
 ## Extension Instalation
 
-  1) Edit the php.ini file and remove the &#039;;&#039; for the database extension you want to install.
-  2) The .dll is for Windows and the .so is for Linux/UNIX.
-  3) Uncomment the lines of the extensions you want to enable.
+1) Edit the php.ini file and remove the &#039;;&#039; for the database extension you want to install.
+2) The .dll is for Windows and the .so is for Linux/UNIX.
+3) Uncomment the lines of the extensions you want to enable.
 
 - From
 
@@ -90,7 +90,7 @@ PHP-Generic-Database currently supports the following mechanisms/database:
 ;extension=php_pdo_mysql.so
 ```
 
-To
+- To
 
 ```ini
 extension=php_pdo_mysql.dll
@@ -202,12 +202,17 @@ PHP-Generic-Database is released under the MIT license.
     - [x] Improved use of the Static Calling format, now using array by key and value for arguments.
     - [x] Improved use of the Static Calling format, now using named arguments.
     - [ ] Adjust in Attribute DEFAULT_FETCH_MODE
+    - [x] Add file support format connection to XML.
+    - [x] Add file support format connection to JSON.
+    - [x] Add file support format connection to INI.
+    - [x] Add file support format connection to YAML.
+    - [ ] Add file support format connection to NEON.
+    - [x] Added compatibility for PDO engine.
+    - [x] Added compatibility for ODBC engine.
+    - [ ] Added compatibility for MongoDB Database.
+    - [ ] Added compatibility for Cassandra Database.
+    - [ ] Added compatibility for SyBase Database.
+    - [ ] Added compatibility for dBase Database.
   - [x] Implement fetch and fetchAll methods.
   - [ ] Add transaction, commit and rollback support.
-  - [x] Added compatibility for PDO engine.
-  - [x] Added compatibility for ODBC engine.
-  - [ ] Added compatibility for MongoDB Database.
-  - [ ] Added compatibility for Cassandra Database.
-  - [ ] Added compatibility for SyBase Database.
-  - [ ] Added compatibility for dBase Database.
   - [ ] Query builder creation.

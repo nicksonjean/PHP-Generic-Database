@@ -39,14 +39,19 @@ class Options
         foreach (Reflections::getClassConstants($class) as $key => $value) {
             $index = in_array($value, array_keys($options));
             if ($index !== false) {
-                $keyName = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT'
+                $keyName = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT' && $key !== 'ATTR_AUTOCOMMIT'
                     ? str_replace("ATTR", "ODBC", $key)
                     : $key;
                 ODBCEngine::getInstance()->setAttribute("ODBC::$key", $options[$value]);
-                if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT') {
-                    ODBC::setAttribute($keyName, $options[$value]);
+                if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT' && $key !== 'ATTR_AUTOCOMMIT') {
+                    ODBCEngine::getInstance()->setAttribute($keyName, $options[$value]);
                 }
-                self::$options[constant("$class::$key")] = $options[$value];
+                if (str_contains($options[$value], 'FETCH')) {
+                    self::$options[constant("$class::$key")] =
+                        constant("$class::" . str_replace("ODBC::", '', $options[$value]));
+                } else {
+                    self::$options[constant("$class::$key")] = $options[$value];
+                }
             }
         }
     }

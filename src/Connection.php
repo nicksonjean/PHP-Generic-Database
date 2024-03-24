@@ -89,13 +89,50 @@ class Connection
 {
     use Singleton;
 
-    public const FETCH_NUM = 8;
-    public const FETCH_OBJ = 9;
-    public const FETCH_BOTH = 10;
-    public const FETCH_INTO = 11;
-    public const FETCH_CLASS = 12;
-    public const FETCH_ASSOC = 13;
-    public const FETCH_COLUMN = 14;
+    /**
+     * Fetch mode that starts fetching rows only when they are requested.
+     */
+    final public const FETCH_LAZY = 1;
+
+    /**
+     * Constant for the fetch mode representing fetching as an associative array
+     */
+    final public const FETCH_ASSOC = 2;
+
+    /**
+     * Constant for the fetch mode representing fetching as a numeric array
+     */
+    final public const FETCH_NUM = 3;
+
+    /**
+     * Constant for the fetch mode representing fetching as both a numeric and associative array
+     */
+    final public const FETCH_BOTH = 4;
+
+    /**
+     * Constant for the fetch mode representing fetching as an object
+     */
+    final public const FETCH_OBJ = 5;
+
+    /**
+     * Fetch mode that requires explicit binding of PHP variables to fetch values.
+     */
+    final public const FETCH_BOUND = 6;
+
+    /**
+     * Constant for the fetch mode representing fetching a single column
+     */
+    final public const FETCH_COLUMN = 7;
+
+    /**
+     * Constant for the fetch mode representing fetching into a new instance of a specified class
+     */
+    final public const FETCH_CLASS = 8;
+
+    /**
+     * Constant for the fetch mode representing fetching into an existing object
+     */
+    final public const FETCH_INTO = 9;
 
     /**
      * Array property for use in magic setter and getter in order

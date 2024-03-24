@@ -14,7 +14,7 @@ class DSN
     /**
      * @throws CustomException
      */
-    public static function parseDsn(): string|CustomException
+    public static function parse(): string|CustomException
     {
         if (!extension_loaded('pdo')) {
             $message = sprintf(

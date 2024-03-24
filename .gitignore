@@ -499,5 +499,3 @@ composer.lock
 .phpunit.result.cache
 ###< phpunit/phpunit ###
 /adminer/
-db-test.php
-odbc.php

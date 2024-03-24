@@ -4,6 +4,7 @@ namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
 use GenericDatabase\Engine\SQLSrvEngine;
+use GenericDatabase\Engine\SQLSrv\SQLSrv;
 use GenericDatabase\Modules\Chainable;
 
 class SqlsrvEngineTest extends TestCase
@@ -28,13 +29,15 @@ class SqlsrvEngineTest extends TestCase
 
     public function testConnectionConstants()
     {
-        $this->assertSame(8, SQLSrvEngine::FETCH_NUM);
-        $this->assertSame(9, SQLSrvEngine::FETCH_OBJ);
-        $this->assertSame(10, SQLSrvEngine::FETCH_BOTH);
-        $this->assertSame(11, SQLSrvEngine::FETCH_INTO);
-        $this->assertSame(12, SQLSrvEngine::FETCH_CLASS);
-        $this->assertSame(13, SQLSrvEngine::FETCH_ASSOC);
-        $this->assertSame(14, SQLSrvEngine::FETCH_COLUMN);
+        $this->assertSame(1, SQLSrv::FETCH_LAZY);
+        $this->assertSame(2, SQLSrv::FETCH_ASSOC);
+        $this->assertSame(3, SQLSrv::FETCH_NUM);
+        $this->assertSame(4, SQLSrv::FETCH_BOTH);
+        $this->assertSame(5, SQLSrv::FETCH_OBJ);
+        $this->assertSame(6, SQLSrv::FETCH_BOUND);
+        $this->assertSame(7, SQLSrv::FETCH_COLUMN);
+        $this->assertSame(8, SQLSrv::FETCH_CLASS);
+        $this->assertSame(9, SQLSrv::FETCH_INTO);
     }
 
     public function testConnection()

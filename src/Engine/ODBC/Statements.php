@@ -2,6 +2,7 @@
 
 namespace GenericDatabase\Engine\ODBC;
 
+use GenericDatabase\Engine\ODBC\ODBC;
 use GenericDatabase\Helpers\Reflections;
 use ReflectionException;
 
@@ -32,7 +33,12 @@ class Statements
         $numfields = odbc_num_fields($statement);
         for ($i = 1; $i <= $numfields; $i++) {
             $result = odbc_result($statement, $i);
-            $row[odbc_field_name($statement, $i)] = $row[$i - 1] = $result;
+            if (mb_detect_encoding($result, 'utf8', true) === false) {
+                $resultFixed = ODBC::setType(mb_convert_encoding($result, 'utf8', 'ISO-8859-1'));
+                $row[odbc_field_name($statement, $i)] = $row[$i - 1] = $resultFixed;
+            } else {
+                $row[odbc_field_name($statement, $i)] = $row[$i - 1] = ODBC::setType($result);
+            }
         }
         return $row;
     }
@@ -46,7 +52,12 @@ class Statements
         $numfields = odbc_num_fields($statement);
         for ($i = 1; $i <= $numfields; $i++) {
             $result = odbc_result($statement, $i);
-            $row[odbc_field_name($statement, $i)] = $result;
+            if (mb_detect_encoding($result, 'utf8', true) === false) {
+                $resultFixed = ODBC::setType(mb_convert_encoding($result, 'utf8', 'ISO-8859-1'));
+                $row[odbc_field_name($statement, $i)] = $resultFixed;
+            } else {
+                $row[odbc_field_name($statement, $i)] = ODBC::setType($result);
+            }
         }
         return $row;
     }
@@ -60,7 +71,12 @@ class Statements
         $numfields = odbc_num_fields($statement);
         for ($i = 1; $i <= $numfields; $i++) {
             $result = odbc_result($statement, $i);
-            $row[$i - 1] = $result;
+            if (mb_detect_encoding($result, 'utf8', true) === false) {
+                $resultFixed = ODBC::setType(mb_convert_encoding($result, 'utf8', 'ISO-8859-1'));
+                $row[$i - 1] = $resultFixed;
+            } else {
+                $row[$i - 1] = ODBC::setType($result);
+            }
         }
         return $row;
     }
@@ -102,7 +118,7 @@ class Statements
         return $result;
     }
 
-    public static function internalFetchAllColumn($statement = null, $columnIndex = 0)
+    public static function internalFetchAllColumn($statement = null, $columnIndex = 0): array
     {
         $result = [];
         $fetchArgument = $columnIndex ?? 0;

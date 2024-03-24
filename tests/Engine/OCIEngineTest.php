@@ -4,6 +4,7 @@ namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
 use GenericDatabase\Engine\OCIEngine;
+use GenericDatabase\Engine\OCI\OCI;
 use GenericDatabase\Modules\Chainable;
 
 class OCIEngineTest extends TestCase
@@ -28,13 +29,15 @@ class OCIEngineTest extends TestCase
 
     public function testConnectionConstants()
     {
-        $this->assertSame(8, OCIEngine::FETCH_NUM);
-        $this->assertSame(9, OCIEngine::FETCH_OBJ);
-        $this->assertSame(10, OCIEngine::FETCH_BOTH);
-        $this->assertSame(11, OCIEngine::FETCH_INTO);
-        $this->assertSame(12, OCIEngine::FETCH_CLASS);
-        $this->assertSame(13, OCIEngine::FETCH_ASSOC);
-        $this->assertSame(14, OCIEngine::FETCH_COLUMN);
+        $this->assertSame(1, OCI::FETCH_LAZY);
+        $this->assertSame(2, OCI::FETCH_ASSOC);
+        $this->assertSame(3, OCI::FETCH_NUM);
+        $this->assertSame(4, OCI::FETCH_BOTH);
+        $this->assertSame(5, OCI::FETCH_OBJ);
+        $this->assertSame(6, OCI::FETCH_BOUND);
+        $this->assertSame(7, OCI::FETCH_COLUMN);
+        $this->assertSame(8, OCI::FETCH_CLASS);
+        $this->assertSame(9, OCI::FETCH_INTO);
     }
 
     public function testConnection()

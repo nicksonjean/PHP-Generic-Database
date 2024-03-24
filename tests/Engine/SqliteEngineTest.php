@@ -4,6 +4,7 @@ namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
 use GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Engine\SQLite\SQLite;
 use GenericDatabase\Modules\Chainable;
 
 class SqliteEngineTest extends TestCase
@@ -25,13 +26,15 @@ class SqliteEngineTest extends TestCase
 
     public function testConnectionConstants()
     {
-        $this->assertSame(8, SQLiteEngine::FETCH_NUM);
-        $this->assertSame(9, SQLiteEngine::FETCH_OBJ);
-        $this->assertSame(10, SQLiteEngine::FETCH_BOTH);
-        $this->assertSame(11, SQLiteEngine::FETCH_INTO);
-        $this->assertSame(12, SQLiteEngine::FETCH_CLASS);
-        $this->assertSame(13, SQLiteEngine::FETCH_ASSOC);
-        $this->assertSame(14, SQLiteEngine::FETCH_COLUMN);
+        $this->assertSame(1, SQLite::FETCH_LAZY);
+        $this->assertSame(2, SQLite::FETCH_ASSOC);
+        $this->assertSame(3, SQLite::FETCH_NUM);
+        $this->assertSame(4, SQLite::FETCH_BOTH);
+        $this->assertSame(5, SQLite::FETCH_OBJ);
+        $this->assertSame(6, SQLite::FETCH_BOUND);
+        $this->assertSame(7, SQLite::FETCH_COLUMN);
+        $this->assertSame(8, SQLite::FETCH_CLASS);
+        $this->assertSame(9, SQLite::FETCH_INTO);
     }
 
     public function testConnection()

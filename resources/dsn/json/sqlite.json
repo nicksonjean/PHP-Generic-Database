@@ -8,7 +8,8 @@
       "SQLite::ATTR_OPEN_CREATE": true,
       "SQLite::ATTR_CONNECT_TIMEOUT": 28800,
       "SQLite::ATTR_PERSISTENT": true,
-      "SQLite::ATTR_AUTOCOMMIT": true
+      "SQLite::ATTR_AUTOCOMMIT": true,
+      "SQLite::ATTR_DEFAULT_FETCH_MODE": "SQLite::FETCH_OBJ"
     }
   ],
   "exception": true

@@ -64,14 +64,6 @@ class SQLSrvEngine implements IConnection
     use Cleaner;
     use Singleton;
 
-    public const FETCH_NUM = 8;
-    public const FETCH_OBJ = 9;
-    public const FETCH_BOTH = 10;
-    public const FETCH_INTO = 11;
-    public const FETCH_CLASS = 12;
-    public const FETCH_ASSOC = 13;
-    public const FETCH_COLUMN = 14;
-
     /**
      * Instance of the connection with database
      * @var mixed $connection
@@ -281,7 +273,7 @@ class SQLSrvEngine implements IConnection
      */
     private function parseDsn(): string|CustomException
     {
-        return DSN::parseDsn();
+        return DSN::parse();
     }
 
     /**
@@ -670,22 +662,23 @@ class SQLSrvEngine implements IConnection
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param int $fetchStyle The fetch style.
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
      * @throws ReflectionException
      */
-    public function fetch(
-        int $fetchStyle = self::FETCH_BOTH,
-        mixed $fetchArgument = null,
-        mixed $optArgs = null
-    ): mixed {
-        return match ($fetchStyle) {
-            9, 11, 12 => Statements::internalFetchClassOrObject(self::$statement, $fetchArgument, $optArgs),
-            14 => Statements::internalFetchColumn(self::$statement, $fetchArgument),
-            13 => Statements::internalFetchAssoc(self::$statement),
-            8 => Statements::internalFetchNum(self::$statement),
+    public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    {
+        $fetch = is_null($fetchStyle) ? Options::getOptions(SQLSrv::ATTR_DEFAULT_FETCH_MODE) : $fetchStyle;
+        return match ($fetch) {
+            SQLSrv::FETCH_OBJ,
+            SQLSrv::FETCH_INTO,
+            SQLSrv::FETCH_CLASS => Statements::internalFetchClassOrObject(self::$statement, $fetchArgument, $optArgs),
+            SQLSrv::FETCH_COLUMN => Statements::internalFetchColumn(self::$statement, $fetchArgument),
+            SQLSrv::FETCH_ASSOC => Statements::internalFetchAssoc(self::$statement),
+            SQLSrv::FETCH_NUM => Statements::internalFetchNum(self::$statement),
+            SQLSrv::FETCH_BOTH => Statements::internalFetchBoth(self::$statement),
             default => Statements::internalFetchBoth(self::$statement),
         };
     }
@@ -693,22 +686,23 @@ class SQLSrvEngine implements IConnection
     /**
      * Fetches all rows from the statement and returns them as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
+     * @param int $fetchStyle The fetch style.
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
-     * @return array An array containing all rows from the statement.
+     * @return mixed The next row from the statement as an array, or false if there are no more rows.
      * @throws ReflectionException
      */
-    public function fetchAll(
-        int $fetchStyle = self::FETCH_ASSOC,
-        mixed $fetchArgument = null,
-        mixed $optArgs = null
-    ): array {
-        return match ($fetchStyle) {
-            9, 12 => Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
-            14 => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
-            13 => Statements::internalFetchAllAssoc(self::$statement),
-            8 => Statements::internalFetchAllNum(self::$statement),
+    public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    {
+        $fetch = is_null($fetchStyle) ? Options::getOptions(SQLSrv::ATTR_DEFAULT_FETCH_MODE) : $fetchStyle;
+        return match ($fetch) {
+            SQLSrv::FETCH_OBJ,
+            SQLSrv::FETCH_CLASS =>
+            Statements::internalFetchAllClassOrObjects(self::$statement, $fetchArgument, $optArgs),
+            SQLSrv::FETCH_COLUMN => Statements::internalFetchAllColumn(self::$statement, $fetchArgument),
+            SQLSrv::FETCH_ASSOC => Statements::internalFetchAllAssoc(self::$statement),
+            SQLSrv::FETCH_NUM => Statements::internalFetchAllNum(self::$statement),
+            SQLSrv::FETCH_BOTH => Statements::internalFetchAllBoth(self::$statement),
             default => Statements::internalFetchAllBoth(self::$statement),
         };
     }

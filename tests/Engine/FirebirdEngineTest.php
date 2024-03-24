@@ -4,6 +4,7 @@ namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
 use GenericDatabase\Engine\FirebirdEngine;
+use GenericDatabase\Engine\Firebird\Firebird;
 use GenericDatabase\Modules\Chainable;
 
 class FirebirdEngineTest extends TestCase
@@ -28,13 +29,15 @@ class FirebirdEngineTest extends TestCase
 
     public function testConnectionConstants()
     {
-        $this->assertSame(8, FirebirdEngine::FETCH_NUM);
-        $this->assertSame(9, FirebirdEngine::FETCH_OBJ);
-        $this->assertSame(10, FirebirdEngine::FETCH_BOTH);
-        $this->assertSame(11, FirebirdEngine::FETCH_INTO);
-        $this->assertSame(12, FirebirdEngine::FETCH_CLASS);
-        $this->assertSame(13, FirebirdEngine::FETCH_ASSOC);
-        $this->assertSame(14, FirebirdEngine::FETCH_COLUMN);
+        $this->assertSame(1, Firebird::FETCH_LAZY);
+        $this->assertSame(2, Firebird::FETCH_ASSOC);
+        $this->assertSame(3, Firebird::FETCH_NUM);
+        $this->assertSame(4, Firebird::FETCH_BOTH);
+        $this->assertSame(5, Firebird::FETCH_OBJ);
+        $this->assertSame(6, Firebird::FETCH_BOUND);
+        $this->assertSame(7, Firebird::FETCH_COLUMN);
+        $this->assertSame(8, Firebird::FETCH_CLASS);
+        $this->assertSame(9, Firebird::FETCH_INTO);
     }
 
     public function testConnection()

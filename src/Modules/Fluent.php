@@ -55,7 +55,8 @@ class Fluent
                 MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
                 MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
                 MySQL::ATTR_OPT_READ_TIMEOUT => 30,
-                MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M"
+                MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M",
+                MySQL::ATTR_DEFAULT_FETCH_MODE => MySQL::FETCH_OBJ
             ])
             ::setException(true);
 
@@ -89,6 +90,7 @@ class Fluent
                 PgSQL::ATTR_CONNECT_ASYNC => true,
                 PgSQL::ATTR_CONNECT_FORCE_NEW => true,
                 PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
+                PgSQL::ATTR_DEFAULT_FETCH_MODE => PgSQL::FETCH_OBJ
             ])
             ::setException(true);
 
@@ -121,6 +123,7 @@ class Fluent
             ::setOptions([
                 SQLSrv::ATTR_PERSISTENT => $persistent,
                 SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
+                SQLSrv::ATTR_DEFAULT_FETCH_MODE => SQLSrv::FETCH_OBJ
             ])
             ::setException(true);
 
@@ -152,6 +155,7 @@ class Fluent
             ::setOptions([
                 OCI::ATTR_PERSISTENT => $persistent,
                 OCI::ATTR_CONNECT_TIMEOUT => 28800,
+                OCI::ATTR_DEFAULT_FETCH_MODE => OCI::FETCH_OBJ
             ])
             ::setException(true);
 
@@ -183,6 +187,7 @@ class Fluent
             ::setOptions([
                 Firebird::ATTR_PERSISTENT => $persistent,
                 Firebird::ATTR_CONNECT_TIMEOUT => 28800,
+                Firebird::ATTR_DEFAULT_FETCH_MODE => Firebird::FETCH_OBJ
             ])
             ::setException(true);
 
@@ -213,7 +218,8 @@ class Fluent
                 SQLite::ATTR_OPEN_CREATE => true,
                 SQLite::ATTR_CONNECT_TIMEOUT => 28800,
                 SQLite::ATTR_PERSISTENT => $persistent,
-                SQLite::ATTR_AUTOCOMMIT => true
+                SQLite::ATTR_AUTOCOMMIT => true,
+                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ
             ])
             ::setException(true);
 
@@ -244,7 +250,8 @@ class Fluent
                 SQLite::ATTR_OPEN_CREATE => true,
                 SQLite::ATTR_CONNECT_TIMEOUT => 28800,
                 SQLite::ATTR_PERSISTENT => $persistent,
-                SQLite::ATTR_AUTOCOMMIT => true
+                SQLite::ATTR_AUTOCOMMIT => true,
+                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ
             ])
             ::setException(true);
 

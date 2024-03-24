@@ -27,7 +27,7 @@ class Arguments
             ODBCEngine::getInstance(),
             'ODBC',
             'ODBC',
-            ['ATTR_PERSISTENT', 'ATTR_CONNECT_TIMEOUT']
+            ['ATTR_PERSISTENT', 'ATTR_CONNECT_TIMEOUT', 'ATTR_AUTOCOMMIT', 'DEFAULT_FETCH_MODE']
         );
         Options::setOptions($options);
         return Options::getOptions();
