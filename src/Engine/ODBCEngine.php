@@ -562,15 +562,7 @@ class ODBCEngine implements IConnection
     private function internalBindParamArgs(mixed ...$params): void
     {
         $referenceParams = array_values($params['sqlArgs']);
-        if (!$params['rowCount']) {
-            $this->exec($params['sqlStatement'], $referenceParams);
-        } else {
-            $this->exec($params['sqlStatement'], $referenceParams);
-        }
-        // (!$params['rowCount'])
-        //     ? self::$statement = $this->exec($params['sqlStatement'], $referenceParams)
-        //     : self::$statementResult = $this->exec($params['sqlStatement'], $referenceParams);
-        // $this->affectedRows += odbc_num_rows(self::$statement);
+        $this->exec($params['sqlStatement'], $referenceParams);
     }
 
     /**
