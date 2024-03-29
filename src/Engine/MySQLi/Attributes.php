@@ -248,6 +248,13 @@ class Attributes
         return self::$settings;
     }
 
+    private static function connectionStatus(): string
+    {
+        return (Compare::connection(MySQLiEngine::getInstance()->getConnection()) === 'mysqli')
+            ? sprintf('Connection OK in %s; waiting to send.', MySQLiEngine::getInstance()->getConnection()->host_info)
+            : 'Connection failed;';
+    }
+
     /**
      * Define all MySQLi attribute of the connection a ready exist
      *
@@ -263,28 +270,19 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => (int) !Options::getOptions(MySQL::ATTR_AUTOCOMMIT)
-                    ? 0
-                    : (int) Options::getOptions(MySQL::ATTR_AUTOCOMMIT),
+                'AUTOCOMMIT' => (bool) Options::getOptions(MySQL::ATTR_AUTOCOMMIT) ?: false,
                 'ERRMODE' => self::$errorMode,
                 'CASE' => (int) $settings['lower_case_table_names'] === 1 ? 0 : 1,
                 'CLIENT_VERSION' => MySQLiEngine::getInstance()->getConnection()->client_info,
-                'CONNECTION_STATUS' => (Compare::connection(
-                    MySQLiEngine::getInstance()->getConnection()
-                ) === 'mysqli')
-                    ? sprintf(
-                        'Connection OK in %s; waiting to send.',
-                        MySQLiEngine::getInstance()->getConnection()->host_info
-                    )
-                    : 'Connection failed;',
-                'PERSISTENT' => (int) !Options::getOptions(MySQL::ATTR_PERSISTENT)
-                    ? 0
-                    : (int) Options::getOptions(MySQL::ATTR_PERSISTENT),
+                'CONNECTION_STATUS' => self::connectionStatus(),
+                'PERSISTENT' => (bool) Options::getOptions(MySQL::ATTR_PERSISTENT) ?: false,
                 'SERVER_INFO' => MySQLiEngine::getInstance()->getConnection()->stat(),
                 'SERVER_VERSION' => MySQLiEngine::getInstance()->getConnection()->server_info,
                 'TIMEOUT' => (int) $settings['connect_timeout'],
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => self::$fetchMode,
+                'DEFAULT_FETCH_MODE' => Options::getOptions(MySQL::ATTR_DEFAULT_FETCH_MODE)
+                    ?? self::$fetchMode
+                    ?: MySQL::FETCH_BOTH,
                 'CHARACTER_SET' => self::getVariables($type)['charset'],
                 'COLLATION' => self::getVariables($type)['collation'],
                 default => throw new CustomException("Invalid attribute: $attribute"),

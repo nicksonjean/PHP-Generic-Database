@@ -41,6 +41,13 @@ class Attributes
         ];
     }
 
+    private static function connectionStatus(): string
+    {
+        return (Compare::connection(SQLSrvEngine::getInstance()->getConnection()) === 'sqlsrv')
+            ? sprintf('Connection OK in %s via TCP/IP; waiting to send.', SQLSrvEngine::getInstance()->getHost())
+            : 'Connection failed;';
+    }
+
     /**
      * Define all SQLSrv attribute of the connection a ready exist
      *
@@ -55,28 +62,17 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => false,
+                'AUTOCOMMIT' => (bool) Options::getOptions(SQLSrv::ATTR_AUTOCOMMIT) ?: false,
                 'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['client_version'],
-                'CONNECTION_STATUS' => (Compare::connection(
-                    SQLSrvEngine::getInstance()->getConnection()
-                ) === 'sqlsrv')
-                    ? sprintf(
-                        'Connection OK in %s via TCP/IP; waiting to send.',
-                        SQLSrvEngine::getInstance()->getHost()
-                    )
-                    : 'Connection failed;',
-                'PERSISTENT' => (int) !Options::getOptions(SQLSrv::ATTR_PERSISTENT)
-                    ? 0
-                    : (int) Options::getOptions(SQLSrv::ATTR_PERSISTENT),
+                'CONNECTION_STATUS' => self::connectionStatus(),
+                'PERSISTENT' => (bool) Options::getOptions(SQLSrv::ATTR_PERSISTENT) ?: false,
                 'SERVER_INFO' => $settings['server_info'],
                 'SERVER_VERSION' => $settings['server_version'],
-                'TIMEOUT' =>  (int) Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)
-                    ? Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)
-                    : 30,
+                'TIMEOUT' =>  (int) Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT) ?: 30,
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => 3,
+                'DEFAULT_FETCH_MODE' => Options::getOptions(SQLSrv::ATTR_DEFAULT_FETCH_MODE) ?? SQLSrv::FETCH_BOTH,
                 'CHARACTER_SET' => SQLSrvEngine::getInstance()->getCharset(),
                 'COLLATION' => SQLSrvEngine::getInstance()->getCharset() == 'utf8' ? 'unicode_ci_ai' : 'none',
                 default => throw new CustomException("Invalid attribute: $attribute"),

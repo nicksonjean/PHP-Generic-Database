@@ -24,7 +24,7 @@ try {
 }
 
 try {
-    $context = StaticArray::odbcSQLSrv(env: $_ENV, strategy: false)->connect();
+    $context = StaticArray::odbcSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
     var_dump($context);
 } catch (Exception $e) {
     var_dump($e);

@@ -105,7 +105,7 @@ class MysqliEngineTest extends TestCase
         $this->connection->query('SELECT id AS Codigo FROM estado');
         $this->assertInstanceOf(MySQLiEngine::class, $this->connection);
         $data = $this->connection->fetch();
-        $this->assertIsArray($data);
+        $this->assertIsObject($data);
     }
 
     public function testFetchAll()

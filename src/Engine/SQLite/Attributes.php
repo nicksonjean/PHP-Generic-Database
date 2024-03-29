@@ -38,6 +38,14 @@ class Attributes
         ];
     }
 
+    private static function connectionStatus(): string
+    {
+        $dbType = SQLiteEngine::getInstance()->getDatabase() == 'memory' ? '' : ' via File';
+        return (Compare::connection(SQLiteEngine::getInstance()->getConnection()) === 'sqlite')
+            ? sprintf('Connection OK in %s%s; waiting to send.', SQLiteEngine::getInstance()->getDatabase(), $dbType)
+            : 'Connection failed;';
+    }
+
     /**
      * Define all SQLite attribute of the connection a ready exist
      *
@@ -49,33 +57,20 @@ class Attributes
         $settings = self::settings();
         $result = [];
         $keys = array_keys(self::$attributeList);
-        $dbType = SQLiteEngine::getInstance()->getDatabase() == 'memory' ? '' : ' via File';
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => false,
+                'AUTOCOMMIT' => (bool) Options::getOptions(SQLite::ATTR_AUTOCOMMIT) ?: false,
                 'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['versionString'],
-                'CONNECTION_STATUS' => (Compare::connection(
-                    SQLiteEngine::getInstance()->getConnection()
-                ) === 'sqlite')
-                    ? sprintf(
-                        'Connection OK in %s%s; waiting to send.',
-                        SQLiteEngine::getInstance()->getDatabase(),
-                        $dbType
-                    )
-                    : 'Connection failed;',
-                'PERSISTENT' => (int) !Options::getOptions(SQLite::ATTR_PERSISTENT)
-                    ? 0
-                    : (int) Options::getOptions(SQLite::ATTR_PERSISTENT),
+                'CONNECTION_STATUS' => self::connectionStatus(),
+                'PERSISTENT' => (bool) Options::getOptions(SQLite::ATTR_PERSISTENT) ?: false,
                 'SERVER_INFO' => $settings,
                 'SERVER_VERSION' => $settings['versionNumber'],
-                'TIMEOUT' =>  (int) Options::getOptions(SQLite::ATTR_CONNECT_TIMEOUT)
-                    ? Options::getOptions(SQLite::ATTR_CONNECT_TIMEOUT)
-                    : 30,
+                'TIMEOUT' =>  (int) Options::getOptions(SQLite::ATTR_CONNECT_TIMEOUT) ?: 30,
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => 3,
+                'DEFAULT_FETCH_MODE' => Options::getOptions(SQLite::ATTR_DEFAULT_FETCH_MODE) ?? SQLite::FETCH_BOTH,
                 default => throw new CustomException("Invalid attribute: $attribute"),
             };
         }

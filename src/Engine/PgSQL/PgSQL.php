@@ -23,6 +23,11 @@ class PgSQL
     final public const ATTR_CONNECT_FORCE_NEW = 1003;
 
     /**
+     * Connection attribute to set the auto-commit mode.
+     */
+    final public const ATTR_AUTOCOMMIT = 1010;
+
+    /**
      * Connection attribute for setting the persistence of the connection.
      */
     final public const ATTR_PERSISTENT = 13;

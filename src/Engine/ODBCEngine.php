@@ -191,11 +191,20 @@ class ODBCEngine implements IConnection
         #[SensitiveParameter] string $password = null,
         int $options = null
     ): ODBCEngine {
-        $this->setConnection(
-            (string) !Options::getOptions(ODBC::ATTR_PERSISTENT)
-                ? odbc_connect($dsn, (string) $user, (string) $password, $options)
-                : odbc_pconnect($dsn, (string) $user, (string) $password, $options)
+        $this->setConnection((!Options::getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') ?
+                odbc_connect($dsn, (string) $user, (string) $password, $options) :
+                odbc_pconnect($dsn, (string) $user, (string) $password, $options)
         );
+        if (!Options::getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') {
+            $nonPersistent = [];
+            foreach (Options::getOptions() as $key => $value) {
+                if ($key !== ODBC::ATTR_PERSISTENT) {
+                    $nonPersistent[$key] = $value;
+                }
+            }
+            $nonPersistent[ODBC::ATTR_PERSISTENT] = false;
+            Options::setOptions($nonPersistent);
+        }
         return $this;
     }
 

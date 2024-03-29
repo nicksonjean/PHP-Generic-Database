@@ -38,19 +38,14 @@ class Attributes
         ];
     }
 
-    private static function status(): string
+    private static function connectionStatus(): string
     {
         $dbFiles = ['sqlite', 'access', 'excel', 'text'];
-        if (in_array(ODBCEngine::getInstance()->getDriver(), $dbFiles)) {
-            $dbType = ODBCEngine::getInstance()->getDatabase() . ' via File';
-        } else {
-            $dbType = ODBCEngine::getInstance()->getHost() . ' via TCP/IP';
-        }
+        $dbType = (in_array(ODBCEngine::getInstance()->getDriver(), $dbFiles))
+            ? ODBCEngine::getInstance()->getDatabase() . ' via File'
+            : ODBCEngine::getInstance()->getHost() . ' via TCP/IP';
         return (Compare::connection(ODBCEngine::getInstance()->getConnection()) === 'odbc')
-            ? sprintf(
-                'Connection OK in %s; waiting to send.',
-                $dbType
-            )
+            ? sprintf('Connection OK in %s; waiting to send.', $dbType)
             : 'Connection failed;';
     }
 
@@ -68,18 +63,14 @@ class Attributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => Options::getOptions(ODBC::ATTR_AUTOCOMMIT) ?? false,
+                'AUTOCOMMIT' => (bool) Options::getOptions(ODBC::ATTR_AUTOCOMMIT) ?: false,
                 'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION', 'SERVER_VERSION' => $settings['DriverODBCVer'] ?? '',
-                'CONNECTION_STATUS' => self::status(),
-                'PERSISTENT' => (int) !Options::getOptions(ODBC::ATTR_PERSISTENT)
-                    ? 0
-                    : (int) Options::getOptions(ODBC::ATTR_PERSISTENT),
+                'CONNECTION_STATUS' => self::connectionStatus(),
+                'PERSISTENT' => (bool) Options::getOptions(ODBC::ATTR_PERSISTENT) ?: false,
                 'SERVER_INFO' => $settings,
-                'TIMEOUT' => (int) Options::getOptions(ODBC::ATTR_CONNECT_TIMEOUT)
-                    ? Options::getOptions(ODBC::ATTR_CONNECT_TIMEOUT)
-                    : $settings['CPTimeout'] ?? '',
+                'TIMEOUT' => (int) Options::getOptions(ODBC::ATTR_CONNECT_TIMEOUT) ?: $settings['CPTimeout'] ?? 0,
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => Options::getOptions(ODBC::ATTR_DEFAULT_FETCH_MODE) ?? ODBC::FETCH_BOTH,
                 'CHARACTER_SET' => ODBCEngine::getInstance()->getCharset() ?? '',

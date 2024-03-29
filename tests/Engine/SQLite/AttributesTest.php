@@ -48,7 +48,7 @@ final class AttributesTest extends TestCase
         Attributes::define();
         $attributes = self::$instance->getAttributes();
         $expectedAttributes = [
-            'AUTOCOMMIT' => false,
+            'AUTOCOMMIT' => true,
             'ERRMODE' => 1,
             'CASE' => 0,
             'CLIENT_VERSION' => self::$settings['versionString'],
@@ -58,7 +58,7 @@ final class AttributesTest extends TestCase
             'SERVER_VERSION' => self::$settings['versionNumber'],
             'TIMEOUT' => 28800,
             'EMULATE_PREPARES' => true,
-            'DEFAULT_FETCH_MODE' => 3
+            'DEFAULT_FETCH_MODE' => 5
         ];
         $this->assertEquals($expectedAttributes, $attributes);
     }

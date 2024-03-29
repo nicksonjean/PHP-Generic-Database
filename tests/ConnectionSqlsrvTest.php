@@ -28,13 +28,15 @@ class ConnectionSqlsrvTest extends TestCase
 
     public function testConnectionConstants()
     {
-        $this->assertSame(8, Connection::FETCH_NUM);
-        $this->assertSame(9, Connection::FETCH_OBJ);
-        $this->assertSame(10, Connection::FETCH_BOTH);
-        $this->assertSame(11, Connection::FETCH_INTO);
-        $this->assertSame(12, Connection::FETCH_CLASS);
-        $this->assertSame(13, Connection::FETCH_ASSOC);
-        $this->assertSame(14, Connection::FETCH_COLUMN);
+        $this->assertSame(1, Connection::FETCH_LAZY);
+        $this->assertSame(2, Connection::FETCH_ASSOC);
+        $this->assertSame(3, Connection::FETCH_NUM);
+        $this->assertSame(4, Connection::FETCH_BOTH);
+        $this->assertSame(5, Connection::FETCH_OBJ);
+        $this->assertSame(6, Connection::FETCH_BOUND);
+        $this->assertSame(7, Connection::FETCH_COLUMN);
+        $this->assertSame(8, Connection::FETCH_CLASS);
+        $this->assertSame(9, Connection::FETCH_INTO);
     }
 
     public function testConnectionSingleton()
@@ -109,7 +111,7 @@ class ConnectionSqlsrvTest extends TestCase
         $this->connection->query('SELECT id AS Codigo FROM estado');
         $this->assertInstanceOf(Connection::class, $this->connection);
         $data = $this->connection->fetch();
-        $this->assertIsArray($data);
+        $this->assertIsObject($data);
     }
 
     public function testFetchAll()

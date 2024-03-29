@@ -52,7 +52,7 @@ var_dump([
 
 var_dump($testB->fetchAll(Connection::FETCH_BOTH));
 
-$contextC = Chainable::odbcSQLSrv(env: $_ENV, strategy: false)->connect();
+$contextC = Chainable::odbcSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 
 $testC = $contextC->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id = :id', '27');
 

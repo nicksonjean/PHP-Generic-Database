@@ -102,7 +102,7 @@ class SqliteEngineTest extends TestCase
         $this->connection->query('SELECT id AS Codigo FROM estado');
         $this->assertInstanceOf(SQLiteEngine::class, $this->connection);
         $data = $this->connection->fetch();
-        $this->assertIsArray($data);
+        $this->assertIsObject($data);
     }
 
     public function testFetchAll()
