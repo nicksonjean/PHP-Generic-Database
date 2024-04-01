@@ -86,7 +86,7 @@ class Options
     }
 
     /**
-     * This method is responsible for set options after connect in databasem
+     * This method is responsible for set options after connect in database,
      * more informations in https://www.php.net/manual/en/sqlite3.configuration.php
      *
      * @return void

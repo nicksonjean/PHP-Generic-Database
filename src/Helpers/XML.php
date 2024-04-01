@@ -77,15 +77,15 @@ class XML
             return false;
         }
         set_error_handler(fn (): bool => true, E_WARNING);
-        $lxml = simpleXML_load_file($xml, "SimpleXMLElement", LIBXML_NOCDATA);
-        if ($lxml === false) {
+        $xmlData = simpleXML_load_file($xml, "SimpleXMLElement", LIBXML_NOCDATA);
+        if ($xmlData === false) {
             restore_error_handler();
             $result = false;
         } else {
-            $lxml = new XMLReader();
-            $lxml->open($xml);
+            $xmlData = new XMLReader();
+            $xmlData->open($xml);
             restore_error_handler();
-            $result = $lxml->setParserProperty(XMLReader::VALIDATE, true);
+            $result = $xmlData->setParserProperty(XMLReader::VALIDATE, true);
         }
         return $result;
     }

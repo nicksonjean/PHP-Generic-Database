@@ -52,7 +52,7 @@ class Options
                 }
                 $options += [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true];
                 break;
-                // Fall-through intencional
+                // Fall-through intentional
             case 'pgsql':
                 $options += [PDO::ATTR_AUTOCOMMIT => true];
                 break;

@@ -25,7 +25,7 @@ final class TranslaterTest extends TestCase
         $input = 'SELECT * FROM users WHERE name = "John"';
         $expected = 'SELECT "*" FROM "users" WHERE "name" = "John"';
 
-        $actual = Translater::escape($input, Translater::SQL_DIALECT_DQUOTE);
+        $actual = Translater::escape($input, Translater::SQL_DIALECT_DOUBLE_QUOTE);
 
         $this->assertEquals($expected, $actual);
     }
@@ -35,7 +35,7 @@ final class TranslaterTest extends TestCase
         $input = self::$userQuery;
         $expected = "SELECT '*' FROM 'users' WHERE 'name' = 'John'";
 
-        $actual = Translater::escape($input, Translater::SQL_DIALECT_SQUOTE);
+        $actual = Translater::escape($input, Translater::SQL_DIALECT_SINGLE_QUOTE);
 
         $this->assertEquals($expected, $actual);
     }
@@ -45,7 +45,7 @@ final class TranslaterTest extends TestCase
         $input = self::$userQuery;
         $expected = "SELECT `*` FROM `users` WHERE `name` = 'John'";
 
-        $actual = Translater::escape($input, Translater::SQL_DIALECT_BTICK);
+        $actual = Translater::escape($input, Translater::SQL_DIALECT_BACKTICK);
 
         $this->assertEquals($expected, $actual);
     }

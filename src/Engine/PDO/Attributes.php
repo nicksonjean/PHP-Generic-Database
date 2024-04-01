@@ -32,7 +32,7 @@ class Attributes
     ];
 
     /**
-     * Define all PDO attibute of the conection a ready exist
+     * Define all PDO attribute of the connection a ready exist
      *
      * @return void
      * @throws CustomException|PDOException|Exception

@@ -551,7 +551,7 @@ class PgSQLEngine implements IConnection
     private function parse(mixed ...$params): string
     {
         $this->queryString = Translater::binding(
-            Translater::escape(reset($params), Translater::SQL_DIALECT_DQUOTE),
+            Translater::escape(reset($params), Translater::SQL_DIALECT_DOUBLE_QUOTE),
             Translater::BIND_DOLLAR_SIGN
         );
         return $this->queryString;

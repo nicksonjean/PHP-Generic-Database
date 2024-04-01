@@ -6,7 +6,7 @@ use PDO;
 use MySQLi;
 use SQLite3;
 use GenericDatabase\Connection as CNX;
-use PgSQL\Connection as PGCNX;
+use PgSQL\Connection as PgCNX;
 use GenericDatabase\Core\Types as An;
 
 /**
@@ -32,7 +32,7 @@ use GenericDatabase\Core\Types as An;
  *
  * <code>
  * //Using an object-based database connection (e.g., PDO for MySQL)
- * $pdoConnection = new PDO("mysql:host=localhost;dbname=mydatabase", "username", "password");
+ * $pdoConnection = new PDO("mysql:host=localhost;dbname=database", "username", "password");
  * $type = Compare::connection($pdoConnection);
  * echo "Database type: $type";
  * </code>
@@ -74,7 +74,7 @@ class Compare
             $cnx instanceof SQLite3 ||
             $cnx instanceof MySQLi ||
             $cnx instanceof CNX ||
-            $cnx instanceof PGCNX
+            $cnx instanceof PgCNX
         ) {
             return self::getObjectConnectionType($cnx);
         } else {

@@ -16,7 +16,7 @@ use stdClass;
  * $escapedQuery = Translater::escape("SELECT * FROM users WHERE id = :id");
  *
  * //Escape an SQL query using a specific dialect
- * $escapedQuery = Translater::escape("SELECT * FROM users WHERE id = :id", Translater::SQL_DIALECT_DQUOTE);
+ * $escapedQuery = Translater::escape("SELECT * FROM users WHERE id = :id", Translater::SQL_DIALECT_DOUBLE_QUOTE);
  *
  * //Extract parameters from an SQL query
  * $parameters = Translater::arguments("SELECT * FROM users WHERE id = :id");
@@ -60,9 +60,9 @@ use stdClass;
  * Replaces the SQL binds with dollar signs.
  *
  * Fields:
- * - `SQL_DIALECT_BTICK`: Constant representing the SQL dialect using backticks.
- * - `SQL_DIALECT_DQUOTE`: Constant representing the SQL dialect using double quotes.
- * - `SQL_DIALECT_SQUOTE`: Constant representing the SQL dialect using single quotes.
+ * - `SQL_DIALECT_BACKTICK`: Constant representing the SQL dialect using backticks.
+ * - `SQL_DIALECT_DOUBLE_QUOTE`: Constant representing the SQL dialect using double quotes.
+ * - `SQL_DIALECT_SINGLE_QUOTE`: Constant representing the SQL dialect using single quotes.
  * - `SQL_DIALECT_NONE`: Constant representing no SQL dialect.
  * - `BIND_QUESTION_MARK`: Constant representing the bind type using question marks.
  * - `BIND_DOLLAR_SIGN`: Constant representing the bind type using dollar signs.
@@ -79,18 +79,18 @@ class Translater
      * SQL Dialect used by MySQL, MariaDB, Percona and Other Forks,
      * also as Drizzle, Derby H2, HSQLDB and SQLite
      */
-    final public const SQL_DIALECT_BTICK = 1;
+    final public const SQL_DIALECT_BACKTICK = 1;
 
     /**
      * SQL Dialect used by IBM DB2, Firebird, PostgreSQL, Oracle,
      * also as Microsoft SQL Server and Sybase
      */
-    final public const SQL_DIALECT_DQUOTE = 2;
+    final public const SQL_DIALECT_DOUBLE_QUOTE = 2;
 
     /**
      * SQL Dialect used by Cassandra, MongoDB and other Hybrid, Databases.
      */
-    final public const SQL_DIALECT_SQUOTE = 3;
+    final public const SQL_DIALECT_SINGLE_QUOTE = 3;
 
     /**
      * For none SQL Dialect and bypass character escape.
@@ -121,9 +121,9 @@ class Translater
      * SQL dialect array map
      */
     private static array $quoteMap = [
-        self::SQL_DIALECT_DQUOTE => '"',
-        self::SQL_DIALECT_BTICK => '`',
-        self::SQL_DIALECT_SQUOTE => "'",
+        self::SQL_DIALECT_DOUBLE_QUOTE => '"',
+        self::SQL_DIALECT_BACKTICK => '`',
+        self::SQL_DIALECT_SINGLE_QUOTE => "'",
         self::SQL_DIALECT_NONE => ''
     ];
 
@@ -240,7 +240,7 @@ class Translater
             !$inDoubleQt && str_contains($word, '"') => self::processCondition($object, $word, true),
             str_contains($word, ':') => $word,
             in_array($word, $resWords) => $word,
-            is_numeric($word) || preg_match('/\d{1,}/im', $word) => $word,
+            is_numeric($word) || preg_match('/\d+/im', $word) => $word,
             default => self::encloseWord($word, $quote),
         };
 

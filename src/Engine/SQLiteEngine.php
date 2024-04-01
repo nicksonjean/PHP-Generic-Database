@@ -107,13 +107,13 @@ class SQLiteEngine implements IConnection
     private ?int $affectedRows = 0;
 
     /**
-     * Last string query runned
+     * Last string query executed
      * @var string $queryString = ''
      */
     private string $queryString = '';
 
     /**
-     * Lasts params query runned
+     * Lasts params query executed
      * @var array $queryParameters = []
      */
     private array $queryParameters = [];
@@ -601,8 +601,8 @@ class SQLiteEngine implements IConnection
         $this->resetMetadata();
         if (!empty($params)) {
             self::$statement = $this->getConnection()->query($this->parse(...$params));
-            $statment = $this->getConnection()->prepare($this->parse(...$params));
-            array_unshift($params, $statment);
+            $statement = $this->getConnection()->prepare($this->parse(...$params));
+            array_unshift($params, $statement);
             self::$statementCount = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => true]);
             $this->queryRows = $this->queryRows();
             $this->queryColumns = self::$statement->numColumns();

@@ -322,7 +322,7 @@ class RegexDateTime
      *
      * @return array
      */
-    private static function getRegexes(): array
+    private static function getRegexp(): array
     {
         return array_combine(
             array_keys(self::$patternMap),
@@ -815,7 +815,7 @@ class RegexDateTime
     public static function getPattern(string $input): array
     {
         $result = [];
-        foreach (self::getRegexes() as $mask => $regex) {
+        foreach (self::getRegexp() as $mask => $regex) {
             if (preg_match($regex, $input, $matches)) {
                 $result[$input] = [];
                 foreach ($matches as $key => $value) {

@@ -101,13 +101,13 @@ class OCIEngine implements IConnection
     private ?int $affectedRows = 0;
 
     /**
-     * Last string query runned
+     * Last string query executed
      * @var string $queryString = ''
      */
     private string $queryString = '';
 
     /**
-     * Lasts params query runned
+     * Lasts params query executed
      * @var array $queryParameters = []
      */
     private array $queryParameters = [];
@@ -601,7 +601,7 @@ class OCIEngine implements IConnection
      */
     private function parse(mixed ...$params)
     {
-        $this->queryString = Translater::escape(reset($params), Translater::SQL_DIALECT_DQUOTE);
+        $this->queryString = Translater::escape(reset($params), Translater::SQL_DIALECT_DOUBLE_QUOTE);
         return oci_parse($this->getConnection(), $this->queryString);
     }
 

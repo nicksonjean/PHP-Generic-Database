@@ -95,13 +95,13 @@ class SQLSrvEngine implements IConnection
     private ?int $affectedRows = 0;
 
     /**
-     * Last string query runned
+     * Last string query executed
      * @var string $queryString = ''
      */
     private string $queryString = '';
 
     /**
-     * Lasts params query runned
+     * Lasts params query executed
      * @var array $queryParameters = []
      */
     private array $queryParameters = [];
@@ -594,7 +594,7 @@ class SQLSrvEngine implements IConnection
     private function parse(mixed ...$params): string
     {
         $this->queryString = Translater::binding(
-            Translater::escape($params[0], Translater::SQL_DIALECT_DQUOTE)
+            Translater::escape($params[0], Translater::SQL_DIALECT_DOUBLE_QUOTE)
         );
         return $this->queryString;
     }

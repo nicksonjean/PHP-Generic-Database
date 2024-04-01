@@ -18,7 +18,6 @@ use GenericDatabase\Engine\ODBC\Dump;
 use GenericDatabase\Engine\ODBC\Transaction;
 use GenericDatabase\Engine\ODBC\Statements;
 use GenericDatabase\Helpers\CustomException;
-use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translater;
@@ -107,13 +106,13 @@ class ODBCEngine implements IConnection
     private ?int $affectedRows = 0;
 
     /**
-     * Last string query runned
+     * Last string query executed
      * @var string $queryString = ''
      */
     private string $queryString = '';
 
     /**
-     * Lasts params query runned
+     * Lasts params query executed
      * @var array $queryParameters = []
      */
     private array $queryParameters = [];
@@ -193,8 +192,7 @@ class ODBCEngine implements IConnection
     ): ODBCEngine {
         $this->setConnection((!Options::getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') ?
                 odbc_connect($dsn, (string) $user, (string) $password, $options) :
-                odbc_pconnect($dsn, (string) $user, (string) $password, $options)
-        );
+                odbc_pconnect($dsn, (string) $user, (string) $password, $options));
         if (!Options::getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') {
             $nonPersistent = [];
             foreach (Options::getOptions() as $key => $value) {
@@ -612,9 +610,9 @@ class ODBCEngine implements IConnection
     {
         $driver = static::getDriver();
         $dialectQuote = match ($driver) {
-            'mysql' => Translater::SQL_DIALECT_BTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translater::SQL_DIALECT_DQUOTE,
-            default => Translater::SQL_DIALECT_DQUOTE,
+            'mysql' => Translater::SQL_DIALECT_BACKTICK,
+            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translater::SQL_DIALECT_DOUBLE_QUOTE,
+            default => Translater::SQL_DIALECT_DOUBLE_QUOTE,
         };
         $this->queryString = Translater::binding(
             Translater::escape(reset($params), $dialectQuote),

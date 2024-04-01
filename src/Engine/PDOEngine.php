@@ -102,13 +102,13 @@ class PDOEngine implements IConnection
     private ?int $affectedRows = 0;
 
     /**
-     * Last string query runned
+     * Last string query executed
      * @var string $queryString = ''
      */
     private string $queryString = '';
 
     /**
-     * Lasts params query runned
+     * Lasts params query executed
      * @var array $queryParameters = []
      */
     private array $queryParameters = [];
@@ -582,8 +582,8 @@ class PDOEngine implements IConnection
     {
         $driver = static::getDriver();
         $dialectQuote = match ($driver) {
-            'mysql' => Translater::SQL_DIALECT_BTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translater::SQL_DIALECT_DQUOTE,
+            'mysql' => Translater::SQL_DIALECT_BACKTICK,
+            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translater::SQL_DIALECT_DOUBLE_QUOTE,
             default => Translater::SQL_DIALECT_NONE,
         };
         $this->queryString = Translater::escape(reset($params), $dialectQuote);

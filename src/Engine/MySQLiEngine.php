@@ -95,13 +95,13 @@ class MySQLiEngine implements IConnection
     private ?int $affectedRows = 0;
 
     /**
-     * Last string query runned
+     * Last string query executed
      * @var string $queryString = ''
      */
     private string $queryString = '';
 
     /**
-     * Lasts params query runned
+     * Lasts params query executed
      * @var array $queryParameters = []
      */
     private array $queryParameters = [];
@@ -601,7 +601,7 @@ class MySQLiEngine implements IConnection
      */
     private function parse(mixed ...$params): string
     {
-        $this->queryString = Translater::binding(Translater::escape(reset($params), Translater::SQL_DIALECT_BTICK));
+        $this->queryString = Translater::binding(Translater::escape(reset($params), Translater::SQL_DIALECT_BACKTICK));
         return $this->queryString;
     }
 
