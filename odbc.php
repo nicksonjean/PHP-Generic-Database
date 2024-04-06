@@ -298,17 +298,15 @@ if (extension_loaded('odbc')) {
 
         $odbcMysql = odbc_connect($mysql, "root", "masterkey");
         // var_dump($odbcMysql);
-
         // $resultMysql = odbc_exec($odbcMysql, "SELECT id as Codigo, nome as Estado, sigla as UF FROM estado WHERE id > 10");
         // var_dump(ODBC::fetchAll($resultMysql));
-
 
         // $pstmt = odbc_prepare($odbcMysql, "SELECT id as Codigo, nome as Estado, sigla as UF FROM estado WHERE id > 10");
         // $res = odbc_execute($pstmt);
 
-        $pstmt = odbc_prepare($odbcMysql, "SELECT id as Codigo, nome as Estado, sigla as UF FROM estado WHERE id > ?");
-        $res = odbc_execute($pstmt, array("10"));
-        var_dump(ODBC::fetchAll($pstmt));
+        // $pstmt = odbc_prepare($odbcMysql, "SELECT id as Codigo, nome as Estado, sigla as UF FROM estado WHERE id > ?");
+        // $res = odbc_execute($pstmt, array("10"));
+        // var_dump(ODBC::fetchAll($pstmt));
 
 
         $odbcSqlite = odbc_connect($sqlite3, "", "");

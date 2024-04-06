@@ -191,8 +191,8 @@ class ODBCEngine implements IConnection
         int $options = null
     ): ODBCEngine {
         $this->setConnection((!Options::getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') ?
-                odbc_connect($dsn, (string) $user, (string) $password, $options) :
-                odbc_pconnect($dsn, (string) $user, (string) $password, $options));
+            odbc_connect($dsn, (string) $user, (string) $password, $options) :
+            odbc_pconnect($dsn, (string) $user, (string) $password, $options));
         if (!Options::getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') {
             $nonPersistent = [];
             foreach (Options::getOptions() as $key => $value) {
@@ -611,7 +611,8 @@ class ODBCEngine implements IConnection
         $driver = static::getDriver();
         $dialectQuote = match ($driver) {
             'mysql' => Translater::SQL_DIALECT_BACKTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translater::SQL_DIALECT_DOUBLE_QUOTE,
+            'pgsql', 'sqlsrv', 'oci', 'firebird', 'access', 'excel', 'text' => Translater::SQL_DIALECT_DOUBLE_QUOTE,
+            'sqlite' => Translater::SQL_DIALECT_SINGLE_QUOTE,
             default => Translater::SQL_DIALECT_DOUBLE_QUOTE,
         };
         $this->queryString = Translater::binding(

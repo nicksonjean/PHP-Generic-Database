@@ -232,6 +232,8 @@ class Translater
         $object = new stdClass();
 
         $result = match (true) {
+            str_contains($word, ']') => self::processCondition($object, $word, false),
+            str_contains($word, '[') => self::processCondition($object, $word, true),
             $inFunction && str_contains($word, ')') => self::processCondition($object, $word, false),
             !$inFunction && str_contains($word, '(') => self::processCondition($object, $word, true),
             $inSingleQt && str_contains($word, "'") => self::processCondition($object, $word, false),
