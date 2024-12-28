@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
   <driver>sqlsrv</driver>
-  <host>localhost</host>
+  <host>sqlsrv</host>
   <port>1433</port>
   <database>demodev</database>
   <user>sa</user>
-  <password>masterkey</password>
+  <password>20Z£?2@Z§!</password>
   <charset>utf8</charset>
   <options>
 		<option name="PDO::ATTR_EMULATE_PREPARES">true</option>

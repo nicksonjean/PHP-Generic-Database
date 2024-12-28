@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
   <engine>oci</engine>
-  <host>localhost</host>
+  <host>oracle</host>
   <port>1521</port>
-  <database>xe</database>
+  <database>freepdb1</database>
   <user>hr</user>
   <password>masterkey</password>
   <charset>utf8</charset>

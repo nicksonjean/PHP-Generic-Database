@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
   <driver>mysql</driver>
-  <host>localhost</host>
+  <host>mysql</host>
   <port>3306</port>
   <database>demodev</database>
   <user>root</user>

@@ -1,8 +1,8 @@
 {
   "driver": "oci",
-  "host": "localhost",
+  "host": "oracle",
   "port": 1521,
-  "database": "xe",
+  "database": "freepdb1",
   "user": "hr",
   "password": "masterkey",
   "charset": "utf8",

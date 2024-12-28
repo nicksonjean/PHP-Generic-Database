@@ -1,7 +1,7 @@
 {
-  "host": "localhost",
+  "host": "firebird",
   "port": 3050,
-  "database": "../../resources/database/firebird/DB.FDB",
+  "database": "/firebird/data/DB.FDB",
   "user": "sysdba",
   "password": "masterkey",
   "charset": "utf8",

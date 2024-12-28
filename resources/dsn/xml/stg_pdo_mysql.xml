@@ -2,7 +2,7 @@
 <root>
   <engine>pdo</engine>
   <driver>mysql</driver>
-  <host>localhost</host>
+  <host>mysql</host>
   <port>3306</port>
   <database>demodev</database>
   <user>root</user>

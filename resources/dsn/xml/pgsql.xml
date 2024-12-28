@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
-  <host>localhost</host>
+  <host>postgres</host>
   <port>5432</port>
   <database>postgres</database>
   <user>postgres</user>

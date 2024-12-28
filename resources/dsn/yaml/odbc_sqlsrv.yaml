@@ -1,9 +1,9 @@
 driver: sqlsrv
-host: localhost
+host: sqlsrv
 port: 1433
 database: demodev
 user: sa
-password: masterkey
+password: 20Z£?2@Z§!
 charset: utf8
 options:
   - "ODBC::ATTR_PERSISTENT": true

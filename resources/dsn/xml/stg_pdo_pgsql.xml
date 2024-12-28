@@ -2,7 +2,7 @@
 <root>
   <engine>pdo</engine>
   <driver>pgsql</driver>
-  <host>localhost</host>
+  <host>postgres</host>
   <port>5432</port>
   <database>postgres</database>
   <user>postgres</user>
