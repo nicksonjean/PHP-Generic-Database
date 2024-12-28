@@ -10,3 +10,4 @@ parameters:
 	ignoreErrors:
 		- '#^Unsafe usage of new static#'
 		- '#Call to an undefined static method GenericDatabase\\Connection::new\(\)#'
+		- '#Function ibase_prepare invoked with 2 parameters, 3 required#'

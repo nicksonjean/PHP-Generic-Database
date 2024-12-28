@@ -2,9 +2,9 @@
 
 namespace GenericDatabase\Tests\Engine\SQLite;
 
-use GenericDatabase\Engine\SQLite\SQLite;
-use GenericDatabase\Engine\SQLite\Attributes;
-use GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Engine\SQLite\Connection\SQLite;
+use GenericDatabase\Engine\SQLite\Connection\Attributes;
+use GenericDatabase\Engine\SQLiteConnection;
 use GenericDatabase\Helpers\CustomException;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ final class AttributesTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        self::$instance = SQLiteEngine
+        self::$instance = SQLiteConnection
             ::setDriver('sqlite')
             ::setDatabase('memory')
             ::setCharset('utf8')

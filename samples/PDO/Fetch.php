@@ -19,7 +19,7 @@ $testA = $contextA->prepare(
 
 var_dump($testA);
 
-var_dump($testA->queryMetadata());
+var_dump($testA->getAllMetadata());
 
 var_dump([
     $testA->queryString(),
@@ -42,7 +42,7 @@ $testB = $contextB->prepare(
 
 var_dump($testB);
 
-var_dump($testB->queryMetadata());
+var_dump($testB->getAllMetadata());
 
 var_dump([
     $testB->queryString(),
@@ -62,7 +62,7 @@ $testC = $contextC->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla
 
 var_dump($testC);
 
-var_dump($testC->queryMetadata());
+var_dump($testC->getAllMetadata());
 
 var_dump([
     $testC->queryString(),
@@ -87,7 +87,7 @@ $testD = $contextD->prepare(
 
 var_dump($testD);
 
-var_dump($testD->queryMetadata());
+var_dump($testD->getAllMetadata());
 
 var_dump([
     $testD->queryString(),
@@ -107,7 +107,7 @@ $testE = $contextE->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla
 
 var_dump($testE);
 
-var_dump($testE->queryMetadata());
+var_dump($testE->getAllMetadata());
 
 var_dump([
     $testE->queryString(),
@@ -129,7 +129,7 @@ $testF = $contextF->query(
 
 var_dump($testF);
 
-var_dump($testF->queryMetadata());
+var_dump($testF->getAllMetadata());
 
 var_dump([
     $testF->queryString(),

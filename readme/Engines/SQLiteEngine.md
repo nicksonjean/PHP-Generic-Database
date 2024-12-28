@@ -1,8 +1,8 @@
-# SQLiteEngine
+# SQLiteConnection
 
-## SQLiteEngine Connection
+## SQLiteConnection Connection
 
-The `GenericDatabase\SQLiteEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
+The `GenericDatabase\SQLiteConnection` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
 
@@ -10,7 +10,7 @@ The `GenericDatabase\SQLiteEngine` class is responsible for establishing and man
 
 ```php
 // Explicit and simplified module loading with all environment variables
-use GenericDatabase\SQLiteEngine;
+use GenericDatabase\SQLiteConnection;
 use GenericDatabase\Engine\SQLite\SQLite;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
@@ -24,7 +24,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 ```php
 // Create a new database connection using MySQLi engine in the chainable methods format
-$connection = new SQLiteEngine();
+$connection = new SQLiteConnection();
 $connection
 ->setDatabase($_ENV['SQLITE_DATABASE'])
 ->setCharset('utf8')
@@ -44,7 +44,7 @@ $connection
 
 ```php
 // Create a new database connection using MySQLi engine in the fluent design format
-$connection = SQLiteEngine
+$connection = SQLiteConnection
 ::setDatabase($_ENV['SQLITE_DATABASE'])
 ::setCharset('utf8')
 ::setOptions([
@@ -63,7 +63,7 @@ $connection = SQLiteEngine
 
 ```php
 // Create a new database connection using MySQLi engine in the static arguments format
-$connection = SQLiteEngine::new(
+$connection = SQLiteConnection::new(
     database: $_ENV['SQLITE_DATABASE'],
     charset: 'utf8',
     options: [
@@ -83,7 +83,7 @@ $connection = SQLiteEngine::new(
 
 ```php
 // Create a new database connection using MySQLi engine in the static array format
-$connection = SQLiteEngine::new([
+$connection = SQLiteConnection::new([
     'database' => $_ENV['SQLITE_DATABASE'],
     'charset' => 'utf8',
     'options' => [

@@ -1,8 +1,8 @@
-# FirebirdEngine
+# FirebirdConnection
 
-## FirebirdEngine Connection
+## FirebirdConnection Connection
 
-The `GenericDatabase\FirebirdEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
+The `GenericDatabase\FirebirdConnection` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
 
@@ -10,7 +10,7 @@ The `GenericDatabase\FirebirdEngine` class is responsible for establishing and m
 
 ```php
 // Explicit and simplified module loading with all environment variables
-use GenericDatabase\FirebirdEngine;
+use GenericDatabase\FirebirdConnection;
 use GenericDatabase\Engine\Firebird\Firebird;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
@@ -24,14 +24,14 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 ```php
 // Create a new database connection using MySQLi engine in the chainable methods format
-$connection = new FirebirdEngine();
+$connection = new FirebirdConnection();
 $connection
-->setHost($_ENV['FIREBIRD_HOST'])
-->setPort((int)$_ENV['FIREBIRD_PORT'])
-->setDatabase($_ENV['FIREBIRD_DATABASE'])
-->setUser($_ENV['FIREBIRD_USER'])
-->setPassword($_ENV['FIREBIRD_PASSWORD'])
-->setCharset($_ENV['FIREBIRD_CHARSET'])
+->setHost($_ENV['FBIRD_HOST'])
+->setPort((int)$_ENV['FBIRD_PORT'])
+->setDatabase($_ENV['FBIRD_DATABASE'])
+->setUser($_ENV['FBIRD_USER'])
+->setPassword($_ENV['FBIRD_PASSWORD'])
+->setCharset($_ENV['FBIRD_CHARSET'])
 ->setOptions([
     Firebird::ATTR_PERSISTENT => true,
     Firebird::ATTR_CONNECT_TIMEOUT => 28800,
@@ -44,13 +44,13 @@ $connection
 
 ```php
 // Create a new database connection using MySQLi engine in the fluent design format
-$connection = FirebirdEngine
-::setHost($_ENV['FIREBIRD_HOST'])
-::setPort((int)$_ENV['FIREBIRD_PORT'])
-::setDatabase($_ENV['FIREBIRD_DATABASE'])
-::setUser($_ENV['FIREBIRD_USER'])
-::setPassword($_ENV['FIREBIRD_PASSWORD'])
-::setCharset($_ENV['FIREBIRD_CHARSET'])
+$connection = FirebirdConnection
+::setHost($_ENV['FBIRD_HOST'])
+::setPort((int)$_ENV['FBIRD_PORT'])
+::setDatabase($_ENV['FBIRD_DATABASE'])
+::setUser($_ENV['FBIRD_USER'])
+::setPassword($_ENV['FBIRD_PASSWORD'])
+::setCharset($_ENV['FBIRD_CHARSET'])
 ::setOptions([
     Firebird::ATTR_PERSISTENT => true,
     Firebird::ATTR_CONNECT_TIMEOUT => 28800,
@@ -63,12 +63,12 @@ $connection = FirebirdEngine
 
 ```php
 // Create a new database connection using MySQLi engine in the static arguments format
-$connection = FirebirdEngine::new(
-    host: $_ENV['FIREBIRD_HOST'],
-    port: (int)$_ENV['FIREBIRD_PORT'],
-    database: $_ENV['FIREBIRD_DATABASE'],
-    user: $_ENV['FIREBIRD_USER'],
-    password: $_ENV['FIREBIRD_PASSWORD'],
+$connection = FirebirdConnection::new(
+    host: $_ENV['FBIRD_HOST'],
+    port: (int)$_ENV['FBIRD_PORT'],
+    database: $_ENV['FBIRD_DATABASE'],
+    user: $_ENV['FBIRD_USER'],
+    password: $_ENV['FBIRD_PASSWORD'],
     charset: 'utf8',
     options: [
         Firebird::ATTR_PERSISTENT => true,
@@ -83,12 +83,12 @@ $connection = FirebirdEngine::new(
 
 ```php
 // Create a new database connection using MySQLi engine in the static array format
-$connection = FirebirdEngine::new([
-    'host' => $_ENV['FIREBIRD_HOST'],
-    'port' => (int)$_ENV['FIREBIRD_PORT'],
-    'database' => $_ENV['FIREBIRD_DATABASE'],
-    'user' => $_ENV['FIREBIRD_USER'],
-    'password' => $_ENV['FIREBIRD_PASSWORD'],
+$connection = FirebirdConnection::new([
+    'host' => $_ENV['FBIRD_HOST'],
+    'port' => (int)$_ENV['FBIRD_PORT'],
+    'database' => $_ENV['FBIRD_DATABASE'],
+    'user' => $_ENV['FBIRD_USER'],
+    'password' => $_ENV['FBIRD_PASSWORD'],
     'charset' => 'utf8',
     'options' => [
         Firebird::ATTR_PERSISTENT => true,

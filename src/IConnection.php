@@ -105,6 +105,100 @@ interface IConnection
     public function quote(mixed ...$params): mixed;
 
     /**
+     * Returns an object containing the number of queried rows and the number of affected rows.
+     *
+     * @return object An associative object with keys 'queryRows' and 'affectedRows'.
+     */
+    public function getAllMetadata(): object;
+
+    /**
+     * Returns the query string.
+     *
+     * @return string The query string associated with this instance.
+     */
+    public function getQueryString(): string;
+
+    /**
+     * Sets the query string for the Connection instance.
+     *
+     * @param string $params The query string to set.
+     */
+    public function setQueryString(string $params): void;
+
+    /**
+     * Returns the parameters associated with this instance.
+     *
+     * @return array|null The parameters associated with this instance.
+     */
+    public function getQueryParameters(): ?array;
+
+    /**
+     * Sets the query parameters for the Connection instance.
+     *
+     * @param array|null $params The query parameters to set.
+     */
+    public function setQueryParameters(?array $params): void;
+
+    /**
+     * Returns the number of rows affected by an operation.
+     *
+     * @return int|false The number of affected rows
+     */
+    public function getQueryRows(): int|false;
+
+    /**
+     * Sets the number of query rows for the Connection instance.
+     *
+     * @param callable|int|false $params The number of query rows to set.
+     * @return void
+     */
+    public function setQueryRows(callable|int|false $params): void;
+
+    /**
+     * Returns the number of columns in a statement result.
+     *
+     * @return int|false The number of columns in the result or false in case of an error.
+     */
+    public function getQueryColumns(): int|false;
+
+    /**
+     * Sets the number of columns in the query result.
+     *
+     * @param int|false $params The number of columns or false if there are no columns.
+     * @return void
+     */
+    public function setQueryColumns(int|false $params): void;
+
+    /**
+     * Returns the number of rows affected by an operation.
+     *
+     * @return int|false The number of affected rows
+     */
+    public function getAffectedRows(): int|false;
+
+    /**
+     * Sets the number of affected rows for the Connection instance.
+     *
+     * @param int|false $params The number of affected rows to set.
+     * @return void
+     */
+    public function setAffectedRows(int|false $params): void;
+
+    /**
+     * A description of the entire PHP function.
+     *
+     * @return mixed
+     */
+    public function getStatement(): mixed;
+
+    /**
+     * Set the statement for the function.
+     *
+     * @param mixed $statement The statement to be set.
+     */
+    public function setStatement(mixed $statement): void;
+
+    /**
      * This function prepares an SQL statement for execution and returns a statement object.
      *
      * @param mixed $params Statement to be prepared
@@ -131,22 +225,22 @@ interface IConnection
     /**
      * Fetches the next row from the statement and returns it as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
+     * @param int|null $fetchStyle The fetch style (optional). Default is *_FETCH_BOTH.
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch(int $fetchStyle = 10, mixed $fetchArgument = null, mixed $optArgs = null): mixed;
+    public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed;
 
     /**
      * Fetches all rows from the statement and returns them as an array.
      *
-     * @param int $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
+     * @param int|null $fetchStyle The fetch style (optional). Default is *_FETCH_ASSOC.
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
-     * @return mixed An array containing all rows from the statement.
+     * @return array|bool An array containing all rows from the statement.
      */
-    public function fetchAll(int $fetchStyle = 13, mixed $fetchArgument = null, mixed $optArgs = null): mixed;
+    public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool;
 
     /**
      * This function retrieves an attribute from the database.
@@ -170,6 +264,7 @@ interface IConnection
      *
      * @param mixed $inst = null Resource name, table or view
      * @return int|string|array|bool|null
+     * @noinspection PhpUnused
      */
     public function errorCode(mixed $inst = null): int|string|array|bool|null;
 
@@ -178,6 +273,7 @@ interface IConnection
      *
      * @param mixed $inst = null Resource name, table or view
      * @return string|array|null|false
+     * @noinspection PhpUnused
      */
     public function errorInfo(mixed $inst = null): string|array|bool|null;
 }

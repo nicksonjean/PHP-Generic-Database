@@ -83,8 +83,8 @@
       "@run:docs"
     ],
     "lint": [
-      "@phpcs",
       "@phpcbf",
+      "@phpcs",
       "@phpmd",
       "@phpstan",
       "@phplint"

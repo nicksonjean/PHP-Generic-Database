@@ -3,11 +3,11 @@
 namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
-use GenericDatabase\Engine\PgSQL\PgSQL;
-use GenericDatabase\Engine\PgSQLEngine;
+use GenericDatabase\Engine\PgSQLConnection;
+use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
 use GenericDatabase\Modules\Chainable;
 
-class PgsqlEngineTest extends TestCase
+class PgSQLConnectionTest extends TestCase
 {
     private array $pgsqlEnv;
 
@@ -42,23 +42,23 @@ class PgsqlEngineTest extends TestCase
 
     public function testConnection()
     {
-        $this->assertInstanceOf(PgSQLEngine::class, $this->connection);
+        $this->assertInstanceOf(PgSQLConnection::class, $this->connection);
     }
 
     public function testConnectionSingleton()
     {
-        $connection1 = PgSQLEngine::getInstance();
-        $connection2 = PgSQLEngine::getInstance();
+        $connection1 = PgSQLConnection::getInstance();
+        $connection2 = PgSQLConnection::getInstance();
 
-        $this->assertInstanceOf(PgSQLEngine::class, $connection1);
-        $this->assertInstanceOf(PgSQLEngine::class, $connection2);
+        $this->assertInstanceOf(PgSQLConnection::class, $connection1);
+        $this->assertInstanceOf(PgSQLConnection::class, $connection2);
         $this->assertSame($connection1, $connection2);
     }
 
     public function testConnect()
     {
         $this->connection->connect();
-        $this->assertInstanceOf(PgSQLEngine::class, $this->connection);
+        $this->assertInstanceOf(PgSQLConnection::class, $this->connection);
     }
 
     public function testPing()
@@ -91,19 +91,19 @@ class PgsqlEngineTest extends TestCase
             'SELECT id AS Codigo FROM estado WHERE id = :id',
             [':id' => 10]
         );
-        $this->assertInstanceOf(PgSQLEngine::class, $this->connection);
+        $this->assertInstanceOf(PgSQLConnection::class, $this->connection);
     }
 
     public function testQuery()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado WHERE id = 5');
-        $this->assertInstanceOf(PgSQLEngine::class, $this->connection);
+        $this->assertInstanceOf(PgSQLConnection::class, $this->connection);
     }
 
     public function testFetch()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(PgSQLEngine::class, $this->connection);
+        $this->assertInstanceOf(PgSQLConnection::class, $this->connection);
         $data = $this->connection->fetch();
         $this->assertIsObject($data);
     }
@@ -111,7 +111,7 @@ class PgsqlEngineTest extends TestCase
     public function testFetchAll()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(PgSQLEngine::class, $this->connection);
+        $this->assertInstanceOf(PgSQLConnection::class, $this->connection);
         $data = $this->connection->fetchAll();
         $this->assertIsArray($data);
     }
@@ -120,12 +120,12 @@ class PgsqlEngineTest extends TestCase
     {
         $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
         $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
-        $this->assertInstanceOf(PgSQLEngine::class, $this->connection);
+        $this->assertInstanceOf(PgSQLConnection::class, $this->connection);
     }
 
     public function testDisconnect()
     {
         $this->connection->disconnect();
-        $this->assertInstanceOf(PgSQLEngine::class, $this->connection);
+        $this->assertInstanceOf(PgSQLConnection::class, $this->connection);
     }
 }

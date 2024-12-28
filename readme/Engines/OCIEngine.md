@@ -1,8 +1,8 @@
-# OCIEngine
+# OCIConnection
 
-## OCIEngine Connection
+## OCIConnection Connection
 
-The `GenericDatabase\OCIEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
+The `GenericDatabase\OCIConnection` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
 
@@ -10,7 +10,7 @@ The `GenericDatabase\OCIEngine` class is responsible for establishing and managi
 
 ```php
 // Explicit and simplified module loading with all environment variables
-use GenericDatabase\OCIEngine;
+use GenericDatabase\OCIConnection;
 use GenericDatabase\Engine\OCI\OCI;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
@@ -24,7 +24,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 ```php
 // Create a new database connection using MySQLi engine in the chainable methods format
-$connection = new OCIEngine();
+$connection = new OCIConnection();
 $connection
 ->setHost($_ENV['OCI_HOST'])
 ->setPort((int)$_ENV['OCI_PORT'])
@@ -44,7 +44,7 @@ $connection
 
 ```php
 // Create a new database connection using MySQLi engine in the fluent design format
-$connection = OCIEngine
+$connection = OCIConnection
 ::setHost($_ENV['OCI_HOST'])
 ::setPort((int)$_ENV['OCI_PORT'])
 ::setDatabase($_ENV['OCI_DATABASE'])
@@ -63,7 +63,7 @@ $connection = OCIEngine
 
 ```php
 // Create a new database connection using MySQLi engine in the static arguments format
-$connection = OCIEngine::new(
+$connection = OCIConnection::new(
     host: $_ENV['OCI_HOST'],
     port: (int)$_ENV['OCI_PORT'],
     database: $_ENV['OCI_DATABASE'],
@@ -83,7 +83,7 @@ $connection = OCIEngine::new(
 
 ```php
 // Create a new database connection using MySQLi engine in the static array format
-$connection = OCIEngine::new([
+$connection = OCIConnection::new([
     'host' => $_ENV['OCI_HOST'],
     'port' => (int)$_ENV['OCI_PORT'],
     'database' => $_ENV['OCI_DATABASE'],

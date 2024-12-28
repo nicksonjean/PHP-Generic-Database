@@ -1,5 +1,25 @@
 <?php
 
+/** @noinspection ALL */
+
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
+
+/** @noinspection ALL */
+
 namespace GenericDatabase\Helpers;
 
 /**
@@ -262,6 +282,7 @@ class RegexDateTime
      *
      * @return string The date and time regular expression pattern.
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private static function regexYDMHMS(): string
     {
@@ -277,6 +298,7 @@ class RegexDateTime
      *
      * @return string The date and time regular expression pattern.
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private static function regexYMDHMS(): string
     {
@@ -292,6 +314,7 @@ class RegexDateTime
      *
      * @return string The date and time regular expression pattern.
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private static function regexMDYHMS(): string
     {
@@ -307,6 +330,7 @@ class RegexDateTime
      *
      * @return string The date and time regular expression pattern.
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private static function regexDMYHMS(): string
     {

@@ -1,8 +1,8 @@
-# SQLSrvEngine
+# SQLSrvConnection
 
-## SQLSrvEngine Connection
+## SQLSrvConnection Connection
 
-The `GenericDatabase\SQLSrvEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
+The `GenericDatabase\SQLSrvConnection` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
 
@@ -10,7 +10,7 @@ The `GenericDatabase\SQLSrvEngine` class is responsible for establishing and man
 
 ```php
 // Explicit and simplified module loading with all environment variables
-use GenericDatabase\SQLSrvEngine;
+use GenericDatabase\SQLSrvConnection;
 use GenericDatabase\Engine\SQLSrv\SQLSrv;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
@@ -24,7 +24,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 ```php
 // Create a new database connection using MySQLi engine in the chainable methods format
-$connection = new SQLSrvEngine();
+$connection = new SQLSrvConnection();
 $connection
 ->setHost($_ENV['SQLSRV_HOST'])
 ->setPort((int)$_ENV['SQLSRV_PORT'])
@@ -44,7 +44,7 @@ $connection
 
 ```php
 // Create a new database connection using MySQLi engine in the fluent design format
-$connection = SQLSrvEngine
+$connection = SQLSrvConnection
 ::setHost($_ENV['SQLSRV_HOST'])
 ::setPort((int)$_ENV['SQLSRV_PORT'])
 ::setDatabase($_ENV['SQLSRV_DATABASE'])
@@ -63,7 +63,7 @@ $connection = SQLSrvEngine
 
 ```php
 // Create a new database connection using MySQLi engine in the static arguments format
-$connection = SQLSrvEngine::new(
+$connection = SQLSrvConnection::new(
     host: $_ENV['SQLSRV_HOST'],
     port: (int)$_ENV['SQLSRV_PORT'],
     database: $_ENV['SQLSRV_DATABASE'],
@@ -83,7 +83,7 @@ $connection = SQLSrvEngine::new(
 
 ```php
 // Create a new database connection using MySQLi engine in the static array format
-$connection = SQLSrvEngine::new([
+$connection = SQLSrvConnection::new([
     'host' => $_ENV['SQLSRV_HOST'],
     'port' => (int)$_ENV['SQLSRV_PORT'],
     'database' => $_ENV['SQLSRV_DATABASE'],

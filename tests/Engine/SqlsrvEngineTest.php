@@ -3,11 +3,11 @@
 namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
-use GenericDatabase\Engine\SQLSrvEngine;
-use GenericDatabase\Engine\SQLSrv\SQLSrv;
+use GenericDatabase\Engine\SQLSrvConnection;
+use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
 use GenericDatabase\Modules\Chainable;
 
-class SqlsrvEngineTest extends TestCase
+class SQLSrvConnectionTest extends TestCase
 {
     private array $sqlsrvEnv;
 
@@ -42,23 +42,23 @@ class SqlsrvEngineTest extends TestCase
 
     public function testConnection()
     {
-        $this->assertInstanceOf(SQLSrvEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLSrvConnection::class, $this->connection);
     }
 
     public function testConnectionSingleton()
     {
-        $connection1 = SQLSrvEngine::getInstance();
-        $connection2 = SQLSrvEngine::getInstance();
+        $connection1 = SQLSrvConnection::getInstance();
+        $connection2 = SQLSrvConnection::getInstance();
 
-        $this->assertInstanceOf(SQLSrvEngine::class, $connection1);
-        $this->assertInstanceOf(SQLSrvEngine::class, $connection2);
+        $this->assertInstanceOf(SQLSrvConnection::class, $connection1);
+        $this->assertInstanceOf(SQLSrvConnection::class, $connection2);
         $this->assertSame($connection1, $connection2);
     }
 
     public function testConnect()
     {
         $this->connection->connect();
-        $this->assertInstanceOf(SQLSrvEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLSrvConnection::class, $this->connection);
     }
 
     public function testPing()
@@ -91,19 +91,19 @@ class SqlsrvEngineTest extends TestCase
             'SELECT id AS Codigo FROM estado WHERE id = :id',
             [':id' => 10]
         );
-        $this->assertInstanceOf(SQLSrvEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLSrvConnection::class, $this->connection);
     }
 
     public function testQuery()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado WHERE id = 5');
-        $this->assertInstanceOf(SQLSrvEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLSrvConnection::class, $this->connection);
     }
 
     public function testFetch()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(SQLSrvEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLSrvConnection::class, $this->connection);
         $data = $this->connection->fetch();
         $this->assertIsObject($data);
     }
@@ -111,7 +111,7 @@ class SqlsrvEngineTest extends TestCase
     public function testFetchAll()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(SQLSrvEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLSrvConnection::class, $this->connection);
         $data = $this->connection->fetchAll();
         $this->assertIsArray($data);
     }
@@ -120,12 +120,12 @@ class SqlsrvEngineTest extends TestCase
     {
         $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
         $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
-        $this->assertInstanceOf(SQLSrvEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLSrvConnection::class, $this->connection);
     }
 
     public function testDisconnect()
     {
         $this->connection->disconnect();
-        $this->assertInstanceOf(SQLSrvEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLSrvConnection::class, $this->connection);
     }
 }

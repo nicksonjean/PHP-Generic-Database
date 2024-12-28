@@ -1,11 +1,11 @@
 <?php
 
-use GenericDatabase\Engine\SQLiteEngine;
+use GenericDatabase\Engine\SQLiteConnection;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$sqlite = SQLiteEngine::new(PATH_ROOT . '/resources/dsn/json/sqlite.json')->connect();
+$sqlite = SQLiteConnection::new(PATH_ROOT . '/resources/dsn/json/sqlite.json')->connect();
 
 var_dump($sqlite);

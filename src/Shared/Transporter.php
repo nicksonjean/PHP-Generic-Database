@@ -6,8 +6,6 @@ trait Transporter
 {
     use Property;
 
-    private static mixed $instance = null;
-
     /**
      * Sleep instance used by serialize/unserialize
      *

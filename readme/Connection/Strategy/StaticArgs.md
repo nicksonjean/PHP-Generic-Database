@@ -116,11 +116,11 @@ $connection = Connection::new(
 // Create a new database connection using Firebird/Interbase engine for Firebird/Interbase dialects in the static arguments format
 $connection = Connection::new(
     engine: 'firebird',
-    host: $_ENV['FIREBIRD_HOST'],
-    port: (int)$_ENV['FIREBIRD_PORT'],
-    database: $_ENV['FIREBIRD_DATABASE'],
-    user: $_ENV['FIREBIRD_USER'],
-    password: $_ENV['FIREBIRD_PASSWORD'],
+    host: $_ENV['FBIRD_HOST'],
+    port: (int)$_ENV['FBIRD_PORT'],
+    database: $_ENV['FBIRD_DATABASE'],
+    user: $_ENV['FBIRD_USER'],
+    password: $_ENV['FBIRD_PASSWORD'],
     charset: 'utf8',
     options: [
         Firebird::ATTR_PERSISTENT => true,
@@ -257,11 +257,11 @@ $connection = Connection::new(
 $connection = Connection::new(
     engine: 'pdo',
     driver: 'firebird',
-    host: $_ENV['FIREBIRD_HOST'],
-    port: (int)$_ENV['FIREBIRD_PORT'],
-    database: $_ENV['FIREBIRD_DATABASE'],
-    user: $_ENV['FIREBIRD_USER'],
-    password: $_ENV['FIREBIRD_PASSWORD'],
+    host: $_ENV['FBIRD_HOST'],
+    port: (int)$_ENV['FBIRD_PORT'],
+    database: $_ENV['FBIRD_DATABASE'],
+    user: $_ENV['FBIRD_USER'],
+    password: $_ENV['FBIRD_PASSWORD'],
     charset: 'utf8',
     options: [
         PDO::ATTR_PERSISTENT => true,

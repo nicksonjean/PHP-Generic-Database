@@ -2,7 +2,7 @@
 
 use GenericDatabase\Connection;
 use GenericDatabase\Engine\MySQLi\MySQL;
-use GenericDatabase\Engine\MySQLiEngine;
+use GenericDatabase\Engine\MySQLiConnection;
 use GenericDatabase\Modules\Chainable;
 use Dotenv\Dotenv;
 
@@ -33,7 +33,7 @@ $connection
     ])
     ->setException(true);
 
-// $connection = new MySQLiEngine();
+// $connection = new Connection();
 // $connection
 //     ->setHost($_ENV['MYSQL_HOST'])
 //     ->setPort((int)$_ENV['MYSQL_PORT'])
@@ -83,7 +83,7 @@ $a = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM e
 
 var_dump($a);
 
-var_dump($a->queryMetadata());
+var_dump($a->getAllMetadata());
 
 var_dump([
     $a->queryString(),
@@ -109,7 +109,7 @@ while ($row = $a->fetch(Connection::FETCH_OBJ)) {
 
 // var_dump($b);
 
-// var_dump($b->queryMetadata());
+// var_dump($b->getAllMetadata());
 
 // var_dump([
 //     $b->queryString(),

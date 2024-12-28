@@ -1,7 +1,7 @@
 <?php
 
 use GenericDatabase\Connection;
-use GenericDatabase\Engine\MySQLiEngine;
+use GenericDatabase\Engine\MySQLiConnection;
 use GenericDatabase\Modules\Chainable;
 use Dotenv\Dotenv;
 
@@ -20,10 +20,10 @@ $withoutStrategy = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strateg
 tryConnectDisconnectReconnect($withoutStrategy);
 
 /**
- * @param MySQLiEngine|Connection $context
+ * @param Connection|MySQLiConnection $context
  * @return void
  */
-function tryConnectDisconnectReconnect(MySQLiEngine|Connection $context): void
+function tryConnectDisconnectReconnect(Connection|MySQLiConnection $context): void
 {
     $status = 'Connection Status: %s';
 

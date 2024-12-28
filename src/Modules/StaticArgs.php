@@ -6,21 +6,21 @@ namespace GenericDatabase\Modules;
 
 use GenericDatabase\Core\Entity;
 use GenericDatabase\Connection;
-use GenericDatabase\Engine\MySQLiEngine;
-use GenericDatabase\Engine\MySQLi\MySQL;
-use GenericDatabase\Engine\PgSQLEngine;
-use GenericDatabase\Engine\PgSQL\PgSQL;
-use GenericDatabase\Engine\SQLSrvEngine;
-use GenericDatabase\Engine\SQLSrv\SQLSrv;
-use GenericDatabase\Engine\OCIEngine;
-use GenericDatabase\Engine\OCI\OCI;
-use GenericDatabase\Engine\FirebirdEngine;
-use GenericDatabase\Engine\Firebird\Firebird;
-use GenericDatabase\Engine\SQLiteEngine;
-use GenericDatabase\Engine\SQLite\SQLite;
-use GenericDatabase\Engine\ODBCEngine;
-use GenericDatabase\Engine\ODBC\ODBC;
-use GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Engine\MySQLiConnection;
+use GenericDatabase\Engine\MySQLi\Connection\MySQL;
+use GenericDatabase\Engine\PgSQLConnection;
+use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
+use GenericDatabase\Engine\SQLSrvConnection;
+use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
+use GenericDatabase\Engine\OCIConnection;
+use GenericDatabase\Engine\OCI\Connection\OCI;
+use GenericDatabase\Engine\FirebirdConnection;
+use GenericDatabase\Engine\Firebird\Connection\Firebird;
+use GenericDatabase\Engine\SQLiteConnection;
+use GenericDatabase\Engine\SQLite\Connection\SQLite;
+use GenericDatabase\Engine\ODBCConnection;
+use GenericDatabase\Engine\ODBC\Connection\ODBC;
+use GenericDatabase\Engine\PDOConnection;
 use PDO;
 
 class StaticArgs
@@ -29,14 +29,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|MySQLiEngine
+     * @return Connection|MySQLiConnection
      */
     public static function nativeMySQLi(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|MySQLiEngine {
-        /** @var Connection|MySQLiEngine $className */
+    ): Connection|MySQLiConnection {
+        /** @var Connection|MySQLiConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_MYSQLI_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -71,14 +71,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PgSQLEngine
+     * @return Connection|PgSQLConnection
      */
     public static function nativePgSQL(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PgSQLEngine {
-        /** @var Connection|PgSQLEngine $className */
+    ): Connection|PgSQLConnection {
+        /** @var Connection|PgSQLConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PGSQL_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -86,7 +86,7 @@ class StaticArgs
         }
         $parameters = array_merge($parameters, [
             'host' => $env['PGSQL_HOST'],
-            'port' => (int)$env['PGSQL_PORT'],
+            'port' => (int) $env['PGSQL_PORT'],
             'database' => $env['PGSQL_DATABASE'],
             'user' => $env['PGSQL_USER'],
             'password' => $env['PGSQL_PASSWORD'],
@@ -109,14 +109,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|SQLSrvEngine
+     * @return Connection|SQLSrvConnection
      */
     public static function nativeSQLSrv(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|SQLSrvEngine {
-        /** @var Connection|SQLSrvEngine $className */
+    ): Connection|SQLSrvConnection {
+        /** @var Connection|SQLSrvConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLSRV_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -124,7 +124,7 @@ class StaticArgs
         }
         $parameters = array_merge($parameters, [
             'host' => $env['SQLSRV_HOST'],
-            'port' => (int)$env['SQLSRV_PORT'],
+            'port' => (int) $env['SQLSRV_PORT'],
             'database' => $env['SQLSRV_DATABASE'],
             'user' => $env['SQLSRV_USER'],
             'password' => $env['SQLSRV_PASSWORD'],
@@ -145,14 +145,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|OCIEngine
+     * @return Connection|OCIConnection
      */
     public static function nativeOCI(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|OCIEngine {
-        /** @var Connection|OCIEngine $className */
+    ): Connection|OCIConnection {
+        /** @var Connection|OCIConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_OCI_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -160,7 +160,7 @@ class StaticArgs
         }
         $parameters = array_merge($parameters, [
             'host' => $env['OCI_HOST'],
-            'port' => (int)$env['OCI_PORT'],
+            'port' => (int) $env['OCI_PORT'],
             'database' => $env['OCI_DATABASE'],
             'user' => $env['OCI_USER'],
             'password' => $env['OCI_PASSWORD'],
@@ -181,25 +181,25 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|FirebirdEngine
+     * @return Connection|FirebirdConnection
      */
     public static function nativeFirebird(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|FirebirdEngine {
-        /** @var Connection|FirebirdEngine $className */
+    ): Connection|FirebirdConnection {
+        /** @var Connection|FirebirdConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_FIREBIRD_ENGINE->value;
         $parameters = [];
         if ($strategy) {
             $parameters['engine'] = 'firebird';
         }
         $parameters = array_merge($parameters, [
-            'host' => $env['FIREBIRD_HOST'],
-            'port' => (int)$env['FIREBIRD_PORT'],
-            'database' => $env['FIREBIRD_DATABASE'],
-            'user' => $env['FIREBIRD_USER'],
-            'password' => $env['FIREBIRD_PASSWORD'],
+            'host' => $env['FBIRD_HOST'],
+            'port' => (int) $env['FBIRD_PORT'],
+            'database' => $env['FBIRD_DATABASE'],
+            'user' => $env['FBIRD_USER'],
+            'password' => $env['FBIRD_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
                 Firebird::ATTR_PERSISTENT => $persistent,
@@ -217,14 +217,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|SQLiteEngine
+     * @return Connection|SQLiteConnection
      */
     public static function nativeSQLite(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|SQLiteEngine {
-        /** @var Connection|SQLiteEngine $className */
+    ): Connection|SQLiteConnection {
+        /** @var Connection|SQLiteConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -253,14 +253,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|SQLiteEngine
+     * @return Connection|SQLiteConnection
      */
     public static function nativeMemory(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|SQLiteEngine {
-        /** @var Connection|SQLiteEngine $className */
+    ): Connection|SQLiteConnection {
+        /** @var Connection|SQLiteConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -289,14 +289,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoMySQL(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
-        /** @var Connection|PDOEngine $className */
+    ): Connection|PDOConnection {
+        /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -305,7 +305,7 @@ class StaticArgs
         $parameters = array_merge($parameters, [
             'driver' => 'mysql',
             'host' => $env['MYSQL_HOST'],
-            'port' => (int)$env['MYSQL_PORT'],
+            'port' => (int) $env['MYSQL_PORT'],
             'database' => $env['MYSQL_DATABASE'],
             'user' => $env['MYSQL_USER'],
             'password' => $env['MYSQL_PASSWORD'],
@@ -326,14 +326,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoPgSQL(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
-        /** @var Connection|PDOEngine $className */
+    ): Connection|PDOConnection {
+        /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -342,7 +342,7 @@ class StaticArgs
         $parameters = array_merge($parameters, [
             'driver' => 'pgsql',
             'host' => $env['PGSQL_HOST'],
-            'port' => (int)$env['PGSQL_PORT'],
+            'port' => (int) $env['PGSQL_PORT'],
             'database' => $env['PGSQL_DATABASE'],
             'user' => $env['PGSQL_USER'],
             'password' => $env['PGSQL_PASSWORD'],
@@ -362,13 +362,13 @@ class StaticArgs
     /**
      * @param array $env
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoSQLSrv(
         array $env,
         bool $strategy = false
-    ): Connection|PDOEngine {
-        /** @var Connection|PDOEngine $className */
+    ): Connection|PDOConnection {
+        /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -377,7 +377,7 @@ class StaticArgs
         $parameters = array_merge($parameters, [
             'driver' => 'sqlsrv',
             'host' => $env['SQLSRV_HOST'],
-            'port' => (int)$env['SQLSRV_PORT'],
+            'port' => (int) $env['SQLSRV_PORT'],
             'database' => $env['SQLSRV_DATABASE'],
             'user' => $env['SQLSRV_USER'],
             'password' => $env['SQLSRV_PASSWORD'],
@@ -397,14 +397,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoOCI(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
-        /** @var Connection|PDOEngine $className */
+    ): Connection|PDOConnection {
+        /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -413,7 +413,7 @@ class StaticArgs
         $parameters = array_merge($parameters, [
             'driver' => 'oci',
             'host' => $env['OCI_HOST'],
-            'port' => (int)$env['OCI_PORT'],
+            'port' => (int) $env['OCI_PORT'],
             'database' => $env['OCI_DATABASE'],
             'user' => $env['OCI_USER'],
             'password' => $env['OCI_PASSWORD'],
@@ -434,14 +434,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoFirebird(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
-        /** @var Connection|PDOEngine $className */
+    ): Connection|PDOConnection {
+        /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -449,11 +449,11 @@ class StaticArgs
         }
         $parameters = array_merge($parameters, [
             'driver' => 'firebird',
-            'host' => $env['FIREBIRD_HOST'],
-            'port' => (int)$env['FIREBIRD_PORT'],
-            'database' => $env['FIREBIRD_DATABASE'],
-            'user' => $env['FIREBIRD_USER'],
-            'password' => $env['FIREBIRD_PASSWORD'],
+            'host' => $env['FBIRD_HOST'],
+            'port' => (int) $env['FBIRD_PORT'],
+            'database' => $env['FBIRD_DATABASE'],
+            'user' => $env['FBIRD_USER'],
+            'password' => $env['FBIRD_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
                 PDO::ATTR_PERSISTENT => $persistent,
@@ -471,14 +471,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoSQLite(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
-        /** @var Connection|PDOEngine $className */
+    ): Connection|PDOConnection {
+        /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -504,14 +504,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoMemory(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
-        /** @var Connection|PDOEngine $className */
+    ): Connection|PDOConnection {
+        /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -537,14 +537,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcMySQL(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
-        /** @var Connection|ODBCEngine $className */
+    ): Connection|ODBCConnection {
+        /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -553,7 +553,7 @@ class StaticArgs
         $parameters = array_merge($parameters, [
             'driver' => 'mysql',
             'host' => $env['MYSQL_HOST'],
-            'port' => (int)$env['MYSQL_PORT'],
+            'port' => (int) $env['MYSQL_PORT'],
             'database' => $env['MYSQL_DATABASE'],
             'user' => $env['MYSQL_USER'],
             'password' => $env['MYSQL_PASSWORD'],
@@ -574,14 +574,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcPgSQL(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
-        /** @var Connection|ODBCEngine $className */
+    ): Connection|ODBCConnection {
+        /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -590,7 +590,7 @@ class StaticArgs
         $parameters = array_merge($parameters, [
             'driver' => 'pgsql',
             'host' => $env['PGSQL_HOST'],
-            'port' => (int)$env['PGSQL_PORT'],
+            'port' => (int) $env['PGSQL_PORT'],
             'database' => $env['PGSQL_DATABASE'],
             'user' => $env['PGSQL_USER'],
             'password' => $env['PGSQL_PASSWORD'],
@@ -611,14 +611,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcSQLSrv(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
-        /** @var Connection|ODBCEngine $className */
+    ): Connection|ODBCConnection {
+        /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -627,7 +627,7 @@ class StaticArgs
         $parameters = array_merge($parameters, [
             'driver' => 'sqlsrv',
             'host' => $env['SQLSRV_HOST'],
-            'port' => (int)$env['SQLSRV_PORT'],
+            'port' => (int) $env['SQLSRV_PORT'],
             'database' => $env['SQLSRV_DATABASE'],
             'user' => $env['SQLSRV_USER'],
             'password' => $env['SQLSRV_PASSWORD'],
@@ -648,14 +648,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcOCI(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
-        /** @var Connection|ODBCEngine $className */
+    ): Connection|ODBCConnection {
+        /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -664,7 +664,7 @@ class StaticArgs
         $parameters = array_merge($parameters, [
             'driver' => 'oci',
             'host' => $env['OCI_HOST'],
-            'port' => (int)$env['OCI_PORT'],
+            'port' => (int) $env['OCI_PORT'],
             'database' => $env['OCI_DATABASE'],
             'user' => $env['OCI_USER'],
             'password' => $env['OCI_PASSWORD'],
@@ -685,14 +685,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcFirebird(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
-        /** @var Connection|ODBCEngine $className */
+    ): Connection|ODBCConnection {
+        /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -700,12 +700,12 @@ class StaticArgs
         }
         $parameters = array_merge($parameters, [
             'driver' => 'firebird',
-            'host' => $env['FIREBIRD_HOST'],
-            'port' => (int)$env['FIREBIRD_PORT'],
-            'database' => $env['FIREBIRD_DATABASE'],
-            'user' => $env['FIREBIRD_USER'],
-            'password' => $env['FIREBIRD_PASSWORD'],
-            'charset' => $env['FIREBIRD_CHARSET'],
+            'host' => $env['FBIRD_HOST'],
+            'port' => (int) $env['FBIRD_PORT'],
+            'database' => $env['FBIRD_DATABASE'],
+            'user' => $env['FBIRD_USER'],
+            'password' => $env['FBIRD_PASSWORD'],
+            'charset' => $env['FBIRD_CHARSET'],
             'options' => [
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
@@ -722,14 +722,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcSQLite(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
-        /** @var Connection|ODBCEngine $className */
+    ): Connection|ODBCConnection {
+        /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -755,14 +755,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcAccess(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
-        /** @var Connection|ODBCEngine $className */
+    ): Connection|ODBCConnection {
+        /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -790,14 +790,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcExcel(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
-        /** @var Connection|ODBCEngine $className */
+    ): Connection|ODBCConnection {
+        /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -823,14 +823,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcText(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
-        /** @var Connection|ODBCEngine $className */
+    ): Connection|ODBCConnection {
+        /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         $parameters = [];
         if ($strategy) {
@@ -856,14 +856,14 @@ class StaticArgs
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcMemory(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
-        /** @var Connection|ODBCEngine $className */
+    ): Connection|ODBCConnection {
+        /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         $parameters = [];
         if ($strategy) {

@@ -1,8 +1,8 @@
-# ODBCEngine
+# ODBCConnection
 
-## ODBCEngine Connection
+## ODBCConnection Connection
 
-The `GenericDatabase\ODBCEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
+The `GenericDatabase\ODBCConnection` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
 
@@ -10,7 +10,7 @@ The `GenericDatabase\ODBCEngine` class is responsible for establishing and manag
 
 ```php
 // Explicit and simplified module loading with all environment variables
-use GenericDatabase\ODBCEngine;
+use GenericDatabase\ODBCConnection;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
 
@@ -23,7 +23,7 @@ Dotenv::createImmutable(PATH_ROOT)::load();
 
 ```php
 // Create a new database connection using ODBC engine with mysql driver in the fluent design format
-$connection = ODBCEngine
+$connection = ODBCConnection
 ::setDriver('mysql')
 ::setHost($_ENV['MYSQL_HOST'])
 ::setPort(+$_ENV['MYSQL_PORT'])
@@ -42,7 +42,7 @@ $connection = ODBCEngine
 
 ```php
 // Create a new database connection using ODBC engine with pgsql driver in the fluent design format
-$connection = ODBCEngine
+$connection = ODBCConnection
 ::setDriver('pgsql')
 ::setHost($_ENV['PGSQL_HOST'])
 ::setPort(+$_ENV['PGSQL_PORT'])
@@ -61,7 +61,7 @@ $connection = ODBCEngine
 
 ```php
 // Create a new database connection using ODBC engine with pgsql driver in the fluent design format
-$connection = ODBCEngine
+$connection = ODBCConnection
 ::setDriver('sqlsrv')
 ::setHost($_ENV['SQLSRV_HOST'])
 ::setPort(+$_ENV['SQLSRV_PORT'])
@@ -80,7 +80,7 @@ $connection = ODBCEngine
 
 ```php
 // Create a new database connection using ODBC engine with oci driver in the fluent design format
-$connection = ODBCEngine
+$connection = ODBCConnection
 ::setDriver('oci')
 ::setHost($_ENV['OCI_HOST'])
 ::setPort(+$_ENV['OCI_PORT'])
@@ -99,13 +99,13 @@ $connection = ODBCEngine
 
 ```php
 // Create a new database connection using ODBC engine with firebird driver in the fluent design format
-$connection = ODBCEngine
+$connection = ODBCConnection
 ::setDriver('firebird')
-::setHost($_ENV['FIREBIRD_HOST'])
-::setPort(+$_ENV['FIREBIRD_PORT'])
-::setDatabase($_ENV['FIREBIRD_DATABASE'])
-::setUser($_ENV['FIREBIRD_USER'])
-::setPassword($_ENV['FIREBIRD_PASSWORD'])
+::setHost($_ENV['FBIRD_HOST'])
+::setPort(+$_ENV['FBIRD_PORT'])
+::setDatabase($_ENV['FBIRD_DATABASE'])
+::setUser($_ENV['FBIRD_USER'])
+::setPassword($_ENV['FBIRD_PASSWORD'])
 ::setCharset('utf8')
 ::setOptions([
     ODBC::ATTR_PERSISTENT => true,
@@ -118,7 +118,7 @@ $connection = ODBCEngine
 
 ```php
 // Create a new database connection using ODBC engine with sqlite driver in the fluent design format
-$connection = ODBCEngine
+$connection = ODBCConnection
 ::setDriver('sqlite')
 ::setDatabase($_ENV['SQLITE_DATABASE'])
 ::setCharset('utf8')
@@ -133,7 +133,7 @@ $connection = ODBCEngine
 
 ```php
 // Create a new database connection using ODBC engine with sqlite in memory driver in the fluent design format
-$connection = ODBCEngine
+$connection = ODBCConnection
 ::setDriver('sqlite')
 ::setDatabase($_ENV['SQLITE_DATABASE_MEMORY'])
 ::setCharset('utf8')

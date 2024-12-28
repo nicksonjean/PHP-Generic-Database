@@ -26,7 +26,7 @@ final class CompareTest extends TestCase
         self::$env = [];
     }
 
-    public function testNativeMysqliConnection()
+    public function testNativeConnection()
     {
         $connection = new MySQLi(
             self::$env['MYSQL_HOST'],

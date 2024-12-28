@@ -16,6 +16,7 @@ trait Caller
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
      * @return mixed
+     * @noinspection PhpMixedReturnTypeCanBeReducedInspection
      */
     public function __call(string $name, array $arguments): mixed
     {
@@ -38,6 +39,8 @@ trait Caller
      * @return mixed
      * @throws CustomException
      * @throws ReflectionException
+     * @noinspection PhpExpressionResultUnusedInspection
+     * @noinspection PhpMixedReturnTypeCanBeReducedInspection
      */
     public static function __callStatic(string $name, array $arguments): mixed
     {

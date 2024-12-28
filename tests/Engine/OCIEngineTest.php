@@ -3,11 +3,11 @@
 namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
-use GenericDatabase\Engine\OCIEngine;
-use GenericDatabase\Engine\OCI\OCI;
+use GenericDatabase\Engine\OCIConnection;
+use GenericDatabase\Engine\OCI\Connection\OCI;
 use GenericDatabase\Modules\Chainable;
 
-class OCIEngineTest extends TestCase
+class OCIConnectionTest extends TestCase
 {
     private array $ociEnv;
 
@@ -42,23 +42,23 @@ class OCIEngineTest extends TestCase
 
     public function testConnection()
     {
-        $this->assertInstanceOf(OCIEngine::class, $this->connection);
+        $this->assertInstanceOf(OCIConnection::class, $this->connection);
     }
 
     public function testConnectionSingleton()
     {
-        $connection1 = OCIEngine::getInstance();
-        $connection2 = OCIEngine::getInstance();
+        $connection1 = OCIConnection::getInstance();
+        $connection2 = OCIConnection::getInstance();
 
-        $this->assertInstanceOf(OCIEngine::class, $connection1);
-        $this->assertInstanceOf(OCIEngine::class, $connection2);
+        $this->assertInstanceOf(OCIConnection::class, $connection1);
+        $this->assertInstanceOf(OCIConnection::class, $connection2);
         $this->assertSame($connection1, $connection2);
     }
 
     public function testConnect()
     {
         $this->connection->connect();
-        $this->assertInstanceOf(OCIEngine::class, $this->connection);
+        $this->assertInstanceOf(OCIConnection::class, $this->connection);
     }
 
     public function testPing()
@@ -91,19 +91,19 @@ class OCIEngineTest extends TestCase
             'SELECT id AS Codigo FROM estado WHERE id = :id',
             [':id' => 10]
         );
-        $this->assertInstanceOf(OCIEngine::class, $this->connection);
+        $this->assertInstanceOf(OCIConnection::class, $this->connection);
     }
 
     public function testQuery()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado WHERE id = 5');
-        $this->assertInstanceOf(OCIEngine::class, $this->connection);
+        $this->assertInstanceOf(OCIConnection::class, $this->connection);
     }
 
     public function testFetch()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(OCIEngine::class, $this->connection);
+        $this->assertInstanceOf(OCIConnection::class, $this->connection);
         $data = $this->connection->fetch();
         $this->assertIsObject($data);
     }
@@ -111,7 +111,7 @@ class OCIEngineTest extends TestCase
     public function testFetchAll()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(OCIEngine::class, $this->connection);
+        $this->assertInstanceOf(OCIConnection::class, $this->connection);
         $data = $this->connection->fetchAll();
         $this->assertIsArray($data);
     }
@@ -120,12 +120,12 @@ class OCIEngineTest extends TestCase
     {
         $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
         $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
-        $this->assertInstanceOf(OCIEngine::class, $this->connection);
+        $this->assertInstanceOf(OCIConnection::class, $this->connection);
     }
 
     public function testDisconnect()
     {
         $this->connection->disconnect();
-        $this->assertInstanceOf(OCIEngine::class, $this->connection);
+        $this->assertInstanceOf(OCIConnection::class, $this->connection);
     }
 }

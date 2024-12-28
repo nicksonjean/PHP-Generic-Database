@@ -15,14 +15,14 @@ PHP-Generic-Database is a set of PHP classes for connecting, displaying and gene
 
 PHP-Generic-Database currently supports the following mechanisms/database:
 
-![MariaDB](https://img.shields.io/badge/MariaDB-BA7257?style=for-the-badge&logo=mariadb&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-E48E00.svg?style=for-the-badge&logo=mysql&logoColor=white)
-![PgSQL](https://img.shields.io/badge/PostgreSQL-31648C.svg?style=for-the-badge&logo=postgresql&logoColor=white)
-![MicrosoftSQLServer](https://img.shields.io/badge/SQLServer-72818C?style=for-the-badge&logo=microsoft%20sql%20server&logoColor=white)
-![OCI](https://img.shields.io/badge/Oracle-C84734?style=for-the-badge&logo=oracle&logoColor=white)
-![Firebird](https://img.shields.io/badge/Firebird-F5B60F?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAArlBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8tivQqAAAAOXRSTlMABdgSNvzr30vz5MKyDA/4vS3vrpoJysadgHVVTyLoeWplRjAoFqSQb1o7qKGWioZBHdHPYKV9t4Mw5y1WAAAC70lEQVRYw+2X2XqiQBCF2ZFFUUARV9xinGiM0Szn/V9sBDLprg7QJt83d/lvEk6niuqq6qKj/PJf6SwvE/36I4uPTz+wHh/Tca+T/9o2Rn4ST9rfMTdetCF561MEc7i62bwbDKeieNoCvnGLuT6Et65aOMVArEvtWxYWdWt/NLgtiX0Ku1e/2o+B90b7PbyO0sQ9sG9YjvCmSkK8AA+1i3fwCntZDHc1S++wO4qcIXCszj/MFcnYurpmqg1MqupvYcQ/T204/rhd+SZYelUBnsW9BoA7bJXb4j0lVWkwgCUJNAOelgkAq3scG62YWxsD+CM66CJhD5uD5oaAq7nIPbhu6Lzy2bGA7tcAxp8PKxccYeu6AZqLBwCG2AJW/zOdM1DuTgplATELHQcvXJZFrJ1wqgA4pGcmwIVlII9g5nVDMEbEQQ8QeuEAcE20TjBvXx09gkGO8SpXDnzNBghJa3z8OedhQFJeKConzGBXDiHmwFU5fVkkhqvDPCBtyHTmwOYd7HIlmDPBB84V9iPUbCEtJJ8JGqCJ1p3LAByPdPAAxMQBZn1iPt0K3UQmpV1IDhNMwCRfglcHlDfaBgUmHwE5ixsPIr2vKYBDcoCUjRYNIkdhJIk5iEwg4U62iCccpZKIq1cAmCc2LgTcDSmPBYh9sMpT/u/5DAGTTh8fJRYvJ6zX1hDpilO95Mz35jZXdmQH1T2kR5/ykJw+ltVFUwQ7m8lkyLTDXLrPf83AINNE7c35+gYbhSfOtXDDIiAM0tHWZy8nR4l0Z1TuRg7rXKE4C1YFCWx+kBCCXv7VkFP1eT0Uuq0rHiSwyhDa7sfKK+QE06o7GAr0NeRkNZeXcnMaJNTekrbl4j0k0JuU2E6BLqtD0nDvfiw+WYvm9xN7kcwEDMVHPXtVclV/ht3uD1CDkyky1NQ8K/2aGKKpcgPTB19XRk7F7lvKjRjLq5u9SazDl2//57ROB2HuxHRcbzvRlR+g7iJN8+JspfzSwF/pPxQTLGx+KwAAAABJRU5ErkJggg==)
-![Interbase](https://img.shields.io/badge/Interbase-ED1F35?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANEAAADRCAMAAABl5KfdAAAAgVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9d3yJTAAAAKnRSTlMAMpXxm6Hg1Puql/fKss+e7GqK6eLGwKPdu3HYeua3g3VSkGHzWkKlSX+etyczAAAE0UlEQVR42uzZ2XKqQBSF4bUdGASN4BBn45ys93/AUyIGpRFMDBzo4rvxyqJ+pXsXDWq1Wq1Wq9VqtVqtVqvVbsmUZyZ0YTO0gRZmFq++oIMRI4LqO1qMuKi+FqnXX+TyloFsctiuzIFDlnJzlAHvfCCdNNwm71koE+G9PVLItmcxwRvKY8OYxuOc9pAPdFEaM8bJo5wBVeWbyevnfm3xDaZ5R1lsqRAoNiOyIkENKlx1LxiwykGUWM+KrE7QlioDtw4mqxS0ZoIFIoshKxX0wUjSdPWbrFbQjklmCG0d/jCI5KDr7Xb4T4QJJoKLjsVngyLhd+Y7QSGyg/oeLhoWfxEEeN6cgeaosSk6y2Kc5ePCd/jzoChqNuLFcOoXWNVn3AkXsz6f1kYyOS0ZmnQXhWSZjBkJApshXwmKiN/jlWOe8l5aU94bCgLS48tBEfGmTQbCpXXMLavFe+vo9PG1IJW0Dd5YTn3JIWuW/PDwxheCUsja5Z1J90ty3LfnEmbu8wgKyaHb5x3HtGeSx75tLRCQOfMJikhHuUbTbR2ULBG/65qGYbr2+rnmoXrDyYo5BKnkY+wwbjDeiiD0aRu85Yw8ZBnz21IQWDO3IJXYS56pS0uOK4cq512QSjnxESP3IHVU/eX1GOqF5V0WEqSOqj2ft//MLppF71eKD1JHlcoTMRmxM4rGCIjJAoOyR1WsQHijh0cWDvs7BDrMUMhh8HlUqXwAcHhjiYck/FiWIujBqDLVR7gl0tksTdCZLGJRvUVLrUxxbJYr6Oy4ZAYbD61YviAAbWbYINnB4a+0kbcN0zlINGZZgwBhuhNUnlXiIOCT6STpebyca+iq87PN4bgvexAwYRorPoPKHwRhqg9EZFCFIGDENC6+NViNIMhze4OYVQkCBkzjIeCxOkEZy32Ms1WVgrDLvO2kz99roXDCdJM5qxUEOExXuSD0eaVJEIYM6RL0XaRN0LVIn6CwSKOgS5FOQTBIahV0LtIrCIZuQTB0C4KhWxAM3YJg6BYEQ7cgGLoFwdAtCBPdgjDnX+mgHFzdgtDVLQgd3YLg6RYE0S0IcHQLQk+3IHR0C4LoFgT0dQuCzRc0UEKiWxAw1y0Inm5B/9q7u90EgSAMwy9OqhKtISJGG2tNf5O5/wtsTdvYhD2yHjAf89zBm4WFBV2gUQvipBYEj2pBvKsFwVYtCOZqQbypBUGtFgQztSBo1IJgoRYEc7UgWKgFgakFQaMWBK1aEGzUgmCnFgSzoe/Hdn2S0OaOS7kiOr8Y6O6TN1jUdsS2929CG7/ee8+K2ASTar2ku0wKYDKKpOiX2lovqdO71Lbesye0ahB/obypk/c9ENpWbrlUeZ8R2sH7toS2874DkVXjeJYS+w6v8oITka38y6C/5HGTrXhqImvlJodnV7soVS43SDO5QVrLDVKl91qplRuko5esievgJVPiqlzusJt7yQdxTb2kIa5O7rCrB/1f5WtMvGhHWC8ud9i17mqrc3N3sQf7pjZ/g4mdSICJnUjlpCOx9ZM2BGdiJxJgckWY0EL2h2lNDWemcrN6YTpvKX6Z1tRwZoP8Ove/mNRkx5mJvBv7w1R+znVhAk9Wy0mv6DCBZWwp6QklSzetINC4YUgppZRSSimllMbqE+pyG80XO1J+AAAAAElFTkSuQmCC)
-![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
+![MariaDB](https://img.shields.io/badge/MariaDB-4479A1?style=for-the-badge&logo=mariadb&logoColor=white)
+![MySQL](https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Postgres](https://img.shields.io/badge/postgres-4479A1.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![MSSQL](https://img.shields.io/badge/MSSQL-4479A1?style=for-the-badge&logo=microsoft%20sql%20server&logoColor=white)
+![Oracle](https://img.shields.io/badge/Oracle-4479A1?style=for-the-badge&logo=oracle&logoColor=white)
+![Firebird](https://custom-icon-badges.demolab.com/badge/Firebird-4479A1?logo=flatbird&style=for-the-badge&logoColor=white)
+![Interbase](https://img.shields.io/badge/Interbase-4479A1?logo=Interbase&style=for-the-badge&logoColor=white)
+![SQLite](https://img.shields.io/badge/sqlite-4479A1?style=for-the-badge&logo=sqlite&logoColor=white)
 
 ## Features
 
@@ -32,7 +32,7 @@ PHP-Generic-Database currently supports the following mechanisms/database:
 - **Powerful** - Supports various common and complex SQL queries, data mapping and prevents SQL injection.
 - **Compatible** - Supports MySQL/MariaDB, SQLSrv/MSSQL, Interbase/Firebird, PgSQL, OCI, SQLite, and more.
 - **Auto Escape** - Automatically escape SQL queries according to the driver dialect or SQL engine used.
-- **Friendly** - Works well with every PHP framework, such as Laravel, Codeigniter, Yii, Slim, and frameworks that support singleton extension or composer.
+- **Friendly** - Works well with every PHP framework, such as Laravel, Codeigniter, CakePHP, and frameworks that support singleton extension or composer.
 - **Free** - Under the MIT license, you can use it anywhere, for whatever purpose.
 
 ## Requirements
@@ -41,24 +41,24 @@ PHP-Generic-Database currently supports the following mechanisms/database:
 - **Composer**
 - **Native Extensions**
   - **MySQL/MariaDB** ***(MySQLi)*** *[php_mysqli.dll/so]*
-  - **PgSQL** ***(PgSQL)*** *[php_pgsql.dll/so]*
-  - **OCI** ***(ORACLE8)*** *[php_oci8_***.dll/so]*
-  - **SQLSrv** ***(sqlsrv)*** *[php_sqlsrv.dll/so]*
+  - **PostgreSQL** ***(PgSQL)*** *[php_pgsql.dll/so]*
+  - **Oracle** ***(OCI8)*** *[php_oci8_***.dll/so]*
+  - **SQL Server** ***(sqlsrv)*** *[php_sqlsrv.dll/so]*
   - **Firebird/Interbase** ***(ibase: gds | firebird: fds)*** *[php_interbase.dll/so]*
   - **SQLite** ***(SQLite3)*** *[php_sqlite3.dll/so]*
 - **PDO Extensions**
   - **MySQL/MariaDB** ***(MySQL)*** *[php_pdo_mysql.dll/so]*
-  - **PgSQL** ***(PgSQL)*** *[php_pdo_pgsql.dll/so]*
-  - **OCI** ***(ORACLE)*** *[php_pdo_oci.dll/so]*
-  - **SQLSrv** ***(sqlsrv)*** *[php_pdo_sqlsrv.dll/so]*
+  - **PostgreSQL** ***(PgSQL)*** *[php_pdo_pgsql.dll/so]*
+  - **Oracle** ***(OCI)*** *[php_pdo_oci.dll/so]*
+  - **SQL Server** ***(sqlsrv)*** *[php_pdo_sqlsrv.dll/so]*
   - **Firebird/Interbase** ***(ibase: gds | firebird: fds)*** *[php_pdo_firebird.dll/so]*
   - **SQLite** ***(SQLite)*** *[php_pdo_sqlite.dll/so]*
   - **ODBC** ***(ODBC)*** *[php_pdo_obdc.dll/so]*
 - **ODBC Externsions**
   - **MySQL/MariaDB** ***(MySQL)*** *[myodbc8a.dll/so]*
-  - **PgSQL** ***(PgSQL)*** *[psqlodbc30a.dll/so]*
+  - **PostgreSQL** ***(PgSQL)*** *[psqlodbc30a.dll/so]*
   - **OCI** ***(ORACLE)*** *[sqora32.dll/so]*
-  - **SQLSrv** ***(sqlsrv)*** *[sqlsrv32.dll/so]*
+  - **SQL Server** ***(sqlsrv)*** *[sqlsrv32.dll/so]*
   - **Firebird/Interbase** ***(ibase: gds | firebird: fds)*** *[odbcFb.dll/so]*
   - **SQLite** ***(SQLite)*** *[sqlite3odbc.dll/so]*
   - **Access** ***(Access)*** *[aceodbc.dll/so]*
@@ -167,25 +167,37 @@ Below is a series of readmes containing examples of how to use the lib and a [to
     - [Fluent.md](./readme/Connection/Modules/Fluent.md)
     - [StaticArgs.md](./readme/Connection/Modules/StaticArgs.md)
     - [StaticArray.md](./readme/Connection/Modules/StaticArray.md)
-- Engines:
-  - MySQLi: [MySQLiEngine.md](./readme/Engines/MySQLiEngine.md)
-  - Firebird: [FirebirdEngine.md](./readme/Engines/FirebirdEngine.md)
-  - ORACLE8: [OCIEngine.md](./readme/Engines/OCIEngine.md)
-  - PgSQL: [PgSQLEngine.md](./readme/Engines/PgSQLEngine.md)
-  - SQLSrv: [SQLSrvEngine.md](./readme/Engines/SQLSrvEngine.md)
-  - SQLite3: [SQLiteEngine.md](./readme/Engines/SQLiteEngine.md)
-  - PDO:
-    - [Chainable.md](./readme/Engines/PDOEngine/Chainable.md)
-    - [Fluent.md](./readme/Engines/PDOEngine/Fluent.md)
-    - [StaticArgs.md](./readme/Engines/PDOEngine/StaticArgs.md)
-    - [StaticArray.md](./readme/Engines/PDOEngine/StaticArray.md)
-  - ODBC:
-    - [Chainable.md](./readme/Engines/ODBCEngine/Chainable.md)
-    - [Fluent.md](./readme/Engines/ODBCEngine/Fluent.md)
-    - [StaticArgs.md](./readme/Engines/ODBCEngine/StaticArgs.md)
-    - [StaticArray.md](./readme/Engines/ODBCEngine/StaticArray.md)
-- Statements: [Statements.md](./readme/Statements.md)
-- Fetches: [Fetches.md](./readme/Fetches.md)
+  - Engines:
+    - MySQL/MariaDB with mysqli: [MySQLiConnection.md](./readme/Engines/MySQLiConnection.md)
+    - Firebird/Interbase with fbird/ibase: [FirebirdConnection.md](./readme/Engines/FirebirdConnection.md)
+    - Oracle with oci8: [OCIConnection.md](./readme/Engines/OCIConnection.md)
+    - PostgreSQL with pgsql: [PgSQLConnection.md](./readme/Engines/PgSQLConnection.md)
+    - SQL Server with sqlsrv: [SQLSrvConnection.md](./readme/Engines/SQLSrvConnection.md)
+    - SQLite with sqlite3: [SQLiteConnection.md](./readme/Engines/SQLiteConnection.md)
+    - PDO:
+      - [Chainable.md](./readme/Engines/PDOConnection/Chainable.md)
+      - [Fluent.md](./readme/Engines/PDOConnection/Fluent.md)
+      - [StaticArgs.md](./readme/Engines/PDOConnection/StaticArgs.md)
+      - [StaticArray.md](./readme/Engines/PDOConnection/StaticArray.md)
+    - ODBC:
+      - [Chainable.md](./readme/Engines/ODBCConnection/Chainable.md)
+      - [Fluent.md](./readme/Engines/ODBCConnection/Fluent.md)
+      - [StaticArgs.md](./readme/Engines/ODBCConnection/StaticArgs.md)
+      - [StaticArray.md](./readme/Engines/ODBCConnection/StaticArray.md)
+  - Statements: [Statements.md](./readme/Statements.md)
+  - Fetches: [Fetches.md](./readme/Fetches.md)
+- QueryBuilder:
+  - Strategy:
+    - [StrategyQueryBuilder.md](./readme/QueryBuilder/StrategyQueryBuilder.md)
+  - Engines:
+    - MySQL/MariaDB with mysqli: [MySQLiQueryBuilder.md](./readme/Engines/MySQLiQueryBuilder.md)
+    - Firebird/Interbase with fbird/ibase: [FirebirdQueryBuilder.md](./readme/Engines/FirebirdQueryBuilder.md)
+    - Oracle with oci8: [OCIQueryBuilder.md](./readme/Engines/OCIQueryBuilder.md)
+    - PostgreSQL with pgsql: [PgSQLQueryBuilder.md](./readme/Engines/PgSQLQueryBuilder.md)
+    - SQL Server with sqlsrv: [SQLSrvQueryBuilder.md](./readme/Engines/SQLSrvQueryBuilder.md)
+    - SQLite with sqlite3: [SQLiteQueryBuilder.md](./readme/Engines/SQLiteQueryBuilder.md)
+    - PDO: [PDOQueryBuilder.md](./readme/Engines/PDOQueryBuilder.md)
+    - ODBC: [ODBCQueryBuilder.md](./readme/Engines/ODBCQueryBuilder.md)
 
 ## License
 
@@ -215,4 +227,10 @@ PHP-Generic-Database is released under the MIT license.
     - [ ] Added compatibility for dBase Database.
   - [x] Implement fetch and fetchAll methods.
   - [ ] Add transaction, commit and rollback support.
-  - [ ] Query builder creation.
+  - [x] QueryBuilder creation for engines.
+  - [ ] QueryBuilder creation for strategy.
+  - [ ] Identify engine version for detect support Pagination Syntax (SQL Server 2008 unsupported pagination nativally).
+  - [ ] Integrate version and compile options in attach in attributes connections.
+  - [ ] Increase new extra connection attribute for ODBC, sets database alias manually.
+  - [ ] Remove connection attribute exception and validate exceptions manually.
+  - [ ] Add boolean feature for cache connections settings.

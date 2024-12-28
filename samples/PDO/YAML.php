@@ -1,31 +1,31 @@
 <?php
 
-use GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Engine\PDOConnection;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
 
 require_once PATH_ROOT . '/vendor/autoload.php';
 
-$mysql = PDOEngine::new(PATH_ROOT . '/resources/dsn/yaml/pdo_mysql.yaml')->connect();
+$mysql = PDOConnection::new(PATH_ROOT . '/resources/dsn/yaml/pdo_mysql.yaml')->connect();
 
 var_dump($mysql);
 
-$pgsql = PDOEngine::new(PATH_ROOT . '/resources/dsn/yaml/pdo_pgsql.yaml')->connect();
+$pgsql = PDOConnection::new(PATH_ROOT . '/resources/dsn/yaml/pdo_pgsql.yaml')->connect();
 
 var_dump($pgsql);
 
-$sqlsrv = PDOEngine::new(PATH_ROOT . '/resources/dsn/yaml/pdo_sqlsrv.yaml')->connect();
+$sqlsrv = PDOConnection::new(PATH_ROOT . '/resources/dsn/yaml/pdo_sqlsrv.yaml')->connect();
 
 var_dump($sqlsrv);
 
-$oci = PDOEngine::new(PATH_ROOT . '/resources/dsn/yaml/pdo_oci.yaml')->connect();
+$oci = PDOConnection::new(PATH_ROOT . '/resources/dsn/yaml/pdo_oci.yaml')->connect();
 
 var_dump($oci);
 
-$firebird = PDOEngine::new(PATH_ROOT . '/resources/dsn/yaml/pdo_firebird.yaml')->connect();
+$firebird = PDOConnection::new(PATH_ROOT . '/resources/dsn/yaml/pdo_firebird.yaml')->connect();
 
 var_dump($firebird);
 
-$sqlite = PDOEngine::new(PATH_ROOT . '/resources/dsn/yaml/pdo_sqlite.yaml')->connect();
+$sqlite = PDOConnection::new(PATH_ROOT . '/resources/dsn/yaml/pdo_sqlite.yaml')->connect();
 
 var_dump($sqlite);

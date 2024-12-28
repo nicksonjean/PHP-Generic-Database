@@ -1,8 +1,8 @@
-# PDOEngine
+# PDOConnection
 
-## PDOEngine Connection
+## PDOConnection Connection
 
-The `GenericDatabase\PDOEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
+The `GenericDatabase\PDOConnection` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
 
@@ -10,7 +10,7 @@ The `GenericDatabase\PDOEngine` class is responsible for establishing and managi
 
 ```php
 // Explicit and simplified module loading with all environment variables
-use GenericDatabase\PDOEngine;
+use GenericDatabase\PDOConnection;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
 
@@ -23,7 +23,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 ```php
 // Create a new database connection using PDO engine with mysql driver in the static array format
-$connection = PDOEngine::new([
+$connection = PDOConnection::new([
     'driver' => 'mysql',
     'host' => $_ENV['MYSQL_HOST'],
     'port' => +$_ENV['MYSQL_PORT'],
@@ -43,7 +43,7 @@ $connection = PDOEngine::new([
 
 ```php
 // Create a new database connection using PDO engine with mysql driver in the static array format
-$connection = PDOEngine::new([
+$connection = PDOConnection::new([
     'driver' => 'pgsql',
     'host' => $_ENV['PGSQL_HOST'],
     'port' => +$_ENV['PGSQL_PORT'],
@@ -62,7 +62,7 @@ $connection = PDOEngine::new([
 
 ```php
 // Create a new database connection using PDO engine with mysql driver in the static array format
-$sqlsrv = PDOEngine::new([
+$sqlsrv = PDOConnection::new([
     'driver' => 'sqlsrv',
     'host' => $_ENV['SQLSRV_HOST'],
     'port' => +$_ENV['SQLSRV_PORT'],
@@ -80,7 +80,7 @@ $sqlsrv = PDOEngine::new([
 
 ```php
 // Create a new database connection using PDO engine with mysql driver in the static array format
-$oci = PDOEngine::new([
+$oci = PDOConnection::new([
     'driver' => 'oci',
     'host' => $_ENV['OCI_HOST'],
     'port' => +$_ENV['OCI_PORT'],
@@ -99,13 +99,13 @@ $oci = PDOEngine::new([
 
 ```php
 // Create a new database connection using PDO engine with mysql driver in the static array format
-$firebird = PDOEngine::new([
+$firebird = PDOConnection::new([
     'driver' => 'firebird',
-    'host' => $_ENV['FIREBIRD_HOST'],
-    'port' => +$_ENV['FIREBIRD_PORT'],
-    'database' => $_ENV['FIREBIRD_DATABASE'],
-    'user' => $_ENV['FIREBIRD_USER'],
-    'password' => $_ENV['FIREBIRD_PASSWORD'],
+    'host' => $_ENV['FBIRD_HOST'],
+    'port' => +$_ENV['FBIRD_PORT'],
+    'database' => $_ENV['FBIRD_DATABASE'],
+    'user' => $_ENV['FBIRD_USER'],
+    'password' => $_ENV['FBIRD_PASSWORD'],
     'charset' => 'utf8',
     'options' => [
         PDO::ATTR_PERSISTENT => true,
@@ -118,7 +118,7 @@ $firebird = PDOEngine::new([
 
 ```php
 // Create a new database connection using PDO engine with mysql driver in the static array format
-$sqlite2 = PDOEngine::new([
+$sqlite2 = PDOConnection::new([
     'driver' => 'sqlite',
     'database' => $_ENV['SQLITE_DATABASE'],
     'charset' => 'utf8',
@@ -133,7 +133,7 @@ $sqlite2 = PDOEngine::new([
 
 ```php
 // Create a new database connection using PDO engine with sqlite in memory driver in the static array format
-$memory = PDOEngine::new([
+$memory = PDOConnection::new([
     'driver' => 'sqlite',
     'database' => 'memory',
     'charset' => 'utf8',

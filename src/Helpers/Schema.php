@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpUnused */
+
 namespace GenericDatabase\Helpers;
 
 class Schema
@@ -7,7 +9,7 @@ class Schema
     private static string $folderPath;
     private static string $separator = ';';
 
-    private static function allColumnsNull($data)
+    private static function allColumnsNull($data): bool
     {
         foreach ($data as $row) {
             foreach ($row as $value) {
@@ -19,10 +21,9 @@ class Schema
         return true;
     }
 
-    public static function parse($filePath)
+    public static function parse($filePath): array
     {
         $data = [];
-        $header = [];
         if (($handle = fopen($filePath, 'r')) !== false) {
             $header = fgetcsv($handle, 0, self::$separator);
             if (($row = fgetcsv($handle, 0, self::$separator)) !== false) {
@@ -44,12 +45,12 @@ class Schema
         return $data;
     }
 
-    private static function analyze($data)
+    private static function analyze($data): array
     {
         $types = [];
         if (self::allColumnsNull($data)) {
-            foreach ($data as $columnName => $value) {
-                $types[array_keys($data[$columnName])[0]] = 'string';
+            foreach ($data as $value) {
+                $types[array_keys($value)[0]] = 'string';
             }
             return $types;
         }
@@ -62,7 +63,7 @@ class Schema
                     if ($types[$columnName] != 'float') {
                         $types[$columnName] = 'integer';
                     }
-                } elseif (is_numeric($value) && is_float($value)) {
+                } elseif (is_float($value)) {
                     $types[$columnName] = 'float';
                 } elseif (strtotime($value) !== false && preg_match('/[^a-zA-Z\s{1,}]/', $value)) {
                     $types[$columnName] = 'datetime';
@@ -72,7 +73,7 @@ class Schema
         return $types;
     }
 
-    public static function structure($filePath, $separator)
+    public static function structure($filePath, $separator): array
     {
         self::$folderPath = $filePath;
         self::$separator = $separator;
@@ -90,7 +91,8 @@ class Schema
         return $schemas;
     }
 
-    public static function write($overwrite = false)
+    /** @noinspection PhpUnused */
+    public static function write($overwrite = false): void
     {
         $schemaFilePath = self::$folderPath . '\Schema.ini';
         if (!file_exists($schemaFilePath) || $overwrite) {
@@ -114,22 +116,12 @@ class Schema
                     ];
                     $columnName = preg_replace(implode('', $regexParts), "$1", $column['name']);
                     $output .= 'Col' . ($index + 1) . '="' . $columnName . '"';
-                    switch ($column['type']) {
-                        case 'string':
-                            $output .= " Text\n";
-                            break;
-                        case 'integer':
-                            $output .= " Integer\n";
-                            break;
-                        case 'date':
-                            $output .= " Date\n";
-                            break;
-                        case 'datetime':
-                            $output .= " DateTime\n";
-                            break;
-                        default:
-                            $output .= " Text\n";
-                    }
+                    $output .= match ($column['type']) {
+                        'integer' => " Integer\n",
+                        'date' => " Date\n",
+                        'datetime' => " DateTime\n",
+                        default => " Text\n",
+                    };
                 }
                 $output .= "MaxScanRows=0\n";
                 $output .= "CharacterSet=ANSI\n";

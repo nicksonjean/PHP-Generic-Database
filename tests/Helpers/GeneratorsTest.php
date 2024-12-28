@@ -3,7 +3,7 @@
 namespace GenericDatabase\Tests\Helpers;
 
 use GenericDatabase\Helpers\Generators;
-use GenericDatabase\Engine\MySQLiEngine;
+use GenericDatabase\Engine\MySQLiConnection;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
@@ -23,14 +23,14 @@ final class GeneratorsTest extends TestCase
                 'MySQL::ATTR_SET_CHARSET_NAME' => 'utf8',
                 'MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE' => true,
                 'MySQL::ATTR_OPT_CONNECT_TIMEOUT' => 28800,
-                'MySQL::ATTR_OPT_READ_TIMEOUT' =>  30,
+                'MySQL::ATTR_OPT_READ_TIMEOUT' => 30,
                 'MySQL::ATTR_READ_DEFAULT_GROUP' => 'MAX_ALLOWED_PACKET=50M'
             ]
         ];
 
         $options = Generators::setConstant(
             $value,
-            MySQLiEngine::getInstance(),
+            MySQLiConnection::getInstance(),
             'MySQL',
             'MySQLi',
             ['ATTR_PERSISTENT', 'ATTR_AUTOCOMMIT']

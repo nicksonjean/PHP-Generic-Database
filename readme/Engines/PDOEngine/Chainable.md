@@ -1,8 +1,8 @@
-# PDOEngine
+# PDOConnection
 
-## PDOEngine Connection
+## PDOConnection Connection
 
-The `GenericDatabase\PDOEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
+The `GenericDatabase\PDOConnection` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
 
@@ -10,7 +10,7 @@ The `GenericDatabase\PDOEngine` class is responsible for establishing and managi
 
 ```php
 // Explicit and simplified module loading with all environment variables
-use GenericDatabase\PDOEngine;
+use GenericDatabase\PDOConnection;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
 
@@ -23,7 +23,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 ```php
 // Create a new database connection using PDO engine with mysql driver in the chainable methods format
-$connection = new PDOEngine();
+$connection = new PDOConnection();
 $connection
 ->setDriver('mysql')
 ->setHost($_ENV['MYSQL_HOST'])
@@ -43,7 +43,7 @@ $connection
 
 ```php
 // Create a new database connection using PDO engine with pgsql driver in the chainable methods format
-$connection = new PDOEngine();
+$connection = new PDOConnection();
 $connection
 ->setDriver('pgsql')
 ->setHost($_ENV['PGSQL_HOST'])
@@ -63,7 +63,7 @@ $connection
 
 ```php
 // Create a new database connection using PDO engine with sqlsrv driver in the chainable methods format
-$connection = new PDOEngine();
+$connection = new PDOConnection();
 $connection
 ->setDriver('sqlsrv')
 ->setHost($_ENV['SQLSRV_HOST'])
@@ -82,7 +82,7 @@ $connection
 
 ```php
 // Create a new database connection using PDO engine with oci driver in the chainable methods format
-$connection = new PDOEngine();
+$connection = new PDOConnection();
 $connection
 ->setDriver('oci')
 ->setHost($_ENV['OCI_HOST'])
@@ -102,14 +102,14 @@ $connection
 
 ```php
 // Create a new database connection using PDO engine with firebird driver in the chainable methods format
-$connection = new PDOEngine();
+$connection = new PDOConnection();
 $connection
 ->setDriver('firebird')
-->setHost($_ENV['FIREBIRD_HOST'])
-->setPort(+$_ENV['FIREBIRD_PORT'])
-->setDatabase($_ENV['FIREBIRD_DATABASE'])
-->setUser($_ENV['FIREBIRD_USER'])
-->setPassword($_ENV['FIREBIRD_PASSWORD'])
+->setHost($_ENV['FBIRD_HOST'])
+->setPort(+$_ENV['FBIRD_PORT'])
+->setDatabase($_ENV['FBIRD_DATABASE'])
+->setUser($_ENV['FBIRD_USER'])
+->setPassword($_ENV['FBIRD_PASSWORD'])
 ->setCharset('utf8')
 ->setOptions([
     PDO::ATTR_PERSISTENT => true,
@@ -122,7 +122,7 @@ $connection
 
 ```php
 // Create a new database connection using PDO engine with sqlite driver in the chainable methods format
-$connection = new PDOEngine();
+$connection = new PDOConnection();
 $connection
 ->setDriver('sqlite')
 ->setDatabase($_ENV['SQLITE_DATABASE'])
@@ -138,7 +138,7 @@ $connection
 
 ```php
 // Create a new database connection using PDO engine with sqlite in memory driver in the chainable methods format
-$connection = new PDOEngine();
+$connection = new PDOConnection();
 $connection
 ->setDriver('sqlite')
 ->setDatabase($_ENV['SQLITE_DATABASE_MEMORY'])

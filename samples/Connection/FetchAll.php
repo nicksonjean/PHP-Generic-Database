@@ -19,17 +19,11 @@ $testA = $contextA->prepare(
 
 var_dump($testA);
 
-var_dump($testA->queryMetadata());
-
-var_dump([
-    $testA->queryString(),
-    $testA->queryParameters(),
-    $testA->queryRows(),
-    $testA->queryColumns(),
-    $testA->affectedRows()
-]);
+var_dump($testA->getAllMetadata());
 
 var_dump($testA->fetchAll(Connection::FETCH_BOTH));
+
+echo '<hr>';
 
 $contextB = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: true)->connect();
 
@@ -40,17 +34,11 @@ $testB = $contextB->prepare(
 
 var_dump($testB);
 
-var_dump($testB->queryMetadata());
-
-var_dump([
-    $testB->queryString(),
-    $testB->queryParameters(),
-    $testB->queryRows(),
-    $testB->queryColumns(),
-    $testB->affectedRows()
-]);
+var_dump($testB->getAllMetadata());
 
 var_dump($testB->fetchAll(Connection::FETCH_BOTH));
+
+echo '<hr>';
 
 $contextC = Chainable::pdoSQLSrv(env: $_ENV, strategy: true)->connect();
 
@@ -58,17 +46,11 @@ $testC = $contextC->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla
 
 var_dump($testC);
 
-var_dump($testC->queryMetadata());
-
-var_dump([
-    $testC->queryString(),
-    $testC->queryParameters(),
-    $testC->queryRows(),
-    $testC->queryColumns(),
-    $testC->affectedRows()
-]);
+var_dump($testC->getAllMetadata());
 
 var_dump($testC->fetchAll(Connection::FETCH_BOTH));
+
+echo '<hr>';
 
 $contextD = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: true)->connect();
 
@@ -81,17 +63,11 @@ $testD = $contextD->prepare(
 
 var_dump($testD);
 
-var_dump($testD->queryMetadata());
-
-var_dump([
-    $testD->queryString(),
-    $testD->queryParameters(),
-    $testD->queryRows(),
-    $testD->queryColumns(),
-    $testD->affectedRows()
-]);
+var_dump($testD->getAllMetadata());
 
 var_dump($testD->fetchAll(Connection::FETCH_BOTH));
+
+echo '<hr>';
 
 $contextE = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
 
@@ -99,17 +75,11 @@ $testE = $contextE->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla
 
 var_dump($testE);
 
-var_dump($testE->queryMetadata());
-
-var_dump([
-    $testE->queryString(),
-    $testE->queryParameters(),
-    $testE->queryRows(),
-    $testE->queryColumns(),
-    $testE->affectedRows()
-]);
+var_dump($testE->getAllMetadata());
 
 var_dump($testE->fetchAll(Connection::FETCH_BOTH));
+
+echo '<hr>';
 
 $contextF = Chainable::pdoSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
 
@@ -119,14 +89,6 @@ $testF = $contextF->query(
 
 var_dump($testF);
 
-var_dump($testF->queryMetadata());
-
-var_dump([
-    $testF->queryString(),
-    $testF->queryParameters(),
-    $testF->queryRows(),
-    $testF->queryColumns(),
-    $testF->affectedRows()
-]);
+var_dump($testF->getAllMetadata());
 
 var_dump($testF->fetchAll(Connection::FETCH_BOTH));

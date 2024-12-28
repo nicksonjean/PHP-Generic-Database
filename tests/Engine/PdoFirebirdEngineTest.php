@@ -4,10 +4,10 @@ namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
 use PDO;
-use GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Engine\PDOConnection;
 use GenericDatabase\Modules\Chainable;
 
-class PdoFirebirdEngineTest extends TestCase
+class PdoFirebirdConnectionTest extends TestCase
 {
     private array $firebirdEnv;
 
@@ -16,12 +16,12 @@ class PdoFirebirdEngineTest extends TestCase
     protected function setUp(): void
     {
         $this->firebirdEnv = [
-            'FIREBIRD_HOST' => "localhost",
-            'FIREBIRD_PORT' => 3050,
-            'FIREBIRD_DATABASE' => "./resources/database/firebird/DB.FDB",
-            'FIREBIRD_USER' => "sysdba",
-            'FIREBIRD_PASSWORD' => "masterkey",
-            'FIREBIRD_CHARSET' => "utf8",
+            'FBIRD_HOST' => "localhost",
+            'FBIRD_PORT' => 3050,
+            'FBIRD_DATABASE' => "./resources/database/firebird/DB.FDB",
+            'FBIRD_USER' => "sysdba",
+            'FBIRD_PASSWORD' => "masterkey",
+            'FBIRD_CHARSET' => "utf8",
         ];
 
         $this->connection = Chainable::pdoFirebird($this->firebirdEnv, false, false);
@@ -42,23 +42,23 @@ class PdoFirebirdEngineTest extends TestCase
 
     public function testConnection()
     {
-        $this->assertInstanceOf(PDOEngine::class, $this->connection);
+        $this->assertInstanceOf(PDOConnection::class, $this->connection);
     }
 
     public function testConnectionSingleton()
     {
-        $connection1 = PDOEngine::getInstance();
-        $connection2 = PDOEngine::getInstance();
+        $connection1 = PDOConnection::getInstance();
+        $connection2 = PDOConnection::getInstance();
 
-        $this->assertInstanceOf(PDOEngine::class, $connection1);
-        $this->assertInstanceOf(PDOEngine::class, $connection2);
+        $this->assertInstanceOf(PDOConnection::class, $connection1);
+        $this->assertInstanceOf(PDOConnection::class, $connection2);
         $this->assertSame($connection1, $connection2);
     }
 
     public function testConnect()
     {
         $this->connection->connect();
-        $this->assertInstanceOf(PDOEngine::class, $this->connection);
+        $this->assertInstanceOf(PDOConnection::class, $this->connection);
     }
 
     public function testPing()
@@ -91,19 +91,19 @@ class PdoFirebirdEngineTest extends TestCase
             'SELECT id AS Codigo FROM estado WHERE id = :id',
             [':id' => 10]
         );
-        $this->assertInstanceOf(PDOEngine::class, $this->connection);
+        $this->assertInstanceOf(PDOConnection::class, $this->connection);
     }
 
     public function testQuery()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado WHERE id = 5');
-        $this->assertInstanceOf(PDOEngine::class, $this->connection);
+        $this->assertInstanceOf(PDOConnection::class, $this->connection);
     }
 
     public function testFetch()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(PDOEngine::class, $this->connection);
+        $this->assertInstanceOf(PDOConnection::class, $this->connection);
         $data = $this->connection->fetch();
         $this->assertIsArray($data);
     }
@@ -111,7 +111,7 @@ class PdoFirebirdEngineTest extends TestCase
     public function testFetchAll()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(PDOEngine::class, $this->connection);
+        $this->assertInstanceOf(PDOConnection::class, $this->connection);
         $data = $this->connection->fetchAll();
         $this->assertIsArray($data);
     }
@@ -120,12 +120,12 @@ class PdoFirebirdEngineTest extends TestCase
     {
         $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
         $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
-        $this->assertInstanceOf(PDOEngine::class, $this->connection);
+        $this->assertInstanceOf(PDOConnection::class, $this->connection);
     }
 
     public function testDisconnect()
     {
         $this->connection->disconnect();
-        $this->assertInstanceOf(PDOEngine::class, $this->connection);
+        $this->assertInstanceOf(PDOConnection::class, $this->connection);
     }
 }

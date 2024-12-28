@@ -103,13 +103,129 @@ class Validations
     }
 
     /**
-     * Detect if query is Select
+     * Detects the type of the given query.
      *
-     * @return bool The value bound to the parameter.
+     * @param string $query The query to detect the type of.
+     * @return string The type of the query. Possible values are "SELECT", "INSERT", "UPDATE", "DELETE", "REPLACE",
+     * or "MERGE". If the query does not match any of these types, "SELECT" is returned as the default.
      */
-    public static function isSelect(string $stmt): bool
+    public static function detectQueryType(string $query): string
     {
-        $trimMaskWithParams = "( \t\n\r\0\x0B";
-        return 'SELECT' === mb_strtoupper(substr(ltrim($stmt, $trimMaskWithParams), 0, 6));
+        return match (true) {
+            'SELECT' === mb_strtoupper(substr(ltrim($query), 0, 6)) => "SELECT",
+            'INSERT' === mb_strtoupper(substr(ltrim($query), 0, 6)) => "INSERT",
+            'UPDATE' === mb_strtoupper(substr(ltrim($query), 0, 6)) => "UPDATE",
+            'DELETE' === mb_strtoupper(substr(ltrim($query), 0, 6)) => "DELETE",
+            'REPLACE' === mb_strtoupper(substr(ltrim($query), 0, 7)) => "REPLACE",
+            'MERGE' === mb_strtoupper(substr(ltrim($query), 0, 5)) => "MERGE",
+            default => 'SELECT'
+        };
+    }
+
+    /**
+     * Determines if the given query is a SELECT statement.
+     *
+     * @param string $query The query to check.
+     * @return bool Returns true if the query is a SELECT statement, false otherwise.
+     */
+    public static function isSelect(string $query): bool
+    {
+        return self::detectQueryType($query) === 'SELECT';
+    }
+
+    /**
+     * Determines if the given query is a INSERT statement.
+     *
+     * @param string $query The query to check.
+     * @return bool Returns true if the query is a INSERT statement, false otherwise.
+     * @noinspection PhpUnused
+     */
+    public static function isInsert(string $query): bool
+    {
+        return self::detectQueryType($query) === 'INSERT';
+    }
+
+    /**
+     * Determines if the given query is a UPDATE statement.
+     *
+     * @param string $query The query to check.
+     * @return bool Returns true if the query is a UPDATE statement, false otherwise.
+     * @noinspection PhpUnused
+     */
+    public static function isUpdate(string $query): bool
+    {
+        return self::detectQueryType($query) === 'UPDATE';
+    }
+
+    /**
+     * Determines if the given query is a DELETE statement.
+     *
+     * @param string $query The query to check.
+     * @return bool Returns true if the query is a DELETE statement, false otherwise.
+     * @noinspection PhpUnused
+     */
+    public static function isDelete(string $query): bool
+    {
+        return self::detectQueryType($query) === 'DELETE';
+    }
+
+    /**
+     * Determines if the given query is a REPLACE statement.
+     *
+     * @param string $query The query to check.
+     * @return bool Returns true if the query is a REPLACE statement, false otherwise.
+     * @noinspection PhpUnused
+     */
+    public static function isReplace(string $query): bool
+    {
+        return self::detectQueryType($query) === 'REPLACE';
+    }
+
+    /**
+     * Determines if the given query is a MERGE statement.
+     *
+     * @param string $query The query to check.
+     * @return bool Returns true if the query is a MERGE statement, false otherwise.
+     * @noinspection PhpUnused
+     */
+    public static function isMerge(string $query): bool
+    {
+        return self::detectQueryType($query) === 'MERGE';
+    }
+
+    /**
+     * @param mixed $data
+     * @return mixed
+     */
+    public static function detectTypes(mixed $data): mixed
+    {
+        $data = array_values($data);
+        foreach ($data as $i => $v) {
+            switch (gettype($v)) {
+                case 'boolean':
+                case 'integer':
+                    $data[$i] = (int) $v;
+                    break;
+                case 'string':
+                    $data[$i] = (string) $v;
+                    break;
+                case 'array':
+                    $data[$i] = implode(',', $v);
+                    break;
+                case 'object':
+                    $data[$i] = serialize($v);
+                    break;
+                case 'resource':
+                    if (is_resource($v) && get_resource_type($v) === 'stream') {
+                        $data[$i] = stream_get_contents($v);
+                    } else {
+                        $data[$i] = serialize($v);
+                    }
+                    break;
+                default:
+                    $data[$i] = $v;
+            }
+        }
+        return $data;
     }
 }

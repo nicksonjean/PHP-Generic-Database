@@ -1,8 +1,8 @@
-# PgSQLEngine
+# PgSQLConnection
 
-## PgSQLEngine Connection
+## PgSQLConnection Connection
 
-The `GenericDatabase\PgSQLEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
+The `GenericDatabase\PgSQLConnection` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
 
@@ -10,7 +10,7 @@ The `GenericDatabase\PgSQLEngine` class is responsible for establishing and mana
 
 ```php
 // Explicit and simplified module loading with all environment variables
-use GenericDatabase\PgSQLEngine;
+use GenericDatabase\PgSQLConnection;
 use GenericDatabase\Engine\PgSQL\PgSQL;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
@@ -24,7 +24,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 ```php
 // Create a new database connection using MySQLi engine in the chainable methods format
-$connection = new PgSQLEngine();
+$connection = new PgSQLConnection();
 $connection
 ->setHost($_ENV['PGSQL_HOST'])
 ->setPort((int)$_ENV['PGSQL_PORT'])
@@ -46,7 +46,7 @@ $connection
 
 ```php
 // Create a new database connection using MySQLi engine in the fluent design format
-$connection = PgSQLEngine
+$connection = PgSQLConnection
 ::setHost($_ENV['PGSQL_HOST'])
 ::setPort((int)$_ENV['PGSQL_PORT'])
 ::setDatabase($_ENV['PGSQL_DATABASE'])
@@ -67,7 +67,7 @@ $connection = PgSQLEngine
 
 ```php
 // Create a new database connection using MySQLi engine in the static arguments format
-$connection = PgSQLEngine::new(
+$connection = PgSQLConnection::new(
     host: $_ENV['PGSQL_HOST'],
     port: (int)$_ENV['PGSQL_PORT'],
     database: $_ENV['PGSQL_DATABASE'],
@@ -89,7 +89,7 @@ $connection = PgSQLEngine::new(
 
 ```php
 // Create a new database connection using MySQLi engine in the static array format
-$connection = PgSQLEngine::new([
+$connection = PgSQLConnection::new([
     'host' => $_ENV['PGSQL_HOST'],
     'port' => (int)$_ENV['PGSQL_PORT'],
     'database' => $_ENV['PGSQL_DATABASE'],

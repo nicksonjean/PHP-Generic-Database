@@ -15,12 +15,12 @@ class ConnectionFirebirdTest extends TestCase
     protected function setUp(): void
     {
         $this->firebirdEnv = [
-            'FIREBIRD_HOST' => "localhost",
-            'FIREBIRD_PORT' => 3050,
-            'FIREBIRD_DATABASE' => "./resources/database/firebird/DB.FDB",
-            'FIREBIRD_USER' => "sysdba",
-            'FIREBIRD_PASSWORD' => "masterkey",
-            'FIREBIRD_CHARSET' => "utf8",
+            'FBIRD_HOST' => "localhost",
+            'FBIRD_PORT' => 3050,
+            'FBIRD_DATABASE' => "./resources/database/firebird/DB.FDB",
+            'FBIRD_USER' => "sysdba",
+            'FBIRD_PASSWORD' => "masterkey",
+            'FBIRD_CHARSET' => "utf8",
         ];
 
         $this->connection = Chainable::nativeFirebird($this->firebirdEnv, false, true);

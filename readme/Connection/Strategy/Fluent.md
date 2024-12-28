@@ -112,11 +112,11 @@ $connection = Connection
 // Create a new database connection using Firebird/Interbase engine for Firebird/Interbase dialects in the chainable methods format
 $connection = Connection
 ::setEngine('firebird')
-::setHost($_ENV['FIREBIRD_HOST'])
-::setPort((int)$_ENV['FIREBIRD_PORT'])
-::setDatabase($_ENV['FIREBIRD_DATABASE'])
-::setUser($_ENV['FIREBIRD_USER'])
-::setPassword($_ENV['FIREBIRD_PASSWORD'])
+::setHost($_ENV['FBIRD_HOST'])
+::setPort((int)$_ENV['FBIRD_PORT'])
+::setDatabase($_ENV['FBIRD_DATABASE'])
+::setUser($_ENV['FBIRD_USER'])
+::setPassword($_ENV['FBIRD_PASSWORD'])
 ::setCharset('utf8')
 ::setOptions([
     Firebird::ATTR_PERSISTENT => true,
@@ -246,11 +246,11 @@ $connection = Connection
 $connection = Connection
 ::setEngine('pdo')
 ::setDriver('firebird')
-::setHost($_ENV['FIREBIRD_HOST'])
-::setPort((int)$_ENV['FIREBIRD_PORT'])
-::setDatabase($_ENV['FIREBIRD_DATABASE'])
-::setUser($_ENV['FIREBIRD_USER'])
-::setPassword($_ENV['FIREBIRD_PASSWORD'])
+::setHost($_ENV['FBIRD_HOST'])
+::setPort((int)$_ENV['FBIRD_PORT'])
+::setDatabase($_ENV['FBIRD_DATABASE'])
+::setUser($_ENV['FBIRD_USER'])
+::setPassword($_ENV['FBIRD_PASSWORD'])
 ::setCharset('utf8')
 ::setOptions([
     PDO::ATTR_PERSISTENT => true,

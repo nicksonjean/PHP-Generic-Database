@@ -1,134 +1,192 @@
-version: "3.9"
+services:
+  # php74:
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/PHP7.4/Dockerfile
+  #   container_name: php74
+  #   env_file:
+  #     - .env.docker
+  #   restart: unless-stopped
+  #   ports:
+  #     - "7400:80"
+  #   depends_on:
+  #     - mysql
+  #     - postgres
+  #     - sqlsrv
+  #     - oracle
+  #     - firebird
+  #   networks:
+  #     - internal
+  #   logging:
+  #       driver: "json-file"
+  #       options:
+  #         max-file: "5"
+  #         max-size: "10m"
+
+  php81:
+    build:
+      context: .
+      dockerfile: ./docker/PHP8.1/Dockerfile
+    container_name: php81
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    ports:
+      - "8100:80"
+    depends_on:
+      - mysql
+      - postgres
+      - sqlsrv
+      - oracle
+      - firebird
+    networks:
+      - internal
+    logging:
+        driver: "json-file"
+        options:
+          max-file: "5"
+          max-size: "10m"
+
+  php82:
+    build:
+      context: .
+      dockerfile: ./docker/PHP8.2/Dockerfile
+    container_name: php82
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    ports:
+      - "8200:80"
+    depends_on:
+      - mysql
+      - postgres
+      - sqlsrv
+      - oracle
+      - firebird
+    networks:
+      - internal
+    logging:
+        driver: "json-file"
+        options:
+          max-file: "5"
+          max-size: "10m"
+
+  # adminer:
+  #   image: adminer:latest
+  #   container_name: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - internal
+
+  # whodb:
+  #   image: clidey/whodb:latest
+  #   container_name: whodb
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - internal
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    ports:
+      - "${MYSQL_PORT:-3306}:${MYSQL_PORT:-3306}"
+    volumes:
+      - /var/lib/mysql
+    environment:
+      MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_USER: ${MYSQL_USER:-root}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-masterkey}
+    networks:
+      - internal
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    ports:
+      - "${PGSQL_PORT:-5432}:${PGSQL_PORT:-5432}"
+    volumes:
+      - /var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${PGSQL_USER:-postgres}
+      POSTGRES_PASSWORD: ${PGSQL_PASSWORD:-masterkey}
+    networks:
+      - internal
+
+  sqlsrv:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: sqlsrv
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    ports:
+      - "${SQLSERVER_PORT:-1433}:${SQLSERVER_PORT:-1433}"
+    volumes:
+      - /var/opt/mssql/
+      - /var/opt/sqlserver/data
+      - /var/opt/sqlserver/log
+      - /var/opt/sqlserver/backup
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_USER: ${SQLSERVER_USER:-sa}
+      SA_PASSWORD: ${SQLSERVER_PASSWORD:-20Z£?2@Z§!}
+      MSSQL_PID: Express
+    networks:
+      - internal
+
+  oracle:
+    image: gvenzl/oracle-free:latest
+    container_name: oracle
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    ports:
+      - "${OCI_PORT:-1521}:${OCI_PORT:-1521}"
+    volumes:
+      - /opt/oracle/oradata
+      - /opt/oracle/backup
+    environment:
+      ORACLE_ALLOW_REMOTE: true
+      ORACLE_RANDOM_PASSWORD: true
+      APP_USER: ${OCI_USER:-hr}
+      APP_USER_PASSWORD: ${OCI_PASSWORD:-masterkey}
+    networks:
+      - internal
+
+  firebird:
+    image: jacobalberty/firebird:3.0.7
+    container_name: firebird
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    ports:
+      - ${FBIRD_PORT:-3050}:${FBIRD_PORT:-3050}
+    volumes:
+      - ./resources/database/firebird:/firebird:rw
+      - ./resources/database/firebird/config/firebird.conf:/firebird/etc/firebird.conf:ro
+    environment:
+      FIREBIRD_USER: ${FBIRD_USER:-sysdba}
+      FIREBIRD_PASSWORD: ${FBIRD_PASSWORD:-masterkey}
+      FIREBIRD_ROOT_PASSWORD: ${FBIRD_PASSWORD:-masterkey}
+      ISC_USER: ${FBIRD_USER:-sysdba}
+      ISC_PASSWORD: "${FBIRD_PASSWORD:-masterkey}"
+      EnableLegacyClientAuth: true
+    entrypoint: [ "/usr/local/firebird/bin/fbguard" ]
+    networks:
+      - internal
 
 networks:
   internal:
     name: internal
+    external: false
     driver: bridge
-
-services:
-  php:
-    container_name: php-generic-database
-    env_file:
-      - .env.docker
-    build: .
-    ports:
-      - "8080:80"
-      - "443:443"
-    volumes:
-      - ./resources/database/access:/access
-    networks:
-      - internal
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "5"
-        max-size: "10m"
-
-  # mysql:
-  #   image: mysql:latest
-  #   container_name: mysql
-  #   env_file:
-  #     - .env.docker
-  #   restart: always
-  #   ports:
-  #     - "${MYSQL_PORT}:${MYSQL_PORT}"
-  #   volumes:
-  #     - /var/lib/mysql
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-  #   networks:
-  #     - internal
-
-  # postgres:
-  #   image: postgres:latest
-  #   container_name: postgres
-  #   env_file:
-  #     - .env.docker
-  #   restart: always
-  #   ports:
-  #     - "${POSTGRESQL_PORT}:${POSTGRESQL_PORT}"
-  #   volumes:
-  #     - /var/lib/postgresql/data
-  #   environment:
-  #     POSTGRES_DB: ${POSTGRESQL_DATABASE}
-  #     POSTGRES_USER: ${POSTGRESQL_USER}
-  #     POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
-  #   networks:
-  #     - internal
-
-  # sqlsrv:
-  #   image: mcr.microsoft.com/mssql/server:latest
-  #   container_name: sqlsrv
-  #   env_file:
-  #     - .env.docker
-  #   restart: always
-  #   ports:
-  #     - "${SQLSERVER_PORT}:${SQLSERVER_PORT}"
-  #   volumes:
-  #     - /var/opt/mssql/
-  #     - /var/opt/sqlserver/data
-  #     - /var/opt/sqlserver/log
-  #     - /var/opt/sqlserver/backup
-  #   environment:
-  #     ACCEPT_EULA: Y
-  #     SA_PASSWORD: ${SQLSERVER_PASSWORD}
-  #     MSSQL_PID: "Express"
-  #   networks:
-  #     - internal
-
-  # oracle:
-  #   image: gvenzl/oracle-xe:latest
-  #   container_name: oracle
-  #   env_file:
-  #     - .env.docker
-  #   restart: always
-  #   ports:
-  #     - "${ORACLE_PORT}:${ORACLE_PORT}"
-  #   volumes:
-  #     - /opt/oracle/oradata
-  #     - /opt/oracle/backup
-  #   environment:
-  #     ORACLE_ALLOW_REMOTE: true
-  #     APP_USER: ${ORACLE_USER}
-  #     APP_USER_PASSWORD: ${ORACLE_PASSWORD}
-  #     ORACLE_PASSWORD: ${ORACLE_PASSWORD}
-  #   networks:
-  #     - internal
-
-  # firebird:
-  #   image: jacobalberty/firebird:v3.0
-  #   container_name: firebird
-  #   env_file:
-  #     - .env.docker
-  #   restart: always
-  #   ports:
-  #     - "3050:3050"
-  #   volumes:
-  #     - ./resources/database/firebird:/firebird/data
-  #     - /opt/firebird/data
-  #     - /opt/firebird/restore
-  #     - /opt/firebird/system
-  #     - /opt/firebird/etc
-  #     - /opt/firebird/log
-  #     - /var/firebird/run
-  #   environment:
-  #     ISC_USER: ${FIREBIRD_USER}
-  #     ISC_PASSWORD: ${FIREBIRD_PASSWORD}
-  #   networks:
-  #     - internal
-
-  # mongodb:
-  #   image: mongo:latest
-  #   container_name: mongodb
-  #   ports:
-  #     - 27017:27017
-  #   networks:
-  #     - internal
-
-  # mongo-express:
-  #   image: mongo-express:latest
-  #   container_name: mongo-express
-  #   ports:
-  #     - "8081:8081"
-  #   depends_on:
-  #     - mongodb

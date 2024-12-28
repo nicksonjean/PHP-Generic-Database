@@ -19,19 +19,13 @@ $testA = $contextA->prepare(
 
 var_dump($testA);
 
-var_dump($testA->queryMetadata());
-
-var_dump([
-    $testA->queryString(),
-    $testA->queryParameters(),
-    $testA->queryRows(),
-    $testA->queryColumns(),
-    $testA->affectedRows()
-]);
+var_dump($testA->getAllMetadata());
 
 while ($row = $testA->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
+
+echo '<hr>';
 
 $contextB = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: true)->connect();
 
@@ -42,19 +36,13 @@ $testB = $contextB->prepare(
 
 var_dump($testB);
 
-var_dump($testB->queryMetadata());
-
-var_dump([
-    $testB->queryString(),
-    $testB->queryParameters(),
-    $testB->queryRows(),
-    $testB->queryColumns(),
-    $testB->affectedRows()
-]);
+var_dump($testB->getAllMetadata());
 
 while ($row = $testB->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
+
+echo '<hr>';
 
 $contextC = Chainable::nativeSQLSrv(env: $_ENV, strategy: true)->connect();
 
@@ -62,19 +50,13 @@ $testC = $contextC->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla
 
 var_dump($testC);
 
-var_dump($testC->queryMetadata());
-
-var_dump([
-    $testC->queryString(),
-    $testC->queryParameters(),
-    $testC->queryRows(),
-    $testC->queryColumns(),
-    $testC->affectedRows()
-]);
+var_dump($testC->getAllMetadata());
 
 while ($row = $testC->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
+
+echo '<hr>';
 
 $contextD = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: true)->connect();
 
@@ -87,19 +69,13 @@ $testD = $contextD->prepare(
 
 var_dump($testD);
 
-var_dump($testD->queryMetadata());
-
-var_dump([
-    $testD->queryString(),
-    $testD->queryParameters(),
-    $testD->queryRows(),
-    $testD->queryColumns(),
-    $testD->affectedRows()
-]);
+var_dump($testD->getAllMetadata());
 
 while ($row = $testD->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
+
+echo '<hr>';
 
 $contextE = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
 
@@ -107,19 +83,13 @@ $testE = $contextE->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla
 
 var_dump($testE);
 
-var_dump($testE->queryMetadata());
-
-var_dump([
-    $testE->queryString(),
-    $testE->queryParameters(),
-    $testE->queryRows(),
-    $testE->queryColumns(),
-    $testE->affectedRows()
-]);
+var_dump($testE->getAllMetadata());
 
 while ($row = $testE->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
+
+echo '<hr>';
 
 $contextF = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
 
@@ -129,15 +99,7 @@ $testF = $contextF->query(
 
 var_dump($testF);
 
-var_dump($testF->queryMetadata());
-
-var_dump([
-    $testF->queryString(),
-    $testF->queryParameters(),
-    $testF->queryRows(),
-    $testF->queryColumns(),
-    $testF->affectedRows()
-]);
+var_dump($testF->getAllMetadata());
 
 while ($row = $testF->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);

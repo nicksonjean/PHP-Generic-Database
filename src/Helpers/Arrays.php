@@ -107,6 +107,7 @@ namespace GenericDatabase\Helpers;
  * Creates an index or list array to
  *
  * @package GenericDatabase\Helpers
+ * @noinspection SpellCheckingInspection
  */
 class Arrays
 {
@@ -141,6 +142,7 @@ class Arrays
      * @param array $array An associative array
      * @param string|null $apply Filter to be applied
      * @return string
+     * @noinspection SpellCheckingInspection
      */
     public static function matchValues(array $list, array $array, ?string $apply = 'mb_strtolower'): string
     {
@@ -197,12 +199,32 @@ class Arrays
     /**
      * Determine if array is an array multidimensional
      *
-     * @param array $array The array
+     * @param array|string $array $array The array
      * @return bool
      */
-    public static function isMultidimensional(array $array): bool
+    public static function isMultidimensional(array|string $array): bool
     {
+        if (!is_array($array)) {
+            return false;
+        }
         return is_array($array[array_key_first($array)]);
+    }
+
+    /**
+     * Determine the depth of a multidimensional array recursively.
+     *
+     * @param array $array The array to calculate the depth for.
+     * @return int The depth of the multidimensional array.
+     */
+    public static function isDepthArray(array $array): int
+    {
+        $depth = 1;
+        foreach ($array as $item) {
+            if (is_array($item)) {
+                $depth = max($depth, 1 + self::isDepthArray($item));
+            }
+        }
+        return $depth;
     }
 
     /**
@@ -281,6 +303,22 @@ class Arrays
     }
 
     /**
+     * A function that filters out null values from the input array.
+     *
+     * @param array $array The array to filter
+     * @return array The filtered array with non-null values
+     */
+    public static function arraySafe(array $array): array
+    {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = self::arraySafe($value);
+            }
+        }
+        return array_filter($array, fn ($value) => isset($value) && !empty($value));
+    }
+
+    /**
      * This function makes an arguments list
      *
      * @param mixed $driver
@@ -307,8 +345,8 @@ class Arrays
             }
         }
         return [
-            'sqlStatement' => ($driver === 'sqlsrv') ? null : $params[0],
-            'sqlQuery' => ($driver === 'sqlsrv') ? $params[0] : $params[1],
+            'sqlStatement' => ($driver === 'sqlsrv') ? null : reset($params),
+            'sqlQuery' => ($driver === 'sqlsrv') ? reset($params) : $params[1],
             'sqlArgs' => $sqlArgs ?? [],
             'isArray' => $isArray ?? false,
             'isMulti' => $isMulti ?? false,

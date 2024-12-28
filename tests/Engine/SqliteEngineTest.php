@@ -3,11 +3,11 @@
 namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
-use GenericDatabase\Engine\SQLiteEngine;
-use GenericDatabase\Engine\SQLite\SQLite;
+use GenericDatabase\Engine\SQLiteConnection;
+use GenericDatabase\Engine\SQLite\Connection\SQLite;
 use GenericDatabase\Modules\Chainable;
 
-class SqliteEngineTest extends TestCase
+class SQLiteConnectionTest extends TestCase
 {
     private array $sqliteEnv;
 
@@ -39,23 +39,23 @@ class SqliteEngineTest extends TestCase
 
     public function testConnection()
     {
-        $this->assertInstanceOf(SQLiteEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLiteConnection::class, $this->connection);
     }
 
     public function testConnectionSingleton()
     {
-        $connection1 = SQLiteEngine::getInstance();
-        $connection2 = SQLiteEngine::getInstance();
+        $connection1 = SQLiteConnection::getInstance();
+        $connection2 = SQLiteConnection::getInstance();
 
-        $this->assertInstanceOf(SQLiteEngine::class, $connection1);
-        $this->assertInstanceOf(SQLiteEngine::class, $connection2);
+        $this->assertInstanceOf(SQLiteConnection::class, $connection1);
+        $this->assertInstanceOf(SQLiteConnection::class, $connection2);
         $this->assertSame($connection1, $connection2);
     }
 
     public function testConnect()
     {
         $this->connection->connect();
-        $this->assertInstanceOf(SQLiteEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLiteConnection::class, $this->connection);
     }
 
     public function testPing()
@@ -88,19 +88,19 @@ class SqliteEngineTest extends TestCase
             'SELECT id AS Codigo FROM estado WHERE id = :id',
             [':id' => 10]
         );
-        $this->assertInstanceOf(SQLiteEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLiteConnection::class, $this->connection);
     }
 
     public function testQuery()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado WHERE id = 5');
-        $this->assertInstanceOf(SQLiteEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLiteConnection::class, $this->connection);
     }
 
     public function testFetch()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(SQLiteEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLiteConnection::class, $this->connection);
         $data = $this->connection->fetch();
         $this->assertIsObject($data);
     }
@@ -108,7 +108,7 @@ class SqliteEngineTest extends TestCase
     public function testFetchAll()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(SQLiteEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLiteConnection::class, $this->connection);
         $data = $this->connection->fetchAll();
         $this->assertIsArray($data);
     }
@@ -117,12 +117,12 @@ class SqliteEngineTest extends TestCase
     {
         $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
         $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
-        $this->assertInstanceOf(SQLiteEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLiteConnection::class, $this->connection);
     }
 
     public function testDisconnect()
     {
         $this->connection->disconnect();
-        $this->assertInstanceOf(SQLiteEngine::class, $this->connection);
+        $this->assertInstanceOf(SQLiteConnection::class, $this->connection);
     }
 }

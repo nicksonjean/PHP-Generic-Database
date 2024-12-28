@@ -1,8 +1,8 @@
-# ODBCEngine
+# ODBCConnection
 
-## ODBCEngine Connection
+## ODBCConnection Connection
 
-The `GenericDatabase\ODBCEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
+The `GenericDatabase\ODBCConnection` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
 
@@ -10,7 +10,7 @@ The `GenericDatabase\ODBCEngine` class is responsible for establishing and manag
 
 ```php
 // Explicit and simplified module loading with all environment variables
-use GenericDatabase\ODBCEngine;
+use GenericDatabase\ODBCConnection;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
 
@@ -23,7 +23,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 ```php
 // Create a new database connection using ODBC engine with mysql driver in the static arguments format
-$connection = ODBCEngine::new(
+$connection = ODBCConnection::new(
     driver: 'mysql',
     host: $_ENV['MYSQL_HOST'],
     port: +$_ENV['MYSQL_PORT'],
@@ -43,7 +43,7 @@ $connection = ODBCEngine::new(
 
 ```php
 // Create a new database connection using ODBC engine with pgsql driver in the static arguments format
-$connection = ODBCEngine::new(
+$connection = ODBCConnection::new(
     driver: 'pgsql',
     host: $_ENV['PGSQL_HOST'],
     port: +$_ENV['PGSQL_PORT'],
@@ -62,7 +62,7 @@ $connection = ODBCEngine::new(
 
 ```php
 // Create a new database connection using ODBC engine with sqlsrv driver in the static arguments format
-$connection = ODBCEngine::new(
+$connection = ODBCConnection::new(
     driver: 'sqlsrv',
     host: $_ENV['SQLSRV_HOST'],
     port: +$_ENV['SQLSRV_PORT'],
@@ -81,7 +81,7 @@ $connection = ODBCEngine::new(
 
 ```php
 // Create a new database connection using ODBC engine with oci driver in the static arguments format
-$connection = ODBCEngine::new(
+$connection = ODBCConnection::new(
     driver: 'oci',
     host: $_ENV['OCI_HOST'],
     port: +$_ENV['OCI_PORT'],
@@ -100,13 +100,13 @@ $connection = ODBCEngine::new(
 
 ```php
 // Create a new database connection using ODBC engine with firebird driver in the static arguments format
-$firebird = ODBCEngine::new(
+$firebird = ODBCConnection::new(
     driver: 'firebird',
-    host: $_ENV['FIREBIRD_HOST'],
-    port: +$_ENV['FIREBIRD_PORT'],
-    database: $_ENV['FIREBIRD_DATABASE'],
-    user: $_ENV['FIREBIRD_USER'],
-    password: $_ENV['FIREBIRD_PASSWORD'],
+    host: $_ENV['FBIRD_HOST'],
+    port: +$_ENV['FBIRD_PORT'],
+    database: $_ENV['FBIRD_DATABASE'],
+    user: $_ENV['FBIRD_USER'],
+    password: $_ENV['FBIRD_PASSWORD'],
     charset: 'utf8',
     options: [
         ODBC::ATTR_PERSISTENT => true,
@@ -119,7 +119,7 @@ $firebird = ODBCEngine::new(
 
 ```php
 // Create a new database connection using ODBC engine with sqlite driver in the static arguments format
-$connection = ODBCEngine::new(
+$connection = ODBCConnection::new(
     driver: 'sqlite',
     database: $_ENV['SQLITE_DATABASE'],
     charset: 'utf8',
@@ -134,7 +134,7 @@ $connection = ODBCEngine::new(
 
 ```php
 // Create a new database connection using ODBC engine with sqlite in memory driver in the static arguments format
-$connection = ODBCEngine::new(
+$connection = ODBCConnection::new(
     driver: 'sqlite',
     database: 'memory',
     charset: 'utf8',

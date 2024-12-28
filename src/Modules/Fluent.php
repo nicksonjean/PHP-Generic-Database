@@ -6,21 +6,21 @@ namespace GenericDatabase\Modules;
 
 use GenericDatabase\Core\Entity;
 use GenericDatabase\Connection;
-use GenericDatabase\Engine\MySQLiEngine;
-use GenericDatabase\Engine\MySQLi\MySQL;
-use GenericDatabase\Engine\PgSQLEngine;
-use GenericDatabase\Engine\PgSQL\PgSQL;
-use GenericDatabase\Engine\SQLSrvEngine;
-use GenericDatabase\Engine\SQLSrv\SQLSrv;
-use GenericDatabase\Engine\OCIEngine;
-use GenericDatabase\Engine\OCI\OCI;
-use GenericDatabase\Engine\FirebirdEngine;
-use GenericDatabase\Engine\Firebird\Firebird;
-use GenericDatabase\Engine\SQLiteEngine;
-use GenericDatabase\Engine\SQLite\SQLite;
-use GenericDatabase\Engine\ODBCEngine;
-use GenericDatabase\Engine\ODBC\ODBC;
-use GenericDatabase\Engine\PDOEngine;
+use GenericDatabase\Engine\MySQLiConnection;
+use GenericDatabase\Engine\MySQLi\Connection\MySQL;
+use GenericDatabase\Engine\PgSQLConnection;
+use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
+use GenericDatabase\Engine\SQLSrvConnection;
+use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
+use GenericDatabase\Engine\OCIConnection;
+use GenericDatabase\Engine\OCI\Connection\OCI;
+use GenericDatabase\Engine\FirebirdConnection;
+use GenericDatabase\Engine\Firebird\Connection\Firebird;
+use GenericDatabase\Engine\SQLiteConnection;
+use GenericDatabase\Engine\SQLite\Connection\SQLite;
+use GenericDatabase\Engine\ODBCConnection;
+use GenericDatabase\Engine\ODBC\Connection\ODBC;
+use GenericDatabase\Engine\PDOConnection;
 use PDO;
 
 class Fluent
@@ -29,20 +29,20 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|MySQLiEngine
+     * @return Connection|MySQLiConnection
      */
     public static function nativeMySQLi(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|MySQLiEngine {
+    ): Connection|MySQLiConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_MYSQLI_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'mysqli');
         }
-        /** @var Connection|MySQLiEngine $className */
+        /** @var Connection|MySQLiConnection $className */
         $instance = $className::setHost($env['MYSQL_HOST']);
-        $instance::setPort((int)$env['MYSQL_PORT'])
+        $instance::setPort((int) $env['MYSQL_PORT'])
             ::setDatabase($env['MYSQL_DATABASE'])
             ::setUser($env['MYSQL_USER'])
             ::setPassword($env['MYSQL_PASSWORD'])
@@ -67,20 +67,20 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PgSQLEngine
+     * @return Connection|PgSQLConnection
      */
     public static function nativePgSQL(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PgSQLEngine {
+    ): Connection|PgSQLConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PGSQL_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pgsql');
         }
-        /** @var Connection|PgSQLEngine $className */
+        /** @var Connection|PgSQLConnection $className */
         $instance = $className::setHost($env['PGSQL_HOST']);
-        $instance::setPort((int)$env['PGSQL_PORT'])
+        $instance::setPort((int) $env['PGSQL_PORT'])
             ::setDatabase($env['PGSQL_DATABASE'])
             ::setUser($env['PGSQL_USER'])
             ::setPassword($env['PGSQL_PASSWORD'])
@@ -101,21 +101,21 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|SQLSrvEngine
+     * @return Connection|SQLSrvConnection
      */
     public static function nativeSQLSrv(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|SQLSrvEngine {
+    ): Connection|SQLSrvConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLSRV_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlsrv');
         }
-        /** @var Connection|SQLSrvEngine $className */
+        /** @var Connection|SQLSrvConnection $className */
         $instance = $className::setHost($env['SQLSRV_HOST']);
-        $instance::setPort((int)$env['SQLSRV_PORT'])
-            ::setPort((int)$env['SQLSRV_PORT'])
+        $instance::setPort((int) $env['SQLSRV_PORT'])
+            ::setPort((int) $env['SQLSRV_PORT'])
             ::setDatabase($env['SQLSRV_DATABASE'])
             ::setUser($env['SQLSRV_USER'])
             ::setPassword($env['SQLSRV_PASSWORD'])
@@ -134,20 +134,20 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|OCIEngine
+     * @return Connection|OCIConnection
      */
     public static function nativeOCI(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|OCIEngine {
+    ): Connection|OCIConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_OCI_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'oci');
         }
-        /** @var Connection|OCIEngine $className */
+        /** @var Connection|OCIConnection $className */
         $instance = $className::setHost($env['OCI_HOST']);
-        $instance::setPort((int)$env['OCI_PORT'])
+        $instance::setPort((int) $env['OCI_PORT'])
             ::setDatabase($env['OCI_DATABASE'])
             ::setUser($env['OCI_USER'])
             ::setPassword($env['OCI_PASSWORD'])
@@ -166,24 +166,24 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|FirebirdEngine
+     * @return Connection|FirebirdConnection
      */
     public static function nativeFirebird(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|FirebirdEngine {
+    ): Connection|FirebirdConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_FIREBIRD_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'firebird');
         }
-        /** @var Connection|FirebirdEngine $className */
-        $instance = $className::setHost($env['FIREBIRD_HOST']);
-        $instance::setPort((int)$env['FIREBIRD_PORT'])
-            ::setDatabase($env['FIREBIRD_DATABASE'])
-            ::setUser($env['FIREBIRD_USER'])
-            ::setPassword($env['FIREBIRD_PASSWORD'])
-            ::setCharset($env['FIREBIRD_CHARSET'])
+        /** @var Connection|FirebirdConnection $className */
+        $instance = $className::setHost($env['FBIRD_HOST']);
+        $instance::setPort((int) $env['FBIRD_PORT'])
+            ::setDatabase($env['FBIRD_DATABASE'])
+            ::setUser($env['FBIRD_USER'])
+            ::setPassword($env['FBIRD_PASSWORD'])
+            ::setCharset($env['FBIRD_CHARSET'])
             ::setOptions([
                 Firebird::ATTR_PERSISTENT => $persistent,
                 Firebird::ATTR_CONNECT_TIMEOUT => 28800,
@@ -198,18 +198,18 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|SQLiteEngine
+     * @return Connection|SQLiteConnection
      */
     public static function nativeSQLite(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|SQLiteEngine {
+    ): Connection|SQLiteConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlite');
         }
-        /** @var Connection|SQLiteEngine $className */
+        /** @var Connection|SQLiteConnection $className */
         $instance = $className::setDatabase($env['SQLITE_DATABASE']);
         $instance::setCharset($env['SQLITE_CHARSET'])
             ::setOptions([
@@ -230,18 +230,18 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|SQLiteEngine
+     * @return Connection|SQLiteConnection
      */
     public static function nativeMemory(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|SQLiteEngine {
+    ): Connection|SQLiteConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlite');
         }
-        /** @var Connection|SQLiteEngine $className */
+        /** @var Connection|SQLiteConnection $className */
         $instance = $className::setDatabase($env['SQLITE_DATABASE_MEMORY']);
         $instance::setCharset($env['SQLITE_CHARSET'])
             ::setOptions([
@@ -262,21 +262,21 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoMySQL(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
+    ): Connection|PDOConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOEngine $className */
+        /** @var Connection|PDOConnection $className */
         $instance = $className::setDriver('mysql');
         $instance::setHost($env['MYSQL_HOST'])
-            ::setPort((int)$env['MYSQL_PORT'])
+            ::setPort((int) $env['MYSQL_PORT'])
             ::setDatabase($env['MYSQL_DATABASE'])
             ::setUser($env['MYSQL_USER'])
             ::setPassword($env['MYSQL_PASSWORD'])
@@ -295,22 +295,22 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoPgSQL(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
+    ): Connection|PDOConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOEngine $className */
+        /** @var Connection|PDOConnection $className */
         $instance = $className::setDriver('pgsql');
         $instance
             ::setHost($env['PGSQL_HOST'])
-            ::setPort((int)$env['PGSQL_PORT'])
+            ::setPort((int) $env['PGSQL_PORT'])
             ::setDatabase($env['PGSQL_DATABASE'])
             ::setUser($env['PGSQL_USER'])
             ::setPassword($env['PGSQL_PASSWORD'])
@@ -328,21 +328,21 @@ class Fluent
     /**
      * @param array $env
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoSQLSrv(
         array $env,
         bool $strategy = false
-    ): Connection|PDOEngine {
+    ): Connection|PDOConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOEngine $className */
+        /** @var Connection|PDOConnection $className */
         $instance = $className::setDriver('sqlsrv');
         $instance
             ::setHost($env['SQLSRV_HOST'])
-            ::setPort((int)$env['SQLSRV_PORT'])
+            ::setPort((int) $env['SQLSRV_PORT'])
             ::setDatabase($env['SQLSRV_DATABASE'])
             ::setUser($env['SQLSRV_USER'])
             ::setPassword($env['SQLSRV_PASSWORD'])
@@ -360,22 +360,22 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoOCI(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
+    ): Connection|PDOConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOEngine $className */
+        /** @var Connection|PDOConnection $className */
         $instance = $className::setDriver('oci');
         $instance
             ::setHost($env['OCI_HOST'])
-            ::setPort((int)$env['OCI_PORT'])
+            ::setPort((int) $env['OCI_PORT'])
             ::setDatabase($env['OCI_DATABASE'])
             ::setUser($env['OCI_USER'])
             ::setPassword($env['OCI_PASSWORD'])
@@ -394,26 +394,26 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoFirebird(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
+    ): Connection|PDOConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOEngine $className */
+        /** @var Connection|PDOConnection $className */
         $instance = $className::setDriver('firebird');
         $instance
-            ::setHost($env['FIREBIRD_HOST'])
-            ::setPort((int)$env['FIREBIRD_PORT'])
-            ::setDatabase($env['FIREBIRD_DATABASE'])
-            ::setUser($env['FIREBIRD_USER'])
-            ::setPassword($env['FIREBIRD_PASSWORD'])
-            ::setCharset($env['FIREBIRD_CHARSET'])
+            ::setHost($env['FBIRD_HOST'])
+            ::setPort((int) $env['FBIRD_PORT'])
+            ::setDatabase($env['FBIRD_DATABASE'])
+            ::setUser($env['FBIRD_USER'])
+            ::setPassword($env['FBIRD_PASSWORD'])
+            ::setCharset($env['FBIRD_CHARSET'])
             ::setOptions([
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
@@ -428,18 +428,18 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoSQLite(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
+    ): Connection|PDOConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOEngine $className */
+        /** @var Connection|PDOConnection $className */
         $instance = $className::setDriver('sqlite');
         $instance
             ::setDatabase($env['SQLITE_DATABASE'])
@@ -458,18 +458,18 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|PDOEngine
+     * @return Connection|PDOConnection
      */
     public static function pdoMemory(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|PDOEngine {
+    ): Connection|PDOConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOEngine $className */
+        /** @var Connection|PDOConnection $className */
         $instance = $className::setDriver('sqlite');
         $instance
             ::setDatabase($env['SQLITE_DATABASE_MEMORY'])
@@ -488,22 +488,22 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcMySQL(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
+    ): Connection|ODBCConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCEngine $className */
+        /** @var Connection|ODBCConnection $className */
         $instance = $className::setDriver('mysql');
         $instance
             ::setHost($env['MYSQL_HOST'])
-            ::setPort((int)$env['MYSQL_PORT'])
+            ::setPort((int) $env['MYSQL_PORT'])
             ::setDatabase($env['MYSQL_DATABASE'])
             ::setUser($env['MYSQL_USER'])
             ::setPassword($env['MYSQL_PASSWORD'])
@@ -522,22 +522,22 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcPgSQL(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
+    ): Connection|ODBCConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCEngine $className */
+        /** @var Connection|ODBCConnection $className */
         $instance = $className::setDriver('pgsql');
         $instance
             ::setHost($env['PGSQL_HOST'])
-            ::setPort((int)$env['PGSQL_PORT'])
+            ::setPort((int) $env['PGSQL_PORT'])
             ::setDatabase($env['PGSQL_DATABASE'])
             ::setUser($env['PGSQL_USER'])
             ::setPassword($env['PGSQL_PASSWORD'])
@@ -554,23 +554,24 @@ class Fluent
 
     /**
      * @param array $env
+     * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcSQLSrv(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
+    ): Connection|ODBCConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCEngine $className */
+        /** @var Connection|ODBCConnection $className */
         $instance = $className::setDriver('sqlsrv');
         $instance
             ::setHost($env['SQLSRV_HOST'])
-            ::setPort((int)$env['SQLSRV_PORT'])
+            ::setPort((int) $env['SQLSRV_PORT'])
             ::setDatabase($env['SQLSRV_DATABASE'])
             ::setUser($env['SQLSRV_USER'])
             ::setPassword($env['SQLSRV_PASSWORD'])
@@ -589,22 +590,22 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcOCI(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
+    ): Connection|ODBCConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCEngine $className */
+        /** @var Connection|ODBCConnection $className */
         $instance = $className::setDriver('oci');
         $instance
             ::setHost($env['OCI_HOST'])
-            ::setPort((int)$env['OCI_PORT'])
+            ::setPort((int) $env['OCI_PORT'])
             ::setDatabase($env['OCI_DATABASE'])
             ::setUser($env['OCI_USER'])
             ::setPassword($env['OCI_PASSWORD'])
@@ -623,26 +624,26 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcFirebird(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
+    ): Connection|ODBCConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCEngine $className */
+        /** @var Connection|ODBCConnection $className */
         $instance = $className::setDriver('firebird');
         $instance
-            ::setHost($env['FIREBIRD_HOST'])
-            ::setPort((int)$env['FIREBIRD_PORT'])
-            ::setDatabase($env['FIREBIRD_DATABASE'])
-            ::setUser($env['FIREBIRD_USER'])
-            ::setPassword($env['FIREBIRD_PASSWORD'])
-            ::setCharset($env['FIREBIRD_CHARSET'])
+            ::setHost($env['FBIRD_HOST'])
+            ::setPort((int) $env['FBIRD_PORT'])
+            ::setDatabase($env['FBIRD_DATABASE'])
+            ::setUser($env['FBIRD_USER'])
+            ::setPassword($env['FBIRD_PASSWORD'])
+            ::setCharset($env['FBIRD_CHARSET'])
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
@@ -657,18 +658,18 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcSQLite(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
+    ): Connection|ODBCConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCEngine $className */
+        /** @var Connection|ODBCConnection $className */
         $instance = $className::setDriver('sqlite');
         $instance
             ::setDatabase($env['SQLITE_DATABASE'])
@@ -687,18 +688,18 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcAccess(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
+    ): Connection|ODBCConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCEngine $className */
+        /** @var Connection|ODBCConnection $className */
         $instance = $className::setDriver('access');
         $instance
             ::setDatabase($env['ACCESS_DATABASE'])
@@ -719,18 +720,18 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcExcel(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
+    ): Connection|ODBCConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCEngine $className */
+        /** @var Connection|ODBCConnection $className */
         $instance = $className::setDriver('excel');
         $instance
             ::setDatabase($env['EXCEL_DATABASE'])
@@ -749,18 +750,18 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcText(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
+    ): Connection|ODBCConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCEngine $className */
+        /** @var Connection|ODBCConnection $className */
         $instance = $className::setDriver('text');
         $instance
             ::setDatabase($env['TEXT_DATABASE'])
@@ -779,18 +780,18 @@ class Fluent
      * @param array $env
      * @param bool $persistent
      * @param bool $strategy
-     * @return Connection|ODBCEngine
+     * @return Connection|ODBCConnection
      */
     public static function odbcMemory(
         array $env,
         bool $persistent = false,
         bool $strategy = false
-    ): Connection|ODBCEngine {
+    ): Connection|ODBCConnection {
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCEngine $className */
+        /** @var Connection|ODBCConnection $className */
         $instance = $className::setDriver('sqlite');
         $instance
             ::setDatabase($env['SQLITE_DATABASE_MEMORY'])

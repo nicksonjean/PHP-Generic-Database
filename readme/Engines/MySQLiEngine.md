@@ -1,8 +1,8 @@
-# MySQLiEngine
+# Connection
 
-## MySQLiEngine Connection
+## Connection Connection
 
-The `GenericDatabase\MySQLiEngine` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
+The `GenericDatabase\Connection` class is responsible for establishing and managing database connections. It uses a strategy pattern to support different database engines. The class provides methods for connecting to a database, executing queries, fetching results, and managing the connection state.
 
 ## Example Usage
 
@@ -10,7 +10,7 @@ The `GenericDatabase\MySQLiEngine` class is responsible for establishing and man
 
 ```php
 // Explicit and simplified module loading with all environment variables
-use GenericDatabase\MySQLiEngine;
+use GenericDatabase\Connection;
 use GenericDatabase\Engine\MySQli\MySQL;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
@@ -24,7 +24,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 ```php
 // Create a new database connection using MySQLi engine in the chainable methods format
-$connection = new MySQLiEngine();
+$connection = new Connection();
 $connection
 ->setHost($_ENV['MYSQL_HOST'])
 ->setPort((int)$_ENV['MYSQL_PORT'])
@@ -50,7 +50,7 @@ $connection
 
 ```php
 // Create a new database connection using MySQLi engine in the fluent design format
-$connection = MySQLiEngine
+$connection = Connection
 ::setHost($_ENV['MYSQL_HOST'])
 ::setPort((int)$_ENV['MYSQL_PORT'])
 ::setDatabase($_ENV['MYSQL_DATABASE'])
@@ -75,7 +75,7 @@ $connection = MySQLiEngine
 
 ```php
 // Create a new database connection using MySQLi engine in the static arguments format
-$connection = MySQLiEngine::new(
+$connection = Connection::new(
     host: $_ENV['MYSQL_HOST'],
     port: (int)$_ENV['MYSQL_PORT'],
     database: $_ENV['MYSQL_DATABASE'],
@@ -101,7 +101,7 @@ $connection = MySQLiEngine::new(
 
 ```php
 // Create a new database connection using MySQLi engine in the static array format
-$connection = MySQLiEngine::new([
+$connection = Connection::new([
     'host' => $_ENV['MYSQL_HOST'],
     'port' => (int)$_ENV['MYSQL_PORT'],
     'database' => $_ENV['MYSQL_DATABASE'],

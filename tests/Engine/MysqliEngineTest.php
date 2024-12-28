@@ -3,11 +3,11 @@
 namespace GenericDatabase\Tests\Engine;
 
 use PHPUnit\Framework\TestCase;
-use GenericDatabase\Engine\MySQLiEngine;
-use GenericDatabase\Engine\MySQLi\MySQL;
+use GenericDatabase\Engine\MySQLiConnection;
+use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 use GenericDatabase\Modules\Chainable;
 
-class MysqliEngineTest extends TestCase
+class ConnectionTest extends TestCase
 {
     private array $mysqlEnv;
 
@@ -42,23 +42,23 @@ class MysqliEngineTest extends TestCase
 
     public function testConnection()
     {
-        $this->assertInstanceOf(MySQLiEngine::class, $this->connection);
+        $this->assertInstanceOf(MySQLiConnection::class, $this->connection);
     }
 
     public function testConnectionSingleton()
     {
-        $connection1 = MySQLiEngine::getInstance();
-        $connection2 = MySQLiEngine::getInstance();
+        $connection1 = MySQLiConnection::getInstance();
+        $connection2 = MySQLiConnection::getInstance();
 
-        $this->assertInstanceOf(MySQLiEngine::class, $connection1);
-        $this->assertInstanceOf(MySQLiEngine::class, $connection2);
+        $this->assertInstanceOf(MySQLiConnection::class, $connection1);
+        $this->assertInstanceOf(MySQLiConnection::class, $connection2);
         $this->assertSame($connection1, $connection2);
     }
 
     public function testConnect()
     {
         $this->connection->connect();
-        $this->assertInstanceOf(MySQLiEngine::class, $this->connection);
+        $this->assertInstanceOf(MySQLiConnection::class, $this->connection);
     }
 
     public function testPing()
@@ -91,19 +91,19 @@ class MysqliEngineTest extends TestCase
             'SELECT id AS Codigo FROM estado WHERE id = :id',
             [':id' => 10]
         );
-        $this->assertInstanceOf(MySQLiEngine::class, $this->connection);
+        $this->assertInstanceOf(MySQLiConnection::class, $this->connection);
     }
 
     public function testQuery()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado WHERE id = 5');
-        $this->assertInstanceOf(MySQLiEngine::class, $this->connection);
+        $this->assertInstanceOf(MySQLiConnection::class, $this->connection);
     }
 
     public function testFetch()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(MySQLiEngine::class, $this->connection);
+        $this->assertInstanceOf(MySQLiConnection::class, $this->connection);
         $data = $this->connection->fetch();
         $this->assertIsObject($data);
     }
@@ -111,7 +111,7 @@ class MysqliEngineTest extends TestCase
     public function testFetchAll()
     {
         $this->connection->query('SELECT id AS Codigo FROM estado');
-        $this->assertInstanceOf(MySQLiEngine::class, $this->connection);
+        $this->assertInstanceOf(MySQLiConnection::class, $this->connection);
         $data = $this->connection->fetchAll();
         $this->assertIsArray($data);
     }
@@ -122,12 +122,12 @@ class MysqliEngineTest extends TestCase
         $this->connection->exec($stmt1);
         $stmt2 = $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
         $this->connection->exec($stmt2);
-        $this->assertInstanceOf(MySQLiEngine::class, $this->connection);
+        $this->assertInstanceOf(MySQLiConnection::class, $this->connection);
     }
 
     public function testDisconnect()
     {
         $this->connection->disconnect();
-        $this->assertInstanceOf(MySQLiEngine::class, $this->connection);
+        $this->assertInstanceOf(MySQLiConnection::class, $this->connection);
     }
 }

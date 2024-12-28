@@ -113,16 +113,18 @@ class Translater
     private static array $patternMap = [
         'sqlBinds' => '/(:[a-zA-Z]{1,})/i',
         'sqlArgs' => '/(:\w+)/',
-        'sqlGroups' => '/(\w+)?\((.+)\)\s/m',
-        'sqlMask' => '(_PARAM_) '
+        'sqlGroups' => '/(\w+)?\((.+)\)\s/m'
     ];
+
+    private static string $patternFunction =
+        '/(?<function>\w+)\s*\(\s*(?:(?<table>["]?[a-zA-Z0-9_]+["]?)\.)?(?<column>["]?[a-zA-Z0-9_]+["]?)\s*\)/m';
 
     /**
      * SQL dialect array map
      */
     private static array $quoteMap = [
-        self::SQL_DIALECT_DOUBLE_QUOTE => '"',
         self::SQL_DIALECT_BACKTICK => '`',
+        self::SQL_DIALECT_DOUBLE_QUOTE => '"',
         self::SQL_DIALECT_SINGLE_QUOTE => "'",
         self::SQL_DIALECT_NONE => ''
     ];
@@ -201,13 +203,87 @@ class Translater
             self::$patternMap['sqlGroups'],
             function ($matches) use ($quote, $resWords) {
                 if (!empty($matches) && !in_array($matches[1], $resWords)) {
-                    $pWords = array_map(fn ($word) => $quote . trim($word) . $quote, explode(',', trim($matches[2])));
+                    $pWords = array_map(fn($word) => $quote . trim($word) . $quote, explode(',', trim($matches[2])));
                     return '(' . implode(', ', $pWords) . ') ';
                 }
                 return $matches[0];
             },
             $input
         );
+    }
+
+    /**
+     * Applies the quotes in columns with alias.
+     *
+     * @param string $input The input SQL string.
+     * @return string The input string with quotes in columns with alias.
+     * @noinspection PhpUnused
+     */
+    private static function applyQuotes(string $input, string $quote): string
+    {
+        $wordWithComma = explode('.', substr($input, 0, -1));
+        $wordWithoutComma = explode('.', $input);
+        return (str_ends_with($input, ','))
+            ? "$quote$wordWithComma[0]$quote.$quote$wordWithComma[1]$quote,"
+            : "$quote$wordWithoutComma[0]$quote.$quote$wordWithoutComma[1]$quote";
+    }
+
+    /**
+     * Encloses a word with quotes or backticks, depending on the SQL dialect.
+     *
+     * @param string $input The word to be enclosed.
+     * @param string $quote The quote character to be used.
+     * @return string The enclosed word.
+     * @noinspection PhpUnused
+     */
+    private static function encloseWord(string $input, string $quote): string
+    {
+        $wordWithComma = substr($input, 0, -1);
+        $wordWithoutComma = $input;
+        return (str_ends_with($input, ','))
+            ? "$quote$wordWithComma$quote,"
+            : "$quote$wordWithoutComma$quote";
+    }
+
+    /**
+     * Applies a wildcard to the input string if it contains a dot.
+     *
+     * @param string $input The input string to apply the wildcard to.
+     * @param string $quote The quote character to use for enclosing the words.
+     * @return string The input string with the wildcard applied, or the original input string if no wildcard is needed.
+     * @noinspection PhpUnused
+     */
+    private static function applyWildCard(string $input, string $quote): string
+    {
+        if (str_contains($input, '.')) {
+            $wordWithComma = explode('.', $input);
+            return "$quote$wordWithComma[0]$quote.$wordWithComma[1]";
+        } else {
+            return $input;
+        }
+    }
+
+    /** @noinspection PhpUnused */
+    private static function isFunction(string $input): bool
+    {
+        $result = false;
+        if (preg_match('/\w+\(.*\)/m', $input)) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /** @noinspection PhpUnused */
+    private static function applyQuotesFunction(string $input, string $quote): string
+    {
+        $result = '';
+        if (preg_match(self::$patternFunction, $input, $matches)) {
+            $matches = Arrays::arraySafe($matches);
+            $result = (isset($matches['table']))
+                ? preg_replace(self::$patternFunction, "$1($quote$2$quote.$quote$3$quote)", $input)
+                : preg_replace(self::$patternFunction, "$1($quote$3$quote)", $input);
+        }
+        return $result;
     }
 
     /**
@@ -230,8 +306,11 @@ class Translater
         bool &$inDoubleQt
     ): string {
         $object = new stdClass();
-
+        $bindQm = self::$bindingMap[self::BIND_QUESTION_MARK];
         $result = match (true) {
+            self::isFunction($word) => self::applyQuotesFunction($word, $quote),
+            str_contains($word, '*') => self::applyWildCard($word, $quote),
+            str_contains($word, '.') => self::applyQuotes($word, $quote),
             str_contains($word, ']') => self::processCondition($object, $word, false),
             str_contains($word, '[') => self::processCondition($object, $word, true),
             $inFunction && str_contains($word, ')') => self::processCondition($object, $word, false),
@@ -241,8 +320,9 @@ class Translater
             $inDoubleQt && str_contains($word, '"') => self::processCondition($object, $word, false),
             !$inDoubleQt && str_contains($word, '"') => self::processCondition($object, $word, true),
             str_contains($word, ':') => $word,
-            in_array($word, $resWords) => $word,
+            in_array(mb_strtoupper($word), $resWords) => mb_strtoupper($word),
             is_numeric($word) || preg_match('/\d+/im', $word) => $word,
+            str_contains($word, $bindQm) => str_replace($quote . $bindQm . $quote, $bindQm, $word),
             default => self::encloseWord($word, $quote),
         };
 
@@ -262,23 +342,12 @@ class Translater
      * @param string $processedWord The processed word.
      * @param bool $processedCondition The processed condition.
      * @return bool The processed condition.
+     * @noinspection PhpUnused
      */
     private static function processCondition(stdClass $object, string $processedWord, bool $processedCondition): bool
     {
         $object->processedWord = $processedWord;
         return $processedCondition;
-    }
-
-    /**
-     * Encloses a word with quotes or backticks, depending on the SQL dialect.
-     *
-     * @param string $word The word to be enclosed.
-     * @param string $quote The quote character to be used.
-     * @return string The enclosed word.
-     */
-    private static function encloseWord(string $word, string $quote): string
-    {
-        return (str_ends_with($word, ',')) ? $quote . substr($word, 0, -1) . $quote . ',' : $quote . $word . $quote;
     }
 
     /**
@@ -288,8 +357,13 @@ class Translater
      * @param int $dialect The SQL dialect to be used for escaping. Defaults to `Translater::SQL_DIALECT_NONE`.
      * @return string The escaped SQL string.
      */
-    public static function escape(string $input, int $dialect = self::SQL_DIALECT_NONE): string
+    public static function escape(string $input, int $dialect = self::SQL_DIALECT_NONE, int $quoteSkip = null): string
     {
+        foreach (self::$quoteMap as $char) {
+            if (!is_null($quoteSkip) && $char !== self::$quoteMap[$quoteSkip]) {
+                $input = str_replace($char, self::$quoteMap[self::SQL_DIALECT_NONE], $input);
+            }
+        }
         $quote = self::$quoteMap[$dialect] ?? '';
         return self::escapeType($input, $quote);
     }

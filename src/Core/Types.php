@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection ALL */
+
 namespace GenericDatabase\Core;
 
 /**
