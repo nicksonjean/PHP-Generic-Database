@@ -1,0 +1,6 @@
+{
+    "name": "PHP 8.2 & Apache",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspaces/{$localWorspaceFolderBasename}"
+}
