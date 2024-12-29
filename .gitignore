@@ -498,7 +498,6 @@ composer.lock
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
-/adminer/
 /resources/database/firebird/etc/
 /resources/database/firebird/log/
 /resources/database/firebird/system
