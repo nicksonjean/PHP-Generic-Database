@@ -17,6 +17,30 @@ services:
   #   networks:
   #     - internal
 
+  # php73:
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/PHP7.3/Dockerfile
+  #   container_name: php73
+  #   env_file:
+  #     - .env.docker
+  #   restart: unless-stopped
+  #   ports:
+  #     - "7300:80"
+  #   depends_on:
+  #     - mysql
+  #     - postgres
+  #     - sqlsrv
+  #     - oracle
+  #     - firebird
+  #   networks:
+  #     - internal
+  #   logging:
+  #       driver: "json-file"
+  #       options:
+  #         max-file: "5"
+  #         max-size: "10m"
+
   # php74:
   #   build:
   #     context: .
@@ -41,29 +65,29 @@ services:
   #         max-file: "5"
   #         max-size: "10m"
 
-  php81:
-    build:
-      context: .
-      dockerfile: ./docker/PHP8.1/Dockerfile
-    container_name: php81
-    env_file:
-      - .env.docker
-    restart: unless-stopped
-    ports:
-      - "8100:80"
-    depends_on:
-      - mysql
-      - postgres
-      - sqlsrv
-      - oracle
-      - firebird
-    networks:
-      - internal
-    logging:
-        driver: "json-file"
-        options:
-          max-file: "5"
-          max-size: "10m"
+  # php81:
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/PHP8.1/Dockerfile
+  #   container_name: php81
+  #   env_file:
+  #     - .env.docker
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8100:80"
+  #   depends_on:
+  #     - mysql
+  #     - postgres
+  #     - sqlsrv
+  #     - oracle
+  #     - firebird
+  #   networks:
+  #     - internal
+  #   logging:
+  #       driver: "json-file"
+  #       options:
+  #         max-file: "5"
+  #         max-size: "10m"
 
   php82:
     build:

@@ -40,26 +40,34 @@ RUN \
   cp /usr/src/php/ext/zlib/config0.m4 /usr/src/php/ext/zlib/config.m4 && \
   docker-php-ext-install zlib
 
-# Install pecl extensions
+# Download and Install pecl extensions
+COPY \
+  --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 RUN \
-  pecl install xdebug yaml pcov mcrypt && \
-  docker-php-ext-enable xdebug yaml pcov mcrypt
+  install-php-extensions xdebug yaml pcov mcrypt
 
-# Install interbase
-RUN \
-  docker-php-ext-install interbase && \
-  docker-php-ext-enable interbase
+# Download and Install interbase
+# COPY \
+#   --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+# RUN \
+#   install-php-extensions interbase
 
-# Install pdo, pdo_dblib and pdo_sqlite
+# Download and Install pdo and pdo_sqlite
 RUN \
-  docker-php-ext-install pdo pdo_dblib pdo_sqlite
+  docker-php-ext-install pdo pdo_sqlite
+
+# Download and Install pdo_dblib
+COPY \
+  --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+RUN \
+  install-php-extensions pdo_dblib
 
 # Install pdo_firebird
 RUN \
   docker-php-ext-install pdo_firebird && \
   docker-php-ext-enable pdo_firebird
 
-# Install mysqli and pdo_mysql
+# Download and Install mysqli and pdo_mysql
 RUN \
   docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
   docker-php-ext-install pdo_mysql && \
@@ -85,6 +93,12 @@ RUN \
   docker-php-ext-configure odbc --with-unixODBC=shared,/usr && \
   docker-php-ext-install odbc
 
+# Download and Install sqlsrv and pdo_sqlsrv
+COPY \
+  --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+RUN \
+  install-php-extensions sqlsrv pdo_sqlsrv
+
 # Download and Install MSSQL ODBC Driver
 RUN \
   apt-get update && \
@@ -93,13 +107,8 @@ RUN \
   curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
   apt-get update && \
   apt-get -y --no-install-recommends install msodbcsql17 odbc-mdbtools && \
-  apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-
-# Install sqlsrv and pdo_sqlsrv
-RUN \
-  pecl install sqlsrv pdo_sqlsrv && \
-  docker-php-ext-enable sqlsrv pdo_sqlsrv
-
+  apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*  
+  
 # Download and Unzip OCI Instant Client
 RUN \
   cd /tmp/ && wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-basic-linux.x64-21.6.0.0.0dbru.zip && \
