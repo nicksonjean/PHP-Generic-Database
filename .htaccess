@@ -1,4 +1,4 @@
-IndexIgnore *.stub.php composer.* php*.xml grumphp.* phpstan.* config.php docker-compose.yml /trash /vendor /assets /cache /resources /scripts /tests /src /bin /docker /adminer
+IndexIgnore *.stub.php composer.* php*.xml grumphp.* phpstan.* config.php docker-compose.yml /trash /vendor /assets /cache /resources /scripts /tests /src /bin /docker /adminer /devcontainer
 <FilesMatch "^\.">
 Order allow,deny
 Deny from all

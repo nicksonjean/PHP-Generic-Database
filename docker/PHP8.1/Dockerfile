@@ -120,31 +120,31 @@ WORKDIR /var/www/html
 RUN \
   chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 
-# Copy project structure, folders and files
-ADD ./assets/ /var/www/html/assets/
-ADD ./bin/ /var/www/html/bin/
-ADD ./build/ /var/www/html/build/
-ADD ./readme/ /var/www/html/readme/
-ADD ./resources/ /var/www/html/resources/
-ADD ./samples/ /var/www/html/samples/
-ADD ./src/ /var/www/html/src/
-ADD ./tests/ /var/www/html/tests/
+# # Copy project structure, folders and files
+# ADD ./assets/ /var/www/html/assets/
+# ADD ./bin/ /var/www/html/bin/
+# ADD ./build/ /var/www/html/build/
+# ADD ./readme/ /var/www/html/readme/
+# ADD ./resources/ /var/www/html/resources/
+# ADD ./samples/ /var/www/html/samples/
+# ADD ./src/ /var/www/html/src/
+# ADD ./tests/ /var/www/html/tests/
 ADD ./composer.json /var/www/html/composer.json
-ADD ./phpcs.xml /var/www/html/phpcs.xml
-ADD ./phpmd.xml /var/www/html/phpmd.xml
-ADD ./phpstan.neon /var/www/html/phpstan.neon
-ADD ./phpunit.xml /var/www/html/phpunit.xml
-ADD ./grumphp.yml /var/www/html/grumphp.yml
-ADD ./config.php /var/www/html/config.php
+# ADD ./phpcs.xml /var/www/html/phpcs.xml
+# ADD ./phpmd.xml /var/www/html/phpmd.xml
+# ADD ./phpstan.neon /var/www/html/phpstan.neon
+# ADD ./phpunit.xml /var/www/html/phpunit.xml
+# ADD ./grumphp.yml /var/www/html/grumphp.yml
+# ADD ./config.php /var/www/html/config.php
 
-# Copy all Stubs from VSCode or PHPStorm
-COPY ./dbase.stub.php /var/www/html/dbase.stub.php
-COPY ./interbase.stub.php /var/www/html/interbase.stub.php
-COPY ./oci8.stub.php /var/www/html/oci8.stub.php
-COPY ./odbc.stub.php /var/www/html/odbc.stub.php
-COPY ./pdo.stub.php /var/www/html/pdo.stub.php
-COPY ./pgsql.stub.php /var/www/html/pgsql.stub.php
-COPY ./sqlsrv.stub.php /var/www/html/sqlsrv.stub.php
+# # Copy all Stubs from VSCode or PHPStorm
+# COPY ./dbase.stub.php /var/www/html/dbase.stub.php
+# COPY ./interbase.stub.php /var/www/html/interbase.stub.php
+# COPY ./oci8.stub.php /var/www/html/oci8.stub.php
+# COPY ./odbc.stub.php /var/www/html/odbc.stub.php
+# COPY ./pdo.stub.php /var/www/html/pdo.stub.php
+# COPY ./pgsql.stub.php /var/www/html/pgsql.stub.php
+# COPY ./sqlsrv.stub.php /var/www/html/sqlsrv.stub.php
 
 # PHPInfo for Test PHP Libs
 COPY ./phpinfo.php /var/www/html/phpinfo.php
