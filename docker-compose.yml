@@ -1,3 +1,26 @@
+x-php-base: &php-base
+  build:
+    context: .
+  env_file:
+    - .env.docker
+  restart: unless-stopped
+  depends_on:
+    - mysql
+    - postgres
+    - sqlsrv
+    - oracle
+    - firebird
+  working_dir: /var/www/html
+  volumes:
+    - .:/var/www/html
+  networks:
+    - internal
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "5"
+      max-size: "10m"
+
 services:
   # adminer:
   #   image: adminer:latest
@@ -17,113 +40,16 @@ services:
   #   networks:
   #     - internal
 
-  # php73:
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/PHP7.3/Dockerfile
-  #   container_name: php73
-  #   env_file:
-  #     - .env.docker
-  #   restart: unless-stopped
-  #   ports:
-  #     - "7300:80"
-  #   depends_on:
-  #     - mysql
-  #     - postgres
-  #     - sqlsrv
-  #     - oracle
-  #     - firebird
-  #   working_dir: /var/www/html
-  #   volumes:
-  #     - .:/var/www/html
-  #   networks:
-  #     - internal
-  #   logging:
-  #       driver: "json-file"
-  #       options:
-  #         max-file: "5"
-  #         max-size: "10m"
-
-  # php74:
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/PHP7.4/Dockerfile
-  #   container_name: php74
-  #   env_file:
-  #     - .env.docker
-  #   restart: unless-stopped
-  #   ports:
-  #     - "7400:80"
-  #   depends_on:
-  #     - mysql
-  #     - postgres
-  #     - sqlsrv
-  #     - oracle
-  #     - firebird
-  #   working_dir: /var/www/html
-  #   volumes:
-  #     - .:/var/www/html
-  #   networks:
-  #     - internal
-  #   logging:
-  #       driver: "json-file"
-  #       options:
-  #         max-file: "5"
-  #         max-size: "10m"
-
-  # php81:
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/PHP8.1/Dockerfile
-  #   container_name: php81
-  #   env_file:
-  #     - .env.docker
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8100:80"
-  #   depends_on:
-  #     - mysql
-  #     - postgres
-  #     - sqlsrv
-  #     - oracle
-  #     - firebird
-  #   working_dir: /var/www/html
-  #   volumes:
-  #     - .:/var/www/html
-  #   networks:
-  #     - internal
-  #   logging:
-  #       driver: "json-file"
-  #       options:
-  #         max-file: "5"
-  #         max-size: "10m"
-
-  php82:
+  app:
+    <<: *php-base
     build:
-      context: .
-      dockerfile: ./docker/PHP8.2/Dockerfile
-    container_name: php82
-    env_file:
-      - .env.docker
-    restart: unless-stopped
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        PHP_VERSION: "${PHP_VERSION:-8.3}"
+        PHP_PORT: "${PHP_PORT:-8300}"
+    container_name: php${PHP_VERSION:-8.3}
     ports:
-      - "8200:80"
-    depends_on:
-      - mysql
-      - postgres
-      - sqlsrv
-      - oracle
-      - firebird
-    working_dir: /var/www/html
-    volumes:
-      - .:/var/www/html
-    networks:
-      - internal
-    logging:
-        driver: "json-file"
-        options:
-          max-file: "5"
-          max-size: "10m"
+      - "${PHP_PORT:-8300}:80"
 
   mysql:
     image: mysql:latest
