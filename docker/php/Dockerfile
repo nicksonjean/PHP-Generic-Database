@@ -66,6 +66,7 @@ RUN \
     exit 1; \
   fi
 
+# Install interbase extension only for PHP 7.3
 RUN \
   if [ "$PHP_VERSION" = "7.3" ]; then \
     ( curl -sSLf https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o - || echo 'return 1' ) | sh -s \
