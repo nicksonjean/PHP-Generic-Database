@@ -6,13 +6,14 @@ FROM php:${PHP_VERSION:-8.3}-apache
 
 # Redeclara os argumentos enviados pelo docker-compose.yml
 ARG PHP_VERSION
+ARG PHP_PORT
 
 # Tag do Autor
 LABEL author="Nickson Jeanmerson (nickson.jeanmerson@gmail.com)"
 
 # Echo para verificar os valores
 RUN \
-  echo "PHP_VERSION=${PHP_VERSION}"
+  echo "PHP_VERSION=${PHP_VERSION}, PHP_PORT=${PHP_PORT}"
 
 # Definindo variáveis de ambiente
 ENV \

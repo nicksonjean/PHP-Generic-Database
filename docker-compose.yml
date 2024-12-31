@@ -2,7 +2,7 @@ x-php-base: &php-base
   build:
     context: .
   env_file:
-    - .env.docker
+    - .env
   restart: unless-stopped
   depends_on:
     - mysql
@@ -22,40 +22,22 @@ x-php-base: &php-base
       max-size: "10m"
 
 services:
-  # adminer:
-  #   image: adminer:latest
-  #   container_name: adminer
-  #   restart: always
-  #   ports:
-  #     - 8080:8080
-  #   networks:
-  #     - internal
-
-  # whodb:
-  #   image: clidey/whodb:latest
-  #   container_name: whodb
-  #   restart: always
-  #   ports:
-  #     - 8080:8080
-  #   networks:
-  #     - internal
-
   app:
     <<: *php-base
     build:
       dockerfile: ./docker/php/Dockerfile
       args:
-        PHP_VERSION: "${PHP_VERSION:-8.3}"
-        PHP_PORT: "${PHP_PORT:-8300}"
-    container_name: php${PHP_VERSION:-8.3}
+        PHP_VERSION: "${PHP_VERSION}"
+        PHP_PORT: "${PHP_PORT}"
+    container_name: php${PHP_VERSION}
     ports:
-      - "${PHP_PORT:-8300}:80"
+      - "${PHP_PORT}:80"
 
   mysql:
     image: mysql:latest
     container_name: mysql
     env_file:
-      - .env.docker
+      - .env
     restart: unless-stopped
     ports:
       - "${MYSQL_PORT:-3306}:${MYSQL_PORT:-3306}"
@@ -73,7 +55,7 @@ services:
     image: postgres:latest
     container_name: postgres
     env_file:
-      - .env.docker
+      - .env
     restart: unless-stopped
     ports:
       - "${PGSQL_PORT:-5432}:${PGSQL_PORT:-5432}"
@@ -89,7 +71,7 @@ services:
     image: mcr.microsoft.com/mssql/server:latest
     container_name: sqlsrv
     env_file:
-      - .env.docker
+      - .env
     restart: unless-stopped
     ports:
       - "${SQLSERVER_PORT:-1433}:${SQLSERVER_PORT:-1433}"
@@ -110,7 +92,7 @@ services:
     image: gvenzl/oracle-free:latest
     container_name: oracle
     env_file:
-      - .env.docker
+      - .env
     restart: unless-stopped
     ports:
       - "${OCI_PORT:-1521}:${OCI_PORT:-1521}"
@@ -129,7 +111,7 @@ services:
     image: jacobalberty/firebird:3.0.7
     container_name: firebird
     env_file:
-      - .env.docker
+      - .env
     restart: unless-stopped
     ports:
       - ${FBIRD_PORT:-3050}:${FBIRD_PORT:-3050}
@@ -146,6 +128,24 @@ services:
     entrypoint: [ "/usr/local/firebird/bin/fbguard" ]
     networks:
       - internal
+
+  # adminer:
+  #   image: adminer:latest
+  #   container_name: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - internal
+
+  # whodb:
+  #   image: clidey/whodb:latest
+  #   container_name: whodb
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - internal
 
 networks:
   internal:
