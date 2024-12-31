@@ -4,7 +4,7 @@
   <port>1433</port>
   <database>demodev</database>
   <user>sa</user>
-  <password>20Z£?2@Z§!</password>
+  <password>Masterkey@1</password>
   <charset>utf8</charset>
   <options>
 		<option name="SQLSrv::ATTR_PERSISTENT">true</option>
