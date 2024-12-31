@@ -1,0 +1,12 @@
+{
+  "php.stubs": ["*", "pgsql", "oci8", "yaml", "dbase", "interbase", "sqlsrv", "pdo"],
+  "files.exclude": {
+    "**/scripts/**": true,
+    "**/cache/**": true,
+    "**/vendor/**": true,
+    "**/.stubs/**": true
+  },
+  "CodeGPT.apiKey": "Google AI Studio",
+  "php.version": "8.3",
+  "sqltools.connections": []
+}
