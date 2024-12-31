@@ -73,10 +73,10 @@ class DSN
                 $file = pathinfo(ODBCConnection::getInstance()->getDatabase());
                 $result = sprintf(
                     "Driver={%s};DriverID=" .
-                        ($file['extension'] === 'xls' ? "790" : "1046") .
-                        ";DBQ=%s;DefaultDir=%s;Charset=%s;Extensions=" .
-                        ($file['extension'] === 'xls' ? "xls" : "xls,xlsx,xlsm,xlsb") .
-                        ";ImportMixedTypes=Text;",
+                    ($file['extension'] === 'xls' ? "790" : "1046") .
+                    ";DBQ=%s;DefaultDir=%s;Charset=%s;Extensions=" .
+                    ($file['extension'] === 'xls' ? "xls" : "xls,xlsx,xlsm,xlsb") .
+                    ";ImportMixedTypes=Text;",
                     ODBC::getAliasByDriver(
                         ODBCConnection::getInstance()->getDriver(),
                         ($file['extension'] === 'xls') ? 'xls' : 'xlsx'
@@ -94,11 +94,12 @@ class DSN
                     ));
                 }
                 $file = pathinfo(ODBCConnection::getInstance()->getDatabase());
+                $extension = ($file['extension'] === 'mdb') ? 'mdb' : 'accdb';
                 $result = sprintf(
                     "Driver={%s};DBQ=%s;UID=%s;PWD=%s;Charset=%s;ExtendedAnsiSQL=1;",
                     ODBC::getAliasByDriver(
                         ODBCConnection::getInstance()->getDriver(),
-                        ($file['extension'] === 'mdb') ? 'mdb' : 'accdb'
+                        (PHP_OS === 'Windows') ? $extension : null
                     ),
                     ODBCConnection::getInstance()->getDatabase(),
                     ODBCConnection::getInstance()->getUser(),

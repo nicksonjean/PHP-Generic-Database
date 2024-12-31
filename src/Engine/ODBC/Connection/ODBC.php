@@ -286,7 +286,7 @@ class ODBC
      */
     private static function getLinuxDriverSettings(): array
     {
-        $command = sprintf('%s', dirname(__DIR__, 4) . self::LINUX_CMDLET);
+        $command = sprintf('%s', self::LINUX_CMDLET);
         $string = shell_exec($command);
         $result = [];
         $odbcRegex = '/^([^:]+?)\s+(\d+(\.\d+)+)$/m';

@@ -33,6 +33,11 @@
         "alias": "\/Microsoft Access Driver \\(\\*\\.mdb, \\*\\.accdb\\)\/"
     },
     {
+        "driver": "access",
+        "type": "mdbtools",
+        "alias": "\/MDBTools\/"
+    },
+    {
         "driver": "firebird",
         "type": "odbc",
         "alias": "\/Firebird\\\/InterBase\\(r\\) driver\/"
