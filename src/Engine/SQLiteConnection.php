@@ -208,7 +208,7 @@ class SQLiteConnection implements IConnection
      */
     public function connect(): SQLiteConnection
     {
-        if (!extension_loaded('interbase')) {
+        if (!extension_loaded('sqlite3')) {
             $message = sprintf(
                 "Invalid or not loaded '%s' extension in '%s' settings",
                 'interbase',

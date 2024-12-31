@@ -92,6 +92,11 @@
         "alias": "\/PostgreSQL Unicode\\(x\\d{2}\\)\/"
     },
     {
+      "driver": "mysql",
+      "type": "native",
+      "alias": "\/MySQL ODBC \\d{1}\\.\\d{1}\\.\\d{1} Driver\/"
+    },
+    {
         "driver": "mysql",
         "type": "ansi",
         "default": true,

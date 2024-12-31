@@ -195,7 +195,7 @@ class PgSQLConnection implements IConnection
      */
     public function connect(): PgSQLConnection
     {
-        if (!extension_loaded('interbase')) {
+        if (!extension_loaded('pgsql')) {
             $message = sprintf(
                 "Invalid or not loaded '%s' extension in '%s' settings",
                 'interbase',

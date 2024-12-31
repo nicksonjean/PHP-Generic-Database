@@ -121,6 +121,15 @@ RUN \
   docker-php-ext-configure odbc --with-unixODBC=shared,/usr && \
   docker-php-ext-install odbc
 
+# Download and Install MySQL Connector for ODBC
+RUN \
+  apt-get update -y && apt-get update && \
+  apt-get install -y --no-install-recommends gcc g++ gnupg && \
+  cd /tmp/ && wget https://dev.mysql.com/get/Downloads/Connector-ODBC/9.1/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
+  tar -C . -xzvf mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
+  cp -r mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/* /usr/local && \
+  myodbc-installer -a -d -n "MySQL ODBC 9.1.0 Driver" -t "Driver=/usr/local/lib/libmyodbc9w.so"
+
 # Download and Install sqlsrv and pdo_sqlsrv
 RUN \
   if [ "$PHP_VERSION" = "7.3" ] || [ "$PHP_VERSION" = "7.4" ] || [ "$PHP_VERSION" = "8.0" ]; then \
@@ -134,7 +143,7 @@ RUN \
     exit 1; \
   fi
 
-# Download and Install MSSQL ODBC Driver
+# Download and Install MSSQL Connector for ODBC and MDBTools for Access
 RUN \
   apt-get update && \
   apt-get install -y gnupg2 && \
