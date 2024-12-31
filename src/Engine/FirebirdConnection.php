@@ -217,6 +217,15 @@ class FirebirdConnection implements IConnection
      */
     public function connect(): FirebirdConnection
     {
+        if (!extension_loaded('interbase')) {
+            $message = sprintf(
+                "Invalid or not loaded '%s' extension in '%s' settings",
+                'interbase',
+                'PHP.ini'
+            );
+            throw new CustomException($message);
+        }
+
         try {
             $this->setInstance($this);
             $this

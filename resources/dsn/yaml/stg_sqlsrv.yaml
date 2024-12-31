@@ -3,7 +3,7 @@ host: sqlsrv
 port: 1433
 database: demodev
 user: sa
-password: 20Z£?2@Z§!
+password: Masterkey@1
 charset: utf8
 options:
   - "SQLSrv::ATTR_PERSISTENT": true

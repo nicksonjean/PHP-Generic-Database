@@ -221,6 +221,15 @@ class ODBCConnection implements IConnection
      */
     public function connect(): ODBCConnection
     {
+        if (!extension_loaded('odbc')) {
+            $message = sprintf(
+                "Invalid or not loaded '%s' extension in '%s' settings",
+                'interbase',
+                'PHP.ini'
+            );
+            throw new CustomException($message);
+        }
+
         try {
             $this->setInstance($this);
             $this
@@ -710,7 +719,7 @@ class ODBCConnection implements IConnection
             array_unshift($rowCount, $this->getStatementResult());
             array_unshift($params, $this->getStatement());
             self::$statementCount = array_merge($this->makeArgs('', ...$rowCount), ['rowCount' => true]);
-            $this->setQueryRows(fn () => count(Statements::internalFetchAllAssoc(
+            $this->setQueryRows(fn() => count(Statements::internalFetchAllAssoc(
                 self::$statementCount['sqlStatement']
             )));
             $this->setQueryColumns(odbc_num_fields($this->getStatement()));
@@ -736,7 +745,7 @@ class ODBCConnection implements IConnection
             $bindParams = array_merge($this->makeArgs('', ...$params), ['rowCount' => false]);
             self::$statementCount = array_merge($this->makeArgs('', ...$rowCount), ['rowCount' => true]);
             $this->bindParam(...$bindParams);
-            $this->setQueryRows(fn () => count(Statements::internalFetchAllAssoc(
+            $this->setQueryRows(fn() => count(Statements::internalFetchAllAssoc(
                 self::$statementCount['sqlStatement']
             )));
             $this->setQueryColumns(odbc_num_fields($this->getStatement()));

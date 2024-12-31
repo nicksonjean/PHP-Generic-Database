@@ -211,12 +211,21 @@ class SQLSrvConnection implements IConnection
      */
     public function connect(): SQLSrvConnection
     {
+        if (!extension_loaded('sqlsrv')) {
+            $message = sprintf(
+                "Invalid or not loaded '%s' extension in '%s' settings",
+                'interbase',
+                'PHP.ini'
+            );
+            throw new CustomException($message);
+        }
+
         try {
             $this->setInstance($this);
             $this
                 ->preConnect()
                 ->getInstance()
-                ->setDsn((string)$this->parseDsn())
+                ->setDsn($this->parseDsn())
                 ->realConnect(
                     static::getHost(),
                     static::getUser(),
@@ -692,9 +701,11 @@ class SQLSrvConnection implements IConnection
                 $this->getConnection(),
                 $this->parse(...$params),
                 [],
-                ['Scrollable' => Validations::isSelect($this->getQueryString())
-                    ? SQLSRV_CURSOR_STATIC
-                    : SQLSRV_CURSOR_FORWARD]
+                [
+                    'Scrollable' => Validations::isSelect($this->getQueryString())
+                        ? SQLSRV_CURSOR_STATIC
+                        : SQLSRV_CURSOR_FORWARD
+                ]
             ));
             $this->setQueryRows((int) sqlsrv_num_rows($this->getStatement()));
             $this->setQueryColumns((int) sqlsrv_num_fields($this->getStatement()));

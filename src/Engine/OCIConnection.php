@@ -199,8 +199,8 @@ class OCIConnection implements IConnection
         $dsn = vsprintf('%s:%s/%s', [$host, $port, $database]);
         $this->setConnection(
             (string) !Options::getOptions(OCI::ATTR_PERSISTENT)
-                ? oci_connect($user, $password, $dsn, $charset)
-                : oci_pconnect($user, $password, $dsn, $charset)
+            ? oci_connect($user, $password, $dsn, $charset)
+            : oci_pconnect($user, $password, $dsn, $charset)
         );
         return $this;
     }
@@ -213,6 +213,15 @@ class OCIConnection implements IConnection
      */
     public function connect(): OCIConnection
     {
+        if (!extension_loaded('oci8')) {
+            $message = sprintf(
+                "Invalid or not loaded '%s' extension in '%s' settings",
+                'interbase',
+                'PHP.ini'
+            );
+            throw new CustomException($message);
+        }
+
         try {
             $this->setInstance($this);
             $this
@@ -702,7 +711,7 @@ class OCIConnection implements IConnection
             array_unshift($params, $this->getStatement());
             self::$statementCount = array_merge($this->makeArgs($driver, ...$rowCount), ['rowCount' => true]);
             $this->exec($this->getStatement());
-            $this->setQueryRows(fn () => count(Statements::internalFetchAllAssoc(
+            $this->setQueryRows(fn() => count(Statements::internalFetchAllAssoc(
                 self::$statementCount['sqlStatement']
             )));
             $this->setQueryColumns((int) oci_num_fields($this->getStatement()));
@@ -723,7 +732,7 @@ class OCIConnection implements IConnection
             $bindParams = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => false]);
             self::$statementCount = array_merge($this->makeArgs($driver, ...$rowCount), ['rowCount' => true]);
             $this->bindParam(...$bindParams);
-            $this->setQueryRows(fn () => count(Statements::internalFetchAllAssoc(
+            $this->setQueryRows(fn() => count(Statements::internalFetchAllAssoc(
                 self::$statementCount['sqlStatement']
             )));
             $this->setQueryColumns((int) oci_num_fields($this->getStatement()));

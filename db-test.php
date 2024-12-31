@@ -42,6 +42,7 @@ try {
 
 try {
     $db = './resources/database/sqlite/data/DB.SQLITE';
+    /** @var SQLite3|null $sqlite3 */
     $sqlite3 = new SQLite3($db);
     if (!file_exists($db)) {
         die("File is not exists ! " . $db);
@@ -59,7 +60,7 @@ try {
     $sqlhost = (PHP_OS === 'Windows') ? 'localhost' : 'sqlsrv';
     $sqlsrv = sqlsrv_connect(
         "$sqlhost,1433",
-        ["Database" => "demodev", "UID" => "sa", "PWD" => "20Z£?2@Z§!", "Encrypt" => false, "TrustServerCertificate" => false]
+        ["Database" => "demodev", "UID" => "sa", "PWD" => "Masterkey@1", "Encrypt" => false, "TrustServerCertificate" => false]
     );
     if (!$sqlsrv) {
         throw new Exception("Database Connection Error");
@@ -73,6 +74,7 @@ try {
 
 if (extension_loaded('interbase')) {
     try {
+        /** @var resource|false $ibase */
         $ibase = ibase_connect('firebird:/firebird/data/DB.FDB', 'sysdba', 'masterkey');
         if (!$ibase) {
             throw new Exception("Database Connection Error");
@@ -85,6 +87,7 @@ if (extension_loaded('interbase')) {
 }
 
 try {
+    /** @var PDO $pdo */
     $pdo = new PDO('firebird:dbname=firebird:/firebird/data/DB.FDB', 'sysdba', 'masterkey');
     if (!$pdo) {
         throw new Exception("Database Connection Error");
@@ -97,6 +100,7 @@ try {
 
 try {
     $ocihost = (PHP_OS === 'Windows') ? 'localhost' : 'oracle';
+    /** @var PDO $pdo */
     $pdo = new PDO("oci:dbname=$ocihost:1521/freepdb1", 'hr', 'masterkey');
     if (!$pdo) {
         throw new Exception("Database Connection Error");

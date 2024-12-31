@@ -209,6 +209,15 @@ class MySQLiConnection implements IConnection
      */
     public function connect(): MySQLiConnection
     {
+        if (!extension_loaded('mysqli')) {
+            $message = sprintf(
+                "Invalid or not loaded '%s' extension in '%s' settings",
+                'interbase',
+                'PHP.ini'
+            );
+            throw new CustomException($message);
+        }
+
         try {
             $this->setInstance($this);
             $this

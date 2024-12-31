@@ -181,8 +181,8 @@ class PgSQLConnection implements IConnection
     {
         $this->setConnection(
             (string) !Options::getOptions(PgSQL::ATTR_PERSISTENT)
-                ? pg_connect($dsn, Attributes::getFlags())
-                : pg_pconnect($dsn, Attributes::getFlags())
+            ? pg_connect($dsn, Attributes::getFlags())
+            : pg_pconnect($dsn, Attributes::getFlags())
         );
         return $this;
     }
@@ -195,6 +195,15 @@ class PgSQLConnection implements IConnection
      */
     public function connect(): PgSQLConnection
     {
+        if (!extension_loaded('interbase')) {
+            $message = sprintf(
+                "Invalid or not loaded '%s' extension in '%s' settings",
+                'interbase',
+                'PHP.ini'
+            );
+            throw new CustomException($message);
+        }
+
         try {
             $this->setInstance($this);
             $this
@@ -379,11 +388,11 @@ class PgSQLConnection implements IConnection
         $string = $params[0];
         $quote = $params[1] ?? false;
         if (is_array($string)) {
-            return array_map(fn ($str) => $this->quote($str, $quote), $string);
+            return array_map(fn($str) => $this->quote($str, $quote), $string);
         } elseif ($string && preg_match("/^(?:\d+\.\d+|[1-9]\d*)$/S", (string) $string)) {
             return $string;
         }
-        $quoted = fn ($str) => pg_escape_string($this->getConnection(), (string) $str);
+        $quoted = fn($str) => pg_escape_string($this->getConnection(), (string) $str);
         return ($quote) ? "'" . $quoted($string) . "'" : $quoted($string);
     }
 

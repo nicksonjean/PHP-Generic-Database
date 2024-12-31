@@ -208,6 +208,15 @@ class SQLiteConnection implements IConnection
      */
     public function connect(): SQLiteConnection
     {
+        if (!extension_loaded('interbase')) {
+            $message = sprintf(
+                "Invalid or not loaded '%s' extension in '%s' settings",
+                'interbase',
+                'PHP.ini'
+            );
+            throw new CustomException($message);
+        }
+
         try {
             $this->setInstance($this);
             $this
@@ -703,7 +712,7 @@ class SQLiteConnection implements IConnection
             $statement = $this->getConnection()->prepare($this->parse(...$params));
             array_unshift($params, $statement);
             self::$statementCount = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => true]);
-            $this->setQueryRows(fn () => count(Statements::internalFetchAllAssoc($this->getStatementResult())));
+            $this->setQueryRows(fn() => count(Statements::internalFetchAllAssoc($this->getStatementResult())));
             $this->setQueryColumns((int) $this->getStatement()->numColumns());
             $this->setAffectedRows((int) $this->getConnection()->changes());
         }
@@ -728,7 +737,7 @@ class SQLiteConnection implements IConnection
             $bindParams = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => false]);
             self::$statementCount = array_merge($this->makeArgs($driver, ...$rowCount), ['rowCount' => true]);
             $this->bindParam(...$bindParams);
-            $this->setQueryRows(fn () => count(Statements::internalFetchAllAssoc($this->getStatementResult())));
+            $this->setQueryRows(fn() => count(Statements::internalFetchAllAssoc($this->getStatementResult())));
             $this->setQueryColumns((int) $this->getStatement()->numColumns());
         }
         return $this;

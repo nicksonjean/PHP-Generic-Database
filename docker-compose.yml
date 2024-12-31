@@ -83,7 +83,7 @@ services:
     environment:
       ACCEPT_EULA: "Y"
       SA_USER: ${SQLSERVER_USER:-sa}
-      SA_PASSWORD: ${SQLSERVER_PASSWORD:-20Z£?2@Z§!}
+      SA_PASSWORD: ${SQLSERVER_PASSWORD:-Masterkey@1}
       MSSQL_PID: Express
     networks:
       - internal
