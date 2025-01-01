@@ -44,12 +44,12 @@ try {
 //     var_dump($e);
 // }
 
-try {
-    $context = Chainable::odbcAccess(env: $_ENV, persistent: true, strategy: false)->connect();
-    var_dump($context);
-} catch (Exception $e) {
-    var_dump($e);
-}
+// try {
+//     $context = Chainable::odbcAccess(env: $_ENV, persistent: true, strategy: false)->connect();
+//     var_dump($context);
+// } catch (Exception $e) {
+//     var_dump($e);
+// }
 
 // try {
 //     $context = Chainable::odbcExcel(env: $_ENV, persistent: true, strategy: false)->connect();

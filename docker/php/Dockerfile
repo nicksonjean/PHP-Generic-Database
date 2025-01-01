@@ -18,8 +18,10 @@ RUN \
 # Definindo variáveis de ambiente
 ENV \
   ACCEPT_EULA='Y' \
-  LANG='en_US.UTF-8' \
   LANGUAGE='en_US:en' \
+  LC_CTYPE=C.UTF-8 \
+  LC_ALL=C.UTF-8 \
+  LANG=C.UTF-8 \
   TZ='America/Sao_Paulo'
 
 # Atualizar o sistema e instalar dependências
@@ -33,7 +35,13 @@ RUN \
   libmcrypt-dev \
   firebird-dev \
   freetds-dev \
+  freetds-bin \
+  tdsodbc \
+  odbc-postgresql \
   odbcinst \
+  odbcinst1debian2 \
+  libodbc1 \
+  unixodbc \
   wget \
   unzip \
   libxml2-dev \
@@ -120,15 +128,6 @@ RUN \
   sed -ri 's@^ *test +"\$PHP_.*" *= *"no" *&& *PHP_.*=yes *$@#&@g' configure && \
   docker-php-ext-configure odbc --with-unixODBC=shared,/usr && \
   docker-php-ext-install odbc
-
-# Download and Install MySQL Connector for ODBC
-RUN \
-  apt-get update -y && apt-get update && \
-  apt-get install -y --no-install-recommends gcc g++ gnupg && \
-  cd /tmp/ && wget https://dev.mysql.com/get/Downloads/Connector-ODBC/9.1/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
-  tar -C . -xzvf mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
-  cp -r mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/* /usr/local && \
-  myodbc-installer -a -d -n "MySQL ODBC 9.1.0 Driver" -t "Driver=/usr/local/lib/libmyodbc9w.so"
 
 # Download and Install sqlsrv and pdo_sqlsrv
 RUN \
