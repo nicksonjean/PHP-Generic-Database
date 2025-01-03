@@ -214,7 +214,7 @@ class SQLSrvConnection implements IConnection
         if (!extension_loaded('sqlsrv')) {
             $message = sprintf(
                 "Invalid or not loaded '%s' extension in '%s' settings",
-                'interbase',
+                'sqlsrv',
                 'PHP.ini'
             );
             throw new CustomException($message);

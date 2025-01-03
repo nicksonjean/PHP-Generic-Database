@@ -29,6 +29,7 @@ RUN \
   apt-get update && apt-get install -y \
   libpq-dev \
   libsqlite3-dev \
+  libsqliteodbc \
   unixodbc-dev \
   libyaml-dev \
   default-libmysqlclient-dev \
@@ -103,6 +104,14 @@ RUN \
   docker-php-ext-install pdo_firebird && \
   docker-php-ext-enable pdo_firebird
 
+# Install odbc firebird
+RUN \
+  cd /tmp/ && wget https://github.com/FirebirdSQL/firebird-odbc-driver/releases/download/v3-0-0-release/linux_libs.zip && \
+  cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec unzip {} \; && \
+  cp -r /tmp/Release_x86_64/* /usr/lib/x86_64-linux-gnu/odbc/ && \
+  echo "[Firebird/InterBase(r) driver]\nDescription=InterBase/Firebird ODBC\nDriver=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nSetup=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nThreading=1\nFileUsage=1\nCPTimeout=\nCPReuse=" >> /etc/odbcinst.ini && \
+  cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec rm {} \;
+
 # Install mysqli and pdo_mysql
 RUN \
   docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
@@ -156,8 +165,10 @@ RUN \
 RUN \
   cd /tmp/ && wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-basic-linux.x64-21.6.0.0.0dbru.zip && \
   wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-sdk-linux.x64-21.6.0.0.0dbru.zip && \
-  unzip '*.zip' && \
-  rm *.zip
+  wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-odbc-linux.x64-21.6.0.0.0dbru.zip && \
+  cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec unzip {} \; && \
+  cd /tmp/instantclient_21_6 && ./odbc_update_ini.sh / /tmp/instantclient_21_6 "Oracle 21 ODBC driver" "OracleODBC-21" /etc/odbc.ini && \
+  cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec rm {} \;
 
 # Configure oci8 & pdo_oci
 RUN \
@@ -185,10 +196,6 @@ COPY \
 # PHPInfo for Test PHP Libs
 COPY \
   ./phpinfo.php /var/www/html/phpinfo.php
-
-# Test Database Connections
-COPY \
-  ./db-test.php /var/www/html/db-test.php
 
 # Copy environment variables
 COPY \
