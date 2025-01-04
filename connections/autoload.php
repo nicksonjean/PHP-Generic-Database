@@ -3,38 +3,115 @@ class Autoloader
 {
     private static $loadedVariables = [];
 
-    public static function load(...$params)
+    /**
+     * Renderiza um arquivo com variáveis no escopo e retorna a saída como string.
+     *
+     * @param string $file Caminho para o arquivo PHP a ser processado.
+     * @param array $vars Variáveis a serem injetadas no escopo do arquivo.
+     * @return string O conteúdo renderizado do arquivo.
+     * @throws Exception Se o arquivo não for encontrado.
+     */
+    public static function renderFile(string $file, array $vars = []): string
     {
-        $includeFileWithVars = function ($file, $vars) {
-            $uniqueKey = realpath($file);
-            self::$loadedVariables[$uniqueKey] = $vars;
-            include_once($file);
-        };
+        if (!file_exists($file)) {
+            throw new Exception("Arquivo não encontrado: $file");
+        }
 
-        foreach ($params as $param) {
-            $folder = $param[0];
-            $files = is_array($param[1]) ? $param[1] : [$param[1]];
-            $vars = isset($param[2]) ? $param[2] : [];
+        // Extrai as variáveis no escopo local
+        extract($vars);
+
+        // Inicia o buffer de saída
+        ob_start();
+
+        // Inclui o arquivo
+        include $file;
+
+        // Captura o conteúdo do buffer
+        $output = ob_get_clean();
+
+        return $output;
+    }
+
+    /**
+     * Carrega os arquivos com base em uma matriz no formato ajustado.
+     *
+     * @param array $config Configuração no formato ajustado.
+     */
+    public static function loadFromArray(array $config)
+    {
+        foreach ($config as $item) {
+            $folder = $item['path'] ?? null;
+            $files = $item['files'] ?? [];
+            $vars = $item['vars'] ?? [];
+
+            if (!$folder || empty($files)) {
+                continue; // Ignora entradas inválidas.
+            }
+
             $baseDir = __DIR__ . '/' . $folder . '/';
 
-            foreach ($files as $file) {
+            foreach ((array) $files as $file) {
                 $filePath = $baseDir . $file . '.php';
 
                 if (file_exists($filePath)) {
-                    $includeFileWithVars($filePath, $vars);
+                    self::includeFileWithVars($filePath, $vars);
                 } else {
-                    echo "Arquivo não encontrado: $filePath";
+                    echo "Arquivo não encontrado: $filePath\n";
                 }
             }
         }
     }
 
-    public static function getLoadedVariables($uniqueKey)
+    /**
+     * Carrega a configuração a partir de um arquivo JSON no mesmo formato.
+     *
+     * @param string $jsonFilePath Caminho para o arquivo JSON.
+     * @throws Exception Se o arquivo JSON não for encontrado ou inválido.
+     */
+    public static function loadFromJson(string $jsonFilePath)
     {
-        return isset(self::$loadedVariables[$uniqueKey]) ? self::$loadedVariables[$uniqueKey] : null;
+        if (!file_exists($jsonFilePath)) {
+            throw new Exception("Arquivo de configuração JSON não encontrado: $jsonFilePath");
+        }
+
+        $jsonContent = file_get_contents($jsonFilePath);
+        $config = json_decode($jsonContent, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception("Erro ao decodificar o arquivo JSON: " . json_last_error_msg());
+        }
+
+        self::loadFromArray($config);
+    }
+
+    /**
+     * Inclui o arquivo e injeta as variáveis no escopo.
+     *
+     * @param string $file Caminho do arquivo.
+     * @param array $vars Variáveis a serem injetadas.
+     */
+    private static function includeFileWithVars(string $file, array $vars)
+    {
+        $uniqueKey = realpath($file);
+        self::$loadedVariables[$uniqueKey] = $vars;
+
+        extract($vars);
+        include_once($file);
+    }
+
+    /**
+     * Retorna as variáveis carregadas para um arquivo específico.
+     *
+     * @param string $uniqueKey Caminho único do arquivo.
+     * @return array|null Variáveis carregadas ou null se não existir.
+     */
+    public static function getLoadedVariables(string $uniqueKey): ?array
+    {
+        return self::$loadedVariables[$uniqueKey] ?? null;
     }
 }
 
+// Função global para recuperar variáveis carregadas.
 if (!function_exists('getVars')) {
     function getVars()
     {
@@ -43,4 +120,3 @@ if (!function_exists('getVars')) {
         return Autoloader::getLoadedVariables($currentFile);
     }
 }
-?>

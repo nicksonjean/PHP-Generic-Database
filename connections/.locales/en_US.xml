@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n>
+  <label>
+		<name>env_not_found</name>
+		<value>Failed to load .env file.</value>
+	</label>
+	<label>
+		<name>file_not_found</name>
+		<value>File is not exists in {{database}}</value>
+	</label>
+	<label>
+		<name>connection_fail</name>
+		<value>Connection failed!</value>
+	</label>
+	<label>
+		<name>connection_success</name>
+		<value>{{label}} connected with {{method}}</value>
+	</label>
+	<label>
+		<name>connection_error</name>
+		<value>{{label}} not connected with {{method}}</value>
+	</label>
+	<label>
+		<name>extension</name>
+		<value>The extension {{extension}} not was loaded!</value>
+	</label>
+  <label>
+		<name>connections_success</name>
+		<value>{{label}} Connected with {{pdo}} and {{odbc}}</value>
+	</label>
+  <label>
+		<name>connections_error</name>
+		<value>{{label}} Not Connected with {{pdo}} and {{odbc}}</value>
+	</label>
+  <label>
+		<name>extensions</name>
+		<value>The Extensions {{pdo}} and {{odbc}} are not loaded!</value>
+	</label>
+ </i18n>

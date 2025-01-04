@@ -1,41 +1,196 @@
-<!DOCTYPE html>
-<link rel="stylesheet" href="assets/style.css">
-
-<h1>Connecting to Databases</h1>
-
 <?php
 require_once './functions.php';
 require_once './autoload.php';
-if (!load_env_file(dirname(__DIR__) . '/.env')) {
-    throw new Exception('Falha ao carregar o arquivo .env.');
+include_once "./i18n.php";
+
+$lang = filter_input(INPUT_GET, 'language') ?? 'en';
+$country = filter_input(INPUT_GET, 'country') ?? 'US';
+$i18n = new i18n("", $lang, $country);
+
+define('PROJECT_PATH', __DIR__);
+define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT']);
+
+if (!load_env_file(ROOT_PATH . '/.env')) {
+    throw new Exception($i18n->getLabel("env_not_found"));
 }
+?>
+<!DOCTYPE html>
+<html lang="en">
 
-Autoloader::load(
-    ['mysql', ['mysql'], ['label' => 'MySQL', 'extension' => 'mysqli', 'env' => 'MYSQL']],
-    ['pgsql', ['pgsql'], ['label' => 'PostgreSQL', 'extension' => 'pgsql', 'env' => 'PGSQL']],
-    ['sqlsrv', ['sqlsrv'], ['label' => 'SQL Server', 'extension' => 'sqlsrv', 'env' => 'SQLSRV']],
-    ['oci', ['oci'], ['label' => 'Oracle Server', 'extension' => 'oci8', 'env' => 'OCI']],
-    ['firebird', ['firebird'], ['label' => 'Firebird', 'extension' => 'interbase', 'env' => 'FBIRD']],
-    ['sqlite', ['sqlite'], ['label' => 'SQLite', 'extension' => 'sqlite3', 'env' => 'SQLITE']],
-    ['pdo', ['pdo'], ['pdo' => 'PDO', 'extension' => 'pdo']],
-    ['odbc', ['odbc'], ['odbc' => 'ODBC', 'extension' => 'odbc']]
-);
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Engines</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/index.css" rel="stylesheet">
+</head>
 
-// foreach (PDO::getAvailableDrivers() as $driver) {
-//     echo $driver . '<br />';
-// }
+<body>
+    <div class="container py-5">
+        <h2 class="text-center mb-4">Database Engines</h2>
+        <ul class="nav nav-tabs" id="engineTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="native-tab" data-bs-toggle="tab" data-bs-target="#native"
+                    type="button" role="tab">Native</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pdo-tab" data-bs-toggle="tab" data-bs-target="#pdo" type="button"
+                    role="tab">PDO</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="odbc-tab" data-bs-toggle="tab" data-bs-target="#odbc" type="button"
+                    role="tab">ODBC</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pdo-odbc-tab" data-bs-toggle="tab" data-bs-target="#pdo-odbc" type="button"
+                    role="tab">PDO + ODBC</button>
+            </li>
+        </ul>
 
-// https://www.connectionstrings.com/sqlite/
-// https://www.dbi-services.com/blog/installing-the-odbc-driver-manager-with-sqlite-on-linux/
+        <div class="tab-content p-4 border border-top-0 rounded-bottom" id="engineTabContent">
 
-// https://gist.github.com/amirkdv/9672857
-// https://stackoverflow.com/questions/61813881/how-to-access-mdb-data-source-in-php-linux
+            <!-- Native Tab -->
+            <div class="tab-pane fade show active" id="native" role="tabpanel">
+                <ul class="nav nav-pills mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="pill"
+                            data-bs-target="#native-mysql">MySQL</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill"
+                            data-bs-target="#native-postgresql">PostgreSQL</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#native-sqlserver">SQL
+                            Server</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#native-oracle">Oracle</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill"
+                            data-bs-target="#native-firebird">Firebird</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#native-sqlite">SQLite</button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <?php
+                    Autoloader::loadFromArray([['path' => 'native', 'files' => ['native'], 'vars' => ['lang' => $i18n]]]);
+                    ?>
+                </div>
+            </div>
 
-// https://stackoverflow.com/questions/18556047/php-odbc-connect-to-access-mdb-file-another-server
-// https://stackoverflow.com/questions/63707927/how-to-connect-to-microsoft-access-database-from-another-computer-through-odbc-c
 
+            <!-- PDO Tab -->
+            <div class="tab-pane fade" id="pdo" role="tabpanel">
+                <ul class="nav nav-pills mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pdo-mysql">MySQL</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill"
+                            data-bs-target="#pdo-postgresql">PostgreSQL</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pdo-sqlserver">SQL
+                            Server</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pdo-oracle">Oracle</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pdo-firebird">Firebird</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pdo-sqlite">SQLite</button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <?php
+                    Autoloader::loadFromArray([['path' => 'pdo', 'files' => ['pdo'], 'vars' => ['lang' => $i18n]]]);
+                    ?>
+                </div>
+            </div>
 
-// https://gist.github.com/treffynnon/294738
-// https://github.com/mpericay/apicollector/blob/master/lib/db/class.odbc.php
-// https://snipplr.com/view/24916/php-connection-class-odbc-v1
-// https://pt.stackoverflow.com/questions/115042/pdo-dblib-e-codificacao-utf-8
+            <!-- ODBC Tab -->
+            <div class="tab-pane fade" id="odbc" role="tabpanel">
+                <ul class="nav nav-pills mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="pill"
+                            data-bs-target="#odbc-mysql">MySQL</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill"
+                            data-bs-target="#odbc-postgresql">PostgreSQL</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#odbc-sqlserver">SQL
+                            Server</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#odbc-oracle">Oracle</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#odbc-firebird">Firebird</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#odbc-sqlite">SQLite</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#odbc-access">Access</button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <?php
+                    Autoloader::loadFromArray([['path' => 'odbc', 'files' => ['odbc'], 'vars' => ['lang' => $i18n]]]);
+                    ?>
+                </div>
+            </div>
+
+            <!-- PDO + ODBC Tab -->
+            <div class="tab-pane fade" id="pdo-odbc" role="tabpanel">
+                <ul class="nav nav-pills mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="pill"
+                            data-bs-target="#pdo-odbc-mysql">MySQL</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill"
+                            data-bs-target="#pdo-odbc-postgresql">PostgreSQL</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pdo-odbc-sqlserver">SQL
+                            Server</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pdo-odbc-oracle">Oracle</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill"
+                            data-bs-target="#pdo-odbc-firebird">Firebird</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pdo-odbc-sqlite">SQLite</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pdo-odbc-access">Access</button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <?php
+                    Autoloader::loadFromArray([['path' => 'pdo_odbc', 'files' => ['pdo_odbc'], 'vars' => ['lang' => $i18n]]]);
+                    ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
