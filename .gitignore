@@ -499,4 +499,4 @@ composer.lock
 .phpunit.result.cache
 ###< phpunit/phpunit ###
 
-resources/database/firebird/system/**
+resources/database/firebird/system/security3.fdb
