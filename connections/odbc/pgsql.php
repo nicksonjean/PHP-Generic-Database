@@ -1,7 +1,7 @@
 <div class="tab-pane fade" id="odbc-postgresql">
     <?php
 
-    $var = getVars();
+    $var = Autoloader::getLoadedVariables();
 
     $extension = $var['extension'] ?? '';
     $env = $var['env'] ?? '';

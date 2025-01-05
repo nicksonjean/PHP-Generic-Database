@@ -1,7 +1,7 @@
 <div class="tab-pane fade" id="pdo-odbc-firebird">
     <?php
 
-    $var = getVars();
+    $var = Autoloader::getLoadedVariables();
 
     $extensions = $var['extensions'] ?? '';
     $env = $var['env'] ?? '';

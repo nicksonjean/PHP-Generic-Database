@@ -1,17 +1,17 @@
 <?php
 require_once './functions.php';
 require_once './autoload.php';
-include_once "./i18n.php";
+require_once "./i18n.php";
 
 $lang = filter_input(INPUT_GET, 'language') ?? 'en';
 $country = filter_input(INPUT_GET, 'country') ?? 'US';
-$i18n = new i18n("", $lang, $country);
+$i18n = new i18n("", $lang, $country); // @phpstan-ignore-line
 
 define('PROJECT_PATH', __DIR__);
 define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT']);
 
 if (!load_env_file(ROOT_PATH . '/.env')) {
-    throw new Exception($i18n->getLabel("env_not_found"));
+    throw new Exception($i18n->getLabel("env_not_found")); // @phpstan-ignore-line
 }
 ?>
 <!DOCTYPE html>
@@ -77,7 +77,9 @@ if (!load_env_file(ROOT_PATH . '/.env')) {
                 </ul>
                 <div class="tab-content">
                     <?php
-                    Autoloader::loadFromArray([['path' => 'native', 'files' => ['native'], 'vars' => ['lang' => $i18n]]]);
+                    Autoloader::loadFromArray([
+                        ['path' => 'native', 'files' => ['native'], 'vars' => ['i18n' => $i18n]],
+                    ]);
                     ?>
                 </div>
             </div>
@@ -109,7 +111,9 @@ if (!load_env_file(ROOT_PATH . '/.env')) {
                 </ul>
                 <div class="tab-content">
                     <?php
-                    Autoloader::loadFromArray([['path' => 'pdo', 'files' => ['pdo'], 'vars' => ['lang' => $i18n]]]);
+                    Autoloader::loadFromArray([
+                        ['path' => 'pdo', 'files' => ['pdo'], 'vars' => ['i18n' => $i18n]],
+                    ]);
                     ?>
                 </div>
             </div>
@@ -144,7 +148,9 @@ if (!load_env_file(ROOT_PATH . '/.env')) {
                 </ul>
                 <div class="tab-content">
                     <?php
-                    Autoloader::loadFromArray([['path' => 'odbc', 'files' => ['odbc'], 'vars' => ['lang' => $i18n]]]);
+                    Autoloader::loadFromArray([
+                        ['path' => 'odbc', 'files' => ['odbc'], 'vars' => ['i18n' => $i18n]],
+                    ]);
                     ?>
                 </div>
             </div>
@@ -180,7 +186,9 @@ if (!load_env_file(ROOT_PATH . '/.env')) {
                 </ul>
                 <div class="tab-content">
                     <?php
-                    Autoloader::loadFromArray([['path' => 'pdo_odbc', 'files' => ['pdo_odbc'], 'vars' => ['lang' => $i18n]]]);
+                    Autoloader::loadFromArray([
+                        ['path' => 'pdo_odbc', 'files' => ['pdo_odbc'], 'vars' => ['i18n' => $i18n]]
+                    ]);
                     ?>
                 </div>
             </div>

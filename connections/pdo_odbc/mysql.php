@@ -1,7 +1,7 @@
 <div class="tab-pane fade show active" id="pdo-odbc-mysql">
     <?php
 
-    $var = getVars();
+    $var = Autoloader::getLoadedVariables();
 
     $extensions = $var['extensions'] ?? '';
     $env = $var['env'] ?? '';
@@ -22,12 +22,14 @@
 
             $instance = new PDO(
                 vsprintf(
-                    "odbc:Driver={MySQL ODBC 8.0 Unicode Driver};Server=%s;Port=%s;DBQ=%s;Charset=%s",
+                    "odbc:Driver={MySQL ODBC 9.1 ANSI Driver};Server=%s;Port=%s;Database=%s;User=%s;Password=%s;Charset=%s;Option=3",
                     [
                         $_ENV["{$env}_HOST"],
                         $_ENV["{$env}_PORT"],
                         $_ENV["{$env}_DATABASE"],
-                        $_ENV["{$env}_CHARSET"]
+                        $_ENV["{$env}_USER"],
+                        $_ENV["{$env}_PASSWORD"],
+                        $_ENV["{$env}_CHARSET"],
                     ]
                 ),
                 $_ENV["{$env}_USER"],

@@ -1,7 +1,9 @@
 <?php
+
+$GLOBALS['loadedVariables'] = [];
+
 class Autoloader
 {
-    private static $loadedVariables = [];
 
     /**
      * Renderiza um arquivo com variáveis no escopo e retorna a saída como string.
@@ -93,7 +95,7 @@ class Autoloader
     private static function includeFileWithVars(string $file, array $vars)
     {
         $uniqueKey = realpath($file);
-        self::$loadedVariables[$uniqueKey] = $vars;
+        $GLOBALS['loadedVariables'][$uniqueKey] = $vars;
 
         extract($vars);
         include_once($file);
@@ -105,9 +107,15 @@ class Autoloader
      * @param string $uniqueKey Caminho único do arquivo.
      * @return array|null Variáveis carregadas ou null se não existir.
      */
-    public static function getLoadedVariables(string $uniqueKey): ?array
+    public static function getLoadedVariables(string $uniqueKey = ''): ?array
     {
-        return self::$loadedVariables[$uniqueKey] ?? null;
+        if (empty($uniqueKey)) { {
+                $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+                $currentFile = realpath($backtrace[0]['file']);
+                return $GLOBALS['loadedVariables'][$currentFile] ?? null;
+            }
+        }
+        return $GLOBALS['loadedVariables'][$uniqueKey] ?? null;
     }
 }
 

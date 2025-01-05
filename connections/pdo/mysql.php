@@ -1,7 +1,7 @@
 <div class="tab-pane fade show active" id="pdo-mysql">
     <?php
 
-    $var = getVars();
+    $var = Autoloader::getLoadedVariables();
 
     $extension = $var['extension'] ?? '';
     $env = $var['env'] ?? '';
