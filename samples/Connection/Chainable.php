@@ -149,18 +149,22 @@ try {
     var_dump($e);
 }
 
-try {
-    $context = Chainable::odbcExcel(env: $_ENV, persistent: true, strategy: true)->connect();
-    var_dump($context);
-} catch (Exception $e) {
-    var_dump($e);
-}
+if (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 
-try {
-    $context = Chainable::odbcText(env: $_ENV, persistent: true, strategy: true)->connect();
-    var_dump($context);
-} catch (Exception $e) {
-    var_dump($e);
+    try {
+        $context = Chainable::odbcExcel(env: $_ENV, persistent: true, strategy: true)->connect();
+        var_dump($context);
+    } catch (Exception $e) {
+        var_dump($e);
+    }
+
+    try {
+        $context = Chainable::odbcText(env: $_ENV, persistent: true, strategy: true)->connect();
+        var_dump($context);
+    } catch (Exception $e) {
+        var_dump($e);
+    }
+
 }
 
 try {

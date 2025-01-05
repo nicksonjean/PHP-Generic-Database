@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n>
+  <label>
+		<name>title</name>
+		<value>Testes de conexão do motor/driver de banco de dados</value>
+	</label>
+  <label>
+		<name>native</name>
+		<value>Nativo</value>
+	</label>
+  <label>
+		<name>env_not_found</name>
+		<value>Falha ao carregar o arquivo .env.</value>
+	</label>
 	<label>
 		<name>file_not_found</name>
 		<value>Arquivo não foi encontrado em {{database}}</value>
@@ -19,10 +31,6 @@
 	<label>
 		<name>extension</name>
 		<value>A extensão {{extension}} não foi carregada!</value>
-	</label>
-  <label>
-		<name>env_not_found</name>
-		<value>Falha ao carregar o arquivo .env.</value>
 	</label>
   <label>
 		<name>connections_success</name>

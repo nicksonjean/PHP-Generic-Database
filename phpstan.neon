@@ -15,3 +15,7 @@ parameters:
 		- '#Function check_params not found#'
 		- '#Function vsprintf_assoc not found#'
 		- '#Function load_env_file not found#'
+		- '#Instantiated class i18n not found#'
+		- '#Call to method getLabel\(\) on an unknown class i18n#'
+		- '#Call to static method getLoadedVariables\(\) on an unknown class Autoloader#'
+		- '#Call to static method loadFromArray\(\) on an unknown class Autoloader#'

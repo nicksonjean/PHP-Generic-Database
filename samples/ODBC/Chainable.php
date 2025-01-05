@@ -16,65 +16,69 @@ try {
     var_dump($e);
 }
 
-// try {
-//     $context = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
-//     var_dump($context);
-// } catch (Exception $e) {
-//     var_dump($e);
-// }
+try {
+    $context = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-// try {
-//     $context = Chainable::odbcSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
-//     var_dump($context);
-// } catch (Exception $e) {
-//     var_dump($e);
-// }
+try {
+    $context = Chainable::odbcSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-// try {
-//     $context = Chainable::odbcOCI(env: $_ENV, persistent: true, strategy: false)->connect();
-//     var_dump($context);
-// } catch (Exception $e) {
-//     var_dump($e);
-// }
+try {
+    $context = Chainable::odbcOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-// try {
-//     $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
-//     var_dump($context);
-// } catch (Exception $e) {
-//     var_dump($e);
-// }
+try {
+    $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-// try {
-//     $context = Chainable::odbcAccess(env: $_ENV, persistent: true, strategy: false)->connect();
-//     var_dump($context);
-// } catch (Exception $e) {
-//     var_dump($e);
-// }
+try {
+    $context = Chainable::odbcAccess(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
 
-// try {
-//     $context = Chainable::odbcExcel(env: $_ENV, persistent: true, strategy: false)->connect();
-//     var_dump($context);
-// } catch (Exception $e) {
-//     var_dump($e);
-// }
+if (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 
-// try {
-//     $context = Chainable::odbcText(env: $_ENV, persistent: true, strategy: false)->connect();
-//     var_dump($context);
-// } catch (Exception $e) {
-//     var_dump($e);
-// }
+    try {
+        $context = Chainable::odbcExcel(env: $_ENV, persistent: true, strategy: false)->connect();
+        var_dump($context);
+    } catch (Exception $e) {
+        var_dump($e);
+    }
 
-// try {
-//     $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
-//     var_dump($context);
-// } catch (Exception $e) {
-//     var_dump($e);
-// }
+    try {
+        $context = Chainable::odbcText(env: $_ENV, persistent: true, strategy: false)->connect();
+        var_dump($context);
+    } catch (Exception $e) {
+        var_dump($e);
+    }
 
-// try {
-//     $context = Chainable::odbcMemory(env: $_ENV, persistent: true, strategy: false)->connect();
-//     var_dump($context);
-// } catch (Exception $e) {
-//     var_dump($e);
-// }
+}
+
+try {
+    $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Chainable::odbcMemory(env: $_ENV, persistent: true, strategy: false)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}

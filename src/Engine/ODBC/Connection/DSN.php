@@ -99,7 +99,7 @@ class DSN
                     "Driver={%s};DBQ=%s;UID=%s;PWD=%s;Charset=%s;ExtendedAnsiSQL=1;",
                     ODBC::getAliasByDriver(
                         ODBCConnection::getInstance()->getDriver(),
-                        (PHP_OS === 'Windows') ? $extension : null
+                        (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? $extension : null
                     ),
                     ODBCConnection::getInstance()->getDatabase(),
                     ODBCConnection::getInstance()->getUser(),
@@ -152,8 +152,9 @@ class DSN
                 }
                 break;
             case 'oci':
+                $server = (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? 'Server' : 'DBQ';
                 $result = sprintf(
-                    "Driver={%s};Server=%s:%s/%s;UID=%s;PWD=%s;Charset=%s;",
+                    "Driver={%s};$server=%s:%s/%s;UID=%s;PWD=%s;Charset=%s;",
                     ODBC::getAliasByDriver(ODBCConnection::getInstance()->getDriver()),
                     ODBCConnection::getInstance()->getHost(),
                     ODBCConnection::getInstance()->getPort(),

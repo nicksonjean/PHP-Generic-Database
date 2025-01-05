@@ -49,6 +49,11 @@
         "alias": "\/SQLite\\d{0,1} ODBC Driver\/"
     },
     {
+      "driver": "sqlite",
+      "type": "odbc",
+      "alias": "\/SQLite\\d{0,1}\/"
+    },
+    {
         "driver": "sqlsrv",
         "type": "odbc",
         "default": true,
@@ -76,6 +81,11 @@
         "alias": "\/Oracle in|em OraDB\\d{2}Home\\d{0,1}.*\\\/\/"
     },
     {
+      "driver": "oci",
+      "type": "native",
+      "alias": "\/Oracle \\d{2} ODBC driver\/"
+    },
+    {
         "driver": "oci",
         "type": "native",
         "alias": "\/Microsoft ODBC for Oracle\/"
@@ -83,13 +93,23 @@
     {
         "driver": "pgsql",
         "type": "ansi",
-        "default": true,
-        "alias": "\/PostgreSQL ANSI\\(x\\d{2}\\)\/"
+        "alias": "\/PostgreSQL ANSI\/"
     },
     {
         "driver": "pgsql",
         "type": "unicode",
-        "alias": "\/PostgreSQL Unicode\\(x\\d{2}\\)\/"
+        "alias": "\/PostgreSQL Unicode\/"
+    },
+    {
+      "driver": "pgsql",
+      "type": "ansi",
+      "default": true,
+      "alias": "\/PostgreSQL ANSI\\(x\\d{2}\\)?\/"
+    },
+    {
+        "driver": "pgsql",
+        "type": "unicode",
+        "alias": "\/PostgreSQL Unicode\\(x\\d{2}\\)?\/"
     },
     {
         "driver": "mysql",

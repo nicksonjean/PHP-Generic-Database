@@ -64,11 +64,30 @@ function load_env_file($filePath)
 
 function set_message($type = 'success', $message = '')
 {
+    if ($type === 'primary') {
+        $label = 'Info';
+        $icon = 'info-fill';
+    } else if ($type === 'success') {
+        $label = ucfirst($type);
+        $icon = 'check-circle-fill';
+    } else if ($type === 'warning') {
+        $label = ucfirst($type);
+        $icon = 'exclamation-triangle-fill';
+    } else {
+        $label = ucfirst($type);
+        $icon = 'exclamation-triangle-fill';
+    }
     return vsprintf(
-        '<p style="color: %s; font-weight: bold;">%s %s</p>',
+        '<div class="alert alert-%s d-flex align-items-center m-0" role="alert">
+            <svg class="bi flex-shrink-0 me-2" role="img" aria-label="%s:"><use xlink:href="#%s"/></svg>
+            <div>
+                %s
+            </div>
+        </div>',
         [
-            $type === 'success' ? 'green' : 'red',
-            $type === 'success' ? '✔️' : '❌',
+            $type,
+            $label,
+            $icon,
             $message
         ]
     );

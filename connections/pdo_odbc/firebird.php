@@ -45,7 +45,7 @@
 
         } catch (Exception $e) {
 
-            echo set_message('error', $lang->getLabelVars('connections_error', ['label' => $label, 'pdo' => strtoupper($extensions[0]), 'odbc' => strtoupper($extensions[1])]));
+            echo set_message('warning', $lang->getLabelVars('connections_error', ['label' => $label, 'pdo' => strtoupper($extensions[0]), 'odbc' => strtoupper($extensions[1])]));
             if (check_params('show_errors')) {
                 var_dump($e->getMessage());
             }
@@ -55,7 +55,7 @@
         }
 
     } else {
-        echo set_message('error', $lang->getLabelVars('extensions', ['pdo' => strtoupper($extensions[0]), 'odbc' => strtoupper($extensions[1])]));
+        echo set_message('danger', $lang->getLabelVars('extensions', ['pdo' => strtoupper($extensions[0]), 'odbc' => strtoupper($extensions[1])]));
     }
     ?>
 </div>

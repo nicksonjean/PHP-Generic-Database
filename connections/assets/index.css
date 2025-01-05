@@ -28,7 +28,7 @@
 }
 
 .tab-content {
-    padding: 1rem;
+    /*padding: 1rem;*/
     background-color: #fff;
 }
 
@@ -36,4 +36,10 @@
     padding: 1rem;
     background-color: #f8f9fa;
     border-radius: 0.25rem;
+}
+.bi {
+    width: 1em;
+    height: 1em;
+    vertical-align: -.125em;
+    fill: currentcolor;
 }

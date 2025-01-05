@@ -45,7 +45,7 @@
 
         } catch (Exception $e) {
 
-            echo set_message('error', $lang->getLabelVars('connection_error', ['label' => $label, 'method' => strtoupper($method)]));
+            echo set_message('warning', $lang->getLabelVars('connection_error', ['label' => $label, 'method' => $method]));
             if (check_params('show_errors')) {
                 var_dump($e->getMessage());
             }
@@ -55,7 +55,7 @@
         }
 
     } else {
-        echo set_message('error', $lang->getLabelVars('extension', ['extension' => strtoupper($extension)]));
+        echo set_message('danger', $lang->getLabelVars('extension', ['extension' => $extension]));
     }
     ?>
 </div>
