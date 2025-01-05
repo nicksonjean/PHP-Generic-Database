@@ -34,7 +34,7 @@
 	</label>
   <label>
 		<name>connections_success</name>
-		<value>{{label}} Connected with {{pdo}} and {{odbc}}</value>
+		<value>{{label}} connected with {{pdo}} and {{odbc}}</value>
 	</label>
   <label>
 		<name>connections_error</name>
