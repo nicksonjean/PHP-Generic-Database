@@ -1,20 +1,4 @@
 <?php
-/**
- * Verifica se um parâmetro $_GET existe e possui um valor positivo.
- *
- * @param string $param Nome do parâmetro a ser verificado.
- * @return bool Retorna true se o parâmetro existir e for positivo, false caso contrário.
- */
-
-function check_params($param)
-{
-    if (isset($_GET[$param])) {
-        $value = $_GET[$param];
-        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === true;
-    }
-    return false;
-}
-
 function vsprintf_assoc($format, $values)
 {
     $formattedString = vsprintf($format, $values);

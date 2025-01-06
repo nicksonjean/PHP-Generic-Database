@@ -39,14 +39,14 @@
             }
 
             echo set_message('success', $lang->getLabelVars('connections_success', ['label' => $label, 'pdo' => strtoupper($extensions[0]), 'odbc' => strtoupper($extensions[1])]));
-            if (check_params('show_objects')) {
+            if (filter_input(INPUT_GET, 'debug', FILTER_VALIDATE_BOOLEAN)) {
                 var_dump($instance);
             }
 
         } catch (Exception $e) {
 
             echo set_message('warning', $lang->getLabelVars('connections_error', ['label' => $label, 'pdo' => strtoupper($extensions[0]), 'odbc' => strtoupper($extensions[1])]));
-            if (check_params('show_errors')) {
+            if (filter_input(INPUT_GET, 'debug', FILTER_VALIDATE_BOOLEAN)) {
                 var_dump($e->getMessage());
             }
 
