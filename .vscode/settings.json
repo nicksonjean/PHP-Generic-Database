@@ -5,7 +5,7 @@
     "**/cache/**": true,
     "**/vendor/**": true,
     "**/.stubs/**": true,
-    "**/_devcontainer/**": true,
+    "**/.devcontainer/**": true,
   },
   "CodeGPT.apiKey": "Google AI Studio",
   "php.version": "8.3",

@@ -16,22 +16,11 @@ if (!load_env_file(ROOT_PATH . '/.env')) {
     throw new Exception($i18n->getLabel("env_not_found"));
 }
 
-// Definir textos baseados no idioma atual
 $isEnglish = $lang === 'en';
-$dropdownLabel = $isEnglish ? 'Language' : 'Idioma';
 $translateText = $isEnglish ? 'Traduzir para Português' : 'Translate to English';
-$debugText = $isEnglish ? 'Debug Mode' : 'Modo Debug';
 $targetLanguage = $isEnglish ? 'pt' : 'en';
 $targetCountry = $isEnglish ? 'BR' : 'US';
-$currentFlag = strtolower($country);
 $targetFlag = strtolower($targetCountry);
-
-function buildUrl($params = [])
-{
-    $currentParams = $_GET;
-    $newParams = array_merge($currentParams, $params);
-    return '?' . http_build_query($newParams);
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,6 +29,8 @@ function buildUrl($params = [])
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $i18n->getLabel("title"); ?></title>
+    <link rel="icon" href="../favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/index.css" rel="stylesheet">
 </head>
@@ -85,11 +76,15 @@ function buildUrl($params = [])
             </ul>
 
             <div class="dropdown ms-3">
-                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
-                    <img src="https://flagcdn.com/24x18/<?php echo $currentFlag; ?>.png" alt="<?php echo $country; ?>"
-                        width="24" height="18" class="me-2">
-                    <?php echo $dropdownLabel; ?>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-gear" viewBox="0 0 16 16">
+                        <path
+                            d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+                        <path
+                            d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+                    </svg>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
@@ -111,11 +106,12 @@ function buildUrl($params = [])
                                 <path
                                     d="M4.355.522a.5.5 0 0 1 .623.333l.291.956A4.979 4.979 0 0 1 8 1c1.007 0 1.946.298 2.731.811l.29-.956a.5.5 0 1 1 .957.29l-.41 1.352A4.985 4.985 0 0 1 13 6h.5a.5.5 0 0 0 .5-.5V5a.5.5 0 0 1 1 0v.5A1.5 1.5 0 0 1 13.5 7H13v1h1.5a.5.5 0 0 1 0 1H13v1h.5a1.5 1.5 0 0 1 1.5 1.5v.5a.5.5 0 1 1-1 0v-.5a.5.5 0 0 0-.5-.5H13a5 5 0 0 1-10 0h-.5a.5.5 0 0 0-.5.5v.5a.5.5 0 1 1-1 0v-.5A1.5 1.5 0 0 1 2.5 10H3V9H1.5a.5.5 0 0 1 0-1H3V7h-.5A1.5 1.5 0 0 1 1 5.5V5a.5.5 0 0 1 1 0v.5a.5.5 0 0 0 .5.5H3c0-1.364.547-2.601 1.432-3.503l-.41-1.352a.5.5 0 0 1 .333-.623zM4 7v4a4 4 0 0 0 3.5 3.97V7H4zm4.5 0v7.97A4 4 0 0 0 12 11V7H8.5zM12 6a3.989 3.989 0 0 0-1.334-2.982A3.983 3.983 0 0 0 8 2a3.983 3.983 0 0 0-2.667 1.018A3.989 3.989 0 0 0 4 6h8z" />
                             </svg>
-                            <?php echo $debugText; ?>
+                            <?php echo $i18n->getLabel("debug"); ?>
                         </a>
                     </li>
                 </ul>
             </div>
+
         </div>
 
         <div class="tab-content p-4 border border-top-0 rounded-bottom" id="engineTabContent">

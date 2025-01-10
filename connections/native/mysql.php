@@ -22,7 +22,7 @@
 
             $instance = mysqli_connect(
                 $_ENV["{$env}_HOST"],
-                $_ENV["{$env}_USER"],
+                $_ENV["{$env}_USERNAME"],
                 $_ENV["{$env}_PASSWORD"],
                 $_ENV["{$env}_DATABASE"],
                 $_ENV["{$env}_PORT"],

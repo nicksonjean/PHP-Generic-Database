@@ -29,7 +29,7 @@ $connection
 ->setHost($_ENV['MYSQL_HOST'])
 ->setPort(+$_ENV['MYSQL_PORT'])
 ->setDatabase($_ENV['MYSQL_DATABASE'])
-->setUser($_ENV['MYSQL_USER'])
+->setUser($_ENV['MYSQL_USERNAME'])
 ->setPassword($_ENV['MYSQL_PASSWORD'])
 ->setCharset('utf8')
 ->setOptions([

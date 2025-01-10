@@ -34,10 +34,14 @@ $access = ODBCConnection::new(PATH_ROOT . '/resources/dsn/ini/odbc_access.ini')-
 
 var_dump($access);
 
-$excel = ODBCConnection::new(PATH_ROOT . '/resources/dsn/ini/odbc_excel.ini')->connect();
+if (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 
-var_dump($excel);
+    $excel = ODBCConnection::new(PATH_ROOT . '/resources/dsn/ini/odbc_excel.ini')->connect();
 
-$text = ODBCConnection::new(PATH_ROOT . '/resources/dsn/ini/odbc_text.ini')->connect();
+    var_dump($excel);
 
-var_dump($text);
+    $text = ODBCConnection::new(PATH_ROOT . '/resources/dsn/ini/odbc_text.ini')->connect();
+
+    var_dump($text);
+
+}

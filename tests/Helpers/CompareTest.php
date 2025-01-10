@@ -30,7 +30,7 @@ final class CompareTest extends TestCase
     {
         $connection = new MySQLi(
             self::$env['MYSQL_HOST'],
-            self::$env['MYSQL_USER'],
+            self::$env['MYSQL_USERNAME'],
             self::$env['MYSQL_PASSWORD'],
             self::$env['MYSQL_DATABASE']
         );
@@ -106,7 +106,7 @@ final class CompareTest extends TestCase
                 self::$env['MYSQL_HOST'],
                 self::$env['MYSQL_DATABASE']
             ),
-            self::$env['MYSQL_USER'],
+            self::$env['MYSQL_USERNAME'],
             self::$env['MYSQL_PASSWORD']
         );
 

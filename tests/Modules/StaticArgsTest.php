@@ -29,7 +29,7 @@ class StaticArgsTest extends TestCase
             'MYSQL_HOST' => 'localhost',
             'MYSQL_PORT' => '3306',
             'MYSQL_DATABASE' => 'demodev',
-            'MYSQL_USER' => 'root',
+            'MYSQL_USERNAME' => 'root',
             'MYSQL_PASSWORD' => 'masterkey',
             'MYSQL_CHARSET' => 'utf8',
         ];

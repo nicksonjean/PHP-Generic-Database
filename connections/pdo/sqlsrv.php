@@ -29,7 +29,7 @@
                         $_ENV["{$env}_DATABASE"],
                     ]
                 ),
-                $_ENV["{$env}_USER"],
+                $_ENV["{$env}_USERNAME"],
                 $_ENV["{$env}_PASSWORD"],
             );
 

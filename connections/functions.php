@@ -46,6 +46,13 @@ function load_env_file($filePath)
     return true;
 }
 
+function buildUrl($params = [])
+{
+    $currentParams = $_GET;
+    $newParams = array_merge($currentParams, $params);
+    return '?' . http_build_query($newParams);
+}
+
 function set_message($type = 'success', $message = '')
 {
     if ($type === 'primary') {

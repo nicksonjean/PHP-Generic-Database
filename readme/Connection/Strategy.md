@@ -36,7 +36,7 @@ $connection
 ->setHost($env['MYSQL_HOST'])
 ->setPort((int)$env['MYSQL_PORT'])
 ->setDatabase($env['MYSQL_DATABASE'])
-->setUser($env['MYSQL_USER'])
+->setUser($env['MYSQL_USERNAME'])
 ->setPassword($env['MYSQL_PASSWORD'])
 ->setCharset($env['MYSQL_CHARSET'])
 ->setOptions([
@@ -62,7 +62,7 @@ $connection = Connection
 ::setHost($env['MYSQL_HOST'])
 ::setPort((int)$env['MYSQL_PORT'])
 ::setDatabase($env['MYSQL_DATABASE'])
-::setUser($env['MYSQL_USER'])
+::setUser($env['MYSQL_USERNAME'])
 ::setPassword($env['MYSQL_PASSWORD'])
 ::setCharset($env['MYSQL_CHARSET'])
 ::setOptions([
@@ -88,7 +88,7 @@ $connection = Connection::new(
     host: $_ENV['MYSQL_HOST'],
     port: (int)$_ENV['MYSQL_PORT'],
     database: $_ENV['MYSQL_DATABASE'],
-    user: $_ENV['MYSQL_USER'],
+    user: $_ENV['MYSQL_USERNAME'],
     password: $_ENV['MYSQL_PASSWORD'],
     charset: 'utf8',
     options: [
@@ -115,7 +115,7 @@ $connection = Connection::new([
     'host' => $_ENV['MYSQL_HOST'],
     'port' => (int)$_ENV['MYSQL_PORT'],
     'database' => $_ENV['MYSQL_DATABASE'],
-    'user' => $_ENV['MYSQL_USER'],
+    'user' => $_ENV['MYSQL_USERNAME'],
     'password' => $_ENV['MYSQL_PASSWORD'],
     'charset' => 'utf8',
     'options' => [

@@ -31,7 +31,7 @@
                         $_ENV["{$env}_CHARSET"]
                     ]
                 ),
-                $_ENV["{$env}_USER"],
+                $_ENV["{$env}_USERNAME"],
                 $_ENV["{$env}_PASSWORD"]
             );
 

@@ -44,7 +44,7 @@ class Chainable
         $instance->setHost($env['MYSQL_HOST'])
             ->setPort((int) $env['MYSQL_PORT'])
             ->setDatabase($env['MYSQL_DATABASE'])
-            ->setUser($env['MYSQL_USER'])
+            ->setUser($env['MYSQL_USERNAME'])
             ->setPassword($env['MYSQL_PASSWORD'])
             ->setCharset($env['MYSQL_CHARSET'])
             ->setOptions([
@@ -83,7 +83,7 @@ class Chainable
         $instance->setHost($env['PGSQL_HOST'])
             ->setPort((int) $env['PGSQL_PORT'])
             ->setDatabase($env['PGSQL_DATABASE'])
-            ->setUser($env['PGSQL_USER'])
+            ->setUser($env['PGSQL_USERNAME'])
             ->setPassword($env['PGSQL_PASSWORD'])
             ->setCharset($env['PGSQL_CHARSET'])
             ->setOptions([
@@ -118,7 +118,7 @@ class Chainable
         $instance->setHost($env['SQLSRV_HOST'])
             ->setPort((int) $env['SQLSRV_PORT'])
             ->setDatabase($env['SQLSRV_DATABASE'])
-            ->setUser($env['SQLSRV_USER'])
+            ->setUser($env['SQLSRV_USERNAME'])
             ->setPassword($env['SQLSRV_PASSWORD'])
             ->setCharset($env['SQLSRV_CHARSET'])
             ->setOptions([
@@ -151,7 +151,7 @@ class Chainable
         $instance->setHost($env['OCI_HOST'])
             ->setPort((int) $env['OCI_PORT'])
             ->setDatabase($env['OCI_DATABASE'])
-            ->setUser($env['OCI_USER'])
+            ->setUser($env['OCI_USERNAME'])
             ->setPassword($env['OCI_PASSWORD'])
             ->setCharset($env['OCI_CHARSET'])
             ->setOptions([
@@ -184,7 +184,7 @@ class Chainable
         $instance->setHost($env['FBIRD_HOST'])
             ->setPort((int) $env['FBIRD_PORT'])
             ->setDatabase($env['FBIRD_DATABASE'])
-            ->setUser($env['FBIRD_USER'])
+            ->setUser($env['FBIRD_USERNAME'])
             ->setPassword($env['FBIRD_PASSWORD'])
             ->setCharset($env['FBIRD_CHARSET'])
             ->setOptions([
@@ -284,7 +284,7 @@ class Chainable
             ->setHost($env['MYSQL_HOST'])
             ->setPort((int) $env['MYSQL_PORT'])
             ->setDatabase($env['MYSQL_DATABASE'])
-            ->setUser($env['MYSQL_USER'])
+            ->setUser($env['MYSQL_USERNAME'])
             ->setPassword($env['MYSQL_PASSWORD'])
             ->setCharset($env['MYSQL_CHARSET'])
             ->setOptions([
@@ -318,7 +318,7 @@ class Chainable
             ->setHost($env['PGSQL_HOST'])
             ->setPort((int) $env['PGSQL_PORT'])
             ->setDatabase($env['PGSQL_DATABASE'])
-            ->setUser($env['PGSQL_USER'])
+            ->setUser($env['PGSQL_USERNAME'])
             ->setPassword($env['PGSQL_PASSWORD'])
             ->setCharset('utf8')
             ->setOptions([
@@ -350,7 +350,7 @@ class Chainable
             ->setHost($env['SQLSRV_HOST'])
             ->setPort((int) $env['SQLSRV_PORT'])
             ->setDatabase($env['SQLSRV_DATABASE'])
-            ->setUser($env['SQLSRV_USER'])
+            ->setUser($env['SQLSRV_USERNAME'])
             ->setPassword($env['SQLSRV_PASSWORD'])
             ->setCharset($env['SQLSRV_CHARSET'])
             ->setOptions([
@@ -383,7 +383,7 @@ class Chainable
             ->setHost($env['OCI_HOST'])
             ->setPort((int) $env['OCI_PORT'])
             ->setDatabase($env['OCI_DATABASE'])
-            ->setUser($env['OCI_USER'])
+            ->setUser($env['OCI_USERNAME'])
             ->setPassword($env['OCI_PASSWORD'])
             ->setCharset($env['OCI_CHARSET'])
             ->setOptions([
@@ -417,7 +417,7 @@ class Chainable
             ->setHost($env['FBIRD_HOST'])
             ->setPort((int) $env['FBIRD_PORT'])
             ->setDatabase($env['FBIRD_DATABASE'])
-            ->setUser($env['FBIRD_USER'])
+            ->setUser($env['FBIRD_USERNAME'])
             ->setPassword($env['FBIRD_PASSWORD'])
             ->setCharset($env['FBIRD_CHARSET'])
             ->setOptions([
@@ -511,7 +511,7 @@ class Chainable
             ->setHost($env['MYSQL_HOST'])
             ->setPort((int) $env['MYSQL_PORT'])
             ->setDatabase($env['MYSQL_DATABASE'])
-            ->setUser($env['MYSQL_USER'])
+            ->setUser($env['MYSQL_USERNAME'])
             ->setPassword($env['MYSQL_PASSWORD'])
             ->setCharset($env['MYSQL_CHARSET'])
             ->setOptions([
@@ -544,7 +544,7 @@ class Chainable
             ->setHost($env['PGSQL_HOST'])
             ->setPort((int) $env['PGSQL_PORT'])
             ->setDatabase($env['PGSQL_DATABASE'])
-            ->setUser($env['PGSQL_USER'])
+            ->setUser($env['PGSQL_USERNAME'])
             ->setPassword($env['PGSQL_PASSWORD'])
             ->setCharset($env['PGSQL_CHARSET'])
             ->setOptions([
@@ -578,7 +578,7 @@ class Chainable
             ->setHost($env['SQLSRV_HOST'])
             ->setPort((int) $env['SQLSRV_PORT'])
             ->setDatabase($env['SQLSRV_DATABASE'])
-            ->setUser($env['SQLSRV_USER'])
+            ->setUser($env['SQLSRV_USERNAME'])
             ->setPassword($env['SQLSRV_PASSWORD'])
             ->setCharset($env['SQLSRV_CHARSET'])
             ->setOptions([
@@ -612,7 +612,7 @@ class Chainable
             ->setHost($env['OCI_HOST'])
             ->setPort((int) $env['OCI_PORT'])
             ->setDatabase($env['OCI_DATABASE'])
-            ->setUser($env['OCI_USER'])
+            ->setUser($env['OCI_USERNAME'])
             ->setPassword($env['OCI_PASSWORD'])
             ->setCharset($env['OCI_CHARSET'])
             ->setOptions([
@@ -646,7 +646,7 @@ class Chainable
             ->setHost($env['FBIRD_HOST'])
             ->setPort((int) $env['FBIRD_PORT'])
             ->setDatabase($env['FBIRD_DATABASE'])
-            ->setUser($env['FBIRD_USER'])
+            ->setUser($env['FBIRD_USERNAME'])
             ->setPassword($env['FBIRD_PASSWORD'])
             ->setCharset($env['FBIRD_CHARSET'])
             ->setOptions([
@@ -708,7 +708,7 @@ class Chainable
         }
         $instance->setDriver('access')
             ->setDatabase($env['ACCESS_DATABASE'])
-            ->setUser($env['ACCESS_USER'])
+            ->setUser($env['ACCESS_USERNAME'])
             ->setPassword($env['ACCESS_PASSWORD'])
             ->setCharset($env['ACCESS_CHARSET'])
             ->setOptions([

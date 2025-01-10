@@ -12,10 +12,16 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 $contextA = Chainable::odbcMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 
+// $testA = $contextA->prepare(
+//     'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM estado WHERE id >= :id',
+//     [':id' => 10]
+// );
+
 $testA = $contextA->prepare(
-    'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM estado WHERE id >= :id',
-    [':id' => 10]
+    'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM estado WHERE id >= :idA AND id <= :idB',
+    [':idA' => 1, ':idB' => rand(2, 27)]
 );
+
 
 var_dump($testA);
 
@@ -26,6 +32,8 @@ while ($row = $testA->fetch(Connection::FETCH_BOTH)) {
 }
 
 echo '<hr>';
+
+die();
 
 $contextB = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 
@@ -107,48 +115,52 @@ while ($row = $testF->fetch(Connection::FETCH_BOTH)) {
 
 echo '<hr>';
 
-$contextG = Chainable::odbcAccess(env: $_ENV, persistent: true, strategy: false)->connect();
+if (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 
-$testG = $contextG->query(
-    'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM estado WHERE id NOT IN(25, 26, 27) ORDER BY id'
-);
+    $contextG = Chainable::odbcAccess(env: $_ENV, persistent: true, strategy: false)->connect();
 
-var_dump($testG);
+    $testG = $contextG->query(
+        'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM estado WHERE id NOT IN(25, 26, 27) ORDER BY id'
+    );
 
-var_dump($testG->getAllMetadata());
+    var_dump($testG);
 
-while ($row = $testG->fetch(Connection::FETCH_BOTH)) {
-    var_dump($row);
-}
+    var_dump($testG->getAllMetadata());
 
-echo '<hr>';
+    while ($row = $testG->fetch(Connection::FETCH_BOTH)) {
+        var_dump($row);
+    }
 
-$contextH = Chainable::odbcExcel(env: $_ENV, persistent: true, strategy: false)->connect();
+    echo '<hr>';
 
-$testH = $contextH->query(
-    'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM [estado$] WHERE id NOT IN(25, 26, 27) ORDER BY id'
-);
+    $contextH = Chainable::odbcExcel(env: $_ENV, persistent: true, strategy: false)->connect();
 
-var_dump($testH);
+    $testH = $contextH->query(
+        'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM [estado$] WHERE id NOT IN(25, 26, 27) ORDER BY id'
+    );
 
-var_dump($testH->getAllMetadata());
+    var_dump($testH);
 
-while ($row = $testH->fetch(Connection::FETCH_BOTH)) {
-    var_dump($row);
-}
+    var_dump($testH->getAllMetadata());
 
-echo '<hr>';
+    while ($row = $testH->fetch(Connection::FETCH_BOTH)) {
+        var_dump($row);
+    }
 
-$contextI = Chainable::odbcText(env: $_ENV, persistent: true, strategy: false)->connect();
+    echo '<hr>';
 
-$testI = $contextI->query(
-    'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM [estado.csv] WHERE id NOT IN(25, 26, 27) ORDER BY id'
-);
+    $contextI = Chainable::odbcText(env: $_ENV, persistent: true, strategy: false)->connect();
 
-var_dump($testI);
+    $testI = $contextI->query(
+        'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM [estado.csv] WHERE id NOT IN(25, 26, 27) ORDER BY id'
+    );
 
-var_dump($testI->getAllMetadata());
+    var_dump($testI);
 
-while ($row = $testI->fetch(Connection::FETCH_BOTH)) {
-    var_dump($row);
+    var_dump($testI->getAllMetadata());
+
+    while ($row = $testI->fetch(Connection::FETCH_BOTH)) {
+        var_dump($row);
+    }
+
 }

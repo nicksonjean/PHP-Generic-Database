@@ -7,7 +7,15 @@
   <label>
 		<name>native</name>
 		<value>Native</value>
-	</label>  
+	</label>
+  <label>
+		<name>translate</name>
+		<value>Translate to English</value>
+	</label>
+    <label>
+		<name>debug</name>
+		<value>Debug Mode</value>
+	</label>
   <label>
 		<name>env_not_found</name>
 		<value>Failed to load .env file.</value>

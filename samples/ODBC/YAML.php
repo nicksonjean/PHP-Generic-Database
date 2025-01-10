@@ -34,10 +34,14 @@ $access = ODBCConnection::new(PATH_ROOT . '/resources/dsn/yaml/odbc_access.yaml'
 
 var_dump($access);
 
-$excel = ODBCConnection::new(PATH_ROOT . '/resources/dsn/yaml/odbc_excel.yaml')->connect();
+if (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 
-var_dump($excel);
+    $excel = ODBCConnection::new(PATH_ROOT . '/resources/dsn/yaml/odbc_excel.yaml')->connect();
 
-$text = ODBCConnection::new(PATH_ROOT . '/resources/dsn/yaml/odbc_text.yaml')->connect();
+    var_dump($excel);
 
-var_dump($text);
+    $text = ODBCConnection::new(PATH_ROOT . '/resources/dsn/yaml/odbc_text.yaml')->connect();
+
+    var_dump($text);
+
+}

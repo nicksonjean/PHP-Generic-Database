@@ -21,7 +21,7 @@
         try {
 
             $instance = oci_connect(
-                $_ENV["{$env}_USER"],
+                $_ENV["{$env}_USERNAME"],
                 $_ENV["{$env}_PASSWORD"],
                 vsprintf('%s:%s/%s', [
                     $_ENV["{$env}_HOST"],

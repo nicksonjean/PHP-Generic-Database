@@ -16,9 +16,9 @@ $connection = new Connection();
 $connection
     ->setEngine('mysqli')
     ->setHost($_ENV['MYSQL_HOST'])
-    ->setPort((int)$_ENV['MYSQL_PORT'])
+    ->setPort((int) $_ENV['MYSQL_PORT'])
     ->setDatabase($_ENV['MYSQL_DATABASE'])
-    ->setUser($_ENV['MYSQL_USER'])
+    ->setUser($_ENV['MYSQL_USERNAME'])
     ->setPassword($_ENV['MYSQL_PASSWORD'])
     ->setCharset($_ENV['MYSQL_CHARSET'])
     ->setOptions([
@@ -38,7 +38,7 @@ $connection
 //     ->setHost($_ENV['MYSQL_HOST'])
 //     ->setPort((int)$_ENV['MYSQL_PORT'])
 //     ->setDatabase($_ENV['MYSQL_DATABASE'])
-//     ->setUser($_ENV['MYSQL_USER'])
+//     ->setUser($_ENV['MYSQL_USERNAME'])
 //     ->setPassword($_ENV['MYSQL_PASSWORD'])
 //     ->setCharset($_ENV['MYSQL_CHARSET'])
 //     ->setOptions([

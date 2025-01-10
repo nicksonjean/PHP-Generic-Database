@@ -120,9 +120,17 @@ RUN \
   tar -C . -xzvf mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
   cp -r /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/* /usr/bin/ && \
   cp -r /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/lib/* /usr/lib/x86_64-linux-gnu/odbc/ && \
+  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/lib/libmyodbc9a.so && \
+  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/lib/libmyodbc9w.so && \
+  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/local/lib/libmyodbc9a.so && \
+  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/local/lib/libmyodbc9w.so && \
+  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/lib64/libmyodbc9a.so && \
+  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/lib64/libmyodbc9w.so && \
   /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 ANSI Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so" && \
   /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 Unicode Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so"  && \
-  find . -maxdepth 1 -type f -name '*.zip*' -exec rm {} \;
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/odbc && \
+  ldconfig && \
+  find . -maxdepth 1 -type f -name '*.tar.gz*' -exec rm {} \;
 
 # Install mysqli and pdo_mysql
 RUN \
@@ -193,6 +201,10 @@ RUN \
   echo /tmp/instantclient_21_6 > /etc/ld.so.conf.d/oracle.conf && \
   ldconfig
 
+# Debug Trace for ODBC
+RUN \
+  echo "\n[ODBC]\nTrace=Yes\nTraceFile=/tmp/odbc.log\n" >> /etc/odbcinst.ini
+
 # Definir diretório de trabalho
 WORKDIR \
   /var/www/html
@@ -205,17 +217,9 @@ RUN \
 COPY \
   ./composer.json /var/www/html/composer.json
 
-# PHPInfo for Test PHP Libs
-COPY \
-  ./phpinfo.php /var/www/html/phpinfo.php
-
 # Copy environment variables
 COPY \
   ./.env.docker /var/www/html/.env
-
-# Copy .htaccess for hidden files in directory list
-COPY \
-  ./.htaccess /var/www/html/.htaccess
 
 # Copy apache settings
 COPY \
@@ -246,31 +250,31 @@ RUN \
   echo 'SetEnv MYSQL_HOST ${MYSQL_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv MYSQL_PORT ${MYSQL_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv MYSQL_DATABASE ${MYSQL_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv MYSQL_USER ${MYSQL_USER}' >> /etc/apache2/conf-enabled/environment.conf && \
+  echo 'SetEnv MYSQL_USERNAME ${MYSQL_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv MYSQL_PASSWORD ${MYSQL_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv MYSQL_CHARSET ${MYSQL_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv PGSQL_HOST ${PGSQL_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv PGSQL_PORT ${PGSQL_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv PGSQL_DATABASE ${PGSQL_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv PGSQL_USER ${PGSQL_USER}' >> /etc/apache2/conf-enabled/environment.conf && \
+  echo 'SetEnv PGSQL_USERNAME ${PGSQL_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv PGSQL_PASSWORD ${PGSQL_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv PGSQL_CHARSET ${PGSQL_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv SQLSRV_HOST ${SQLSRV_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv SQLSRV_PORT ${SQLSRV_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv SQLSRV_DATABASE ${SQLSRV_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv SQLSRV_USER ${SQLSRV_USER}' >> /etc/apache2/conf-enabled/environment.conf && \
+  echo 'SetEnv SQLSRV_USERNAME ${SQLSRV_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv SQLSRV_PASSWORD ${SQLSRV_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv SQLSRV_CHARSET ${SQLSRV_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv OCI_HOST ${OCI_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv OCI_PORT ${OCI_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv OCI_DATABASE ${OCI_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv OCI_USER ${OCI_USER}' >> /etc/apache2/conf-enabled/environment.conf && \
+  echo 'SetEnv OCI_USERNAME ${OCI_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv OCI_PASSWORD ${OCI_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv OCI_CHARSET ${OCI_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv FBIRD_HOST ${FBIRD_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv FBIRD_PORT ${FBIRD_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv FBIRD_DATABASE ${FBIRD_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv FBIRD_USER ${FBIRD_USER}' >> /etc/apache2/conf-enabled/environment.conf && \
+  echo 'SetEnv FBIRD_USERNAME ${FBIRD_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv FBIRD_PASSWORD ${FBIRD_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv FBIRD_CHARSET ${FBIRD_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv SQLITE_DATABASE ${SQLITE_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \

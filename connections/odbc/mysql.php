@@ -19,30 +19,29 @@
         });
 
         try {
-
-            $instance = odbc_connect(
+            $odbc_connection_mysql = odbc_connect(
                 vsprintf(
-                    "Driver={MySQL ODBC 9.1 ANSI Driver};Server=%s;Port=%s;Database=%s;User=%s;Password=%s;Charset=%s;Option=3",
+                    "Driver={MySQL ODBC 9.1 ANSI Driver};Server=%s;Port=%s;Database=%s;User=%s;Password=%s;Charset=%s;Option=3;",
                     [
                         $_ENV["{$env}_HOST"],
                         $_ENV["{$env}_PORT"],
                         $_ENV["{$env}_DATABASE"],
-                        $_ENV["{$env}_USER"],
+                        $_ENV["{$env}_USERNAME"],
                         $_ENV["{$env}_PASSWORD"],
                         $_ENV["{$env}_CHARSET"],
                     ]
                 ),
-                $_ENV["{$env}_USER"],
+                $_ENV["{$env}_USERNAME"],
                 $_ENV["{$env}_PASSWORD"]
             );
 
-            if (!$instance) {
+            if (!$odbc_connection_mysql) {
                 throw new Exception($lang->getLabel('connection_fail'));
             }
 
             echo set_message('success', $lang->getLabelVars('connection_success', ['label' => $label, 'method' => $method]));
             if (filter_input(INPUT_GET, 'debug', FILTER_VALIDATE_BOOLEAN)) {
-                var_dump($instance);
+                var_dump($odbc_connection_mysql);
             }
 
         } catch (Exception $e) {

@@ -46,7 +46,7 @@ class StaticArgs
             'host' => $env['MYSQL_HOST'],
             'port' => (int) $env['MYSQL_PORT'],
             'database' => $env['MYSQL_DATABASE'],
-            'user' => $env['MYSQL_USER'],
+            'user' => $env['MYSQL_USERNAME'],
             'password' => $env['MYSQL_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
@@ -88,7 +88,7 @@ class StaticArgs
             'host' => $env['PGSQL_HOST'],
             'port' => (int) $env['PGSQL_PORT'],
             'database' => $env['PGSQL_DATABASE'],
-            'user' => $env['PGSQL_USER'],
+            'user' => $env['PGSQL_USERNAME'],
             'password' => $env['PGSQL_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
@@ -126,7 +126,7 @@ class StaticArgs
             'host' => $env['SQLSRV_HOST'],
             'port' => (int) $env['SQLSRV_PORT'],
             'database' => $env['SQLSRV_DATABASE'],
-            'user' => $env['SQLSRV_USER'],
+            'user' => $env['SQLSRV_USERNAME'],
             'password' => $env['SQLSRV_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
@@ -162,7 +162,7 @@ class StaticArgs
             'host' => $env['OCI_HOST'],
             'port' => (int) $env['OCI_PORT'],
             'database' => $env['OCI_DATABASE'],
-            'user' => $env['OCI_USER'],
+            'user' => $env['OCI_USERNAME'],
             'password' => $env['OCI_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
@@ -198,7 +198,7 @@ class StaticArgs
             'host' => $env['FBIRD_HOST'],
             'port' => (int) $env['FBIRD_PORT'],
             'database' => $env['FBIRD_DATABASE'],
-            'user' => $env['FBIRD_USER'],
+            'user' => $env['FBIRD_USERNAME'],
             'password' => $env['FBIRD_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
@@ -307,7 +307,7 @@ class StaticArgs
             'host' => $env['MYSQL_HOST'],
             'port' => (int) $env['MYSQL_PORT'],
             'database' => $env['MYSQL_DATABASE'],
-            'user' => $env['MYSQL_USER'],
+            'user' => $env['MYSQL_USERNAME'],
             'password' => $env['MYSQL_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
@@ -344,7 +344,7 @@ class StaticArgs
             'host' => $env['PGSQL_HOST'],
             'port' => (int) $env['PGSQL_PORT'],
             'database' => $env['PGSQL_DATABASE'],
-            'user' => $env['PGSQL_USER'],
+            'user' => $env['PGSQL_USERNAME'],
             'password' => $env['PGSQL_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
@@ -379,7 +379,7 @@ class StaticArgs
             'host' => $env['SQLSRV_HOST'],
             'port' => (int) $env['SQLSRV_PORT'],
             'database' => $env['SQLSRV_DATABASE'],
-            'user' => $env['SQLSRV_USER'],
+            'user' => $env['SQLSRV_USERNAME'],
             'password' => $env['SQLSRV_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
@@ -415,7 +415,7 @@ class StaticArgs
             'host' => $env['OCI_HOST'],
             'port' => (int) $env['OCI_PORT'],
             'database' => $env['OCI_DATABASE'],
-            'user' => $env['OCI_USER'],
+            'user' => $env['OCI_USERNAME'],
             'password' => $env['OCI_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
@@ -452,7 +452,7 @@ class StaticArgs
             'host' => $env['FBIRD_HOST'],
             'port' => (int) $env['FBIRD_PORT'],
             'database' => $env['FBIRD_DATABASE'],
-            'user' => $env['FBIRD_USER'],
+            'user' => $env['FBIRD_USERNAME'],
             'password' => $env['FBIRD_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
@@ -555,7 +555,7 @@ class StaticArgs
             'host' => $env['MYSQL_HOST'],
             'port' => (int) $env['MYSQL_PORT'],
             'database' => $env['MYSQL_DATABASE'],
-            'user' => $env['MYSQL_USER'],
+            'user' => $env['MYSQL_USERNAME'],
             'password' => $env['MYSQL_PASSWORD'],
             'charset' => $env['MYSQL_CHARSET'],
             'options' => [
@@ -592,7 +592,7 @@ class StaticArgs
             'host' => $env['PGSQL_HOST'],
             'port' => (int) $env['PGSQL_PORT'],
             'database' => $env['PGSQL_DATABASE'],
-            'user' => $env['PGSQL_USER'],
+            'user' => $env['PGSQL_USERNAME'],
             'password' => $env['PGSQL_PASSWORD'],
             'charset' => $env['PGSQL_CHARSET'],
             'options' => [
@@ -629,7 +629,7 @@ class StaticArgs
             'host' => $env['SQLSRV_HOST'],
             'port' => (int) $env['SQLSRV_PORT'],
             'database' => $env['SQLSRV_DATABASE'],
-            'user' => $env['SQLSRV_USER'],
+            'user' => $env['SQLSRV_USERNAME'],
             'password' => $env['SQLSRV_PASSWORD'],
             'charset' => $env['SQLSRV_CHARSET'],
             'options' => [
@@ -666,7 +666,7 @@ class StaticArgs
             'host' => $env['OCI_HOST'],
             'port' => (int) $env['OCI_PORT'],
             'database' => $env['OCI_DATABASE'],
-            'user' => $env['OCI_USER'],
+            'user' => $env['OCI_USERNAME'],
             'password' => $env['OCI_PASSWORD'],
             'charset' => $env['OCI_CHARSET'],
             'options' => [
@@ -703,7 +703,7 @@ class StaticArgs
             'host' => $env['FBIRD_HOST'],
             'port' => (int) $env['FBIRD_PORT'],
             'database' => $env['FBIRD_DATABASE'],
-            'user' => $env['FBIRD_USER'],
+            'user' => $env['FBIRD_USERNAME'],
             'password' => $env['FBIRD_PASSWORD'],
             'charset' => $env['FBIRD_CHARSET'],
             'options' => [
@@ -771,7 +771,7 @@ class StaticArgs
         $parameters = array_merge($parameters, [
             'driver' => 'access',
             'database' => $env['ACCESS_DATABASE'],
-            'user' => $env['ACCESS_USER'],
+            'user' => $env['ACCESS_USERNAME'],
             'password' => $env['ACCESS_PASSWORD'],
             'charset' => $env['ACCESS_CHARSET'],
             'options' => [
