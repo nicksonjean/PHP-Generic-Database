@@ -12,16 +12,10 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 $contextA = Chainable::odbcMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 
-// $testA = $contextA->prepare(
-//     'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM estado WHERE id >= :id',
-//     [':id' => 10]
-// );
-
 $testA = $contextA->prepare(
     'SELECT id AS Codigo, nome AS Estado, sigla AS UF FROM estado WHERE id >= :idA AND id <= :idB',
     [':idA' => 1, ':idB' => rand(2, 27)]
 );
-
 
 var_dump($testA);
 
@@ -32,8 +26,6 @@ while ($row = $testA->fetch(Connection::FETCH_BOTH)) {
 }
 
 echo '<hr>';
-
-die();
 
 $contextB = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 
