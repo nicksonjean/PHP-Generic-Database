@@ -13,7 +13,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 
-$test0 = (new PgSQLQueryBuilder())->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$test0 = (new PgSQLQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
     ->where(['e.id >= 25']);
 
@@ -26,9 +26,9 @@ var_dump($test0->fetchAll(Connection::FETCH_BOTH));
 //     var_dump($row);
 // }
 
-$testA = PgSQLQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testA = PgSQLQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
-    ->where(['e.id <= 25']);
+    ->where(['e.id >= 25']);
 
 var_dump($testA);
 var_dump($testA->build());
@@ -39,7 +39,7 @@ var_dump($testA->fetchAll(Connection::FETCH_BOTH));
 //     var_dump($row);
 // }
 
-$testB = (new PgSQLQueryBuilder())->select('e.id AS Codigo, e.nome AS Estado, e.sigla AS Sigla')
+$testB = (new PgSQLQueryBuilder($context))->select('e.id AS Codigo, e.nome AS Estado, e.sigla AS Sigla')
     ->from('estado e')
     ->where('e.id >= 1')
     ->andWhere('e.id <= 5');
@@ -53,7 +53,7 @@ var_dump($testB->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testB->getAllMetadata());
 
-$testC = PgSQLQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testC = PgSQLQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id = 6')
     ->orWhere('e.id = 11');
@@ -67,7 +67,7 @@ var_dump($testC->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testC->getAllMetadata());
 
-$testD = PgSQLQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testD = PgSQLQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where([['e.id >= 12'], ['AND' => 'e.id <= 20'], ['OR' => 'e.id = 25']]);
 
@@ -80,7 +80,7 @@ var_dump($testD->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testD->getAllMetadata());
 
-$testE = PgSQLQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testE = PgSQLQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.nome LIKE %Rio Grande%');
 
@@ -93,7 +93,7 @@ var_dump($testE->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testE->getAllMetadata());
 
-$testF = PgSQLQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testF = PgSQLQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id BETWEEN 1, 20');
 
@@ -106,7 +106,7 @@ var_dump($testF->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testF->getAllMetadata());
 
-$testF1 = PgSQLQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testF1 = PgSQLQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id BETWEEN 21 AND 22');
 
@@ -119,7 +119,7 @@ var_dump($testF1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testF1->getAllMetadata());
 
-$testG = PgSQLQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testG = PgSQLQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id IN (20, 21, 22)');
 
@@ -132,7 +132,7 @@ var_dump($testG->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testG->getAllMetadata());
 
-$testH1 = PgSQLQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'COUNT(c.id) as num_cidades'])
+$testH1 = PgSQLQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'COUNT(c.id) as num_cidades'])
     ->from(['estado e'])
     ->join(['cidade c'])
     ->on(['e.id = c.estado_id'])
@@ -150,7 +150,7 @@ var_dump($testH1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testH1->getAllMetadata());
 
-$testH2 = PgSQLQueryBuilder::select('e.id AS Codigo, e.nome AS Estado, COUNT(c.id) as num_cidades')
+$testH2 = PgSQLQueryBuilder::with($context)::select('e.id AS Codigo, e.nome AS Estado, COUNT(c.id) as num_cidades')
     ->from('estado e')
     ->join('cidade c')
     ->on('e.id = c.estado_id')
@@ -168,7 +168,7 @@ var_dump($testH2->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testH2->getAllMetadata());
 
-$testI = PgSQLQueryBuilder::select(['e.*', 'c.*'])
+$testI = PgSQLQueryBuilder::with($context)::select(['e.*', 'c.*'])
     ->from(['estado e'], ['cidade c'])
     ->where(['e.id = 10'])
     ->andWhere(['c.id = 10']);
@@ -182,7 +182,7 @@ var_dump($testI->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testI->getAllMetadata());
 
-$testI1 = PgSQLQueryBuilder::select('e.*, c.*')
+$testI1 = PgSQLQueryBuilder::with($context)::select('e.*, c.*')
     ->from('estado e, cidade c')
     ->where('e.id = 5')
     ->andWhere('c.id = 5');
@@ -196,7 +196,7 @@ var_dump($testI1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testI1->getAllMetadata());
 
-$testJ = PgSQLQueryBuilder::select(['e.*', 'c.*'])
+$testJ = PgSQLQueryBuilder::with($context)::select(['e.*', 'c.*'])
     ->from(['estado e', 'cidade c'])
     ->where([['e.id = 1'], ['AND' => 'e.id = 2'], ['AND' => 'e.id = 3']])
     ->andWhere(['e.id = 4'])
@@ -213,7 +213,7 @@ var_dump($testJ->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ->getAllMetadata());
 
-$testJ1 = PgSQLQueryBuilder::select(['e.*', 'c.*'])
+$testJ1 = PgSQLQueryBuilder::with($context)::select(['e.*', 'c.*'])
     ->from(['estado e', 'cidade c'])
     ->where([['e.id = 10'], ['AND' => 'e.id = 11'], ['AND' => 'e.id = 12']])
     ->andWhere([['e.id = 13'], ['OR' => 'c.id = 14']])
@@ -229,7 +229,7 @@ var_dump($testJ1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ1->getAllMetadata());
 
-$testJ2 = PgSQLQueryBuilder::select('e.*, c.*')
+$testJ2 = PgSQLQueryBuilder::with($context)::select('e.*, c.*')
     ->from('estado e, cidade c')
     ->where([['e.id = 10'], ['AND' => 'e.id = 11'], ['AND' => 'e.id = 12']])
     ->andWhere([['e.id = 13'], ['OR' => 'c.id = 14']])
@@ -245,16 +245,16 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ2->getAllMetadata());
 
-// $combinedQuery = PgSQLQueryBuilder::select(['maconha.id', 'maconha.nome'])
+// $combinedQuery = PgSQLQueryBuilder::with($context)::select(['maconha.id', 'maconha.nome'])
 //     ->from('estado AS maconha')
 //     ->where('maconha.id', '=', 'teste')
 //     ->union(
-//         PgSQLQueryBuilder::select(['c.id', 'c.nome'])
+//         PgSQLQueryBuilder::with($context)::select(['c.id', 'c.nome'])
 //             ->from('estado AS c')
 //             ->where('c.id', '=', 'maconha.id')
 //     )
 //     ->union(
-//         PgSQLQueryBuilder::select(['d.id', 'd.nome'])
+//         PgSQLQueryBuilder::with($context)::select(['d.id', 'd.nome'])
 //             ->from('estado AS d')
 //             ->where('d.id', '=', 'maconha.id')
 //     );
@@ -263,20 +263,20 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // var_dump($combinedQuery->build());
 // var_dump($combinedQuery->buildRaw());
 
-// $query = PgSQLQueryBuilder::select(['*'])
+// $query = PgSQLQueryBuilder::with($context)::select(['*'])
 //     ->from('orders AS o')
 //     ->where('o.status', '=', 'completed')
 //     ->where('o.total_amount', '>', 1000)
 //     ->andWhere(
-//         PgSQLQueryBuilder::exists(
-//             PgSQLQueryBuilder::select(['1'])
+//         PgSQLQueryBuilder::with($context)::exists(
+//             PgSQLQueryBuilder::with($context)::select(['1'])
 //                 ->from('customers c')
 //                 ->where('c.id', '=', 'o.customer_id')
 //         )
 //     )
 //     ->orWhere(
-//         PgSQLQueryBuilder::notExists(
-//             PgSQLQueryBuilder::select(['1'])
+//         PgSQLQueryBuilder::with($context)::notExists(
+//             PgSQLQueryBuilder::with($context)::select(['1'])
 //                 ->from('returns r')
 //                 ->where('r.order_id', '=', 'o.id')
 //         )
@@ -286,8 +286,8 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // var_dump($query);
 
 
-// var_dump(PgSQLQueryBuilder::getRegexSelect());
-// var_dump(PgSQLQueryBuilder::getRegexFrom());
-// var_dump(PgSQLQueryBuilder::getRegexOn());
-// var_dump(PgSQLQueryBuilder::getRegexGroupOrder());
-// var_dump(PgSQLQueryBuilder::getRegexWhereHaving());
+// var_dump(PgSQLQueryBuilder::with($context)::getRegexSelect());
+// var_dump(PgSQLQueryBuilder::with($context)::getRegexFrom());
+// var_dump(PgSQLQueryBuilder::with($context)::getRegexOn());
+// var_dump(PgSQLQueryBuilder::with($context)::getRegexGroupOrder());
+// var_dump(PgSQLQueryBuilder::with($context)::getRegexWhereHaving());

@@ -13,7 +13,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
 
-$test0 = (new MySQLiQueryBuilder())->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$test0 = (new MySQLiQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
     ->where(['e.id >= 25']);
 
@@ -26,7 +26,7 @@ var_dump($test0->fetchAll(Connection::FETCH_BOTH));
 //     var_dump($row);
 // }
 
-$testA = MySQLiQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testA = MySQLiQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
     ->where(['e.id <= 25']);
 
@@ -39,7 +39,7 @@ var_dump($testA->fetchAll(Connection::FETCH_BOTH));
 //     var_dump($row);
 // }
 
-$testB = (new MySQLiQueryBuilder())->select('e.id AS Codigo, e.nome AS Estado, e.sigla AS Sigla')
+$testB = (new MySQLiQueryBuilder($context))->select('e.id AS Codigo, e.nome AS Estado, e.sigla AS Sigla')
     ->from('estado e')
     ->where('e.id >= 1')
     ->andWhere('e.id <= 5');
@@ -53,7 +53,7 @@ var_dump($testB->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testB->getAllMetadata());
 
-$testC = MySQLiQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testC = MySQLiQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id = 6')
     ->orWhere('e.id = 11');
@@ -67,7 +67,7 @@ var_dump($testC->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testC->getAllMetadata());
 
-$testD = MySQLiQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testD = MySQLiQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where([['e.id >= 12'], ['AND' => 'e.id <= 20'], ['OR' => 'e.id = 25']]);
 
@@ -80,7 +80,7 @@ var_dump($testD->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testD->getAllMetadata());
 
-$testE = MySQLiQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testE = MySQLiQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.nome LIKE %Rio Grande%');
 
@@ -93,7 +93,7 @@ var_dump($testE->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testE->getAllMetadata());
 
-$testF = MySQLiQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testF = MySQLiQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id BETWEEN 1, 20');
 
@@ -106,7 +106,7 @@ var_dump($testF->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testF->getAllMetadata());
 
-$testF1 = MySQLiQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testF1 = MySQLiQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id BETWEEN 21 AND 22');
 
@@ -119,7 +119,7 @@ var_dump($testF1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testF1->getAllMetadata());
 
-$testG = MySQLiQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testG = MySQLiQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id IN (20, 21, 22)');
 
@@ -132,7 +132,7 @@ var_dump($testG->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testG->getAllMetadata());
 
-$testH1 = MySQLiQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'COUNT(c.id) as num_cidades'])
+$testH1 = MySQLiQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'COUNT(c.id) as num_cidades'])
     ->from(['estado e'])
     ->join(['cidade c'])
     ->on(['e.id = c.estado_id'])
@@ -150,7 +150,7 @@ var_dump($testH1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testH1->getAllMetadata());
 
-$testH2 = MySQLiQueryBuilder::select('e.id AS Codigo, e.nome AS Estado, COUNT(c.id) as num_cidades')
+$testH2 = MySQLiQueryBuilder::with($context)::select('e.id AS Codigo, e.nome AS Estado, COUNT(c.id) as num_cidades')
     ->from('estado e')
     ->join('cidade c')
     ->on('e.id = c.estado_id')
@@ -168,7 +168,7 @@ var_dump($testH2->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testH2->getAllMetadata());
 
-$testI = MySQLiQueryBuilder::select(['e.*', 'c.*'])
+$testI = MySQLiQueryBuilder::with($context)::select(['e.*', 'c.*'])
     ->from(['estado e'], ['cidade c'])
     ->where(['e.id = 10'])
     ->andWhere(['c.id = 10']);
@@ -182,7 +182,7 @@ var_dump($testI->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testI->getAllMetadata());
 
-$testI1 = MySQLiQueryBuilder::select('e.*, c.*')
+$testI1 = MySQLiQueryBuilder::with($context)::select('e.*, c.*')
     ->from('estado e, cidade c')
     ->where('e.id = 5')
     ->andWhere('c.id = 5');
@@ -196,7 +196,7 @@ var_dump($testI1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testI1->getAllMetadata());
 
-$testJ = MySQLiQueryBuilder::select(['e.*', 'c.*'])
+$testJ = MySQLiQueryBuilder::with($context)::select(['e.*', 'c.*'])
     ->from(['estado e', 'cidade c'])
     ->where([['e.id = 1'], ['AND' => 'e.id = 2'], ['AND' => 'e.id = 3']])
     ->andWhere(['e.id = 4'])
@@ -213,7 +213,7 @@ var_dump($testJ->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ->getAllMetadata());
 
-$testJ1 = MySQLiQueryBuilder::select(['e.*', 'c.*'])
+$testJ1 = MySQLiQueryBuilder::with($context)::select(['e.*', 'c.*'])
     ->from(['estado e', 'cidade c'])
     ->where([['e.id = 10'], ['AND' => 'e.id = 11'], ['AND' => 'e.id = 12']])
     ->andWhere([['e.id = 13'], ['OR' => 'c.id = 14']])
@@ -229,7 +229,7 @@ var_dump($testJ1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ1->getAllMetadata());
 
-$testJ2 = MySQLiQueryBuilder::select('e.*, c.*')
+$testJ2 = MySQLiQueryBuilder::with($context)::select('e.*, c.*')
     ->from('estado e, cidade c')
     ->where([['e.id = 10'], ['AND' => 'e.id = 11'], ['AND' => 'e.id = 12']])
     ->andWhere([['e.id = 13'], ['OR' => 'c.id = 14']])
@@ -245,16 +245,16 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ2->getAllMetadata());
 
-// $combinedQuery = MySQLiQueryBuilder::select(['maconha.id', 'maconha.nome'])
+// $combinedQuery = MySQLiQueryBuilder::with($context)::select(['maconha.id', 'maconha.nome'])
 //     ->from('estado AS maconha')
 //     ->where('maconha.id', '=', 'teste')
 //     ->union(
-//         MySQLiQueryBuilder::select(['c.id', 'c.nome'])
+//         MySQLiQueryBuilder::with($context)::select(['c.id', 'c.nome'])
 //             ->from('estado AS c')
 //             ->where('c.id', '=', 'maconha.id')
 //     )
 //     ->union(
-//         MySQLiQueryBuilder::select(['d.id', 'd.nome'])
+//         MySQLiQueryBuilder::with($context)::select(['d.id', 'd.nome'])
 //             ->from('estado AS d')
 //             ->where('d.id', '=', 'maconha.id')
 //     );
@@ -263,20 +263,20 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // var_dump($combinedQuery->build());
 // var_dump($combinedQuery->buildRaw());
 
-// $query = MySQLiQueryBuilder::select(['*'])
+// $query = MySQLiQueryBuilder::with($context)::select(['*'])
 //     ->from('orders AS o')
 //     ->where('o.status', '=', 'completed')
 //     ->where('o.total_amount', '>', 1000)
 //     ->andWhere(
-//         MySQLiQueryBuilder::exists(
-//             MySQLiQueryBuilder::select(['1'])
+//         MySQLiQueryBuilder::with($context)::exists(
+//             MySQLiQueryBuilder::with($context)::select(['1'])
 //                 ->from('customers c')
 //                 ->where('c.id', '=', 'o.customer_id')
 //         )
 //     )
 //     ->orWhere(
-//         MySQLiQueryBuilder::notExists(
-//             MySQLiQueryBuilder::select(['1'])
+//         MySQLiQueryBuilder::with($context)::notExists(
+//             MySQLiQueryBuilder::with($context)::select(['1'])
 //                 ->from('returns r')
 //                 ->where('r.order_id', '=', 'o.id')
 //         )
@@ -286,8 +286,8 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // var_dump($query);
 
 
-// var_dump(MySQLiQueryBuilder::getRegexSelect());
-// var_dump(MySQLiQueryBuilder::getRegexFrom());
-// var_dump(MySQLiQueryBuilder::getRegexOn());
-// var_dump(MySQLiQueryBuilder::getRegexGroupOrder());
-// var_dump(MySQLiQueryBuilder::getRegexWhereHaving());
+// var_dump(MySQLiQueryBuilder::with($context)::getRegexSelect());
+// var_dump(MySQLiQueryBuilder::with($context)::getRegexFrom());
+// var_dump(MySQLiQueryBuilder::with($context)::getRegexOn());
+// var_dump(MySQLiQueryBuilder::with($context)::getRegexGroupOrder());
+// var_dump(MySQLiQueryBuilder::with($context)::getRegexWhereHaving());

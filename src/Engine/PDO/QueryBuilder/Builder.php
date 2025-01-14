@@ -2,7 +2,6 @@
 
 namespace GenericDatabase\Engine\PDO\QueryBuilder;
 
-use GenericDatabase\Core\Build;
 use GenericDatabase\Core\Column;
 use GenericDatabase\Core\Select;
 use GenericDatabase\Core\Join;
@@ -15,19 +14,19 @@ use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translater;
 use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Connection;
 use GenericDatabase\Engine\PDOConnection;
-use GenericDatabase\Engine\PDOQueryBuilder;
 
 class Builder
 {
     use Query;
 
-    private static PDOConnection $connection;
+    private static Connection|PDOConnection $context;
 
-    public function __construct($query, $connection)
+    public function __construct($query, $context)
     {
         $this->query = $query;
-        self::$connection = $connection;
+        self::$context = $context;
     }
 
     /**
@@ -261,7 +260,7 @@ class Builder
         }
         $output = [];
 
-        $output[] = match (self::$connection->getDriver()) {
+        $output[] = match (self::$context->getDriver()) {
             'firebird' => (isset($this->query->limit['offset'])) ? "ROWS ? TO ?" : "ROWS ?",
             'mysql' => (isset($this->query->limit['offset'])) ? "LIMIT ?, ?" : "LIMIT ?",
             'pgsql' => (isset($this->query->limit['offset'])) ? "OFFSET ? LIMIT ?" : "LIMIT ?",
@@ -307,25 +306,7 @@ class Builder
         if (!empty($this->query->limit)) {
             $query .= $this->buildLimit();
         }
-
-        if ($this->query->build === Build::BEFORE) {
-            $this->beforeRun($query);
-        }
         return trim($query);
-    }
-
-    private function beforeRun(string $query): void
-    {
-        $values = $this->getValues();
-        if (!empty($values)) {
-            $query = $this->setPlaceholders($query, $values);
-            $query = $this->parse(
-                $query,
-                Translater::SQL_DIALECT_NONE,
-                Translater::SQL_DIALECT_SINGLE_QUOTE
-            );
-        }
-        PDOQueryBuilder::beforeRun($query);
     }
 
     private function setPlaceholders(string $query, array $values): string
@@ -423,7 +404,7 @@ class Builder
 
         if (!empty($this->query->limit)) {
             $limits = explode(', ', $this->query->limit['value']);
-            if (self::$connection->getDriver() === 'sqlite') {
+            if (self::$context->getDriver() === 'sqlite') {
                 $values = array_merge(
                     $values,
                     array_map(fn($limit) => $limit, count($limits) === 1

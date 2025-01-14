@@ -118,8 +118,8 @@ class Generators
         return str_replace(
             "ATTR",
             $constantName === 'SQLite'
-                ? mb_strtoupper($constantName) . '3'
-                : mb_strtoupper($constantName),
+            ? mb_strtoupper($constantName) . '3'
+            : mb_strtoupper($constantName),
             $index
         );
     }
@@ -135,5 +135,39 @@ class Generators
     private static function generateOptionKey(string $className, string $constantName, string $index): string
     {
         return constant(sprintf(Entity::CASE_INTERNAL_CLASS->value, $constantName, $className, $index));
+    }
+
+    /**
+     * Generates a random hash value.
+     *
+     * @return string The generated hash value.
+     *
+     * The hash value is generated using the `uuid_create` function if it exists,
+     * otherwise it is generated using the `mt_rand` function.
+     *
+     * The generated hash value is a UUID (Universally Unique Identifier) in the
+     * format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.
+     *
+     * @see https://en.wikipedia.org/wiki/Universally_unique_identifier
+     */
+    public static function generateHash(): string
+    {
+        if (function_exists('uuid_create')) {
+            if (!defined('UUID_TYPE_RANDOM')) {
+                define('UUID_TYPE_RANDOM', 4);
+            }
+            return uuid_create(UUID_TYPE_RANDOM);
+        }
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
     }
 }

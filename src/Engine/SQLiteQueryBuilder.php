@@ -3,9 +3,9 @@
 namespace GenericDatabase\Engine;
 
 use stdClass;
-use ReflectionMethod;
 use ReflectionException;
-use GenericDatabase\Core\Build;
+use GenericDatabase\Connection;
+use GenericDatabase\Engine\SQLiteConnection;
 use GenericDatabase\Core\Join;
 use GenericDatabase\Core\Where;
 use GenericDatabase\Core\Having;
@@ -19,6 +19,7 @@ use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Translater;
 use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Engine\SQLite\QueryBuilder\Context;
 use GenericDatabase\Engine\SQLite\QueryBuilder\Query;
 use GenericDatabase\Engine\SQLite\QueryBuilder\Builder;
 use GenericDatabase\Engine\SQLite\QueryBuilder\Internal;
@@ -26,138 +27,184 @@ use GenericDatabase\Engine\SQLite\QueryBuilder\Internal;
 class SQLiteQueryBuilder implements IQueryBuilder
 {
     use Query;
+    use Context;
     use Singleton;
 
-    private static Build $directive;
+    private static $self;
 
-    public function __construct(?Build $build = null)
+    private ?string $lastQuery = null;
+
+    private bool $cursorExhausted = false;
+
+    public function __construct(Connection|SQLiteConnection $context = null)
     {
-        self::$directive = $build ?? Build::BEFORE;
         $this->query = new stdClass();
-        $this->query->build = self::$directive;
+        self::$context = $context;
+        self::$self = $this;
     }
 
-    public static function select(array|string ...$data): IQueryBuilder
+    /**
+     * Static initializer with context
+     *
+     * @param Connection|SQLiteConnection $context
+     * @return class-string<static>
+     */
+    public static function with(Connection|SQLiteConnection $context): string
     {
-        return Internal::select(['type' => Select::DEFAULT, 'data' => $data, 'self' => self::getInstance()]);
+        self::$context = $context;
+        self::$self = new static($context);
+        return static::class;
     }
 
-    /** @noinspection PhpUnused */
-    public static function distinct(array|string ...$data): IQueryBuilder
+    /**
+     * @param array|string ...$data
+     * @return static
+     */
+    public static function select(array|string ...$data): static
     {
-        return Internal::select(['type' => Select::DISTINCT, 'data' => $data, 'self' => self::getInstance()]);
+        /** @var static */
+        return Internal::select(['type' => Select::DEFAULT , 'data' => $data, 'self' => self::$self]);
     }
 
-    public static function from(array|string ...$data): IQueryBuilder
+    /**
+     * @param array|string ...$data
+     * @return static
+     */
+    public static function distinct(array|string ...$data): static
     {
-        return Internal::from(['data' => $data, 'self' => self::getInstance()]);
+        /** @var static */
+        return Internal::select(['type' => Select::DISTINCT, 'data' => $data, 'self' => self::$self]);
     }
 
-    public static function join(array|string ...$data): IQueryBuilder
+    /**
+     * @param array|string ...$data
+     * @return static
+     */
+    public static function from(array|string ...$data): static
     {
+        /** @var static */
+        return Internal::from(['data' => $data, 'self' => self::$self]);
+    }
+
+    /**
+     * @param array|string ...$data
+     * @return static
+     */
+    public static function join(array|string ...$data): static
+    {
+        /** @var static */
         return Internal::join(
-            ['type' => Join::DEFAULT, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::getInstance()]
+            ['type' => Join::DEFAULT , 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
         );
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function selfJoin(array|string ...$data): IQueryBuilder
+    public static function selfJoin(array|string ...$data): static
     {
+        /** @var static */
         return Internal::join(
-            ['type' => Join::SELF, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::getInstance()]
+            ['type' => Join::SELF, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
         );
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function leftJoin(array|string ...$data): IQueryBuilder
+    public static function leftJoin(array|string ...$data): static
     {
+        /** @var static */
         return Internal::join(
-            ['type' => Join::LEFT, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::getInstance()]
+            ['type' => Join::LEFT, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
         );
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function rightJoin(array|string ...$data): IQueryBuilder
+    public static function rightJoin(array|string ...$data): static
     {
+        /** @var static */
         return Internal::join(
-            ['type' => Join::RIGHT, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::getInstance()]
+            ['type' => Join::RIGHT, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
         );
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function innerJoin(array|string ...$data): IQueryBuilder
+    public static function innerJoin(array|string ...$data): static
     {
+        /** @var static */
         return Internal::join(
-            ['type' => Join::INNER, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::getInstance()]
+            ['type' => Join::INNER, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
         );
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function outerJoin(array|string ...$data): IQueryBuilder
+    public static function outerJoin(array|string ...$data): static
     {
+        /** @var static */
         return Internal::join(
-            ['type' => Join::OUTER, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::getInstance()]
+            ['type' => Join::OUTER, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
         );
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function crossJoin(array|string ...$data): IQueryBuilder
+    public static function crossJoin(array|string ...$data): static
     {
+        /** @var static */
         return Internal::join(
-            ['type' => Join::CROSS, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::getInstance()]
+            ['type' => Join::CROSS, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
         );
     }
 
-    public static function on(array|string ...$data): IQueryBuilder
+    /**
+     * @param array|string ...$data
+     * @return static
+     */
+    public static function on(array|string ...$data): static
     {
-        return Internal::on(['junction' => Junction::NONE, 'data' => $data, 'self' => self::getInstance()]);
+        /** @var static */
+        return Internal::on(['junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]);
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function andOn(array|string ...$data): IQueryBuilder
+    public static function andOn(array|string ...$data): static
     {
-        return Internal::on(['junction' => Junction::CONJUNCTION, 'data' => $data, 'self' => self::getInstance()]);
+        /** @var static */
+        return Internal::on(['junction' => Junction::CONJUNCTION, 'data' => $data, 'self' => self::$self]);
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function orOn(array|string ...$data): IQueryBuilder
+    public static function orOn(array|string ...$data): static
     {
-        return Internal::on(['junction' => Junction::DISJUNCTION, 'data' => $data, 'self' => self::getInstance()]);
+        /** @var static */
+        return Internal::on(['junction' => Junction::DISJUNCTION, 'data' => $data, 'self' => self::$self]);
     }
 
-    public static function where(array|string ...$data): IQueryBuilder
+    /**
+     * @param array|string ...$data
+     * @return static
+     */
+    public static function where(array|string ...$data): static
     {
         if (Arrays::isDepthArray($data) > 2) {
             $result = [];
@@ -172,21 +219,27 @@ class SQLiteQueryBuilder implements IQueryBuilder
                     'enum' => Where::class,
                     'condition' => $condition,
                     'data' => [$values],
-                    'self' => self::getInstance()
+                    'self' => self::$self
                 ];
             }
+            /** @var static */
             return Internal::where($result);
         } else {
+            /** @var static */
             return Internal::where([
                 'enum' => Where::class,
                 'condition' => Condition::NONE,
                 'data' => $data,
-                'self' => self::getInstance()
+                'self' => self::$self
             ]);
         }
     }
 
-    public static function andWhere(array|string ...$data): IQueryBuilder
+    /**
+     * @param array|string ...$data
+     * @return static
+     */
+    public static function andWhere(array|string ...$data): static
     {
         if (Arrays::isDepthArray($data) > 2) {
             $result = [];
@@ -201,21 +254,27 @@ class SQLiteQueryBuilder implements IQueryBuilder
                     'enum' => Where::class,
                     'condition' => $condition,
                     'data' => [$values],
-                    'self' => self::getInstance()
+                    'self' => self::$self
                 ];
             }
+            /** @var static */
             return Internal::where($result);
         } else {
+            /** @var static */
             return Internal::where([
                 'enum' => Where::class,
                 'condition' => Condition::CONJUNCTION,
                 'data' => $data,
-                'self' => self::getInstance()
+                'self' => self::$self
             ]);
         }
     }
 
-    public static function orWhere(array|string ...$data): IQueryBuilder
+    /**
+     * @param array|string ...$data
+     * @return static
+     */
+    public static function orWhere(array|string ...$data): static
     {
         if (Arrays::isDepthArray($data) > 2) {
             $result = [];
@@ -230,21 +289,27 @@ class SQLiteQueryBuilder implements IQueryBuilder
                     'enum' => Where::class,
                     'condition' => $condition,
                     'data' => [$values],
-                    'self' => self::getInstance()
+                    'self' => self::$self
                 ];
             }
+            /** @var static */
             return Internal::where($result);
         } else {
+            /** @var static */
             return Internal::where([
                 'enum' => Where::class,
                 'condition' => Condition::DISJUNCTION,
                 'data' => $data,
-                'self' => self::getInstance()
+                'self' => self::$self
             ]);
         }
     }
 
-    public static function having(array|string ...$data): IQueryBuilder
+    /**
+     * @param array|string ...$data
+     * @return static
+     */
+    public static function having(array|string ...$data): static
     {
         if (Arrays::isDepthArray($data) > 2) {
             $result = [];
@@ -259,26 +324,27 @@ class SQLiteQueryBuilder implements IQueryBuilder
                     'enum' => Having::class,
                     'condition' => $condition,
                     'data' => [$values],
-                    'self' => self::getInstance()
+                    'self' => self::$self
                 ];
             }
+            /** @var static */
             return Internal::having($result);
         } else {
+            /** @var static */
             return Internal::having([
                 'enum' => Having::class,
                 'condition' => Condition::NONE,
                 'data' => $data,
-                'self' => self::getInstance()
+                'self' => self::$self
             ]);
         }
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function andHaving(array|string ...$data): IQueryBuilder
+    public static function andHaving(array|string ...$data): static
     {
         if (Arrays::isDepthArray($data) > 2) {
             $result = [];
@@ -287,26 +353,27 @@ class SQLiteQueryBuilder implements IQueryBuilder
                     'enum' => Having::class,
                     'condition' => Condition::CONJUNCTION,
                     'data' => [$value],
-                    'self' => self::getInstance()
+                    'self' => self::$self
                 ];
             }
+            /** @var static */
             return Internal::having($result);
         } else {
+            /** @var static */
             return Internal::having([
                 'enum' => Having::class,
                 'condition' => Condition::CONJUNCTION,
                 'data' => $data,
-                'self' => self::getInstance()
+                'self' => self::$self
             ]);
         }
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function orHaving(array|string ...$data): IQueryBuilder
+    public static function orHaving(array|string ...$data): static
     {
         if (Arrays::isDepthArray($data) > 2) {
             $result = [];
@@ -315,90 +382,103 @@ class SQLiteQueryBuilder implements IQueryBuilder
                     'enum' => Having::class,
                     'condition' => Condition::DISJUNCTION,
                     'data' => [$value],
-                    'self' => self::getInstance()
+                    'self' => self::$self
                 ];
             }
+            /** @var static */
             return Internal::having($result);
         } else {
+            /** @var static */
             return Internal::having([
                 'enum' => Having::class,
                 'condition' => Condition::DISJUNCTION,
                 'data' => $data,
-                'self' => self::getInstance()
+                'self' => self::$self
             ]);
         }
     }
 
-    public static function group(array|string ...$data): IQueryBuilder
+    /**
+     * @param array|string ...$data
+     * @return static
+     */
+    public static function group(array|string ...$data): static
     {
-        return Internal::group(['sorting' => Grouping::DEFAULT, 'data' => $data, 'self' => self::getInstance()]);
-    }
-
-    public static function order(array|string ...$data): IQueryBuilder
-    {
-        return Internal::order(['sorting' => Sorting::NONE, 'data' => $data, 'self' => self::getInstance()]);
+        /** @var static */
+        return Internal::group(['sorting' => Grouping::DEFAULT , 'data' => $data, 'self' => self::$self]);
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function orderAsc(array|string ...$data): IQueryBuilder
+    public static function order(array|string ...$data): static
     {
-        return Internal::order(['sorting' => Sorting::ASCENDING, 'data' => $data, 'self' => self::getInstance()]);
+        /** @var static */
+        return Internal::order(['sorting' => Sorting::NONE, 'data' => $data, 'self' => self::$self]);
     }
 
     /**
      * @param array|string ...$data
-     * @return $this
+     * @return static
      */
-    /** @noinspection PhpUnused */
-    public static function orderDesc(array|string ...$data): IQueryBuilder
+    public static function orderAsc(array|string ...$data): static
     {
-        return Internal::order(['sorting' => Sorting::DESCENDING, 'data' => $data, 'self' => self::getInstance()]);
-    }
-
-    public static function limit(array|string ...$data): IQueryBuilder
-    {
-        return Internal::limit(['data' => $data, 'self' => self::getInstance()]);
+        /** @var static */
+        return Internal::order(['sorting' => Sorting::ASCENDING, 'data' => $data, 'self' => self::$self]);
     }
 
     /**
-     * @throws CustomException
+     * @param array|string ...$data
+     * @return static
      */
-    public function build(): string
+    public static function orderDesc(array|string ...$data): static
     {
-        return (new Builder($this->query))->build();
+        /** @var static */
+        return Internal::order(['sorting' => Sorting::DESCENDING, 'data' => $data, 'self' => self::$self]);
     }
 
     /**
-     * @throws CustomException
+     * @param array|string ...$data
+     * @return static
      */
-    public function buildRaw(): string
+    public static function limit(array|string ...$data): static
     {
-        return (new Builder($this->query))->buildRaw();
-    }
-
-    /** @noinspection PhpUnused */
-    public function getValues(): array
-    {
-        return (new Builder($this->query))->getValues();
-    }
-
-    public function getAllMetadata(): object
-    {
-        return SQLiteConnection::getInstance()->getAllMetadata();
+        /** @var static */
+        return Internal::limit(['data' => $data, 'self' => self::$self]);
     }
 
     /**
      * @throws ReflectionException
      */
-    private static function run($instance): string
+    private function runOnce(): void
     {
-        $reflectionMethod = new ReflectionMethod($instance, 'buildRaw');
-        $buildRawResult = $reflectionMethod->invoke($instance);
-        $builder = new Builder($instance->query);
+        $currentQuery = $this->parse();
+
+        if ($this->lastQuery !== $currentQuery || $this->cursorExhausted) {
+            $this->getContext()->query($currentQuery);
+            $this->lastQuery = $currentQuery;
+            $this->cursorExhausted = false;
+        }
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function reset(): void
+    {
+        $this->lastQuery = null;
+        $this->cursorExhausted = true;
+    }
+
+    /**
+     * @throws ReflectionException
+     * @return string
+     */
+    private function parse(): string
+    {
+        $buildRawResult = $this->buildRaw();
+        $builder = new Builder($this->query);
         return $builder->parse(
             $buildRawResult,
             Translater::SQL_DIALECT_NONE,
@@ -407,38 +487,68 @@ class SQLiteQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws ReflectionException
+     * @throws CustomException
+     * @return string
      */
-    private static function afterRun($instance): void
+    public function build(): string
     {
-        $query = self::run($instance);
-        SQLiteConnection::getInstance()->query($query);
+        return (new Builder($this->query))->build();
     }
 
-    public static function beforeRun(string $query): void
+    /**
+     * @throws CustomException
+     * @return string
+     */
+    public function buildRaw(): string
     {
-        SQLiteConnection::getInstance()->query($query);
+        return (new Builder($this->query))->buildRaw();
+    }
+
+    /**
+     * @throws CustomException
+     * @return array
+     */
+    public function getValues(): array
+    {
+        return (new Builder($this->query))->getValues();
+    }
+
+    /**
+     * @throws CustomException
+     * @return object
+     */
+    public function getAllMetadata(): object
+    {
+        $this->runOnce();
+        return $this->getContext()->getAllMetadata();
     }
 
     /**
      * @throws ReflectionException
+     * @return mixed
      */
     public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
-        if ($this->query->build === Build::AFTER) {
-            self::afterRun($this);
+        $this->runOnce();
+        $result = $this->getContext()->fetch($fetchStyle, $fetchArgument, $optArgs);
+
+        if ($result === false || $result === null) {
+            $this->cursorExhausted = true;
         }
-        return SQLiteConnection::getInstance()->fetch($fetchStyle, $fetchArgument, $optArgs);
+
+        return $result;
     }
 
     /**
      * @throws ReflectionException
+     * @return array|bool
      */
     public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
-        if ($this->query->build === Build::AFTER) {
-            self::afterRun($this);
-        }
-        return SQLiteConnection::getInstance()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
+        $this->runOnce();
+        $result = $this->getContext()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
+
+        $this->cursorExhausted = true;
+        return $result;
     }
 }

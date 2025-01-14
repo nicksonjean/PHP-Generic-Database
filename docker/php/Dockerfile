@@ -241,6 +241,10 @@ RUN \
   echo "xdebug.var_display_max_children=-1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
   echo "xdebug.var_display_max_data=-1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
+# Configuração de memory_limit do PHP
+RUN \
+  echo "memory_limit=-1" >>  /usr/local/etc/php/php.ini
+
 # Apache Configurations, Mod Rewrite
 RUN \
   ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load

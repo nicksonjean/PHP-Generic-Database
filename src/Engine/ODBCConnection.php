@@ -729,7 +729,6 @@ class ODBCConnection implements IConnection
     {
         $this->setAllMetadata();
         if (!empty($params)) {
-            ini_set('memory_limit', '-1');
             $this->setStatement(odbc_prepare($this->getConnection(), $this->parse(...$params)));
             $rowCount = $params;
             array_unshift($rowCount, odbc_prepare($this->getConnection(), $this->parse(...$params)));

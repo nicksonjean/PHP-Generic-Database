@@ -2,7 +2,6 @@
 
 namespace GenericDatabase\Engine\MySQLi\QueryBuilder;
 
-use GenericDatabase\Core\Build;
 use GenericDatabase\Core\Column;
 use GenericDatabase\Core\Select;
 use GenericDatabase\Core\Join;
@@ -15,7 +14,6 @@ use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translater;
 use GenericDatabase\Helpers\CustomException;
-use GenericDatabase\Engine\MySQLiQueryBuilder;
 
 class Builder
 {
@@ -297,27 +295,8 @@ class Builder
         if (!empty($this->query->limit)) {
             $query .= $this->buildLimit();
         }
-
-        if ($this->query->build === Build::BEFORE) {
-            $this->beforeRun($query);
-        }
         return trim($query);
     }
-
-    private function beforeRun(string $query): void
-    {
-        $values = $this->getValues();
-        if (!empty($values)) {
-            $query = $this->setPlaceholders($query, $values);
-            $query = $this->parse(
-                $query,
-                Translater::SQL_DIALECT_NONE,
-                Translater::SQL_DIALECT_SINGLE_QUOTE
-            );
-        }
-        MySQLiQueryBuilder::beforeRun($query);
-    }
-
 
     private function setPlaceholders(string $query, array $values): string
     {

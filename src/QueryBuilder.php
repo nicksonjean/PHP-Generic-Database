@@ -7,21 +7,13 @@ namespace GenericDatabase;
 use GenericDatabase\IQueryBuilder;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Connection;
-use GenericDatabase\Engine\FirebirdConnection;
 use GenericDatabase\Engine\FirebirdQueryBuilder;
-use GenericDatabase\Engine\OCIConnection;
 use GenericDatabase\Engine\OCIQueryBuilder;
-use GenericDatabase\Engine\PgSQLConnection;
 use GenericDatabase\Engine\PgSQLQueryBuilder;
-use GenericDatabase\Engine\MySQLiConnection;
 use GenericDatabase\Engine\MySQLiQueryBuilder;
-use GenericDatabase\Engine\SQLSrvConnection;
 use GenericDatabase\Engine\SQLSrvQueryBuilder;
-use GenericDatabase\Engine\SQLiteConnection;
 use GenericDatabase\Engine\SQLiteQueryBuilder;
-use GenericDatabase\Engine\PDOConnection;
 use GenericDatabase\Engine\PDOQueryBuilder;
-use GenericDatabase\Engine\ODBCConnection;
 use GenericDatabase\Engine\ODBCQueryBuilder;
 use Exception;
 
@@ -34,6 +26,8 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      */
     private static Connection $context;
 
+    private static $self;
+
     /**
      * Property of the type object who define the strategy
      */
@@ -42,10 +36,24 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     /**
      * @throws Exception
      */
-    public function __construct()
+    public function __construct(Connection $context = null)
     {
-        $this->initContext();
+        self::$context = $context;
+        self::$self = $this;
         $this->initStrategy();
+    }
+
+    /**
+     * Static initializer with context
+     *
+     * @param Connection $context
+     * @return class-string<static>
+     */
+    public static function with(Connection $context): string
+    {
+        self::$context = $context;
+        self::$self = new static($context);
+        return static::class;
     }
 
     /**
@@ -75,44 +83,6 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      * @return void
      * @throws Exception
      */
-    private function initContext(): void
-    {
-        self::$context = new Connection();
-
-        $connections = [
-            FirebirdConnection::class,
-            MySQLiConnection::class,
-            OCIConnection::class,
-            PgSQLConnection::class,
-            SQLSrvConnection::class,
-            SQLiteConnection::class,
-            PDOConnection::class,
-            ODBCConnection::class
-        ];
-
-        $instance = null;
-
-        foreach ($connections as $connection) {
-            $instanceCandidate = $connection::getInstance();
-            if ($instanceCandidate instanceof $connection) {
-                $instance = $instanceCandidate;
-                break;
-            }
-        }
-
-        if ($instance === null) {
-            throw new Exception('No valid context found');
-        }
-
-        self::$context->setStrategy($instance);
-    }
-
-    /**
-     * Factory that replaces the __constructor and defines the Strategy through the engine parameter
-     *
-     * @return void
-     * @throws Exception
-     */
     private function initStrategy(): void
     {
         $engine = self::$context->getEngine();
@@ -122,14 +92,14 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
         }
 
         $strategy = match ($engine) {
-            'firebird' => FirebirdQueryBuilder::getInstance(),
-            'mysqli' => MySQLiQueryBuilder::getInstance(),
-            'oci' => OCIQueryBuilder::getInstance(),
-            'pgsql' => PgSQLQueryBuilder::getInstance(),
-            'sqlsrv' => SQLSrvQueryBuilder::getInstance(),
-            'sqlite' => SQLiteQueryBuilder::getInstance(),
-            'pdo' => PDOQueryBuilder::getInstance(),
-            'odbc' => ODBCQueryBuilder::getInstance(),
+            'firebird' => (new FirebirdQueryBuilder(self::$context)),
+            'mysqli' => (new MySQLiQueryBuilder(self::$context)),
+            'oci' => (new OCIQueryBuilder(self::$context)),
+            'pgsql' => (new PgSQLQueryBuilder(self::$context)),
+            'sqlsrv' => (new SQLSrvQueryBuilder(self::$context)),
+            'sqlite' => (new SQLiteQueryBuilder(self::$context)),
+            'pdo' => (new PDOQueryBuilder(self::$context)),
+            'odbc' => (new ODBCQueryBuilder(self::$context)),
             default => null,
         };
 
@@ -142,175 +112,175 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     public static function select(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->select(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->select(...$data);
+        return self::$self;
     }
 
     public static function distinct(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->distinct(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->distinct(...$data);
+        return self::$self;
     }
 
     public static function from(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->from(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->from(...$data);
+        return self::$self;
     }
 
     public static function join(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->join(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->join(...$data);
+        return self::$self;
     }
 
     public static function selfJoin(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->selfJoin(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->selfJoin(...$data);
+        return self::$self;
     }
 
     public static function leftJoin(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->leftJoin(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->leftJoin(...$data);
+        return self::$self;
     }
 
     public static function rightJoin(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->rightJoin(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->rightJoin(...$data);
+        return self::$self;
     }
 
     public static function innerJoin(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->innerJoin(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->innerJoin(...$data);
+        return self::$self;
     }
 
     public static function outerJoin(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->outerJoin(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->outerJoin(...$data);
+        return self::$self;
     }
 
     public static function crossJoin(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->crossJoin(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->crossJoin(...$data);
+        return self::$self;
     }
 
     public static function on(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->on(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->on(...$data);
+        return self::$self;
     }
 
     public static function andOn(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->andOn(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->andOn(...$data);
+        return self::$self;
     }
 
     public static function orOn(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->orOn(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->orOn(...$data);
+        return self::$self;
     }
 
     public static function where(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->where(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->where(...$data);
+        return self::$self;
     }
 
     public static function andWhere(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->andWhere(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->andWhere(...$data);
+        return self::$self;
     }
 
     public static function orWhere(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->andWhere(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->andWhere(...$data);
+        return self::$self;
     }
 
     public static function having(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->having(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->having(...$data);
+        return self::$self;
     }
 
     public static function andHaving(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->andHaving(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->andHaving(...$data);
+        return self::$self;
     }
 
     public static function orHaving(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->orHaving(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->orHaving(...$data);
+        return self::$self;
     }
 
     public static function group(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->group(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->group(...$data);
+        return self::$self;
     }
 
     public static function order(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->order(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->order(...$data);
+        return self::$self;
     }
 
     public static function orderAsc(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->orderAsc(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->orderAsc(...$data);
+        return self::$self;
     }
 
     public static function orderDesc(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->orderDesc(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->orderDesc(...$data);
+        return self::$self;
     }
 
     public static function limit(array|string ...$data): IQueryBuilder
     {
-        self::getInstance()->getStrategy()->limit(...$data);
-        return self::getInstance();
+        self::$self->getStrategy()->limit(...$data);
+        return self::$self;
     }
 
     public function build(): string
     {
-        return self::getInstance()->getStrategy()->build();
+        return self::$self->getStrategy()->build();
     }
 
     public function buildRaw(): string
     {
-        return self::getInstance()->getStrategy()->buildRaw();
+        return self::$self->getStrategy()->buildRaw();
     }
 
     public function getValues(): array
     {
-        return self::getInstance()->getStrategy()->getValues();
+        return self::$self->getStrategy()->getValues();
     }
 
     public function getAllMetadata(): object
     {
-        return self::getInstance()->getStrategy()->getAllMetadata();
+        return self::$self->getStrategy()->getAllMetadata();
     }
 
     public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
-        return self::getInstance()->getStrategy()->fetch($fetchStyle, $fetchArgument, $optArgs);
+        return self::$self->getStrategy()->fetch($fetchStyle, $fetchArgument, $optArgs);
     }
 
     public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
-        return self::getInstance()->getStrategy()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
+        return self::$self->getStrategy()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
     }
 }

@@ -18,7 +18,7 @@ $context = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: false)
 // $context = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 
-$test0 = (new PDOQueryBuilder())->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$test0 = (new PDOQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
     ->where(['e.id >= 25']);
 
@@ -31,7 +31,7 @@ var_dump($test0->fetchAll(Connection::FETCH_BOTH));
 //     var_dump($row);
 // }
 
-$testA = PDOQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testA = PDOQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
     ->where(['e.id <= 25']);
 
@@ -44,7 +44,7 @@ var_dump($testA->fetchAll(Connection::FETCH_BOTH));
 //     var_dump($row);
 // }
 
-$testB = (new PDOQueryBuilder())->select('e.id AS Codigo, e.nome AS Estado, e.sigla AS Sigla')
+$testB = (new PDOQueryBuilder($context))->select('e.id AS Codigo, e.nome AS Estado, e.sigla AS Sigla')
     ->from('estado e')
     ->where('e.id >= 1')
     ->andWhere('e.id <= 5');
@@ -58,7 +58,7 @@ var_dump($testB->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testB->getAllMetadata());
 
-$testC = PDOQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testC = PDOQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id = 6')
     ->orWhere('e.id = 11');
@@ -72,7 +72,7 @@ var_dump($testC->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testC->getAllMetadata());
 
-$testD = PDOQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testD = PDOQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where([['e.id >= 12'], ['AND' => 'e.id <= 20'], ['OR' => 'e.id = 25']]);
 
@@ -85,7 +85,7 @@ var_dump($testD->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testD->getAllMetadata());
 
-$testE = PDOQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testE = PDOQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.nome LIKE %Rio Grande%');
 
@@ -98,7 +98,7 @@ var_dump($testE->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testE->getAllMetadata());
 
-$testF = PDOQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testF = PDOQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id BETWEEN 1, 20');
 
@@ -111,7 +111,7 @@ var_dump($testF->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testF->getAllMetadata());
 
-$testF1 = PDOQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testF1 = PDOQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id BETWEEN 21 AND 22');
 
@@ -124,7 +124,7 @@ var_dump($testF1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testF1->getAllMetadata());
 
-$testG = PDOQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testG = PDOQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id IN (20, 21, 22)');
 
@@ -137,7 +137,7 @@ var_dump($testG->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testG->getAllMetadata());
 
-$testH1 = PDOQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'COUNT(c.id) as num_cidades'])
+$testH1 = PDOQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'COUNT(c.id) as num_cidades'])
     ->from(['estado e'])
     ->join(['cidade c'])
     ->on(['e.id = c.estado_id'])
@@ -155,7 +155,7 @@ var_dump($testH1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testH1->getAllMetadata());
 
-$testH2 = PDOQueryBuilder::select('e.id AS Codigo, e.nome AS Estado, COUNT(c.id) as num_cidades')
+$testH2 = PDOQueryBuilder::with($context)::select('e.id AS Codigo, e.nome AS Estado, COUNT(c.id) as num_cidades')
     ->from('estado e')
     ->join('cidade c')
     ->on('e.id = c.estado_id')
@@ -173,7 +173,7 @@ var_dump($testH2->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testH2->getAllMetadata());
 
-$testI = PDOQueryBuilder::select(['e.*', 'c.*'])
+$testI = PDOQueryBuilder::with($context)::select(['e.*', 'c.*'])
     ->from(['estado e'], ['cidade c'])
     ->where(['e.id = 10'])
     ->andWhere(['c.id = 10']);
@@ -187,7 +187,7 @@ var_dump($testI->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testI->getAllMetadata());
 
-$testI1 = PDOQueryBuilder::select('e.*, c.*')
+$testI1 = PDOQueryBuilder::with($context)::select('e.*, c.*')
     ->from('estado e, cidade c')
     ->where('e.id = 5')
     ->andWhere('c.id = 5');
@@ -201,7 +201,7 @@ var_dump($testI1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testI1->getAllMetadata());
 
-$testJ = PDOQueryBuilder::select(['e.*', 'c.*'])
+$testJ = PDOQueryBuilder::with($context)::select(['e.*', 'c.*'])
     ->from(['estado e', 'cidade c'])
     ->where([['e.id = 1'], ['AND' => 'e.id = 2'], ['AND' => 'e.id = 3']])
     ->andWhere(['e.id = 4'])
@@ -218,7 +218,7 @@ var_dump($testJ->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ->getAllMetadata());
 
-$testJ1 = PDOQueryBuilder::select(['e.*', 'c.*'])
+$testJ1 = PDOQueryBuilder::with($context)::select(['e.*', 'c.*'])
     ->from(['estado e', 'cidade c'])
     ->where([['e.id = 10'], ['AND' => 'e.id = 11'], ['AND' => 'e.id = 12']])
     ->andWhere([['e.id = 13'], ['OR' => 'c.id = 14']])
@@ -234,7 +234,7 @@ var_dump($testJ1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ1->getAllMetadata());
 
-$testJ2 = PDOQueryBuilder::select('e.*, c.*')
+$testJ2 = PDOQueryBuilder::with($context)::select('e.*, c.*')
     ->from('estado e, cidade c')
     ->where([['e.id = 10'], ['AND' => 'e.id = 11'], ['AND' => 'e.id = 12']])
     ->andWhere([['e.id = 13'], ['OR' => 'c.id = 14']])
@@ -250,16 +250,16 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ2->getAllMetadata());
 
-// $combinedQuery = PDOQueryBuilder::select(['maconha.id', 'maconha.nome'])
+// $combinedQuery = PDOQueryBuilder::with($context)::select(['maconha.id', 'maconha.nome'])
 //     ->from('estado AS maconha')
 //     ->where('maconha.id', '=', 'teste')
 //     ->union(
-//         PDOQueryBuilder::select(['c.id', 'c.nome'])
+//         PDOQueryBuilder::with($context)::select(['c.id', 'c.nome'])
 //             ->from('estado AS c')
 //             ->where('c.id', '=', 'maconha.id')
 //     )
 //     ->union(
-//         PDOQueryBuilder::select(['d.id', 'd.nome'])
+//         PDOQueryBuilder::with($context)::select(['d.id', 'd.nome'])
 //             ->from('estado AS d')
 //             ->where('d.id', '=', 'maconha.id')
 //     );
@@ -268,20 +268,20 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // var_dump($combinedQuery->build());
 // var_dump($combinedQuery->buildRaw());
 
-// $query = PDOQueryBuilder::select(['*'])
+// $query = PDOQueryBuilder::with($context)::select(['*'])
 //     ->from('orders AS o')
 //     ->where('o.status', '=', 'completed')
 //     ->where('o.total_amount', '>', 1000)
 //     ->andWhere(
-//         PDOQueryBuilder::exists(
-//             PDOQueryBuilder::select(['1'])
+//         PDOQueryBuilder::with($context)::exists(
+//             PDOQueryBuilder::with($context)::select(['1'])
 //                 ->from('customers c')
 //                 ->where('c.id', '=', 'o.customer_id')
 //         )
 //     )
 //     ->orWhere(
-//         PDOQueryBuilder::notExists(
-//             PDOQueryBuilder::select(['1'])
+//         PDOQueryBuilder::with($context)::notExists(
+//             PDOQueryBuilder::with($context)::select(['1'])
 //                 ->from('returns r')
 //                 ->where('r.order_id', '=', 'o.id')
 //         )
@@ -291,8 +291,8 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // var_dump($query);
 
 
-// var_dump(PDOQueryBuilder::getRegexSelect());
-// var_dump(PDOQueryBuilder::getRegexFrom());
-// var_dump(PDOQueryBuilder::getRegexOn());
-// var_dump(PDOQueryBuilder::getRegexGroupOrder());
-// var_dump(PDOQueryBuilder::getRegexWhereHaving());
+// var_dump(PDOQueryBuilder::with($context)::getRegexSelect());
+// var_dump(PDOQueryBuilder::with($context)::getRegexFrom());
+// var_dump(PDOQueryBuilder::with($context)::getRegexOn());
+// var_dump(PDOQueryBuilder::with($context)::getRegexGroupOrder());
+// var_dump(PDOQueryBuilder::with($context)::getRegexWhereHaving());

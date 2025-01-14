@@ -18,7 +18,20 @@ $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: false
 // $context = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::odbcOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 
-$test0 = (new ODBCQueryBuilder())->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testu = ODBCQueryBuilder::with($context)::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+    ->from(['estado e'])
+    ->where(['e.id >= 25']);
+
+var_dump($testu);
+var_dump($testu->build());
+var_dump($testu->buildRaw());
+var_dump($testu->getAllMetadata());
+var_dump($testu->fetchAll(Connection::FETCH_BOTH));
+// while ($row = $testu->fetch(Connection::FETCH_ASSOC)) {
+//     var_dump($row);
+// }
+
+$test0 = (new ODBCQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
     ->where(['e.id >= 25']);
 
@@ -31,7 +44,7 @@ var_dump($test0->fetchAll(Connection::FETCH_BOTH));
 //     var_dump($row);
 // }
 
-$testA = ODBCQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testA = (new ODBCQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
     ->where(['e.id <= 25']);
 
@@ -44,7 +57,8 @@ var_dump($testA->fetchAll(Connection::FETCH_BOTH));
 //     var_dump($row);
 // }
 
-$testB = (new ODBCQueryBuilder())->select('e.id AS Codigo, e.nome AS Estado, e.sigla AS Sigla')
+
+$testB = (new ODBCQueryBuilder($context))->select('e.id AS Codigo, e.nome AS Estado, e.sigla AS Sigla')
     ->from('estado e')
     ->where('e.id >= 1')
     ->andWhere('e.id <= 5');
@@ -58,7 +72,7 @@ var_dump($testB->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testB->getAllMetadata());
 
-$testC = ODBCQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testC = (new ODBCQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id = 6')
     ->orWhere('e.id = 11');
@@ -72,7 +86,7 @@ var_dump($testC->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testC->getAllMetadata());
 
-$testD = ODBCQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testD = (new ODBCQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where([['e.id >= 12'], ['AND' => 'e.id <= 20'], ['OR' => 'e.id = 25']]);
 
@@ -85,7 +99,7 @@ var_dump($testD->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testD->getAllMetadata());
 
-$testE = ODBCQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testE = (new ODBCQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.nome LIKE %Rio Grande%');
 
@@ -98,7 +112,7 @@ var_dump($testE->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testE->getAllMetadata());
 
-$testF = ODBCQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testF = (new ODBCQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id BETWEEN 1, 20');
 
@@ -111,7 +125,7 @@ var_dump($testF->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testF->getAllMetadata());
 
-$testF1 = ODBCQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testF1 = (new ODBCQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id BETWEEN 21 AND 22');
 
@@ -124,7 +138,7 @@ var_dump($testF1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testF1->getAllMetadata());
 
-$testG = ODBCQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
+$testG = (new ODBCQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from('estado e')
     ->where('e.id IN (20, 21, 22)');
 
@@ -137,7 +151,7 @@ var_dump($testG->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testG->getAllMetadata());
 
-$testH1 = ODBCQueryBuilder::select(['e.id AS Codigo', 'e.nome AS Estado', 'COUNT(c.id) as num_cidades'])
+$testH1 = (new ODBCQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'COUNT(c.id) as num_cidades'])
     ->from(['estado e'])
     ->join(['cidade c'])
     ->on(['e.id = c.estado_id'])
@@ -155,7 +169,7 @@ var_dump($testH1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testH1->getAllMetadata());
 
-$testH2 = ODBCQueryBuilder::select('e.id AS Codigo, e.nome AS Estado, COUNT(c.id) as num_cidades')
+$testH2 = (new ODBCQueryBuilder($context))->select('e.id AS Codigo, e.nome AS Estado, COUNT(c.id) as num_cidades')
     ->from('estado e')
     ->join('cidade c')
     ->on('e.id = c.estado_id')
@@ -173,7 +187,7 @@ var_dump($testH2->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testH2->getAllMetadata());
 
-$testI = ODBCQueryBuilder::select(['e.*', 'c.*'])
+$testI = (new ODBCQueryBuilder($context))->select(['e.*', 'c.*'])
     ->from(['estado e'], ['cidade c'])
     ->where(['e.id = 10'])
     ->andWhere(['c.id = 10']);
@@ -187,7 +201,7 @@ var_dump($testI->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testI->getAllMetadata());
 
-$testI1 = ODBCQueryBuilder::select('e.*, c.*')
+$testI1 = (new ODBCQueryBuilder($context))->select('e.*, c.*')
     ->from('estado e, cidade c')
     ->where('e.id = 5')
     ->andWhere('c.id = 5');
@@ -201,7 +215,7 @@ var_dump($testI1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testI1->getAllMetadata());
 
-$testJ = ODBCQueryBuilder::select(['e.*', 'c.*'])
+$testJ = (new ODBCQueryBuilder($context))->select(['e.*', 'c.*'])
     ->from(['estado e', 'cidade c'])
     ->where([['e.id = 1'], ['AND' => 'e.id = 2'], ['AND' => 'e.id = 3']])
     ->andWhere(['e.id = 4'])
@@ -218,7 +232,7 @@ var_dump($testJ->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ->getAllMetadata());
 
-$testJ1 = ODBCQueryBuilder::select(['e.*', 'c.*'])
+$testJ1 = (new ODBCQueryBuilder($context))->select(['e.*', 'c.*'])
     ->from(['estado e', 'cidade c'])
     ->where([['e.id = 10'], ['AND' => 'e.id = 11'], ['AND' => 'e.id = 12']])
     ->andWhere([['e.id = 13'], ['OR' => 'c.id = 14']])
@@ -234,7 +248,7 @@ var_dump($testJ1->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ1->getAllMetadata());
 
-$testJ2 = ODBCQueryBuilder::select('e.*, c.*')
+$testJ2 = (new ODBCQueryBuilder($context))->select('e.*, c.*')
     ->from('estado e, cidade c')
     ->where([['e.id = 10'], ['AND' => 'e.id = 11'], ['AND' => 'e.id = 12']])
     ->andWhere([['e.id = 13'], ['OR' => 'c.id = 14']])
@@ -250,16 +264,16 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // }
 // var_dump($testJ2->getAllMetadata());
 
-// $combinedQuery = ODBCQueryBuilder::select(['maconha.id', 'maconha.nome'])
+// $combinedQuery = (new ODBCQueryBuilder($context))->select(['maconha.id', 'maconha.nome'])
 //     ->from('estado AS maconha')
 //     ->where('maconha.id', '=', 'teste')
 //     ->union(
-//         ODBCQueryBuilder::select(['c.id', 'c.nome'])
+//         (new ODBCQueryBuilder($context))->select(['c.id', 'c.nome'])
 //             ->from('estado AS c')
 //             ->where('c.id', '=', 'maconha.id')
 //     )
 //     ->union(
-//         ODBCQueryBuilder::select(['d.id', 'd.nome'])
+//         (new ODBCQueryBuilder($context))->select(['d.id', 'd.nome'])
 //             ->from('estado AS d')
 //             ->where('d.id', '=', 'maconha.id')
 //     );
@@ -268,20 +282,20 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // var_dump($combinedQuery->build());
 // var_dump($combinedQuery->buildRaw());
 
-// $query = ODBCQueryBuilder::select(['*'])
+// $query = (new ODBCQueryBuilder($context))->select(['*'])
 //     ->from('orders AS o')
 //     ->where('o.status', '=', 'completed')
 //     ->where('o.total_amount', '>', 1000)
 //     ->andWhere(
-//         ODBCQueryBuilder::exists(
-//             ODBCQueryBuilder::select(['1'])
+//         (new ODBCQueryBuilder($context))->exists(
+//             (new ODBCQueryBuilder($context))->select(['1'])
 //                 ->from('customers c')
 //                 ->where('c.id', '=', 'o.customer_id')
 //         )
 //     )
 //     ->orWhere(
-//         ODBCQueryBuilder::notExists(
-//             ODBCQueryBuilder::select(['1'])
+//         (new ODBCQueryBuilder($context))->notExists(
+//             (new ODBCQueryBuilder($context))->select(['1'])
 //                 ->from('returns r')
 //                 ->where('r.order_id', '=', 'o.id')
 //         )
@@ -291,8 +305,8 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // var_dump($query);
 
 
-// var_dump(ODBCQueryBuilder::getRegexSelect());
-// var_dump(ODBCQueryBuilder::getRegexFrom());
-// var_dump(ODBCQueryBuilder::getRegexOn());
-// var_dump(ODBCQueryBuilder::getRegexGroupOrder());
-// var_dump(ODBCQueryBuilder::getRegexWhereHaving());
+// var_dump((new ODBCQueryBuilder($context))->getRegexSelect());
+// var_dump((new ODBCQueryBuilder($context))->getRegexFrom());
+// var_dump((new ODBCQueryBuilder($context))->getRegexOn());
+// var_dump((new ODBCQueryBuilder($context))->getRegexGroupOrder());
+// var_dump((new ODBCQueryBuilder($context))->getRegexWhereHaving());

@@ -245,17 +245,17 @@ class Internal
     {
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new ODBCQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
-        $connection = $arguments['connection'] ?? null;
+        $context = $arguments['context'] ?? null;
         if (Arrays::isDepthArray($data) === 1 && count($data) > 1) {
             $data = [implode(', ', $data)];
         }
         if (Arrays::isMultidimensional($data)) {
             $self->query->limit = Criteria::getLimit([
                 'data' => implode(', ', reset($data)),
-                'connection' => $connection
+                'context' => $context
             ]);
         } else {
-            $self->query->limit = Criteria::getLimit(['data' => reset($data), 'connection' => $connection]);
+            $self->query->limit = Criteria::getLimit(['data' => reset($data), 'context' => $context]);
         }
         return $self;
     }
