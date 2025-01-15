@@ -47,13 +47,13 @@ class MySQLiQueryBuilder implements IQueryBuilder
      * Static initializer with context
      *
      * @param Connection|MySQLiConnection $context
-     * @return class-string<static>
+     * @return self
      */
-    public static function with(Connection|MySQLiConnection $context): string
+    public static function with(Connection|MySQLiConnection $context): self
     {
         self::$context = $context;
         self::$self = new static($context);
-        return static::class;
+        return self::$self;
     }
 
     /**

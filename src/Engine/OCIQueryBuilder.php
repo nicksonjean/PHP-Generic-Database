@@ -47,13 +47,13 @@ class OCIQueryBuilder implements IQueryBuilder
      * Static initializer with context
      *
      * @param Connection|OCIConnection $context
-     * @return class-string<static>
+     * @return self
      */
-    public static function with(Connection|OCIConnection $context): string
+    public static function with(Connection|OCIConnection $context): self
     {
         self::$context = $context;
         self::$self = new static($context);
-        return static::class;
+        return self::$self;
     }
 
     /**

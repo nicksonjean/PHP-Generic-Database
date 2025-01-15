@@ -149,6 +149,10 @@ class Connection implements IConnection, IConnectionStrategy
         'SQLite'
     ];
 
+    /**
+     * Empty constructor since initialization is handled through factory methods
+     * and the Strategy pattern implementation
+     */
     public function __construct()
     {
     }

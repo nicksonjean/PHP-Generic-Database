@@ -47,13 +47,13 @@ class SQLSrvQueryBuilder implements IQueryBuilder
      * Static initializer with context
      *
      * @param Connection|SQLSrvConnection $context
-     * @return class-string<static>
+     * @return self
      */
-    public static function with(Connection|SQLSrvConnection $context): string
+    public static function with(Connection|SQLSrvConnection $context): self
     {
         self::$context = $context;
         self::$self = new static($context);
-        return static::class;
+        return self::$self;
     }
 
     /**

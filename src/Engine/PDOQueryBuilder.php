@@ -47,13 +47,13 @@ class PDOQueryBuilder implements IQueryBuilder
      * Static initializer with context
      *
      * @param Connection|PDOConnection $context
-     * @return class-string<static>
+     * @return self
      */
-    public static function with(Connection|PDOConnection $context): string
+    public static function with(Connection|PDOConnection $context): self
     {
         self::$context = $context;
         self::$self = new static($context);
-        return static::class;
+        return self::$self;
     }
 
     /**

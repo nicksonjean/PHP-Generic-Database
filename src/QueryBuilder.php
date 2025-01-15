@@ -34,7 +34,9 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     private IQueryBuilder $strategy;
 
     /**
-     * @throws Exception
+     * Constructor with context
+     *
+     * @param Connection $context
      */
     public function __construct(Connection $context = null)
     {
@@ -47,13 +49,13 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      * Static initializer with context
      *
      * @param Connection $context
-     * @return class-string<static>
+     * @return self
      */
-    public static function with(Connection $context): string
+    public static function with(Connection $context): self
     {
         self::$context = $context;
         self::$self = new static($context);
-        return static::class;
+        return self::$self;
     }
 
     /**

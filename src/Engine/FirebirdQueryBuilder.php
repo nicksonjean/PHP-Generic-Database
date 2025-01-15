@@ -47,13 +47,13 @@ class FirebirdQueryBuilder implements IQueryBuilder
      * Static initializer with context
      *
      * @param Connection|FirebirdConnection $context
-     * @return class-string<static>
+     * @return self
      */
-    public static function with(Connection|FirebirdConnection $context): string
+    public static function with(Connection|FirebirdConnection $context): self
     {
         self::$context = $context;
         self::$self = new static($context);
-        return static::class;
+        return self::$self;
     }
 
     /**

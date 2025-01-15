@@ -1,5 +1,6 @@
 {
   "name": "nicksonjean/php-generic-database",
+  "version": "1.0.0",
   "type": "library",
   "description": "Generic Database Connection Class and Query Builder",
   "keywords": [
@@ -114,7 +115,7 @@
     "phpcs": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 src/ tests/",
     "phpcbf": "php vendor/bin/phpcbf --ignore-annotations --standard=PSR12 src/ tests/",
     "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude pdo.stub.php --exclude pgsql.stub.php --exclude vendor .",
-    "run:docs": "php vendor/bin/doctum.php update ./config.php --ignore-parse-errors",
+    "run:docs": "php vendor/bin/doctum.php update ./doctum.php --ignore-parse-errors -vvv",
     "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
     "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
     "run:test:coverage": "php -d pcov.directory=src vendor/bin/phpunit tests --colors=always --configuration phpunit.xml --do-not-cache-result --coverage-html build/coverage --coverage-clover build/logs/clover.xml",
