@@ -5,22 +5,33 @@ namespace GenericDatabase\Tests;
 use PHPUnit\Framework\TestCase;
 use GenericDatabase\Connection;
 use GenericDatabase\Modules\Chainable;
+use Dotenv\Dotenv;
 
+/**
+ * @group ignore-test-cases
+ */
 class ConnectionFirebirdTest extends TestCase
 {
     private array $firebirdEnv;
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 1);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->firebirdEnv = [
-            'FBIRD_HOST' => "localhost",
-            'FBIRD_PORT' => 3050,
-            'FBIRD_DATABASE' => "./resources/database/firebird/DB.FDB",
-            'FBIRD_USER' => "sysdba",
-            'FBIRD_PASSWORD' => "masterkey",
-            'FBIRD_CHARSET' => "utf8",
+            'FBIRD_HOST' => $_ENV['FBIRD_HOST'],
+            'FBIRD_PORT' => $_ENV['FBIRD_PORT'],
+            'FBIRD_DATABASE' => $_ENV['FBIRD_DATABASE'],
+            'FBIRD_USERNAME' => $_ENV['FBIRD_USERNAME'],
+            'FBIRD_PASSWORD' => $_ENV['FBIRD_PASSWORD'],
+            'FBIRD_CHARSET' => $_ENV['FBIRD_CHARSET']
         ];
 
         $this->connection = Chainable::nativeFirebird($this->firebirdEnv, false, true);

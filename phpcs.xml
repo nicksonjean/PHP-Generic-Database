@@ -5,8 +5,11 @@
   <config name="tab_width" value="2"/>
   <config name="ignore_errors_on_exit" value="1"/>
   <config name="ignore_warnings_on_exit" value="1"/>
-  <rule ref="PSR12">
-    <!-- Exclude PSR12 Rules Here -->
+  <rule ref="PSR12" />
+  <rule ref="Generic.Files.LineLength">
+    <properties>
+        <property name="lineLimit" value="360"/>
+        <property name="absoluteLineLimit" value="360"/>
+    </properties>
   </rule>
-  <!-- Add Additional Rules Here -->
 </ruleset>

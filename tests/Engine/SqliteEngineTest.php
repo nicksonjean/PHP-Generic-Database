@@ -6,19 +6,27 @@ use PHPUnit\Framework\TestCase;
 use GenericDatabase\Engine\SQLiteConnection;
 use GenericDatabase\Engine\SQLite\Connection\SQLite;
 use GenericDatabase\Modules\Chainable;
+use Dotenv\Dotenv;
 
-class SQLiteConnectionTest extends TestCase
+class SqliteEngineTest extends TestCase
 {
     private array $sqliteEnv;
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 2);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->sqliteEnv = [
-            'SQLITE_DATABASE' => "./resources/database/sqlite/DB.SQLITE",
-            'SQLITE_DATABASE_MEMORY' => "memory",
-            'SQLITE_CHARSET' => "utf8",
+            'SQLITE_DATABASE' => "./resources/database/sqlite/data/DB.SQLITE",
+            'SQLITE_DATABASE_MEMORY' => $_ENV['SQLITE_DATABASE_MEMORY'],
+            'SQLITE_CHARSET' => $_ENV['SQLITE_CHARSET']
         ];
 
         $this->connection = Chainable::nativeSQLite($this->sqliteEnv, false, false);

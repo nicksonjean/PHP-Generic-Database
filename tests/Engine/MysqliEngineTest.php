@@ -6,22 +6,30 @@ use PHPUnit\Framework\TestCase;
 use GenericDatabase\Engine\MySQLiConnection;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 use GenericDatabase\Modules\Chainable;
+use Dotenv\Dotenv;
 
-class ConnectionTest extends TestCase
+class MysqliEngineTest extends TestCase
 {
     private array $mysqlEnv;
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 2);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->mysqlEnv = [
-            'MYSQL_HOST' => 'localhost',
-            'MYSQL_PORT' => '3306',
-            'MYSQL_DATABASE' => 'demodev',
-            'MYSQL_USERNAME' => 'root',
-            'MYSQL_PASSWORD' => 'masterkey',
-            'MYSQL_CHARSET' => 'utf8',
+            'MYSQL_HOST' => $_ENV['MYSQL_HOST'],
+            'MYSQL_PORT' => $_ENV['MYSQL_PORT'],
+            'MYSQL_DATABASE' => $_ENV['MYSQL_DATABASE'],
+            'MYSQL_USERNAME' => $_ENV['MYSQL_USERNAME'],
+            'MYSQL_PASSWORD' => $_ENV['MYSQL_PASSWORD'],
+            'MYSQL_CHARSET' => $_ENV['MYSQL_CHARSET']
         ];
 
         $this->connection = Chainable::nativeMySQLi($this->mysqlEnv, false, false);
@@ -118,10 +126,8 @@ class ConnectionTest extends TestCase
 
     public function testExec()
     {
-        $stmt1 = $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
-        $this->connection->exec($stmt1);
-        $stmt2 = $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
-        $this->connection->exec($stmt2);
+        $this->connection->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
+        $this->connection->query("DELETE FROM estado WHERE nome = 'TESTE' AND sigla = 'TE'");
         $this->assertInstanceOf(MySQLiConnection::class, $this->connection);
     }
 

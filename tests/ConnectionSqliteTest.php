@@ -5,6 +5,7 @@ namespace GenericDatabase\Tests;
 use PHPUnit\Framework\TestCase;
 use GenericDatabase\Connection;
 use GenericDatabase\Modules\Chainable;
+use Dotenv\Dotenv;
 
 class ConnectionSqliteTest extends TestCase
 {
@@ -12,12 +13,19 @@ class ConnectionSqliteTest extends TestCase
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 1);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->sqliteEnv = [
-            'SQLITE_DATABASE' => "./resources/database/sqlite/DB.SQLITE",
-            'SQLITE_DATABASE_MEMORY' => "memory",
-            'SQLITE_CHARSET' => "utf8",
+            'SQLITE_DATABASE' => "./resources/database/sqlite/data/DB.SQLITE",
+            'SQLITE_DATABASE_MEMORY' => $_ENV['SQLITE_DATABASE_MEMORY'],
+            'SQLITE_CHARSET' => $_ENV['SQLITE_CHARSET']
         ];
 
         $this->connection = Chainable::nativeSQLite($this->sqliteEnv, false, true);
@@ -45,16 +53,16 @@ class ConnectionSqliteTest extends TestCase
         $this->assertInstanceOf(Connection::class, $connection2);
         $this->assertSame($connection1, $connection2);
 
-        $ini = Connection::new('./resources/dsn/ini/stg_sqlite.ini');
+        $ini = Connection::new('/var/www/html/resources/dsn/ini/stg_sqlite.ini');
         $this->assertInstanceOf(Connection::class, $ini);
 
-        $json = Connection::new('./resources/dsn/json/stg_sqlite.json');
+        $json = Connection::new('/var/www/html/resources/dsn/json/stg_sqlite.json');
         $this->assertInstanceOf(Connection::class, $json);
 
-        $xml = Connection::new('./resources/dsn/xml/stg_sqlite.xml');
+        $xml = Connection::new('/var/www/html/resources/dsn/xml/stg_sqlite.xml');
         $this->assertInstanceOf(Connection::class, $xml);
 
-        $yaml = Connection::new('./resources/dsn/yaml/stg_sqlite.yaml');
+        $yaml = Connection::new('/var/www/html/resources/dsn/yaml/stg_sqlite.yaml');
         $this->assertInstanceOf(Connection::class, $yaml);
     }
 

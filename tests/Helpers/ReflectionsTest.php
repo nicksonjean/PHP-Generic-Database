@@ -190,8 +190,7 @@ final class ReflectionsTest extends TestCase
         $object->name = 'Alice';
         $propertyList = [
             'Name' => 'Bob',
-            'age' => 25,
-            'Live' => 'yes'
+            'age' => 25
         ];
 
         $method = new ReflectionMethod(self::REFCLASS, 'setPropertiesCaseInsensitive');

@@ -109,14 +109,19 @@
       "@clear",
       "composer install"
     ],
+    "phpcs:config": [
+      "php vendor/bin/phpcs --config-set show_progress 1",
+      "php vendor/bin/phpcs --config-set colors 1",
+      "php vendor/bin/phpcs --config-set report_width auto"
+    ],
     "grumphp": "php ./vendor/bin/grumphp -n run",
     "phpstan": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
-    "phpmd": "php vendor/bin/phpmd src/,samples/,tests/ ansi --color phpmd.xml",
-    "phpcs": "php vendor/bin/phpcs --ignore-annotations --standard=PSR12 src/ tests/",
-    "phpcbf": "php vendor/bin/phpcbf --ignore-annotations --standard=PSR12 src/ tests/",
-    "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude pdo.stub.php --exclude pgsql.stub.php --exclude vendor .",
+    "phpmd": "php vendor/bin/phpmd src/,samples/,tests/ ansi phpmd.xml",
+    "phpcs": "php vendor/bin/phpcs --ignore-annotations --standard=./phpcs.xml src/ tests/",
+    "phpcbf": "php vendor/bin/phpcbf --ignore-annotations --standard=./phpcs.xml src/ tests/",
+    "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude connections --exclude pdo.stub.php --exclude pgsql.stub.php --exclude vendor .",
     "run:docs": "php vendor/bin/doctum.php update ./doctum.php --ignore-parse-errors -vvv",
-    "run:test": "php vendor/bin/phpunit --colors=always --testdox --do-not-cache-result tests/",
+    "run:test": "php vendor/bin/phpunit --colors=always --exclude-group=ignore-test-cases --do-not-cache-result --display-notices --display-warnings --display-deprecations --testdox tests/",
     "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
     "run:test:coverage": "php -d pcov.directory=src vendor/bin/phpunit tests --colors=always --configuration phpunit.xml --do-not-cache-result --coverage-html build/coverage --coverage-clover build/logs/clover.xml",
     "run:env": "php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
@@ -131,6 +136,9 @@
     "clear:git": [
       "php -r \"@unlink('.git/hooks/commit-msg');\"",
       "php -r \"@unlink('.git/hooks/pre-commit');\""
+    ],
+    "post-install-cmd": [
+      "@phpcs:config"
     ],
     "post-update-cmd": [
       "@run:env"

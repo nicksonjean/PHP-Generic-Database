@@ -5,6 +5,7 @@ namespace GenericDatabase\Tests;
 use PHPUnit\Framework\TestCase;
 use GenericDatabase\Connection;
 use GenericDatabase\Modules\Chainable;
+use Dotenv\Dotenv;
 
 class ConnectionOCITest extends TestCase
 {
@@ -12,15 +13,22 @@ class ConnectionOCITest extends TestCase
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 1);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->ociEnv = [
-            'OCI_HOST' => "localhost",
-            'OCI_PORT' => 1521,
-            'OCI_DATABASE' => "xe",
-            'OCI_USER' => "hr",
-            'OCI_PASSWORD' => "masterkey",
-            'OCI_CHARSET' => "utf8",
+            'OCI_HOST' => $_ENV['OCI_HOST'],
+            'OCI_PORT' => $_ENV['OCI_PORT'],
+            'OCI_DATABASE' => $_ENV['OCI_DATABASE'],
+            'OCI_USERNAME' => $_ENV['OCI_USERNAME'],
+            'OCI_PASSWORD' => $_ENV['OCI_PASSWORD'],
+            'OCI_CHARSET' => $_ENV['OCI_CHARSET']
         ];
 
         $this->connection = Chainable::nativeOCI($this->ociEnv, false, true);

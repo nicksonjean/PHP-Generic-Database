@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:referrer="http://a9.com/-/opensearch/extensions/referrer/">
+    <ShortName>PHP Generic Database Documentation (main)</ShortName>
+    <Description>Searches PHP Generic Database Documentation (main)</Description>
+    <Tags>PHP Generic Database Documentation</Tags>
+    <Image height="16" width="16" type="image/x-icon">https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico</Image>
+    <Url type="text/html" method="GET" template="https://github.com/nicksonjean/PHP-Generic-Database/search.html?search={searchTerms}&amp;utm_source={referrer:source?}"/>
+    <InputEncoding>UTF-8</InputEncoding>
+    <AdultContent>false</AdultContent>
+</OpenSearchDescription>

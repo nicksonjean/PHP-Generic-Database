@@ -198,9 +198,9 @@ class Connection implements IConnection, IConnectionStrategy
                     XML::isValidXML(...$argumentsFile) => self::callArgumentsByFormat('xml', $argumentsFile),
                     default => Arrays::isAssoc(...$argumentsFile)
                     ? self::callWithByStaticArray(...$arguments)
-                    : self::callWithByStaticArgs($arguments)
+                    : self::callWithByStaticArgs($arguments),
                 },
-            default => self::call(self::getInstance(), $name, $arguments)
+            default => self::call(self::getInstance(), $name, $arguments),
         };
     }
 

@@ -6,22 +6,29 @@ use PHPUnit\Framework\TestCase;
 use GenericDatabase\Engine\SQLSrvConnection;
 use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
 use GenericDatabase\Modules\Chainable;
-
-class SQLSrvConnectionTest extends TestCase
+use Dotenv\Dotenv;
+class SqlsrvEngineTest extends TestCase
 {
     private array $sqlsrvEnv;
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 2);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->sqlsrvEnv = [
-            'SQLSRV_HOST' => "localhost",
-            'SQLSRV_PORT' => 1433,
-            'SQLSRV_DATABASE' => "demodev",
-            'SQLSRV_USER' => "sa",
-            'SQLSRV_PASSWORD' => "masterkey",
-            'SQLSRV_CHARSET' => "utf8",
+            'SQLSRV_HOST' => $_ENV['SQLSRV_HOST'],
+            'SQLSRV_PORT' => $_ENV['SQLSRV_PORT'],
+            'SQLSRV_DATABASE' => $_ENV['SQLSRV_DATABASE'],
+            'SQLSRV_USERNAME' => $_ENV['SQLSRV_USERNAME'],
+            'SQLSRV_PASSWORD' => $_ENV['SQLSRV_PASSWORD'],
+            'SQLSRV_CHARSET' => $_ENV['SQLSRV_CHARSET']
         ];
 
         $this->connection = Chainable::nativeSQLSrv($this->sqlsrvEnv, false, false);

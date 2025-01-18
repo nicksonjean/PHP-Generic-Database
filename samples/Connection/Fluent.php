@@ -37,12 +37,12 @@ try {
     var_dump($e);
 }
 
-try {
-    $context = Fluent::nativeFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
-    var_dump($context);
-} catch (Exception $e) {
-    var_dump($e);
-}
+// try {
+//     $context = Fluent::nativeFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
+//     var_dump($context);
+// } catch (Exception $e) {
+//     var_dump($e);
+// }
 
 try {
     $context = Fluent::nativeSQLite(env: $_ENV, persistent: true, strategy: true)->connect();

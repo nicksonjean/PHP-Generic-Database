@@ -8,19 +8,27 @@ use GenericDatabase\Engine\PDO\Connection\DSN;
 use GenericDatabase\Engine\PDOConnection;
 use GenericDatabase\Modules\Chainable;
 use GenericDatabase\Helpers\CustomException;
+use Dotenv\Dotenv;
 
-class PdoSQLiteConnectionTest extends TestCase
+class PdoSqliteEngineTest extends TestCase
 {
     private array $sqliteEnv;
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 2);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->sqliteEnv = [
-            'SQLITE_DATABASE' => "./resources/database/sqlite/DB.SQLITE",
-            'SQLITE_DATABASE_MEMORY' => "memory",
-            'SQLITE_CHARSET' => "utf8",
+            'SQLITE_DATABASE' => "./resources/database/sqlite/data/DB.SQLITE",
+            'SQLITE_DATABASE_MEMORY' => $_ENV['SQLITE_DATABASE_MEMORY'],
+            'SQLITE_CHARSET' => $_ENV['SQLITE_CHARSET']
         ];
 
         $this->connection = Chainable::pdoSQLite($this->sqliteEnv, false, false);

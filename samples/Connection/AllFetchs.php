@@ -15,7 +15,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 // $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
 // $context = Chainable::nativeSQLSrv(env: $_ENV, strategy: true)->connect();
 // $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: true)->connect();
-$context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: true)->connect();
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: true)->connect();
 
 // $context = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
@@ -28,7 +28,7 @@ $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: true)->c
 // $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
 // $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
 // $context = Chainable::odbcSQLSrv(env: $_ENV, strategy: true)->connect();
-// $context = Chainable::odbcMySQL(env: $_ENV, persistent: true, strategy: true)->connect();
+$context = Chainable::odbcMySQL(env: $_ENV, persistent: true, strategy: true)->connect();
 // $context = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: true)->connect();
 // $context = Chainable::odbcOCI(env: $_ENV, persistent: true, strategy: true)->connect();
 

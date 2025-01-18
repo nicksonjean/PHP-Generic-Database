@@ -3,7 +3,7 @@
 namespace GenericDatabase\Tests\Shared;
 
 use PHPUnit\Framework\TestCase;
-use GenericDatabase\Shared\Cleaner;
+use GenericDatabase\Tests\Shared\Samples\CleanerMock;
 
 class CleanerTraitTest extends TestCase
 {
@@ -11,16 +11,18 @@ class CleanerTraitTest extends TestCase
 
     protected function setUp(): void
     {
-        $traitName = Cleaner::class;
-
-        $this->cleanerMock = $this->getMockBuilder($traitName)->getMockForTrait();
+        $this->cleanerMock = new CleanerMock();
     }
 
     public function testPropertyIsSet()
     {
         $name = 'testProperty';
 
-        $this->cleanerMock->property = [$name => 'value'];
+        $reflection = new \ReflectionClass($this->cleanerMock);
+        $property = $reflection->getProperty('property');
+        $property->setAccessible(true);
+
+        $property->setValue($this->cleanerMock, [$name => 'value']);
 
         $this->assertTrue(isset($this->cleanerMock->{$name}));
     }
@@ -35,7 +37,9 @@ class CleanerTraitTest extends TestCase
     {
         $name = 'testProperty';
 
-        $this->cleanerMock->property = [$name => 'value'];
+        $reflection = new \ReflectionClass($this->cleanerMock);
+        $property = $reflection->getProperty('property');
+        $property->setAccessible(true);
 
         unset($this->cleanerMock->{$name});
 

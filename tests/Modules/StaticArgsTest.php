@@ -13,6 +13,7 @@ use GenericDatabase\Engine\SQLSrvConnection;
 use GenericDatabase\Engine\FirebirdConnection;
 use GenericDatabase\Engine\PDOConnection;
 use GenericDatabase\Engine\ODBCConnection;
+use Dotenv\Dotenv;
 
 class StaticArgsTest extends TestCase
 {
@@ -23,57 +24,64 @@ class StaticArgsTest extends TestCase
     private array $firebirdEnv;
     private array $sqliteEnv;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 2);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->mysqlEnv = [
-            'MYSQL_HOST' => 'localhost',
-            'MYSQL_PORT' => '3306',
-            'MYSQL_DATABASE' => 'demodev',
-            'MYSQL_USERNAME' => 'root',
-            'MYSQL_PASSWORD' => 'masterkey',
-            'MYSQL_CHARSET' => 'utf8',
+            'MYSQL_HOST' => $_ENV['MYSQL_HOST'],
+            'MYSQL_PORT' => $_ENV['MYSQL_PORT'],
+            'MYSQL_DATABASE' => $_ENV['MYSQL_DATABASE'],
+            'MYSQL_USERNAME' => $_ENV['MYSQL_USERNAME'],
+            'MYSQL_PASSWORD' => $_ENV['MYSQL_PASSWORD'],
+            'MYSQL_CHARSET' => $_ENV['MYSQL_CHARSET']
         ];
 
         $this->pgsqlEnv = [
-            'PGSQL_HOST' => "localhost",
-            'PGSQL_PORT' => 5432,
-            'PGSQL_DATABASE' => "postgres",
-            'PGSQL_USER' => "postgres",
-            'PGSQL_PASSWORD' => "masterkey",
-            'PGSQL_CHARSET' => "utf8",
+            'PGSQL_HOST' => $_ENV['PGSQL_HOST'],
+            'PGSQL_PORT' => $_ENV['PGSQL_PORT'],
+            'PGSQL_DATABASE' => $_ENV['PGSQL_DATABASE'],
+            'PGSQL_USERNAME' => $_ENV['PGSQL_USERNAME'],
+            'PGSQL_PASSWORD' => $_ENV['PGSQL_PASSWORD'],
+            'PGSQL_CHARSET' => $_ENV['PGSQL_CHARSET']
         ];
 
         $this->sqlsrvEnv = [
-            'SQLSRV_HOST' => "localhost",
-            'SQLSRV_PORT' => 1433,
-            'SQLSRV_DATABASE' => "demodev",
-            'SQLSRV_USER' => "sa",
-            'SQLSRV_PASSWORD' => "masterkey",
-            'SQLSRV_CHARSET' => "utf8",
+            'SQLSRV_HOST' => $_ENV['SQLSRV_HOST'],
+            'SQLSRV_PORT' => $_ENV['SQLSRV_PORT'],
+            'SQLSRV_DATABASE' => $_ENV['SQLSRV_DATABASE'],
+            'SQLSRV_USERNAME' => $_ENV['SQLSRV_USERNAME'],
+            'SQLSRV_PASSWORD' => $_ENV['SQLSRV_PASSWORD'],
+            'SQLSRV_CHARSET' => $_ENV['SQLSRV_CHARSET']
         ];
 
         $this->ociEnv = [
-            'OCI_HOST' => "localhost",
-            'OCI_PORT' => 1521,
-            'OCI_DATABASE' => "xe",
-            'OCI_USER' => "hr",
-            'OCI_PASSWORD' => "masterkey",
-            'OCI_CHARSET' => "utf8",
+            'OCI_HOST' => $_ENV['OCI_HOST'],
+            'OCI_PORT' => $_ENV['OCI_PORT'],
+            'OCI_DATABASE' => $_ENV['OCI_DATABASE'],
+            'OCI_USERNAME' => $_ENV['OCI_USERNAME'],
+            'OCI_PASSWORD' => $_ENV['OCI_PASSWORD'],
+            'OCI_CHARSET' => $_ENV['OCI_CHARSET']
         ];
 
         $this->firebirdEnv = [
-            'FBIRD_HOST' => "localhost",
-            'FBIRD_PORT' => 3050,
-            'FBIRD_DATABASE' => "../../resources/database/firebird/DB.FDB",
-            'FBIRD_USER' => "sysdba",
-            'FBIRD_PASSWORD' => "masterkey",
-            'FBIRD_CHARSET' => "utf8",
+            'FBIRD_HOST' => $_ENV['FBIRD_HOST'],
+            'FBIRD_PORT' => $_ENV['FBIRD_PORT'],
+            'FBIRD_DATABASE' => $_ENV['FBIRD_DATABASE'],
+            'FBIRD_USERNAME' => $_ENV['FBIRD_USERNAME'],
+            'FBIRD_PASSWORD' => $_ENV['FBIRD_PASSWORD'],
+            'FBIRD_CHARSET' => $_ENV['FBIRD_CHARSET']
         ];
 
         $this->sqliteEnv = [
-            'SQLITE_DATABASE' => "../../resources/database/sqlite/DB.SQLITE",
-            'SQLITE_DATABASE_MEMORY' => "memory",
-            'SQLITE_CHARSET' => "utf8",
+            'SQLITE_DATABASE' => $_ENV['SQLITE_DATABASE'],
+            'SQLITE_DATABASE_MEMORY' => $_ENV['SQLITE_DATABASE_MEMORY'],
+            'SQLITE_CHARSET' => $_ENV['SQLITE_CHARSET']
         ];
     }
     public function testNativeMysqliAndStrategyMysqli()
@@ -225,7 +233,7 @@ class StaticArgsTest extends TestCase
         $pdo = StaticArgs::odbcSQLSrv($this->sqlsrvEnv);
         $this->assertInstanceOf(ODBCConnection::class, $pdo);
 
-        $strategy = StaticArgs::odbcSQLSrv($this->sqlsrvEnv, true);
+        $strategy = StaticArgs::odbcSQLSrv($this->sqlsrvEnv, false, true);
         $this->assertInstanceOf(Connection::class, $strategy);
     }
 

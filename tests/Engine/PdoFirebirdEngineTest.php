@@ -6,22 +6,30 @@ use PHPUnit\Framework\TestCase;
 use PDO;
 use GenericDatabase\Engine\PDOConnection;
 use GenericDatabase\Modules\Chainable;
+use Dotenv\Dotenv;
 
-class PdoFirebirdConnectionTest extends TestCase
+class PdoFirebirdEngineTest extends TestCase
 {
     private array $firebirdEnv;
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 2);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->firebirdEnv = [
-            'FBIRD_HOST' => "localhost",
-            'FBIRD_PORT' => 3050,
-            'FBIRD_DATABASE' => "./resources/database/firebird/DB.FDB",
-            'FBIRD_USER' => "sysdba",
-            'FBIRD_PASSWORD' => "masterkey",
-            'FBIRD_CHARSET' => "utf8",
+            'FBIRD_HOST' => $_ENV['FBIRD_HOST'],
+            'FBIRD_PORT' => $_ENV['FBIRD_PORT'],
+            'FBIRD_DATABASE' => $_ENV['FBIRD_DATABASE'],
+            'FBIRD_USERNAME' => $_ENV['FBIRD_USERNAME'],
+            'FBIRD_PASSWORD' => $_ENV['FBIRD_PASSWORD'],
+            'FBIRD_CHARSET' => $_ENV['FBIRD_CHARSET']
         ];
 
         $this->connection = Chainable::pdoFirebird($this->firebirdEnv, false, false);

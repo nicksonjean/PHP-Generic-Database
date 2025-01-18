@@ -23,7 +23,7 @@ final class TranslaterTest extends TestCase
     public function testEscapeDquoteDialect()
     {
         $input = 'SELECT * FROM users WHERE name = "John"';
-        $expected = 'SELECT "*" FROM "users" WHERE "name" = "John"';
+        $expected = 'SELECT * FROM "users" WHERE "name" = "John"';
 
         $actual = Translater::escape($input, Translater::SQL_DIALECT_DOUBLE_QUOTE);
 
@@ -33,7 +33,7 @@ final class TranslaterTest extends TestCase
     public function testEscapeSquoteDialect()
     {
         $input = self::$userQuery;
-        $expected = "SELECT '*' FROM 'users' WHERE 'name' = 'John'";
+        $expected = "SELECT * FROM 'users' WHERE 'name' = 'John'";
 
         $actual = Translater::escape($input, Translater::SQL_DIALECT_SINGLE_QUOTE);
 
@@ -43,7 +43,7 @@ final class TranslaterTest extends TestCase
     public function testEscapeBtickDialect()
     {
         $input = self::$userQuery;
-        $expected = "SELECT `*` FROM `users` WHERE `name` = 'John'";
+        $expected = "SELECT * FROM `users` WHERE `name` = 'John'";
 
         $actual = Translater::escape($input, Translater::SQL_DIALECT_BACKTICK);
 

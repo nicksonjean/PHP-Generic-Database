@@ -7,14 +7,47 @@ use GenericDatabase\Shared\Transporter;
 
 class TransporterTraitTest extends TestCase
 {
-    public function testSleepAndWakeupMethodRestoresProperties()
+    /**
+     * Create a concrete test class that uses the Transporter trait
+     */
+    private function createConcreteClass(): string
     {
-        $mock = $this->getMockForTrait(Transporter::class);
-        $mock->property = ['field' => 'value']; // @phpstan-ignore-line
+        $className = 'TestTransporterClass_' . uniqid();
 
-        $serialized = serialize($mock);
+        eval ('
+            class ' . $className . ' {
+                use \GenericDatabase\Shared\Transporter;
+
+                private $field;
+
+                public function setField($value)
+                {
+                    $this->field = $value;
+                    $this->property["field"] = $value;
+                }
+
+                public function getField()
+                {
+                    return $this->field;
+                }
+            }
+        ');
+
+        return $className;
+    }
+
+    public function testSleepAndWakeupMethodRestoresProperties(): void
+    {
+        // Arrange
+        $className = $this->createConcreteClass();
+        $instance = new $className();
+        $instance->setField('value');
+
+        // Act
+        $serialized = serialize($instance);
         $unserialized = unserialize($serialized);
 
-        $this->assertEquals('value', $unserialized->field);
+        // Assert
+        $this->assertEquals('value', $unserialized->getField());
     }
 }

@@ -3,36 +3,29 @@
 namespace GenericDatabase\Tests\Helpers;
 
 use GenericDatabase\Helpers\Compare;
-use MySQLi;
-use PDO;
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
+use MySQLi;
+use PDO;
 use SQLite3;
 use stdClass;
 
 final class CompareTest extends TestCase
 {
-    private static array $env = [];
-
     public static function setUpBeforeClass(): void
     {
-        define("PATH_ROOT", dirname(__DIR__, 2));
-        require_once PATH_ROOT . '/vendor/autoload.php';
-        self::$env = Dotenv::createImmutable(PATH_ROOT)->load();
+        $path = dirname(__DIR__, 2);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
     }
 
-    public static function tearDownAfterClass(): void
-    {
-        self::$env = [];
-    }
-
-    public function testNativeConnection()
+    public function testNativeMysqliConnection()
     {
         $connection = new MySQLi(
-            self::$env['MYSQL_HOST'],
-            self::$env['MYSQL_USERNAME'],
-            self::$env['MYSQL_PASSWORD'],
-            self::$env['MYSQL_DATABASE']
+            $_ENV['MYSQL_HOST'],
+            $_ENV['MYSQL_USERNAME'],
+            $_ENV['MYSQL_PASSWORD'],
+            $_ENV['MYSQL_DATABASE']
         );
 
         $connectionType = Compare::connection($connection);
@@ -42,16 +35,17 @@ final class CompareTest extends TestCase
 
     public function testNativePgsqlConnection()
     {
-        $connection = pg_connect(
-            sprintf(
-                "host=%s dbname=%s user=%s password=%s",
-                self::$env['PGSQL_HOST'],
-                self::$env['PGSQL_DATABASE'],
-                self::$env['PGSQL_USER'],
-                self::$env['PGSQL_PASSWORD']
-            )
+        $connectionString = vsprintf(
+            "host=%s port=%s dbname=%s user=%s password=%s",
+            [
+                $_ENV['PGSQL_HOST'],
+                $_ENV['PGSQL_PORT'],
+                $_ENV['PGSQL_DATABASE'],
+                $_ENV['PGSQL_USERNAME'],
+                $_ENV['PGSQL_PASSWORD']
+            ]
         );
-
+        $connection = pg_connect($connectionString);
         $connectionType = Compare::connection($connection);
 
         $this->assertEquals('pgsql', $connectionType);
@@ -59,11 +53,11 @@ final class CompareTest extends TestCase
 
     public function testNativeSqlsrvConnection()
     {
-        $serverName = vsprintf('%s', [self::$env['SQLSRV_HOST']]);
+        $serverName = vsprintf('%s', [$_ENV['SQLSRV_HOST']]);
         $connectionInfo = [
-            "Database" => self::$env['SQLSRV_DATABASE'],
-            "UID" => self::$env['SQLSRV_USER'],
-            "PWD" => self::$env['SQLSRV_PASSWORD']
+            "Database" => $_ENV['SQLSRV_DATABASE'],
+            "UID" => $_ENV['SQLSRV_USERNAME'],
+            "PWD" => $_ENV['SQLSRV_PASSWORD']
         ];
         $connection = sqlsrv_connect($serverName, $connectionInfo);
 
@@ -75,12 +69,12 @@ final class CompareTest extends TestCase
     public function testNativeOciConnection()
     {
         $connection = oci_connect(
-            self::$env['OCI_USER'],
-            self::$env['OCI_PASSWORD'],
+            $_ENV['OCI_USERNAME'],
+            $_ENV['OCI_PASSWORD'],
             sprintf(
                 "%s/%s",
-                self::$env['OCI_HOST'],
-                self::$env['OCI_DATABASE']
+                $_ENV['OCI_HOST'],
+                $_ENV['OCI_DATABASE']
             )
         );
 
@@ -103,11 +97,11 @@ final class CompareTest extends TestCase
         $connection = new PDO(
             sprintf(
                 "mysql:host=%s;dbname=%s",
-                self::$env['MYSQL_HOST'],
-                self::$env['MYSQL_DATABASE']
+                $_ENV['MYSQL_HOST'],
+                $_ENV['MYSQL_DATABASE']
             ),
-            self::$env['MYSQL_USERNAME'],
-            self::$env['MYSQL_PASSWORD']
+            $_ENV['MYSQL_USERNAME'],
+            $_ENV['MYSQL_PASSWORD']
         );
 
         $connectionType = Compare::connection($connection);
@@ -120,11 +114,11 @@ final class CompareTest extends TestCase
         $connection = new PDO(
             sprintf(
                 "pgsql:host=%s;dbname=%s",
-                self::$env['PGSQL_HOST'],
-                self::$env['PGSQL_DATABASE']
+                $_ENV['PGSQL_HOST'],
+                $_ENV['PGSQL_DATABASE']
             ),
-            self::$env['PGSQL_USER'],
-            self::$env['PGSQL_PASSWORD']
+            $_ENV['PGSQL_USERNAME'],
+            $_ENV['PGSQL_PASSWORD']
         );
 
         $connectionType = Compare::connection($connection);
@@ -137,11 +131,11 @@ final class CompareTest extends TestCase
         $connection = new PDO(
             sprintf(
                 "sqlsrv:server=%s;database=%s",
-                self::$env['SQLSRV_HOST'],
-                self::$env['SQLSRV_DATABASE']
+                $_ENV['SQLSRV_HOST'],
+                $_ENV['SQLSRV_DATABASE']
             ),
-            self::$env['SQLSRV_USER'],
-            self::$env['SQLSRV_PASSWORD']
+            $_ENV['SQLSRV_USERNAME'],
+            $_ENV['SQLSRV_PASSWORD']
         );
 
         $connectionType = Compare::connection($connection);
@@ -152,13 +146,16 @@ final class CompareTest extends TestCase
     public function testPdoOciConnection()
     {
         $connection = new PDO(
-            sprintf(
-                "oci:host=%s;dbname=%s",
-                self::$env['OCI_HOST'],
-                self::$env['OCI_DATABASE']
+            vsprintf(
+                "oci:dbname=%s:%s/%s",
+                [
+                    $_ENV['OCI_HOST'],
+                    $_ENV['OCI_PORT'],
+                    $_ENV['OCI_DATABASE']
+                ]
             ),
-            self::$env['OCI_USER'],
-            self::$env['OCI_PASSWORD']
+            $_ENV['OCI_USERNAME'],
+            $_ENV['OCI_PASSWORD']
         );
 
         $connectionType = Compare::connection($connection);

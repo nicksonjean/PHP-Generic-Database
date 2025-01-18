@@ -5,6 +5,7 @@ namespace GenericDatabase\Tests;
 use PHPUnit\Framework\TestCase;
 use GenericDatabase\Connection;
 use GenericDatabase\Modules\Chainable;
+use Dotenv\Dotenv;
 
 class ConnectionPgsqlTest extends TestCase
 {
@@ -12,15 +13,22 @@ class ConnectionPgsqlTest extends TestCase
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 1);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->pgsqlEnv = [
-            'PGSQL_HOST' => "localhost",
-            'PGSQL_PORT' => 5432,
-            'PGSQL_DATABASE' => "postgres",
-            'PGSQL_USER' => "postgres",
-            'PGSQL_PASSWORD' => "masterkey",
-            'PGSQL_CHARSET' => "utf8",
+            'PGSQL_HOST' => $_ENV['PGSQL_HOST'],
+            'PGSQL_PORT' => $_ENV['PGSQL_PORT'],
+            'PGSQL_DATABASE' => $_ENV['PGSQL_DATABASE'],
+            'PGSQL_USERNAME' => $_ENV['PGSQL_USERNAME'],
+            'PGSQL_PASSWORD' => $_ENV['PGSQL_PASSWORD'],
+            'PGSQL_CHARSET' => $_ENV['PGSQL_CHARSET']
         ];
 
         $this->connection = Chainable::nativePgSQL($this->pgsqlEnv, false, true);

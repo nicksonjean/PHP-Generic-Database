@@ -6,22 +6,30 @@ use PHPUnit\Framework\TestCase;
 use PDO;
 use GenericDatabase\Engine\PDOConnection;
 use GenericDatabase\Modules\Chainable;
+use Dotenv\Dotenv;
 
-class PdoPgSQLConnectionTest extends TestCase
+class PdoPgsqlEngineTest extends TestCase
 {
     private array $pgsqlEnv;
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 2);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->pgsqlEnv = [
-            'PGSQL_HOST' => "localhost",
-            'PGSQL_PORT' => 5432,
-            'PGSQL_DATABASE' => "postgres",
-            'PGSQL_USER' => "postgres",
-            'PGSQL_PASSWORD' => "masterkey",
-            'PGSQL_CHARSET' => "utf8",
+            'PGSQL_HOST' => $_ENV['PGSQL_HOST'],
+            'PGSQL_PORT' => $_ENV['PGSQL_PORT'],
+            'PGSQL_DATABASE' => $_ENV['PGSQL_DATABASE'],
+            'PGSQL_USERNAME' => $_ENV['PGSQL_USERNAME'],
+            'PGSQL_PASSWORD' => $_ENV['PGSQL_PASSWORD'],
+            'PGSQL_CHARSET' => $_ENV['PGSQL_CHARSET']
         ];
 
         $this->connection = Chainable::pdoPgSQL($this->pgsqlEnv, false, false);

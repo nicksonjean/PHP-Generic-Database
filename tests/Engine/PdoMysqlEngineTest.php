@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use PDO;
 use GenericDatabase\Engine\PDOConnection;
 use GenericDatabase\Modules\Chainable;
+use Dotenv\Dotenv;
 
 class PdoMysqlEngineTest extends TestCase
 {
@@ -13,15 +14,22 @@ class PdoMysqlEngineTest extends TestCase
 
     private $connection;
 
+    public static function setUpBeforeClass(): void
+    {
+        $path = dirname(__DIR__, 2);
+        require_once $path . '/vendor/autoload.php';
+        Dotenv::createImmutable($path)->load();
+    }
+
     protected function setUp(): void
     {
         $this->mysqlEnv = [
-            'MYSQL_HOST' => 'localhost',
-            'MYSQL_PORT' => '3306',
-            'MYSQL_DATABASE' => 'demodev',
-            'MYSQL_USERNAME' => 'root',
-            'MYSQL_PASSWORD' => 'masterkey',
-            'MYSQL_CHARSET' => 'utf8',
+            'MYSQL_HOST' => $_ENV['MYSQL_HOST'],
+            'MYSQL_PORT' => $_ENV['MYSQL_PORT'],
+            'MYSQL_DATABASE' => $_ENV['MYSQL_DATABASE'],
+            'MYSQL_USERNAME' => $_ENV['MYSQL_USERNAME'],
+            'MYSQL_PASSWORD' => $_ENV['MYSQL_PASSWORD'],
+            'MYSQL_CHARSET' => $_ENV['MYSQL_CHARSET']
         ];
 
         $this->connection = Chainable::pdoMySQL($this->mysqlEnv, false, false);
