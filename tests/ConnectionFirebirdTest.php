@@ -78,6 +78,16 @@ class ConnectionFirebirdTest extends TestCase
         $this->assertInstanceOf(Connection::class, $this->connection);
     }
 
+    public function testCallWithByStaticArrayThroughCallStatic(): void
+    {
+        $connection = Connection::new($this->firebirdEnv);
+        $this->assertEquals($_ENV['FBIRD_HOST'], $connection->getHost());
+        $this->assertEquals($_ENV['FBIRD_PORT'], $connection->getPort());
+        $this->assertEquals($_ENV['FBIRD_DATABASE'], $connection->getDatabase());
+        $this->assertEquals($_ENV['FBIRD_USERNAME'], $connection->getUser());
+        $this->assertEquals($_ENV['FBIRD_PASSWORD'], $connection->getPassword());
+    }
+
     public function testPing()
     {
         $connected = $this->connection->ping();

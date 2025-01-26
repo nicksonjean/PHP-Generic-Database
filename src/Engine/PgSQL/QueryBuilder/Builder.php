@@ -12,7 +12,7 @@ use GenericDatabase\Core\Grouping;
 use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translater;
+use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Engine\PgSQLQueryBuilder;
 
@@ -330,10 +330,10 @@ class Builder
 
     public function parse(
         string $query,
-        int $quoteType = Translater::SQL_DIALECT_DOUBLE_QUOTE,
+        int $quoteType = Translate::SQL_DIALECT_DOUBLE_QUOTE,
         int $quoteSkip = null
     ): string {
-        return Translater::binding(Translater::escape(trim($query), $quoteType, $quoteSkip));
+        return Translate::binding(Translate::escape(trim($query), $quoteType, $quoteSkip));
     }
 
     /**

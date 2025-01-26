@@ -4,6 +4,7 @@ namespace GenericDatabase\Tests\Helpers;
 
 use GenericDatabase\Helpers\Validations;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @coversDefaultClass \GenericDatabase\Helpers\Validations
@@ -73,12 +74,93 @@ final class ValidationsTest extends TestCase
         $this->assertEquals($length, strlen($result));
     }
 
-    public function testIsSelectReturnsTrue()
+    public function testDetectTypesWithBoolean()
     {
-        $stmt = 'SELECT * FROM table';
+        $input = [true, false];
+        $expected = [1, 0];
 
-        $result = Validations::isSelect($stmt);
+        $result = Validations::detectTypes($input);
+        $this->assertEquals($expected, $result);
+    }
 
-        $this->assertTrue($result);
+    public function testDetectTypesWithIntegers()
+    {
+        $input = [1, -1, 0];
+        $expected = [1, -1, 0];
+
+        $result = Validations::detectTypes($input);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testDetectTypesWithStrings()
+    {
+        $input = ['hello', '123', ''];
+        $expected = ['hello', '123', ''];
+
+        $result = Validations::detectTypes($input);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testDetectTypesWithArrays()
+    {
+        $input = [['a', 'b'], ['1', '2']];
+        $expected = ['a,b', '1,2'];
+
+        $result = Validations::detectTypes($input);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testDetectTypesWithObjects()
+    {
+        $obj = new stdClass();
+        $obj->name = 'Test';
+
+        $input = [$obj];
+        $result = Validations::detectTypes($input);
+
+        $this->assertEquals(
+            [serialize($obj)],
+            $result
+        );
+    }
+
+    public function testDetectTypesWithStream()
+    {
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, 'test content');
+        rewind($stream);
+
+        $input = [$stream];
+        $expected = ['test content'];
+
+        $result = Validations::detectTypes($input);
+        $this->assertEquals($expected, $result);
+
+        fclose($stream);
+    }
+
+    public function testDetectTypesWithMixedTypes()
+    {
+        $obj = new stdClass();
+        $obj->name = 'Test';
+
+        $input = [
+            true,
+            42,
+            'string',
+            ['a', 'b'],
+            $obj,
+        ];
+
+        $expected = [
+            1,
+            42,
+            'string',
+            'a,b',
+            serialize($obj),
+        ];
+
+        $result = Validations::detectTypes($input);
+        $this->assertEquals($expected, $result);
     }
 }

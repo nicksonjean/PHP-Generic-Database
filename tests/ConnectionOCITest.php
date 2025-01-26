@@ -75,6 +75,16 @@ class ConnectionOCITest extends TestCase
         $this->assertInstanceOf(Connection::class, $this->connection);
     }
 
+    public function testCallWithByStaticArrayThroughCallStatic(): void
+    {
+        $connection = Connection::new($this->ociEnv);
+        $this->assertEquals($_ENV['OCI_HOST'], $connection->getHost());
+        $this->assertEquals($_ENV['OCI_PORT'], $connection->getPort());
+        $this->assertEquals($_ENV['OCI_DATABASE'], $connection->getDatabase());
+        $this->assertEquals($_ENV['OCI_USERNAME'], $connection->getUser());
+        $this->assertEquals($_ENV['OCI_PASSWORD'], $connection->getPassword());
+    }
+
     public function testPing()
     {
         $connected = $this->connection->ping();

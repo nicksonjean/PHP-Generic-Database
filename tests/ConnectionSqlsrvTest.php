@@ -75,6 +75,16 @@ class ConnectionSqlsrvTest extends TestCase
         $this->assertInstanceOf(Connection::class, $this->connection);
     }
 
+    public function testCallWithByStaticArrayThroughCallStatic(): void
+    {
+        $connection = Connection::new($this->sqlsrvEnv);
+        $this->assertEquals($_ENV['SQLSRV_HOST'], $connection->getHost());
+        $this->assertEquals($_ENV['SQLSRV_PORT'], $connection->getPort());
+        $this->assertEquals($_ENV['SQLSRV_DATABASE'], $connection->getDatabase());
+        $this->assertEquals($_ENV['SQLSRV_USERNAME'], $connection->getUser());
+        $this->assertEquals($_ENV['SQLSRV_PASSWORD'], $connection->getPassword());
+    }
+
     public function testPing()
     {
         $connected = $this->connection->ping();

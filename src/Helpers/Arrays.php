@@ -315,7 +315,7 @@ class Arrays
                 $array[$key] = self::arraySafe($value);
             }
         }
-        return array_filter($array, fn ($value) => isset($value) && !empty($value));
+        return array_filter($array, fn($value) => isset($value) && !empty($value));
     }
 
     /**
@@ -341,7 +341,7 @@ class Arrays
                 $isArgs = true;
                 $isArray = false;
                 $isMulti = false;
-                $sqlArgs = Translater::arguments($params[$index['isArgs']], array_slice($params, $index['isMulti']));
+                $sqlArgs = Translate::arguments($params[$index['isArgs']], array_slice($params, $index['isMulti']));
             }
         }
         return [

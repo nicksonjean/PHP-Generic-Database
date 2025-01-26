@@ -20,7 +20,7 @@ use GenericDatabase\Engine\ODBC\Connection\Statements;
 use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translater;
+use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
@@ -118,6 +118,9 @@ class ODBCConnection implements IConnection
      */
     private string $queryString = '';
 
+    /**
+     * Empty constructor since initialization is handled by traits and interface methods
+     */
     public function __construct()
     {
     }
@@ -221,6 +224,15 @@ class ODBCConnection implements IConnection
      */
     public function connect(): ODBCConnection
     {
+        if (!extension_loaded('odbc')) {
+            $message = sprintf(
+                "Invalid or not loaded '%s' extension in '%s' settings",
+                'odbc',
+                'PHP.ini'
+            );
+            throw new CustomException($message);
+        }
+
         try {
             $this->setInstance($this);
             $this
@@ -490,11 +502,10 @@ class ODBCConnection implements IConnection
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        $fetchCount = (function () use ($params) {
+        $this->queryRows = (function () use ($params) {
             $this->bindParam(...self::$statementCount);
             return $params();
         });
-        $this->queryRows = Validations::isSelect($this->getQueryString()) ? $fetchCount() : 0;
     }
 
     /**
@@ -536,7 +547,7 @@ class ODBCConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->affectedRows = Validations::isSelect($this->getQueryString()) ? 0 : ($this->getAffectedRows() + $params);
+        $this->affectedRows = $this->getAffectedRows() + $params;
     }
 
     /**
@@ -685,12 +696,12 @@ class ODBCConnection implements IConnection
     {
         $driver = static::getDriver();
         $dialectQuote = match ($driver) {
-            'mysql' => Translater::SQL_DIALECT_BACKTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translater::SQL_DIALECT_DOUBLE_QUOTE,
-            'sqlite' => Translater::SQL_DIALECT_SINGLE_QUOTE,
-            default => Translater::SQL_DIALECT_NONE,
+            'mysql' => Translate::SQL_DIALECT_BACKTICK,
+            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translate::SQL_DIALECT_DOUBLE_QUOTE,
+            'sqlite' => Translate::SQL_DIALECT_SINGLE_QUOTE,
+            default => Translate::SQL_DIALECT_NONE,
         };
-        $this->setQueryString(Translater::binding(Translater::escape(reset($params), $dialectQuote)));
+        $this->setQueryString(Translate::binding(Translate::escape(reset($params), $dialectQuote)));
         return $this->getQueryString();
     }
 

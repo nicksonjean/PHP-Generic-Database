@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="robots" content="index, follow, all" />
-    <title>GenericDatabase\Helpers\Translater | PHP Generic Database Documentation</title>
+    <title>GenericDatabase\Helpers\Translate | PHP Generic Database Documentation</title>
 
             <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="../../css/bootstrap-theme.min.css">
@@ -23,7 +23,7 @@
           title="PHP Generic Database Documentation (main)" />
     </head>
 
-    <body id="class" data-name="class:GenericDatabase_Helpers_Translater" data-root-path="../../" data-search-index-url="../../doctum-search.json">
+    <body id="class" data-name="class:GenericDatabase_Helpers_Translate" data-root-path="../../" data-search-index-url="../../doctum-search.json">
             <div id="content">
         <div id="left-column">
                 <div id="control-panel">
@@ -79,44 +79,44 @@
                         <div class="namespace-breadcrumbs">
             <ol class="breadcrumb">
                 <li><span class="label label-default">class</span></li>
-                        <li><a href="../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../GenericDatabase/Helpers.html">Helpers</a></li><li class="backslash">\</li><li>Translater</li>
+                        <li><a href="../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../GenericDatabase/Helpers.html">Helpers</a></li><li class="backslash">\</li><li>Translate</li>
             </ol>
         </div>
                 <div id="page-content">
     <div class="page-header">
-        <h1>Translater    
+        <h1>Translate
             </h1>
     </div>
 
-    
+
     <p>        class
-    <strong>Translater</strong>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Translater.php">View source</a>)
+    <strong>Translate</strong>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Translate.php">View source</a>)
 </p>
 
-        
-        
-    
-        
+
+
+
+
 
             <div class="description">
-            <p><p>The <code>GenericDatabase\Helpers\Translater</code> class is responsible for
+            <p><p>The <code>GenericDatabase\Helpers\Translate</code> class is responsible for
 escaping SQL strings and replacing parameters and binds in the SQL queries.</p></p>            <p><p>It provides methods to escape SQL strings based on different SQL dialects,
 extract SQL arguments, and replace SQL binds with different bind types.</p>
 <p>Example Usage:</p>
 <pre><code>//Escape an SQL query using the default dialect
-$escapedQuery = Translater::escape("SELECT * FROM users WHERE id = :id");
+$escapedQuery = Translate::escape("SELECT * FROM users WHERE id = :id");
 
 //Escape an SQL query using a specific dialect
-$escapedQuery = Translater::escape("SELECT * FROM users WHERE id = :id", Translater::SQL_DIALECT_DOUBLE_QUOTE);
+$escapedQuery = Translate::escape("SELECT * FROM users WHERE id = :id", Translate::SQL_DIALECT_DOUBLE_QUOTE);
 
 //Extract parameters from an SQL query
-$parameters = Translater::arguments("SELECT * FROM users WHERE id = :id");
+$parameters = Translate::arguments("SELECT * FROM users WHERE id = :id");
 
 //Bind parameters in an SQL query with question marks
-$boundQuery = Translater::binding("SELECT * FROM users WHERE id = :id");
+$boundQuery = Translate::binding("SELECT * FROM users WHERE id = :id");
 
 //Bind parameters in an SQL query with dollar signs
-$boundQuery = Translater::binding("SELECT * FROM users WHERE id = :id", Translater::BIND_QUESTION_MARK);</code></pre>
+$boundQuery = Translate::binding("SELECT * FROM users WHERE id = :id", Translate::BIND_QUESTION_MARK);</code></pre>
 <p>Main functionalities:</p>
 <ul>
 <li>Escaping SQL strings by replacing certain characters with their escaped versions.</li>
@@ -163,8 +163,8 @@ Replaces the SQL binds with dollar signs.</li>
 <li><code>$bindingMap</code>: An array mapping bind types to their corresponding bind characters.</li>
 <li><code>$resWords</code>: An instance of the reserved word dictionary, loaded from a JSON file.</li>
 </ul></p>        </div>
-            
-        
+
+
             <h2>Constants</h2>    <table class="table table-condensed">
                     <tr>
                 <td>
@@ -224,8 +224,8 @@ also as Microsoft SQL Server and Sybase</p></em></p>
             </tr>
             </table>
 
-    
-    
+
+
             <h2>Methods</h2>
 
             <div class="container-fluid underlined">
@@ -235,7 +235,7 @@ also as Microsoft SQL Server and Sybase</p></em></p>
                 </div>
                 <div class="col-md-8">
                     <a href="#method_escape">escape</a>(string $input, int $dialect = self::SQL_DIALECT_NONE, int $quoteSkip = null)
-        
+
                                             <p><p>Escapes the SQL string by replacing parameters with their quoted versions.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -245,7 +245,7 @@ also as Microsoft SQL Server and Sybase</p></em></p>
                 </div>
                 <div class="col-md-8">
                     <a href="#method_arguments">arguments</a>(string $input, array $values = null)
-        
+
                                             <p><p>Extracts the SQL arguments from the input string.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -255,7 +255,7 @@ also as Microsoft SQL Server and Sybase</p></em></p>
                 </div>
                 <div class="col-md-8">
                     <a href="#method_binding">binding</a>(string $input, int $bindType = self::BIND_QUESTION_MARK)
-        
+
                                             <p><p>Replaces the SQL binds with the specified bind type.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -267,18 +267,18 @@ also as Microsoft SQL Server and Sybase</p></em></p>
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_escape">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Translater.php#L360">at line 360</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Translate.php#L360">at line 360</a></div>
         <code>        static            string
     <strong>escape</strong>(string $input, int $dialect = self::SQL_DIALECT_NONE, int $quoteSkip = null)
         </code>
     </h3>
-    <div class="details">    
-            
-    
-            
+    <div class="details">
+
+
+
 
         <div class="method-description">
-                            <p><p>Escapes the SQL string by replacing parameters with their quoted versions.</p></p>                        
+                            <p><p>Escapes the SQL string by replacing parameters with their quoted versions.</p></p>
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -292,7 +292,7 @@ also as Microsoft SQL Server and Sybase</p></em></p>
                     <tr>
                 <td>int</td>
                 <td>$dialect</td>
-                <td><p>The SQL dialect to be used for escaping. Defaults to <code>Translater::SQL_DIALECT_NONE</code>.</p></td>
+                <td><p>The SQL dialect to be used for escaping. Defaults to <code>Translate::SQL_DIALECT_NONE</code>.</p></td>
             </tr>
                     <tr>
                 <td>int</td>
@@ -301,7 +301,7 @@ also as Microsoft SQL Server and Sybase</p></em></p>
             </tr>
             </table>
 
-            
+
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -311,27 +311,27 @@ also as Microsoft SQL Server and Sybase</p></em></p>
         </tr>
     </table>
 
-            
-            
-            
+
+
+
                     </div>
     </div>
 
             </div>
                     <div class="method-item">
                     <h3 id="method_arguments">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Translater.php#L378">at line 378</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Translate.php#L378">at line 378</a></div>
         <code>        static            array
     <strong>arguments</strong>(string $input, array $values = null)
         </code>
     </h3>
-    <div class="details">    
-            
-    
-            
+    <div class="details">
+
+
+
 
         <div class="method-description">
-                            <p><p>Extracts the SQL arguments from the input string.</p></p>                        
+                            <p><p>Extracts the SQL arguments from the input string.</p></p>
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -349,7 +349,7 @@ also as Microsoft SQL Server and Sybase</p></em></p>
             </tr>
             </table>
 
-            
+
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -359,27 +359,27 @@ also as Microsoft SQL Server and Sybase</p></em></p>
         </tr>
     </table>
 
-            
-            
-            
+
+
+
                     </div>
     </div>
 
             </div>
                     <div class="method-item">
                     <h3 id="method_binding">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Translater.php#L394">at line 394</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Translate.php#L394">at line 394</a></div>
         <code>        static            string
     <strong>binding</strong>(string $input, int $bindType = self::BIND_QUESTION_MARK)
         </code>
     </h3>
-    <div class="details">    
-            
-    
-            
+    <div class="details">
+
+
+
 
         <div class="method-description">
-                            <p><p>Replaces the SQL binds with the specified bind type.</p></p>                        
+                            <p><p>Replaces the SQL binds with the specified bind type.</p></p>
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -393,11 +393,11 @@ also as Microsoft SQL Server and Sybase</p></em></p>
                     <tr>
                 <td>int</td>
                 <td>$bindType</td>
-                <td><p>The type of binding to be used. Defaults to <code>Translater::BIND_QUESTION_MARK</code>.</p></td>
+                <td><p>The type of binding to be used. Defaults to <code>Translate::BIND_QUESTION_MARK</code>.</p></td>
             </tr>
             </table>
 
-            
+
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -407,16 +407,16 @@ also as Microsoft SQL Server and Sybase</p></em></p>
         </tr>
     </table>
 
-            
-            
-            
+
+
+
                     </div>
     </div>
 
             </div>
             </div>
 
-    
+
 </div><div id="footer">
         Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
     </div>

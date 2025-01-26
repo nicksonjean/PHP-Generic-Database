@@ -21,7 +21,7 @@ use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translater;
+use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
@@ -119,6 +119,9 @@ class FirebirdConnection implements IConnection
      */
     private string $queryString = '';
 
+    /**
+     * Empty constructor since initialization is handled by traits and interface methods
+     */
     public function __construct()
     {
     }
@@ -493,11 +496,10 @@ class FirebirdConnection implements IConnection
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        $fetchCount = (function () use ($params) {
+        $this->queryRows = (function () use ($params) {
             $this->bindParam(...self::$statementCount);
             return $params();
         });
-        $this->queryRows = Validations::isSelect($this->getQueryString()) ? $fetchCount() : 0;
     }
 
     /**
@@ -539,7 +541,7 @@ class FirebirdConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->affectedRows = Validations::isSelect($this->getQueryString()) ? 0 : ($this->getAffectedRows() + $params);
+        $this->affectedRows = $this->getAffectedRows() + $params;
     }
 
     /**
@@ -689,7 +691,7 @@ class FirebirdConnection implements IConnection
      */
     private function parse(mixed ...$params): string
     {
-        $queryString = Translater::binding(Translater::escape(reset($params), Translater::SQL_DIALECT_DOUBLE_QUOTE));
+        $queryString = Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE));
         $this->setQueryString($queryString);
         return $this->getQueryString();
     }

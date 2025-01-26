@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use GenericDatabase\Connection;
 use GenericDatabase\Modules\Chainable;
 use Dotenv\Dotenv;
+use stdClass;
 
 class ConnectionMysqliTest extends TestCase
 {
@@ -32,6 +33,16 @@ class ConnectionMysqliTest extends TestCase
         ];
 
         $this->connection = Chainable::nativeMySQLi($this->mysqlEnv, false, true);
+    }
+
+    public function testConnectionMethods(): void
+    {
+        $mockConnection = new stdClass();
+        $this->connection->expects($this->once())->method('setConnection')->with($mockConnection);
+        $this->connection->expects($this->once())->method('getConnection')->willReturn($mockConnection);
+
+        $result = $this->connection->setConnection($mockConnection);
+        $this->assertSame($mockConnection, $result);
     }
 
     public function testConnectionConstants()
@@ -73,6 +84,16 @@ class ConnectionMysqliTest extends TestCase
     {
         $this->connection->connect();
         $this->assertInstanceOf(Connection::class, $this->connection);
+    }
+
+    public function testCallWithByStaticArrayThroughCallStatic(): void
+    {
+        $connection = Connection::new($this->mysqlEnv);
+        $this->assertEquals($_ENV['MYSQL_HOST'], $connection->getHost());
+        $this->assertEquals($_ENV['MYSQL_PORT'], $connection->getPort());
+        $this->assertEquals($_ENV['MYSQL_DATABASE'], $connection->getDatabase());
+        $this->assertEquals($_ENV['MYSQL_USERNAME'], $connection->getUser());
+        $this->assertEquals($_ENV['MYSQL_PASSWORD'], $connection->getPassword());
     }
 
     public function testPing()

@@ -32,6 +32,8 @@ while ($row = $test0->fetch(Connection::FETCH_OBJ)) {
     var_dump($row);
 }
 
+die();
+
 echo '<hr />';
 
 while ($row = $test0->fetch(Connection::FETCH_INTO)) {

@@ -1,7 +1,5 @@
 <?php
 
-/** @noinspection PhpUnused */
-
 namespace GenericDatabase\Helpers;
 
 class Schema
@@ -91,7 +89,6 @@ class Schema
         return $schemas;
     }
 
-    /** @noinspection PhpUnused */
     public static function write($overwrite = false): void
     {
         $schemaFilePath = self::$folderPath . '\Schema.ini';

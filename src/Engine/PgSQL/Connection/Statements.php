@@ -1,102 +1,244 @@
 <?php
 
-/** @noinspection PhpUnused */
-
 namespace GenericDatabase\Engine\PgSQL\Connection;
 
 use GenericDatabase\Helpers\Reflections;
-use ReflectionException;
 
 class Statements
 {
+    private static array $positions = [];
+    private static array $cachedResults = [];
+    private static array $lastFetchAll = [];
+
     /**
-     * @throws ReflectionException
+     * Gets a unique identifier for the statement resource
+     *
+     * @param mixed $statement The statement to get ID for
+     * @return string Unique identifier for the statement
      */
+    private static function getResourceId($statement): string
+    {
+        if (is_array($statement)) {
+            return 'array_' . md5(serialize($statement));
+        }
+        if ($statement instanceof \PgSql\Result) {
+            return 'result_' . spl_object_id($statement);
+        }
+        return 'null';
+    }
+
+    /**
+     * Caches the results from a statement for future use
+     *
+     * @param mixed $statement The statement to cache results from
+     * @return string The statement identifier
+     */
+    private static function cacheResults($statement): string
+    {
+        $statementId = self::getResourceId($statement);
+        if (!isset(self::$cachedResults[$statementId])) {
+            self::$cachedResults[$statementId] = [];
+            if ($statement instanceof \PgSql\Result) {
+                while ($row = pg_fetch_array($statement, null, PGSQL_ASSOC)) {
+                    $normalizedRow = [];
+                    $numericIndex = 0;
+                    foreach ($row as $key => $value) {
+                        if (is_string($key) && !is_numeric($key)) {
+                            $normalizedRow[$key] = $value;
+                            $normalizedRow[$numericIndex] = $value;
+                            $numericIndex++;
+                        }
+                    }
+                    self::$cachedResults[$statementId][] = $normalizedRow;
+                }
+                pg_result_seek($statement, 0);
+            } elseif (is_array($statement)) {
+                self::$cachedResults[$statementId] = $statement['results'] ?? [];
+            }
+            self::$positions[$statementId] = 0;
+        }
+        return $statementId;
+    }
+
+    /**
+     * Handles resetting the fetch position and caching results if not already cached
+     *
+     * @param mixed $statement The statement resource
+     * @return void
+     */
+    private static function handleFetchReset($statement): void
+    {
+        if (!$statement) {
+            return;
+        }
+        $statementId = self::getResourceId($statement);
+        if (!isset(self::$cachedResults[$statementId])) {
+            self::$cachedResults[$statementId] = [];
+            if ($statement instanceof \PgSql\Result) {
+                while ($row = pg_fetch_array($statement, null, PGSQL_ASSOC)) {
+                    self::$cachedResults[$statementId][] = $row;
+                }
+                pg_result_seek($statement, 0);
+            } elseif (is_array($statement)) {
+                self::$cachedResults[$statementId] = $statement['results'] ?? [];
+            }
+            self::$positions[$statementId] = 0;
+        }
+        if (isset(self::$lastFetchAll[$statementId])) {
+            self::$positions[$statementId] = 0;
+            unset(self::$lastFetchAll[$statementId]);
+        }
+    }
+
     public static function internalFetchClass(
         $statement = null,
-        $constructorArguments = [],
-        $aClassOrObject = '\stdClass',
+        ?array $constructorArguments = null,
+        $aClassOrObject = '\stdClass'
     ) {
-        $rowData = self::internalFetchAssoc($statement);
-        $fetchArgument = $constructorArguments ?? [];
-        if (is_array($rowData)) {
-            return Reflections::createObjectAndSetPropertiesCaseInsensitive($aClassOrObject, $fetchArgument, $rowData);
+        $statementId = self::cacheResults($statement);
+        $results = self::$cachedResults[$statementId] ?? [];
+
+        if (isset($results[self::$positions[$statementId]])) {
+            $row = $results[self::$positions[$statementId]++];
+            return Reflections::createObjectAndSetPropertiesCaseInsensitive(
+                $aClassOrObject,
+                $constructorArguments ?? [],
+                $row
+            );
         }
-        return $rowData;
+
+        return false;
     }
 
     public static function internalFetchBoth($statement = null): bool|array
     {
-        return pg_fetch_array($statement);
-    }
+        $statementId = self::cacheResults($statement);
+        $results = self::$cachedResults[$statementId] ?? [];
 
-    public static function internalFetchAssoc($statement = null): bool|array
-    {
-        return pg_fetch_assoc($statement);
-    }
-
-    public static function internalFetchNum($statement = null): bool|array
-    {
-        return pg_fetch_row($statement);
-    }
-
-    /** @noinspection PhpUnused */
-    public static function internalFetchColumn($statement = null, $columnIndex = 0)
-    {
-        $rowData = self::internalFetchNum($statement);
-        $fetchArgument = $columnIndex ?? 0;
-        if (is_array($rowData)) {
-            return $rowData[$fetchArgument] ?? null;
+        if (isset($results[self::$positions[$statementId]])) {
+            $row = $results[self::$positions[$statementId]++];
+            $result = [];
+            $index = 0;
+            foreach ($row as $key => $value) {
+                $result[$index] = (string) $value;
+                $result[$key] = (string) $value;
+                $index++;
+            }
+            return $result;
         }
+
         return false;
     }
 
-    /** @noinspection PhpUnused */
+    public static function internalFetchAssoc(mixed $statement): array|null|false
+    {
+        $statementId = self::cacheResults($statement);
+        $results = self::$cachedResults[$statementId] ?? [];
+
+        if (isset($results[self::$positions[$statementId]])) {
+            return $results[self::$positions[$statementId]++];
+        }
+
+        return false;
+    }
+
+    public static function internalFetchNum($statement = null): bool|array|null
+    {
+        $statementId = self::cacheResults($statement);
+        $results = self::$cachedResults[$statementId] ?? [];
+
+        if (isset($results[self::$positions[$statementId]])) {
+            $row = array_values($results[self::$positions[$statementId]++]);
+            return array_map('strval', $row);
+        }
+
+        return false;
+    }
+
+    public static function internalFetchColumn($statement = null, $columnIndex = 0)
+    {
+        $columnIndex = $columnIndex ?? 0;
+        self::handleFetchReset($statement);
+        $statementId = self::cacheResults($statement);
+        $results = self::$cachedResults[$statementId];
+
+        if (isset($results[self::$positions[$statementId]])) {
+            $row = $results[self::$positions[$statementId]++];
+            $values = array_values($row);
+            return isset($values[$columnIndex]) ? (string) $values[$columnIndex] : false;
+        }
+
+        return false;
+    }
+
     public static function internalFetchAllAssoc($statement = null): array
     {
-        return pg_fetch_all($statement);
+        $statementId = self::cacheResults($statement);
+        self::$lastFetchAll[$statementId] = true;
+        return self::$cachedResults[$statementId];
     }
 
-    /** @noinspection PhpUnused */
     public static function internalFetchAllNum($statement = null): array
     {
+        $statementId = self::cacheResults($statement);
+        self::$lastFetchAll[$statementId] = true;
+
         $result = [];
-        while ($data = self::internalFetchNum($statement)) {
-            $result[] = $data;
+        foreach (self::$cachedResults[$statementId] as $row) {
+            $result[] = array_map('strval', array_values($row));
         }
         return $result;
     }
 
-    /** @noinspection PhpUnused */
     public static function internalFetchAllBoth($statement = null): array
     {
+        $statementId = self::cacheResults($statement);
+        self::$lastFetchAll[$statementId] = true;
+
         $result = [];
-        while ($data = self::internalFetchBoth($statement)) {
-            $result[] = $data;
+        foreach (self::$cachedResults[$statementId] as $row) {
+            $combined = [];
+            $index = 0;
+            foreach ($row as $key => $value) {
+                $combined[$index] = (string) $value;
+                $combined[$key] = (string) $value;
+                $index++;
+            }
+            $result[] = $combined;
         }
         return $result;
     }
 
-    /** @noinspection PhpUnused */
     public static function internalFetchAllColumn($statement = null, $columnIndex = 0): array
     {
-        $fetchArgument = $columnIndex ?? 0;
-        return pg_fetch_all_columns($statement, $fetchArgument);
+        $columnIndex = $columnIndex ?? 0;
+        $statementId = self::cacheResults($statement);
+        self::$lastFetchAll[$statementId] = true;
+        $result = [];
+        foreach (self::$cachedResults[$statementId] as $row) {
+            $values = array_values($row);
+            if (isset($values[$columnIndex])) {
+                $result[] = (string) $values[$columnIndex];
+            }
+        }
+        return $result;
     }
 
-    /**
-     * @throws ReflectionException
-     * @noinspection PhpUnused
-     */
     public static function internalFetchAllClass(
         $statement = null,
         $constructorArguments = [],
         $aClassOrObject = '\stdClass',
     ): array {
+        $statementId = self::cacheResults($statement);
+        self::$lastFetchAll[$statementId] = true;
+
         $result = [];
-        $fetchArgument = $constructorArguments ?? [];
-        while ($row = self::internalFetchClass($statement, $fetchArgument, $aClassOrObject)) {
-            $result[] = $row;
+        foreach (self::$cachedResults[$statementId] as $row) {
+            $result[] = Reflections::createObjectAndSetPropertiesCaseInsensitive(
+                $aClassOrObject,
+                $constructorArguments ?? [],
+                $row
+            );
         }
         return $result;
     }

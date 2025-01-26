@@ -103,6 +103,28 @@ class Validations
     }
 
     /**
+     * @param mixed $data
+     * @return mixed
+     */
+    public static function detectTypes(mixed $data): mixed
+    {
+        $data = array_values($data);
+        foreach ($data as $i => $v) {
+            $data[$i] = match (gettype($v)) {
+                'boolean', 'integer' => (int) $v,
+                'string' => (string) $v,
+                'array' => implode(',', $v),
+                'object' => serialize($v),
+                'resource' => is_resource($v) && get_resource_type($v) === 'stream'
+                ? stream_get_contents($v)
+                : serialize($v),
+                default => $v
+            };
+        }
+        return $data;
+    }
+
+     /**
      * Detects the type of the given query.
      *
      * @param string $query The query to detect the type of.
@@ -131,101 +153,5 @@ class Validations
     public static function isSelect(string $query): bool
     {
         return self::detectQueryType($query) === 'SELECT';
-    }
-
-    /**
-     * Determines if the given query is a INSERT statement.
-     *
-     * @param string $query The query to check.
-     * @return bool Returns true if the query is a INSERT statement, false otherwise.
-     * @noinspection PhpUnused
-     */
-    public static function isInsert(string $query): bool
-    {
-        return self::detectQueryType($query) === 'INSERT';
-    }
-
-    /**
-     * Determines if the given query is a UPDATE statement.
-     *
-     * @param string $query The query to check.
-     * @return bool Returns true if the query is a UPDATE statement, false otherwise.
-     * @noinspection PhpUnused
-     */
-    public static function isUpdate(string $query): bool
-    {
-        return self::detectQueryType($query) === 'UPDATE';
-    }
-
-    /**
-     * Determines if the given query is a DELETE statement.
-     *
-     * @param string $query The query to check.
-     * @return bool Returns true if the query is a DELETE statement, false otherwise.
-     * @noinspection PhpUnused
-     */
-    public static function isDelete(string $query): bool
-    {
-        return self::detectQueryType($query) === 'DELETE';
-    }
-
-    /**
-     * Determines if the given query is a REPLACE statement.
-     *
-     * @param string $query The query to check.
-     * @return bool Returns true if the query is a REPLACE statement, false otherwise.
-     * @noinspection PhpUnused
-     */
-    public static function isReplace(string $query): bool
-    {
-        return self::detectQueryType($query) === 'REPLACE';
-    }
-
-    /**
-     * Determines if the given query is a MERGE statement.
-     *
-     * @param string $query The query to check.
-     * @return bool Returns true if the query is a MERGE statement, false otherwise.
-     * @noinspection PhpUnused
-     */
-    public static function isMerge(string $query): bool
-    {
-        return self::detectQueryType($query) === 'MERGE';
-    }
-
-    /**
-     * @param mixed $data
-     * @return mixed
-     */
-    public static function detectTypes(mixed $data): mixed
-    {
-        $data = array_values($data);
-        foreach ($data as $i => $v) {
-            switch (gettype($v)) {
-                case 'boolean':
-                case 'integer':
-                    $data[$i] = (int) $v;
-                    break;
-                case 'string':
-                    $data[$i] = (string) $v;
-                    break;
-                case 'array':
-                    $data[$i] = implode(',', $v);
-                    break;
-                case 'object':
-                    $data[$i] = serialize($v);
-                    break;
-                case 'resource':
-                    if (is_resource($v) && get_resource_type($v) === 'stream') {
-                        $data[$i] = stream_get_contents($v);
-                    } else {
-                        $data[$i] = serialize($v);
-                    }
-                    break;
-                default:
-                    $data[$i] = $v;
-            }
-        }
-        return $data;
     }
 }

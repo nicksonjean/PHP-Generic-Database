@@ -3,104 +3,243 @@
 namespace GenericDatabase\Engine\SQLite\Connection;
 
 use GenericDatabase\Helpers\Reflections;
-use ReflectionException;
 
 class Statements
 {
+    private static array $positions = [];
+    private static array $cachedResults = [];
+    private static array $lastFetchAll = [];
+
     /**
-     * @throws ReflectionException
+     * Gets a unique identifier for the statement resource
+     *
+     * @param mixed $statement The statement to get ID for
+     * @return string Unique identifier for the statement
      */
+    private static function getResourceId($statement): string
+    {
+        if (is_object($statement)) {
+            return spl_object_hash($statement);
+        }
+        if (is_array($statement)) {
+            return md5(serialize($statement));
+        }
+        return 'null';
+    }
+
+    /**
+     * Caches the results from a statement for future use
+     *
+     * @param mixed $statement The statement to cache results from
+     * @return string The statement identifier
+     */
+    private static function cacheResults($statement): string
+    {
+        $statementId = self::getResourceId($statement);
+
+        if (!isset(self::$cachedResults[$statementId])) {
+            if ($statement instanceof \SQLite3Stmt) {
+                $result = $statement->execute();
+                if ($result instanceof \SQLite3Result) {
+                    self::$cachedResults[$statementId] = [];
+                    while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                        self::$cachedResults[$statementId][] = $row;
+                    }
+                    $result->reset();
+                }
+            } elseif ($statement instanceof \SQLite3Result) {
+                self::$cachedResults[$statementId] = [];
+                while ($row = $statement->fetchArray(SQLITE3_ASSOC)) {
+                    self::$cachedResults[$statementId][] = $row;
+                }
+                $statement->reset();
+            } elseif (is_array($statement)) {
+                self::$cachedResults[$statementId] = $statement['results'] ?? [];
+            }
+            self::$positions[$statementId] = 0;
+        }
+
+        return $statementId;
+    }
+
+    /**
+     * Handles resetting the fetch position and caching results if not already cached
+     *
+     * @param mixed $statement The statement resource
+     * @return void
+     */
+    private static function handleFetchReset($statement): void
+    {
+        if (!$statement) {
+            return;
+        }
+
+        $stmtId = self::getResourceId($statement);
+
+        if (!isset(self::$cachedResults[$stmtId])) {
+            if ($statement instanceof \SQLite3Result) {
+                $rows = [];
+                while ($row = $statement->fetchArray(SQLITE3_BOTH)) {
+                    $rows[] = $row;
+                }
+                self::$cachedResults[$stmtId] = $rows;
+                $statement->reset();
+            } elseif (is_array($statement)) {
+                self::$cachedResults[$stmtId] = $statement['results'] ?? [];
+            }
+            self::$positions[$stmtId] = 0;
+        }
+    }
+
     public static function internalFetchClass(
         $statement = null,
-        $constructorArguments = [],
-        $aClassOrObject = '\stdClass',
+        ?array $constructorArguments = null,
+        $aClassOrObject = '\stdClass'
     ) {
-        $rowData = self::internalFetchAssoc($statement);
-        $fetchArgument = $constructorArguments ?? [];
-        if (is_array($rowData)) {
-            return Reflections::createObjectAndSetPropertiesCaseInsensitive($aClassOrObject, $fetchArgument, $rowData);
+        $statementId = self::cacheResults($statement);
+        $results = self::$cachedResults[$statementId] ?? [];
+
+        if (isset($results[self::$positions[$statementId]])) {
+            $row = $results[self::$positions[$statementId]++];
+            return Reflections::createObjectAndSetPropertiesCaseInsensitive(
+                $aClassOrObject,
+                $constructorArguments ?? [],
+                $row
+            );
         }
-        return $rowData;
+
+        return false;
     }
 
-    public static function internalFetchBoth($statement = null)
+    public static function internalFetchBoth($statement = null): bool|array
     {
-        return $statement->fetchArray(SQLITE3_BOTH);
+        $statementId = self::cacheResults($statement);
+        $results = self::$cachedResults[$statementId] ?? [];
+
+        if (isset($results[self::$positions[$statementId]])) {
+            $row = $results[self::$positions[$statementId]++];
+            $result = [];
+            $index = 0;
+            foreach ($row as $key => $value) {
+                $result[$index] = (string) $value;
+                $result[$key] = (string) $value;
+                $index++;
+            }
+            return $result;
+        }
+
+        return false;
     }
 
-    public static function internalFetchAssoc($statement = null)
+    public static function internalFetchAssoc(mixed $statement): array|null|false
     {
-        return $statement->fetchArray(SQLITE3_ASSOC);
+        $statementId = self::cacheResults($statement);
+        $results = self::$cachedResults[$statementId] ?? [];
+
+        if (isset($results[self::$positions[$statementId]])) {
+            return $results[self::$positions[$statementId]++];
+        }
+
+        return false;
     }
 
-    public static function internalFetchNum($statement = null)
+    public static function internalFetchNum($statement = null): bool|array|null
     {
-        return $statement->fetchArray(SQLITE3_NUM);
+        $statementId = self::cacheResults($statement);
+        $results = self::$cachedResults[$statementId] ?? [];
+
+        if (isset($results[self::$positions[$statementId]])) {
+            $row = array_values($results[self::$positions[$statementId]++]);
+            return array_map('strval', $row);
+        }
+
+        return false;
     }
 
     public static function internalFetchColumn($statement = null, $columnIndex = 0)
     {
-        $rowData = self::internalFetchNum($statement);
-        $fetchArgument = $columnIndex ?? 0;
-        if (is_array($rowData)) {
-            return $rowData[$fetchArgument] ?? null;
+        $columnIndex = $columnIndex ?? 0;
+        self::handleFetchReset($statement);
+        $statementId = self::cacheResults($statement);
+        $results = self::$cachedResults[$statementId];
+
+        if (isset($results[self::$positions[$statementId]])) {
+            $row = $results[self::$positions[$statementId]++];
+            $values = array_values($row);
+            return isset($values[$columnIndex]) ? (string) $values[$columnIndex] : false;
         }
+
         return false;
     }
 
     public static function internalFetchAllAssoc($statement = null): array
     {
-        $result = [];
-        while ($data = self::internalFetchAssoc($statement)) {
-            $result[] = $data;
-        }
-        return $result;
+        $statementId = self::cacheResults($statement);
+        self::$lastFetchAll[$statementId] = true;
+        return self::$cachedResults[$statementId];
     }
 
-    /** @noinspection PhpUnused */
     public static function internalFetchAllNum($statement = null): array
     {
+        $statementId = self::cacheResults($statement);
+        self::$lastFetchAll[$statementId] = true;
+
         $result = [];
-        while ($data = self::internalFetchNum($statement)) {
-            $result[] = $data;
+        foreach (self::$cachedResults[$statementId] as $row) {
+            $result[] = array_map('strval', array_values($row));
         }
         return $result;
     }
 
-    /** @noinspection PhpUnused */
     public static function internalFetchAllBoth($statement = null): array
     {
+        $statementId = self::cacheResults($statement);
+        self::$lastFetchAll[$statementId] = true;
+
         $result = [];
-        while ($data = self::internalFetchBoth($statement)) {
-            $result[] = $data;
+        foreach (self::$cachedResults[$statementId] as $row) {
+            $combined = [];
+            $index = 0;
+            foreach ($row as $key => $value) {
+                $combined[$index] = (string) $value;
+                $combined[$key] = (string) $value;
+                $index++;
+            }
+            $result[] = $combined;
         }
         return $result;
     }
 
-    /** @noinspection PhpUnused */
     public static function internalFetchAllColumn($statement = null, $columnIndex = 0): array
     {
+        $columnIndex = $columnIndex ?? 0;
+        $statementId = self::cacheResults($statement);
+        self::$lastFetchAll[$statementId] = true;
         $result = [];
-        $fetchArgument = $columnIndex ?? 0;
-        while ($data = self::internalFetchColumn($statement, $fetchArgument)) {
-            $result[] = $data;
+        foreach (self::$cachedResults[$statementId] as $row) {
+            $values = array_values($row);
+            if (isset($values[$columnIndex])) {
+                $result[] = (string) $values[$columnIndex];
+            }
         }
         return $result;
     }
 
-    /**
-     * @throws ReflectionException
-     * @noinspection PhpUnused
-     */
     public static function internalFetchAllClass(
         $statement = null,
         $constructorArguments = [],
         $aClassOrObject = '\stdClass',
     ): array {
+        $statementId = self::cacheResults($statement);
+        self::$lastFetchAll[$statementId] = true;
+
         $result = [];
-        $fetchArgument = $constructorArguments ?? [];
-        while ($row = self::internalFetchClass($statement, $fetchArgument, $aClassOrObject)) {
-            $result[] = $row;
+        foreach (self::$cachedResults[$statementId] as $row) {
+            $result[] = Reflections::createObjectAndSetPropertiesCaseInsensitive(
+                $aClassOrObject,
+                $constructorArguments ?? [],
+                $row
+            );
         }
         return $result;
     }

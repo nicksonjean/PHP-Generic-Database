@@ -75,6 +75,15 @@ class ConnectionPgsqlTest extends TestCase
         $this->assertInstanceOf(Connection::class, $this->connection);
     }
 
+    public function testCallWithByStaticArrayThroughCallStatic(): void
+    {
+        $connection = Connection::new($this->pgsqlEnv);
+        $this->assertEquals($_ENV['PGSQL_HOST'], $connection->getHost());
+        $this->assertEquals($_ENV['PGSQL_PORT'], $connection->getPort());
+        $this->assertEquals($_ENV['PGSQL_USERNAME'], $connection->getUser());
+        $this->assertEquals($_ENV['PGSQL_PASSWORD'], $connection->getPassword());
+    }
+
     public function testPing()
     {
         $connected = $this->connection->ping();

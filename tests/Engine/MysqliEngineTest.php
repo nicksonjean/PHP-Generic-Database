@@ -2,17 +2,17 @@
 
 namespace GenericDatabase\Tests\Engine;
 
+use mysqli;
+use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
+use GenericDatabase\Modules\Chainable;
 use GenericDatabase\Engine\MySQLiConnection;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
-use GenericDatabase\Modules\Chainable;
-use Dotenv\Dotenv;
 
 class MysqliEngineTest extends TestCase
 {
     private array $mysqlEnv;
-
-    private $connection;
+    private MySQLiConnection $connection;
 
     public static function setUpBeforeClass(): void
     {
@@ -33,7 +33,9 @@ class MysqliEngineTest extends TestCase
         ];
 
         $this->connection = Chainable::nativeMySQLi($this->mysqlEnv, false, false);
+
     }
+
 
     public function testConnectionConstants()
     {

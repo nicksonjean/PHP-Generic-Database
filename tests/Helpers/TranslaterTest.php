@@ -2,12 +2,12 @@
 
 namespace GenericDatabase\Tests\Helpers;
 
-use GenericDatabase\Helpers\Translater;
+use GenericDatabase\Helpers\Translate;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 
-final class TranslaterTest extends TestCase
+final class TranslateTest extends TestCase
 {
     private static string $userQuery = "SELECT * FROM users WHERE name = 'John'";
     public function testEscapeDefaultDialect()
@@ -15,7 +15,7 @@ final class TranslaterTest extends TestCase
         $input = self::$userQuery;
         $expected = self::$userQuery;
 
-        $actual = Translater::escape($input);
+        $actual = Translate::escape($input);
 
         $this->assertEquals($expected, $actual);
     }
@@ -25,7 +25,7 @@ final class TranslaterTest extends TestCase
         $input = 'SELECT * FROM users WHERE name = "John"';
         $expected = 'SELECT * FROM "users" WHERE "name" = "John"';
 
-        $actual = Translater::escape($input, Translater::SQL_DIALECT_DOUBLE_QUOTE);
+        $actual = Translate::escape($input, Translate::SQL_DIALECT_DOUBLE_QUOTE);
 
         $this->assertEquals($expected, $actual);
     }
@@ -35,7 +35,7 @@ final class TranslaterTest extends TestCase
         $input = self::$userQuery;
         $expected = "SELECT * FROM 'users' WHERE 'name' = 'John'";
 
-        $actual = Translater::escape($input, Translater::SQL_DIALECT_SINGLE_QUOTE);
+        $actual = Translate::escape($input, Translate::SQL_DIALECT_SINGLE_QUOTE);
 
         $this->assertEquals($expected, $actual);
     }
@@ -45,7 +45,7 @@ final class TranslaterTest extends TestCase
         $input = self::$userQuery;
         $expected = "SELECT * FROM `users` WHERE `name` = 'John'";
 
-        $actual = Translater::escape($input, Translater::SQL_DIALECT_BACKTICK);
+        $actual = Translate::escape($input, Translate::SQL_DIALECT_BACKTICK);
 
         $this->assertEquals($expected, $actual);
     }
@@ -55,7 +55,7 @@ final class TranslaterTest extends TestCase
         $input = self::$userQuery;
         $expected = self::$userQuery;
 
-        $actual = Translater::escape($input, Translater::SQL_DIALECT_NONE);
+        $actual = Translate::escape($input, Translate::SQL_DIALECT_NONE);
 
         $this->assertEquals($expected, $actual);
     }
@@ -65,7 +65,7 @@ final class TranslaterTest extends TestCase
         $input = "SELECT * FROM users WHERE name = 'SELECT'";
         $expected = "SELECT * FROM users WHERE name = 'SELECT'";
 
-        $actual = Translater::escape($input);
+        $actual = Translate::escape($input);
 
         $this->assertEquals($expected, $actual);
     }
@@ -74,7 +74,7 @@ final class TranslaterTest extends TestCase
     {
         $input = "SELECT * FROM table WHERE id = :id";
         $expected = "SELECT * FROM table WHERE id = ?";
-        $actual = Translater::binding($input);
+        $actual = Translate::binding($input);
         $this->assertEquals($expected, $actual);
     }
 
@@ -82,7 +82,7 @@ final class TranslaterTest extends TestCase
     {
         $input = "SELECT * FROM table WHERE id = :id";
         $expected = "SELECT * FROM table WHERE id = $1";
-        $actual = Translater::binding($input, Translater::BIND_DOLLAR_SIGN);
+        $actual = Translate::binding($input, Translate::BIND_DOLLAR_SIGN);
         $this->assertEquals($expected, $actual);
     }
 
@@ -90,7 +90,7 @@ final class TranslaterTest extends TestCase
     {
         $input = "SELECT * FROM users WHERE id = :id AND name = :name";
         $values = ['id' => 1, 'name' => 'John'];
-        $arguments = Translater::arguments($input, $values);
+        $arguments = Translate::arguments($input, $values);
         $this->assertEquals([':id' => 1, ':name' => 'John'], $arguments);
     }
 
@@ -103,7 +103,7 @@ final class TranslaterTest extends TestCase
         $quote = '"';
         $forbiddenWords = ['INSERT', 'INTO', 'VALUES'];
 
-        $reflectionClass = new ReflectionClass(Translater::class);
+        $reflectionClass = new ReflectionClass(Translate::class);
         $method = $reflectionClass->getMethod('replaceParameters');
         $method->setAccessible(true); //NOSONAR
 
@@ -121,7 +121,7 @@ final class TranslaterTest extends TestCase
         $quote = '';
         $forbiddenWords = [''];
 
-        $reflectionClass = new ReflectionClass(Translater::class);
+        $reflectionClass = new ReflectionClass(Translate::class);
         $method = $reflectionClass->getMethod('replaceParameters');
         $method->setAccessible(true); //NOSONAR
 
@@ -134,7 +134,7 @@ final class TranslaterTest extends TestCase
     {
         $input = "SELECT * FROM users";
 
-        $arguments = Translater::arguments($input, null);
+        $arguments = Translate::arguments($input, null);
 
         $this->assertEmpty($arguments);
     }

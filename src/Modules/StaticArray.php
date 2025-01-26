@@ -38,11 +38,12 @@ class StaticArray
     ): Connection|MySQLiConnection {
         /** @var Connection|MySQLiConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_MYSQLI_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'mysqli';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'mysqli'] : [],
             'host' => $env['MYSQL_HOST'],
             'port' => (int) $env['MYSQL_PORT'],
             'database' => $env['MYSQL_DATABASE'],
@@ -62,9 +63,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -80,11 +78,12 @@ class StaticArray
     ): Connection|PgSQLConnection {
         /** @var Connection|PgSQLConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PGSQL_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'pgsql';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'pgsql'] : [],
             'host' => $env['PGSQL_HOST'],
             'port' => (int) $env['PGSQL_PORT'],
             'database' => $env['PGSQL_DATABASE'],
@@ -100,9 +99,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -118,11 +114,12 @@ class StaticArray
     ): Connection|SQLSrvConnection {
         /** @var Connection|SQLSrvConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLSRV_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'sqlsrv';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'sqlsrv'] : [],
             'host' => $env['SQLSRV_HOST'],
             'port' => (int) $env['SQLSRV_PORT'],
             'database' => $env['SQLSRV_DATABASE'],
@@ -136,9 +133,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -154,11 +148,12 @@ class StaticArray
     ): Connection|OCIConnection {
         /** @var Connection|OCIConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_OCI_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'oci';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'oci'] : [],
             'host' => $env['OCI_HOST'],
             'port' => (int) $env['OCI_PORT'],
             'database' => $env['OCI_DATABASE'],
@@ -172,9 +167,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -190,11 +182,12 @@ class StaticArray
     ): Connection|FirebirdConnection {
         /** @var Connection|FirebirdConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_FIREBIRD_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'firebird';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'firebird'] : [],
             'host' => $env['FBIRD_HOST'],
             'port' => (int) $env['FBIRD_PORT'],
             'database' => $env['FBIRD_DATABASE'],
@@ -208,9 +201,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -226,11 +216,12 @@ class StaticArray
     ): Connection|SQLiteConnection {
         /** @var Connection|SQLiteConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'sqlite';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'sqlite'] : [],
             'database' => $env['SQLITE_DATABASE'],
             'charset' => 'utf8',
             'options' => [
@@ -244,9 +235,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -262,11 +250,12 @@ class StaticArray
     ): Connection|SQLiteConnection {
         /** @var Connection|SQLiteConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'sqlite';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'sqlite'] : [],
             'database' => $env['SQLITE_DATABASE_MEMORY'],
             'charset' => 'utf8',
             'options' => [
@@ -280,9 +269,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -298,11 +284,12 @@ class StaticArray
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'pdo';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'pdo'] : [],
             'driver' => 'mysql',
             'host' => $env['MYSQL_HOST'],
             'port' => (int) $env['MYSQL_PORT'],
@@ -317,9 +304,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -335,11 +319,12 @@ class StaticArray
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'pdo';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'pdo'] : [],
             'driver' => 'pgsql',
             'host' => $env['PGSQL_HOST'],
             'port' => (int) $env['PGSQL_PORT'],
@@ -354,9 +339,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -370,11 +352,12 @@ class StaticArray
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'pdo';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'pdo'] : [],
             'driver' => 'sqlsrv',
             'host' => $env['SQLSRV_HOST'],
             'port' => (int) $env['SQLSRV_PORT'],
@@ -388,9 +371,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -406,11 +386,12 @@ class StaticArray
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'pdo';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'pdo'] : [],
             'driver' => 'oci',
             'host' => $env['OCI_HOST'],
             'port' => (int) $env['OCI_PORT'],
@@ -425,9 +406,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -443,11 +421,12 @@ class StaticArray
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'pdo';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'pdo'] : [],
             'driver' => 'firebird',
             'host' => $env['FBIRD_HOST'],
             'port' => (int) $env['FBIRD_PORT'],
@@ -462,9 +441,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -480,11 +456,12 @@ class StaticArray
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'pdo';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'pdo'] : [],
             'driver' => 'sqlite',
             'database' => $env['SQLITE_DATABASE'],
             'charset' => 'utf8',
@@ -495,9 +472,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -513,11 +487,12 @@ class StaticArray
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'pdo';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'pdo'] : [],
             'driver' => 'sqlite',
             'database' => $env['SQLITE_DATABASE_MEMORY'],
             'charset' => 'utf8',
@@ -528,9 +503,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -546,11 +518,12 @@ class StaticArray
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'odbc';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'odbc'] : [],
             'driver' => 'mysql',
             'host' => $env['MYSQL_HOST'],
             'port' => (int) $env['MYSQL_PORT'],
@@ -565,9 +538,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -583,11 +553,12 @@ class StaticArray
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'odbc';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'odbc'] : [],
             'driver' => 'pgsql',
             'host' => $env['PGSQL_HOST'],
             'port' => (int) $env['PGSQL_PORT'],
@@ -602,9 +573,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -620,11 +588,12 @@ class StaticArray
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'odbc';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'odbc'] : [],
             'driver' => 'sqlsrv',
             'host' => $env['SQLSRV_HOST'],
             'port' => (int) $env['SQLSRV_PORT'],
@@ -639,9 +608,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -657,11 +623,12 @@ class StaticArray
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'odbc';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'odbc'] : [],
             'driver' => 'oci',
             'host' => $env['OCI_HOST'],
             'port' => (int) $env['OCI_PORT'],
@@ -676,9 +643,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -694,11 +658,12 @@ class StaticArray
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'odbc';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'odbc'] : [],
             'driver' => 'firebird',
             'host' => $env['FBIRD_HOST'],
             'port' => (int) $env['FBIRD_PORT'],
@@ -713,9 +678,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -731,11 +693,12 @@ class StaticArray
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'odbc';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'odbc'] : [],
             'driver' => 'sqlite',
             'database' => $env['SQLITE_DATABASE'],
             'charset' => $env['SQLITE_CHARSET'],
@@ -746,9 +709,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -764,11 +724,12 @@ class StaticArray
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'odbc';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'odbc'] : [],
             'driver' => 'access',
             'database' => $env['ACCESS_DATABASE'],
             'user' => $env['ACCESS_USERNAME'],
@@ -781,9 +742,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -799,11 +757,12 @@ class StaticArray
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'odbc';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'odbc'] : [],
             'driver' => 'excel',
             'database' => $env['EXCEL_DATABASE'],
             'charset' => $env['EXCEL_CHARSET'],
@@ -814,9 +773,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -832,11 +788,12 @@ class StaticArray
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'odbc';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'odbc'] : [],
             'driver' => 'text',
             'database' => $env['TEXT_DATABASE'],
             'charset' => $env['TEXT_CHARSET'],
@@ -847,9 +804,6 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 
     /**
@@ -865,11 +819,12 @@ class StaticArray
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
-        $parameters = [];
-        if ($strategy) {
-            $parameters['engine'] = 'odbc';
-        }
-        $parameters = array_merge($parameters, [
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        return $constructor([
+            ...$strategy ? ['engine' => 'odbc'] : [],
             'driver' => 'sqlite',
             'database' => $env['SQLITE_DATABASE_MEMORY'],
             'charset' => $env['SQLITE_CHARSET'],
@@ -880,8 +835,5 @@ class StaticArray
             ],
             'exception' => true
         ]);
-        /** @var callable $constructor */
-        $constructor = [$className, 'new'];
-        return call_user_func_array($constructor, [...$parameters]);
     }
 }

@@ -72,6 +72,12 @@ class ConnectionSqliteTest extends TestCase
         $this->assertInstanceOf(Connection::class, $this->connection);
     }
 
+    public function testCallWithByStaticArrayThroughCallStatic(): void
+    {
+        $connection = Connection::new($this->sqliteEnv);
+        $this->assertEquals($_ENV['SQLITE_DATABASE'], $connection->getDatabase());
+    }
+
     public function testPing()
     {
         $connected = $this->connection->ping();

@@ -12,7 +12,7 @@ use GenericDatabase\Core\Where;
 use GenericDatabase\Core\Having;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translater;
+use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Helpers\CustomException;
 
 class Builder
@@ -329,10 +329,10 @@ class Builder
 
     public function parse(
         string $query,
-        int $quoteType = Translater::SQL_DIALECT_BACKTICK,
+        int $quoteType = Translate::SQL_DIALECT_BACKTICK,
         int $quoteSkip = null
     ): string {
-        return Translater::binding(Translater::escape(trim($query), $quoteType, $quoteSkip));
+        return Translate::binding(Translate::escape(trim($query), $quoteType, $quoteSkip));
     }
 
     /**

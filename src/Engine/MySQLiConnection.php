@@ -7,7 +7,6 @@ namespace GenericDatabase\Engine;
 use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
-use Exception;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 use GenericDatabase\Engine\MySQLi\Connection\Arguments;
@@ -21,13 +20,13 @@ use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translater;
-use GenericDatabase\Helpers\Validations;
+use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
 use mysqli_result;
+use Exception;
 use stdClass;
 
 /**
@@ -108,6 +107,9 @@ class MySQLiConnection implements IConnection
      */
     private string $queryString = '';
 
+    /**
+     * Empty constructor since initialization is handled by traits and interface methods
+     */
     public function __construct()
     {
     }
@@ -212,7 +214,7 @@ class MySQLiConnection implements IConnection
         if (!extension_loaded('mysqli')) {
             $message = sprintf(
                 "Invalid or not loaded '%s' extension in '%s' settings",
-                'interbase',
+                'mysqli',
                 'PHP.ini'
             );
             throw new CustomException($message);
@@ -375,26 +377,26 @@ class MySQLiConnection implements IConnection
     public function lastInsertId(?string $name = null): string|int|false
     {
         if (!$name) {
-            return $this->getConnection()->insert_id;
+            return (int) $this->getConnection()->insert_id;
         }
-        $filter = "WHERE table_name = ? AND column_key = ? AND extra = ?";
-        $query = sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
+        $filter = "WHERE TABLE_NAME = ? AND COLUMN_KEY = ? AND EXTRA = ?";
+        $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
         $stmt = $this->getConnection()->prepare($query);
-        $stmt->bind_param("sss", $name, 'PRI', 'auto_increment');
+        $stmt = $this->internalBindVariable([$name, 'PRI', 'auto_increment'], $stmt);
         $stmt->execute();
         $autoKeyResult = $stmt->get_result();
         $autoKey = $autoKeyResult->fetch_assoc();
-        if (isset($autoKey['column_name'])) {
-            $query = sprintf("SELECT MAX(%s) AS value FROM %s", $autoKey['column_name'], $name);
+        if (isset($autoKey['COLUMN_NAME'])) {
+            $query = sprintf("SELECT MAX(%s) AS value FROM %s", $autoKey['COLUMN_NAME'], $name);
             $stmt = $this->getConnection()->prepare($query);
             $stmt->execute();
             $maxIndexResult = $stmt->get_result();
             $maxIndex = $maxIndexResult->fetch_assoc()['value'];
             if ($maxIndex !== null) {
-                return $maxIndex;
+                return (int) $maxIndex;
             }
         }
-        return $autoKey['column_name'] ?? 0;
+        return (int) $autoKey['COLUMN_NAME'] ?? 0;
     }
 
     /**
@@ -413,7 +415,7 @@ class MySQLiConnection implements IConnection
             return $string;
         }
         $quoted = fn($str) => $this->getConnection()->real_escape_string($str);
-        return ($quote) ? "'" . $quoted($string) . "'" : $quoted($string);
+        return $quote ? "'" . $quoted($string) . "'" : $quoted($string);
     }
 
     /**
@@ -504,7 +506,7 @@ class MySQLiConnection implements IConnection
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        $this->queryRows = $params;
+        $this->queryRows = (is_callable($params)) ? $params() : $params;
     }
 
     /**
@@ -546,7 +548,7 @@ class MySQLiConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->affectedRows = Validations::isSelect($this->getQueryString()) ? 0 : ($this->getAffectedRows() + $params);
+        $this->affectedRows = (int) $params;
     }
 
     /**
@@ -578,22 +580,28 @@ class MySQLiConnection implements IConnection
      * @param mixed $stmt The prepared statement to bind variables to.
      * @return mixed The prepared statement with bound variables.
      */
-    private function internalBindVariable(array &$preparedParams, mixed $stmt): mixed
+    private function internalBindVariable(mixed $params, mixed $statement): \mysqli_stmt
     {
-        $types = '';
-        $referenceParams = [];
-        foreach ($preparedParams as &$arg) {
-            $referenceParams[] = &$arg;
-            $types .= match (true) {
-                is_float($arg) => 'd',
-                is_integer($arg) => 'i',
-                is_string($arg) => 's',
-                default => 'b'
-            };
+        if (is_array($params)) {
+            $types = '';
+            $values = [];
+            foreach ($params as $value) {
+                if (is_int($value)) {
+                    $types .= 'i';
+                } elseif (is_float($value)) {
+                    $types .= 'd';
+                } elseif (is_string($value)) {
+                    $types .= 's';
+                } else {
+                    $types .= 'b';
+                }
+                $values[] = $value;
+            }
+            if (!empty($types)) {
+                $statement->bind_param($types, ...array_values($values));
+            }
         }
-        array_unshift($referenceParams, $types);
-        call_user_func_array([$stmt, 'bind_param'], $referenceParams);
-        return $stmt;
+        return $statement;
     }
 
     /**
@@ -606,8 +614,18 @@ class MySQLiConnection implements IConnection
     {
         foreach ($params['sqlArgs'] as $param) {
             $statement = $this->internalBindVariable($param, $params['sqlStatement']);
-            $this->exec($statement);
-            $this->setAffectedRows((int) $this->getConnection()->affected_rows);
+            if ($this->exec($statement)) {
+                if ($statement->field_count > 0) {
+                    $result = $statement->get_result();
+                    if ($result) {
+                        $this->setStatement($result);
+                        $this->setQueryRows((int) $result->num_rows);
+                        $this->setQueryColumns($result->field_count);
+                    }
+                } else {
+                    $this->setAffectedRows($this->getAffectedRows() + $statement->affected_rows);
+                }
+            }
         }
     }
 
@@ -646,9 +664,41 @@ class MySQLiConnection implements IConnection
      */
     private function internalBindParamArgs(mixed ...$params): void
     {
-        $statement = $this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
-        $this->exec($statement);
-        $this->setAffectedRows((int) $this->getConnection()->affected_rows);
+        $statement = $params['sqlStatement'];
+        while ($this->getConnection()->more_results()) {
+            $this->getConnection()->next_result();
+        }
+        $this->internalBindVariable($params['sqlArgs'], $statement);
+        if ($statement->execute()) {
+            if ($statement->field_count > 0) {
+                $metadata = $statement->result_metadata();
+                if ($metadata) {
+                    $fields = [];
+                    $row = [];
+                    $bindVars = [];
+                    $results = [];
+                    while ($field = $metadata->fetch_field()) {
+                        $fields[] = $field->name;
+                        $row[$field->name] = null;
+                        $bindVars[] = &$row[$field->name];
+                    }
+                    call_user_func_array([$statement, 'bind_result'], $bindVars);
+                    while ($statement->fetch()) {
+                        $rowData = [];
+                        foreach ($fields as $field) {
+                            $rowData[$field] = $row[$field];
+                        }
+                        $results[] = $rowData;
+                    }
+                    $this->setStatement($results);
+                    $this->setQueryRows(count($results));
+                    $this->setQueryColumns(count($fields));
+                    $metadata->free();
+                }
+            } else {
+                $this->setAffectedRows($statement->affected_rows);
+            }
+        }
     }
 
     /**
@@ -687,7 +737,7 @@ class MySQLiConnection implements IConnection
      */
     public function parse(mixed ...$params): string
     {
-        $queryString = Translater::binding(Translater::escape(reset($params), Translater::SQL_DIALECT_BACKTICK));
+        $queryString = Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_BACKTICK));
         $this->setQueryString($queryString);
         return $this->getQueryString();
     }
@@ -702,15 +752,34 @@ class MySQLiConnection implements IConnection
     {
         $this->setAllMetadata();
         if (!empty($params)) {
-            $resultMode = array_key_exists(1, $params) ? (int) $params[1] : MYSQLI_STORE_RESULT;
-            $stmt = mysqli_query($this->getConnection(), $this->parse(...$params), $resultMode);
-            $this->setStatement($stmt);
-            $isResult = is_object($this->getStatement()) && get_class($this->getStatement()) === 'mysqli_result';
-            if ($isResult) {
-                $this->setQueryRows((int) $this->getStatement()->num_rows);
-                $this->setQueryColumns($this->getStatement()->field_count);
+            $query = $this->parse(...$params);
+            $statement = $this->getConnection()->prepare($query);
+            if ($statement) {
+                $this->setStatement($statement);
+                $queryParameters = $params[1] ?? [];
+                if ($statement->execute()) {
+                    $result = $statement->get_result();
+                    if ($result) {
+                        $results = $result->fetch_all(MYSQLI_ASSOC);
+                        $this->setStatement([
+                            'results' => $results,
+                            'queryString' => $query,
+                            'queryParameters' => $queryParameters,
+                        ]);
+                        $this->setQueryRows($result->num_rows);
+                        $this->setQueryColumns($result->field_count);
+                    } else {
+                        $this->setAffectedRows($statement->affected_rows);
+                        $this->setStatement([
+                            'results' => [],
+                            'queryString' => $query,
+                            'queryParameters' => $queryParameters,
+                        ]);
+                        $this->setQueryRows(0);
+                        $this->setQueryColumns(0);
+                    }
+                }
             }
-            $this->setAffectedRows((int) $this->getConnection()->affected_rows);
         }
         return $this;
     }
@@ -727,16 +796,39 @@ class MySQLiConnection implements IConnection
         $this->setAllMetadata();
         if (!empty($params)) {
             $stmt = mysqli_prepare($this->getConnection(), $this->parse(...$params));
-            array_unshift($params, $stmt);
-            if (array_key_exists(2, $params)) {
-                $bindParams = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => false]);
-                $this->bindParam(...$bindParams);
-            } else {
-                $this->exec($stmt);
+            if ($stmt) {
+                $this->setStatement($stmt);
+                if (array_key_exists(1, $params) && is_array($params[1])) {
+                    $bindParams = array_merge($this->makeArgs($driver, $stmt, ...$params));
+                    $this->setQueryParameters($bindParams['sqlArgs']);
+                    if (isset($bindParams['sqlArgs']) && is_array($bindParams['sqlArgs'])) {
+                        if (isset($bindParams['sqlArgs'][0]) && is_array($bindParams['sqlArgs'][0])) {
+                            $affectedRows = 0;
+                            foreach ($bindParams['sqlArgs'] as $args) {
+                                $this->internalBindVariable($args, $stmt);
+                                if ($stmt->execute()) {
+                                    $affectedRows += $stmt->affected_rows;
+                                }
+                            }
+                            $this->setAffectedRows($affectedRows);
+                        } else {
+                            $this->internalBindVariable($bindParams['sqlArgs'], $stmt);
+                            if ($stmt->execute()) {
+                                if ($stmt->field_count > 0) {
+                                    $result = $stmt->get_result();
+                                    if ($result) {
+                                        $this->setStatement($result);
+                                        $this->setQueryRows((int) $result->num_rows);
+                                        $this->setQueryColumns($result->field_count);
+                                    }
+                                } else {
+                                    $this->setAffectedRows($stmt->affected_rows);
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            $isResult = is_object($this->getStatement()) && get_class($this->getStatement()) === 'mysqli_result';
-            $this->setQueryRows($isResult ? (int) $this->getStatement()->num_rows : (int) $stmt->num_rows);
-            $this->setQueryColumns($isResult ? $this->getStatement()->field_count : $stmt->field_count);
         }
         return $this;
     }
@@ -750,8 +842,15 @@ class MySQLiConnection implements IConnection
     public function exec(mixed ...$params): bool|mysqli_result
     {
         $statement = reset($params);
-        $this->setStatement($statement->execute() ? $statement->get_result() : false);
-        return $this->getStatement();
+        if ($statement instanceof mysqli_stmt) {
+            if (!$statement->execute()) {
+                $this->setStatement(false);
+                return false;
+            }
+            return true;
+        }
+        $this->setStatement($statement);
+        return $statement !== false;
     }
 
     /**
@@ -791,6 +890,7 @@ class MySQLiConnection implements IConnection
         $fetch = is_null($fetchStyle) ? Options::getOptions(MySQL::ATTR_DEFAULT_FETCH_MODE) : $fetchStyle;
         return match ($fetch) {
             MySQL::FETCH_OBJ,
+            MySQL::FETCH_INTO,
             MySQL::FETCH_CLASS => Statements::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
             MySQL::FETCH_COLUMN => Statements::internalFetchAllColumn($this->getStatement(), $fetchArgument),
             MySQL::FETCH_ASSOC => Statements::internalFetchAllAssoc($this->getStatement()),
@@ -828,10 +928,10 @@ class MySQLiConnection implements IConnection
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return int|bool
+     * @return int|string|bool
      * @noinspection PhpUnused
      */
-    public function errorCode(mixed $inst = null): int|bool
+    public function errorCode(mixed $inst = null): int|string|bool
     {
         return $this->getConnection()->errno || $inst;
     }
@@ -840,10 +940,10 @@ class MySQLiConnection implements IConnection
      * This function returns an array containing error information about the last operation performed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return string|bool
+     * @return string|bool|array
      * @noinspection PhpUnused
      */
-    public function errorInfo(mixed $inst = null): string|bool
+    public function errorInfo(mixed $inst = null): string|bool|array
     {
         return $this->getConnection()->error || $inst;
     }

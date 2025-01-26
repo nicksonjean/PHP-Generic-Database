@@ -1,5 +1,5 @@
 {
-  "database": "../../resources/database/sqlite/DB.SQLITE",
+  "database": "../../resources/database/sqlite/data/DB.SQLITE",
   "charset": "utf8",
   "options": [
     {

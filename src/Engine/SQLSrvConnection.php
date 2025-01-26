@@ -7,7 +7,6 @@ namespace GenericDatabase\Engine;
 use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
-use Exception;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
 use GenericDatabase\Engine\SQLSrv\Connection\Arguments;
@@ -21,12 +20,12 @@ use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translater;
-use GenericDatabase\Helpers\Validations;
+use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
+use Exception;
 use stdClass;
 
 /**
@@ -107,6 +106,9 @@ class SQLSrvConnection implements IConnection
      */
     private string $queryString = '';
 
+    /**
+     * Empty constructor since initialization is handled by traits and interface methods
+     */
     public function __construct()
     {
     }
@@ -377,7 +379,34 @@ class SQLSrvConnection implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return $name;
+        if (!$name) {
+            $query = "SELECT CAST(@@IDENTITY AS BIGINT) AS LastInsertedID";
+            $statement = sqlsrv_query($this->getConnection(), $query);
+            if ($statement) {
+                $row = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC);
+                sqlsrv_free_stmt($statement);
+                return $row ? (int) $row['LastInsertedID'] : 0;
+            }
+            return 0;
+        }
+        $filter = "WHERE TABLE_NAME = ? AND TABLE_SCHEMA = SCHEMA_NAME() AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1";
+        $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
+        $statement = sqlsrv_query($this->getConnection(), $query, [$name]);
+        if ($statement) {
+            $row = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC);
+            sqlsrv_free_stmt($statement);
+            if (isset($row['COLUMN_NAME'])) {
+                $identityColumn = $row['COLUMN_NAME'];
+                $query = sprintf("SELECT MAX(%s) AS LastInsertedID FROM %s", $identityColumn, $name);
+                $statement = sqlsrv_query($this->getConnection(), $query);
+                if ($statement) {
+                    $result = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC);
+                    sqlsrv_free_stmt($statement);
+                    return $result ? (int) $result['LastInsertedID'] : 0;
+                }
+            }
+        }
+        return 0;
     }
 
     /**
@@ -528,7 +557,7 @@ class SQLSrvConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->affectedRows = ($params === -1) ? 0 : ($this->getAffectedRows() + $params);
+        $this->affectedRows = $params;
     }
 
     /**
@@ -561,16 +590,25 @@ class SQLSrvConnection implements IConnection
      */
     private function internalBindVariable(mixed $data)
     {
+        $temporaryStatement = sqlsrv_prepare(
+            $this->getConnection(),
+            $this->getQueryString(),
+            $data
+        );
+        $isSelect = $temporaryStatement && sqlsrv_num_fields($temporaryStatement) > 0;
         $this->setStatement(sqlsrv_prepare(
             $this->getConnection(),
             $this->getQueryString(),
             $data,
             [
-                'Scrollable' => Validations::isSelect($this->getQueryString())
+                'Scrollable' => $isSelect
                     ? SQLSRV_CURSOR_STATIC
                     : SQLSRV_CURSOR_FORWARD
             ]
         ));
+        if ($temporaryStatement) {
+            sqlsrv_free_stmt($temporaryStatement);
+        }
         return $this->getStatement();
     }
 
@@ -682,7 +720,7 @@ class SQLSrvConnection implements IConnection
      */
     private function parse(mixed ...$params): string
     {
-        $queryString = Translater::binding(Translater::escape(reset($params), Translater::SQL_DIALECT_DOUBLE_QUOTE));
+        $queryString = Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE));
         $this->setQueryString($queryString);
         return $this->getQueryString();
     }
@@ -697,19 +735,31 @@ class SQLSrvConnection implements IConnection
     {
         $this->setAllMetadata();
         if (!empty($params)) {
-            $this->setStatement(sqlsrv_query(
-                $this->getConnection(),
-                $this->parse(...$params),
-                [],
-                [
-                    'Scrollable' => Validations::isSelect($this->getQueryString())
-                        ? SQLSRV_CURSOR_STATIC
-                        : SQLSRV_CURSOR_FORWARD
-                ]
-            ));
-            $this->setQueryRows((int) sqlsrv_num_rows($this->getStatement()));
-            $this->setQueryColumns((int) sqlsrv_num_fields($this->getStatement()));
-            $this->setAffectedRows((int) sqlsrv_rows_affected($this->getStatement()));
+            $query = $this->parse(...$params);
+            $statement = sqlsrv_query($this->getConnection(), $query);
+            if ($statement) {
+                $numFields = sqlsrv_num_fields($statement);
+                if ($numFields > 0) {
+                    $results = [];
+                    while ($row = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC)) {
+                        $results[] = $row;
+                    }
+                    $this->setStatement(['results' => $results]);
+                    $this->setQueryRows(count($results));
+                    $this->setQueryColumns($numFields);
+                    $this->setAffectedRows(0);
+                } else {
+                    $affectedRows = sqlsrv_rows_affected($statement);
+                    $this->setStatement(['results' => []]);
+                    $this->setAffectedRows($affectedRows !== false ? $affectedRows : 0);
+                    $this->setQueryRows(0);
+                    $this->setQueryColumns(0);
+                }
+                sqlsrv_free_stmt($statement);
+            } else {
+                $this->setQueryRows(0);
+                $this->setAffectedRows(0);
+            }
         }
         return $this;
     }
@@ -725,11 +775,41 @@ class SQLSrvConnection implements IConnection
         $driver = Compare::connection($this->getConnection());
         $this->setAllMetadata();
         if (!empty($params)) {
-            $bindParams = $this->makeArgs($driver, ...$params);
-            $this->parse(...$params);
-            (array_key_exists(1, $params)) ? $this->bindParam(...$bindParams) : $this->query(...$params);
-            $this->setQueryRows((int) sqlsrv_num_rows($this->getStatement()));
-            $this->setQueryColumns((int) sqlsrv_num_fields($this->getStatement()));
+            $query = $this->parse(...$params);
+            if (isset($params[1])) {
+                $results = [];
+                $affectedRows = 0;
+                $numFields = 0;
+                $paramSets = is_array($params[1][0] ?? null) ? $params[1] : [$params[1]];
+                $bindParams = $this->makeArgs($driver, ...$params);
+                $this->setQueryParameters($bindParams['sqlArgs']);
+                foreach ($paramSets as $bindParams) {
+                    $orderedParams = array_values($bindParams);
+                    $statement = sqlsrv_query($this->getConnection(), $query, $orderedParams, ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
+                    if ($statement) {
+                        $numFields = sqlsrv_num_fields($statement);
+                        if ($numFields > 0) {
+                            while ($row = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC)) {
+                                $results[] = $row;
+                            }
+                        } else {
+                            $affectedRows += sqlsrv_rows_affected($statement) !== false ? sqlsrv_rows_affected($statement) : 0;
+                        }
+                        sqlsrv_free_stmt($statement);
+                    }
+                }
+                if ($numFields > 0) {
+                    $this->setStatement(['results' => $results]);
+                    $this->setQueryRows(count($results));
+                    $this->setQueryColumns($numFields);
+                    $this->setAffectedRows(0);
+                } else {
+                    $this->setStatement(['results' => []]);
+                    $this->setAffectedRows($affectedRows);
+                    $this->setQueryRows(0);
+                    $this->setQueryColumns(0);
+                }
+            }
         }
         return $this;
     }
@@ -785,6 +865,7 @@ class SQLSrvConnection implements IConnection
         $fetch = is_null($fetchStyle) ? Options::getOptions(SQLSrv::ATTR_DEFAULT_FETCH_MODE) : $fetchStyle;
         return match ($fetch) {
             SQLSrv::FETCH_OBJ,
+            SQLSrv::FETCH_INTO,
             SQLSrv::FETCH_CLASS =>
             Statements::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
             SQLSrv::FETCH_COLUMN => Statements::internalFetchAllColumn($this->getStatement(), $fetchArgument),

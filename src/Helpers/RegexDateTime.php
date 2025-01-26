@@ -1,25 +1,5 @@
 <?php
 
-/** @noinspection ALL */
-
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-
-/** @noinspection ALL */
-
 namespace GenericDatabase\Helpers;
 
 /**
@@ -119,7 +99,7 @@ class RegexDateTime
     private const TIMEZONE_SECONDS_24 = '(?<timezone_seconds>' . self::DIGITS . ')';
     private const MERIDIEM = '(?<meridiem>[AaPp][Mm])';
     private const TIMEZONE =
-    '(?<timezone>Z|[+|-]' . '(?:' . self::HOURS . ')' . self::TIME_SEPARATOR . '?(?:' . self::MINUTES . ')?)?';
+        '(?<timezone>Z|[+|-]' . '(?:' . self::HOURS . ')' . self::TIME_SEPARATOR . '?(?:' . self::MINUTES . ')?)?';
     private const DATE_SEPARATOR = '[\s\/\|\-]';
     private const DATE_TIME_SEPARATOR = '(?<date_time_separator>[\s\/\|\-|T])?';
     private const DAYS_28_SEPARATOR = '(?<day_28_separator>' . self::DATE_SEPARATOR . ')';
@@ -141,17 +121,28 @@ class RegexDateTime
     private const LEAP_DAY = '(?<leap_day>29)';
     private const LEAP_MONTH = '(?<leap_month>02)';
     private const LEAP_YEAR =
-    '(?<leap_year>(?:\d{2}(?:0[48]|[2468][048]|[13579][26]))|(?:(?:[02468][048])|[13579][26])00)';
+        '(?<leap_year>(?:\d{2}(?:0[48]|[2468][048]|[13579][26]))|(?:(?:[02468][048])|[13579][26])00)';
     private const YEAR = '(?<year>(?:\d{4}|(?:(?:0[48]|[2468][048]|[13579][26]))))';
     private static array $separators = [
         'dateSeparators' => [
-            'day_28_separator', 'day_30_separator', 'day_31_separator', 'month_28_separator',
-            'month_30_separator', 'month_31_separator', 'leap_day_separator', 'leap_month_separator',
-            'leap_year_separator', 'year_separator'
+            'day_28_separator',
+            'day_30_separator',
+            'day_31_separator',
+            'month_28_separator',
+            'month_30_separator',
+            'month_31_separator',
+            'leap_day_separator',
+            'leap_month_separator',
+            'leap_year_separator',
+            'year_separator'
         ],
         'timeSeparators' => [
-            'timezone_hours_separator', 'timezone_minutes_separator', 'timezone_seconds', 'meridiem_hours_separator',
-            'meridiem_minutes_separator', 'meridiem_seconds'
+            'timezone_hours_separator',
+            'timezone_minutes_separator',
+            'timezone_seconds',
+            'meridiem_hours_separator',
+            'meridiem_minutes_separator',
+            'meridiem_seconds'
         ],
         'dateTimeSeparators' => ['date_time_separator'],
         'meridiemSeparators' => ['meridiem_separator'],
@@ -350,7 +341,7 @@ class RegexDateTime
     {
         return array_combine(
             array_keys(self::$patternMap),
-            array_map(fn ($method) => '/' . self::$method() . '/', array_values(self::$patternMap))
+            array_map(fn($method) => '/' . self::$method() . '/', array_values(self::$patternMap))
         );
     }
 
@@ -434,23 +425,23 @@ class RegexDateTime
     ): string {
         $length = strlen($input);
         return match (true) {
-            $length === 5  && !$dtsp && !$msp && !$tzsp => self::buildTimeMask($format, $tsp),
-            $length === 8  && !$dtsp &&  $msp && !$tzsp => self::buildTimeWithMeridiemMask($format, $tsp, $msp),
-            $length === 12 && !$dtsp && !$msp &&  $tzsp => self::buildTimeWithTimespanMask($format, $tsp, $tzsp),
-            $length === 8  && !$dtsp && !$msp && !$tzsp => self::buildTimeWithSecondsMask($format, $tsp),
-            $length === 11 && !$dtsp &&  $msp && !$tzsp => self::buildTimeWithSecondsAndMeridiemMask(
+            $length === 5 && !$dtsp && !$msp && !$tzsp => self::buildTimeMask($format, $tsp),
+            $length === 8 && !$dtsp && $msp && !$tzsp => self::buildTimeWithMeridiemMask($format, $tsp, $msp),
+            $length === 12 && !$dtsp && !$msp && $tzsp => self::buildTimeWithTimespanMask($format, $tsp, $tzsp),
+            $length === 8 && !$dtsp && !$msp && !$tzsp => self::buildTimeWithSecondsMask($format, $tsp),
+            $length === 11 && !$dtsp && $msp && !$tzsp => self::buildTimeWithSecondsAndMeridiemMask(
                 $format,
                 $tsp,
                 $msp
             ),
-            $length === 15 && !$dtsp && !$msp &&  $tzsp => self::buildTimeWithSecondsAndTimespanMask(
+            $length === 15 && !$dtsp && !$msp && $tzsp => self::buildTimeWithSecondsAndTimespanMask(
                 $format,
                 $tsp,
                 $tzsp
             ),
             $length === 10 && !$dtsp && !$msp && !$tzsp => self::buildDateMask($format, $dsp),
-            $length === 16 &&  $dtsp && !$msp && !$tzsp => self::buildDateTimeMask($format, $dsp, $tsp, $dtsp),
-            $length === 19 &&  $dtsp &&  $msp && !$tzsp => self::buildDateTimeWithMeridiemMask(
+            $length === 16 && $dtsp && !$msp && !$tzsp => self::buildDateTimeMask($format, $dsp, $tsp, $dtsp),
+            $length === 19 && $dtsp && $msp && !$tzsp => self::buildDateTimeWithMeridiemMask(
                 $format,
                 $dsp,
                 $tsp,

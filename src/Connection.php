@@ -702,10 +702,10 @@ class Connection implements IConnection, IConnectionStrategy
      * This function returns an SQLSTATE code for the last operation executed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return int|bool
+     * @return int|string|array|bool|null
      * @noinspection PhpUnused
      */
-    public function errorCode(mixed $inst = null): int|bool
+    public function errorCode(mixed $inst = null): int|string|array|bool|null
     {
         return $this->getStrategy()->getConnection()->errorCode($inst);
     }
@@ -714,10 +714,10 @@ class Connection implements IConnection, IConnectionStrategy
      * This function returns an array containing error information about the last operation performed by the database.
      *
      * @param mixed $inst = null Resource name, table or view
-     * @return string|bool
+     * @return string|array|bool|null
      * @noinspection PhpUnused
      */
-    public function errorInfo(mixed $inst = null): string|bool
+    public function errorInfo(mixed $inst = null): string|array|bool|null
     {
         return $this->getStrategy()->getConnection()->errorInfo($inst);
     }

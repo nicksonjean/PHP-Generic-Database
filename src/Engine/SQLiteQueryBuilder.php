@@ -17,7 +17,7 @@ use GenericDatabase\IQueryBuilder;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Helpers\Translater;
+use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Engine\SQLite\QueryBuilder\Context;
 use GenericDatabase\Engine\SQLite\QueryBuilder\Query;
@@ -481,8 +481,8 @@ class SQLiteQueryBuilder implements IQueryBuilder
         $builder = new Builder($this->query);
         return $builder->parse(
             $buildRawResult,
-            Translater::SQL_DIALECT_NONE,
-            Translater::SQL_DIALECT_SINGLE_QUOTE
+            Translate::SQL_DIALECT_NONE,
+            Translate::SQL_DIALECT_SINGLE_QUOTE
         );
     }
 

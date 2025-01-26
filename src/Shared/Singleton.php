@@ -1,9 +1,5 @@
 <?php
 
-/** @noinspection ALL */
-
-/** @noinspection ALL */
-
 namespace GenericDatabase\Shared;
 
 trait Singleton
