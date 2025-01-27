@@ -123,35 +123,4 @@ class Validations
         }
         return $data;
     }
-
-     /**
-     * Detects the type of the given query.
-     *
-     * @param string $query The query to detect the type of.
-     * @return string The type of the query. Possible values are "SELECT", "INSERT", "UPDATE", "DELETE", "REPLACE",
-     * or "MERGE". If the query does not match any of these types, "SELECT" is returned as the default.
-     */
-    public static function detectQueryType(string $query): string
-    {
-        return match (true) {
-            'SELECT' === mb_strtoupper(substr(ltrim($query), 0, 6)) => "SELECT",
-            'INSERT' === mb_strtoupper(substr(ltrim($query), 0, 6)) => "INSERT",
-            'UPDATE' === mb_strtoupper(substr(ltrim($query), 0, 6)) => "UPDATE",
-            'DELETE' === mb_strtoupper(substr(ltrim($query), 0, 6)) => "DELETE",
-            'REPLACE' === mb_strtoupper(substr(ltrim($query), 0, 7)) => "REPLACE",
-            'MERGE' === mb_strtoupper(substr(ltrim($query), 0, 5)) => "MERGE",
-            default => 'SELECT'
-        };
-    }
-
-    /**
-     * Determines if the given query is a SELECT statement.
-     *
-     * @param string $query The query to check.
-     * @return bool Returns true if the query is a SELECT statement, false otherwise.
-     */
-    public static function isSelect(string $query): bool
-    {
-        return self::detectQueryType($query) === 'SELECT';
-    }
 }

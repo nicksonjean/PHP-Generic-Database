@@ -445,10 +445,10 @@ class PDOConnection implements IConnection
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result ? (int) $result['LastInsertedID'] : 0;
         }
-        $filter = "WHERE TABLE_NAME = :table_name AND TABLE_SCHEMA = SCHEMA_NAME() AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1";
+        $filter = "WHERE TABLE_NAME = :tableName AND TABLE_SCHEMA = SCHEMA_NAME() AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1";
         $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
         $stmt = $this->getConnection()->prepare($query);
-        $stmt->bindValue(':table_name', $name, PDO::PARAM_STR);
+        $stmt->bindValue(':tableName', $name, PDO::PARAM_STR);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -459,7 +459,7 @@ class PDOConnection implements IConnection
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result ? (int) $result['LastInsertedID'] : 0;
         }
-        return 0;
+        return false;
     }
 
     private function lastInsertIdOCI(?string $name = null): string|int|false
@@ -489,7 +489,23 @@ class PDOConnection implements IConnection
 
     private function lastInsertIdFirebird(?string $name = null): string|int|false
     {
-        return 0;
+        if (!$name) {
+            return 0;
+        }
+        $filter = 'WHERE RDB$RELATION_NAME=:tableName AND RDB$IDENTITY_TYPE=1';
+        $query = sprintf('SELECT RDB$FIELD_NAME, RDB$GENERATOR_NAME FROM RDB$RELATION_FIELDS %s', $filter);
+        $stmt = $this->getConnection()->prepare($query);
+        $stmt->bindValue(':tableName', $name, PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (isset($row['RDB$GENERATOR_NAME'])) {
+            $identityColumn = $row['RDB$GENERATOR_NAME'];
+            $query = sprintf('SELECT GEN_ID(%s,0) AS LASTINSERTEDID FROM RDB$DATABASE', $identityColumn);
+            $stmt = $this->getConnection()->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? (int) $result['LASTINSERTEDID'] : 0;
+        }
+        return false;
     }
 
     /**
@@ -656,8 +672,7 @@ class PDOConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        // $this->affectedRows = $params;
-        $this->affectedRows = $this->getAffectedRows() + $params;
+        $this->affectedRows = $params;
     }
 
     /**
@@ -720,10 +735,14 @@ class PDOConnection implements IConnection
      */
     private function internalBindParamArrayMulti(mixed ...$params): void
     {
+        $affectedRows = 0;
         foreach ($params['sqlArgs'] as $param) {
             $statement = $this->internalBindVariable($param, $params['sqlStatement']);
             $this->exec($statement);
-            $this->setAffectedRows((int) $this->getStatement()->rowCount());
+            $affectedRows++;
+            if ($this->getQueryColumns() === 0) {
+                $this->setAffectedRows((int) $affectedRows);
+            }
         }
     }
 
@@ -764,7 +783,9 @@ class PDOConnection implements IConnection
     {
         $statement = $this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
         $this->exec($statement);
-        $this->setAffectedRows((int) $this->getStatement()->rowCount());
+        if ($this->getQueryColumns() > 0) {
+            $this->setQueryRows((int) count($this->getStatement()->fetchAll(PDO::FETCH_ASSOC)));
+        }
     }
 
     /**
@@ -792,6 +813,14 @@ class PDOConnection implements IConnection
         } else {
             $this->internalBindParamArgs(...$params);
         }
+        $this->setQueryColumns((int) $this->getStatement()->columnCount());
+        if ($this->getQueryColumns() > 0) {
+            $this->setQueryRows((int) count($this->getStatement()->fetchAll(PDO::FETCH_ASSOC)));
+        } else {
+            if (!$params['isMulti']) {
+                $this->setAffectedRows((int) $this->getStatement()->rowCount());
+            }
+        }
     }
 
     /**
@@ -814,12 +843,12 @@ class PDOConnection implements IConnection
     }
 
     /**
-     * This function executes an SQL statement and returns the result set as a statement object.
+     * This function binds the parameters to a prepared statement.
      *
-     * @param mixed $params Statement to be queried
+     * @param mixed ...$params
      * @return static|null
      */
-    public function query(mixed ...$params): static|null
+    private function prepareStatement(mixed ...$params): PDOStatement
     {
         $this->setAllMetadata();
         if (!empty($params)) {
@@ -836,30 +865,26 @@ class PDOConnection implements IConnection
             $statement = $this->getConnection()->prepare($query, $cursor);
             if ($statement) {
                 $this->setStatement($statement);
-                $queryParameters = $params[1] ?? [];
-                if (!empty($queryParameters) && is_array($queryParameters)) {
-                    foreach ($queryParameters as $key => $value) {
-                        if (is_string($key)) {
-                            $statement->bindValue($key, $value);
-                        } else {
-                            $statement->bindValue($key + 1, $value);
-                        }
-                    }
-                }
-                if ($statement->execute()) {
-                    $columnCount = $statement->columnCount();
-                    if ($columnCount > 0) {
-                        $this->setQueryColumns($columnCount);
-                        if (in_array($driver, ['oci', 'firebird', 'sqlite'])) {
-                            $rowCount = $this->countResultSetRows($statement);
-                            $this->setQueryRows($rowCount);
-                        } else {
-                            $this->setQueryRows($statement->rowCount());
-                        }
-                    } else {
-                        $this->setAffectedRows($statement->rowCount());
-                    }
-                }
+            }
+        }
+        return $statement;
+    }
+
+    /**
+     * This function executes an SQL statement and returns the result set as a statement object.
+     *
+     * @param mixed $params Statement to be queried
+     * @return static|null
+     */
+    public function query(mixed ...$params): static|null
+    {
+        $statement = $this->prepareStatement(...$params);
+        if ($statement && $this->exec($statement)) {
+            $this->setQueryColumns((int) $this->getStatement()->columnCount());
+            if ($this->getQueryColumns() > 0) {
+                $this->setQueryRows((int) count($this->getStatement()->fetchAll(PDO::FETCH_ASSOC)));
+            } else {
+                $this->setAffectedRows($this->getStatement()->rowCount());
             }
         }
         return $this;
@@ -873,90 +898,21 @@ class PDOConnection implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $query = $this->parse(...$params);
-
-            $driver = static::getDriver();
-            $cursor = match ($driver) {
-                'oci', 'mysql', 'pgsql' => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
-                'firebird', 'sqlsrv' => [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL],
-                'sqlite' => [],
-                default => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
-            };
-
-            $statement = $this->getConnection()->prepare($query, $cursor);
-            if ($statement) {
-                $this->setStatement($statement);
-                if (isset($params[1]) && is_array($params[1])) {
-                    $paramSets = $params[1];
-                    if (array_is_list($paramSets)) {
-                        foreach ($paramSets as $paramSet) {
-                            if (is_array($paramSet)) {
-                                foreach ($paramSet as $key => $value) {
-                                    if (is_string($key)) {
-                                        $statement->bindValue($key, $value);
-                                    } else {
-                                        $statement->bindValue($key + 1, $value);
-                                    }
-                                }
-                                if ($statement->execute()) {
-                                    $this->processQueryResults($statement, $driver);
-                                }
-                            }
-                        }
-                    } else {
-                        foreach ($paramSets as $key => $value) {
-                            if (is_string($key)) {
-                                $statement->bindValue($key, $value);
-                            } else {
-                                $statement->bindValue($key + 1, $value);
-                            }
-                        }
-                        if ($statement->execute()) {
-                            $this->processQueryResults($statement, $driver);
-                        }
-                    }
-                } else {
-                    if ($statement->execute()) {
-                        $this->processQueryResults($statement, $driver);
-                    }
-                }
-                if ($driver !== 'sqlsrv') {
-                    array_unshift($params, $this->getStatement());
-                }
+        $statement = $this->prepareStatement(...$params);
+        $driver = static::getDriver();
+        if ($statement) {
+            if ($driver === 'sqlsrv') {
                 $bindParams = $this->makeArgs($driver, ...$params);
-                $this->setQueryParameters($bindParams['sqlArgs']);
+                $bindParams['sqlStatement'] = $this->getStatement();
+                $this->bindParam(...$bindParams);
+            } else {
+                array_unshift($params, $this->getStatement());
+                $bindParams = $this->makeArgs($driver, ...$params);
+                $this->bindParam(...$bindParams);
             }
+            $this->setQueryParameters($bindParams['sqlArgs']);
         }
         return $this;
-    }
-
-    private function processQueryResults(PDOStatement $statement, string $driver): void
-    {
-        $columnCount = $statement->columnCount();
-        if ($columnCount > 0) {
-            $this->setQueryColumns($columnCount);
-            if (in_array($driver, ['oci', 'firebird', 'sqlite'])) {
-                $rowCount = $this->countResultSetRows($statement);
-                $this->setQueryRows($rowCount);
-            } else {
-                $this->setQueryRows($statement->rowCount());
-            }
-        } else {
-            $this->setAffectedRows($statement->rowCount());
-        }
-    }
-
-    private function countResultSetRows(PDOStatement $statement): int
-    {
-        $statement->execute();
-        $rows = 0;
-        while ($statement->fetch(PDO::FETCH_ASSOC)) {
-            $rows++;
-        }
-        $statement->execute();
-        return $rows;
     }
 
     /**
