@@ -23,7 +23,7 @@ use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Helpers\Validations;
+use GenericDatabase\Helpers\Compare;
 use PDO;
 use PDOStatement;
 use PDOException;
@@ -77,12 +77,6 @@ class PDOConnection implements IConnection
      * @var mixed $statement = null
      */
     private static mixed $statement = null;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statementCount = null
-     */
-    private static mixed $statementCount = null;
 
     /**
      * Count rows in query statement
@@ -846,26 +840,25 @@ class PDOConnection implements IConnection
      * This function binds the parameters to a prepared statement.
      *
      * @param mixed ...$params
-     * @return static|null
+     * @return PDOStatement|false
      */
-    private function prepareStatement(mixed ...$params): PDOStatement
+    private function prepareStatement(mixed ...$params): PDOStatement|false
     {
         $this->setAllMetadata();
         if (!empty($params)) {
-            $query = $this->parse(...$params);
 
-            $driver = static::getDriver();
-            $cursor = match ($driver) {
+            $cursor = match (static::getDriver()) {
                 'oci', 'mysql', 'pgsql' => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
                 'firebird', 'sqlsrv' => [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL],
                 'sqlite' => [],
                 default => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
             };
 
-            $statement = $this->getConnection()->prepare($query, $cursor);
+            $statement = $this->getConnection()->prepare($this->parse(...$params), $cursor);
             if ($statement) {
                 $this->setStatement($statement);
             }
+
         }
         return $statement;
     }
@@ -904,12 +897,11 @@ class PDOConnection implements IConnection
             if ($driver === 'sqlsrv') {
                 $bindParams = $this->makeArgs($driver, ...$params);
                 $bindParams['sqlStatement'] = $this->getStatement();
-                $this->bindParam(...$bindParams);
             } else {
                 array_unshift($params, $this->getStatement());
                 $bindParams = $this->makeArgs($driver, ...$params);
-                $this->bindParam(...$bindParams);
             }
+            $this->bindParam(...$bindParams);
             $this->setQueryParameters($bindParams['sqlArgs']);
         }
         return $this;

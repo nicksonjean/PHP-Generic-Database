@@ -57,7 +57,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 // var_dump($serialized);
 
-// $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
@@ -69,7 +69,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 // $context = Chainable::pdoSQLSrv(env: $_ENV, strategy: false)->connect();
 // $context = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
-$context = Chainable::pdoSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::pdoSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 // $context = Chainable::odbcMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();

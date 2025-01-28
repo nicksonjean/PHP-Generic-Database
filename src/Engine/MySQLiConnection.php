@@ -26,6 +26,7 @@ use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
 use mysqli_result;
+use mysqli_stmt;
 use Exception;
 use stdClass;
 
@@ -580,7 +581,7 @@ class MySQLiConnection implements IConnection
      * @param mixed $stmt The prepared statement to bind variables to.
      * @return mixed The prepared statement with bound variables.
      */
-    private function internalBindVariable(mixed $params, mixed $statement): \mysqli_stmt
+    private function internalBindVariable(mixed $params, mixed $statement): mysqli_stmt
     {
         if (is_array($params)) {
             $types = '';
@@ -784,6 +785,21 @@ class MySQLiConnection implements IConnection
         return $this;
     }
 
+    private function prepareStatement(mixed ...$params): mysqli_stmt|false
+    {
+        $this->setAllMetadata();
+        if (!empty($params)) {
+
+            $statement = $this->getConnection()->prepare($this->parse(...$params));
+
+            if ($statement) {
+                $this->setStatement($statement);
+            }
+
+        }
+        return $statement;
+    }
+
     /**
      * This function binds the parameters to a prepared query.
      *
@@ -792,39 +808,34 @@ class MySQLiConnection implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $driver = Compare::connection($this->getConnection());
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $stmt = mysqli_prepare($this->getConnection(), $this->parse(...$params));
-            if ($stmt) {
-                $this->setStatement($stmt);
-                if (array_key_exists(1, $params) && is_array($params[1])) {
-                    $bindParams = array_merge($this->makeArgs($driver, $stmt, ...$params));
-                    $this->setQueryParameters($bindParams['sqlArgs']);
-                    if (isset($bindParams['sqlArgs']) && is_array($bindParams['sqlArgs'])) {
-                        if (isset($bindParams['sqlArgs'][0]) && is_array($bindParams['sqlArgs'][0])) {
-                            $affectedRows = 0;
-                            foreach ($bindParams['sqlArgs'] as $args) {
-                                $this->internalBindVariable($args, $stmt);
-                                if ($stmt->execute()) {
-                                    $affectedRows += $stmt->affected_rows;
-                                }
+        $statement = $this->prepareStatement(...$params);
+        $driver = static::getDriver();
+
+        if (!empty($params) && $statement && array_key_exists(1, $params) && is_array($params[1])) {
+            $bindParams = array_merge($this->makeArgs($driver, $statement, ...$params));
+            $this->setQueryParameters($bindParams['sqlArgs']);
+            if (isset($bindParams['sqlArgs']) && is_array($bindParams['sqlArgs'])) {
+                if (isset($bindParams['sqlArgs'][0]) && is_array($bindParams['sqlArgs'][0])) {
+                    $affectedRows = 0;
+                    foreach ($bindParams['sqlArgs'] as $args) {
+                        $this->internalBindVariable($args, $statement);
+                        if ($statement->execute()) {
+                            $affectedRows += $statement->affected_rows;
+                        }
+                    }
+                    $this->setAffectedRows($affectedRows);
+                } else {
+                    $this->internalBindVariable($bindParams['sqlArgs'], $statement);
+                    if ($statement->execute()) {
+                        if ($statement->field_count > 0) {
+                            $result = $statement->get_result();
+                            if ($result) {
+                                $this->setStatement($result);
+                                $this->setQueryRows((int) $result->num_rows);
+                                $this->setQueryColumns($result->field_count);
                             }
-                            $this->setAffectedRows($affectedRows);
                         } else {
-                            $this->internalBindVariable($bindParams['sqlArgs'], $stmt);
-                            if ($stmt->execute()) {
-                                if ($stmt->field_count > 0) {
-                                    $result = $stmt->get_result();
-                                    if ($result) {
-                                        $this->setStatement($result);
-                                        $this->setQueryRows((int) $result->num_rows);
-                                        $this->setQueryColumns($result->field_count);
-                                    }
-                                } else {
-                                    $this->setAffectedRows($stmt->affected_rows);
-                                }
-                            }
+                            $this->setAffectedRows($statement->affected_rows);
                         }
                     }
                 }
