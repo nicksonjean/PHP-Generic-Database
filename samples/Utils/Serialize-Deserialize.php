@@ -57,14 +57,14 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 // var_dump($serialized);
 
-$context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
-// $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect(); //Falta Instalar Servidor e Configurar o PHP
 
-// $context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoSQLSrv(env: $_ENV, strategy: false)->connect();
 // $context = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: false)->connect();
@@ -87,7 +87,20 @@ $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false
 
 // OBJ, INTO, CLASS, COLUMN, ASSOC, NUM, BOTH
 
-$q = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :idA AND id <= :idB', [':idA' => 1, ':idB' => 3]);
+// $o = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE :nome', [':nome' => 'Rio%']);
+
+// var_dump($o->getAllMetadata());
+
+// var_dump($o->fetchAll(Connection::FETCH_OBJ));
+
+// while ($row = $o->fetch(Connection::FETCH_OBJ)) {
+//     var_dump($row);
+// }
+
+$rand = mt_rand(2, 6);
+$range = implode(', ', range(1, $rand));
+
+$q = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :idA AND id <= :idB', [':idA' => 1, ':idB' => $rand]);
 
 var_dump($q->getAllMetadata());
 
@@ -97,7 +110,7 @@ while ($row = $q->fetch(Connection::FETCH_OBJ)) {
     var_dump($row);
 }
 
-$r = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id IN(24, 25, 26, 27) ORDER BY id');
+$r = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id IN(' . $range . ') ORDER BY id');
 
 var_dump($r->getAllMetadata());
 
@@ -132,7 +145,7 @@ var_dump($r->fetchAll(Connection::FETCH_OBJ));
 
 
 
-$b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE', ':sigla' => 'T1'], [':nome' => 'TESTE', ':sigla' => 'T2']]);
+$b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE', ':sigla' => 'T1'], [':nome' => 'TESTE', ':sigla' => 'T2'], [':nome' => 'TESTE', ':sigla' => 'T5']]);
 var_dump($b->getAllMetadata());
 
 var_dump($b->lastInsertId('estado'));

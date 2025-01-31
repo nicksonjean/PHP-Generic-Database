@@ -551,7 +551,7 @@ class ODBCConnection implements IConnection
     }
 
     /**
-     * A description of the entire PHP function.
+     * Returns the statement for the function.
      *
      * @return mixed
      */
@@ -571,7 +571,7 @@ class ODBCConnection implements IConnection
     }
 
     /**
-     * A description of the entire PHP function.
+     * Returns the statement result for the function.
      *
      * @return mixed
      */

@@ -561,7 +561,7 @@ class SQLSrvConnection implements IConnection
     }
 
     /**
-     * A description of the entire PHP function.
+     * Returns the statement for the function.
      *
      * @return mixed
      */
@@ -571,7 +571,7 @@ class SQLSrvConnection implements IConnection
     }
 
     /**
-     * Set the statement for the function.
+     * Sets the statement for the function.
      *
      * @param mixed $statement The statement to be set.
      */

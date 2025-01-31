@@ -185,7 +185,7 @@ interface IConnection
     public function setAffectedRows(int|false $params): void;
 
     /**
-     * A description of the entire PHP function.
+     * Returns the statement for the function.
      *
      * @return mixed
      */

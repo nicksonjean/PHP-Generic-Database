@@ -597,7 +597,7 @@ class Connection implements IConnection, IConnectionStrategy
     }
 
     /**
-     * A description of the entire PHP function.
+     * Returns the statement for the function.
      *
      * @return mixed
      */

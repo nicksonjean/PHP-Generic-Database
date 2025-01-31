@@ -698,7 +698,7 @@ class PDOConnection implements IConnection
      * @param mixed $stmt The prepared statement to bind variables to.
      * @return mixed The prepared statement with bound variables.
      */
-    private function internalBindVariable(array &$preparedParams, PDOStatement $stmt): PDOStatement
+    private function internalBindVariable(array &$preparedParams, PDOStatement $statement): PDOStatement
     {
         $index = 0;
         foreach ($preparedParams as &$arg) {
@@ -715,10 +715,10 @@ class PDOConnection implements IConnection
             } else {
                 $types = PDO::PARAM_LOB;
             }
-            call_user_func_array([$stmt, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
+            call_user_func_array([$statement, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
             $index++;
         }
-        return $stmt;
+        return $statement;
     }
 
     /**
@@ -731,11 +731,12 @@ class PDOConnection implements IConnection
     {
         $affectedRows = 0;
         foreach ($params['sqlArgs'] as $param) {
-            $statement = $this->internalBindVariable($param, $params['sqlStatement']);
-            $this->exec($statement);
-            $affectedRows++;
-            if ($this->getQueryColumns() === 0) {
-                $this->setAffectedRows((int) $affectedRows);
+            $this->setStatement($this->internalBindVariable($param, $params['sqlStatement']));
+            if ($this->exec($this->getStatement())) {
+                if ($this->getQueryColumns() === 0) {
+                    $affectedRows++;
+                    $this->setAffectedRows((int) $affectedRows);
+                }
             }
         }
     }
@@ -759,7 +760,6 @@ class PDOConnection implements IConnection
      */
     private function internalBindParamArray(mixed ...$params): void
     {
-        $this->setQueryParameters($params['sqlArgs']);
         if ($params['isMulti']) {
             $this->internalBindParamArrayMulti(...$params);
         } else {
@@ -775,10 +775,14 @@ class PDOConnection implements IConnection
      */
     private function internalBindParamArgs(mixed ...$params): void
     {
-        $statement = $this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
-        $this->exec($statement);
-        if ($this->getQueryColumns() > 0) {
-            $this->setQueryRows((int) count($this->getStatement()->fetchAll(PDO::FETCH_ASSOC)));
+        $this->setStatement($this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']));
+        if ($this->exec($this->getStatement())) {
+            if ($this->getStatement()->columnCount() > 0) {
+                $this->setQueryRows((int) count($this->getStatement()->fetchAll(PDO::FETCH_ASSOC)));
+            }
+            else {
+                $this->setAffectedRows((int) $this->getStatement()->rowCount());
+            }
         }
     }
 
@@ -802,19 +806,13 @@ class PDOConnection implements IConnection
      */
     public function bindParam(mixed ...$params): void
     {
+        $this->setQueryParameters($params['sqlArgs']);
         if ($params['isArray']) {
             $this->internalBindParamArray(...$params);
         } else {
             $this->internalBindParamArgs(...$params);
         }
         $this->setQueryColumns((int) $this->getStatement()->columnCount());
-        if ($this->getQueryColumns() > 0) {
-            $this->setQueryRows((int) count($this->getStatement()->fetchAll(PDO::FETCH_ASSOC)));
-        } else {
-            if (!$params['isMulti']) {
-                $this->setAffectedRows((int) $this->getStatement()->rowCount());
-            }
-        }
     }
 
     /**
@@ -846,19 +844,16 @@ class PDOConnection implements IConnection
     {
         $this->setAllMetadata();
         if (!empty($params)) {
-
             $cursor = match (static::getDriver()) {
                 'oci', 'mysql', 'pgsql' => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
                 'firebird', 'sqlsrv' => [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL],
                 'sqlite' => [],
                 default => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
             };
-
             $statement = $this->getConnection()->prepare($this->parse(...$params), $cursor);
             if ($statement) {
                 $this->setStatement($statement);
             }
-
         }
         return $statement;
     }
@@ -902,7 +897,6 @@ class PDOConnection implements IConnection
                 $bindParams = $this->makeArgs($driver, ...$params);
             }
             $this->bindParam(...$bindParams);
-            $this->setQueryParameters($bindParams['sqlArgs']);
         }
         return $this;
     }

@@ -549,7 +549,7 @@ class OCIConnection implements IConnection
     }
 
     /**
-     * A description of the entire PHP function.
+     * Returns the statement for the function.
      *
      * @return mixed
      */
