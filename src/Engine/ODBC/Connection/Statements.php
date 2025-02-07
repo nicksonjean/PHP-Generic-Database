@@ -553,9 +553,8 @@ class Statements
                             $rows++;
                         }
                         self::setStatement(['results' => $results, 'statement' => $stmt]);
-                        self::setQueryRows(count($results));
                         return $rows;
-                    })($statement)
+                    })($statement) ?? 0
                 );
             } else {
                 self::setAffectedRows(odbc_num_rows($statement));

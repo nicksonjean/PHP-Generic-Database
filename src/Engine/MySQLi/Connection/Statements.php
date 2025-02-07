@@ -419,12 +419,17 @@ class Statements
             $colCount = $statement->field_count;
             if ($colCount > 0) {
                 self::setQueryColumns($colCount);
-                $result = $statement->get_result();
-                if ($result) {
-                    $results = $result->fetch_all(MYSQLI_ASSOC);
-                    self::setStatement(['results' => $results]);
-                    self::setQueryRows($result->num_rows);
-                }
+                self::setQueryRows(
+                    (function (mixed $stmt): int {
+                        $result = $stmt->get_result();
+                        if(!$result) {
+                            return 0;
+                        }
+                        $results = $result->fetch_all(MYSQLI_ASSOC);
+                        self::setStatement(['results' => $results]);
+                        return $result->num_rows;
+                   })($statement) ?? 0
+               );                
             } else {
                 self::setStatement(['results' => []]);
                 self::setAffectedRows((int) $statement->affected_rows);

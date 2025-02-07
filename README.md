@@ -129,7 +129,21 @@ composer setup
 3) Once logged in to Docker Hub and with Docker Desktop open on your system, run the command below:
 
 ```bash
-docker pull php-generic-database:8.1-full
+docker pull php-generic-database:8.3-full
+```
+
+or
+
+for Windows:
+
+```bash
+.\setup.bat --build-arg PHP_VERSION=8.3 --build-arg PHP_PORT=8300 --run "docker compose up -d"
+```
+
+for Linux or Mac:
+
+```bash
+.\setup.sh --build-arg PHP_VERSION=8.3 --build-arg PHP_PORT=8300 --run "docker compose up -d"
 ```
 
 4) Docker will download, install and configure a Debian-Like Linux Custom Image as Apache and with PHP 8.1 with all Extensions properly configured.
@@ -210,7 +224,7 @@ PHP-Generic-Database is released under the MIT license.
   - [x] Creation of the Container in Docker Compose.
   - [ ] Implement new runners such as: Swoole, Franken, Nginx, Ubuntu in addition to Apache
   - [ ] Add Firebird/Interbase compatibility with Firebird 3 from PHP 8.1 to PHP 8-3 in Linux php:8.x-apache.
-  - [ ] Creation of Migrations between all Databases.
+  - [ ] Creation of Migrations scripts between all Databases.
 - Source
   - Connection
     - [x] Possibility of use with Fluent Design and Chained Methods.
@@ -240,10 +254,11 @@ PHP-Generic-Database is released under the MIT license.
   - [ ] Create a new class for cache connections settings.
   - [ ] Create a new class for cache results.
   - [ ] Create a new class for cache queries.
-  - [ ] Create a new class for Statements.
-  - [ ] Rename class Statements to Fetchts.
-  - [ ] Optimize class Statements to use in Fetchts class.
-  - [ ] Optimize class Statements for MySQLi, PgSQL, SQLSrv, SQLite and ODBC.
+  - [x] Create a new class for Statements.
+  - [x] Rename class Statements to Fetchts.
+  - [x] Create class Statements to use in Specialized Connection class.
+  - [ ] Optimize class Statements for PgSQL, SQLSrv, Firebird, SQLite (MySQLi, PDO, ODBC has optimized).
+  - [ ] Create Interface for Fetchs and Statements Classes.
   - [ ] Install a lib from SQL Parser to use in Query and Prepare Method.
-  - [ ] Fix prepare method for PDO engine.
+  - [ ] Fix prepare method for PDO and ODBC engine with makeArgs method.
   - [ ] Fix problem with method Arrays::makeArgs to SQLSrv engine.
