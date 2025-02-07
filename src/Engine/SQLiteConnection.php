@@ -7,6 +7,7 @@ namespace GenericDatabase\Engine;
 use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
+use Exception;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\SQLite\Connection\SQLite;
 use GenericDatabase\Engine\SQLite\Connection\Arguments;
@@ -16,18 +17,15 @@ use GenericDatabase\Engine\SQLite\Connection\DSN;
 use GenericDatabase\Engine\SQLite\Connection\Dump;
 use GenericDatabase\Engine\SQLite\Connection\Transaction;
 use GenericDatabase\Engine\SQLite\Connection\Statements;
+use GenericDatabase\Engine\SQLite\Connection\Fetchs;
 use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
 use SQLite3;
-use Exception;
-use stdClass;
 
 /**
  * Dynamic and Static container class for SQLiteConnection connections.
@@ -72,58 +70,11 @@ class SQLiteConnection implements IConnection
     private static mixed $connection;
 
     /**
-     * Instance of the Statement of the database
-     * @var mixed $statement = null
-     */
-    private static mixed $statement = null;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statementCount = null
-     */
-    private static mixed $statementCount = null;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statementResult = null
-     */
-    private static mixed $statementResult = null;
-
-    /**
-     * Count rows in query statement
-     * @var ?int $queryRows = 0
-     */
-    private ?int $queryRows = 0;
-
-    /**
-     * Count columns in query statement
-     * @var ?int $queryColumns = 0
-     */
-    private ?int $queryColumns = 0;
-
-    /**
-     * Affected row in query statement
-     * @var ?int $affectedRows = 0
-     */
-    private ?int $affectedRows = 0;
-
-    /**
-     * Lasts params query executed
-     * @var ?array $queryParameters = []
-     */
-    private ?array $queryParameters = [];
-
-    /**
-     * Last string query executed
-     * @var string $queryString = ''
-     */
-    private string $queryString = '';
-
-    /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
     public function __construct()
     {
+
     }
 
     /**
@@ -378,7 +329,7 @@ class SQLiteConnection implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return (int) $this->getConnection()->lastInsertRowID() ?? 0;
+        return Statements::lastInsertId($name);
     }
 
     /**
@@ -389,14 +340,7 @@ class SQLiteConnection implements IConnection
      */
     public function quote(mixed ...$params): string|int
     {
-        $string = $params[0];
-        return match (true) {
-            is_int($string) => $string,
-            is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
-            is_bool($string) => $string ? '1' : '0',
-            is_null($string) => 'NULL',
-            default => "'" . str_replace("'", "''", (string) $string) . "'",
-        };
+        return Statements::quote(...$params);
     }
 
     /**
@@ -406,11 +350,7 @@ class SQLiteConnection implements IConnection
      */
     private function setAllMetadata(): void
     {
-        $this->queryString = '';
-        $this->queryParameters = [];
-        $this->queryRows = 0;
-        $this->queryColumns = 0;
-        $this->affectedRows = 0;
+        Statements::setAllMetadata();
     }
 
     /**
@@ -420,13 +360,7 @@ class SQLiteConnection implements IConnection
      */
     public function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = $this->getQueryString();
-        $metadata->queryParameters = $this->getQueryParameters();
-        $metadata->queryRows = $this->getQueryRows();
-        $metadata->queryColumns = $this->getQueryColumns();
-        $metadata->affectedRows = $this->getAffectedRows();
-        return $metadata;
+        return Statements::getAllMetadata();
     }
 
     /**
@@ -436,7 +370,7 @@ class SQLiteConnection implements IConnection
      */
     public function getQueryString(): string
     {
-        return $this->queryString;
+        return Statements::getQueryString();
     }
 
     /**
@@ -446,7 +380,7 @@ class SQLiteConnection implements IConnection
      */
     public function setQueryString(string $params): void
     {
-        $this->queryString = $params;
+        Statements::setQueryString($params);
     }
 
     /**
@@ -456,7 +390,7 @@ class SQLiteConnection implements IConnection
      */
     public function getQueryParameters(): ?array
     {
-        return $this->queryParameters;
+        return Statements::getQueryParameters();
     }
 
     /**
@@ -466,7 +400,7 @@ class SQLiteConnection implements IConnection
      */
     public function setQueryParameters(?array $params): void
     {
-        $this->queryParameters = $params;
+        Statements::setQueryParameters($params);
     }
 
     /**
@@ -476,7 +410,7 @@ class SQLiteConnection implements IConnection
      */
     public function getQueryRows(): int|false
     {
-        return $this->queryRows;
+        return Statements::getQueryRows();
     }
 
     /**
@@ -487,7 +421,7 @@ class SQLiteConnection implements IConnection
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        $this->queryRows = $params;
+        Statements::setQueryRows($params);
     }
 
     /**
@@ -497,7 +431,7 @@ class SQLiteConnection implements IConnection
      */
     public function getQueryColumns(): int|false
     {
-        return $this->queryColumns;
+        return Statements::getQueryColumns();
     }
 
     /**
@@ -508,7 +442,7 @@ class SQLiteConnection implements IConnection
      */
     public function setQueryColumns(int|false $params): void
     {
-        $this->queryColumns = $params;
+        Statements::setQueryColumns($params);
     }
 
     /**
@@ -518,7 +452,7 @@ class SQLiteConnection implements IConnection
      */
     public function getAffectedRows(): int|false
     {
-        return $this->affectedRows;
+        return Statements::getAffectedRows();
     }
 
     /**
@@ -529,7 +463,7 @@ class SQLiteConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->affectedRows = $params;
+        Statements::setAffectedRows($params);
     }
 
     /**
@@ -539,132 +473,17 @@ class SQLiteConnection implements IConnection
      */
     public function getStatement(): mixed
     {
-        return self::$statement;
+        return Statements::getStatement();
     }
 
     /**
-     * Set the statement for the function.
+     * Sets the statement for the function.
      *
      * @param mixed $statement The statement to be set.
      */
     public function setStatement(mixed $statement): void
     {
-        self::$statement = $statement;
-    }
-
-    /**
-     * Returns the statement result for the function.
-     *
-     * @return mixed
-     */
-    public function getStatementResult(): mixed
-    {
-        return self::$statementResult;
-    }
-
-    /**
-     * Set the statement for the function.
-     *
-     * @param mixed $statement The statement to be set.
-     */
-    public function setStatementResult(mixed $statement): void
-    {
-        self::$statementResult = $statement;
-    }
-    /**
-     * Binds variables to a prepared statement with specified types.
-     * This method binds variables to a prepared statement based on their types,
-     * allowing for more precise parameter binding.
-     *
-     * @param array &$preparedParams An array containing the parameters to bind.
-     * @param mixed $stmt The prepared statement to bind variables to.
-     * @return mixed The prepared statement with bound variables.
-     */
-    private function internalBindVariable(array &$preparedParams, mixed $stmt): mixed
-    {
-        $index = 0;
-        foreach ($preparedParams as &$arg) {
-            $types = match (true) {
-                is_float($arg) => SQLITE3_FLOAT,
-                is_integer($arg) => SQLITE3_INTEGER,
-                is_string($arg) => SQLITE3_TEXT,
-                is_null($arg) => SQLITE3_NULL,
-                default => SQLITE3_BLOB,
-            };
-            call_user_func_array([$stmt, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
-            $index++;
-        }
-        return $stmt;
-    }
-
-    /**
-     * Binds an array multiple parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArrayMulti(mixed ...$params): void
-    {
-        foreach ($params['sqlArgs'] as $param) {
-            $statement = $this->internalBindVariable($param, $params['sqlStatement']);
-            (!$params['rowCount'])
-                ? $this->setStatement($this->exec($statement))
-                : $this->setStatementResult($this->exec($statement));
-            $this->setAffectedRows((int) $this->getConnection()->changes());
-        }
-    }
-
-    /**
-     * Binds an array single parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArraySingle(mixed ...$params): void
-    {
-        $this->internalBindParamArgs(...$params);
-    }
-
-    /**
-     * Binds a parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArray(mixed ...$params): void
-    {
-        if ($params['isMulti']) {
-            $this->internalBindParamArrayMulti(...$params);
-        } else {
-            $this->internalBindParamArraySingle(...$params);
-        }
-    }
-
-    /**
-     * Binds a parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArgs(mixed ...$params): void
-    {
-        $statement = $this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
-        (!$params['rowCount'])
-            ? $this->setStatement($this->exec($statement))
-            : $this->setStatementResult($this->exec($statement));
-        $this->setAffectedRows((int) $this->getConnection()->changes());
-    }
-
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
+        Statements::setStatement($statement);
     }
 
     /**
@@ -675,12 +494,7 @@ class SQLiteConnection implements IConnection
      */
     public function bindParam(mixed ...$params): void
     {
-        $this->setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            $this->internalBindParamArray(...$params);
-        } else {
-            $this->internalBindParamArgs(...$params);
-        }
+        Statements::bindParam(...$params);
     }
 
     /**
@@ -691,9 +505,7 @@ class SQLiteConnection implements IConnection
      */
     private function parse(mixed ...$params): string
     {
-        $queryString = Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE);
-        $this->setQueryString($queryString);
-        return $this->getQueryString();
+        return Statements::parse(...$params);
     }
 
     /**
@@ -704,90 +516,18 @@ class SQLiteConnection implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $query = $this->parse(...$params);
-            $statement = $this->getConnection()->prepare($query);
-            if ($statement) {
-                $this->setStatement($statement);
-                $queryParameters = $params[1] ?? [];
-                $result = $statement->execute();
-                if (is_object($result) && get_class($result) === 'SQLite3Result' && method_exists($result, 'numColumns')) {
-                    $numColumns = $result->numColumns();
-                    if ($numColumns > 0) {
-                        $this->setQueryColumns($numColumns);
-                        $results = [];
-                        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-                            $results[] = $row;
-                        }
-                        $this->setQueryRows(count($results));
-                        $this->setStatement([
-                            'results' => $results,
-                            'queryString' => $query,
-                            'queryParameters' => $queryParameters,
-                        ]);
-                        $result->reset();
-                    } else {
-                        $this->setAffectedRows($this->getConnection()->changes());
-                        $this->setQueryRows(0);
-                        $this->setQueryColumns(0);
-                    }
-                } else {
-                    $this->setQueryRows(0);
-                    $this->setQueryColumns(0);
-                }
-            }
-        }
-
-        return $this;
+        return Statements::query(...$params);
     }
 
+    /**
+     * This function binds the parameters to a prepared query.
+     *
+     * @param mixed ...$params
+     * @return static|null
+     */
     public function prepare(mixed ...$params): static|null
     {
-        $driver = Compare::connection($this->getConnection());
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $stmt = $this->getConnection()->prepare($this->parse(...$params));
-            if ($stmt) {
-                $this->setStatement($stmt);
-                if (array_key_exists(1, $params) && is_array($params[1])) {
-                    $bindParams = array_merge($this->makeArgs($driver, $stmt, ...$params), ['rowCount' => false]);
-                    $this->setQueryParameters($bindParams['sqlArgs']);
-                    if (isset($bindParams['sqlArgs']) && is_array($bindParams['sqlArgs'])) {
-                        if (is_array($bindParams['sqlArgs']) && isset($bindParams['sqlArgs'][0]) && is_array($bindParams['sqlArgs'][0])) {
-                            $affectedRows = 0;
-                            foreach ($bindParams['sqlArgs'] as $args) {
-                                $this->internalBindVariable($args, $stmt);
-                                $result = $stmt->execute();
-                                if ($result) {
-                                    $affectedRows += $this->getConnection()->changes();
-                                }
-                            }
-                            $this->setAffectedRows($affectedRows);
-                        } else {
-                            $this->internalBindVariable($bindParams['sqlArgs'], $stmt);
-                            $result = $stmt->execute();
-                            if ($result) {
-                                $this->setAffectedRows($this->getConnection()->changes());
-                                if (is_object($result) && get_class($result) === 'SQLite3Result' && method_exists($result, 'numColumns')) {
-                                    $this->setQueryColumns($result->numColumns());
-                                    $rowCount = 0;
-                                    while ($result->fetchArray(SQLITE3_ASSOC)) {
-                                        $rowCount++;
-                                    }
-                                    $this->setQueryRows($rowCount);
-                                    $result->reset();
-                                } else {
-                                    $this->setQueryRows(0);
-                                    $this->setQueryColumns(0);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $this;
+        return Statements::prepare(...$params);
     }
 
     /**
@@ -798,7 +538,7 @@ class SQLiteConnection implements IConnection
      */
     public function exec(mixed ...$params): mixed
     {
-        return (reset($params) ?? $this->getStatement())->execute();
+        return Statements::exec(...$params);
     }
 
     /**
@@ -816,11 +556,11 @@ class SQLiteConnection implements IConnection
         return match ($fetch) {
             SQLite::FETCH_OBJ,
             SQLite::FETCH_INTO,
-            SQLite::FETCH_CLASS => Statements::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
-            SQLite::FETCH_COLUMN => Statements::internalFetchColumn($this->getStatement(), $fetchArgument),
-            SQLite::FETCH_ASSOC => Statements::internalFetchAssoc($this->getStatement()),
-            SQLite::FETCH_NUM => Statements::internalFetchNum($this->getStatement()),
-            default => Statements::internalFetchBoth($this->getStatement()),
+            SQLite::FETCH_CLASS => Fetchs::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
+            SQLite::FETCH_COLUMN => Fetchs::internalFetchColumn($this->getStatement(), $fetchArgument),
+            SQLite::FETCH_ASSOC => Fetchs::internalFetchAssoc($this->getStatement()),
+            SQLite::FETCH_NUM => Fetchs::internalFetchNum($this->getStatement()),
+            default => Fetchs::internalFetchBoth($this->getStatement()),
         };
     }
 
@@ -839,12 +579,11 @@ class SQLiteConnection implements IConnection
         return match ($fetch) {
             SQLite::FETCH_OBJ,
             SQLite::FETCH_INTO,
-            SQLite::FETCH_CLASS =>
-            Statements::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
-            SQLite::FETCH_COLUMN => Statements::internalFetchAllColumn($this->getStatement(), $fetchArgument),
-            SQLite::FETCH_ASSOC => Statements::internalFetchAllAssoc($this->getStatement()),
-            SQLite::FETCH_NUM => Statements::internalFetchAllNum($this->getStatement()),
-            default => Statements::internalFetchAllBoth($this->getStatement()),
+            SQLite::FETCH_CLASS => Fetchs::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
+            SQLite::FETCH_COLUMN => Fetchs::internalFetchAllColumn($this->getStatement(), $fetchArgument),
+            SQLite::FETCH_ASSOC => Fetchs::internalFetchAllAssoc($this->getStatement()),
+            SQLite::FETCH_NUM => Fetchs::internalFetchAllNum($this->getStatement()),
+            default => Fetchs::internalFetchAllBoth($this->getStatement()),
         };
     }
 

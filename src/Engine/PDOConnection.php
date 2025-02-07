@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
+use Exception;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\PDO\Connection\Arguments;
 use GenericDatabase\Engine\PDO\Connection\Options;
@@ -15,20 +15,15 @@ use GenericDatabase\Engine\PDO\Connection\DSN;
 use GenericDatabase\Engine\PDO\Connection\Dump;
 use GenericDatabase\Engine\PDO\Connection\Transaction;
 use GenericDatabase\Engine\PDO\Connection\Statements;
+use GenericDatabase\Engine\PDO\Connection\Fetchs;
 use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Helpers\Compare;
 use PDO;
-use PDOStatement;
 use PDOException;
-use Exception;
-use stdClass;
 
 /**
  * Dynamic and Static container class for PDOConnection connections.
@@ -71,42 +66,6 @@ class PDOConnection implements IConnection
      * @var mixed $connection
      */
     private static mixed $connection;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statement = null
-     */
-    private static mixed $statement = null;
-
-    /**
-     * Count rows in query statement
-     * @var ?int $queryRows = 0
-     */
-    private ?int $queryRows = 0;
-
-    /**
-     * Count columns in query statement
-     * @var ?int $queryColumns = 0
-     */
-    private ?int $queryColumns = 0;
-
-    /**
-     * Affected row in query statement
-     * @var ?int $affectedRows = 0
-     */
-    private ?int $affectedRows = 0;
-
-    /**
-     * Lasts params query executed
-     * @var ?array $queryParameters = []
-     */
-    private ?array $queryParameters = [];
-
-    /**
-     * Last string query executed
-     * @var string $queryString = ''
-     */
-    private string $queryString = '';
 
     /**
      * Empty constructor since initialization is handled by traits and interface methods
@@ -360,167 +319,16 @@ class PDOConnection implements IConnection
         return Transaction::inTransaction();
     }
 
-    private function lastInsertIdMySQL(?string $name = null): string|int|false
-    {
-        if (!$name) {
-            return (int) $this->getConnection()->lastInsertId();
-        }
-        $filter = "WHERE TABLE_NAME = :tableName AND COLUMN_KEY = :columnKey AND EXTRA = :extra";
-        $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
-        $stmt = $this->getConnection()->prepare($query);
-        $stmt->bindValue(':tableName', $name, PDO::PARAM_STR);
-        $stmt->bindValue(':columnKey', 'PRI', PDO::PARAM_STR);
-        $stmt->bindValue(':extra', 'auto_increment', PDO::PARAM_STR);
-        $stmt->execute();
-        $autoKey = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (isset($autoKey['COLUMN_NAME'])) {
-            $query = sprintf("SELECT MAX(%s) AS value FROM %s", $autoKey['COLUMN_NAME'], $name);
-            $stmt = $this->getConnection()->prepare($query);
-            $stmt->execute();
-            $maxIndex = $stmt->fetch(PDO::FETCH_ASSOC)['value'];
-            if ($maxIndex !== null) {
-                return (int) $maxIndex;
-            }
-        }
-        return ($autoKey['COLUMN_NAME'] ? (int) $autoKey['COLUMN_NAME'] : 0) ?? false;
-    }
-
-    private function lastInsertIdPgSQL(?string $name = null): string|int|false
-    {
-        if (!$name) {
-            return (int) $this->getConnection()->lastInsertId();
-        }
-        $query = "SELECT
-            current_database() as DATABASE_NAME,
-            seq.schemaname AS SCHEMA_NAME,
-            seq.sequencename AS NAME,
-            table_identities.*,
-            seq.last_value
-        FROM pg_sequences seq
-             INNER JOIN pg_namespace nspc ON nspc.nspname = seq.schemaname
-             INNER JOIN pg_class s ON s.relname = seq.sequencename AND s.relnamespace = nspc.oid
-             LEFT OUTER JOIN (
-                 SELECT
-                     t.relname AS TABLE_NAME,
-                     a.attname AS COLUMN_NAME,
-                     d.objid AS OBJID
-                 FROM pg_namespace tns
-                          JOIN pg_class t ON tns.oid = t.relnamespace AND t.relkind IN ('p', 'r')
-                          JOIN pg_index i ON t.oid = i.indrelid AND i.indisprimary
-                          JOIN pg_attribute a ON i.indrelid = a.attrelid AND a.attnum = ANY (i.indkey)
-                          JOIN pg_depend d ON t.oid = d.refobjid AND d.refobjsubid = a.attnum
-             ) table_identities ON table_identities.OBJID = s.oid
-        WHERE table_identities.TABLE_NAME = :tableName
-        AND (SELECT current_database()) = :databaseName";
-        $stmt = $this->getConnection()->prepare($query);
-        $stmt->bindValue(':tableName', $name, PDO::PARAM_STR);
-        $stmt->bindValue(':databaseName', static::getDatabase(), PDO::PARAM_STR);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row && isset($row['last_value']) && is_null($row['last_value']) && isset($row['name'])) {
-            $seqName = $row['name'];
-            $seqQuery = "SELECT currval(:seqName)";
-            $seqStmt = $this->getConnection()->prepare($seqQuery);
-            $seqStmt->bindValue(':seqName', $seqName);
-            $seqStmt->execute();
-            $seqResult = $seqStmt->fetch(PDO::FETCH_NUM);
-            return $seqResult ? (int) $seqResult[0] : false;
-        } elseif ($row && isset($row['last_value']) && !is_null($row['last_value'])) {
-            return (int) $row['last_value'];
-        }
-        return false;
-    }
-
-    private function lastInsertIdSQLSrv(?string $name = null): string|int|false
-    {
-        if (!$name) {
-            $query = "SELECT CAST(@@IDENTITY AS BIGINT) AS LastInsertedID";
-            $stmt = $this->getConnection()->query($query);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result ? (int) $result['LastInsertedID'] : 0;
-        }
-        $filter = "WHERE TABLE_NAME = :tableName AND TABLE_SCHEMA = SCHEMA_NAME() AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1";
-        $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
-        $stmt = $this->getConnection()->prepare($query);
-        $stmt->bindValue(':tableName', $name, PDO::PARAM_STR);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (isset($row['COLUMN_NAME'])) {
-            $identityColumn = $row['COLUMN_NAME'];
-            $query = sprintf("SELECT MAX(%s) AS LastInsertedID FROM %s", $identityColumn, $name);
-            $stmt = $this->getConnection()->query($query);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result ? (int) $result['LastInsertedID'] : 0;
-        }
-        return false;
-    }
-
-    private function lastInsertIdOCI(?string $name = null): string|int|false
-    {
-        if ($name !== null) {
-            $filter = "WHERE OWNER = USER AND identity_column = 'YES' AND TABLE_NAME = :tableName";
-            $seqQuery = sprintf("SELECT data_default AS sequence_val, table_name, column_name FROM all_tab_columns %s", $filter);
-            $stmt = $this->getConnection()->prepare($seqQuery);
-            $stmt->bindValue(':tableName', $name, PDO::PARAM_STR);
-            if ($stmt->execute()) {
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($row && isset($row['SEQUENCE_VAL'])) {
-                    $sequenceVal = $row['SEQUENCE_VAL'];
-                    $sequenceVal = str_replace('.nextval', '.currval', $sequenceVal);
-                    $sequenceVal = str_replace('"', '', $sequenceVal);
-                    $query = "SELECT $sequenceVal FROM DUAL";
-                    $statement = $this->getConnection()->prepare($query);
-                    if ($statement->execute()) {
-                        $row = $statement->fetch(PDO::FETCH_NUM);
-                        return $row ? (int) $row[0] : false;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private function lastInsertIdFirebird(?string $name = null): string|int|false
-    {
-        if (!$name) {
-            return 0;
-        }
-        $filter = 'WHERE RDB$RELATION_NAME=:tableName AND RDB$IDENTITY_TYPE=1';
-        $query = sprintf('SELECT RDB$FIELD_NAME, RDB$GENERATOR_NAME FROM RDB$RELATION_FIELDS %s', $filter);
-        $stmt = $this->getConnection()->prepare($query);
-        $stmt->bindValue(':tableName', $name, PDO::PARAM_STR);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (isset($row['RDB$GENERATOR_NAME'])) {
-            $identityColumn = $row['RDB$GENERATOR_NAME'];
-            $query = sprintf('SELECT GEN_ID(%s,0) AS LASTINSERTEDID FROM RDB$DATABASE', $identityColumn);
-            $stmt = $this->getConnection()->query($query);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result ? (int) $result['LASTINSERTEDID'] : 0;
-        }
-        return false;
-    }
-
     /**
      * This function returns the last ID generated by an auto-increment column,
-     *  either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @param ?string $name = null Resource name, table or view
      * @return string|int|false
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        $driver = static::getDriver();
-        return match ($driver) {
-            'mysql' => $this->lastInsertIdMySQL($name),
-            'pgsql' => $this->lastInsertIdPgSQL($name),
-            'sqlsrv' => $this->lastInsertIdSQLSrv($name),
-            'oci' => $this->lastInsertIdOCI($name),
-            'firebird' => $this->lastInsertIdFirebird($name),
-            'sqlite' => (int) $this->getConnection()->lastInsertId(),
-            default => (int) $this->getConnection()->lastInsertId(),
-        };
+        return Statements::lastInsertId($name);
     }
 
     /**
@@ -531,9 +339,7 @@ class PDOConnection implements IConnection
      */
     public function quote(mixed ...$params): mixed
     {
-        $string = $params[0];
-        $type = (empty($params) || !isset($params[1])) ? PDO::PARAM_STR : $params[1];
-        return $this->getConnection()->quote($string, $type);
+        return Statements::quote(...$params);
     }
 
     /**
@@ -543,11 +349,7 @@ class PDOConnection implements IConnection
      */
     private function setAllMetadata(): void
     {
-        $this->queryString = '';
-        $this->queryParameters = [];
-        $this->queryRows = 0;
-        $this->queryColumns = 0;
-        $this->affectedRows = 0;
+        Statements::setAllMetadata();
     }
 
     /**
@@ -557,13 +359,7 @@ class PDOConnection implements IConnection
      */
     public function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = $this->getQueryString();
-        $metadata->queryParameters = $this->getQueryParameters();
-        $metadata->queryRows = $this->getQueryRows();
-        $metadata->queryColumns = $this->getQueryColumns();
-        $metadata->affectedRows = $this->getAffectedRows();
-        return $metadata;
+        return Statements::getAllMetadata();
     }
 
     /**
@@ -573,7 +369,7 @@ class PDOConnection implements IConnection
      */
     public function getQueryString(): string
     {
-        return $this->queryString;
+        return Statements::getQueryString();
     }
 
     /**
@@ -583,7 +379,7 @@ class PDOConnection implements IConnection
      */
     public function setQueryString(string $params): void
     {
-        $this->queryString = $params;
+        Statements::setQueryString($params);
     }
 
     /**
@@ -593,7 +389,7 @@ class PDOConnection implements IConnection
      */
     public function getQueryParameters(): ?array
     {
-        return $this->queryParameters;
+        return Statements::getQueryParameters();
     }
 
     /**
@@ -603,7 +399,7 @@ class PDOConnection implements IConnection
      */
     public function setQueryParameters(?array $params): void
     {
-        $this->queryParameters = $params;
+        Statements::setQueryParameters($params);
     }
 
     /**
@@ -613,7 +409,7 @@ class PDOConnection implements IConnection
      */
     public function getQueryRows(): int|false
     {
-        return $this->queryRows;
+        return Statements::getQueryRows();
     }
 
     /**
@@ -624,7 +420,7 @@ class PDOConnection implements IConnection
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        $this->queryRows = $params;
+        Statements::setQueryRows($params);
     }
 
     /**
@@ -634,7 +430,7 @@ class PDOConnection implements IConnection
      */
     public function getQueryColumns(): int|false
     {
-        return $this->queryColumns;
+        return Statements::getQueryColumns();
     }
 
     /**
@@ -645,7 +441,7 @@ class PDOConnection implements IConnection
      */
     public function setQueryColumns(int|false $params): void
     {
-        $this->queryColumns = $params;
+        Statements::setQueryColumns($params);
     }
 
     /**
@@ -655,7 +451,7 @@ class PDOConnection implements IConnection
      */
     public function getAffectedRows(): int|false
     {
-        return $this->affectedRows;
+        return Statements::getAffectedRows();
     }
 
     /**
@@ -666,136 +462,27 @@ class PDOConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->affectedRows = $params;
+        Statements::setAffectedRows($params);
     }
 
     /**
-     * A description of the entire PHP function.
+     * Returns the statement for the function.
      *
      * @return mixed
      */
-    public function getStatement(): PDOStatement
+    public function getStatement(): mixed
     {
-        return self::$statement;
+        return Statements::getStatement();
     }
 
     /**
-     * Set the statement for the function.
+     * Sets the statement for the function.
      *
      * @param mixed $statement The statement to be set.
      */
     public function setStatement(mixed $statement): void
     {
-        self::$statement = $statement;
-    }
-
-    /**
-     * Binds variables to a prepared statement with specified types.
-     * This method binds variables to a prepared statement based on their types,
-     * allowing for more precise parameter binding.
-     *
-     * @param array &$preparedParams An array containing the parameters to bind.
-     * @param mixed $stmt The prepared statement to bind variables to.
-     * @return mixed The prepared statement with bound variables.
-     */
-    private function internalBindVariable(array &$preparedParams, PDOStatement $statement): PDOStatement
-    {
-        $index = 0;
-        foreach ($preparedParams as &$arg) {
-            if (is_bool($arg)) {
-                $types = PDO::PARAM_BOOL;
-            } elseif (is_integer($arg)) {
-                $types = PDO::PARAM_INT;
-            } elseif (is_float($arg)) {
-                $types = PDO::PARAM_STR;
-            } elseif (is_string($arg)) {
-                $types = PDO::PARAM_STR;
-            } elseif (is_null($arg)) {
-                $types = PDO::PARAM_NULL;
-            } else {
-                $types = PDO::PARAM_LOB;
-            }
-            call_user_func_array([$statement, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
-            $index++;
-        }
-        return $statement;
-    }
-
-    /**
-     * Binds an array multiple parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArrayMulti(mixed ...$params): void
-    {
-        $affectedRows = 0;
-        foreach ($params['sqlArgs'] as $param) {
-            $this->setStatement($this->internalBindVariable($param, $params['sqlStatement']));
-            if ($this->exec($this->getStatement())) {
-                if ($this->getQueryColumns() === 0) {
-                    $affectedRows++;
-                    $this->setAffectedRows((int) $affectedRows);
-                }
-            }
-        }
-    }
-
-    /**
-     * Binds an array single parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArraySingle(mixed ...$params): void
-    {
-        $this->internalBindParamArgs(...$params);
-    }
-
-    /**
-     * Binds an array parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArray(mixed ...$params): void
-    {
-        if ($params['isMulti']) {
-            $this->internalBindParamArrayMulti(...$params);
-        } else {
-            $this->internalBindParamArraySingle(...$params);
-        }
-    }
-
-    /**
-     * Binds a parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArgs(mixed ...$params): void
-    {
-        $this->setStatement($this->internalBindVariable($params['sqlArgs'], $params['sqlStatement']));
-        if ($this->exec($this->getStatement())) {
-            if ($this->getStatement()->columnCount() > 0) {
-                $this->setQueryRows((int) count($this->getStatement()->fetchAll(PDO::FETCH_ASSOC)));
-            }
-            else {
-                $this->setAffectedRows((int) $this->getStatement()->rowCount());
-            }
-        }
-    }
-
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
+        Statements::setStatement($statement);
     }
 
     /**
@@ -806,13 +493,7 @@ class PDOConnection implements IConnection
      */
     public function bindParam(mixed ...$params): void
     {
-        $this->setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            $this->internalBindParamArray(...$params);
-        } else {
-            $this->internalBindParamArgs(...$params);
-        }
-        $this->setQueryColumns((int) $this->getStatement()->columnCount());
+        Statements::bindParam(...$params);
     }
 
     /**
@@ -821,86 +502,31 @@ class PDOConnection implements IConnection
      * @param mixed ...$params The parameters for the query function.
      * @return string The statement resulting from the SQL statement.
      */
-    private function parse(mixed ...$params): string
+    public function parse(mixed ...$params): string
     {
-        $driver = static::getDriver();
-        $dialectQuote = match ($driver) {
-            'mysql' => Translate::SQL_DIALECT_BACKTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translate::SQL_DIALECT_DOUBLE_QUOTE,
-            'sqlite' => Translate::SQL_DIALECT_NONE,
-            default => Translate::SQL_DIALECT_NONE,
-        };
-        $this->setQueryString(Translate::escape(reset($params), $dialectQuote));
-        return $this->getQueryString();
-    }
-
-    /**
-     * This function binds the parameters to a prepared statement.
-     *
-     * @param mixed ...$params
-     * @return PDOStatement|false
-     */
-    private function prepareStatement(mixed ...$params): PDOStatement|false
-    {
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $cursor = match (static::getDriver()) {
-                'oci', 'mysql', 'pgsql' => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
-                'firebird', 'sqlsrv' => [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL],
-                'sqlite' => [],
-                default => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
-            };
-            $statement = $this->getConnection()->prepare($this->parse(...$params), $cursor);
-            if ($statement) {
-                $this->setStatement($statement);
-            }
-        }
-        return $statement;
+        return Statements::parse(...$params);
     }
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return static|null
+     * @return PDOConnection|null
      */
-    public function query(mixed ...$params): static|null
+    public function query(mixed ...$params): PDOConnection|null
     {
-        $statement = $this->prepareStatement(...$params);
-        if ($statement && $this->exec($statement)) {
-            $this->setQueryColumns((int) $this->getStatement()->columnCount());
-            if ($this->getQueryColumns() > 0) {
-                $this->setQueryRows((int) count($this->getStatement()->fetchAll(PDO::FETCH_ASSOC)));
-            } else {
-                $this->setAffectedRows($this->getStatement()->rowCount());
-            }
-        }
-        return $this;
+        return Statements::query(...$params);
     }
-
     /**
      * This function binds the parameters to a prepared query.
      *
      * @param mixed ...$params
-     * @return static|null
+     * @return PDOConnection|null
      */
-    public function prepare(mixed ...$params): static|null
+    public function prepare(mixed ...$params): PDOConnection|null
     {
-        $statement = $this->prepareStatement(...$params);
-        $driver = static::getDriver();
-        if ($statement) {
-            if ($driver === 'sqlsrv') {
-                $bindParams = $this->makeArgs($driver, ...$params);
-                $bindParams['sqlStatement'] = $this->getStatement();
-            } else {
-                array_unshift($params, $this->getStatement());
-                $bindParams = $this->makeArgs($driver, ...$params);
-            }
-            $this->bindParam(...$bindParams);
-        }
-        return $this;
+        return Statements::prepare(...$params);
     }
-
     /**
      * This function runs an SQL statement and returns the number of affected rows.
      *
@@ -909,8 +535,7 @@ class PDOConnection implements IConnection
      */
     public function exec(mixed ...$params): bool
     {
-        $stmt = reset($params);
-        return $stmt->execute();
+        return Statements::exec(...$params);
     }
 
     /**
@@ -920,18 +545,17 @@ class PDOConnection implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
-     * @throws ReflectionException
      */
     public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
         return match ($fetchStyle) {
             PDO::FETCH_OBJ,
             PDO::FETCH_INTO,
-            PDO::FETCH_CLASS => Statements::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
-            PDO::FETCH_COLUMN => Statements::internalFetchColumn($this->getStatement(), $fetchArgument),
-            PDO::FETCH_ASSOC => Statements::internalFetchAssoc($this->getStatement()),
-            PDO::FETCH_NUM => Statements::internalFetchNum($this->getStatement()),
-            default => Statements::internalFetchBoth($this->getStatement()),
+            PDO::FETCH_CLASS => Fetchs::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
+            PDO::FETCH_COLUMN => Fetchs::internalFetchColumn($this->getStatement(), $fetchArgument),
+            PDO::FETCH_ASSOC => Fetchs::internalFetchAssoc($this->getStatement()),
+            PDO::FETCH_NUM => Fetchs::internalFetchNum($this->getStatement()),
+            default => Fetchs::internalFetchBoth($this->getStatement()),
         };
     }
 
@@ -942,18 +566,17 @@ class PDOConnection implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array|bool The next row from the statement as an array, or false if there are no more rows.
-     * @throws ReflectionException
      */
     public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
         return match ($fetchStyle) {
             PDO::FETCH_OBJ,
             PDO::FETCH_INTO,
-            PDO::FETCH_CLASS => Statements::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
-            PDO::FETCH_COLUMN => Statements::internalFetchAllColumn($this->getStatement(), $fetchArgument),
-            PDO::FETCH_ASSOC => Statements::internalFetchAllAssoc($this->getStatement()),
-            PDO::FETCH_NUM => Statements::internalFetchAllNum($this->getStatement()),
-            default => Statements::internalFetchAllBoth($this->getStatement()),
+            PDO::FETCH_CLASS => Fetchs::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
+            PDO::FETCH_COLUMN => Fetchs::internalFetchAllColumn($this->getStatement(), $fetchArgument),
+            PDO::FETCH_ASSOC => Fetchs::internalFetchAllAssoc($this->getStatement()),
+            PDO::FETCH_NUM => Fetchs::internalFetchAllNum($this->getStatement()),
+            default => Fetchs::internalFetchAllBoth($this->getStatement()),
         };
     }
 

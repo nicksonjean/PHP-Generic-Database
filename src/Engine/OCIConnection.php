@@ -7,6 +7,7 @@ namespace GenericDatabase\Engine;
 use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
+use Exception;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\OCI\Connection\OCI;
 use GenericDatabase\Engine\OCI\Connection\Arguments;
@@ -16,6 +17,7 @@ use GenericDatabase\Engine\OCI\Connection\DSN;
 use GenericDatabase\Engine\OCI\Connection\Dump;
 use GenericDatabase\Engine\OCI\Connection\Transaction;
 use GenericDatabase\Engine\OCI\Connection\Statements;
+use GenericDatabase\Engine\OCI\Connection\Fetchs;
 use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
@@ -25,8 +27,6 @@ use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
-use Exception;
-use stdClass;
 
 /**
  * Dynamic and Static container class for OCIConnection connections.
@@ -69,42 +69,6 @@ class OCIConnection implements IConnection
      * @var mixed $connection
      */
     private static mixed $connection;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statement = null
-     */
-    private static mixed $statement = null;
-
-    /**
-     * Count rows in query statement
-     * @var ?int $queryRows = 0
-     */
-    private ?int $queryRows = 0;
-
-    /**
-     * Count columns in query statement
-     * @var ?int $queryColumns = 0
-     */
-    private ?int $queryColumns = 0;
-
-    /**
-     * Affected row in query statement
-     * @var ?int $affectedRows = 0
-     */
-    private ?int $affectedRows = 0;
-
-    /**
-     * Lasts params query executed
-     * @var ?array $queryParameters = []
-     */
-    private ?array $queryParameters = [];
-
-    /**
-     * Last string query executed
-     * @var string $queryString = ''
-     */
-    private string $queryString = '';
 
     /**
      * Empty constructor since initialization is handled by traits and interface methods
@@ -195,8 +159,8 @@ class OCIConnection implements IConnection
         $dsn = vsprintf('%s:%s/%s', [$host, $port, $database]);
         $this->setConnection(
             (string) !Options::getOptions(OCI::ATTR_PERSISTENT)
-            ? oci_connect($user, $password, $dsn, $charset)
-            : oci_pconnect($user, $password, $dsn, $charset)
+                ? oci_connect($user, $password, $dsn, $charset)
+                : oci_pconnect($user, $password, $dsn, $charset)
         );
         return $this;
     }
@@ -375,26 +339,7 @@ class OCIConnection implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        if ($name !== null) {
-            $seqQuery = "SELECT data_default AS sequence_val, table_name, column_name FROM all_tab_columns WHERE OWNER = USER AND identity_column = 'YES' AND TABLE_NAME = :tableName";
-            $stmt = oci_parse($this->getConnection(), $seqQuery);
-            oci_bind_by_name($stmt, ":tableName", $name);
-            if (oci_execute($stmt)) {
-                $row = oci_fetch_array($stmt, OCI_ASSOC);
-                if ($row) {
-                    $sequenceVal = $row['SEQUENCE_VAL'];
-                    $sequenceVal = str_replace('.nextval', '.currval', $sequenceVal);
-                    $sequenceVal = str_replace('"', '', $sequenceVal);
-                    $query = "SELECT $sequenceVal FROM DUAL";
-                    $statement = oci_parse($this->getConnection(), $query);
-                    if ($statement && oci_execute($statement)) {
-                        $row = oci_fetch_array($statement, OCI_NUM);
-                        return $row ? (int) $row[0] : false;
-                    }
-                }
-            }
-        }
-        return false;
+        return Statements::lastInsertId($name);
     }
 
     /**
@@ -405,14 +350,7 @@ class OCIConnection implements IConnection
      */
     public function quote(mixed ...$params): string|int
     {
-        $string = $params[0];
-        return match (true) {
-            is_int($string) => $string,
-            is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
-            is_bool($string) => $string ? '1' : '0',
-            is_null($string) => 'NULL',
-            default => "'" . str_replace("'", "''", (string) $string) . "'",
-        };
+        return Statements::quote(...$params);
     }
 
     /**
@@ -422,11 +360,7 @@ class OCIConnection implements IConnection
      */
     private function setAllMetadata(): void
     {
-        $this->queryString = '';
-        $this->queryParameters = [];
-        $this->queryRows = 0;
-        $this->queryColumns = 0;
-        $this->affectedRows = 0;
+        Statements::setAllMetadata();
     }
 
     /**
@@ -436,13 +370,7 @@ class OCIConnection implements IConnection
      */
     public function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = $this->getQueryString();
-        $metadata->queryParameters = $this->getQueryParameters();
-        $metadata->queryRows = $this->getQueryRows();
-        $metadata->queryColumns = $this->getQueryColumns();
-        $metadata->affectedRows = $this->getAffectedRows();
-        return $metadata;
+        return Statements::getAllMetadata();
     }
 
     /**
@@ -452,7 +380,7 @@ class OCIConnection implements IConnection
      */
     public function getQueryString(): string
     {
-        return $this->queryString;
+        return Statements::getQueryString();
     }
 
     /**
@@ -462,7 +390,7 @@ class OCIConnection implements IConnection
      */
     public function setQueryString(string $params): void
     {
-        $this->queryString = $params;
+        Statements::setQueryString($params);
     }
 
     /**
@@ -472,7 +400,7 @@ class OCIConnection implements IConnection
      */
     public function getQueryParameters(): ?array
     {
-        return $this->queryParameters;
+        return Statements::getQueryParameters();
     }
 
     /**
@@ -482,7 +410,7 @@ class OCIConnection implements IConnection
      */
     public function setQueryParameters(?array $params): void
     {
-        $this->queryParameters = $params;
+        Statements::setQueryParameters($params);
     }
 
     /**
@@ -492,7 +420,7 @@ class OCIConnection implements IConnection
      */
     public function getQueryRows(): int|false
     {
-        return $this->queryRows;
+        return Statements::getQueryRows();
     }
 
     /**
@@ -503,7 +431,7 @@ class OCIConnection implements IConnection
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        $this->queryRows = (is_callable($params)) ? $params() : $params;
+        Statements::setQueryRows($params);
     }
 
     /**
@@ -513,7 +441,7 @@ class OCIConnection implements IConnection
      */
     public function getQueryColumns(): int|false
     {
-        return $this->queryColumns;
+        return Statements::getQueryColumns();
     }
 
     /**
@@ -524,7 +452,7 @@ class OCIConnection implements IConnection
      */
     public function setQueryColumns(int|false $params): void
     {
-        $this->queryColumns = $params;
+        Statements::setQueryColumns($params);
     }
 
     /**
@@ -534,7 +462,7 @@ class OCIConnection implements IConnection
      */
     public function getAffectedRows(): int|false
     {
-        return $this->affectedRows;
+        return Statements::getAffectedRows();
     }
 
     /**
@@ -545,7 +473,7 @@ class OCIConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->affectedRows = $params;
+        Statements::setAffectedRows($params);
     }
 
     /**
@@ -555,131 +483,17 @@ class OCIConnection implements IConnection
      */
     public function getStatement(): mixed
     {
-        return self::$statement;
+        return Statements::getStatement();
     }
 
     /**
-     * Set the statement for the function.
+     * Sets the statement for the function.
      *
      * @param mixed $statement The statement to be set.
      */
     public function setStatement(mixed $statement): void
     {
-        self::$statement = $statement;
-    }
-
-    /**
-     * Binds variables to a prepared statement with specified types.
-     * This method binds variables to a prepared statement based on their types,
-     * allowing for more precise parameter binding.
-     *
-     * @param mixed $statement An array containing the parameters to bind.
-     * @param mixed $param The prepared statement to bind variables to.
-     * @param mixed $value The prepared statement to bind variables to.
-     * @return void
-     */
-    private function internalBindVariable(array $params, mixed $statement): mixed
-    {
-        foreach ($params as $key => $value) {
-            oci_bind_by_name($statement, $key, $params[$key]);
-        }
-        return $statement;
-    }
-
-    /**
-     * Binds an array multiple parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArrayMulti(mixed ...$params): void
-    {
-        foreach ($params['sqlArgs'] as $param) {
-            $this->internalBindVariable($param, $params['sqlStatement']);
-            $this->exec($params['sqlStatement']);
-            $rowCount = oci_num_rows($params['sqlStatement']);
-            if (!oci_num_fields($params['sqlStatement'])) {
-                $this->setAffectedRows($this->getAffectedRows() + $rowCount);
-            }
-        }
-    }
-
-    /**
-     * Binds an array single parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArraySingle(mixed ...$params): void
-    {
-        $this->internalBindParamArgs(...$params);
-    }
-
-    /**
-     * Binds a parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArray(mixed ...$params): void
-    {
-        if ($params['isMulti']) {
-            $this->internalBindParamArrayMulti(...$params);
-        } else {
-            $this->internalBindParamArraySingle(...$params);
-        }
-    }
-
-    /**
-     * Binds a parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArgs(mixed ...$params): void
-    {
-        $statement = $params['sqlStatement'];
-        if (!empty($params['sqlArgs'])) {
-            $this->internalBindVariable($params['sqlArgs'], $statement);
-        }
-        if ($this->exec($statement)) {
-            $numFields = oci_num_fields($statement);
-            if ($numFields > 0) {
-                $results = [];
-                $fields = [];
-                for ($i = 1; $i <= $numFields; $i++) {
-                    $fields[] = oci_field_name($statement, $i);
-                }
-                while ($row = oci_fetch_array($statement, OCI_BOTH + OCI_RETURN_NULLS)) {
-                    $results[] = $row;
-                }
-                $this->setStatement([
-                    'results' => $results,
-                    'fields' => $fields,
-                    'position' => 0,
-                    'original_statement' => $statement
-                ]);
-                $this->setQueryRows(count($results));
-                $this->setQueryColumns($numFields);
-                if (!empty($results)) {
-                    $this->exec($statement);
-                }
-            } else {
-                $this->setAffectedRows(oci_num_rows($statement));
-            }
-        }
-    }
-
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
+        Statements::setStatement($statement);
     }
 
     /**
@@ -690,12 +504,7 @@ class OCIConnection implements IConnection
      */
     public function bindParam(mixed ...$params): void
     {
-        $this->setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            $this->internalBindParamArray(...$params);
-        } else {
-            $this->internalBindParamArgs(...$params);
-        }
+        Statements::bindParam(...$params);
     }
 
     /**
@@ -706,9 +515,7 @@ class OCIConnection implements IConnection
      */
     private function parse(mixed ...$params): string
     {
-        $queryString = Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE);
-        $this->setQueryString($queryString);
-        return $this->getQueryString();
+        return Statements::parse(...$params);
     }
 
     /**
@@ -719,93 +526,12 @@ class OCIConnection implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $statement = oci_parse($this->getConnection(), $this->parse(...$params));
-            if ($statement) {
-                $this->setStatement($statement);
-                if (oci_execute($statement, OCI_COMMIT_ON_SUCCESS)) {
-                    $numFields = oci_num_fields($statement);
-                    if ($numFields > 0) {
-                        $results = [];
-                        while ($row = oci_fetch_array($statement, OCI_ASSOC + OCI_RETURN_NULLS)) {
-                            $results[] = $row;
-                        }
-                        $this->setStatement(['results' => $results]);
-                        $this->setQueryRows(count($results));
-                        $this->setQueryColumns($numFields);
-                        $this->setAffectedRows(0);
-                    } else {
-                        $this->setAffectedRows(oci_num_rows($statement));
-                        $this->setStatement(['results' => []]);
-                        $this->setQueryRows(0);
-                        $this->setQueryColumns(0);
-                    }
-                }
-            }
-        }
-
-        return $this;
+        return Statements::query(...$params);
     }
 
     public function prepare(mixed ...$params): static|null
     {
-        $driver = Compare::connection($this->getConnection());
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $query = $this->parse(...$params);
-            if (isset($params[1])) {
-                $totalAffectedRows = 0;
-                $results = [];
-                $queryParameters = [];
-                $paramSets = is_array($params[1][0] ?? null) ? $params[1] : [$params[1]];
-                foreach ($paramSets as $bindParams) {
-                    $queryParameters = array_merge($queryParameters, $bindParams);
-                    $statement = oci_parse($this->getConnection(), $query);
-                    if ($statement) {
-                        foreach ($bindParams as $param => &$value) {
-                            $value = (string) $value;
-                            oci_bind_by_name($statement, $param, $value);
-                        }
-                        if (oci_execute($statement, OCI_COMMIT_ON_SUCCESS)) {
-                            $numFields = oci_num_fields($statement);
-                            if ($numFields > 0) {
-                                while ($row = oci_fetch_array($statement, OCI_ASSOC + OCI_RETURN_NULLS)) {
-                                    $results[] = $row;
-                                }
-                            } else {
-                                $totalAffectedRows += oci_num_rows($statement);
-                            }
-                        }
-                        oci_free_statement($statement);
-                    }
-                }
-                $bindParams = array_merge($this->makeArgs($driver, $query, ...$params), ['rowCount' => false]);
-                $this->setQueryParameters($bindParams['sqlArgs']);
-                if ($results) {
-                    $this->setStatement([
-                        'results' => $results,
-                        'fields' => array_keys(reset($results)),
-                        'position' => 0,
-                        'original_statement' => $query
-                    ]);
-                    $this->setQueryRows(count($results));
-                    $this->setQueryColumns(count(array_keys(reset($results))));
-                    $this->setAffectedRows(0);
-                } else {
-                    $this->setStatement([
-                        'results' => [],
-                        'fields' => [],
-                        'position' => 0,
-                        'original_statement' => $query
-                    ]);
-                    $this->setQueryRows(0);
-                    $this->setQueryColumns(0);
-                    $this->setAffectedRows($totalAffectedRows);
-                }
-            }
-        }
-        return $this;
+        return Statements::prepare(...$params);
     }
 
     /**
@@ -816,9 +542,7 @@ class OCIConnection implements IConnection
      */
     public function exec(mixed ...$params): bool
     {
-        $statement = reset($params) ?? $this->getStatement();
-        $resultMode = $params[1] ?? OCI_COMMIT_ON_SUCCESS;
-        return oci_execute($statement, $resultMode);
+        return Statements::exec(...$params);
     }
 
     /**
@@ -836,11 +560,11 @@ class OCIConnection implements IConnection
         return match ($fetch) {
             OCI::FETCH_OBJ,
             OCI::FETCH_INTO,
-            OCI::FETCH_CLASS => Statements::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
-            OCI::FETCH_COLUMN => Statements::internalFetchColumn($this->getStatement(), $fetchArgument),
-            OCI::FETCH_ASSOC => Statements::internalFetchAssoc($this->getStatement()),
-            OCI::FETCH_NUM => Statements::internalFetchNum($this->getStatement()),
-            default => Statements::internalFetchBoth($this->getStatement()),
+            OCI::FETCH_CLASS => Fetchs::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
+            OCI::FETCH_COLUMN => Fetchs::internalFetchColumn($this->getStatement(), $fetchArgument),
+            OCI::FETCH_ASSOC => Fetchs::internalFetchAssoc($this->getStatement()),
+            OCI::FETCH_NUM => Fetchs::internalFetchNum($this->getStatement()),
+            default => Fetchs::internalFetchBoth($this->getStatement()),
         };
     }
 
@@ -859,11 +583,11 @@ class OCIConnection implements IConnection
         return match ($fetch) {
             OCI::FETCH_OBJ,
             OCI::FETCH_INTO,
-            OCI::FETCH_CLASS => Statements::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
-            OCI::FETCH_COLUMN => Statements::internalFetchAllColumn($this->getStatement(), $fetchArgument),
-            OCI::FETCH_ASSOC => Statements::internalFetchAllAssoc($this->getStatement()),
-            OCI::FETCH_NUM => Statements::internalFetchAllNum($this->getStatement()),
-            default => Statements::internalFetchAllBoth($this->getStatement()),
+            OCI::FETCH_CLASS => Fetchs::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
+            OCI::FETCH_COLUMN => Fetchs::internalFetchAllColumn($this->getStatement(), $fetchArgument),
+            OCI::FETCH_ASSOC => Fetchs::internalFetchAllAssoc($this->getStatement()),
+            OCI::FETCH_NUM => Fetchs::internalFetchAllNum($this->getStatement()),
+            default => Fetchs::internalFetchAllBoth($this->getStatement()),
         };
     }
 

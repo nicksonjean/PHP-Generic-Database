@@ -59,12 +59,12 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 // $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
-// $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
-// $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect(); //Falta Instalar Servidor e Configurar o PHP
 
-$context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoSQLSrv(env: $_ENV, strategy: false)->connect();
 // $context = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: false)->connect();
@@ -76,7 +76,7 @@ $context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->c
 // $context = Chainable::odbcSQLSrv(env: $_ENV, strategy: false)->connect();
 // $context = Chainable::odbcOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
-// $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 // var_dump($context);
 
@@ -104,9 +104,9 @@ $q = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM
 
 var_dump($q->getAllMetadata());
 
-var_dump($q->fetchAll(Connection::FETCH_OBJ));
+var_dump($q->fetchAll(Connection::FETCH_COLUMN));
 
-while ($row = $q->fetch(Connection::FETCH_OBJ)) {
+while ($row = $q->fetch(Connection::FETCH_COLUMN)) {
     var_dump($row);
 }
 
@@ -114,12 +114,11 @@ $r = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM e
 
 var_dump($r->getAllMetadata());
 
-while ($row = $r->fetch(Connection::FETCH_OBJ)) {
+while ($row = $r->fetch(Connection::FETCH_COLUMN)) {
     var_dump($row);
 }
 
-var_dump($r->fetchAll(Connection::FETCH_OBJ));
-
+var_dump($r->fetchAll(Connection::FETCH_COLUMN));
 
 // var_dump([
 //     'queryString' => $a->getQueryString(),

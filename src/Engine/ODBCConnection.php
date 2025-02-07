@@ -17,16 +17,13 @@ use GenericDatabase\Engine\ODBC\Connection\DSN;
 use GenericDatabase\Engine\ODBC\Connection\Dump;
 use GenericDatabase\Engine\ODBC\Connection\Transaction;
 use GenericDatabase\Engine\ODBC\Connection\Statements;
+use GenericDatabase\Engine\ODBC\Connection\Fetchs;
 use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translate;
-use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
-use stdClass;
 
 /**
  * Dynamic and Static container class for ODBCConnection connections.
@@ -69,54 +66,6 @@ class ODBCConnection implements IConnection
      * @var mixed $connection
      */
     private static mixed $connection;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statement = null
-     */
-    private static mixed $statement = null;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statementResult = null
-     */
-    private static mixed $statementResult = null;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statementCount = null
-     */
-    private static mixed $statementCount = null;
-
-    /**
-     * Count rows in query statement
-     * @var ?int $queryRows = 0
-     */
-    private ?int $queryRows = 0;
-
-    /**
-     * Count columns in query statement
-     * @var ?int $queryColumns = 0
-     */
-    private ?int $queryColumns = 0;
-
-    /**
-     * Affected row in query statement
-     * @var ?int $affectedRows = 0
-     */
-    private ?int $affectedRows = 0;
-
-    /**
-     * Lasts params query executed
-     * @var ?array $queryParameters = []
-     */
-    private ?array $queryParameters = [];
-
-    /**
-     * Last string query executed
-     * @var string $queryString = ''
-     */
-    private string $queryString = '';
 
     /**
      * Empty constructor since initialization is handled by traits and interface methods
@@ -393,7 +342,7 @@ class ODBCConnection implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return $this->getConnection()->lastInsertId($name);
+        return Statements::lastInsertId($name);
     }
 
     /**
@@ -404,14 +353,7 @@ class ODBCConnection implements IConnection
      */
     public function quote(mixed ...$params): string|int
     {
-        $string = $params[0];
-        return match (true) {
-            is_int($string) => $string,
-            is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
-            is_bool($string) => $string ? '1' : '0',
-            is_null($string) => 'NULL',
-            default => "'" . str_replace("'", "''", (string) $string) . "'",
-        };
+        return Statements::quote(...$params);
     }
 
     /**
@@ -421,11 +363,7 @@ class ODBCConnection implements IConnection
      */
     private function setAllMetadata(): void
     {
-        $this->queryString = '';
-        $this->queryParameters = [];
-        $this->queryRows = 0;
-        $this->queryColumns = 0;
-        $this->affectedRows = 0;
+        Statements::setAllMetadata();
     }
 
     /**
@@ -435,13 +373,7 @@ class ODBCConnection implements IConnection
      */
     public function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = $this->getQueryString();
-        $metadata->queryParameters = $this->getQueryParameters();
-        $metadata->queryRows = $this->getQueryRows();
-        $metadata->queryColumns = $this->getQueryColumns();
-        $metadata->affectedRows = $this->getAffectedRows();
-        return $metadata;
+        return Statements::getAllMetadata();
     }
 
     /**
@@ -451,7 +383,7 @@ class ODBCConnection implements IConnection
      */
     public function getQueryString(): string
     {
-        return $this->queryString;
+        return Statements::getQueryString();
     }
 
     /**
@@ -461,7 +393,7 @@ class ODBCConnection implements IConnection
      */
     public function setQueryString(string $params): void
     {
-        $this->queryString = $params;
+        Statements::setQueryString($params);
     }
 
     /**
@@ -471,7 +403,7 @@ class ODBCConnection implements IConnection
      */
     public function getQueryParameters(): ?array
     {
-        return $this->queryParameters;
+        return Statements::getQueryParameters();
     }
 
     /**
@@ -481,7 +413,7 @@ class ODBCConnection implements IConnection
      */
     public function setQueryParameters(?array $params): void
     {
-        $this->queryParameters = $params;
+        Statements::setQueryParameters($params);
     }
 
     /**
@@ -491,7 +423,7 @@ class ODBCConnection implements IConnection
      */
     public function getQueryRows(): int|false
     {
-        return $this->queryRows;
+        return Statements::getQueryRows();
     }
 
     /**
@@ -502,10 +434,7 @@ class ODBCConnection implements IConnection
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        $this->queryRows = (function () use ($params) {
-            $this->bindParam(...self::$statementCount);
-            return $params();
-        });
+        Statements::setQueryRows($params);
     }
 
     /**
@@ -515,7 +444,7 @@ class ODBCConnection implements IConnection
      */
     public function getQueryColumns(): int|false
     {
-        return $this->queryColumns;
+        return Statements::getQueryColumns();
     }
 
     /**
@@ -526,7 +455,7 @@ class ODBCConnection implements IConnection
      */
     public function setQueryColumns(int|false $params): void
     {
-        $this->queryColumns = $params;
+        Statements::setQueryColumns($params);
     }
 
     /**
@@ -536,7 +465,7 @@ class ODBCConnection implements IConnection
      */
     public function getAffectedRows(): int|false
     {
-        return $this->affectedRows;
+        return Statements::getAffectedRows();
     }
 
     /**
@@ -547,7 +476,7 @@ class ODBCConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->affectedRows = $this->getAffectedRows() + $params;
+        Statements::setAffectedRows($params);
     }
 
     /**
@@ -557,117 +486,17 @@ class ODBCConnection implements IConnection
      */
     public function getStatement(): mixed
     {
-        return self::$statement;
+        return Statements::getStatement();
     }
 
     /**
-     * Set the statement for the function.
+     * Sets the statement for the function.
      *
      * @param mixed $statement The statement to be set.
      */
     public function setStatement(mixed $statement): void
     {
-        self::$statement = $statement;
-    }
-
-    /**
-     * Returns the statement result for the function.
-     *
-     * @return mixed
-     */
-    public function getStatementResult(): mixed
-    {
-        return self::$statementResult;
-    }
-
-    /**
-     * Set the statement for the function.
-     *
-     * @param mixed $statement The statement to be set.
-     */
-    public function setStatementResult(mixed $statement): void
-    {
-        self::$statementResult = $statement;
-    }
-
-    /**
-     * Binds variables to a prepared statement with specified types.
-     * This method binds variables to a prepared statement based on their types,
-     * allowing for more precise parameter binding.
-     *
-     * @param mixed $data The prepared statement to bind variables to.
-     * @return mixed The prepared statement with bound variables.
-     */
-    private function internalBindVariable(mixed $data): mixed
-    {
-        return Validations::detectTypes($data);
-    }
-
-    /**
-     * Binds an array multiple parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArrayMulti(mixed ...$params): void
-    {
-        foreach ($params['sqlArgs'] as $param) {
-            $referenceParams = array_values($param);
-            (!$params['rowCount'])
-                ? $this->setStatement($this->exec($params['sqlStatement'], $referenceParams))
-                : $this->setStatementResult($this->exec($params['sqlStatement'], $referenceParams));
-            $this->setAffectedRows(odbc_num_rows($this->getStatement()));
-        }
-    }
-
-    /**
-     * Binds an array single parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArraySingle(mixed ...$params): void
-    {
-        $this->internalBindParamArgs(...$params);
-    }
-
-    /**
-     * Binds an array parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArray(mixed ...$params): void
-    {
-        if ($params['isMulti']) {
-            $this->internalBindParamArrayMulti(...$params);
-        } else {
-            $this->internalBindParamArraySingle(...$params);
-        }
-    }
-
-    /**
-     * Binds a parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArgs(mixed ...$params): void
-    {
-        $referenceParams = array_values($params['sqlArgs']);
-        $this->exec($params['sqlStatement'], $referenceParams);
-    }
-
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
+        Statements::setStatement($statement);
     }
 
     /**
@@ -678,12 +507,7 @@ class ODBCConnection implements IConnection
      */
     public function bindParam(mixed ...$params): void
     {
-        $this->setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            $this->internalBindParamArray(...$params);
-        } else {
-            $this->internalBindParamArgs(...$params);
-        }
+        Statements::bindParam(...$params);
     }
 
     /**
@@ -692,69 +516,31 @@ class ODBCConnection implements IConnection
      * @param mixed ...$params The parameters for the query function.
      * @return string The statement resulting from the SQL statement.
      */
-    private function parse(mixed ...$params): string
+    public function parse(mixed ...$params): string
     {
-        $driver = static::getDriver();
-        $dialectQuote = match ($driver) {
-            'mysql' => Translate::SQL_DIALECT_BACKTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translate::SQL_DIALECT_DOUBLE_QUOTE,
-            'sqlite' => Translate::SQL_DIALECT_SINGLE_QUOTE,
-            default => Translate::SQL_DIALECT_NONE,
-        };
-        $this->setQueryString(Translate::binding(Translate::escape(reset($params), $dialectQuote)));
-        return $this->getQueryString();
+        return Statements::parse(...$params);
     }
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return static|null
+     * @return ODBCConnection|null
      */
-    public function query(mixed ...$params): static|null
+    public function query(mixed ...$params): ODBCConnection|null
     {
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $this->setStatement(odbc_exec($this->getConnection(), $this->parse(...$params)));
-            $rowCount = $params;
-            $this->setStatementResult(odbc_prepare($this->getConnection(), $this->parse(...$params)));
-            array_unshift($rowCount, $this->getStatementResult());
-            array_unshift($params, $this->getStatement());
-            self::$statementCount = array_merge($this->makeArgs('', ...$rowCount), ['rowCount' => true]);
-            $this->setQueryRows(fn() => count(Statements::internalFetchAllAssoc(
-                self::$statementCount['sqlStatement']
-            )));
-            $this->setQueryColumns(odbc_num_fields($this->getStatement()));
-            $this->setAffectedRows(odbc_num_rows($this->getStatement()));
-        }
-        return $this;
+        return Statements::query(...$params);
     }
-
     /**
      * This function binds the parameters to a prepared query.
      *
      * @param mixed ...$params
-     * @return static|null
+     * @return ODBCConnection|null
      */
-    public function prepare(mixed ...$params): static|null
+    public function prepare(mixed ...$params): ODBCConnection|null
     {
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $this->setStatement(odbc_prepare($this->getConnection(), $this->parse(...$params)));
-            $rowCount = $params;
-            array_unshift($rowCount, odbc_prepare($this->getConnection(), $this->parse(...$params)));
-            array_unshift($params, $this->getStatement());
-            $bindParams = array_merge($this->makeArgs('', ...$params), ['rowCount' => false]);
-            self::$statementCount = array_merge($this->makeArgs('', ...$rowCount), ['rowCount' => true]);
-            $this->bindParam(...$bindParams);
-            $this->setQueryRows(fn() => count(Statements::internalFetchAllAssoc(
-                self::$statementCount['sqlStatement']
-            )));
-            $this->setQueryColumns(odbc_num_fields($this->getStatement()));
-        }
-        return $this;
+        return Statements::prepare(...$params);
     }
-
     /**
      * This function runs an SQL statement and returns the number of affected rows.
      *
@@ -763,10 +549,7 @@ class ODBCConnection implements IConnection
      */
     public function exec(mixed ...$params): bool
     {
-        $statement = reset($params);
-        $data = $params[1] ?? false;
-        $data = $this->internalBindVariable($data);
-        return odbc_execute($statement, $data);
+        return Statements::exec(...$params);
     }
 
     /**
@@ -784,11 +567,11 @@ class ODBCConnection implements IConnection
         return match ($fetch) {
             ODBC::FETCH_OBJ,
             ODBC::FETCH_INTO,
-            ODBC::FETCH_CLASS => Statements::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
-            ODBC::FETCH_COLUMN => Statements::internalFetchColumn($this->getStatement(), $fetchArgument),
-            ODBC::FETCH_ASSOC => Statements::internalFetchAssoc($this->getStatement()),
-            ODBC::FETCH_NUM => Statements::internalFetchNum($this->getStatement()),
-            default => Statements::internalFetchBoth($this->getStatement()),
+            ODBC::FETCH_CLASS => Fetchs::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
+            ODBC::FETCH_COLUMN => Fetchs::internalFetchColumn($this->getStatement(), $fetchArgument),
+            ODBC::FETCH_ASSOC => Fetchs::internalFetchAssoc($this->getStatement()),
+            ODBC::FETCH_NUM => Fetchs::internalFetchNum($this->getStatement()),
+            default => Fetchs::internalFetchBoth($this->getStatement()),
         };
     }
 
@@ -806,11 +589,12 @@ class ODBCConnection implements IConnection
         $fetch = is_null($fetchStyle) ? Options::getOptions(ODBC::ATTR_DEFAULT_FETCH_MODE) : $fetchStyle;
         return match ($fetch) {
             ODBC::FETCH_OBJ,
-            ODBC::FETCH_CLASS => Statements::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
-            ODBC::FETCH_COLUMN => Statements::internalFetchAllColumn($this->getStatement(), $fetchArgument),
-            ODBC::FETCH_ASSOC => Statements::internalFetchAllAssoc($this->getStatement()),
-            ODBC::FETCH_NUM => Statements::internalFetchAllNum($this->getStatement()),
-            default => Statements::internalFetchAllBoth($this->getStatement()),
+            ODBC::FETCH_INTO,
+            ODBC::FETCH_CLASS => Fetchs::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
+            ODBC::FETCH_COLUMN => Fetchs::internalFetchAllColumn($this->getStatement(), $fetchArgument),
+            ODBC::FETCH_ASSOC => Fetchs::internalFetchAllAssoc($this->getStatement()),
+            ODBC::FETCH_NUM => Fetchs::internalFetchAllNum($this->getStatement()),
+            default => Fetchs::internalFetchAllBoth($this->getStatement()),
         };
     }
 

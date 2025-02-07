@@ -207,6 +207,9 @@ PHP-Generic-Database is released under the MIT license.
 
 - Infrastructure
   - [x] Creation of the Container in Docker.
+  - [x] Creation of the Container in Docker Compose.
+  - [ ] Implement new runners such as: Swoole, Franken, Nginx, Ubuntu in addition to Apache
+  - [ ] Add Firebird/Interbase compatibility with Firebird 3 from PHP 8.1 to PHP 8-3 in Linux php:8.x-apache.
   - [ ] Creation of Migrations between all Databases.
 - Source
   - Connection
@@ -219,18 +222,28 @@ PHP-Generic-Database is released under the MIT license.
     - [x] Add file support format connection to INI.
     - [x] Add file support format connection to YAML.
     - [ ] Add file support format connection to NEON.
-    - [x] Added compatibility for PDO engine.
-    - [x] Added compatibility for ODBC engine.
-    - [ ] Added compatibility for MongoDB Database.
-    - [ ] Added compatibility for Cassandra Database.
-    - [ ] Added compatibility for SyBase Database.
-    - [ ] Added compatibility for dBase Database.
+    - [x] Add compatibility for PDO engine.
+    - [x] Add compatibility for ODBC engine.
+    - [-] Add compatibility for MongoDB Database.
+    - [-] Add compatibility for Cassandra Database.
+    - [-] Add compatibility for SyBase Database.
+    - [-] Add compatibility for dBase Database.
   - [x] Implement fetch and fetchAll methods.
   - [ ] Add transaction, commit and rollback support.
   - [x] QueryBuilder creation for engines.
-  - [ ] QueryBuilder creation for strategy.
+  - [x] QueryBuilder creation for strategy.
   - [ ] Identify engine version for detect support Pagination Syntax (SQL Server 2008 unsupported pagination nativally).
   - [ ] Integrate version and compile options in attach in attributes connections.
   - [ ] Increase new extra connection attribute for ODBC, sets database alias manually.
   - [ ] Remove connection attribute exception and validate exceptions manually.
   - [ ] Add boolean feature for cache connections settings.
+  - [ ] Create a new class for cache connections settings.
+  - [ ] Create a new class for cache results.
+  - [ ] Create a new class for cache queries.
+  - [ ] Create a new class for Statements.
+  - [ ] Rename class Statements to Fetchts.
+  - [ ] Optimize class Statements to use in Fetchts class.
+  - [ ] Optimize class Statements for MySQLi, PgSQL, SQLSrv, SQLite and ODBC.
+  - [ ] Install a lib from SQL Parser to use in Query and Prepare Method.
+  - [ ] Fix prepare method for PDO engine.
+  - [ ] Fix problem with method Arrays::makeArgs to SQLSrv engine.

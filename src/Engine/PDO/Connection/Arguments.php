@@ -67,8 +67,6 @@ class Arguments
      * @param string $format Accept formats json, xml, ini and yaml
      * @param mixed $arguments
      * @return PDOConnection
-     * @noinspection PhpUnused
-     * @noinspection PhpUnused
      */
     private static function callArgumentsByFormat(string $format, mixed $arguments): PDOConnection
     {
@@ -118,7 +116,6 @@ class Arguments
      *
      * @param array $arguments
      * @return PDOConnection
-     * @noinspection PhpUnused
      * @noinspection PhpUnused
      */
     private static function callWithByStaticArgs(array $arguments): PDOConnection

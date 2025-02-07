@@ -2,111 +2,474 @@
 
 namespace GenericDatabase\Engine\Firebird\Connection;
 
+use GenericDatabase\Engine\FirebirdConnection;
 use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Reflections;
-use ReflectionException;
+use GenericDatabase\Helpers\Translate;
+use GenericDatabase\Helpers\Validations;
+use stdClass;
 
 class Statements
 {
     /**
-     * @throws ReflectionException
+     * Instance of the Statement of the database
+     * @var mixed $statement = null
      */
-    public static function internalFetchClass(
-        $statement = null,
-        $constructorArguments = [],
-        $aClassOrObject = '\stdClass',
-    ) {
-        $rowData = self::internalFetchAssoc($statement);
-        $fetchArgument = $constructorArguments ?? [];
-        if (is_array($rowData)) {
-            return Reflections::createObjectAndSetPropertiesCaseInsensitive($aClassOrObject, $fetchArgument, $rowData);
-        }
-        return $rowData;
-    }
+    private static mixed $statement = null;
+    
+    /**
+     * Instance of the Statement of the database
+     * @var mixed $statementResult = null
+     */
+    private static mixed $statementResult = null;
 
-    public static function internalFetchBoth($statement = null): bool|array
-    {
-        $tmpData = ibase_fetch_assoc($statement, IBASE_TEXT);
-        if (is_array($tmpData)) {
-            return Arrays::assocToIndexCombine($tmpData);
-        }
-        return false;
-    }
+    /**
+     * Count rows in query statement
+     * @var ?int $queryRows = 0
+     */
+    private static ?int $queryRows = 0;
 
-    public static function internalFetchAssoc($statement = null): bool|array
-    {
-        return ibase_fetch_assoc($statement, IBASE_TEXT);
-    }
+    /**
+     * Count columns in query statement
+     * @var ?int $queryColumns = 0
+     */
+    private static ?int $queryColumns = 0;
 
-    public static function internalFetchNum($statement = null): bool|array
-    {
-        return ibase_fetch_row($statement, IBASE_TEXT);
-    }
+    /**
+     * Affected row in query statement
+     * @var ?int $affectedRows = 0
+     */
+    private static ?int $affectedRows = 0;
 
-    public static function internalFetchColumn($statement = null, $columnIndex = 0)
-    {
-        $rowData = self::internalFetchNum($statement);
-        $fetchArgument = $columnIndex ?? 0;
-        if (is_array($rowData)) {
-            return $rowData[$fetchArgument] ?? null;
-        }
-        return false;
-    }
+    /**
+     * Lasts params query executed
+     * @var ?array $queryParameters = []
+     */
+    private static ?array $queryParameters = [];
 
-    public static function internalFetchAllAssoc($statement = null): array
-    {
-        $result = [];
-        while ($data = self::internalFetchAssoc($statement)) {
-            $result[] = $data;
-        }
-        return $result;
-    }
+    /**
+     * Last string query executed
+     * @var string $queryString = ''
+     */
+    private static string $queryString = '';
 
-    /** @noinspection PhpUnused */
-    public static function internalFetchAllNum($statement = null): array
+    /**
+     * Reset query metadata
+     *
+     * @return void
+     */
+    public static function setAllMetadata(): void
     {
-        $result = [];
-        while ($data = self::internalFetchNum($statement)) {
-            $result[] = $data;
-        }
-        return $result;
-    }
-
-    /** @noinspection PhpUnused */
-    public static function internalFetchAllBoth($statement = null): array
-    {
-        $result = [];
-        while ($data = self::internalFetchBoth($statement)) {
-            $result[] = $data;
-        }
-        return $result;
-    }
-
-    /** @noinspection PhpUnused */
-    public static function internalFetchAllColumn($statement = null, $columnIndex = 0): array
-    {
-        $result = [];
-        $fetchArgument = $columnIndex ?? 0;
-        while ($data = self::internalFetchColumn($statement, $fetchArgument)) {
-            $result[] = $data;
-        }
-        return $result;
+        self::$queryString = '';
+        self::$queryParameters = [];
+        self::$queryRows = 0;
+        self::$queryColumns = 0;
+        self::$affectedRows = 0;
     }
 
     /**
-     * @throws ReflectionException
-     * @noinspection PhpUnused
+     * Returns an object containing the number of queried rows and the number of affected rows.
+     *
+     * @return object An associative object with keys 'queryRows' and 'affectedRows'.
      */
-    public static function internalFetchAllClass(
-        $statement = null,
-        $constructorArguments = [],
-        $aClassOrObject = '\stdClass',
-    ): array {
-        $result = [];
-        $fetchArgument = $constructorArguments ?? [];
-        while ($row = self::internalFetchClass($statement, $fetchArgument, $aClassOrObject)) {
-            $result[] = $row;
+    public static function getAllMetadata(): object
+    {
+        $metadata = new stdClass();
+        $metadata->queryString = self::getQueryString();
+        $metadata->queryParameters = self::getQueryParameters();
+        $metadata->queryRows = self::getQueryRows();
+        $metadata->queryColumns = self::getQueryColumns();
+        $metadata->affectedRows = self::getAffectedRows();
+        return $metadata;
+    }
+
+    /**
+     * Returns the query string.
+     *
+     * @return string The query string associated with this instance.
+     */
+    public static function getQueryString(): string
+    {
+        return self::$queryString;
+    }
+
+    /**
+     * Sets the query string for the Connection instance.
+     *
+     * @param string $params The query string to set.
+     */
+    public static function setQueryString(string $params): void
+    {
+        self::$queryString = $params;
+    }
+
+    /**
+     * Returns the parameters associated with this instance.
+     *
+     * @return array|null The parameters associated with this instance.
+     */
+    public static function getQueryParameters(): ?array
+    {
+        return self::$queryParameters;
+    }
+
+    /**
+     * Sets the query parameters for the Connection instance.
+     *
+     * @param array|null $params The query parameters to set.
+     */
+    public static function setQueryParameters(?array $params): void
+    {
+        self::$queryParameters = $params;
+    }
+
+    /**
+     * Returns the number of rows affected by an operation.
+     *
+     * @return int|false The number of affected rows
+     */
+    public static function getQueryRows(): int|false
+    {
+        return self::$queryRows;
+    }
+
+    /**
+     * Sets the number of query rows for the Connection instance.
+     *
+     * @param callable|int|false $params The number of query rows to set.
+     * @return void
+     */
+    public static function setQueryRows(callable|int|false $params): void
+    {
+        self::$queryRows = $params;
+    }
+
+    /**
+     * Returns the number of columns in a statement result.
+     *
+     * @return int|false The number of columns in the result or false in case of an error.
+     */
+    public static function getQueryColumns(): int|false
+    {
+        return self::$queryColumns;
+    }
+
+    /**
+     * Sets the number of columns in the query result.
+     *
+     * @param int|false $params The number of columns or false if there are no columns.
+     * @return void
+     */
+    public static function setQueryColumns(int|false $params): void
+    {
+        self::$queryColumns = $params;
+    }
+
+    /**
+     * Returns the number of rows affected by an operation.
+     *
+     * @return int|false The number of affected rows
+     */
+    public static function getAffectedRows(): int|false
+    {
+        return self::$affectedRows;
+    }
+
+    /**
+     * Sets the number of affected rows for the Connection instance.
+     *
+     * @param int|false $params The number of affected rows to set.
+     * @return void
+     */
+    public static function setAffectedRows(int|false $params): void
+    {
+        self::$affectedRows = (int) $params;
+    }
+
+    /**
+     * Returns the statement for the function.
+     *
+     * @return mixed
+     */
+    public static function getStatement(): mixed
+    {
+        return self::$statement;
+    }
+
+    /**
+     * Sets the statement for the function.
+     *
+     * @param mixed $statement The statement to be set.
+     */
+    public static function setStatement(mixed $statement): void
+    {
+        self::$statement = $statement;
+    }
+
+   /**
+     * Returns the statement result for the function.
+     *
+     * @return mixed
+     */
+    private static function getStatementResult(): mixed
+    {
+        return self::$statementResult;
+    }
+
+    /**
+     * Set the statement for the function.
+     *
+     * @param mixed $statement The statement to be set.
+     */
+    private static function setStatementResult(mixed $statement): void
+    {
+        self::$statementResult = $statement;
+    }
+
+    /**
+     * Binds variables to a prepared statement with specified types.
+     * This method binds variables to a prepared statement based on their types,
+     * allowing for more precise parameter binding.
+     *
+     * @param mixed $data The prepared statement to bind variables to.
+     * @return mixed The prepared statement with bound variables.
+     */
+    private static function internalBindVariable(mixed $data): mixed
+    {
+        return Validations::detectTypes($data);
+    }
+
+    /**
+     * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
+     *
+     * @param mixed $params Content to be quoted
+     * @return mixed
+     */
+    public static function quote(mixed ...$params): mixed
+    {
+        $string = reset($params);
+        return match (true) {
+            is_int($string) => $string,
+            is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
+            is_bool($string) => $string ? '1' : '0',
+            is_null($string) => 'NULL',
+            default => "'" . str_replace("'", "''", (string) $string) . "'",
+        };
+    }
+
+    /**
+     * This function returns the last ID generated by an auto-increment column,
+     * either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     *
+     * @param ?string $name = null Resource name, table or view
+     * @return string|int|false
+     */
+    public static function lastInsertId(?string $name = null): string|int|false
+    {
+        if (!$name) {
+            return 0;
         }
-        return $result;
+        $filter = 'WHERE RDB$RELATION_NAME = ? AND RDB$IDENTITY_TYPE = 1';
+        $query = sprintf('SELECT RDB$FIELD_NAME, RDB$GENERATOR_NAME FROM RDB$RELATION_FIELDS %s', $filter);
+        $stmt = ibase_prepare(FirebirdConnection::getInstance()->getConnection(), $query);
+        $result = ibase_execute($stmt, $name);
+        if (!$result) {
+            return false;
+        }
+        $row = ibase_fetch_assoc($result);
+        if (isset($row['RDB$GENERATOR_NAME'])) {
+            $identityColumn = $row['RDB$GENERATOR_NAME'];
+            $query = sprintf('SELECT GEN_ID(%s, 0) AS LASTINSERTEDID FROM RDB$DATABASE', $identityColumn);
+            $stmt = ibase_query(FirebirdConnection::getInstance()->getConnection(), $query);
+            if (!$stmt) {
+                return false;
+            }
+            $result = ibase_fetch_assoc($stmt);
+            if ($result) {
+                return (int) $result['LASTINSERTEDID'];
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Binds an array multiple parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    private static function internalBindParamArrayMulti(mixed ...$params): void
+    {
+        $affectedRows = 0;
+        foreach ($params['sqlArgs'] as $param) {
+            $referenceParams = array_values($param);
+            $stmt = self::exec($params['sqlStatement'], $referenceParams);
+            self::setStatement($stmt);
+            $affectedRows++;
+            self::setAffectedRows((int) $affectedRows);
+        }
+    }
+
+    /**
+     * Binds an array single parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    private static function internalBindParamArraySingle(mixed ...$params): void
+    {
+        self::internalBindParamArgs(...$params);
+    }
+
+    /**
+     * Binds an array parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    private static function internalBindParamArray(mixed ...$params): void
+    {
+        if ($params['isMulti']) {
+            self::internalBindParamArrayMulti(...$params);
+        } else {
+            self::internalBindParamArraySingle(...$params);
+        }
+    }
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @return void
+     */
+    private static function internalBindParamArgs(mixed ...$params): void
+    {
+        $referenceParams = array_values($params['sqlArgs']);
+        $stmt = self::exec($params['sqlStatement'], $referenceParams);
+        self::setStatement($stmt);
+        $affectedRows = ibase_affected_rows(FirebirdConnection::getInstance()->getConnection());
+        if ($affectedRows !== 0) {
+            self::setAffectedRows($affectedRows);
+        }        
+    }
+
+    /**
+     * This function makes an arguments list
+     *
+     * @param mixed $params Arguments list
+     * @param mixed $driver Driver name
+     * @return array
+     */
+    private static function makeArgs(mixed $driver, mixed ...$params): array
+    {
+        return Arrays::makeArgs($driver, ...$params);
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    public static function bindParam(mixed ...$params): void
+    {
+        self::setQueryParameters($params['sqlArgs']);
+        if ($params['isArray']) {
+            self::internalBindParamArray(...$params);
+        } else {
+            self::internalBindParamArgs(...$params);
+        }
+    }
+
+    /**
+     * Parses an SQL statement and returns an statement.
+     *
+     * @param mixed ...$params The parameters for the query function.
+     * @return string The statement resulting from the SQL statement.
+     */
+    public static function parse(mixed ...$params): string
+    {
+        self::setQueryString(Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE)));
+        return self::getQueryString();
+    }
+
+    /**
+     * This function executes an SQL statement and returns the result set as a statement object.
+     *
+     * @param mixed $params Statement to be queried
+     * @return FirebirdConnection|null
+     */
+    public static function query(mixed ...$params): ?FirebirdConnection
+    {
+        self::setAllMetadata();
+        if (!empty($params)) {
+            $stmt = ibase_query(FirebirdConnection::getInstance()->getConnection(), self::parse(...$params));
+            $affectedRows = ibase_affected_rows(FirebirdConnection::getInstance()->getConnection());
+            if ($affectedRows === 0) {
+                self::setQueryColumns(ibase_num_fields($stmt));
+                $results = [];
+                while ($row = ibase_fetch_assoc($stmt)) {
+                    $results[] = $row;
+                }
+                self::setStatement(['results' => $results]);
+                self::setQueryRows(count($results));
+            } else {
+                self::setStatement(['results' => []]);
+                self::setAffectedRows($affectedRows);
+            }
+        }
+        return FirebirdConnection::getInstance();
+    }
+
+    /**
+     * This function binds the parameters to a prepared query.
+     *
+     * @param mixed ...$params
+     * @return FirebirdConnection|null
+     */
+    public static function prepare(mixed ...$params): ?FirebirdConnection
+    {
+        $driver = FirebirdConnection::getInstance()->getDriver();
+        self::setAllMetadata();
+        if (!empty($params)) {
+            $query = self::parse(...$params);
+            $stmt = ibase_prepare(FirebirdConnection::getInstance()->getConnection(), $query);
+            array_unshift($params, $stmt);
+            $bindParams = self::makeArgs($driver, ...$params);
+            self::bindParam(...$bindParams);
+            $affectedRows = ibase_affected_rows(FirebirdConnection::getInstance()->getConnection());
+            if ($affectedRows === 0) {
+                $stmtCount = ibase_prepare(FirebirdConnection::getInstance()->getConnection(), $query);
+                $rowCount = 0;
+                $referenceParams = array_values($bindParams['sqlArgs']);
+                $stmtExec = self::exec($stmtCount, $referenceParams);
+                if ($stmtExec) {
+                    while (ibase_fetch_assoc($stmtExec)) {
+                        $rowCount++;
+                    }
+                    ibase_free_result($stmtExec);
+                }
+                self::setQueryRows($rowCount);
+            }
+            self::setQueryColumns(ibase_num_fields($stmt));
+        }
+    
+        return FirebirdConnection::getInstance();
+    }
+
+    /**
+     * This function runs an SQL statement and returns the number of affected rows.
+     *
+     * @param mixed $params Statement to be executed
+     * @return mixed
+     */
+    public static function exec(mixed ...$params): mixed
+    {
+        $statement = reset($params);
+        $data = $params[1] ?? false;
+        if (!is_array($data)) {
+            $data = [];
+        }
+        $data = self::internalBindVariable($data);
+        array_unshift($data, $statement);
+        return call_user_func_array('ibase_execute', $data);
     }
 }

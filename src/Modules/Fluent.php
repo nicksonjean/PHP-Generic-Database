@@ -178,12 +178,12 @@ class Fluent
             call_user_func([$className, 'setEngine'], 'firebird');
         }
         /** @var Connection|FirebirdConnection $className */
-        $instance = $className::setHost($env['FBIRD_HOST']);
-        $instance::setPort((int) $env['FBIRD_PORT'])
-            ::setDatabase($env['FBIRD_DATABASE'])
-            ::setUser($env['FBIRD_USERNAME'])
-            ::setPassword($env['FBIRD_PASSWORD'])
-            ::setCharset($env['FBIRD_CHARSET'])
+        $instance = $className::setHost($env['IBASE_HOST']);
+        $instance::setPort((int) $env['IBASE_PORT'])
+            ::setDatabase($env['IBASE_DATABASE'])
+            ::setUser($env['IBASE_USERNAME'])
+            ::setPassword($env['IBASE_PASSWORD'])
+            ::setCharset($env['IBASE_CHARSET'])
             ::setOptions([
                 Firebird::ATTR_PERSISTENT => $persistent,
                 Firebird::ATTR_CONNECT_TIMEOUT => 28800,

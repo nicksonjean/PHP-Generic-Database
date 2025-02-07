@@ -17,6 +17,7 @@ use GenericDatabase\Engine\Firebird\Connection\DSN;
 use GenericDatabase\Engine\Firebird\Connection\Dump;
 use GenericDatabase\Engine\Firebird\Connection\Transaction;
 use GenericDatabase\Engine\Firebird\Connection\Statements;
+use GenericDatabase\Engine\Firebird\Connection\Fetchs;
 use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
@@ -70,54 +71,6 @@ class FirebirdConnection implements IConnection
      * @var mixed $connection
      */
     private static mixed $connection;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statement = null
-     */
-    private static mixed $statement = null;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statementResult = null
-     */
-    private static mixed $statementResult = null;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statementCount = null
-     */
-    private static mixed $statementCount = null;
-
-    /**
-     * Count rows in query statement
-     * @var ?int $queryRows = 0
-     */
-    private ?int $queryRows = 0;
-
-    /**
-     * Count columns in query statement
-     * @var ?int $queryColumns = 0
-     */
-    private ?int $queryColumns = 0;
-
-    /**
-     * Affected row in query statement
-     * @var ?int $affectedRows = 0
-     */
-    private ?int $affectedRows = 0;
-
-    /**
-     * Lasts params query executed
-     * @var ?array $queryParameters = []
-     */
-    private ?array $queryParameters = [];
-
-    /**
-     * Last string query executed
-     * @var string $queryString = ''
-     */
-    private string $queryString = '';
 
     /**
      * Empty constructor since initialization is handled by traits and interface methods
@@ -206,9 +159,10 @@ class FirebirdConnection implements IConnection
         $dsn = vsprintf('%s/%s:%s', [$host, $port, $database]);
         $this->setConnection(
             (string) !Options::getOptions(Firebird::ATTR_PERSISTENT)
-            ? ibase_connect($dsn, $user, $password)
-            : ibase_pconnect($dsn, $user, $password)
+                ? ibase_connect($dsn, $user, $password)
+                : ibase_pconnect($dsn, $user, $password)
         );
+        
         return $this;
     }
 
@@ -387,7 +341,7 @@ class FirebirdConnection implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return !is_null($name) ? $name : 0;
+        return Statements::lastInsertId($name);
     }
 
     /**
@@ -398,14 +352,7 @@ class FirebirdConnection implements IConnection
      */
     public function quote(mixed ...$params): string|int
     {
-        $string = $params[0];
-        return match (true) {
-            is_int($string) => $string,
-            is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
-            is_bool($string) => $string ? '1' : '0',
-            is_null($string) => 'NULL',
-            default => "'" . str_replace("'", "''", (string) $string) . "'",
-        };
+        return Statements::quote(...$params);
     }
 
     /**
@@ -415,11 +362,7 @@ class FirebirdConnection implements IConnection
      */
     private function setAllMetadata(): void
     {
-        $this->queryString = '';
-        $this->queryParameters = [];
-        $this->queryRows = 0;
-        $this->queryColumns = 0;
-        $this->affectedRows = 0;
+        Statements::setAllMetadata();
     }
 
     /**
@@ -429,13 +372,7 @@ class FirebirdConnection implements IConnection
      */
     public function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = $this->getQueryString();
-        $metadata->queryParameters = $this->getQueryParameters();
-        $metadata->queryRows = $this->getQueryRows();
-        $metadata->queryColumns = $this->getQueryColumns();
-        $metadata->affectedRows = $this->getAffectedRows();
-        return $metadata;
+        return Statements::getAllMetadata();
     }
 
     /**
@@ -445,7 +382,7 @@ class FirebirdConnection implements IConnection
      */
     public function getQueryString(): string
     {
-        return $this->queryString;
+        return Statements::getQueryString();
     }
 
     /**
@@ -455,7 +392,7 @@ class FirebirdConnection implements IConnection
      */
     public function setQueryString(string $params): void
     {
-        $this->queryString = $params;
+        Statements::setQueryString($params);
     }
 
     /**
@@ -465,7 +402,7 @@ class FirebirdConnection implements IConnection
      */
     public function getQueryParameters(): ?array
     {
-        return $this->queryParameters;
+        return Statements::getQueryParameters();
     }
 
     /**
@@ -475,7 +412,7 @@ class FirebirdConnection implements IConnection
      */
     public function setQueryParameters(?array $params): void
     {
-        $this->queryParameters = $params;
+        Statements::setQueryParameters($params);
     }
 
     /**
@@ -485,7 +422,7 @@ class FirebirdConnection implements IConnection
      */
     public function getQueryRows(): int|false
     {
-        return $this->queryRows;
+        return Statements::getQueryRows();
     }
 
     /**
@@ -496,10 +433,7 @@ class FirebirdConnection implements IConnection
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        $this->queryRows = (function () use ($params) {
-            $this->bindParam(...self::$statementCount);
-            return $params();
-        });
+        Statements::setQueryRows($params);
     }
 
     /**
@@ -509,7 +443,7 @@ class FirebirdConnection implements IConnection
      */
     public function getQueryColumns(): int|false
     {
-        return $this->queryColumns;
+        return Statements::getQueryColumns();
     }
 
     /**
@@ -520,7 +454,7 @@ class FirebirdConnection implements IConnection
      */
     public function setQueryColumns(int|false $params): void
     {
-        $this->queryColumns = $params;
+        Statements::setQueryColumns($params);
     }
 
     /**
@@ -530,7 +464,7 @@ class FirebirdConnection implements IConnection
      */
     public function getAffectedRows(): int|false
     {
-        return $this->affectedRows;
+        return Statements::getAffectedRows();
     }
 
     /**
@@ -541,7 +475,7 @@ class FirebirdConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->affectedRows = $this->getAffectedRows() + $params;
+        Statements::setAffectedRows($params);
     }
 
     /**
@@ -551,7 +485,7 @@ class FirebirdConnection implements IConnection
      */
     public function getStatement(): mixed
     {
-        return self::$statement;
+        return Statements::getStatement();
     }
 
     /**
@@ -561,110 +495,7 @@ class FirebirdConnection implements IConnection
      */
     public function setStatement(mixed $statement): void
     {
-        self::$statement = $statement;
-    }
-
-    /**
-     * Returns the statement result for the function.
-     *
-     * @return mixed
-     */
-    private function getStatementResult(): mixed
-    {
-        return self::$statementResult;
-    }
-
-    /**
-     * Set the statement for the function.
-     *
-     * @param mixed $statement The statement to be set.
-     */
-    private function setStatementResult(mixed $statement): void
-    {
-        self::$statementResult = $statement;
-    }
-
-    /**
-     * Binds variables to a prepared statement with specified types.
-     * This method binds variables to a prepared statement based on their types,
-     * allowing for more precise parameter binding.
-     *
-     * @param mixed $data The prepared statement to bind variables to.
-     * @return mixed The prepared statement with bound variables.
-     */
-    private function internalBindVariable(mixed $data): mixed
-    {
-        return Validations::detectTypes($data);
-    }
-
-    /**
-     * Binds an array multiple parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArrayMulti(mixed ...$params): void
-    {
-        foreach ($params['sqlArgs'] as $param) {
-            $referenceParams = array_values($param);
-            (!$params['rowCount'])
-                ? $this->setStatement($this->exec($params['sqlStatement'], $referenceParams))
-                : $this->setStatementResult($this->exec($params['sqlStatement'], $referenceParams));
-            $this->setAffectedRows(ibase_affected_rows($this->getConnection()));
-        }
-    }
-
-    /**
-     * Binds an array single parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArraySingle(mixed ...$params): void
-    {
-        $this->internalBindParamArgs(...$params);
-    }
-
-    /**
-     * Binds an array parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArray(mixed ...$params): void
-    {
-        if ($params['isMulti']) {
-            $this->internalBindParamArrayMulti(...$params);
-        } else {
-            $this->internalBindParamArraySingle(...$params);
-        }
-    }
-
-    /**
-     * Binds a parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArgs(mixed ...$params): void
-    {
-        $referenceParams = array_values($params['sqlArgs']);
-        (!$params['rowCount'])
-            ? $this->setStatement($this->exec($params['sqlStatement'], $referenceParams))
-            : $this->setStatementResult($this->exec($params['sqlStatement'], $referenceParams));
-        $this->setAffectedRows(ibase_affected_rows($this->getConnection()));
-    }
-
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
+        Statements::setStatement($statement);
     }
 
     /**
@@ -675,12 +506,7 @@ class FirebirdConnection implements IConnection
      */
     public function bindParam(mixed ...$params): void
     {
-        $this->setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            $this->internalBindParamArray(...$params);
-        } else {
-            $this->internalBindParamArgs(...$params);
-        }
+        Statements::bindParam(...$params);
     }
 
     /**
@@ -691,9 +517,7 @@ class FirebirdConnection implements IConnection
      */
     private function parse(mixed ...$params): string
     {
-        $queryString = Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE));
-        $this->setQueryString($queryString);
-        return $this->getQueryString();
+        return Statements::parse(...$params);
     }
 
     /**
@@ -704,21 +528,7 @@ class FirebirdConnection implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $driver = Compare::connection($this->getConnection());
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $stmt = ibase_query($this->getConnection(), $this->parse(...$params));
-            $this->setStatement($stmt);
-            $rowCount = $params;
-            $statement = ibase_prepare($this->getConnection(), $this->parse(...$params));
-            array_unshift($rowCount, $statement);
-            array_unshift($params, $this->getStatement());
-            self::$statementCount = array_merge($this->makeArgs($driver, ...$rowCount), ['rowCount' => true]);
-            $this->setQueryRows(fn() => count(Statements::internalFetchAllAssoc($this->getStatementResult())));
-            $this->setQueryColumns(ibase_num_fields($statement));
-            $this->setAffectedRows(ibase_affected_rows($this->getConnection()));
-        }
-        return $this;
+        return Statements::query(...$params);
     }
 
     /**
@@ -729,20 +539,7 @@ class FirebirdConnection implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $driver = Compare::connection($this->getConnection());
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $stmt = ibase_prepare($this->getConnection(), $this->parse(...$params));
-            $rowCount = $params;
-            array_unshift($rowCount, ibase_prepare($this->getConnection(), $this->parse(...$params)));
-            array_unshift($params, $stmt);
-            $bindParams = array_merge($this->makeArgs($driver, ...$params), ['rowCount' => false]);
-            self::$statementCount = array_merge($this->makeArgs($driver, ...$rowCount), ['rowCount' => true]);
-            $this->bindParam(...$bindParams);
-            $this->setQueryRows(fn() => count(Statements::internalFetchAllAssoc($this->getStatementResult())));
-            $this->setQueryColumns(ibase_num_fields($stmt));
-        }
-        return $this;
+        return Statements::prepare(...$params);
     }
 
     /**
@@ -753,14 +550,7 @@ class FirebirdConnection implements IConnection
      */
     public function exec(mixed ...$params): mixed
     {
-        $statement = reset($params);
-        $data = $params[1] ?? false;
-        if (!is_array($data)) {
-            $data = [];
-        }
-        $data = $this->internalBindVariable($data);
-        array_unshift($data, $statement);
-        return call_user_func_array('ibase_execute', $data);
+        return Statements::exec(...$params);
     }
 
     /**
@@ -778,11 +568,11 @@ class FirebirdConnection implements IConnection
         return match ($fetch) {
             Firebird::FETCH_OBJ,
             Firebird::FETCH_INTO,
-            Firebird::FETCH_CLASS => Statements::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
-            Firebird::FETCH_COLUMN => Statements::internalFetchColumn($this->getStatement(), $fetchArgument),
-            Firebird::FETCH_ASSOC => Statements::internalFetchAssoc($this->getStatement()),
-            Firebird::FETCH_NUM => Statements::internalFetchNum($this->getStatement()),
-            default => Statements::internalFetchBoth($this->getStatement()),
+            Firebird::FETCH_CLASS => Fetchs::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
+            Firebird::FETCH_COLUMN => Fetchs::internalFetchColumn($this->getStatement(), $fetchArgument),
+            Firebird::FETCH_ASSOC => Fetchs::internalFetchAssoc($this->getStatement()),
+            Firebird::FETCH_NUM => Fetchs::internalFetchNum($this->getStatement()),
+            default => Fetchs::internalFetchBoth($this->getStatement()),
         };
     }
 
@@ -800,11 +590,12 @@ class FirebirdConnection implements IConnection
         $fetch = is_null($fetchStyle) ? Options::getOptions(Firebird::ATTR_DEFAULT_FETCH_MODE) : $fetchStyle;
         return match ($fetch) {
             Firebird::FETCH_OBJ,
-            Firebird::FETCH_CLASS => Statements::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
-            Firebird::FETCH_COLUMN => Statements::internalFetchAllColumn($this->getStatement(), $fetchArgument),
-            Firebird::FETCH_ASSOC => Statements::internalFetchAllAssoc($this->getStatement()),
-            Firebird::FETCH_NUM => Statements::internalFetchAllNum($this->getStatement()),
-            default => Statements::internalFetchAllBoth($this->getStatement()),
+            Firebird::FETCH_INTO,
+            Firebird::FETCH_CLASS => Fetchs::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
+            Firebird::FETCH_COLUMN => Fetchs::internalFetchAllColumn($this->getStatement(), $fetchArgument),
+            Firebird::FETCH_ASSOC => Fetchs::internalFetchAllAssoc($this->getStatement()),
+            Firebird::FETCH_NUM => Fetchs::internalFetchAllNum($this->getStatement()),
+            default => Fetchs::internalFetchAllBoth($this->getStatement()),
         };
     }
 

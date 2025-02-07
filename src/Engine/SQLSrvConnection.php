@@ -7,6 +7,7 @@ namespace GenericDatabase\Engine;
 use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
+use Exception;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
 use GenericDatabase\Engine\SQLSrv\Connection\Arguments;
@@ -16,6 +17,7 @@ use GenericDatabase\Engine\SQLSrv\Connection\DSN;
 use GenericDatabase\Engine\SQLSrv\Connection\Dump;
 use GenericDatabase\Engine\SQLSrv\Connection\Transaction;
 use GenericDatabase\Engine\SQLSrv\Connection\Statements;
+use GenericDatabase\Engine\SQLSrv\Connection\Fetchs;
 use GenericDatabase\Helpers\CustomException;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
@@ -25,8 +27,6 @@ use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Cleaner;
 use GenericDatabase\Shared\Singleton;
-use Exception;
-use stdClass;
 
 /**
  * Dynamic and Static container class for SQLSrvConnection connections.
@@ -109,9 +109,7 @@ class SQLSrvConnection implements IConnection
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -379,34 +377,7 @@ class SQLSrvConnection implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        if (!$name) {
-            $query = "SELECT CAST(@@IDENTITY AS BIGINT) AS LastInsertedID";
-            $statement = sqlsrv_query($this->getConnection(), $query);
-            if ($statement) {
-                $row = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC);
-                sqlsrv_free_stmt($statement);
-                return $row ? (int) $row['LastInsertedID'] : 0;
-            }
-            return 0;
-        }
-        $filter = "WHERE TABLE_NAME = ? AND TABLE_SCHEMA = SCHEMA_NAME() AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1";
-        $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
-        $statement = sqlsrv_query($this->getConnection(), $query, [$name]);
-        if ($statement) {
-            $row = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC);
-            sqlsrv_free_stmt($statement);
-            if (isset($row['COLUMN_NAME'])) {
-                $identityColumn = $row['COLUMN_NAME'];
-                $query = sprintf("SELECT MAX(%s) AS LastInsertedID FROM %s", $identityColumn, $name);
-                $statement = sqlsrv_query($this->getConnection(), $query);
-                if ($statement) {
-                    $result = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC);
-                    sqlsrv_free_stmt($statement);
-                    return $result ? (int) $result['LastInsertedID'] : 0;
-                }
-            }
-        }
-        return 0;
+        return Statements::lastInsertId($name);
     }
 
     /**
@@ -417,14 +388,7 @@ class SQLSrvConnection implements IConnection
      */
     public function quote(mixed ...$params): string|int
     {
-        $string = reset($params);
-        return match (true) {
-            is_int($string) => $string,
-            is_float($string) => "'" . str_replace(',', '.', strval($string)) . "'",
-            is_bool($string) => $string ? '1' : '0',
-            is_null($string) => 'NULL',
-            default => "'" . str_replace("'", "''", (string) $string) . "'",
-        };
+        return Statements::quote(...$params);
     }
 
     /**
@@ -434,11 +398,7 @@ class SQLSrvConnection implements IConnection
      */
     private function setAllMetadata(): void
     {
-        $this->queryString = '';
-        $this->queryParameters = [];
-        $this->queryRows = 0;
-        $this->queryColumns = 0;
-        $this->affectedRows = 0;
+        Statements::setAllMetadata();
     }
 
     /**
@@ -448,13 +408,7 @@ class SQLSrvConnection implements IConnection
      */
     public function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = $this->getQueryString();
-        $metadata->queryParameters = $this->getQueryParameters();
-        $metadata->queryRows = $this->getQueryRows();
-        $metadata->queryColumns = $this->getQueryColumns();
-        $metadata->affectedRows = $this->getAffectedRows();
-        return $metadata;
+        return Statements::getAllMetadata();
     }
 
     /**
@@ -464,7 +418,7 @@ class SQLSrvConnection implements IConnection
      */
     public function getQueryString(): string
     {
-        return $this->queryString;
+        return Statements::getQueryString();
     }
 
     /**
@@ -474,7 +428,7 @@ class SQLSrvConnection implements IConnection
      */
     public function setQueryString(string $params): void
     {
-        $this->queryString = $params;
+        Statements::setQueryString($params);
     }
 
     /**
@@ -484,7 +438,7 @@ class SQLSrvConnection implements IConnection
      */
     public function getQueryParameters(): ?array
     {
-        return $this->queryParameters;
+        return Statements::getQueryParameters();
     }
 
     /**
@@ -494,7 +448,7 @@ class SQLSrvConnection implements IConnection
      */
     public function setQueryParameters(?array $params): void
     {
-        $this->queryParameters = $params;
+        Statements::setQueryParameters($params);
     }
 
     /**
@@ -504,7 +458,7 @@ class SQLSrvConnection implements IConnection
      */
     public function getQueryRows(): int|false
     {
-        return $this->queryRows;
+        return Statements::getQueryRows();
     }
 
     /**
@@ -515,7 +469,7 @@ class SQLSrvConnection implements IConnection
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        $this->queryRows = $params;
+        Statements::setQueryRows($params);
     }
 
     /**
@@ -525,7 +479,7 @@ class SQLSrvConnection implements IConnection
      */
     public function getQueryColumns(): int|false
     {
-        return $this->queryColumns;
+        return Statements::getQueryColumns();
     }
 
     /**
@@ -536,7 +490,7 @@ class SQLSrvConnection implements IConnection
      */
     public function setQueryColumns(int|false $params): void
     {
-        $this->queryColumns = $params;
+        Statements::setQueryColumns($params);
     }
 
     /**
@@ -546,7 +500,7 @@ class SQLSrvConnection implements IConnection
      */
     public function getAffectedRows(): int|false
     {
-        return $this->affectedRows;
+        return Statements::getAffectedRows();
     }
 
     /**
@@ -557,7 +511,7 @@ class SQLSrvConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->affectedRows = $params;
+        Statements::setAffectedRows($params);
     }
 
     /**
@@ -567,7 +521,7 @@ class SQLSrvConnection implements IConnection
      */
     public function getStatement(): mixed
     {
-        return self::$statement;
+        return Statements::getStatement();
     }
 
     /**
@@ -577,123 +531,7 @@ class SQLSrvConnection implements IConnection
      */
     public function setStatement(mixed $statement): void
     {
-        self::$statement = $statement;
-    }
-
-    /**
-     * Binds variables to a prepared statement with specified types.
-     * This method binds variables to a prepared statement based on their types,
-     * allowing for more precise parameter binding.
-     *
-     * @param mixed $data The prepared statement to bind variables to.
-     * @return resource|false The prepared statement with bound variables.
-     */
-    private function internalBindVariable(mixed $data)
-    {
-        $temporaryStatement = sqlsrv_prepare(
-            $this->getConnection(),
-            $this->getQueryString(),
-            $data
-        );
-        $isSelect = $temporaryStatement && sqlsrv_num_fields($temporaryStatement) > 0;
-        $this->setStatement(sqlsrv_prepare(
-            $this->getConnection(),
-            $this->getQueryString(),
-            $data,
-            [
-                'Scrollable' => $isSelect
-                    ? SQLSRV_CURSOR_STATIC
-                    : SQLSRV_CURSOR_FORWARD
-            ]
-        ));
-        if ($temporaryStatement) {
-            sqlsrv_free_stmt($temporaryStatement);
-        }
-        return $this->getStatement();
-    }
-
-    /**
-     * Binds an array multiple parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArrayMulti(mixed ...$params): void
-    {
-        $referenceParams = [];
-        $preparedParams = [];
-        for ($i = 0; $i < count($params['sqlArgs'][0]); $i++) {
-            if (!array_key_exists($i, $referenceParams)) {
-                $referenceParams[$i] = null;
-            }
-            $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
-        }
-        $this->setStatement($this->internalBindVariable($preparedParams));
-        foreach (Arrays::arrayValuesRecursive($params['sqlArgs']) as $row) {
-            for ($i = 0; $i < count($params['sqlArgs'][0]); $i++) {
-                $referenceParams[$i] = $row[$i];
-            }
-            $this->exec($this->getStatement());
-            $this->setAffectedRows((int) sqlsrv_rows_affected($this->getStatement()));
-        }
-    }
-
-    /**
-     * Binds an array single parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArraySingle(mixed ...$params): void
-    {
-        $this->internalBindParamArgs(...$params);
-    }
-
-    /**
-     * Binds an array parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArray(mixed ...$params): void
-    {
-        $this->setQueryParameters($params['sqlArgs']);
-        if ($params['isMulti']) {
-            $this->internalBindParamArrayMulti(...$params);
-        } else {
-            $this->internalBindParamArraySingle(...$params);
-        }
-    }
-
-    /**
-     * Binds a parameter to a variable in the SQL statement.
-     *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
-     * @return void
-     */
-    private function internalBindParamArgs(mixed ...$params): void
-    {
-        $referenceParams = [];
-        $preparedParams = [];
-        for ($i = 0; $i < count($params['sqlArgs']); $i++) {
-            $referenceParams[$i] = array_values($params['sqlArgs'])[$i];
-            $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
-        }
-        $this->setStatement($this->internalBindVariable($preparedParams));
-        $this->exec($this->getStatement());
-        $this->setAffectedRows((int) sqlsrv_rows_affected($this->getStatement()));
-    }
-
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
+        Statements::setStatement($statement);
     }
 
     /**
@@ -704,12 +542,7 @@ class SQLSrvConnection implements IConnection
      */
     public function bindParam(mixed ...$params): void
     {
-        $this->setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            $this->internalBindParamArray(...$params);
-        } else {
-            $this->internalBindParamArgs(...$params);
-        }
+        Statements::bindParam(...$params);
     }
 
     /**
@@ -720,12 +553,10 @@ class SQLSrvConnection implements IConnection
      */
     private function parse(mixed ...$params): string
     {
-        $queryString = Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE));
-        $this->setQueryString($queryString);
-        return $this->getQueryString();
+        return Statements::parse(...$params);
     }
 
-    /**
+   /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
@@ -733,35 +564,7 @@ class SQLSrvConnection implements IConnection
      */
     public function query(mixed ...$params): static|null
     {
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $query = $this->parse(...$params);
-            $statement = sqlsrv_query($this->getConnection(), $query);
-            if ($statement) {
-                $numFields = sqlsrv_num_fields($statement);
-                if ($numFields > 0) {
-                    $results = [];
-                    while ($row = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC)) {
-                        $results[] = $row;
-                    }
-                    $this->setStatement(['results' => $results]);
-                    $this->setQueryRows(count($results));
-                    $this->setQueryColumns($numFields);
-                    $this->setAffectedRows(0);
-                } else {
-                    $affectedRows = sqlsrv_rows_affected($statement);
-                    $this->setStatement(['results' => []]);
-                    $this->setAffectedRows($affectedRows !== false ? $affectedRows : 0);
-                    $this->setQueryRows(0);
-                    $this->setQueryColumns(0);
-                }
-                sqlsrv_free_stmt($statement);
-            } else {
-                $this->setQueryRows(0);
-                $this->setAffectedRows(0);
-            }
-        }
-        return $this;
+        return Statements::query(...$params);
     }
 
     /**
@@ -772,46 +575,7 @@ class SQLSrvConnection implements IConnection
      */
     public function prepare(mixed ...$params): static|null
     {
-        $driver = Compare::connection($this->getConnection());
-        $this->setAllMetadata();
-        if (!empty($params)) {
-            $query = $this->parse(...$params);
-            if (isset($params[1])) {
-                $results = [];
-                $affectedRows = 0;
-                $numFields = 0;
-                $paramSets = is_array($params[1][0] ?? null) ? $params[1] : [$params[1]];
-                $bindParams = $this->makeArgs($driver, ...$params);
-                $this->setQueryParameters($bindParams['sqlArgs']);
-                foreach ($paramSets as $bindParams) {
-                    $orderedParams = array_values($bindParams);
-                    $statement = sqlsrv_query($this->getConnection(), $query, $orderedParams, ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
-                    if ($statement) {
-                        $numFields = sqlsrv_num_fields($statement);
-                        if ($numFields > 0) {
-                            while ($row = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC)) {
-                                $results[] = $row;
-                            }
-                        } else {
-                            $affectedRows += sqlsrv_rows_affected($statement) !== false ? sqlsrv_rows_affected($statement) : 0;
-                        }
-                        sqlsrv_free_stmt($statement);
-                    }
-                }
-                if ($numFields > 0) {
-                    $this->setStatement(['results' => $results]);
-                    $this->setQueryRows(count($results));
-                    $this->setQueryColumns($numFields);
-                    $this->setAffectedRows(0);
-                } else {
-                    $this->setStatement(['results' => []]);
-                    $this->setAffectedRows($affectedRows);
-                    $this->setQueryRows(0);
-                    $this->setQueryColumns(0);
-                }
-            }
-        }
-        return $this;
+        return Statements::prepare(...$params);
     }
 
     /**
@@ -822,10 +586,7 @@ class SQLSrvConnection implements IConnection
      */
     public function exec(mixed ...$params): mixed
     {
-        $statement = reset($params) ?? $this->getStatement();
-        sqlsrv_execute($statement);
-        $this->setStatement($statement);
-        return $this->getStatement();
+        return Statements::exec(...$params);
     }
 
     /**
@@ -843,11 +604,11 @@ class SQLSrvConnection implements IConnection
         return match ($fetch) {
             SQLSrv::FETCH_OBJ,
             SQLSrv::FETCH_INTO,
-            SQLSrv::FETCH_CLASS => Statements::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
-            SQLSrv::FETCH_COLUMN => Statements::internalFetchColumn($this->getStatement(), $fetchArgument),
-            SQLSrv::FETCH_ASSOC => Statements::internalFetchAssoc($this->getStatement()),
-            SQLSrv::FETCH_NUM => Statements::internalFetchNum($this->getStatement()),
-            default => Statements::internalFetchBoth($this->getStatement()),
+            SQLSrv::FETCH_CLASS => Fetchs::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
+            SQLSrv::FETCH_COLUMN => Fetchs::internalFetchColumn($this->getStatement(), $fetchArgument),
+            SQLSrv::FETCH_ASSOC => Fetchs::internalFetchAssoc($this->getStatement()),
+            SQLSrv::FETCH_NUM => Fetchs::internalFetchNum($this->getStatement()),
+            default => Fetchs::internalFetchBoth($this->getStatement()),
         };
     }
 
@@ -866,12 +627,11 @@ class SQLSrvConnection implements IConnection
         return match ($fetch) {
             SQLSrv::FETCH_OBJ,
             SQLSrv::FETCH_INTO,
-            SQLSrv::FETCH_CLASS =>
-            Statements::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
-            SQLSrv::FETCH_COLUMN => Statements::internalFetchAllColumn($this->getStatement(), $fetchArgument),
-            SQLSrv::FETCH_ASSOC => Statements::internalFetchAllAssoc($this->getStatement()),
-            SQLSrv::FETCH_NUM => Statements::internalFetchAllNum($this->getStatement()),
-            default => Statements::internalFetchAllBoth($this->getStatement()),
+            SQLSrv::FETCH_CLASS => Fetchs::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
+            SQLSrv::FETCH_COLUMN => Fetchs::internalFetchAllColumn($this->getStatement(), $fetchArgument),
+            SQLSrv::FETCH_ASSOC => Fetchs::internalFetchAllAssoc($this->getStatement()),
+            SQLSrv::FETCH_NUM => Fetchs::internalFetchAllNum($this->getStatement()),
+            default => Fetchs::internalFetchAllBoth($this->getStatement()),
         };
     }
 

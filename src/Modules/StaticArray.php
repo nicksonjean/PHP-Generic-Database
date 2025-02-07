@@ -188,11 +188,11 @@ class StaticArray
 
         return $constructor([
             ...$strategy ? ['engine' => 'firebird'] : [],
-            'host' => $env['FBIRD_HOST'],
-            'port' => (int) $env['FBIRD_PORT'],
-            'database' => $env['FBIRD_DATABASE'],
-            'user' => $env['FBIRD_USERNAME'],
-            'password' => $env['FBIRD_PASSWORD'],
+            'host' => $env['IBASE_HOST'],
+            'port' => (int) $env['IBASE_PORT'],
+            'database' => $env['IBASE_DATABASE'],
+            'user' => $env['IBASE_USERNAME'],
+            'password' => $env['IBASE_PASSWORD'],
             'charset' => 'utf8',
             'options' => [
                 Firebird::ATTR_PERSISTENT => $persistent,
