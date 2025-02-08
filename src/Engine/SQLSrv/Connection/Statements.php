@@ -401,7 +401,7 @@ class Statements
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return PgSQLConnection|null
+     * @return SQLSrvConnection|null
      */
     public static function query(mixed ...$params): ?SQLSrvConnection
     {
@@ -439,7 +439,7 @@ class Statements
      * This function binds the parameters to a prepared query.
      *
      * @param mixed ...$params
-     * @return PgSQLConnection|null
+     * @return SQLSrvConnection|null
      */
     public static function prepare(mixed ...$params): ?SQLSrvConnection
     {

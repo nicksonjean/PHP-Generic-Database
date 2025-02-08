@@ -226,7 +226,6 @@ class Statements
     public static function lastInsertId(?string $name = null): string|int|false
     {
         if ($name !== null) {
-
             $filter = "WHERE OWNER = USER AND identity_column = 'YES' AND TABLE_NAME = :tableName";
             $query = sprintf("SELECT data_default AS sequence_val, table_name, column_name FROM all_tab_columns %s", $filter);
             $stmt = oci_parse(OCIConnection::getInstance()->getConnection(), $query);

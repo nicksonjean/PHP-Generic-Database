@@ -3,7 +3,7 @@
 namespace GenericDatabase\Engine\MySQLi\Connection;
 
 use GenericDatabase\Engine\MySQLiConnection;
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Core\Schema;
 use GenericDatabase\Helpers\Translate;
 use mysqli_stmt;
 use stdClass;
@@ -276,7 +276,8 @@ class Statements
             $values[] = $value;
         }
         if (!empty($types)) {
-            $statement->bind_param($types, ...array_values($values));
+            $valueArray = array_values($values);
+            $statement->bind_param($types, ...$valueArray);
         }
         return $statement;
     }
@@ -284,14 +285,14 @@ class Statements
     /**
      * Binds an array multiple parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArrayMulti(mixed ...$params): void
+    private static function internalBindParamArrayMulti(object $params): void
     {
         $affectedRows = 0;
-        foreach ($params['sqlArgs'] as $param) {
-            self::setStatement(self::internalBindVariable($param, $params['sqlStatement']));
+        foreach ($params->sqlArgs as $param) {
+            self::setStatement(self::internalBindVariable($param, $params->sqlStatement));
             if (self::exec(self::getStatement())) {
                 if (self::getQueryColumns() === 0) {
                     $affectedRows++;
@@ -304,37 +305,38 @@ class Statements
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArraySingle(mixed ...$params): void
+    private static function internalBindParamArraySingle(object $params): void
     {
-        self::internalBindParamArgs(...$params);
+        self::internalBindParamArgs($params);
     }
 
     /**
      * Binds an array parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArray(mixed ...$params): void
+    private static function internalBindParamArray(object $params): void
     {
-        if ($params['isMulti']) {
-            self::internalBindParamArrayMulti(...$params);
+        if ($params->isMulti) {
+            self::internalBindParamArrayMulti($params);
         } else {
-            self::internalBindParamArraySingle(...$params);
+            self::internalBindParamArraySingle($params);
         }
     }
+
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @param object $params The name of the parameter or an args of parameters and values.
      * @return void
      */
-    private static function internalBindParamArgs(mixed ...$params): void
+    private static function internalBindParamArgs(object $params): void
     {
-        self::setStatement(self::internalBindVariable($params['sqlArgs'], $params['sqlStatement']));
+        self::setStatement(self::internalBindVariable($params->sqlArgs, $params->sqlStatement));
         if (self::exec(self::getStatement())) {
             if (self::getStatement()->field_count > 0) {
                 $result = self::getStatement()->get_result();
@@ -347,31 +349,20 @@ class Statements
             }
         }
     }
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private static function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
-    }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    public static function bindParam(mixed ...$params): void
+    public static function bindParam(object $params): void
     {
-        self::setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            self::internalBindParamArray(...$params);
+        self::setQueryParameters($params->sqlArgs);
+        if ($params->isArray) {
+            self::internalBindParamArray($params);
         } else {
-            self::internalBindParamArgs(...$params);
+            self::internalBindParamArgs($params);
         }
         self::setQueryColumns((int) self::getStatement()->field_count);
     }
@@ -422,14 +413,14 @@ class Statements
                 self::setQueryRows(
                     (function (mixed $stmt): int {
                         $result = $stmt->get_result();
-                        if(!$result) {
+                        if (!$result) {
                             return 0;
                         }
                         $results = $result->fetch_all(MYSQLI_ASSOC);
                         self::setStatement(['results' => $results]);
                         return $result->num_rows;
-                   })($statement) ?? 0
-               );                
+                    })($statement) ?? 0
+                );
             } else {
                 self::setStatement(['results' => []]);
                 self::setAffectedRows((int) $statement->affected_rows);
@@ -446,10 +437,8 @@ class Statements
     public static function prepare(mixed ...$params): ?MySQLiConnection
     {
         if (!empty($params) && (self::prepareStatement(...$params))) {
-            $driver = MySQLiConnection::getInstance()->getDriver();
-            array_unshift($params, self::getStatement());
-            $bindParams = self::makeArgs($driver, ...$params);
-            self::bindParam(...$bindParams);
+            $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
+            self::bindParam($bindParams);
         }
         return MySQLiConnection::getInstance();
     }

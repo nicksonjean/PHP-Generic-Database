@@ -15,7 +15,7 @@ class Statements
      * @var mixed $statement = null
      */
     private static mixed $statement = null;
-    
+
     /**
      * Instance of the Statement of the database
      * @var mixed $statementResult = null
@@ -205,7 +205,7 @@ class Statements
         self::$statement = $statement;
     }
 
-   /**
+    /**
      * Returns the statement result for the function.
      *
      * @return mixed
@@ -348,7 +348,7 @@ class Statements
         $affectedRows = ibase_affected_rows(FirebirdConnection::getInstance()->getConnection());
         if ($affectedRows !== 0) {
             self::setAffectedRows($affectedRows);
-        }        
+        }
     }
 
     /**
@@ -451,7 +451,7 @@ class Statements
             }
             self::setQueryColumns(ibase_num_fields($stmt));
         }
-    
+
         return FirebirdConnection::getInstance();
     }
 

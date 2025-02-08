@@ -3,7 +3,7 @@
 namespace GenericDatabase\Engine\ODBC\Connection;
 
 use GenericDatabase\Engine\ODBCConnection;
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Core\Schema;
 use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Helpers\Validations;
 use stdClass;
@@ -15,7 +15,7 @@ class Statements
      * @var mixed $statement = null
      */
     private static mixed $statement = null;
-    
+
     /**
      * Count rows in query statement
      * @var ?int $queryRows = 0
@@ -218,14 +218,14 @@ class Statements
     }
 
     private static function lastInsertIdMySQL(?string $name = null): string|int|false
-    {       
+    {
         if (!$name) {
             return false;
         }
         $filter = "WHERE TABLE_NAME = ? AND COLUMN_KEY = ? AND EXTRA = ?";
         $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
         $stmt = odbc_prepare(ODBCConnection::getInstance()->getConnection(), $query);
-        odbc_execute($stmt, [$name, 'PRI', 'auto_increment']);	    
+        odbc_execute($stmt, [$name, 'PRI', 'auto_increment']);
         if ($stmt && odbc_fetch_row($stmt)) {
             $identityColumn = odbc_result($stmt, "COLUMN_NAME");
             $query = "SELECT MAX($identityColumn) AS LastInsertedID FROM $name";
@@ -278,7 +278,7 @@ class Statements
     }
 
     private static function lastInsertIdSQLSrv(?string $name = null): string|int|false
-    {       
+    {
         if (!$name) {
             $query = "SELECT @@IDENTITY AS LastInsertedID";
             $stmt = odbc_exec(ODBCConnection::getInstance()->getConnection(), $query);
@@ -288,7 +288,7 @@ class Statements
             return false;
         }
         $filter = "WHERE TABLE_NAME = ? AND TABLE_SCHEMA = SCHEMA_NAME() AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1";
-        $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);              
+        $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
         $stmt = odbc_prepare(ODBCConnection::getInstance()->getConnection(), $query);
         odbc_execute($stmt, [$name]);
         if ($stmt && odbc_fetch_row($stmt)) {
@@ -303,8 +303,8 @@ class Statements
     }
 
     private static function lastInsertIdOCI(?string $name = null): string|int|false
-    {       
-        if ($name !== null) { 
+    {
+        if ($name !== null) {
             $filter = "WHERE OWNER = USER AND identity_column = 'YES' AND TABLE_NAME = ?";
             $query = sprintf("SELECT data_default AS sequence_val, table_name, column_name FROM all_tab_columns %s", $filter);
             $stmt = odbc_prepare(ODBCConnection::getInstance()->getConnection(), $query);
@@ -324,7 +324,7 @@ class Statements
     }
 
     private static function lastInsertIdFirebird(?string $name = null): string|int|false
-    {       
+    {
         if (!$name) {
             return false;
         }
@@ -352,7 +352,7 @@ class Statements
         $stmt = odbc_prepare(ODBCConnection::getInstance()->getConnection(), $query);
         if (!$stmt) {
             return false;
-        }    
+        }
         if (!odbc_execute($stmt, [$name])) {
             return false;
         }
@@ -395,19 +395,19 @@ class Statements
     {
         return Validations::detectTypes($preparedParams);
     }
-    
+
     /**
      * Binds an array multiple parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArrayMulti(mixed ...$params): void
+    private static function internalBindParamArrayMulti(object $params): void
     {
         $affectedRows = 0;
-        foreach ($params['sqlArgs'] as $param) {
+        foreach ($params->sqlArgs as $param) {
             self::internalBindVariable($param);
-            if (self::exec($params['sqlStatement'], array_values($param))) {
+            if (self::exec($params->sqlStatement, array_values($param))) {
                 if (self::getQueryColumns() === 0) {
                     $affectedRows++;
                     self::setAffectedRows((int) $affectedRows);
@@ -419,80 +419,67 @@ class Statements
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArraySingle(mixed ...$params): void
+    private static function internalBindParamArraySingle(object $params): void
     {
-        self::internalBindParamArgs(...$params);
+        self::internalBindParamArgs($params);
     }
 
     /**
      * Binds an array parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArray(mixed ...$params): void
+    private static function internalBindParamArray(object $params): void
     {
-        if ($params['isMulti']) {
-            self::internalBindParamArrayMulti(...$params);
+        if ($params->isMulti) {
+            self::internalBindParamArrayMulti($params);
         } else {
-            self::internalBindParamArraySingle(...$params);
+            self::internalBindParamArraySingle($params);
         }
     }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @param object $params The name of the parameter or an args of parameters and values.
      * @return void
      */
-    private static function internalBindParamArgs(mixed ...$params): void
+    private static function internalBindParamArgs(object $params): void
     {
-        self::internalBindVariable($params['sqlArgs']);
-        if (self::exec($params['sqlStatement'], array_values($params['sqlArgs']))) {
-            if (odbc_num_fields($params['sqlStatement']) > 0) {
+        self::internalBindVariable($params->sqlArgs);
+        if (self::exec($params->sqlStatement, array_values($params->sqlArgs))) {
+            if (odbc_num_fields($params->sqlStatement) > 0) {
                 $results = [];
-                while ($row = odbc_fetch_array($params['sqlStatement'], 0)) {
+                while ($row = odbc_fetch_array($params->sqlStatement, 0)) {
                     $results[] = $row;
                 }
                 self::setStatement(['results' => $results]);
                 self::setQueryRows(count($results));
-            }
-            else {
-                self::setAffectedRows((int) odbc_num_rows($params['sqlStatement']));
+            } else {
+                self::setAffectedRows((int) odbc_num_rows($params->sqlStatement));
             }
         }
-    }
-
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private static function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
     }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    public static function bindParam(mixed ...$params): void
+    public static function bindParam(object $params): void
     {
-        self::setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            self::internalBindParamArray(...$params);
+        self::setQueryParameters($params->sqlArgs);
+        if ($params->isArray) {
+            self::internalBindParamArray($params);
         } else {
-            self::internalBindParamArgs(...$params);
+            self::internalBindParamArgs($params);
         }
-        self::setQueryColumns((int) odbc_num_fields($params['sqlStatement']));
+        self::setQueryColumns((int) odbc_num_fields($params->sqlStatement));
     }
 
     /**
@@ -517,7 +504,7 @@ class Statements
      * This function binds the parameters to a prepared statement.
      *
      * @param mixed ...$params
-     * @return PDOStatement|false
+     * @return ODBCConnection|false
      */
     private static function prepareStatement(mixed ...$params): mixed
     {
@@ -541,11 +528,11 @@ class Statements
     public static function query(mixed ...$params): ?ODBCConnection
     {
         if (!empty($params) && ($statement = self::prepareStatement(...$params)) && self::exec($statement)) {
-            $colCount = odbc_num_fields($statement);
+            $colCount = is_resource($statement) ? odbc_num_fields($statement) : 0;
             if ($colCount > 0) {
                 self::setQueryColumns($colCount);
                 self::setQueryRows(
-                     (function (mixed $stmt): int {
+                    (function (mixed $stmt): int {
                         $results = [];
                         $rows = 0;
                         while ($row = odbc_fetch_array($stmt, 0)) {
@@ -557,30 +544,25 @@ class Statements
                     })($statement) ?? 0
                 );
             } else {
-                self::setAffectedRows(odbc_num_rows($statement));
+                if (is_resource($statement)) {
+                    self::setAffectedRows(odbc_num_rows($statement));
+                }
             }
         }
         return ODBCConnection::getInstance();
-    }    
+    }
 
     /**
      * This function binds the parameters to a prepared query.
      *
      * @param mixed ...$params
      * @return ODBCConnection|null
-     */   
+     */
     public static function prepare(mixed ...$params): ?ODBCConnection
     {
         if (!empty($params) && (self::prepareStatement(...$params))) {
-            $driver = ODBCConnection::getInstance()->getDriver();
-            if ($driver === 'sqlsrv') {
-                $bindParams = self::makeArgs($driver, ...$params);
-                $bindParams['sqlStatement'] = self::getStatement();
-            } else {
-                array_unshift($params, self::getStatement());
-                $bindParams = self::makeArgs($driver, ...$params);
-            }
-            self::bindParam(...$bindParams);
+            $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
+            self::bindParam($bindParams);
         }
         return ODBCConnection::getInstance();
     }
@@ -599,6 +581,6 @@ class Statements
             $data = [];
         }
         $processedData = array_values($data);
-        return call_user_func_array('odbc_execute', [$statement, $processedData]);
+        return @call_user_func_array('odbc_execute', [$statement, $processedData]);
     }
 }
