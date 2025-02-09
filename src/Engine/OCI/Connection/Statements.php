@@ -2,10 +2,11 @@
 
 namespace GenericDatabase\Engine\OCI\Connection;
 
-use GenericDatabase\Engine\OCIConnection;
+use stdClass;
+use GenericDatabase\Core\Schema;
 use GenericDatabase\Helpers\Arrays;
 use GenericDatabase\Helpers\Translate;
-use stdClass;
+use GenericDatabase\Engine\OCIConnection;
 
 class Statements
 {
@@ -272,14 +273,16 @@ class Statements
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArrayMulti(mixed ...$params): void
+    private static function internalBindParamArrayMulti(object $params): void
     {
-        foreach ($params['sqlArgs'] as $param) {
-            self::internalBindVariable($param, $params['sqlStatement']);
-            self::exec($params['sqlStatement']);
-            $rowCount = oci_num_rows($params['sqlStatement']);
-            if (!oci_num_fields($params['sqlStatement'])) {
-                self::setAffectedRows(self::getAffectedRows() + $rowCount);
+        $affectedRows = 0;
+        foreach ($params->sqlArgs as $param) {
+            self::setStatement(self::internalBindVariable($param, $params->sqlStatement));
+            if (self::exec(self::getStatement())) {
+                if (self::getQueryColumns() === 0) {
+                    $affectedRows++;
+                    self::setAffectedRows((int) $affectedRows);
+                }
             }
         }
     }
@@ -290,9 +293,9 @@ class Statements
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArraySingle(mixed ...$params): void
+    private static function internalBindParamArraySingle(object $params): void
     {
-        self::internalBindParamArgs(...$params);
+        self::internalBindParamArgs($params);
     }
 
     /**
@@ -301,12 +304,12 @@ class Statements
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArray(mixed ...$params): void
+    private static function internalBindParamArray(object $params): void
     {
-        if ($params['isMulti']) {
-            self::internalBindParamArrayMulti(...$params);
+        if ($params->isMulti) {
+            self::internalBindParamArrayMulti($params);
         } else {
-            self::internalBindParamArraySingle(...$params);
+            self::internalBindParamArraySingle($params);
         }
     }
     /**
@@ -315,49 +318,27 @@ class Statements
      * @param mixed $params The name of the parameter or an args of parameters and values.
      * @return void
      */
-    private static function internalBindParamArgs(mixed ...$params): void
+    private static function internalBindParamArgs(object $params): void
     {
-        $statement = $params['sqlStatement'];
-        if (!empty($params['sqlArgs'])) {
-            self::internalBindVariable($params['sqlArgs'], $statement);
-        }
-        if (self::exec($statement)) {
-            $numFields = oci_num_fields($statement);
-            if ($numFields > 0) {
-                $results = [];
-                $fields = [];
-                for ($i = 1; $i <= $numFields; $i++) {
-                    $fields[] = oci_field_name($statement, $i);
-                }
-                while ($row = oci_fetch_array($statement, OCI_BOTH + OCI_RETURN_NULLS)) {
-                    $results[] = $row;
-                }
-                self::setStatement([
-                    'results' => $results,
-                    'fields' => $fields,
-                    'position' => 0,
-                    'original_statement' => $statement
-                ]);
-                self::setQueryRows(count($results));
-                self::setQueryColumns($numFields);
-                if (!empty($results)) {
-                    self::exec($statement);
-                }
+        self::setStatement(self::internalBindVariable($params->sqlArgs, $params->sqlStatement));
+        if (self::exec(self::getStatement())) {
+            if ((int) oci_num_fields(self::getStatement()) > 0) {
+                self::setQueryRows(
+                    (function (mixed $stmt): int {
+                        $results = [];
+                        $rows = 0;
+                        while ($row = oci_fetch_array($stmt, OCI_ASSOC + OCI_RETURN_NULLS)) {
+                            $results[] = $row;
+                            $rows++;
+                        }
+                        self::setStatement(['results' => $results]);
+                        return $rows;
+                    })(self::getStatement()) ?? 0
+                );
             } else {
-                self::setAffectedRows(oci_num_rows($statement));
+                self::setAffectedRows((int) oci_num_rows(self::getStatement()));
             }
         }
-    }
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private static function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
     }
 
     /**
@@ -366,14 +347,15 @@ class Statements
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    public static function bindParam(mixed ...$params): void
+    public static function bindParam(object $params): void
     {
-        self::setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            self::internalBindParamArray(...$params);
+        self::setQueryParameters($params->sqlArgs);
+        if ($params->isArray) {
+            self::internalBindParamArray($params);
         } else {
-            self::internalBindParamArgs(...$params);
+            self::internalBindParamArgs($params);
         }
+        self::setQueryColumns((int) oci_num_fields($params->sqlStatement));
     }
 
     /**
@@ -389,6 +371,25 @@ class Statements
     }
 
     /**
+     * This function binds the parameters to a prepared statement.
+     *
+     * @param mixed ...$params
+     * @return mixed
+     */
+    private static function prepareStatement(mixed ...$params): mixed
+    {
+        self::setAllMetadata();
+        if (!empty($params)) {
+            $statement = oci_parse(OCIConnection::getInstance()->getConnection(), self::parse(...$params));
+            if ($statement) {
+                self::setStatement($statement);
+            }
+            return $statement;
+        }
+        return false;
+    }
+
+    /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
@@ -396,33 +397,30 @@ class Statements
      */
     public static function query(mixed ...$params): ?OCIConnection
     {
-        self::setAllMetadata();
-        if (!empty($params)) {
-            $statement = oci_parse(OCIConnection::getInstance()->getConnection(), self::parse(...$params));
-            if ($statement) {
-                self::setStatement($statement);
-                if (oci_execute($statement, OCI_COMMIT_ON_SUCCESS)) {
-                    $numFields = oci_num_fields($statement);
-                    if ($numFields > 0) {
+        if (!empty($params) && ($statement = self::prepareStatement(...$params)) && self::exec($statement)) {
+            $colCount = is_resource($statement) ? oci_num_fields($statement) : 0;
+            if ($colCount > 0) {
+                self::setQueryColumns($colCount);
+                self::setQueryRows(
+                    (function (mixed $stmt): int {
                         $results = [];
-                        while ($row = oci_fetch_array($statement, OCI_ASSOC + OCI_RETURN_NULLS)) {
+                        $rows = 0;
+                        while ($row = oci_fetch_array($stmt, OCI_ASSOC + OCI_RETURN_NULLS)) {
                             $results[] = $row;
+                            $rows++;
                         }
-                        self::setStatement(['results' => $results]);
-                        self::setQueryRows(count($results));
-                        self::setQueryColumns($numFields);
-                        self::setAffectedRows(0);
-                    } else {
-                        self::setAffectedRows(oci_num_rows($statement));
-                        self::setStatement(['results' => []]);
-                        self::setQueryRows(0);
-                        self::setQueryColumns(0);
-                    }
-                }
+                        self::setStatement(['results' => $results, 'statement' => $stmt]);
+                        return $rows;
+                    })($statement) ?? 0
+                );
+            } else {
+                self::setAffectedRows(oci_num_rows($statement));
+                self::setStatement(['results' => []]);
             }
         }
         return OCIConnection::getInstance();
     }
+
     /**
      * This function binds the parameters to a prepared query.
      *
@@ -431,73 +429,26 @@ class Statements
      */
     public static function prepare(mixed ...$params): ?OCIConnection
     {
-        $driver = OCIConnection::getInstance()->getDriver();
-        self::setAllMetadata();
-        if (!empty($params)) {
-            $query = self::parse(...$params);
-            if (isset($params[1])) {
-                $totalAffectedRows = 0;
-                $results = [];
-                $queryParameters = [];
-                $paramSets = is_array($params[1][0] ?? null) ? $params[1] : [$params[1]];
-                foreach ($paramSets as $bindParams) {
-                    $queryParameters = array_merge($queryParameters, $bindParams);
-                    $statement = oci_parse(OCIConnection::getInstance()->getConnection(), $query);
-                    if ($statement) {
-                        foreach ($bindParams as $param => &$value) {
-                            $value = (string) $value;
-                            oci_bind_by_name($statement, $param, $value);
-                        }
-                        if (oci_execute($statement, OCI_COMMIT_ON_SUCCESS)) {
-                            $numFields = oci_num_fields($statement);
-                            if ($numFields > 0) {
-                                while ($row = oci_fetch_array($statement, OCI_ASSOC + OCI_RETURN_NULLS)) {
-                                    $results[] = $row;
-                                }
-                            } else {
-                                $totalAffectedRows += oci_num_rows($statement);
-                            }
-                        }
-                        oci_free_statement($statement);
-                    }
-                }
-                $bindParams = array_merge(self::makeArgs($driver, $query, ...$params), ['rowCount' => false]);
-                self::setQueryParameters($bindParams['sqlArgs']);
-                if ($results) {
-                    self::setStatement([
-                        'results' => $results,
-                        'fields' => array_keys(reset($results)),
-                        'position' => 0,
-                        'original_statement' => $query
-                    ]);
-                    self::setQueryRows(count($results));
-                    self::setQueryColumns(count(array_keys(reset($results))));
-                    self::setAffectedRows(0);
-                } else {
-                    self::setStatement([
-                        'results' => [],
-                        'fields' => [],
-                        'position' => 0,
-                        'original_statement' => $query
-                    ]);
-                    self::setQueryRows(0);
-                    self::setQueryColumns(0);
-                    self::setAffectedRows($totalAffectedRows);
-                }
-            }
+        if (!empty($params) && (self::prepareStatement(...$params))) {
+            $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
+            self::bindParam($bindParams);
         }
         return OCIConnection::getInstance();
     }
+
     /**
      * This function runs an SQL statement and returns the number of affected rows.
      *
      * @param mixed $params Statement to be executed
      * @return bool
      */
-    public static function exec(mixed ...$params): bool
+    public static function exec(mixed ...$params): mixed
     {
-        $statement = reset($params) ?? self::getStatement();
-        $resultMode = $params[1] ?? OCI_COMMIT_ON_SUCCESS;
-        return oci_execute($statement, $resultMode);
+        $statement = reset($params);
+        $data = $params[1] ?? false;
+        if (!is_array($data)) {
+            $data = [];
+        }
+        return call_user_func_array('oci_execute', [$statement, OCI_COMMIT_ON_SUCCESS]);
     }
 }

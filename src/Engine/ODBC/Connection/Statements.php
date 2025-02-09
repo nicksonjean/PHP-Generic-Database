@@ -504,7 +504,7 @@ class Statements
      * This function binds the parameters to a prepared statement.
      *
      * @param mixed ...$params
-     * @return ODBCConnection|false
+     * @return mixed
      */
     private static function prepareStatement(mixed ...$params): mixed
     {
