@@ -442,7 +442,7 @@ class Statements
      */
     public static function prepare(mixed ...$params): ?SQLSrvConnection
     {
-        if (!empty($params) && ($statement = self::prepareStatement(...$params)) && self::exec($statement)) {
+        if (!empty($params) && ($statement = self::prepareStatement(...$params))) {
             $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
             self::bindParam($bindParams);
         }
