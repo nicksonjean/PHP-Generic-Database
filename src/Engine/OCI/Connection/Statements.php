@@ -2,11 +2,10 @@
 
 namespace GenericDatabase\Engine\OCI\Connection;
 
-use stdClass;
-use GenericDatabase\Core\Schema;
-use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Engine\OCIConnection;
+use GenericDatabase\Core\Schema;
+use GenericDatabase\Helpers\Translate;
+use stdClass;
 
 class Statements
 {
@@ -270,7 +269,7 @@ class Statements
     /**
      * Binds an array multiple parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private static function internalBindParamArrayMulti(object $params): void
@@ -290,7 +289,7 @@ class Statements
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private static function internalBindParamArraySingle(object $params): void
@@ -301,7 +300,7 @@ class Statements
     /**
      * Binds an array parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private static function internalBindParamArray(object $params): void
@@ -315,7 +314,7 @@ class Statements
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @param object $params The name of the parameter or an args of parameters and values.
      * @return void
      */
     private static function internalBindParamArgs(object $params): void

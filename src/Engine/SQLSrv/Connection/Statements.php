@@ -3,8 +3,9 @@
 namespace GenericDatabase\Engine\SQLSrv\Connection;
 
 use GenericDatabase\Engine\SQLSrvConnection;
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Core\Schema;
 use GenericDatabase\Helpers\Translate;
+use GenericDatabase\Helpers\Validations;
 use stdClass;
 
 class Statements
@@ -260,113 +261,87 @@ class Statements
      * This method binds variables to a prepared statement based on their types,
      * allowing for more precise parameter binding.
      *
-     * @param mixed $data The prepared statement to bind variables to.
-     * @return resource|false The prepared statement with bound variables.
+     * @param mixed $preparedParams The prepared statement to bind variables to.
+     * @return mixed The prepared statement with bound variables.
      */
-    private static function internalBindVariable(mixed $data)
+    private static function internalBindVariable(mixed $preparedParams): mixed
     {
-        $temporaryStatement = sqlsrv_prepare(
-            SQLSrvConnection::getInstance()->getConnection(),
-            self::getQueryString(),
-            $data
-        );
-        $isSelect = $temporaryStatement && sqlsrv_num_fields($temporaryStatement) > 0;
-        self::setStatement(sqlsrv_prepare(
-            SQLSrvConnection::getInstance()->getConnection(),
-            self::getQueryString(),
-            $data,
-            [
-                'Scrollable' => $isSelect
-                    ? SQLSRV_CURSOR_STATIC
-                    : SQLSRV_CURSOR_FORWARD
-            ]
-        ));
-        if ($temporaryStatement) {
-            sqlsrv_free_stmt($temporaryStatement);
-        }
-        return self::getStatement();
+        return Validations::detectTypes($preparedParams);
     }
 
     /**
      * Binds an array multiple parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArrayMulti(mixed ...$params): void
+    private static function internalBindParamArrayMulti(object $params): void
     {
-        $referenceParams = [];
-        $preparedParams = [];
-        for ($i = 0; $i < count($params['sqlArgs'][0]); $i++) {
-            if (!array_key_exists($i, $referenceParams)) {
-                $referenceParams[$i] = null;
+        $affectedRows = 0;
+        foreach ($params->sqlArgs as $param) {
+            self::internalBindVariable($param);
+            if (self::exec($params->sqlStatement, array_values($param))) {
+                if (self::getQueryColumns() === 0) {
+                    $affectedRows++;
+                    self::setAffectedRows((int) $affectedRows);
+                }
             }
-            $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
-        }
-        self::setStatement(self::internalBindVariable($preparedParams));
-        foreach (Arrays::arrayValuesRecursive($params['sqlArgs']) as $row) {
-            for ($i = 0; $i < count($params['sqlArgs'][0]); $i++) {
-                $referenceParams[$i] = $row[$i];
-            }
-            self::exec(self::getStatement());
-            self::setAffectedRows((int) sqlsrv_rows_affected(self::getStatement()));
         }
     }
 
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArraySingle(mixed ...$params): void
+    private static function internalBindParamArraySingle(object $params): void
     {
-        self::internalBindParamArgs(...$params);
+        self::internalBindParamArgs($params);
     }
 
     /**
      * Binds an array parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArray(mixed ...$params): void
+    private static function internalBindParamArray(object $params): void
     {
-        self::setQueryParameters($params['sqlArgs']);
-        if ($params['isMulti']) {
-            self::internalBindParamArrayMulti(...$params);
+        if ($params->isMulti) {
+            self::internalBindParamArrayMulti($params);
         } else {
-            self::internalBindParamArraySingle(...$params);
+            self::internalBindParamArraySingle($params);
         }
     }
+
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @param object $params The name of the parameter or an args of parameters and values.
      * @return void
      */
-    private static function internalBindParamArgs(mixed ...$params): void
+    private static function internalBindParamArgs(object $params): void
     {
-        $referenceParams = [];
-        $preparedParams = [];
-        for ($i = 0; $i < count($params['sqlArgs']); $i++) {
-            $referenceParams[$i] = array_values($params['sqlArgs'])[$i];
-            $preparedParams[] = [&$referenceParams[$i], SQLSRV_PARAM_IN, SQLSRV_PHPTYPE_STRING('UTF-8')];
+        self::internalBindVariable($params->sqlArgs);
+        if (self::exec($params->sqlStatement)) {
+            if ((int) self::getQueryColumns() > 0) {
+                self::setQueryRows(
+                    (function (mixed $stmt): int {
+                        $results = [];
+                        $rows = 0;
+                        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+                            $results[] = $row;
+                            $rows++;
+                        }
+                        self::setStatement(['results' => $results]);
+                        return $rows;
+                    })($params->sqlStatement) ?? 0
+                );
+            } else {
+                self::setAffectedRows((int) sqlsrv_rows_affected($params->sqlStatement));
+            }
         }
-        self::setStatement(self::internalBindVariable($preparedParams));
-        self::exec(self::getStatement());
-        self::setAffectedRows((int) sqlsrv_rows_affected(self::getStatement()));
-    }
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private static function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
     }
 
     /**
@@ -375,13 +350,13 @@ class Statements
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    public static function bindParam(mixed ...$params): void
+    public static function bindParam(object $params): void
     {
-        self::setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            self::internalBindParamArray(...$params);
+        self::setQueryColumns((int) is_resource($params->sqlStatement) ? sqlsrv_num_fields($params->sqlStatement) : 0);
+        if ($params->isArray) {
+            self::internalBindParamArray($params);
         } else {
-            self::internalBindParamArgs(...$params);
+            self::internalBindParamArgs($params);
         }
     }
 
@@ -398,6 +373,37 @@ class Statements
     }
 
     /**
+     * This function binds the parameters to a prepared statement.
+     *
+     * @param mixed ...$params
+     * @return mixed
+     */
+    private static function prepareStatement(mixed ...$params): mixed
+    {
+        self::setAllMetadata();
+        if (!empty($params)) {
+            $bindParams = Schema::makeArgs([null, ...$params]);
+            self::setQueryParameters($bindParams->sqlArgs);
+            if ($bindParams->isArray) {
+                if ($bindParams->isMulti) {
+                    foreach ($bindParams->sqlArgs as $bindParam) {
+                        $statement = sqlsrv_query(SQLSrvConnection::getInstance()->getConnection(), self::parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
+                    }
+                } else {
+                    $statement = sqlsrv_query(SQLSrvConnection::getInstance()->getConnection(), self::parse(...$params), array_values($bindParams->sqlArgs), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
+                }
+            } else {
+                $statement = sqlsrv_query(SQLSrvConnection::getInstance()->getConnection(), self::parse(...$params));
+            }
+            if ($statement) {
+                self::setStatement($statement);
+            }
+            return $statement;
+        }
+        return false;
+    }
+
+    /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
@@ -405,32 +411,25 @@ class Statements
      */
     public static function query(mixed ...$params): ?SQLSrvConnection
     {
-        self::setAllMetadata();
-        if (!empty($params)) {
-            $query = self::parse(...$params);
-            $statement = sqlsrv_query(SQLSrvConnection::getInstance()->getConnection(), $query);
-            if ($statement) {
-                $numFields = sqlsrv_num_fields($statement);
-                if ($numFields > 0) {
-                    $results = [];
-                    while ($row = sqlsrv_fetch_array($statement, SQLSRV_FETCH_BOTH)) {
-                        $results[] = $row;
-                    }
-                    self::setStatement(['results' => $results]);
-                    self::setQueryRows(count($results));
-                    self::setQueryColumns($numFields);
-                    self::setAffectedRows(0);
-                } else {
-                    $affectedRows = sqlsrv_rows_affected($statement);
-                    self::setStatement(['results' => []]);
-                    self::setAffectedRows($affectedRows !== false ? $affectedRows : 0);
-                    self::setQueryRows(0);
-                    self::setQueryColumns(0);
-                }
-                sqlsrv_free_stmt($statement);
+        if (!empty($params) && ($statement = self::prepareStatement(...$params)) && self::exec($statement)) {
+            $colCount = is_resource($statement) ? sqlsrv_num_fields($statement) : 0;
+            if ($colCount > 0) {
+                self::setQueryColumns($colCount);
+                self::setQueryRows(
+                    (function (mixed $stmt): int {
+                        $results = [];
+                        $rows = 0;
+                        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+                            $results[] = $row;
+                            $rows++;
+                        }
+                        self::setStatement(['results' => $results, 'statement' => $stmt]);
+                        return $rows;
+                    })($statement) ?? 0
+                );
             } else {
-                self::setQueryRows(0);
-                self::setAffectedRows(0);
+                self::setAffectedRows(sqlsrv_rows_affected($statement));
+                self::setStatement(['results' => []]);
             }
         }
         return SQLSrvConnection::getInstance();
@@ -443,47 +442,13 @@ class Statements
      */
     public static function prepare(mixed ...$params): ?SQLSrvConnection
     {
-        $driver = SQLSrvConnection::getInstance()->getDriver();
-        self::setAllMetadata();
-        if (!empty($params)) {
-            $query = self::parse(...$params);
-            if (isset($params[1])) {
-                $results = [];
-                $affectedRows = 0;
-                $numFields = 0;
-                $paramSets = is_array($params[1][0] ?? null) ? $params[1] : [$params[1]];
-                $bindParams = self::makeArgs($driver, ...$params);
-                self::setQueryParameters($bindParams['sqlQuery']);
-                foreach ($paramSets as $bindParams) {
-                    $orderedParams = array_values($bindParams);
-                    $statement = sqlsrv_query(SQLSrvConnection::getInstance()->getConnection(), $query, $orderedParams, ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
-                    if ($statement) {
-                        $numFields = sqlsrv_num_fields($statement);
-                        if ($numFields > 0) {
-                            while ($row = sqlsrv_fetch_array($statement, SQLSRV_FETCH_ASSOC)) {
-                                $results[] = $row;
-                            }
-                        } else {
-                            $affectedRows += sqlsrv_rows_affected($statement) !== false ? sqlsrv_rows_affected($statement) : 0;
-                        }
-                        sqlsrv_free_stmt($statement);
-                    }
-                }
-                if ($numFields > 0) {
-                    self::setStatement(['results' => $results]);
-                    self::setQueryRows(count($results));
-                    self::setQueryColumns($numFields);
-                    self::setAffectedRows(0);
-                } else {
-                    self::setStatement(['results' => []]);
-                    self::setAffectedRows($affectedRows);
-                    self::setQueryRows(0);
-                    self::setQueryColumns(0);
-                }
-            }
+        if (!empty($params) && ($statement = self::prepareStatement(...$params)) && self::exec($statement)) {
+            $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
+            self::bindParam($bindParams);
         }
         return SQLSrvConnection::getInstance();
     }
+
     /**
      * This function runs an SQL statement and returns the number of affected rows.
      *
