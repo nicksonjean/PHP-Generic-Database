@@ -339,10 +339,7 @@ class Statements
      */
     public static function parse(mixed ...$params): string
     {
-        $queryString = Translate::binding(
-            Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE),
-            Translate::BIND_DOLLAR_SIGN
-        );
+        $queryString = Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE), Translate::BIND_DOLLAR_SIGN);
         self::setQueryString($queryString);
         return self::getQueryString();
     }

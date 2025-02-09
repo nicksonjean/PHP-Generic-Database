@@ -257,8 +257,14 @@ PHP-Generic-Database is released under the MIT license.
   - [x] Create a new class for Statements.
   - [x] Rename class Statements to Fetchts.
   - [x] Create class Statements to use in Specialized Connection class.
-  - [ ] Optimize class Statements for PgSQL, SQLSrv, Firebird, SQLite (MySQLi, PDO, ODBC has optimized).
+  - [ ] Optimize class Statements for PgSQL, Firebird, SQLite (MySQLi, PDO, ODBC, SQLSrv has optimized).
   - [ ] Create Interface for Fetchs and Statements Classes.
   - [ ] Install a lib from SQL Parser to use in Query and Prepare Method.
   - [ ] Fix prepare method for PDO and ODBC engine with makeArgs method.
-  - [ ] Fix problem with method Arrays::makeArgs to SQLSrv engine.
+  - [x] Fix problem with method Arrays::makeArgs to SQLSrv engine.
+  - [x] Recreate method Arrays::makeArgs to Schema Object Class
+  - [ ] Install Pollyfill to Enum in PHP8.0 (https://github.com/marc-mabe/php-enum-cl | https://packagist.org/packages/aldemeery/enum-polyfill)
+  - [ ] Remapper Folders and Ajust Types
+  - [ ] Create a Helpers Scalar Types to Strings, Booleans, Integers, Floats (https://tempestphp.com/docs/framework/primitive-helpers/ | https://github.com/tempestphp/tempest-framework/tree/main)
+  - [ ] Create a Helpers Compound Types to Arrays and Objects (https://tempestphp.com/docs/framework/primitive-helpers/ | https://github.com/tempestphp/tempest-framework/tree/main)
+  - [ ] Create a Helpers Special Types to Resources and Nulls (https://tempestphp.com/docs/framework/primitive-helpers/ | https://github.com/tempestphp/tempest-framework/tree/main)

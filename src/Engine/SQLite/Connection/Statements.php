@@ -3,10 +3,10 @@
 namespace GenericDatabase\Engine\SQLite\Connection;
 
 use GenericDatabase\Engine\SQLiteConnection;
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Core\Schema;
 use GenericDatabase\Helpers\Translate;
-use SQLite3;
 use SQLite3Result;
+use SQLite3Stmt;
 use stdClass;
 
 class Statements
@@ -16,12 +16,6 @@ class Statements
      * @var mixed $statement = null
      */
     private static mixed $statement = null;
-
-    /**
-     * Instance of the Statement of the database
-     * @var mixed $statementResult = null
-     */
-    private static mixed $statementResult = null;
 
     /**
      * Count rows in query statement
@@ -207,26 +201,6 @@ class Statements
     }
 
     /**
-     * Returns the statement result for the function.
-     *
-     * @return mixed
-     */
-    public static function getStatementResult(): mixed
-    {
-        return self::$statementResult;
-    }
-
-    /**
-     * Set the statement for the function.
-     *
-     * @param mixed $statement The statement to be set.
-     */
-    public static function setStatementResult(mixed $statement): void
-    {
-        self::$statementResult = $statement;
-    }
-
-    /**
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
@@ -285,69 +259,75 @@ class Statements
     /**
      * Binds an array multiple parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArrayMulti(mixed ...$params): void
+    private static function internalBindParamArrayMulti(object $params): void
     {
-        foreach ($params['sqlArgs'] as $param) {
-            $statement = self::internalBindVariable($param, $params['sqlStatement']);
-            (!$params['rowCount'])
-                ? self::setStatement(self::exec($statement))
-                : self::setStatementResult(self::exec($statement));
-            self::setAffectedRows((int) SQLiteConnection::getInstance()->getConnection()->changes());
+        $affectedRows = 0;
+        foreach ($params->sqlArgs as $param) {
+            self::setStatement(self::internalBindVariable($param, $params->sqlStatement));
+            if (self::exec(self::getStatement())) {
+                if (self::getQueryColumns() === 0) {
+                    $affectedRows++;
+                    self::setAffectedRows((int) $affectedRows);
+                }
+            }
         }
     }
 
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArraySingle(mixed ...$params): void
+    private static function internalBindParamArraySingle(object $params): void
     {
-        self::internalBindParamArgs(...$params);
+        self::internalBindParamArgs($params);
     }
 
     /**
      * Binds an array parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArray(mixed ...$params): void
+    private static function internalBindParamArray(object $params): void
     {
-        if ($params['isMulti']) {
-            self::internalBindParamArrayMulti(...$params);
+        if ($params->isMulti) {
+            self::internalBindParamArrayMulti($params);
         } else {
-            self::internalBindParamArraySingle(...$params);
+            self::internalBindParamArraySingle($params);
         }
     }
+
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @param object $params The name of the parameter or an args of parameters and values.
      * @return void
      */
-    private static function internalBindParamArgs(mixed ...$params): void
+    private static function internalBindParamArgs(object $params): void
     {
-        $statement = self::internalBindVariable($params['sqlArgs'], $params['sqlStatement']);
-        (!$params['rowCount'])
-            ? self::setStatement(self::exec($statement))
-            : self::setStatementResult(self::exec($statement));
-        self::setAffectedRows((int) SQLiteConnection::getInstance()->getConnection()->changes());
-    }
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private static function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
+        self::setStatement(self::internalBindVariable($params->sqlArgs, $params->sqlStatement));
+        if ($result = self::exec(self::getStatement())) {
+            $colCount = (is_object($result) && get_class($result) === 'SQLite3Result' && method_exists($result, 'numColumns')) ? $result->numColumns() : 0;
+            self::setQueryColumns((int) $colCount);
+            if ((int) $colCount > 0) {
+                self::setQueryRows(
+                    (function (mixed $result): int {
+                        $rows = 0;
+                        while ($result->fetchArray(SQLITE3_ASSOC)) {
+                            $rows++;
+                        }
+                        return $rows;
+                    })($result) ?? 0
+                );
+            } else {
+                self::setAffectedRows(SQLiteConnection::getInstance()->getConnection()->changes());
+            }
+        }
     }
 
     /**
@@ -356,13 +336,13 @@ class Statements
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    public static function bindParam(mixed ...$params): void
+    public static function bindParam(object $params): void
     {
-        self::setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            self::internalBindParamArray(...$params);
+        self::setQueryParameters($params->sqlArgs);
+        if ($params->isArray) {
+            self::internalBindParamArray($params);
         } else {
-            self::internalBindParamArgs(...$params);
+            self::internalBindParamArgs($params);
         }
     }
 
@@ -379,6 +359,25 @@ class Statements
     }
 
     /**
+     * This function binds the parameters to a prepared statement.
+     *
+     * @param mixed ...$params
+     * @return SQLite3Stmt|false
+     */
+    private static function prepareStatement(mixed ...$params): SQLite3Stmt|false
+    {
+        self::setAllMetadata();
+        if (!empty($params)) {
+            $statement = SQLiteConnection::getInstance()->getConnection()->prepare(self::parse(...$params));
+            if ($statement) {
+                self::setStatement($statement);
+            }
+            return $statement;
+        }
+        return false;
+    }
+
+    /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
@@ -386,42 +385,30 @@ class Statements
      */
     public static function query(mixed ...$params): ?SQLiteConnection
     {
-        self::setAllMetadata();
-        if (!empty($params)) {
-            $query = self::parse(...$params);
-            $statement = SQLiteConnection::getInstance()->getConnection()->prepare($query);
-            if ($statement) {
-                self::setStatement($statement);
-                $queryParameters = $params[1] ?? [];
-                $result = $statement->execute();
-                if (is_object($result) && get_class($result) === 'SQLite3Result' && method_exists($result, 'numColumns')) {
-                    $numColumns = $result->numColumns();
-                    if ($numColumns > 0) {
-                        self::setQueryColumns($numColumns);
+        if (!empty($params) && ($statement = self::prepareStatement(...$params)) && $result = self::exec($statement)) {
+            $colCount = (is_object($result) && get_class($result) === 'SQLite3Result' && method_exists($result, 'numColumns')) ? $result->numColumns() : 0;
+            if ($colCount > 0) {
+                self::setQueryColumns($colCount);
+                self::setQueryRows(
+                    (function (mixed $stmt): int {
                         $results = [];
-                        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                        $rows = 0;
+                        while ($row = $stmt->fetchArray(SQLITE3_ASSOC)) {
                             $results[] = $row;
+                            $rows++;
                         }
-                        self::setQueryRows(count($results));
-                        self::setStatement([
-                            'results' => $results,
-                            'queryString' => $query,
-                            'queryParameters' => $queryParameters,
-                        ]);
-                        $result->reset();
-                    } else {
-                        self::setAffectedRows(SQLiteConnection::getInstance()->getConnection()->changes());
-                        self::setQueryRows(0);
-                        self::setQueryColumns(0);
-                    }
-                } else {
-                    self::setQueryRows(0);
-                    self::setQueryColumns(0);
-                }
+                        self::setStatement(['results' => $results]);
+                        return $rows;
+                    })($result) ?? 0
+                );
+            } else {
+                self::setAffectedRows(SQLiteConnection::getInstance()->getConnection()->changes());
+                self::setStatement(['results' => []]);
             }
         }
         return SQLiteConnection::getInstance();
     }
+
     /**
      * This function binds the parameters to a prepared query.
      *
@@ -430,51 +417,13 @@ class Statements
      */
     public static function prepare(mixed ...$params): ?SQLiteConnection
     {
-        $driver = SQLiteConnection::getInstance()->getDriver();
-        self::setAllMetadata();
-        if (!empty($params)) {
-            $stmt = SQLiteConnection::getInstance()->getConnection()->prepare(self::parse(...$params));
-            if ($stmt) {
-                self::setStatement($stmt);
-                if (array_key_exists(1, $params) && is_array($params[1])) {
-                    $bindParams = array_merge(self::makeArgs($driver, $stmt, ...$params), ['rowCount' => false]);
-                    self::setQueryParameters($bindParams['sqlArgs']);
-                    if (isset($bindParams['sqlArgs']) && is_array($bindParams['sqlArgs'])) {
-                        if (is_array($bindParams['sqlArgs']) && isset($bindParams['sqlArgs'][0]) && is_array($bindParams['sqlArgs'][0])) {
-                            $affectedRows = 0;
-                            foreach ($bindParams['sqlArgs'] as $args) {
-                                self::internalBindVariable($args, $stmt);
-                                $result = $stmt->execute();
-                                if ($result) {
-                                    $affectedRows += SQLiteConnection::getInstance()->getConnection()->changes();
-                                }
-                            }
-                            self::setAffectedRows($affectedRows);
-                        } else {
-                            self::internalBindVariable($bindParams['sqlArgs'], $stmt);
-                            $result = $stmt->execute();
-                            if ($result) {
-                                self::setAffectedRows(SQLiteConnection::getInstance()->getConnection()->changes());
-                                if (is_object($result) && get_class($result) === 'SQLite3Result' && method_exists($result, 'numColumns')) {
-                                    self::setQueryColumns($result->numColumns());
-                                    $rowCount = 0;
-                                    while ($result->fetchArray(SQLITE3_ASSOC)) {
-                                        $rowCount++;
-                                    }
-                                    self::setQueryRows($rowCount);
-                                    $result->reset();
-                                } else {
-                                    self::setQueryRows(0);
-                                    self::setQueryColumns(0);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        if (!empty($params) && (self::prepareStatement(...$params))) {
+            $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
+            self::bindParam($bindParams);
         }
         return SQLiteConnection::getInstance();
     }
+
     /**
      * This function runs an SQL statement and returns the number of affected rows.
      *
@@ -483,6 +432,7 @@ class Statements
      */
     public static function exec(mixed ...$params): SQLite3Result|false
     {
-        return (reset($params) ?? self::getStatement())->execute();
+        $stmt = reset($params);
+        return $stmt->execute();
     }
 }

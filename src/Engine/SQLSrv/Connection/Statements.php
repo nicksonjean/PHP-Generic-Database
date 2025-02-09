@@ -353,6 +353,7 @@ class Statements
     public static function bindParam(object $params): void
     {
         self::setQueryColumns((int) is_resource($params->sqlStatement) ? sqlsrv_num_fields($params->sqlStatement) : 0);
+        self::setQueryParameters($params->sqlArgs);
         if ($params->isArray) {
             self::internalBindParamArray($params);
         } else {
@@ -383,7 +384,6 @@ class Statements
         self::setAllMetadata();
         if (!empty($params)) {
             $bindParams = Schema::makeArgs([null, ...$params]);
-            self::setQueryParameters($bindParams->sqlArgs);
             if ($bindParams->isArray) {
                 if ($bindParams->isMulti) {
                     foreach ($bindParams->sqlArgs as $bindParam) {
@@ -442,7 +442,7 @@ class Statements
      */
     public static function prepare(mixed ...$params): ?SQLSrvConnection
     {
-        if (!empty($params) && ($statement = self::prepareStatement(...$params))) {
+        if (!empty($params) && (self::prepareStatement(...$params))) {
             $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
             self::bindParam($bindParams);
         }
