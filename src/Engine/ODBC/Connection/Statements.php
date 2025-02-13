@@ -3,13 +3,16 @@
 namespace GenericDatabase\Engine\ODBC\Connection;
 
 use GenericDatabase\Engine\ODBCConnection;
-use GenericDatabase\Core\Schema;
+use GenericDatabase\Helpers\Schema;
 use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Helpers\Validations;
-use stdClass;
+use GenericDatabase\Helpers\Types\Compound\Objects;
+use AllowDynamicProperties;
 
+#[AllowDynamicProperties]
 class Statements
 {
+    use Objects;
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
@@ -67,12 +70,12 @@ class Statements
      */
     public static function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = self::getQueryString();
-        $metadata->queryParameters = self::getQueryParameters();
-        $metadata->queryRows = self::getQueryRows();
-        $metadata->queryColumns = self::getQueryColumns();
-        $metadata->affectedRows = self::getAffectedRows();
+        $metadata = new self();
+        $metadata->query->string = self::getQueryString();
+        $metadata->query->arguments = self::getQueryParameters();
+        $metadata->query->columns = self::getQueryColumns();
+        $metadata->query->rows->fetched = self::getQueryRows();
+        $metadata->query->rows->affected = self::getAffectedRows();
         return $metadata;
     }
 
@@ -405,9 +408,9 @@ class Statements
     private static function internalBindParamArrayMulti(object $params): void
     {
         $affectedRows = 0;
-        foreach ($params->sqlArgs as $param) {
-            self::internalBindVariable($param);
-            if (self::exec($params->sqlStatement, array_values($param))) {
+        foreach ($params->query->arguments as $argument) {
+            self::internalBindVariable($argument);
+            if (self::exec($params->statement->object, array_values($argument))) {
                 if (self::getQueryColumns() === 0) {
                     $affectedRows++;
                     self::setAffectedRows((int) $affectedRows);
@@ -435,7 +438,7 @@ class Statements
      */
     private static function internalBindParamArray(object $params): void
     {
-        if ($params->isMulti) {
+        if ($params->is->array->multi) {
             self::internalBindParamArrayMulti($params);
         } else {
             self::internalBindParamArraySingle($params);
@@ -450,17 +453,17 @@ class Statements
      */
     private static function internalBindParamArgs(object $params): void
     {
-        self::internalBindVariable($params->sqlArgs);
-        if (self::exec($params->sqlStatement, array_values($params->sqlArgs))) {
-            if (odbc_num_fields($params->sqlStatement) > 0) {
+        self::internalBindVariable($params->query->arguments);
+        if (self::exec($params->statement->object, array_values($params->query->arguments))) {
+            if (odbc_num_fields($params->statement->object) > 0) {
                 $results = [];
-                while ($row = odbc_fetch_array($params->sqlStatement, 0)) {
+                while ($row = odbc_fetch_array($params->statement->object, 0)) {
                     $results[] = $row;
                 }
                 self::setStatement(['results' => $results]);
                 self::setQueryRows(count($results));
             } else {
-                self::setAffectedRows((int) odbc_num_rows($params->sqlStatement));
+                self::setAffectedRows((int) odbc_num_rows($params->statement->object));
             }
         }
     }
@@ -473,13 +476,13 @@ class Statements
      */
     public static function bindParam(object $params): void
     {
-        self::setQueryParameters($params->sqlArgs);
-        if ($params->isArray) {
+        self::setQueryParameters($params->query->arguments);
+        if ($params->by->array) {
             self::internalBindParamArray($params);
         } else {
             self::internalBindParamArgs($params);
         }
-        self::setQueryColumns((int) odbc_num_fields($params->sqlStatement));
+        self::setQueryColumns((int) odbc_num_fields($params->statement->object));
     }
 
     /**

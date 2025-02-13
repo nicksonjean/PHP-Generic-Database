@@ -3,14 +3,17 @@
 namespace GenericDatabase\Engine\PDO\Connection;
 
 use GenericDatabase\Engine\PDOConnection;
-use GenericDatabase\Core\Schema;
+use GenericDatabase\Helpers\Schema;
 use GenericDatabase\Helpers\Translate;
 use PDOStatement;
 use PDO;
-use stdClass;
+use GenericDatabase\Helpers\Types\Compound\Objects;
+use AllowDynamicProperties;
 
+#[AllowDynamicProperties]
 class Statements
 {
+    use Objects;
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
@@ -68,12 +71,12 @@ class Statements
      */
     public static function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = self::getQueryString();
-        $metadata->queryParameters = self::getQueryParameters();
-        $metadata->queryRows = self::getQueryRows();
-        $metadata->queryColumns = self::getQueryColumns();
-        $metadata->affectedRows = self::getAffectedRows();
+        $metadata = new self();
+        $metadata->query->string = self::getQueryString();
+        $metadata->query->arguments = self::getQueryParameters();
+        $metadata->query->columns = self::getQueryColumns();
+        $metadata->query->rows->fetched = self::getQueryRows();
+        $metadata->query->rows->affected = self::getAffectedRows();
         return $metadata;
     }
 
@@ -436,8 +439,8 @@ class Statements
     private static function internalBindParamArrayMulti(object $params): void
     {
         $affectedRows = 0;
-        foreach ($params->sqlArgs as $param) {
-            self::setStatement(self::internalBindVariable($param, $params->sqlStatement));
+        foreach ($params->query->arguments as $argument) {
+            self::setStatement(self::internalBindVariable($argument, $params->statement->object));
             if (self::exec(self::getStatement())) {
                 if (self::getQueryColumns() === 0) {
                     $affectedRows++;
@@ -466,7 +469,7 @@ class Statements
      */
     private static function internalBindParamArray(object $params): void
     {
-        if ($params->isMulti) {
+        if ($params->is->array->multi) {
             self::internalBindParamArrayMulti($params);
         } else {
             self::internalBindParamArraySingle($params);
@@ -481,7 +484,7 @@ class Statements
      */
     private static function internalBindParamArgs(object $params): void
     {
-        self::setStatement(self::internalBindVariable($params->sqlArgs, $params->sqlStatement));
+        self::setStatement(@self::internalBindVariable($params->query->arguments, $params->statement->object));
         if (self::exec(self::getStatement())) {
             if (self::getStatement()->columnCount() > 0) {
                 self::setQueryRows((int) count(self::getStatement()->fetchAll(PDO::FETCH_ASSOC)));
@@ -499,8 +502,8 @@ class Statements
      */
     public static function bindParam(object $params): void
     {
-        self::setQueryParameters($params->sqlArgs);
-        if ($params->isArray) {
+        self::setQueryParameters($params->query->arguments);
+        if ($params->by->array) {
             self::internalBindParamArray($params);
         } else {
             self::internalBindParamArgs($params);

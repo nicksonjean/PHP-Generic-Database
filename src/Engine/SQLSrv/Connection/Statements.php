@@ -3,13 +3,16 @@
 namespace GenericDatabase\Engine\SQLSrv\Connection;
 
 use GenericDatabase\Engine\SQLSrvConnection;
-use GenericDatabase\Core\Schema;
+use GenericDatabase\Helpers\Schema;
 use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Helpers\Validations;
-use stdClass;
+use GenericDatabase\Helpers\Types\Compound\Objects;
+use AllowDynamicProperties;
 
+#[AllowDynamicProperties]
 class Statements
 {
+    use Objects;
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
@@ -67,12 +70,12 @@ class Statements
      */
     public static function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = self::getQueryString();
-        $metadata->queryParameters = self::getQueryParameters();
-        $metadata->queryRows = self::getQueryRows();
-        $metadata->queryColumns = self::getQueryColumns();
-        $metadata->affectedRows = self::getAffectedRows();
+        $metadata = new self();
+        $metadata->query->string = self::getQueryString();
+        $metadata->query->arguments = self::getQueryParameters();
+        $metadata->query->columns = self::getQueryColumns();
+        $metadata->query->rows->fetched = self::getQueryRows();
+        $metadata->query->rows->affected = self::getAffectedRows();
         return $metadata;
     }
 
@@ -278,9 +281,9 @@ class Statements
     private static function internalBindParamArrayMulti(object $params): void
     {
         $affectedRows = 0;
-        foreach ($params->sqlArgs as $param) {
+        foreach ($params->query->arguments as $param) {
             self::internalBindVariable($param);
-            if (self::exec($params->sqlStatement, array_values($param))) {
+            if (self::exec($params->statement->object, array_values($param))) {
                 if (self::getQueryColumns() === 0) {
                     $affectedRows++;
                     self::setAffectedRows((int) $affectedRows);
@@ -308,7 +311,7 @@ class Statements
      */
     private static function internalBindParamArray(object $params): void
     {
-        if ($params->isMulti) {
+        if ($params->is->array->multi) {
             self::internalBindParamArrayMulti($params);
         } else {
             self::internalBindParamArraySingle($params);
@@ -323,8 +326,8 @@ class Statements
      */
     private static function internalBindParamArgs(object $params): void
     {
-        self::internalBindVariable($params->sqlArgs);
-        if (self::exec($params->sqlStatement)) {
+        self::internalBindVariable($params->query->arguments);
+        if (self::exec($params->statement->object)) {
             if ((int) self::getQueryColumns() > 0) {
                 self::setQueryRows(
                     (function (mixed $stmt): int {
@@ -336,10 +339,10 @@ class Statements
                         }
                         self::setStatement(['results' => $results]);
                         return $rows;
-                    })($params->sqlStatement) ?? 0
+                    })($params->statement->object) ?? 0
                 );
             } else {
-                self::setAffectedRows((int) sqlsrv_rows_affected($params->sqlStatement));
+                self::setAffectedRows((int) sqlsrv_rows_affected($params->statement->object));
             }
         }
     }
@@ -352,9 +355,9 @@ class Statements
      */
     public static function bindParam(object $params): void
     {
-        self::setQueryColumns((int) is_resource($params->sqlStatement) ? sqlsrv_num_fields($params->sqlStatement) : 0);
-        self::setQueryParameters($params->sqlArgs);
-        if ($params->isArray) {
+        self::setQueryColumns((int) is_resource($params->statement->object) ? sqlsrv_num_fields($params->statement->object) : 0);
+        self::setQueryParameters($params->query->arguments);
+        if ($params->by->array) {
             self::internalBindParamArray($params);
         } else {
             self::internalBindParamArgs($params);
@@ -384,13 +387,9 @@ class Statements
         self::setAllMetadata();
         if (!empty($params)) {
             $bindParams = Schema::makeArgs([null, ...$params]);
-            if ($bindParams->isArray) {
-                if ($bindParams->isMulti) {
-                    foreach ($bindParams->sqlArgs as $bindParam) {
-                        $statement = sqlsrv_query(SQLSrvConnection::getInstance()->getConnection(), self::parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
-                    }
-                } else {
-                    $statement = sqlsrv_query(SQLSrvConnection::getInstance()->getConnection(), self::parse(...$params), array_values($bindParams->sqlArgs), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
+            if ($bindParams->by->array) {
+                foreach (($bindParams->is->array->multi ? $bindParams->query->arguments : [$bindParams->query->arguments]) as $bindParam) {
+                    $statement = sqlsrv_query(SQLSrvConnection::getInstance()->getConnection(), self::parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
                 }
             } else {
                 $statement = sqlsrv_query(SQLSrvConnection::getInstance()->getConnection(), self::parse(...$params));
@@ -434,6 +433,7 @@ class Statements
         }
         return SQLSrvConnection::getInstance();
     }
+
     /**
      * This function binds the parameters to a prepared query.
      *

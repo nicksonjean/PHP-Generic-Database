@@ -116,8 +116,8 @@ class Validations
                 'array' => implode(',', $v),
                 'object' => serialize($v),
                 'resource' => is_resource($v) && get_resource_type($v) === 'stream'
-                ? stream_get_contents($v)
-                : serialize($v),
+                    ? stream_get_contents($v)
+                    : serialize($v),
                 default => $v
             };
         }

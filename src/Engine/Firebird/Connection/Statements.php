@@ -2,14 +2,18 @@
 
 namespace GenericDatabase\Engine\Firebird\Connection;
 
-use GenericDatabase\Engine\FirebirdConnection;
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Core\Query;
+use GenericDatabase\Helpers\Schema;
 use GenericDatabase\Helpers\Translate;
 use GenericDatabase\Helpers\Validations;
-use stdClass;
+use GenericDatabase\Engine\FirebirdConnection;
+use GenericDatabase\Helpers\Types\Compound\Objects;
+use AllowDynamicProperties;
 
+#[AllowDynamicProperties]
 class Statements
 {
+    use Objects;
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
@@ -73,12 +77,12 @@ class Statements
      */
     public static function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = self::getQueryString();
-        $metadata->queryParameters = self::getQueryParameters();
-        $metadata->queryRows = self::getQueryRows();
-        $metadata->queryColumns = self::getQueryColumns();
-        $metadata->affectedRows = self::getAffectedRows();
+        $metadata = new self();
+        $metadata->query->string = self::getQueryString();
+        $metadata->query->arguments = self::getQueryParameters();
+        $metadata->query->columns = self::getQueryColumns();
+        $metadata->query->rows->fetched = self::getQueryRows();
+        $metadata->query->rows->affected = self::getAffectedRows();
         return $metadata;
     }
 
@@ -294,18 +298,20 @@ class Statements
     /**
      * Binds an array multiple parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArrayMulti(mixed ...$params): void
+    private static function internalBindParamArrayMulti(object $params): void
     {
         $affectedRows = 0;
-        foreach ($params['sqlArgs'] as $param) {
-            $referenceParams = array_values($param);
-            $stmt = self::exec($params['sqlStatement'], $referenceParams);
-            self::setStatement($stmt);
-            $affectedRows++;
-            self::setAffectedRows((int) $affectedRows);
+        foreach ($params->query->arguments as $argument) {
+            self::internalBindVariable($argument);
+            if (self::exec($params->statement->object, array_values($argument))) {
+                if (self::getQueryColumns() === 0) {
+                    $affectedRows++;
+                    self::setAffectedRows((int) $affectedRows);
+                }
+            }
         }
     }
 
@@ -315,67 +321,67 @@ class Statements
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArraySingle(mixed ...$params): void
+    private static function internalBindParamArraySingle(object $params): void
     {
-        self::internalBindParamArgs(...$params);
+        self::internalBindParamArgs($params);
     }
 
     /**
      * Binds an array parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArray(mixed ...$params): void
+    private static function internalBindParamArray(object $params): void
     {
-        if ($params['isMulti']) {
-            self::internalBindParamArrayMulti(...$params);
+        if ($params->is->array->multi) {
+            self::internalBindParamArrayMulti($params);
         } else {
-            self::internalBindParamArraySingle(...$params);
+            self::internalBindParamArraySingle($params);
         }
     }
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an args of parameters and values.
+     * @param object $params The name of the parameter or an args of parameters and values.
      * @return void
      */
-    private static function internalBindParamArgs(mixed ...$params): void
+    private static function internalBindParamArgs(object $params): void
     {
-        $referenceParams = array_values($params['sqlArgs']);
-        $stmt = self::exec($params['sqlStatement'], $referenceParams);
-        self::setStatement($stmt);
-        $affectedRows = ibase_affected_rows(FirebirdConnection::getInstance()->getConnection());
-        if ($affectedRows !== 0) {
-            self::setAffectedRows($affectedRows);
+        self::internalBindVariable($params->query->arguments);
+        if ($stmt = self::exec($params->statement->object, array_values($params->query->arguments))) {
+            self::setStatement($stmt);
+            $colCount = is_resource($params->statement->object) ? ibase_num_fields($params->statement->object) : 0;
+            if ($colCount > 0) {
+                self::setQueryColumns((int) $colCount);
+                $rowCount = 0;
+                $rows = [];
+                while ($line = ibase_fetch_assoc($stmt)) {
+                    $rowCount++;
+                    $rows[] = $line;
+                }
+                self::setQueryRows($rowCount);
+                self::setStatement(['results' => $rows]);
+            } else {
+                self::setStatement(['results' => []]);
+                self::setAffectedRows((int) ibase_affected_rows(FirebirdConnection::getInstance()->getConnection()));
+            }
         }
-    }
-
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private static function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
     }
 
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    public static function bindParam(mixed ...$params): void
+    public static function bindParam(object $params): void
     {
-        self::setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            self::internalBindParamArray(...$params);
+        self::setQueryParameters($params->query->arguments);
+        if ($params->by->array) {
+            self::internalBindParamArray($params);
         } else {
-            self::internalBindParamArgs(...$params);
+            self::internalBindParamArgs($params);
         }
     }
 
@@ -392,6 +398,25 @@ class Statements
     }
 
     /**
+     * This function binds the parameters to a prepared statement.
+     *
+     * @param mixed ...$params
+     * @return mixed
+     */
+    private static function prepareStatement(mixed ...$params): mixed
+    {
+        self::setAllMetadata();
+        if (!empty($params)) {
+            $statement = call_user_func_array((reset($params)[1] === Query::RAW) ? 'ibase_query' : 'ibase_prepare', [FirebirdConnection::getInstance()->getConnection(), self::parse(reset($params)[0])]);
+            if ($statement) {
+                self::setStatement($statement);
+            }
+            return $statement;
+        }
+        return false;
+    }
+
+    /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
@@ -399,21 +424,28 @@ class Statements
      */
     public static function query(mixed ...$params): ?FirebirdConnection
     {
-        self::setAllMetadata();
-        if (!empty($params)) {
-            $stmt = ibase_query(FirebirdConnection::getInstance()->getConnection(), self::parse(...$params));
-            $affectedRows = ibase_affected_rows(FirebirdConnection::getInstance()->getConnection());
-            if ($affectedRows === 0) {
-                self::setQueryColumns(ibase_num_fields($stmt));
-                $results = [];
-                while ($row = ibase_fetch_assoc($stmt)) {
-                    $results[] = $row;
+        if (!empty($params) && ($statement = self::prepareStatement([...$params, Query::RAW]))) {
+            $colCount = is_resource($statement) ? ibase_num_fields($statement) : 0;
+            if ($colCount > 0) {
+                $cloneStmt = function () use ($statement, $params): mixed {
+                    if (!is_resource($statement)) {
+                        return false;
+                    }
+                    return self::prepareStatement([...$params, Query::RAW]);
+                };
+                $countStmt = $cloneStmt();
+                if ($countStmt) {
+                    $rowCount = 0;
+                    while (ibase_fetch_row($countStmt)) {
+                        $rowCount++;
+                    }
+                    self::setQueryRows($rowCount);
                 }
-                self::setStatement(['results' => $results]);
-                self::setQueryRows(count($results));
+                self::setQueryColumns($colCount);
+                self::setStatement($statement);
             } else {
                 self::setStatement(['results' => []]);
-                self::setAffectedRows($affectedRows);
+                self::setAffectedRows(ibase_affected_rows(FirebirdConnection::getInstance()->getConnection()));
             }
         }
         return FirebirdConnection::getInstance();
@@ -427,31 +459,10 @@ class Statements
      */
     public static function prepare(mixed ...$params): ?FirebirdConnection
     {
-        $driver = FirebirdConnection::getInstance()->getDriver();
-        self::setAllMetadata();
-        if (!empty($params)) {
-            $query = self::parse(...$params);
-            $stmt = ibase_prepare(FirebirdConnection::getInstance()->getConnection(), $query);
-            array_unshift($params, $stmt);
-            $bindParams = self::makeArgs($driver, ...$params);
-            self::bindParam(...$bindParams);
-            $affectedRows = ibase_affected_rows(FirebirdConnection::getInstance()->getConnection());
-            if ($affectedRows === 0) {
-                $stmtCount = ibase_prepare(FirebirdConnection::getInstance()->getConnection(), $query);
-                $rowCount = 0;
-                $referenceParams = array_values($bindParams['sqlArgs']);
-                $stmtExec = self::exec($stmtCount, $referenceParams);
-                if ($stmtExec) {
-                    while (ibase_fetch_assoc($stmtExec)) {
-                        $rowCount++;
-                    }
-                    ibase_free_result($stmtExec);
-                }
-                self::setQueryRows($rowCount);
-            }
-            self::setQueryColumns(ibase_num_fields($stmt));
+        if (!empty($params) && (self::prepareStatement([...$params, Query::PREPARED]))) {
+            $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
+            self::bindParam($bindParams);
         }
-
         return FirebirdConnection::getInstance();
     }
 

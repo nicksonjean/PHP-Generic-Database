@@ -2,19 +2,31 @@
 
 namespace GenericDatabase\Engine\PgSQL\Connection;
 
-use GenericDatabase\Engine\PgSQLConnection;
-use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translate;
-use stdClass;
 use \PgSql\Result;
+use GenericDatabase\Helpers\Hash;
+use GenericDatabase\Helpers\Schema;
+use GenericDatabase\Helpers\Translate;
+use GenericDatabase\Helpers\Validations;
+use GenericDatabase\Engine\PgSQLConnection;
+use GenericDatabase\Helpers\Types\Compound\Objects;
+use AllowDynamicProperties;
 
+#[AllowDynamicProperties]
 class Statements
 {
+    use Objects;
+
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
      */
     private static mixed $statement = null;
+
+    /**
+     * Instance of the Statement name of the database
+     * @var string $stmtName = ''
+     */
+    private static mixed $stmtName = '';
 
     /**
      * Count rows in query statement
@@ -67,12 +79,12 @@ class Statements
      */
     public static function getAllMetadata(): object
     {
-        $metadata = new stdClass();
-        $metadata->queryString = self::getQueryString();
-        $metadata->queryParameters = self::getQueryParameters();
-        $metadata->queryRows = self::getQueryRows();
-        $metadata->queryColumns = self::getQueryColumns();
-        $metadata->affectedRows = self::getAffectedRows();
+        $metadata = new self();
+        $metadata->query->string = self::getQueryString();
+        $metadata->query->arguments = self::getQueryParameters();
+        $metadata->query->columns = self::getQueryColumns();
+        $metadata->query->rows->fetched = self::getQueryRows();
+        $metadata->query->rows->affected = self::getAffectedRows();
         return $metadata;
     }
 
@@ -200,6 +212,26 @@ class Statements
     }
 
     /**
+     * Returns the statement for the function.
+     *
+     * @return string
+     */
+    public static function getStmtName(): string
+    {
+        return self::$stmtName;
+    }
+
+    /**
+     * Sets the statement for the function.
+     *
+     * @param string $statement The statement to be set.
+     */
+    public static function setStmtName(string $stmtName): void
+    {
+        self::$stmtName = $stmtName;
+    }
+
+    /**
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
@@ -227,42 +259,83 @@ class Statements
      */
     public static function lastInsertId(?string $name = null): string|int|false
     {
-        $statement = self::getStatement();
-        if ($statement instanceof Result) {
-            return pg_last_oid($statement);
-        }
-        if ($name !== null) {
-            $filter = "WHERE table_name = $1 AND column_default LIKE 'nextval%'";
-            $query = sprintf("SELECT column_name, column_default FROM information_schema.columns %s", $filter);
-            $result = pg_query_params(PgSQLConnection::getInstance()->getConnection(), $query, [$name]);
-            if ($result && ($row = pg_fetch_assoc($result))) {
-                $seqName = preg_replace("/nextval\('(.+)'::regclass\)/", "$1", $row['column_default']);
-                $result = pg_query(PgSQLConnection::getInstance()->getConnection(), "SELECT currval('$seqName')");
-                if ($result) {
-                    $row = pg_fetch_row($result);
-                    return $row ? (int) $row[0] : false;
-                }
+        if (!$name) {
+            $result = pg_query(PgSQLConnection::getInstance()->getConnection(), "SELECT lastval()");
+            if ($result) {
+                $row = pg_fetch_row($result);
+                return $row ? (int) $row[0] : false;
             }
+            return false;
         }
-        $result = pg_query(PgSQLConnection::getInstance()->getConnection(), "SELECT lastval()");
+        $query = "SELECT
+            current_database() as database_name,
+            seq.schemaname AS schema_name,
+            seq.sequencename AS name,
+            table_identities.*,
+            seq.last_value
+        FROM pg_sequences seq
+            INNER JOIN pg_namespace nspc ON nspc.nspname = seq.schemaname
+            INNER JOIN pg_class s ON s.relname = seq.sequencename AND s.relnamespace = nspc.oid
+            LEFT OUTER JOIN (
+                SELECT
+                    t.relname AS table_name,
+                    a.attname AS column_name,
+                    d.objid AS objid
+                FROM pg_namespace tns
+                    JOIN pg_class t ON tns.oid = t.relnamespace AND t.relkind IN ('p', 'r')
+                    JOIN pg_index i ON t.oid = i.indrelid AND i.indisprimary
+                    JOIN pg_attribute a ON i.indrelid = a.attrelid AND a.attnum = ANY (i.indkey)
+                    JOIN pg_depend d ON t.oid = d.refobjid AND d.refobjsubid = a.attnum
+            ) table_identities ON table_identities.objid = s.oid
+        WHERE table_identities.table_name = '$name'
+        AND (SELECT current_database()) = current_database()";
+        $result = pg_query(PgSQLConnection::getInstance()->getConnection(), $query);
         if ($result) {
-            $row = pg_fetch_row($result);
-            return $row ? (int) $row[0] : false;
+            $row = pg_fetch_assoc($result);
+            if ($row && isset($row['last_value']) && is_null($row['last_value']) && isset($row['name'])) {
+                $seqName = $row['name'];
+                $seqResult = pg_query_params(PgSQLConnection::getInstance()->getConnection(), "SELECT currval($1)", [$seqName]);
+                if ($seqResult) {
+                    $seqRow = pg_fetch_row($seqResult);
+                    return $seqRow ? (int) $seqRow[0] : false;
+                }
+            } elseif ($row && isset($row['last_value']) && !is_null($row['last_value'])) {
+                return (int) $row['last_value'];
+            }
         }
         return false;
     }
 
     /**
+     * Binds variables to a prepared statement with specified types.
+     * This method binds variables to a prepared statement based on their types,
+     * allowing for more precise parameter binding.
+     *
+     * @param mixed $preparedParams The prepared statement to bind variables to.
+     * @return mixed The prepared statement with bound variables.
+     */
+    private static function internalBindVariable(mixed $preparedParams): mixed
+    {
+        return Validations::detectTypes($preparedParams);
+    }
+
+    /**
      * Binds an array multiple parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArrayMulti(mixed ...$params): void
+    private static function internalBindParamArrayMulti(object $params): void
     {
-        foreach (Arrays::arrayValuesRecursive($params['sqlArgs']) as $param) {
-            self::exec($params['sqlStatement'], $param);
-            self::setAffectedRows(pg_affected_rows(self::getStatement()));
+        $affectedRows = 0;
+        foreach ($params->query->arguments as $argument) {
+            self::internalBindVariable($argument);
+            if (self::exec(self::getStmtName(), array_values($argument))) {
+                if (self::getQueryColumns() === 0) {
+                    $affectedRows++;
+                    self::setAffectedRows((int) $affectedRows);
+                }
+            }
         }
     }
 
@@ -272,47 +345,57 @@ class Statements
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArraySingle(mixed ...$params): void
+    private static function internalBindParamArraySingle(object $params): void
     {
-        self::exec($params['sqlStatement'], array_values($params['sqlArgs']));
-        self::setAffectedRows(pg_affected_rows(self::getStatement()));
+        self::internalBindParamArgs($params);
     }
 
     /**
      * Binds an array parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    private static function internalBindParamArray(mixed ...$params): void
+    private static function internalBindParamArray(object $params): void
     {
-        if ($params['isMulti']) {
-            self::internalBindParamArrayMulti(...$params);
+        if ($params->is->array->multi) {
+            self::internalBindParamArrayMulti($params);
         } else {
-            self::internalBindParamArraySingle(...$params);
+            self::internalBindParamArraySingle($params);
         }
     }
+
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
      * @param mixed $params The name of the parameter or an args of parameters and values.
      * @return void
      */
-    private static function internalBindParamArgs(mixed ...$params): void
+    private static function internalBindParamArgs(object $params): void
     {
-        self::exec($params['sqlStatement'], $params['sqlArgs']);
-        self::setAffectedRows(pg_affected_rows(self::getStatement()));
-    }
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $params Arguments list
-     * @param mixed $driver Driver name
-     * @return array
-     */
-    private static function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        return Arrays::makeArgs($driver, ...$params);
+        self::internalBindVariable($params->query->arguments);
+        if ($result = self::exec(self::getStmtName(), array_values($params->query->arguments))) {
+            $colCount = pg_num_fields($result);
+            if ($colCount > 0) {
+                self::setQueryColumns($colCount);
+                self::setQueryRows(
+                    (function (mixed $result): int {
+                        $results = [];
+                        $rows = 0;
+                        while ($row = pg_fetch_array($result, null, PGSQL_BOTH)) {
+                            $results[] = $row;
+                            $rows++;
+                        }
+                        self::setStatement(['results' => $results]);
+                        return $rows;
+                    })($result) ?? 0
+                );
+            } else {
+                self::setStatement(['results' => []]);
+                self::setAffectedRows(pg_affected_rows($result));
+            }
+            pg_free_result($result);
+        }
     }
 
     /**
@@ -321,13 +404,19 @@ class Statements
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    public static function bindParam(mixed ...$params): void
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param object $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    public static function bindParam(object $params): void
     {
-        self::setQueryParameters($params['sqlArgs']);
-        if ($params['isArray']) {
-            self::internalBindParamArray(...$params);
+        self::setQueryParameters($params->query->arguments);
+        if ($params->by->array) {
+            self::internalBindParamArray($params);
         } else {
-            self::internalBindParamArgs(...$params);
+            self::internalBindParamArgs($params);
         }
     }
 
@@ -339,9 +428,28 @@ class Statements
      */
     public static function parse(mixed ...$params): string
     {
-        $queryString = Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE), Translate::BIND_DOLLAR_SIGN);
-        self::setQueryString($queryString);
+        self::setQueryString(Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE), Translate::BIND_DOLLAR_SIGN));
         return self::getQueryString();
+    }
+
+    /**
+     * This function binds the parameters to a prepared statement.
+     *
+     * @param mixed ...$params
+     * @return Result|bool
+     */
+    private static function prepareStatement(mixed ...$params): Result|bool
+    {
+        self::setAllMetadata();
+        if (!empty($params)) {
+            self::setStmtName(Hash::hash());
+            $statement = pg_prepare(PgSQLConnection::getInstance()->getConnection(), self::getStmtName(), self::parse(...$params));
+            if ($statement) {
+                self::setStatement($statement);
+            }
+            return self::getStatement();
+        }
+        return false;
     }
 
     /**
@@ -352,33 +460,31 @@ class Statements
      */
     public static function query(mixed ...$params): ?PgSQLConnection
     {
-        self::setAllMetadata();
-        if (!empty($params)) {
-            $query = self::parse(...$params);
-            $result = pg_query(PgSQLConnection::getInstance()->getConnection(), $query);
-            if ($result) {
-                $numFields = pg_num_fields($result);
-                if ($numFields > 0) {
-                    $results = [];
-                    while ($row = pg_fetch_array($result, null, PGSQL_BOTH)) {
-                        $results[] = $row;
-                    }
-                    self::setStatement(['results' => $results]);
-                    self::setQueryRows(pg_num_rows($result));
-                    self::setQueryColumns($numFields);
-                    self::setAffectedRows(0);
-                } else {
-                    $affectedRows = pg_affected_rows($result);
-                    self::setStatement(['results' => []]);
-                    self::setAffectedRows($affectedRows);
-                    self::setQueryRows(0);
-                    self::setQueryColumns(0);
-                }
-                pg_free_result($result);
+        if (!empty($params) && (self::prepareStatement(...$params)) && $result = self::exec(self::getStmtName())) {
+            $colCount = pg_num_fields($result);
+            if ($colCount > 0) {
+                self::setQueryColumns($colCount);
+                self::setQueryRows(
+                    (function (mixed $result): int {
+                        $results = [];
+                        $rows = 0;
+                        while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+                            $results[] = $row;
+                            $rows++;
+                        }
+                        self::setStatement(['results' => $results]);
+                        return $rows;
+                    })($result) ?? 0
+                );
+            } else {
+                self::setStatement(['results' => []]);
+                self::setAffectedRows(pg_affected_rows($result));
             }
+            pg_free_result($result);
         }
         return PgSQLConnection::getInstance();
     }
+
     /**
      * This function binds the parameters to a prepared query.
      *
@@ -387,47 +493,13 @@ class Statements
      */
     public static function prepare(mixed ...$params): ?PgSQLConnection
     {
-        $driver = PgSQLConnection::getInstance()->getDriver();
-        self::setAllMetadata();
-        if (!empty($params)) {
-            $query = self::parse(...$params);
-            if (isset($params[1])) {
-                $results = [];
-                $affectedRows = 0;
-                $numFields = 0;
-                $paramSets = is_array($params[1][0] ?? null) ? $params[1] : [$params[1]];
-                $bindParams = self::makeArgs($driver, ...$params);
-                self::setQueryParameters($bindParams['sqlQuery']);
-                foreach ($paramSets as $bindParams) {
-                    $orderedParams = array_values($bindParams);
-                    $result = pg_query_params(PgSQLConnection::getInstance()->getConnection(), $query, $orderedParams);
-                    if ($result) {
-                        $numFields = pg_num_fields($result);
-                        if ($numFields > 0) {
-                            while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
-                                $results[] = $row;
-                            }
-                        } else {
-                            $affectedRows += pg_affected_rows($result);
-                        }
-                        pg_free_result($result);
-                    }
-                }
-                if ($numFields > 0) {
-                    self::setStatement(['results' => $results]);
-                    self::setQueryRows(count($results));
-                    self::setQueryColumns($numFields);
-                    self::setAffectedRows(0);
-                } else {
-                    self::setStatement(['results' => []]);
-                    self::setAffectedRows($affectedRows);
-                    self::setQueryRows(0);
-                    self::setQueryColumns(0);
-                }
-            }
+        if (!empty($params) && (self::prepareStatement(...$params))) {
+            $bindParams = Schema::makeArgs([self::getStatement(), ...$params, self::getStmtName()]);
+            self::bindParam($bindParams);
         }
         return PgSQLConnection::getInstance();
     }
+
     /**
      * This function runs an SQL statement and returns the number of affected rows.
      *
@@ -436,26 +508,12 @@ class Statements
      */
     public static function exec(mixed ...$params): Result|bool
     {
-        if (!empty($params)) {
-            $stmtName = 'stmt_' . md5(serialize($params));
-            $query = self::parse(...$params);
-            $stmt = pg_prepare(PgSQLConnection::getInstance()->getConnection(), $stmtName, $query);
-            if ($stmt && isset($params[1])) {
-                $orderedParams = array_values($params[1]);
-                $result = pg_execute(PgSQLConnection::getInstance()->getConnection(), $stmtName, $orderedParams);
-                if ($result) {
-                    $results = [];
-                    if (pg_num_fields($result) > 0) {
-                        while ($row = pg_fetch_array($result, null, PGSQL_BOTH)) {
-                            $results[] = $row;
-                        }
-                    }
-                    self::setStatement(['results' => $results]);
-                    self::setAffectedRows(pg_affected_rows($result));
-                    return $result;
-                }
-            }
+        $statement = reset($params);
+        $data = $params[1] ?? false;
+        if (!is_array($data)) {
+            $data = [];
         }
-        return false;
+        $processedData = array_values($data);
+        return call_user_func_array('pg_execute', [PgSQLConnection::getInstance()->getConnection(), $statement, $processedData]);
     }
 }
