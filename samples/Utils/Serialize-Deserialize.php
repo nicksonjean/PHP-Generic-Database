@@ -57,8 +57,8 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 // var_dump($serialized);
 
-// $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
-$context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
@@ -78,7 +78,7 @@ $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)
 // $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
-// var_dump($context);
+var_dump($context);
 
 // $d = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :id', [':id' => 10]);
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id = :id', '27');
@@ -87,15 +87,15 @@ $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)
 
 // OBJ, INTO, CLASS, COLUMN, ASSOC, NUM, BOTH
 
-// $o = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE :nome', [':nome' => 'Rio%']);
+$o = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE :nome', [':nome' => 'Rio%']);
 
-// var_dump($o->getAllMetadata());
+var_dump($o->getAllMetadata());
 
-// var_dump($o->fetchAll(Connection::FETCH_ASSOC));
+var_dump($o->fetchAll(Connection::FETCH_ASSOC));
 
-// while ($row = $o->fetch(Connection::FETCH_ASSOC)) {
-//     var_dump($row);
-// }
+while ($row = $o->fetch(Connection::FETCH_ASSOC)) {
+    var_dump($row);
+}
 
 $rand = mt_rand(2, 4);
 $range = implode(', ', range(1, $rand));
@@ -140,10 +140,6 @@ var_dump($r->fetchAll(Connection::FETCH_OBJ));
 // $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'PDC', 'TI', 210);
 // $b = $context->prepare('DELETE FROM estado WHERE id IN (:id)', [[':id' => '271'], [':id' => '272'], [':id' => '273']]);
 
-
-
-
-
 $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE', ':sigla' => 'T1'], [':nome' => 'TESTE', ':sigla' => 'T2'], [':nome' => 'TESTE', ':sigla' => 'T5']]);
 var_dump($b->getAllMetadata());
 
@@ -155,13 +151,8 @@ var_dump($c->getAllMetadata());
 $d = $context->query("UPDATE estado SET sigla = 'T4' WHERE nome = 'TESTE'");
 var_dump($d->getAllMetadata());
 
-
 $f = $context->query("DELETE FROM estado WHERE nome IN ('TESTE')");
 var_dump($f->getAllMetadata());
-
-
-
-
 
 // var_dump([
 //     'queryString' => $b->getQueryString(),
@@ -173,7 +164,7 @@ var_dump($f->getAllMetadata());
 
 /*
 SQLite: 'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id'
-MySQL:  'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id'
+MySQL:  'SELECT `id` AS `Codigo`, `nome` AS `Estado`, `sigla` AS `Sigla` FROM `estado` ORDER BY `id`'
 Firebird:  'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM "estado" ORDER BY "id"'
 PgSQL:  'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM "estado" ORDER BY "id"'
 SQLSrv: 'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM "estado" ORDER BY "id"'

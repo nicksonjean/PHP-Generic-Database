@@ -3,6 +3,7 @@
 namespace GenericDatabase\Engine\PgSQL\Connection;
 
 use \PgSql\Result;
+use GenericDatabase\Core\Query;
 use GenericDatabase\Helpers\Hash;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
@@ -438,16 +439,20 @@ class Statements
      * @param mixed ...$params
      * @return Result|bool
      */
-    private static function prepareStatement(mixed ...$params): Result|bool
+    private static function prepareStatement(mixed ...$params): mixed
     {
         self::setAllMetadata();
         if (!empty($params)) {
             self::setStmtName(Hash::hash());
-            $statement = pg_prepare(PgSQLConnection::getInstance()->getConnection(), self::getStmtName(), self::parse(...$params));
+            if (reset($params)[1] === Query::RAW) {
+                $statement = pg_query(PgSQLConnection::getInstance()->getConnection(), self::parse(reset($params)[0]));
+            } else {
+                $statement = pg_prepare(PgSQLConnection::getInstance()->getConnection(), self::getStmtName(), self::parse(reset($params)[0]));
+            }
             if ($statement) {
                 self::setStatement($statement);
             }
-            return self::getStatement();
+            return $statement;
         }
         return false;
     }
@@ -460,27 +465,29 @@ class Statements
      */
     public static function query(mixed ...$params): ?PgSQLConnection
     {
-        if (!empty($params) && (self::prepareStatement(...$params)) && $result = self::exec(self::getStmtName())) {
-            $colCount = pg_num_fields($result);
+        if (!empty($params) && ($statement = self::prepareStatement([...$params, Query::RAW]))) {
+            $colCount = pg_num_fields($statement);
             if ($colCount > 0) {
+                $cloneStmt = function () use ($statement, $params): mixed {
+                    if ($statement instanceof Result) {
+                        return false;
+                    }
+                    return self::prepareStatement([...$params, Query::RAW]);
+                };
+                $countResult = $cloneStmt();
+                if ($countResult) {
+                    $rowCount = 0;
+                    while (pg_fetch_array($countResult, null, PGSQL_ASSOC)) {
+                        $rowCount++;
+                    }
+                    self::setQueryRows($rowCount);
+                }
                 self::setQueryColumns($colCount);
-                self::setQueryRows(
-                    (function (mixed $result): int {
-                        $results = [];
-                        $rows = 0;
-                        while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
-                            $results[] = $row;
-                            $rows++;
-                        }
-                        self::setStatement(['results' => $results]);
-                        return $rows;
-                    })($result) ?? 0
-                );
+                self::setStatement($statement);
             } else {
                 self::setStatement(['results' => []]);
-                self::setAffectedRows(pg_affected_rows($result));
+                self::setAffectedRows(pg_affected_rows($statement));
             }
-            pg_free_result($result);
         }
         return PgSQLConnection::getInstance();
     }
@@ -493,7 +500,7 @@ class Statements
      */
     public static function prepare(mixed ...$params): ?PgSQLConnection
     {
-        if (!empty($params) && (self::prepareStatement(...$params))) {
+        if (!empty($params) && (self::prepareStatement([...$params, Query::PREPARED]))) {
             $bindParams = Schemas::makeArgs([self::getStatement(), ...$params, self::getStmtName()]);
             self::bindParam($bindParams);
         }

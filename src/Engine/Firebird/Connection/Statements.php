@@ -21,12 +21,6 @@ class Statements
     private static mixed $statement = null;
 
     /**
-     * Instance of the Statement of the database
-     * @var mixed $statementResult = null
-     */
-    private static mixed $statementResult = null;
-
-    /**
      * Count rows in query statement
      * @var ?int $queryRows = 0
      */
@@ -207,26 +201,6 @@ class Statements
     public static function setStatement(mixed $statement): void
     {
         self::$statement = $statement;
-    }
-
-    /**
-     * Returns the statement result for the function.
-     *
-     * @return mixed
-     */
-    private static function getStatementResult(): mixed
-    {
-        return self::$statementResult;
-    }
-
-    /**
-     * Set the statement for the function.
-     *
-     * @param mixed $statement The statement to be set.
-     */
-    private static function setStatementResult(mixed $statement): void
-    {
-        self::$statementResult = $statement;
     }
 
     /**

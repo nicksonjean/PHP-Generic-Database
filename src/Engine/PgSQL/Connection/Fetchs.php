@@ -41,12 +41,9 @@ class Fetchs
             if ($statement instanceof \PgSql\Result) {
                 while ($row = pg_fetch_array($statement, null, PGSQL_ASSOC)) {
                     $normalizedRow = [];
-                    $numericIndex = 0;
                     foreach ($row as $key => $value) {
-                        if (is_string($key) && !is_numeric($key)) {
+                        if (is_string($key)) {
                             $normalizedRow[$key] = $value;
-                            $normalizedRow[$numericIndex] = $value;
-                            $numericIndex++;
                         }
                     }
                     self::$cachedResults[$statementId][] = $normalizedRow;
