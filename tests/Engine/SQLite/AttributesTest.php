@@ -5,7 +5,7 @@ namespace GenericDatabase\Tests\Engine\SQLite;
 use GenericDatabase\Engine\SQLite\Connection\SQLite;
 use GenericDatabase\Engine\SQLite\Connection\Attributes;
 use GenericDatabase\Engine\SQLiteConnection;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use PHPUnit\Framework\TestCase;
 
 final class AttributesTest extends TestCase
@@ -85,7 +85,7 @@ final class AttributesTest extends TestCase
 
     public function testThrowExceptionInvalidAttribute()
     {
-        $this->expectException(CustomException::class);
+        $this->expectException(Exceptions::class);
         $this->expectExceptionMessage("Invalid attribute: INVALID_ATTRIBUTE");
         $origAttributeList = Attributes::$attributeList;
         Attributes::$attributeList[] = 'INVALID_ATTRIBUTE';

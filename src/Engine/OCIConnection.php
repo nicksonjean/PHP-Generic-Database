@@ -18,7 +18,7 @@ use GenericDatabase\Engine\OCI\Connection\Dump;
 use GenericDatabase\Engine\OCI\Connection\Transaction;
 use GenericDatabase\Engine\OCI\Connection\Statements;
 use GenericDatabase\Engine\OCI\Connection\Fetchs;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Shared\Setter;
@@ -71,9 +71,7 @@ class OCIConnection implements IConnection
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -125,7 +123,7 @@ class OCIConnection implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return OCIConnection
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function postConnect(): OCIConnection
     {
@@ -177,7 +175,7 @@ class OCIConnection implements IConnection
                 'oci8',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         try {
@@ -244,10 +242,10 @@ class OCIConnection implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|CustomException
-     * @throws CustomException
+     * @return string|Exceptions
+     * @throws Exceptions
      */
-    private function parseDsn(): string|CustomException
+    private function parseDsn(): string|Exceptions
     {
         return DSN::parse();
     }

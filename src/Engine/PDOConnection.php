@@ -16,7 +16,7 @@ use GenericDatabase\Engine\PDO\Connection\Dump;
 use GenericDatabase\Engine\PDO\Connection\Transaction;
 use GenericDatabase\Engine\PDO\Connection\Statements;
 use GenericDatabase\Engine\PDO\Connection\Fetchs;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
@@ -70,9 +70,7 @@ class PDOConnection implements IConnection
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -109,7 +107,7 @@ class PDOConnection implements IConnection
      * This method is responsible for prepare the connection options before connect.
      *
      * @return PDOConnection
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function preConnect(): PDOConnection
     {
@@ -123,7 +121,7 @@ class PDOConnection implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return PDOConnection
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function postConnect(): PDOConnection
     {
@@ -166,7 +164,7 @@ class PDOConnection implements IConnection
                 'pdo',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         try {

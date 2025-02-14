@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Helpers;
+namespace GenericDatabase\Helpers\Types\Scalars;
 
 class Strings
 {

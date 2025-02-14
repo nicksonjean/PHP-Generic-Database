@@ -5,15 +5,15 @@ namespace GenericDatabase\Engine\SQLite\Connection;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLiteConnection;
 use GenericDatabase\Helpers\Path;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 
 #[AllowDynamicProperties]
 class DSN
 {
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
-    public static function parse(): string|CustomException
+    public static function parse(): string|Exceptions
     {
         if (!extension_loaded('sqlite3')) {
             $message = sprintf(
@@ -21,7 +21,7 @@ class DSN
                 'sqlite3',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         if (

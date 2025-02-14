@@ -11,7 +11,7 @@ use GenericDatabase\Core\Select;
 use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Engine\ODBCQueryBuilder;
 
 class Internal

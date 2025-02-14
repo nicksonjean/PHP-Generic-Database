@@ -18,7 +18,7 @@ use GenericDatabase\Engine\Firebird\Connection\Dump;
 use GenericDatabase\Engine\Firebird\Connection\Transaction;
 use GenericDatabase\Engine\Firebird\Connection\Statements;
 use GenericDatabase\Engine\Firebird\Connection\Fetchs;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Shared\Setter;
@@ -71,9 +71,7 @@ class FirebirdConnection implements IConnection
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -125,7 +123,7 @@ class FirebirdConnection implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return FirebirdConnection
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function postConnect(): FirebirdConnection
     {
@@ -158,7 +156,7 @@ class FirebirdConnection implements IConnection
                 ? ibase_connect($dsn, $user, $password)
                 : ibase_pconnect($dsn, $user, $password)
         );
-        
+
         return $this;
     }
 
@@ -176,7 +174,7 @@ class FirebirdConnection implements IConnection
                 'interbase',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         try {
@@ -243,10 +241,10 @@ class FirebirdConnection implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|CustomException
-     * @throws CustomException
+     * @return string|Exceptions
+     * @throws Exceptions
      */
-    private function parseDsn(): string|CustomException
+    private function parseDsn(): string|Exceptions
     {
         return DSN::parse();
     }

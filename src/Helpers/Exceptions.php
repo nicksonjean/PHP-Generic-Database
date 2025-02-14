@@ -6,13 +6,13 @@ use Exception;
 use Throwable;
 
 /**
- * This `GenericDatabase\Helpers\CustomException` class is a custom exception that extends the built-in
+ * This `GenericDatabase\Helpers\Exceptions` class is a custom exception that extends the built-in
  * Exception class in PHP. It allows for the creation of custom exceptions with a default message, code,
  * and previous exception.
  *
  * Example Usage:
  * <code>
- * $exception = new CustomException("This is a custom exception", 500);
+ * $exception = new Exceptions("This is a custom exception", 500);
  * throw $exception;
  * </code>
  *
@@ -23,16 +23,16 @@ use Throwable;
  *
  * @package GenericDatabase\Helpers
  */
-class CustomException extends Exception
+class Exceptions extends Exception
 {
     /**
-     * Constructor method for CustomException
+     * Constructor method for Exceptions
      *
      * @param string $message The exception message
      * @param int $code The exception code
      * @param Throwable|null $previous The previous exception
      */
-    public function __construct(string $message = "Custom Exception", int $code = 0, Throwable $previous = null)
+    public function __construct(string $message = "Exception", int $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

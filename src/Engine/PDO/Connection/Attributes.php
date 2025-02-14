@@ -4,7 +4,7 @@ namespace GenericDatabase\Engine\PDO\Connection;
 
 use Exception;
 use PDOException;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Engine\PDOConnection;
 
 class Attributes
@@ -35,13 +35,13 @@ class Attributes
      * Define all PDO attribute of the connection a ready exist
      *
      * @return void
-     * @throws CustomException|PDOException|Exception
+     * @throws Exceptions|PDOException|Exception
      */
     public static function define(): void
     {
         set_error_handler(
             function ($code, $message): never {
-                throw new CustomException(message: $message, code: $code);
+                throw new Exceptions(message: $message, code: $code);
             }
         );
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Helpers;
+namespace GenericDatabase\Helpers\Parsers;
 
 /**
  * The `GenericDatabase\Helpers\JSON` class provides two static methods for working with JSON data.
@@ -48,7 +48,7 @@ class JSON
             return false;
         }
 
-        set_error_handler(fn (): bool => true, E_WARNING);
+        set_error_handler(fn(): bool => true, E_WARNING);
         json_decode(file_get_contents($json));
         restore_error_handler();
         if (json_last_error() === JSON_ERROR_NONE) {

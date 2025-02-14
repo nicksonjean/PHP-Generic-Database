@@ -3,16 +3,16 @@
 namespace GenericDatabase\Engine\MySQLi\Connection;
 
 use GenericDatabase\Engine\MySQLiConnection;
-use GenericDatabase\Helpers\Schema;
-use GenericDatabase\Helpers\Translate;
+use GenericDatabase\Helpers\Schemas;
+use GenericDatabase\Helpers\Parsers\SQL;
 use mysqli_stmt;
-use GenericDatabase\Helpers\Types\Compound\Objects;
+use GenericDatabase\Shared\Objectable;
 use AllowDynamicProperties;
 
 #[AllowDynamicProperties]
 class Statements
 {
-    use Objects;
+    use Objectable;
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
@@ -378,7 +378,7 @@ class Statements
      */
     public static function parse(mixed ...$params): string
     {
-        self::setQueryString(Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_BACKTICK)));
+        self::setQueryString(SQL::binding(SQL::escape(reset($params), SQL::SQL_DIALECT_BACKTICK)));
         return self::getQueryString();
     }
 
@@ -440,7 +440,7 @@ class Statements
     public static function prepare(mixed ...$params): ?MySQLiConnection
     {
         if (!empty($params) && (self::prepareStatement(...$params))) {
-            $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
+            $bindParams = Schemas::makeArgs([self::getStatement(), ...$params]);
             self::bindParam($bindParams);
         }
         return MySQLiConnection::getInstance();

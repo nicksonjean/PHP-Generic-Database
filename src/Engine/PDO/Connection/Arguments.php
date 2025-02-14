@@ -4,11 +4,11 @@ namespace GenericDatabase\Engine\PDO\Connection;
 
 use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Helpers\Generators;
-use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\JSON;
-use GenericDatabase\Helpers\INI;
-use GenericDatabase\Helpers\YAML;
-use GenericDatabase\Helpers\XML;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
+use GenericDatabase\Helpers\Parsers\JSON;
+use GenericDatabase\Helpers\Parsers\INI;
+use GenericDatabase\Helpers\Parsers\YAML;
+use GenericDatabase\Helpers\Parsers\XML;
 use GenericDatabase\Engine\PDOConnection;
 
 class Arguments

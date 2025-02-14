@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Engine\PgSQL\QueryBuilder;
 
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Core\Table;
 use GenericDatabase\Core\Column;
 use GenericDatabase\Core\Junction;
@@ -20,18 +20,18 @@ class Criteria
         $data = array_key_exists('data', $arguments) ? trim($arguments['data']) : [];
         if (preg_match(Regex::getSelect(), $data, $matches)) {
             $result = $matches['function_name'] ? Arrays::arraySafe([
-                'type' => Column::FUNCTION ,
+                'type' => Column::FUNCTION,
                 'value' => trim($data),
                 'function' => $matches['function_name'],
                 'arguments' => $matches['function_arguments'],
                 'alias' => $matches['function_column_alias'] ?? null,
             ]) : Arrays::arraySafe([
-                            'type' => Column::METADATA,
-                            'value' => trim($data),
-                            'prefix' => $matches['table_prefix'] ?? null,
-                            'column' => $matches['column_name'],
-                            'alias' => $matches['column_alias'] ?? null,
-                        ]);
+                'type' => Column::METADATA,
+                'value' => trim($data),
+                'prefix' => $matches['table_prefix'] ?? null,
+                'column' => $matches['column_name'],
+                'alias' => $matches['column_alias'] ?? null,
+            ]);
         }
         return $result;
     }
@@ -124,7 +124,7 @@ class Criteria
             };
 
             $result = isset($matches['function_name']) ? Arrays::arraySafe([
-                'type' => $enum::FUNCTION ,
+                'type' => $enum::FUNCTION,
                 'value' => trim($data),
                 'function' => $matches['function_name'] ?? null,
                 'alias' => $matches['function_table_alias'] ?? null,
@@ -142,23 +142,23 @@ class Criteria
                 'signal' => $matches['function_signal'] ?? null,
                 'condition' => $condition,
             ]) : Arrays::arraySafe([
-                            'type' => $enum::DEFAULT ,
-                            'value' => trim($data),
-                            'alias' => $matches['table_alias'] ?? null,
-                            'column' => $matches['column_name'] ?? null,
-                            'arguments' => [
-                                'default' => $matches['arguments'] ?? null,
-                                'extra' => $matches['arguments_extra'] ?? null,
-                                'unlimited' => $matches['arguments_unlimited'] ?? null,
-                            ],
-                            'aggregation' => [
-                                'value' => $matches['aggregation'] ?? null,
-                                'type' => $aggregationType,
-                                'assert' => $aggregationAssert,
-                            ],
-                            'signal' => $matches['signal'] ?? null,
-                            'condition' => $condition,
-                        ]);
+                'type' => $enum::DEFAULT,
+                'value' => trim($data),
+                'alias' => $matches['table_alias'] ?? null,
+                'column' => $matches['column_name'] ?? null,
+                'arguments' => [
+                    'default' => $matches['arguments'] ?? null,
+                    'extra' => $matches['arguments_extra'] ?? null,
+                    'unlimited' => $matches['arguments_unlimited'] ?? null,
+                ],
+                'aggregation' => [
+                    'value' => $matches['aggregation'] ?? null,
+                    'type' => $aggregationType,
+                    'assert' => $aggregationAssert,
+                ],
+                'signal' => $matches['signal'] ?? null,
+                'condition' => $condition,
+            ]);
         }
         return $result;
     }
@@ -170,7 +170,7 @@ class Criteria
         if (preg_match(Regex::getGroupOrder(), $data, $matches)) {
             if (isset($matches['function_name'])) {
                 $result = Arrays::arraySafe([
-                    'type' => Grouping::FUNCTION ,
+                    'type' => Grouping::FUNCTION,
                     'value' => trim($data),
                     'function' => $matches['function_name'],
                     'arguments' => $matches['function_arguments'],
@@ -196,7 +196,7 @@ class Criteria
         if (preg_match(Regex::getGroupOrder(), $data, $matches)) {
             if ($matches['function_name']) {
                 $result = Arrays::arraySafe([
-                    'type' => Sorting::FUNCTION ,
+                    'type' => Sorting::FUNCTION,
                     'value' => trim($data),
                     'function' => $matches['function_name'],
                     'arguments' => $matches['function_arguments'],
@@ -222,7 +222,7 @@ class Criteria
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         if (preg_match(Regex::getLimit(), $data, $matches)) {
             $result = Arrays::arraySafe([
-                'type' => isset($matches['offset']) ? LIMIT::OFFSET : LIMIT::DEFAULT ,
+                'type' => isset($matches['offset']) ? LIMIT::OFFSET : LIMIT::DEFAULT,
                 'value' => trim($data),
                 'limit' => (int) $matches['limit'],
                 'offset' => isset($matches['offset']) ? (int) $matches['offset'] : null,

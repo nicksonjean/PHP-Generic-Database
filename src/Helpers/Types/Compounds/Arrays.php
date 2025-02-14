@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Helpers;
+namespace GenericDatabase\Helpers\Types\Compounds;
 
 /**
  * The `GenericDatabase\Helpers\Arrays` class provides a collection of static methods for manipulating arrays in PHP.
@@ -316,41 +316,5 @@ class Arrays
             }
         }
         return array_filter($array, fn($value) => isset($value) && !empty($value));
-    }
-
-    /**
-     * This function makes an arguments list
-     *
-     * @param mixed $driver
-     * @param mixed $params Arguments list
-     * @return array
-     */
-    public static function makeArgs(mixed $driver, mixed ...$params): array
-    {
-        $index = ['isMulti' => 2, 'isArgs' => 1];
-        if ($driver === 'sqlsrv') {
-            $index = ['isMulti' => 1, 'isArgs' => 0];
-        }
-        if (array_key_exists($index['isMulti'], $params)) {
-            if (is_array($params[$index['isMulti']])) {
-                $isArgs = false;
-                $isArray = true;
-                $isMulti = self::isMultidimensional($params[$index['isMulti']]);
-                $sqlArgs = $params[$index['isMulti']];
-            } else {
-                $isArgs = true;
-                $isArray = false;
-                $isMulti = false;
-                $sqlArgs = Translate::arguments($params[$index['isArgs']], array_slice($params, $index['isMulti']));
-            }
-        }
-        return [
-            'sqlStatement' => ($driver === 'sqlsrv') ? null : reset($params),
-            'sqlQuery' => ($driver === 'sqlsrv') ? reset($params) : $params[1],
-            'sqlArgs' => $sqlArgs ?? [],
-            'isArray' => $isArray ?? false,
-            'isMulti' => $isMulti ?? false,
-            'isArgs' => $isArgs ?? false
-        ];
     }
 }

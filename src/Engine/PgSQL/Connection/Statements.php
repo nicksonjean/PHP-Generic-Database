@@ -4,17 +4,17 @@ namespace GenericDatabase\Engine\PgSQL\Connection;
 
 use \PgSql\Result;
 use GenericDatabase\Helpers\Hash;
-use GenericDatabase\Helpers\Schema;
-use GenericDatabase\Helpers\Translate;
+use GenericDatabase\Helpers\Schemas;
+use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Engine\PgSQLConnection;
-use GenericDatabase\Helpers\Types\Compound\Objects;
+use GenericDatabase\Shared\Objectable;
 use AllowDynamicProperties;
 
 #[AllowDynamicProperties]
 class Statements
 {
-    use Objects;
+    use Objectable;
 
     /**
      * Instance of the Statement of the database
@@ -382,7 +382,7 @@ class Statements
                     (function (mixed $result): int {
                         $results = [];
                         $rows = 0;
-                        while ($row = pg_fetch_array($result, null, PGSQL_BOTH)) {
+                        while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
                             $results[] = $row;
                             $rows++;
                         }
@@ -428,7 +428,7 @@ class Statements
      */
     public static function parse(mixed ...$params): string
     {
-        self::setQueryString(Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE), Translate::BIND_DOLLAR_SIGN));
+        self::setQueryString(SQL::binding(SQL::escape(reset($params), SQL::SQL_DIALECT_DOUBLE_QUOTE), SQL::BIND_DOLLAR_SIGN));
         return self::getQueryString();
     }
 
@@ -494,7 +494,7 @@ class Statements
     public static function prepare(mixed ...$params): ?PgSQLConnection
     {
         if (!empty($params) && (self::prepareStatement(...$params))) {
-            $bindParams = Schema::makeArgs([self::getStatement(), ...$params, self::getStmtName()]);
+            $bindParams = Schemas::makeArgs([self::getStatement(), ...$params, self::getStmtName()]);
             self::bindParam($bindParams);
         }
         return PgSQLConnection::getInstance();

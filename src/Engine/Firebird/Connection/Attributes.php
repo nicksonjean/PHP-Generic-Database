@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\Firebird\Connection;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\FirebirdConnection;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 
 #[AllowDynamicProperties]
 class Attributes
@@ -118,7 +118,7 @@ class Attributes
      * Define all Firebird attribute of the connection a ready exist
      *
      * @return void
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function define(): void
     {
@@ -140,7 +140,7 @@ class Attributes
                 'DEFAULT_FETCH_MODE' => Options::getOptions(Firebird::ATTR_DEFAULT_FETCH_MODE) ?? Firebird::FETCH_BOTH,
                 'CHARACTER_SET' => FirebirdConnection::getInstance()->getCharset(),
                 'COLLATION' => FirebirdConnection::getInstance()->getCharset() == 'utf8' ? 'unicode_ci_ai' : 'none',
-                default => throw new CustomException("Invalid attribute: $attribute"),
+                default => throw new Exceptions("Invalid attribute: $attribute"),
             };
         }
         FirebirdConnection::getInstance()->setAttributes($result);

@@ -3,16 +3,16 @@
 namespace GenericDatabase\Engine\SQLSrv\Connection;
 
 use GenericDatabase\Engine\SQLSrvConnection;
-use GenericDatabase\Helpers\Schema;
-use GenericDatabase\Helpers\Translate;
+use GenericDatabase\Helpers\Schemas;
+use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
-use GenericDatabase\Helpers\Types\Compound\Objects;
+use GenericDatabase\Shared\Objectable;
 use AllowDynamicProperties;
 
 #[AllowDynamicProperties]
 class Statements
 {
-    use Objects;
+    use Objectable;
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
@@ -372,7 +372,7 @@ class Statements
      */
     public static function parse(mixed ...$params): string
     {
-        self::setQueryString(Translate::binding(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE)));
+        self::setQueryString(SQL::binding(SQL::escape(reset($params), SQL::SQL_DIALECT_DOUBLE_QUOTE)));
         return self::getQueryString();
     }
 
@@ -386,7 +386,7 @@ class Statements
     {
         self::setAllMetadata();
         if (!empty($params)) {
-            $bindParams = Schema::makeArgs([null, ...$params]);
+            $bindParams = Schemas::makeArgs([null, ...$params]);
             if ($bindParams->by->array) {
                 foreach (($bindParams->is->array->multi ? $bindParams->query->arguments : [$bindParams->query->arguments]) as $bindParam) {
                     $statement = sqlsrv_query(SQLSrvConnection::getInstance()->getConnection(), self::parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
@@ -443,7 +443,7 @@ class Statements
     public static function prepare(mixed ...$params): ?SQLSrvConnection
     {
         if (!empty($params) && (self::prepareStatement(...$params))) {
-            $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
+            $bindParams = Schemas::makeArgs([self::getStatement(), ...$params]);
             self::bindParam($bindParams);
         }
         return SQLSrvConnection::getInstance();

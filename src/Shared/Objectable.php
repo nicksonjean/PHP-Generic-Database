@@ -1,8 +1,8 @@
 <?php
 
-namespace GenericDatabase\Helpers\Types\Compound;
+namespace GenericDatabase\Shared;
 
-trait Objects
+trait Objectable
 {
     public function __get($name)
     {

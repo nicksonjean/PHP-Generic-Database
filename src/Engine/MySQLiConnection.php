@@ -18,7 +18,7 @@ use GenericDatabase\Engine\MySQLi\Connection\Dump;
 use GenericDatabase\Engine\MySQLi\Connection\Transaction;
 use GenericDatabase\Engine\MySQLi\Connection\Statements;
 use GenericDatabase\Engine\MySQLi\Connection\Fetchs;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Shared\Setter;
@@ -71,9 +71,7 @@ class MySQLiConnection implements IConnection
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -126,7 +124,7 @@ class MySQLiConnection implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return MySQLiConnection
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function postConnect(): MySQLiConnection
     {
@@ -178,7 +176,7 @@ class MySQLiConnection implements IConnection
                 'mysqli',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         try {
@@ -243,10 +241,10 @@ class MySQLiConnection implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|CustomException
-     * @throws CustomException
+     * @return string|Exceptions
+     * @throws Exceptions
      */
-    private function parseDsn(): string|CustomException
+    private function parseDsn(): string|Exceptions
     {
         return DSN::parse();
     }

@@ -7,7 +7,7 @@ use PDO;
 use GenericDatabase\Engine\PDO\Connection\DSN;
 use GenericDatabase\Engine\PDOConnection;
 use GenericDatabase\Modules\Chainable;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use Dotenv\Dotenv;
 
 class PdoSqliteEngineTest extends TestCase
@@ -134,7 +134,7 @@ class PdoSqliteEngineTest extends TestCase
     {
         $originalDriver = PDOConnection::getInstance()->getDriver();
         PDOConnection::getInstance()->setDriver('invalid_driver');
-        $this->expectException(CustomException::class);
+        $this->expectException(Exceptions::class);
         DSN::parse();
         PDOConnection::getInstance()->setDriver($originalDriver);
     }

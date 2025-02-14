@@ -57,8 +57,8 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 // var_dump($serialized);
 
-$context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
-// $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
@@ -91,22 +91,22 @@ $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false
 
 // var_dump($o->getAllMetadata());
 
-// var_dump($o->fetchAll(Connection::FETCH_OBJ));
+// var_dump($o->fetchAll(Connection::FETCH_ASSOC));
 
-// while ($row = $o->fetch(Connection::FETCH_OBJ)) {
+// while ($row = $o->fetch(Connection::FETCH_ASSOC)) {
 //     var_dump($row);
 // }
 
-$rand = mt_rand(2, 6);
+$rand = mt_rand(2, 4);
 $range = implode(', ', range(1, $rand));
 
 $q = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :idA AND id <= :idB', [':idA' => 1, ':idB' => $rand]);
 
 var_dump($q->getAllMetadata());
 
-var_dump($q->fetchAll(Connection::FETCH_COLUMN));
+var_dump($q->fetchAll(Connection::FETCH_OBJ));
 
-while ($row = $q->fetch(Connection::FETCH_COLUMN)) {
+while ($row = $q->fetch(Connection::FETCH_OBJ)) {
     var_dump($row);
 }
 
@@ -114,11 +114,11 @@ $r = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM e
 
 var_dump($r->getAllMetadata());
 
-while ($row = $r->fetch(Connection::FETCH_COLUMN)) {
+while ($row = $r->fetch(Connection::FETCH_OBJ)) {
     var_dump($row);
 }
 
-var_dump($r->fetchAll(Connection::FETCH_COLUMN));
+var_dump($r->fetchAll(Connection::FETCH_OBJ));
 
 // var_dump([
 //     'queryString' => $a->getQueryString(),

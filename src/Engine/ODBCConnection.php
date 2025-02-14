@@ -18,7 +18,7 @@ use GenericDatabase\Engine\ODBC\Connection\Dump;
 use GenericDatabase\Engine\ODBC\Connection\Transaction;
 use GenericDatabase\Engine\ODBC\Connection\Statements;
 use GenericDatabase\Engine\ODBC\Connection\Fetchs;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Getter;
@@ -70,9 +70,7 @@ class ODBCConnection implements IConnection
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -124,7 +122,7 @@ class ODBCConnection implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return ODBCConnection
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function postConnect(): ODBCConnection
     {
@@ -179,7 +177,7 @@ class ODBCConnection implements IConnection
                 'odbc',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         try {

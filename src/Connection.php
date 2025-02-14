@@ -8,11 +8,11 @@ use ReflectionException;
 use AllowDynamicProperties;
 use GenericDatabase\Core\Entity;
 use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Helpers\INI;
-use GenericDatabase\Helpers\XML;
-use GenericDatabase\Helpers\JSON;
-use GenericDatabase\Helpers\YAML;
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\Parsers\INI;
+use GenericDatabase\Helpers\Parsers\XML;
+use GenericDatabase\Helpers\Parsers\JSON;
+use GenericDatabase\Helpers\Parsers\YAML;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\IConnection;
 use GenericDatabase\Engine\OCIConnection;
@@ -153,9 +153,7 @@ class Connection implements IConnection, IConnectionStrategy
      * Empty constructor since initialization is handled through factory methods
      * and the Strategy pattern implementation
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -192,14 +190,14 @@ class Connection implements IConnection, IConnectionStrategy
         $argumentsFile = Arrays::assocToIndex(Arrays::recombine($arguments));
         return match ($name) {
             'new' => match (true) {
-                    JSON::isValidJSON(...$argumentsFile) => self::callArgumentsByFormat('json', $argumentsFile),
-                    YAML::isValidYAML(...$argumentsFile) => self::callArgumentsByFormat('yaml', $argumentsFile),
-                    INI::isValidINI(...$argumentsFile) => self::callArgumentsByFormat('ini', $argumentsFile),
-                    XML::isValidXML(...$argumentsFile) => self::callArgumentsByFormat('xml', $argumentsFile),
-                    default => Arrays::isAssoc(...$argumentsFile)
+                JSON::isValidJSON(...$argumentsFile) => self::callArgumentsByFormat('json', $argumentsFile),
+                YAML::isValidYAML(...$argumentsFile) => self::callArgumentsByFormat('yaml', $argumentsFile),
+                INI::isValidINI(...$argumentsFile) => self::callArgumentsByFormat('ini', $argumentsFile),
+                XML::isValidXML(...$argumentsFile) => self::callArgumentsByFormat('xml', $argumentsFile),
+                default => Arrays::isAssoc(...$argumentsFile)
                     ? self::callWithByStaticArray(...$arguments)
                     : self::callWithByStaticArgs($arguments),
-                },
+            },
             default => self::call(self::getInstance(), $name, $arguments),
         };
     }

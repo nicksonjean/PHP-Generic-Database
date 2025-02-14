@@ -76,13 +76,13 @@ class Path
      *
      * @param string $path The path
      * @return bool True if the path is absolute, false otherwise
-     * @throws CustomException If the path contains non-printable characters or is empty
+     * @throws Exceptions If the path contains non-printable characters or is empty
      */
     public static function isAbsolute(string $path): bool
     {
         if (!ctype_print($path)) {
             $message = 'Path can NOT have non-printable characters or be empty';
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
         $regExp = '%^(?<wrappers>(?:[[:print:]]{2,}://)*)';
         $regExp .= '(?<root>(?:[[:alpha:]]:/|/)?)';

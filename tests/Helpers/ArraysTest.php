@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Tests\Helpers;
 
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -252,7 +252,8 @@ final class ArraysTest extends TestCase
     {
         $params = [
             self::$defaultQuery,
-            1, 'John',
+            1,
+            'John',
         ];
 
         $result = Arrays::makeArgs('sqlsrv', ...$params);

@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\MySQLi\Connection;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\MySQLiConnection;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 
 #[AllowDynamicProperties]
 class Attributes
@@ -51,7 +51,7 @@ class Attributes
     ];
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function getCharsetType(int $type): string
     {
@@ -59,12 +59,12 @@ class Attributes
             self::CLIENT => 'character_set_client',
             self::RESULTS => 'character_set_results',
             self::CONNECTION => 'character_set_connection',
-            default => throw new CustomException("Invalid type: $type"),
+            default => throw new Exceptions("Invalid type: $type"),
         };
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function getInverseCharsetType(int $type): string
     {
@@ -72,12 +72,12 @@ class Attributes
             self::CLIENT => 'client',
             self::RESULTS => 'results',
             self::CONNECTION => 'connection',
-            default => throw new CustomException("Invalid type: $type"),
+            default => throw new Exceptions("Invalid type: $type"),
         };
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function settings(): array
     {
@@ -132,7 +132,7 @@ class Attributes
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      * @noinspection PhpUnused
      */
     private static function getVariables(?int $type = self::CONNECTION)
@@ -141,7 +141,7 @@ class Attributes
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private static function setCharacterSet(): void
     {
@@ -183,7 +183,7 @@ class Attributes
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private static function setCollation(): void
     {
@@ -268,7 +268,7 @@ class Attributes
      *
      * @param int|null $type
      * @return void
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function define(?int $type = self::CONNECTION): void
     {
@@ -289,11 +289,11 @@ class Attributes
                 'TIMEOUT' => (int) $settings['connect_timeout'],
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => Options::getOptions(MySQL::ATTR_DEFAULT_FETCH_MODE)
-                ?? self::$fetchMode
-                ?: MySQL::FETCH_BOTH,
+                    ?? self::$fetchMode
+                    ?: MySQL::FETCH_BOTH,
                 'CHARACTER_SET' => self::getVariables($type)['charset'],
                 'COLLATION' => self::getVariables($type)['collation'],
-                default => throw new CustomException("Invalid attribute: $attribute"),
+                default => throw new Exceptions("Invalid attribute: $attribute"),
             };
         }
         MySQLiConnection::getInstance()->setAttributes($result);

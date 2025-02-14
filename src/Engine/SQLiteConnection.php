@@ -18,7 +18,7 @@ use GenericDatabase\Engine\SQLite\Connection\Dump;
 use GenericDatabase\Engine\SQLite\Connection\Transaction;
 use GenericDatabase\Engine\SQLite\Connection\Statements;
 use GenericDatabase\Engine\SQLite\Connection\Fetchs;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Shared\Setter;
@@ -72,10 +72,7 @@ class SQLiteConnection implements IConnection
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
-    public function __construct()
-    {
-
-    }
+    public function __construct() {}
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -127,7 +124,7 @@ class SQLiteConnection implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return SQLiteConnection
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function postConnect(): SQLiteConnection
     {
@@ -168,7 +165,7 @@ class SQLiteConnection implements IConnection
                 'sqlite3',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         try {
@@ -235,10 +232,10 @@ class SQLiteConnection implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|CustomException
-     * @throws CustomException
+     * @return string|Exceptions
+     * @throws Exceptions
      */
-    private function parseDsn(): string|CustomException
+    private function parseDsn(): string|Exceptions
     {
         return DSN::parse();
     }

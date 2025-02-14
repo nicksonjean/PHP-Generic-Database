@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\OCI\Connection;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\OCIConnection;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 
 #[AllowDynamicProperties]
 class Attributes
@@ -53,7 +53,7 @@ class Attributes
      * Define all OCI attribute of the connection a ready exist
      *
      * @return void
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function define(): void
     {
@@ -76,7 +76,7 @@ class Attributes
                 'DEFAULT_FETCH_MODE' => Options::getOptions(OCI::ATTR_DEFAULT_FETCH_MODE) ?? OCI::FETCH_BOTH,
                 'CHARACTER_SET' => OCIConnection::getInstance()->getCharset(),
                 'COLLATION' => OCIConnection::getInstance()->getCharset() == 'utf8' ? 'unicode_ci_ai' : 'none',
-                default => throw new CustomException("Invalid attribute: $attribute"),
+                default => throw new Exceptions("Invalid attribute: $attribute"),
             };
         }
         OCIConnection::getInstance()->setAttributes($result);

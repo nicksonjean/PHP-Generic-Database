@@ -87,7 +87,7 @@ class Reflections
      *
      * @param mixed $class The class object or instance
      * @return object|false The singleton instance of the class
-     * @throws CustomException If the method does not exist in the class
+     * @throws Exceptions If the method does not exist in the class
      */
     public static function getSingletonInstance(mixed $class): object|false
     {

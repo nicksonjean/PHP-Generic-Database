@@ -91,7 +91,7 @@ class TXT
 
     public static function write($overwrite = false): void
     {
-        $schemaFilePath = self::$folderPath . '\Schema.ini';
+        $schemaFilePath = self::$folderPath . '\Schemas.ini';
         if (!file_exists($schemaFilePath) || $overwrite) {
             $structure = self::structure(self::$folderPath, self::$separator);
             $output = '';

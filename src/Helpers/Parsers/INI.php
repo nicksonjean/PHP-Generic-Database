@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Helpers;
+namespace GenericDatabase\Helpers\Parsers;
 
 /**
  * The `GenericDatabase\Helpers\INI` class provides methods for working with INI files.

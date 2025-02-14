@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Shared;
 
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use ReflectionException;
 
 trait Caller
@@ -37,7 +37,7 @@ trait Caller
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
      * @return mixed
-     * @throws CustomException
+     * @throws Exceptions
      * @throws ReflectionException
      * @noinspection PhpExpressionResultUnusedInspection
      * @noinspection PhpMixedReturnTypeCanBeReducedInspection

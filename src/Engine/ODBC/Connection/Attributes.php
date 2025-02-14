@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\ODBC\Connection;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\ODBCConnection;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 
 #[AllowDynamicProperties]
 class Attributes
@@ -54,7 +54,7 @@ class Attributes
      * Define all ODBC attribute of the connection a ready exist
      *
      * @return void
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function define(): void
     {
@@ -75,7 +75,7 @@ class Attributes
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => Options::getOptions(ODBC::ATTR_DEFAULT_FETCH_MODE) ?? ODBC::FETCH_BOTH,
                 'CHARACTER_SET', 'COLLATION' => ODBCConnection::getInstance()->getCharset() ?? '',
-                default => throw new CustomException("Invalid attribute: $attribute"),
+                default => throw new Exceptions("Invalid attribute: $attribute"),
             };
         }
         ODBCConnection::getInstance()->setAttributes($result);

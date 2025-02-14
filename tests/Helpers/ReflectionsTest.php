@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Tests\Helpers;
 
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Tests\Helpers\Samples\MyClass;
 use GenericDatabase\Tests\Helpers\Samples\MyClassNonInstance;
@@ -16,7 +16,7 @@ final class ReflectionsTest extends TestCase
     private const REFCLASS = 'GenericDatabase\Helpers\Reflections';
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public function testGetSingletonInstanceValid()
     {
@@ -25,7 +25,7 @@ final class ReflectionsTest extends TestCase
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public function testGetSingletonInstanceWithNonExistentMethod()
     {

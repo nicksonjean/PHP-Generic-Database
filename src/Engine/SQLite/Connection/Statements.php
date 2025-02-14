@@ -3,17 +3,17 @@
 namespace GenericDatabase\Engine\SQLite\Connection;
 
 use GenericDatabase\Engine\SQLiteConnection;
-use GenericDatabase\Helpers\Schema;
-use GenericDatabase\Helpers\Translate;
+use GenericDatabase\Helpers\Schemas;
+use GenericDatabase\Helpers\Parsers\SQL;
 use SQLite3Result;
 use SQLite3Stmt;
-use GenericDatabase\Helpers\Types\Compound\Objects;
+use GenericDatabase\Shared\Objectable;
 use AllowDynamicProperties;
 
 #[AllowDynamicProperties]
 class Statements
 {
-    use Objects;
+    use Objectable;
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
@@ -357,7 +357,7 @@ class Statements
      */
     public static function parse(mixed ...$params): string
     {
-        self::setQueryString(Translate::escape(reset($params), Translate::SQL_DIALECT_DOUBLE_QUOTE));
+        self::setQueryString(SQL::escape(reset($params), SQL::SQL_DIALECT_DOUBLE_QUOTE));
         return self::getQueryString();
     }
 
@@ -421,7 +421,7 @@ class Statements
     public static function prepare(mixed ...$params): ?SQLiteConnection
     {
         if (!empty($params) && (self::prepareStatement(...$params))) {
-            $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
+            $bindParams = Schemas::makeArgs([self::getStatement(), ...$params]);
             self::bindParam($bindParams);
         }
         return SQLiteConnection::getInstance();

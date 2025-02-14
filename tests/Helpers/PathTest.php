@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Tests\Helpers;
 
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Path;
 use PHPUnit\Framework\TestCase;
 
@@ -14,12 +14,12 @@ final class PathTest extends TestCase
     public function testIsAbsoluteWithEmptyPath()
     {
         $emptyPath = '';
-        $this->expectException(CustomException::class);
+        $this->expectException(Exceptions::class);
         Path::isAbsolute($emptyPath);
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public function testIsAbsoluteWithValidAbsolutePath()
     {
@@ -29,7 +29,7 @@ final class PathTest extends TestCase
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public function testIsAbsoluteWithValidWindowsAbsolutePath()
     {
@@ -39,7 +39,7 @@ final class PathTest extends TestCase
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public function testIsAbsoluteWithRelativePath()
     {
@@ -51,12 +51,12 @@ final class PathTest extends TestCase
     public function testIsAbsoluteWithInvalidPath()
     {
         $invalidPath = "\x00";
-        $this->expectException(CustomException::class);
+        $this->expectException(Exceptions::class);
         Path::isAbsolute($invalidPath);
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public function testThrowsExceptionForInvalidPath()
     {

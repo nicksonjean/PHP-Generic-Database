@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Helpers;
+namespace GenericDatabase\Helpers\Parsers;
 
 use XMLReader;
 use SimpleXMLElement;
@@ -76,7 +76,7 @@ class XML
         if (!is_string($xml)) {
             return false;
         }
-        set_error_handler(fn (): bool => true, E_WARNING);
+        set_error_handler(fn(): bool => true, E_WARNING);
         $xmlData = simpleXML_load_file($xml, "SimpleXMLElement", LIBXML_NOCDATA);
         if ($xmlData === false) {
             restore_error_handler();

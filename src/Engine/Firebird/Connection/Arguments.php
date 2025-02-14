@@ -3,11 +3,11 @@
 namespace GenericDatabase\Engine\Firebird\Connection;
 
 use GenericDatabase\Helpers\Generators;
-use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\JSON;
-use GenericDatabase\Helpers\INI;
-use GenericDatabase\Helpers\YAML;
-use GenericDatabase\Helpers\XML;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
+use GenericDatabase\Helpers\Parsers\JSON;
+use GenericDatabase\Helpers\Parsers\INI;
+use GenericDatabase\Helpers\Parsers\YAML;
+use GenericDatabase\Helpers\Parsers\XML;
 use GenericDatabase\Engine\FirebirdConnection;
 use ReflectionException;
 
@@ -71,7 +71,8 @@ class Arguments
                     );
                 } else {
                     call_user_func_array([
-                        FirebirdConnection::getInstance(), 'set' . ucfirst($key)
+                        FirebirdConnection::getInstance(),
+                        'set' . ucfirst($key)
                     ], [self::setType($value)]);
                 }
             }

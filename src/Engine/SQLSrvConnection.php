@@ -18,7 +18,7 @@ use GenericDatabase\Engine\SQLSrv\Connection\Dump;
 use GenericDatabase\Engine\SQLSrv\Connection\Transaction;
 use GenericDatabase\Engine\SQLSrv\Connection\Statements;
 use GenericDatabase\Engine\SQLSrv\Connection\Fetchs;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Shared\Setter;
@@ -162,7 +162,7 @@ class SQLSrvConnection implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return SQLSrvConnection
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function postConnect(): SQLSrvConnection
     {
@@ -215,7 +215,7 @@ class SQLSrvConnection implements IConnection
                 'sqlsrv',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         try {
@@ -281,10 +281,10 @@ class SQLSrvConnection implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|CustomException
-     * @throws CustomException
+     * @return string|Exceptions
+     * @throws Exceptions
      */
-    private function parseDsn(): string|CustomException
+    private function parseDsn(): string|Exceptions
     {
         return DSN::parse();
     }
@@ -554,7 +554,7 @@ class SQLSrvConnection implements IConnection
         return Statements::parse(...$params);
     }
 
-   /**
+    /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried

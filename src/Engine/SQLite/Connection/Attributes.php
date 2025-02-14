@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\SQLite\Connection;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLiteConnection;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use SQLite3;
 
 #[AllowDynamicProperties]
@@ -55,7 +55,7 @@ class Attributes
      * Define all SQLite attribute of the connection a ready exist
      *
      * @return void
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function define(): void
     {
@@ -76,7 +76,7 @@ class Attributes
                 'TIMEOUT' =>  (int) Options::getOptions(SQLite::ATTR_CONNECT_TIMEOUT) ?: 30,
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => Options::getOptions(SQLite::ATTR_DEFAULT_FETCH_MODE) ?? SQLite::FETCH_BOTH,
-                default => throw new CustomException("Invalid attribute: $attribute"),
+                default => throw new Exceptions("Invalid attribute: $attribute"),
             };
         }
         SQLiteConnection::getInstance()->setAttributes($result);

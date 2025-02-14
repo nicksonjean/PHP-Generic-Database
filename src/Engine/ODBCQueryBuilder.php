@@ -15,10 +15,10 @@ use GenericDatabase\Core\Grouping;
 use GenericDatabase\Core\Junction;
 use GenericDatabase\IQueryBuilder;
 use GenericDatabase\Core\Condition;
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Helpers\Translate;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Engine\ODBC\QueryBuilder\Context;
 use GenericDatabase\Engine\ODBC\QueryBuilder\Query;
 use GenericDatabase\Engine\ODBC\QueryBuilder\Builder;
@@ -63,7 +63,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function select(array|string ...$data): static
     {
         /** @var static */
-        return Internal::select(['type' => Select::DEFAULT , 'data' => $data, 'self' => self::$self]);
+        return Internal::select(['type' => Select::DEFAULT, 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -94,7 +94,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     {
         /** @var static */
         return Internal::join(
-            ['type' => Join::DEFAULT , 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
+            ['type' => Join::DEFAULT, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
         );
     }
 
@@ -405,7 +405,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function group(array|string ...$data): static
     {
         /** @var static */
-        return Internal::group(['sorting' => Grouping::DEFAULT , 'data' => $data, 'self' => self::$self]);
+        return Internal::group(['sorting' => Grouping::DEFAULT, 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -481,13 +481,13 @@ class ODBCQueryBuilder implements IQueryBuilder
         $builder = new Builder($this->query, $this->getContext());
         return $builder->parse(
             $buildRawResult,
-            Translate::SQL_DIALECT_NONE,
-            Translate::SQL_DIALECT_SINGLE_QUOTE
+            SQL::SQL_DIALECT_NONE,
+            SQL::SQL_DIALECT_SINGLE_QUOTE
         );
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      * @return string
      */
     public function build(): string
@@ -496,7 +496,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      * @return string
      */
     public function buildRaw(): string
@@ -505,7 +505,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      * @return array
      */
     public function getValues(): array
@@ -514,7 +514,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      * @return object
      */
     public function getAllMetadata(): object

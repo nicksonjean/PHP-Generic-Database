@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Tests\Helpers;
 
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Errors;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +25,7 @@ final class ErrorsTest extends TestCase
 
     public function testThrowWithException()
     {
-        $exception = new CustomException("Test Exception");
+        $exception = new Exceptions("Test Exception");
         $result = Errors::throw($exception);
         $expected = json_encode([
             'message' => $exception->getMessage(),

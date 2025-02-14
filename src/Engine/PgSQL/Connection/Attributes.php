@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\PgSQL\Connection;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\PgSQLConnection;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 
 #[AllowDynamicProperties]
 class Attributes
@@ -84,7 +84,7 @@ class Attributes
      * Define all PgSQL attribute of the connection a ready exist
      *
      * @return void
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function define(): void
     {
@@ -107,9 +107,9 @@ class Attributes
                 'DEFAULT_FETCH_MODE' => Options::getOptions(PgSQL::ATTR_DEFAULT_FETCH_MODE) ?? PgSQL::FETCH_BOTH,
                 'CHARACTER_SET' => pg_client_encoding(PgSQLConnection::getInstance()->getConnection()),
                 'COLLATION' => ($settings['collate'] !== false && property_exists($settings['collate'], 'lc_collate'))
-                ? $settings['collate']->lc_collate
-                : false,
-                default => throw new CustomException("Invalid attribute: $attribute"),
+                    ? $settings['collate']->lc_collate
+                    : false,
+                default => throw new Exceptions("Invalid attribute: $attribute"),
             };
         }
         PgSQLConnection::getInstance()->setAttributes($result);

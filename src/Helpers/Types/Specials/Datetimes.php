@@ -1,29 +1,31 @@
 <?php
 
-namespace GenericDatabase\Helpers;
+namespace GenericDatabase\Helpers\Types\Specials;
+
+use GenericDatabase\Helpers\Types\Scalars\Strings;
 
 /**
 
- * The `GenericDatabase\Helpers\RegexDateTime` class provides regular expression
+ * The `GenericDatabase\Helpers\Datetimes` class provides regular expression
  * patterns for parsing and validating date and time strings. It also includes
  * methods for retrieving the regular expression patterns and extracting information from the input string.
  *
  * Example Usage:
  * <code>
  * //Parser a date em time on format: YYYY-DD-MM HH:mm:SS
- * $parse = RegexDateTime::getPattern("2023-28-02 10:45:30");
+ * $parse = Datetimes::getPattern("2023-28-02 10:45:30");
  *
  * //Parser a date em time on format: YYYY-MM-DD HH:mm
- * $parse = RegexDateTime::getPattern("2024-02-29 10:45");
+ * $parse = Datetimes::getPattern("2024-02-29 10:45");
  *
  * //Parser a date em time on format: MM-DD-YYYY HH:mm:SS zzz
- * $parse = RegexDateTime::getPattern("02-28-2023 10:45:30 +02:00");
+ * $parse = Datetimes::getPattern("02-28-2023 10:45:30 +02:00");
  *
  * //Parser a date em time on format: DD-MM-YYYY HH:mm:SS tt
- * $parse = RegexDateTime::getPattern("29-02-2024 10:45:30 PM");
+ * $parse = Datetimes::getPattern("29-02-2024 10:45:30 PM");
  *
  * //Parser a date em time on format: HH:MM:SS
- * $parse = RegexDateTime::getPattern("13:45:30");
+ * $parse = Datetimes::getPattern("13:45:30");
  * </code>
  *
  * Main functionalities:
@@ -77,9 +79,9 @@ namespace GenericDatabase\Helpers;
  * - `LEAP_YEAR`: Regular expression pattern for matching leap year.
  * - `YEAR`: Regular expression pattern for matching year (YYYY or YY).
  *
- * @package RegexDateTime
+ * @package Datetimes
  */
-class RegexDateTime
+class Datetimes
 {
     private const TIME_SEPARATOR = '[:.]';
     private const TIMEZONE_HOURS_SEPARATOR = '(?<timezone_hours_separator>' . self::TIME_SEPARATOR . ')';
@@ -99,7 +101,7 @@ class RegexDateTime
     private const TIMEZONE_SECONDS_24 = '(?<timezone_seconds>' . self::DIGITS . ')';
     private const MERIDIEM = '(?<meridiem>[AaPp][Mm])';
     private const TIMEZONE =
-        '(?<timezone>Z|[+|-]' . '(?:' . self::HOURS . ')' . self::TIME_SEPARATOR . '?(?:' . self::MINUTES . ')?)?';
+    '(?<timezone>Z|[+|-]' . '(?:' . self::HOURS . ')' . self::TIME_SEPARATOR . '?(?:' . self::MINUTES . ')?)?';
     private const DATE_SEPARATOR = '[\s\/\|\-]';
     private const DATE_TIME_SEPARATOR = '(?<date_time_separator>[\s\/\|\-|T])?';
     private const DAYS_28_SEPARATOR = '(?<day_28_separator>' . self::DATE_SEPARATOR . ')';
@@ -121,7 +123,7 @@ class RegexDateTime
     private const LEAP_DAY = '(?<leap_day>29)';
     private const LEAP_MONTH = '(?<leap_month>02)';
     private const LEAP_YEAR =
-        '(?<leap_year>(?:\d{2}(?:0[48]|[2468][048]|[13579][26]))|(?:(?:[02468][048])|[13579][26])00)';
+    '(?<leap_year>(?:\d{2}(?:0[48]|[2468][048]|[13579][26]))|(?:(?:[02468][048])|[13579][26])00)';
     private const YEAR = '(?<year>(?:\d{4}|(?:(?:0[48]|[2468][048]|[13579][26]))))';
     private static array $separators = [
         'dateSeparators' => [
@@ -756,12 +758,7 @@ class RegexDateTime
             'msp' => $msp,
             'tzsp' => $tzsp
         ] = self::setSeparators($inputData);
-        $json = __DIR__ .
-            DIRECTORY_SEPARATOR .
-            'RegexDateTime' .
-            DIRECTORY_SEPARATOR .
-            $flatInputData['format'] .
-            '.json';
+        $json = __DIR__ . DIRECTORY_SEPARATOR . 'Specials' . DIRECTORY_SEPARATOR . 'Datetimes' . DIRECTORY_SEPARATOR . $flatInputData['format'] . '.json';
         self::$pattern = json_decode(
             str_replace(
                 ['~DSP~', '~TSP~', '~DTSP~', '~MSP~', '~TZSP~'],

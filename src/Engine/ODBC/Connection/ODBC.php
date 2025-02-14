@@ -2,8 +2,8 @@
 
 namespace GenericDatabase\Engine\ODBC\Connection;
 
-use GenericDatabase\Helpers\INI;
-use GenericDatabase\Helpers\Arrays;
+use GenericDatabase\Helpers\Parsers\INI;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Reflections;
 use ReflectionException;
 

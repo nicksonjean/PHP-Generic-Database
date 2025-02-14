@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Helpers;
+namespace GenericDatabase\Helpers\Parsers;
 
 /**
  * The `GenericDatabase\Helpers\YAML` class provides validation and parsing functionalities for YAML strings.

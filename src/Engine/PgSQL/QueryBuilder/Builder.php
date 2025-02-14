@@ -11,9 +11,9 @@ use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Grouping;
 use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
-use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translate;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
+use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Engine\PgSQLQueryBuilder;
 
 class Builder
@@ -26,12 +26,12 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function buildSelect(): string
     {
         if (empty($this->query->select)) {
-            throw new CustomException("No columns specified in SELECT clause.");
+            throw new Exceptions("No columns specified in SELECT clause.");
         }
         $output = [];
         $distinct = isset($this->query->select['type']) && $this->query->select['type'] === Select::DISTINCT
@@ -55,12 +55,12 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function buildFrom(): string
     {
         if (empty($this->query->from)) {
-            throw new CustomException("No tables specified in FROM clause.");
+            throw new Exceptions("No tables specified in FROM clause.");
         }
         $output = [];
         foreach ($this->query->from as $data) {
@@ -80,12 +80,12 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function buildJoin(): string
     {
         if (empty($this->query->join)) {
-            throw new CustomException("No tables specified in JOIN clause.");
+            throw new Exceptions("No tables specified in JOIN clause.");
         }
         $output = [];
         $type = '';
@@ -109,12 +109,12 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function buildOn(): string
     {
         if (empty($this->query->on)) {
-            throw new CustomException("No tables specified in ON clause.");
+            throw new Exceptions("No tables specified in ON clause.");
         }
         $output = [];
         foreach ($this->query->on as $data) {
@@ -130,12 +130,12 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function buildWhere(): string
     {
         if (empty($this->query->where)) {
-            throw new CustomException("No conditions specified in WHERE clause.");
+            throw new Exceptions("No conditions specified in WHERE clause.");
         }
         $output = [];
         foreach ($this->query->where as $data) {
@@ -164,12 +164,12 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function buildHaving(): string
     {
         if (empty($this->query->having)) {
-            throw new CustomException("No conditions specified in HAVING clause.");
+            throw new Exceptions("No conditions specified in HAVING clause.");
         }
         $output = [];
         foreach ($this->query->having as $data) {
@@ -180,7 +180,7 @@ class Builder
             $signal = isset($data['signal']) ? trim($data['signal']) : '';
             $assert = ($data['aggregation']['assert'] === Having::NEGATION) ? 'NOT' : ' ';
             $function = $data['type'] === Having::FUNCTION ? $data['function'] : ' ';
-            $type = ($data['type'] === Having::DEFAULT ) ? "$alias$column" : "$function($alias$column)";
+            $type = ($data['type'] === Having::DEFAULT) ? "$alias$column" : "$function($alias$column)";
             $placeholders = isset($data['arguments']['unlimited']) ?
                 implode(
                     ', ',
@@ -198,12 +198,12 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function buildGroup(): string
     {
         if (empty($this->query->group)) {
-            throw new CustomException("No columns specified in GROUP clause.");
+            throw new Exceptions("No columns specified in GROUP clause.");
         }
         $output = [];
         foreach ($this->query->group as $data) {
@@ -220,12 +220,12 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function buildOrder(): string
     {
         if (empty($this->query->order)) {
-            throw new CustomException("No columns specified in ORDER clause.");
+            throw new Exceptions("No columns specified in ORDER clause.");
         }
         $output = [];
         foreach ($this->query->order as $data) {
@@ -247,12 +247,12 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function buildLimit(): string
     {
         if (empty($this->query->limit)) {
-            throw new CustomException("No limits specified in LIMIT clause.");
+            throw new Exceptions("No limits specified in LIMIT clause.");
         }
         $output = [];
         if (isset($this->query->limit['offset'])) {
@@ -264,7 +264,7 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function buildQuery(): string
     {
@@ -305,17 +305,17 @@ class Builder
         if (Arrays::isMultidimensional($values)) {
             foreach ($values as $val) {
                 $query = array_reduce($val, fn($query, $key) =>
-                    preg_replace('/\?/', $formatValue($key), $query, 1), $query);
+                preg_replace('/\?/', $formatValue($key), $query, 1), $query);
             }
         } else {
             $query = array_reduce($values, fn($query, $key) =>
-                preg_replace('/\?/', $formatValue($key), $query, 1), $query);
+            preg_replace('/\?/', $formatValue($key), $query, 1), $query);
         }
         return $query;
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function formatValue($value): int|string
     {
@@ -324,20 +324,20 @@ class Builder
             is_numeric(trim($value)) => (int) trim($value),
             is_string($value) => "'" . trim($value) . "'",
             is_null($value) => 'NULL',
-            default => throw new CustomException("Unsupported value type: " . gettype($value))
+            default => throw new Exceptions("Unsupported value type: " . gettype($value))
         };
     }
 
     public function parse(
         string $query,
-        int $quoteType = Translate::SQL_DIALECT_DOUBLE_QUOTE,
+        int $quoteType = SQL::SQL_DIALECT_DOUBLE_QUOTE,
         int $quoteSkip = null
     ): string {
-        return Translate::binding(Translate::escape(trim($query), $quoteType, $quoteSkip));
+        return SQL::binding(SQL::escape(trim($query), $quoteType, $quoteSkip));
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public function build(): string
     {
@@ -345,7 +345,7 @@ class Builder
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
     public function buildRaw(): string
     {

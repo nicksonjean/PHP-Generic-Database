@@ -18,7 +18,7 @@ use GenericDatabase\Engine\PgSQL\Connection\Dump;
 use GenericDatabase\Engine\PgSQL\Connection\Transaction;
 use GenericDatabase\Engine\PgSQL\Connection\Statements;
 use GenericDatabase\Engine\PgSQL\Connection\Fetchs;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Shared\Setter;
@@ -72,9 +72,7 @@ class PgSQLConnection implements IConnection
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
-    public function __construct() {
-
-    }
+    public function __construct() {}
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -126,7 +124,7 @@ class PgSQLConnection implements IConnection
      * This method is responsible for update in date late binding the connection.
      *
      * @return PgSQLConnection
-     * @throws CustomException
+     * @throws Exceptions
      */
     private function postConnect(): PgSQLConnection
     {
@@ -166,7 +164,7 @@ class PgSQLConnection implements IConnection
                 'pgsql',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         try {
@@ -227,10 +225,10 @@ class PgSQLConnection implements IConnection
     /**
      * This method is responsible for parsing the DSN from DSN class.
      *
-     * @return string|CustomException
-     * @throws CustomException
+     * @return string|Exceptions
+     * @throws Exceptions
      */
-    private function parseDsn(): string|CustomException
+    private function parseDsn(): string|Exceptions
     {
         return DSN::parse();
     }

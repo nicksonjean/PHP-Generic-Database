@@ -3,7 +3,7 @@
 namespace GenericDatabase\Engine\PDO\Connection;
 
 use PDO;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Engine\PDOConnection;
 
 class Options
@@ -26,7 +26,7 @@ class Options
      *
      * @param ?array $options = null
      * @return void
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function setOptions(?array $options = null): void
     {
@@ -36,7 +36,7 @@ class Options
                 PDOConnection::getInstance()->getDriver(),
                 implode(', ', PDO::getAvailableDrivers())
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         $options += [PDO::ATTR_ERRMODE => (PDOConnection::getInstance()->getException())

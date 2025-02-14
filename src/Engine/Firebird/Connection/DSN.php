@@ -5,15 +5,15 @@ namespace GenericDatabase\Engine\Firebird\Connection;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\FirebirdConnection;
 use GenericDatabase\Helpers\Path;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 
 #[AllowDynamicProperties]
 class DSN
 {
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
-    public static function parse(): string|CustomException
+    public static function parse(): string|Exceptions
     {
         if (!extension_loaded('interbase')) {
             $message = sprintf(
@@ -21,7 +21,7 @@ class DSN
                 'interbase',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         if (!Path::isAbsolute(FirebirdConnection::getInstance()->getDatabase())) {

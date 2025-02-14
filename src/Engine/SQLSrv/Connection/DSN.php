@@ -4,15 +4,15 @@ namespace GenericDatabase\Engine\SQLSrv\Connection;
 
 use AllowDynamicProperties;
 use GenericDatabase\Engine\SQLSrvConnection;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 
 #[AllowDynamicProperties]
 class DSN
 {
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
-    public static function parse(): string|CustomException
+    public static function parse(): string|Exceptions
     {
         if (!extension_loaded('sqlsrv')) {
             $message = sprintf(
@@ -20,7 +20,7 @@ class DSN
                 'sqlsrv',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         $result = sprintf(

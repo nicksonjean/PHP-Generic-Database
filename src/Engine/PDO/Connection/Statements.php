@@ -3,17 +3,17 @@
 namespace GenericDatabase\Engine\PDO\Connection;
 
 use GenericDatabase\Engine\PDOConnection;
-use GenericDatabase\Helpers\Schema;
-use GenericDatabase\Helpers\Translate;
+use GenericDatabase\Helpers\Schemas;
+use GenericDatabase\Helpers\Parsers\SQL;
 use PDOStatement;
 use PDO;
-use GenericDatabase\Helpers\Types\Compound\Objects;
+use GenericDatabase\Shared\Objectable;
 use AllowDynamicProperties;
 
 #[AllowDynamicProperties]
 class Statements
 {
-    use Objects;
+    use Objectable;
     /**
      * Instance of the Statement of the database
      * @var mixed $statement = null
@@ -521,11 +521,11 @@ class Statements
     {
         $driver = PDOConnection::getInstance()->getDriver();
         $dialectQuote = match ($driver) {
-            'mysql' => Translate::SQL_DIALECT_BACKTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird' => Translate::SQL_DIALECT_DOUBLE_QUOTE,
-            default => Translate::SQL_DIALECT_NONE,
+            'mysql' => SQL::SQL_DIALECT_BACKTICK,
+            'pgsql', 'sqlsrv', 'oci', 'firebird' => SQL::SQL_DIALECT_DOUBLE_QUOTE,
+            default => SQL::SQL_DIALECT_NONE,
         };
-        self::setQueryString(Translate::escape(reset($params), $dialectQuote));
+        self::setQueryString(SQL::escape(reset($params), $dialectQuote));
         return self::getQueryString();
     }
 
@@ -594,7 +594,7 @@ class Statements
     public static function prepare(mixed ...$params): PDOConnection|null
     {
         if (!empty($params) && (self::prepareStatement(...$params))) {
-            $bindParams = Schema::makeArgs([self::getStatement(), ...$params]);
+            $bindParams = Schemas::makeArgs([self::getStatement(), ...$params]);
             self::bindParam($bindParams);
         }
         return PDOConnection::getInstance();

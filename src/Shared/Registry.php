@@ -4,7 +4,7 @@ namespace GenericDatabase\Shared;
 
 use ReflectionClass;
 use ReflectionException;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 
 trait Registry
 {
@@ -25,15 +25,15 @@ trait Registry
         }
 
         $property = $reflection->getProperty('collection');
-        $property->setAccessible(true);//NOSONAR
+        $property->setAccessible(true); //NOSONAR
 
-        $collection = $property->getValue($this);//NOSONAR
+        $collection = $property->getValue($this); //NOSONAR
         if ($collection === null) {
             $collection = [];
-            $property->setValue($this, $collection);//NOSONAR
+            $property->setValue($this, $collection); //NOSONAR
         }
 
-        $return = $property->getValue($this);//NOSONAR
+        $return = $property->getValue($this); //NOSONAR
         return $return;
     }
 
@@ -47,10 +47,10 @@ trait Registry
         $reflection = new ReflectionClass($this);
 
         if (!$reflection->hasProperty('collection')) {
-            $reflection->getProperty('collection') ?? $reflection->newInstanceWithoutConstructor();//NOSONAR
+            $reflection->getProperty('collection') ?? $reflection->newInstanceWithoutConstructor(); //NOSONAR
             $property = $reflection->getProperty('collection');
-            $property->setAccessible(true);//NOSONAR
-            $property->setValue($this, []);//NOSONAR
+            $property->setAccessible(true); //NOSONAR
+            $property->setValue($this, []); //NOSONAR
         }
     }
 
@@ -58,12 +58,12 @@ trait Registry
      * Adds an item to the registry.
      * @param mixed $object
      * @param string|null $name
-     * @throws CustomException|ReflectionException
+     * @throws Exceptions|ReflectionException
      */
     public function add(mixed $object, string $name = null): void
     {
         if (empty($name)) {
-            throw new CustomException('You must pass in a name to store an item in the registry.');
+            throw new Exceptions('You must pass in a name to store an item in the registry.');
         }
 
         $collection = &$this->ensureCollectionExists();

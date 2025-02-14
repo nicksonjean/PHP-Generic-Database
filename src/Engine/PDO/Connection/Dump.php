@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Engine\PDO\Connection;
 
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Engine\PDOConnection;
 
 class Dump
@@ -27,7 +27,7 @@ class Dump
      * Import SQL dump from file - extremely fast.
      * @param ?callable $onProgress = null
      * @return int  count of commands
-     * @throws CustomException
+     * @throws Exceptions
      */
     public static function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
     {
@@ -36,7 +36,7 @@ class Dump
 
         $handle = @fopen($file, 'r');
         if (!$handle) {
-            throw new CustomException("Cannot open file '$file'.");
+            throw new Exceptions("Cannot open file '$file'.");
         }
 
         $stat = fstat($handle);
@@ -46,7 +46,7 @@ class Dump
         while (($string = fgets($handle)) !== false) {
             $size += strlen($string);
 
-            $uncomment = fn ($string = '') => preg_replace(
+            $uncomment = fn($string = '') => preg_replace(
                 (string) self::$regex['unicode'],
                 ' ',
                 (

@@ -1,11 +1,11 @@
 <?php
 
-namespace GenericDatabase\Helpers;
+namespace GenericDatabase\Helpers\Parsers;
 
 use stdClass;
 
 /**
- * The `GenericDatabase\Helpers\Translate` class is responsible for
+ * The `GenericDatabase\Helpers\Parsers\SQL` class is responsible for
  * escaping SQL strings and replacing parameters and binds in the SQL queries.
  * It provides methods to escape SQL strings based on different SQL dialects,
  * extract SQL arguments, and replace SQL binds with different bind types.
@@ -13,19 +13,19 @@ use stdClass;
  * Example Usage:
  * <code>
  * //Escape an SQL query using the default dialect
- * $escapedQuery = Translate::escape("SELECT * FROM users WHERE id = :id");
+ * $escapedQuery = SQL::escape("SELECT * FROM users WHERE id = :id");
  *
  * //Escape an SQL query using a specific dialect
- * $escapedQuery = Translate::escape("SELECT * FROM users WHERE id = :id", Translate::SQL_DIALECT_DOUBLE_QUOTE);
+ * $escapedQuery = SQL::escape("SELECT * FROM users WHERE id = :id", SQL::SQL_DIALECT_DOUBLE_QUOTE);
  *
  * //Extract parameters from an SQL query
- * $parameters = Translate::arguments("SELECT * FROM users WHERE id = :id");
+ * $parameters = SQL::arguments("SELECT * FROM users WHERE id = :id");
  *
  * //Bind parameters in an SQL query with question marks
- * $boundQuery = Translate::binding("SELECT * FROM users WHERE id = :id");
+ * $boundQuery = SQL::binding("SELECT * FROM users WHERE id = :id");
  *
  * //Bind parameters in an SQL query with dollar signs
- * $boundQuery = Translate::binding("SELECT * FROM users WHERE id = :id", Translate::BIND_QUESTION_MARK);
+ * $boundQuery = SQL::binding("SELECT * FROM users WHERE id = :id", SQL::BIND_QUESTION_MARK);
  * </code>
  *
  * Main functionalities:
@@ -71,9 +71,9 @@ use stdClass;
  * - `$bindingMap`: An array mapping bind types to their corresponding bind characters.
  * - `$resWords`: An instance of the reserved word dictionary, loaded from a JSON file.
  *
- * @package Translate
+ * @package SQL
  */
-class Translate
+class SQL
 {
     /**
      * SQL Dialect used by MySQL, MariaDB, Percona and Other Forks,
@@ -117,7 +117,7 @@ class Translate
     ];
 
     private static string $patternFunction =
-        '/(?<function>\w+)\s*\(\s*(?:(?<table>["]?[a-zA-Z0-9_]+["]?)\.)?(?<column>["]?[a-zA-Z0-9_]+["]?)\s*\)/m';
+    '/(?<function>\w+)\s*\(\s*(?:(?<table>["]?[a-zA-Z0-9_]+["]?)\.)?(?<column>["]?[a-zA-Z0-9_]+["]?)\s*\)/m';
 
     /**
      * SQL dialect array map
@@ -151,7 +151,7 @@ class Translate
     private static function loadReservedWords(): array
     {
         if (!isset(self::$resWords)) {
-            $json = __DIR__ . DIRECTORY_SEPARATOR . 'Translate' . DIRECTORY_SEPARATOR . 'Dictionary.json';
+            $json = __DIR__ . DIRECTORY_SEPARATOR . 'SQL' . DIRECTORY_SEPARATOR . 'SQL.json';
             self::$resWords = json_decode(
                 file_get_contents($json)
             );
@@ -354,7 +354,7 @@ class Translate
      * Escapes the SQL string by replacing parameters with their quoted versions.
      *
      * @param string $input The SQL string to be escaped.
-     * @param int $dialect The SQL dialect to be used for escaping. Defaults to `Translate::SQL_DIALECT_NONE`.
+     * @param int $dialect The SQL dialect to be used for escaping. Defaults to `SQL::SQL_DIALECT_NONE`.
      * @return string The escaped SQL string.
      */
     public static function escape(string $input, int $dialect = self::SQL_DIALECT_NONE, int $quoteSkip = null): string
@@ -388,7 +388,7 @@ class Translate
      * Replaces the SQL binds with the specified bind type.
      *
      * @param string $input The SQL string to replace the binds in.
-     * @param int $bindType The type of binding to be used. Defaults to `Translate::BIND_QUESTION_MARK`.
+     * @param int $bindType The type of binding to be used. Defaults to `SQL::BIND_QUESTION_MARK`.
      * @return string The SQL string with the binds replaced.
      */
     public static function binding(string $input, int $bindType = self::BIND_QUESTION_MARK): string

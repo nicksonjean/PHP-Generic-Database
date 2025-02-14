@@ -2,15 +2,15 @@
 
 namespace GenericDatabase\Helpers;
 
-use GenericDatabase\Helpers\Arrays;
-use GenericDatabase\Helpers\Translate;
-use GenericDatabase\Helpers\Types\Compound\Objects;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
+use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Shared\Objectable;
 use AllowDynamicProperties;
 
 #[AllowDynamicProperties]
-class Schema
+class Schemas
 {
-    use Objects;
+    use Objectable;
 
     /**
      * This function makes an arguments list
@@ -31,7 +31,7 @@ class Schema
                 $isArgs = true;
                 $isArray = false;
                 $isMulti = false;
-                $sqlArgs = Translate::arguments($params[$index['isArgs']], array_slice($params, $index['isMulti']));
+                $sqlArgs = SQL::arguments($params[$index['isArgs']], array_slice($params, $index['isMulti']));
             }
         }
         $result = new self();

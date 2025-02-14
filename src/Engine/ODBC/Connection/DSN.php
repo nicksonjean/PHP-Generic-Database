@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\ODBC\Connection;
 use AllowDynamicProperties;
 use GenericDatabase\Engine\ODBCConnection;
 use GenericDatabase\Helpers\Path;
-use GenericDatabase\Helpers\CustomException;
+use GenericDatabase\Helpers\Exceptions;
 
 #[AllowDynamicProperties]
 class DSN
@@ -15,17 +15,15 @@ class DSN
     public static function load(): array
     {
         if (!isset(self::$dsnFile)) {
-            $dsep = DIRECTORY_SEPARATOR;
-            $json = dirname(__DIR__, 3) . $dsep . 'Helpers' . $dsep . 'ODBC' . $dsep . 'DSN.json';
-            self::$dsnFile = json_decode(file_get_contents($json), true);
+            self::$dsnFile = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'DSN.json'), true);
         }
         return self::$dsnFile;
     }
 
     /**
-     * @throws CustomException
+     * @throws Exceptions
      */
-    public static function parse(): string|CustomException
+    public static function parse(): string|Exceptions
     {
         if (!extension_loaded('odbc')) {
             $message = sprintf(
@@ -33,7 +31,7 @@ class DSN
                 'odbc',
                 'PHP.ini'
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         if (!in_array(ODBCConnection::getInstance()->getDriver(), ODBC::getAvailableDrivers())) {
@@ -42,7 +40,7 @@ class DSN
                 ODBCConnection::getInstance()->getDriver(),
                 implode(', ', ODBC::getAvailableDrivers())
             );
-            throw new CustomException($message);
+            throw new Exceptions($message);
         }
 
         $result = null;
@@ -73,10 +71,10 @@ class DSN
                 $file = pathinfo(ODBCConnection::getInstance()->getDatabase());
                 $result = sprintf(
                     "Driver={%s};DriverID=" .
-                    ($file['extension'] === 'xls' ? "790" : "1046") .
-                    ";DBQ=%s;DefaultDir=%s;Charset=%s;Extensions=" .
-                    ($file['extension'] === 'xls' ? "xls" : "xls,xlsx,xlsm,xlsb") .
-                    ";ImportMixedTypes=Text;",
+                        ($file['extension'] === 'xls' ? "790" : "1046") .
+                        ";DBQ=%s;DefaultDir=%s;Charset=%s;Extensions=" .
+                        ($file['extension'] === 'xls' ? "xls" : "xls,xlsx,xlsm,xlsb") .
+                        ";ImportMixedTypes=Text;",
                     ODBC::getAliasByDriver(
                         ODBCConnection::getInstance()->getDriver(),
                         ($file['extension'] === 'xls') ? 'xls' : 'xlsx'
