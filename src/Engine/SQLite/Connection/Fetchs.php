@@ -16,15 +16,14 @@ class Fetchs
      * @param mixed $statement The statement to get ID for
      * @return string Unique identifier for the statement
      */
-    private static function getResourceId($statement): string
+    private static function getResourceId(mixed $statement): string
     {
-        if (is_object($statement)) {
-            return spl_object_hash($statement);
-        }
-        if (is_array($statement)) {
-            return md5(serialize($statement));
-        }
-        return 'null';
+        return match (true) {
+            is_resource($statement) => (string)$statement,
+            is_object($statement) => spl_object_hash($statement),
+            is_array($statement) => md5(serialize($statement)),
+            default => 'null',
+        };
     }
 
     /**
@@ -33,10 +32,9 @@ class Fetchs
      * @param mixed $statement The statement to cache results from
      * @return string The statement identifier
      */
-    private static function cacheResults($statement): string
+    private static function cacheResults(mixed $statement): string
     {
         $statementId = self::getResourceId($statement);
-
         if (!isset(self::$cachedResults[$statementId])) {
             if ($statement instanceof \SQLite3Stmt) {
                 $result = $statement->execute();
@@ -68,14 +66,12 @@ class Fetchs
      * @param mixed $statement The statement resource
      * @return void
      */
-    private static function handleFetchReset($statement): void
+    private static function handleFetchReset(mixed $statement): void
     {
         if (!$statement) {
             return;
         }
-
         $stmtId = self::getResourceId($statement);
-
         if (!isset(self::$cachedResults[$stmtId])) {
             if ($statement instanceof \SQLite3Result) {
                 $rows = [];

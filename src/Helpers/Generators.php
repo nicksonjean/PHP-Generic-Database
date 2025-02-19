@@ -3,6 +3,7 @@
 namespace GenericDatabase\Helpers;
 
 use GenericDatabase\Core\Entity;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
 
 /**
  * The `GenericDatabase\Helpers\Generators` class provides methods
@@ -118,8 +119,8 @@ class Generators
         return str_replace(
             "ATTR",
             $constantName === 'SQLite'
-            ? mb_strtoupper($constantName) . '3'
-            : mb_strtoupper($constantName),
+                ? mb_strtoupper($constantName) . '3'
+                : mb_strtoupper($constantName),
             $index
         );
     }

@@ -2,13 +2,13 @@
 
 namespace GenericDatabase\Shared;
 
-use GenericDatabase\Helpers\Exceptions;
 use ReflectionException;
+use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Shared\{Getter, Setter};
 
 trait Caller
 {
-    use Setter;
-    use Getter;
+    use Getter, Setter;
 
     /**
      * Triggered when invoking inaccessible methods in an object context

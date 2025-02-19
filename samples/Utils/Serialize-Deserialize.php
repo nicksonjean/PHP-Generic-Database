@@ -87,13 +87,19 @@ var_dump($context);
 
 // OBJ, INTO, CLASS, COLUMN, ASSOC, NUM, BOTH
 
-$o = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE :nome', [':nome' => 'Rio%']);
+function getRandomWord(): string
+{
+    $words = ["Rio%", "Par%", "%Sant%"];
+    return $words[array_rand($words)];
+}
+
+$o = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE :nome', [':nome' => getRandomWord()]);
 
 var_dump($o->getAllMetadata());
 
-var_dump($o->fetchAll(Connection::FETCH_ASSOC));
+var_dump($o->fetchAll(Connection::FETCH_COLUMN));
 
-while ($row = $o->fetch(Connection::FETCH_ASSOC)) {
+while ($row = $o->fetch(Connection::FETCH_COLUMN)) {
     var_dump($row);
 }
 

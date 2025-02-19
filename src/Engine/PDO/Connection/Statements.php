@@ -358,7 +358,7 @@ class Statements
         return false;
     }
 
-    private static function lastInsertIdSQLite(string $name): int|false
+    private static function lastInsertIdSQLite(?string $name): int|false
     {
         if (!$name) {
             return PDOConnection::getInstance()->getConnection()->lastInsertId();

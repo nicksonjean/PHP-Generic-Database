@@ -14,6 +14,6 @@ trait Getter
      */
     public function __get(string $name): mixed
     {
-        return array_key_exists($name, $this->property) ? $this->property[$name] : null;
+        return $this->property[$name] ?? null;
     }
 }

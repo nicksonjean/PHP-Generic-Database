@@ -165,7 +165,7 @@ class Reflections
      * @param mixed $classOrObject The class object or instance, or the class name as a string.
      * @param array $constructorArgArray An array of constructor arguments.
      * @param array $propertyList An array of properties to be set on the object.
-     * @return mixed|object|string The created object with the properties set in a case-insensitive manner.
+     * @return mixed The created object with the properties set in a case-insensitive manner.
      * @throws ReflectionException
      */
     public static function createObjectAndSetPropertiesCaseInsensitive(

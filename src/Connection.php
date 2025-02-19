@@ -6,6 +6,8 @@ namespace GenericDatabase;
 
 use ReflectionException;
 use AllowDynamicProperties;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Strategy\IConnectionStrategy;
 use GenericDatabase\Core\Entity;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Parsers\INI;
@@ -14,7 +16,6 @@ use GenericDatabase\Helpers\Parsers\JSON;
 use GenericDatabase\Helpers\Parsers\YAML;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Reflections;
-use GenericDatabase\IConnection;
 use GenericDatabase\Engine\OCIConnection;
 use GenericDatabase\Engine\PDOConnection;
 use GenericDatabase\Engine\ODBCConnection;
@@ -221,7 +222,7 @@ class Connection implements IConnection, IConnectionStrategy
     /**
      * Get the strategy instance
      *
-     * @return IConnection
+     * @return IConnection 
      */
     public function getStrategy(): IConnection
     {

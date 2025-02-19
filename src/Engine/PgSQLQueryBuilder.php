@@ -32,9 +32,9 @@ class PgSQLQueryBuilder implements IQueryBuilder
 
     private static $self;
 
-    private ?string $lastQuery = null;
+    private static ?string $lastQuery = null;
 
-    private bool $cursorExhausted = false;
+    private static bool $cursorExhausted = false;
 
     public function __construct(Connection|PgSQLConnection $context = null)
     {
@@ -455,10 +455,10 @@ class PgSQLQueryBuilder implements IQueryBuilder
     {
         $currentQuery = $this->parse();
 
-        if ($this->lastQuery !== $currentQuery || $this->cursorExhausted) {
+        if (self::$lastQuery !== $currentQuery || self::$cursorExhausted) {
             $this->getContext()->query($currentQuery);
-            $this->lastQuery = $currentQuery;
-            $this->cursorExhausted = false;
+            self::$lastQuery = $currentQuery;
+            self::$cursorExhausted = false;
         }
     }
 
@@ -467,8 +467,8 @@ class PgSQLQueryBuilder implements IQueryBuilder
      */
     public function reset(): void
     {
-        $this->lastQuery = null;
-        $this->cursorExhausted = true;
+        self::$lastQuery = null;
+        self::$cursorExhausted = true;
     }
 
     /**
@@ -533,7 +533,7 @@ class PgSQLQueryBuilder implements IQueryBuilder
         $result = $this->getContext()->fetch($fetchStyle, $fetchArgument, $optArgs);
 
         if ($result === false || $result === null) {
-            $this->cursorExhausted = true;
+            self::$cursorExhausted = true;
         }
 
         return $result;
@@ -548,7 +548,7 @@ class PgSQLQueryBuilder implements IQueryBuilder
         $this->runOnce();
         $result = $this->getContext()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
 
-        $this->cursorExhausted = true;
+        self::$cursorExhausted = true;
         return $result;
     }
 }

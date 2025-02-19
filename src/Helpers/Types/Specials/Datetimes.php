@@ -3,6 +3,7 @@
 namespace GenericDatabase\Helpers\Types\Specials;
 
 use GenericDatabase\Helpers\Types\Scalars\Strings;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
 
 /**
 

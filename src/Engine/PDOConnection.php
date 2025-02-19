@@ -4,26 +4,28 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use ReflectionException;
 use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
-use GenericDatabase\IConnection;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Fetchs\IFetchOperations;
+use GenericDatabase\Interfaces\Statements\IStatementOperations;
+use GenericDatabase\Engine\PDO\Connection\Fetchs\FetchOperationsHandler;
+use GenericDatabase\Engine\PDO\Connection\Fetchs\Strategy\FetchStrategy;
+use GenericDatabase\Engine\PDO\Connection\Statements\StatementOperationHandler;
 use GenericDatabase\Engine\PDO\Connection\Arguments;
 use GenericDatabase\Engine\PDO\Connection\Options;
 use GenericDatabase\Engine\PDO\Connection\Attributes;
 use GenericDatabase\Engine\PDO\Connection\DSN;
 use GenericDatabase\Engine\PDO\Connection\Dump;
 use GenericDatabase\Engine\PDO\Connection\Transaction;
-use GenericDatabase\Engine\PDO\Connection\Statements;
-use GenericDatabase\Engine\PDO\Connection\Fetchs;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Shared\Setter;
-use GenericDatabase\Shared\Getter;
-use GenericDatabase\Shared\Cleaner;
+use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Shared\Singleton;
-use PDO;
 use PDOException;
+use PDO;
 
 /**
  * Dynamic and Static container class for PDOConnection connections.
@@ -54,11 +56,9 @@ use PDOException;
  * @method static PDOConnection|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
-class PDOConnection implements IConnection
+class PDOConnection implements IConnection, IFetchOperations, IStatementOperations
 {
-    use Setter;
-    use Getter;
-    use Cleaner;
+    use Methods;
     use Singleton;
 
     /**
@@ -67,10 +67,28 @@ class PDOConnection implements IConnection
      */
     private static mixed $connection;
 
+    private static IFetchOperations $fetchHandler;
+
+    private static IStatementOperations $statementHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
-    public function __construct() {}
+    public function __construct()
+    {
+        self::$fetchHandler = new FetchOperationsHandler($this, new FetchStrategy());
+        self::$statementHandler = new StatementOperationHandler($this);
+    }
+
+    private function getFetchHandler(): IFetchOperations
+    {
+        return self::$fetchHandler;
+    }
+
+    private function getStatementHandler(): IStatementOperations
+    {
+        return self::$statementHandler;
+    }
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -166,7 +184,6 @@ class PDOConnection implements IConnection
             );
             throw new Exceptions($message);
         }
-
         try {
             $this->setInstance($this);
             $this
@@ -326,18 +343,18 @@ class PDOConnection implements IConnection
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return Statements::lastInsertId($name);
+        return $this->getStatementHandler()->lastInsertId($name);
     }
 
     /**
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
-        return Statements::quote(...$params);
+        return $this->getStatementHandler()->quote(...$params);
     }
 
     /**
@@ -345,9 +362,9 @@ class PDOConnection implements IConnection
      *
      * @return void
      */
-    private function setAllMetadata(): void
+    public function setAllMetadata(): void
     {
-        Statements::setAllMetadata();
+        $this->getStatementHandler()->setAllMetadata();
     }
 
     /**
@@ -357,7 +374,7 @@ class PDOConnection implements IConnection
      */
     public function getAllMetadata(): object
     {
-        return Statements::getAllMetadata();
+        return $this->getStatementHandler()->getAllMetadata();
     }
 
     /**
@@ -367,7 +384,7 @@ class PDOConnection implements IConnection
      */
     public function getQueryString(): string
     {
-        return Statements::getQueryString();
+        return $this->getStatementHandler()->getQueryString();
     }
 
     /**
@@ -377,7 +394,7 @@ class PDOConnection implements IConnection
      */
     public function setQueryString(string $params): void
     {
-        Statements::setQueryString($params);
+        $this->getStatementHandler()->setQueryString($params);
     }
 
     /**
@@ -387,7 +404,7 @@ class PDOConnection implements IConnection
      */
     public function getQueryParameters(): ?array
     {
-        return Statements::getQueryParameters();
+        return $this->getStatementHandler()->getQueryParameters();
     }
 
     /**
@@ -397,7 +414,7 @@ class PDOConnection implements IConnection
      */
     public function setQueryParameters(?array $params): void
     {
-        Statements::setQueryParameters($params);
+        $this->getStatementHandler()->setQueryParameters($params);
     }
 
     /**
@@ -407,7 +424,7 @@ class PDOConnection implements IConnection
      */
     public function getQueryRows(): int|false
     {
-        return Statements::getQueryRows();
+        return $this->getStatementHandler()->getQueryRows();
     }
 
     /**
@@ -418,7 +435,7 @@ class PDOConnection implements IConnection
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        Statements::setQueryRows($params);
+        $this->getStatementHandler()->setQueryRows($params);
     }
 
     /**
@@ -428,7 +445,7 @@ class PDOConnection implements IConnection
      */
     public function getQueryColumns(): int|false
     {
-        return Statements::getQueryColumns();
+        return $this->getStatementHandler()->getQueryColumns();
     }
 
     /**
@@ -439,7 +456,7 @@ class PDOConnection implements IConnection
      */
     public function setQueryColumns(int|false $params): void
     {
-        Statements::setQueryColumns($params);
+        $this->getStatementHandler()->setQueryColumns($params);
     }
 
     /**
@@ -449,7 +466,7 @@ class PDOConnection implements IConnection
      */
     public function getAffectedRows(): int|false
     {
-        return Statements::getAffectedRows();
+        return $this->getStatementHandler()->getAffectedRows();
     }
 
     /**
@@ -460,7 +477,7 @@ class PDOConnection implements IConnection
      */
     public function setAffectedRows(int|false $params): void
     {
-        Statements::setAffectedRows($params);
+        $this->getStatementHandler()->setAffectedRows($params);
     }
 
     /**
@@ -470,17 +487,17 @@ class PDOConnection implements IConnection
      */
     public function getStatement(): mixed
     {
-        return Statements::getStatement();
+        return $this->getStatementHandler()->getStatement();
     }
 
     /**
-     * Sets the statement for the function.
+     * Set the statement for the function.
      *
      * @param mixed $statement The statement to be set.
      */
     public function setStatement(mixed $statement): void
     {
-        Statements::setStatement($statement);
+        $this->getStatementHandler()->setStatement($statement);
     }
 
     /**
@@ -489,9 +506,9 @@ class PDOConnection implements IConnection
      * @param mixed $params The name of the parameter or an array of parameters and values.
      * @return void
      */
-    public function bindParam(mixed ...$params): void
+    public function bindParam(object $params): void
     {
-        Statements::bindParam(...$params);
+        $this->getStatementHandler()->bindParam($params);
     }
 
     /**
@@ -502,38 +519,40 @@ class PDOConnection implements IConnection
      */
     public function parse(mixed ...$params): string
     {
-        return Statements::parse(...$params);
+        return $this->getStatementHandler()->parse(...$params);
     }
 
     /**
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return PDOConnection|null
+     * @return static|null
      */
-    public function query(mixed ...$params): PDOConnection|null
+    public function query(mixed ...$params): static|null
     {
-        return Statements::query(...$params);
+        return $this->getStatementHandler()->query(...$params);
     }
+
     /**
      * This function binds the parameters to a prepared query.
      *
      * @param mixed ...$params
-     * @return PDOConnection|null
+     * @return static|null
      */
-    public function prepare(mixed ...$params): PDOConnection|null
+    public function prepare(mixed ...$params): static|null
     {
-        return Statements::prepare(...$params);
+        return $this->getStatementHandler()->prepare(...$params);
     }
+
     /**
      * This function runs an SQL statement and returns the number of affected rows.
      *
      * @param mixed $params Statement to be executed
-     * @return bool
+     * @return mixed
      */
-    public function exec(mixed ...$params): bool
+    public function exec(mixed ...$params): mixed
     {
-        return Statements::exec(...$params);
+        return $this->getStatementHandler()->exec(...$params);
     }
 
     /**
@@ -543,18 +562,11 @@ class PDOConnection implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
+     * @throws ReflectionException
      */
     public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
-        return match ($fetchStyle) {
-            PDO::FETCH_OBJ,
-            PDO::FETCH_INTO,
-            PDO::FETCH_CLASS => Fetchs::internalFetchClass($this->getStatement(), $fetchArgument, $optArgs),
-            PDO::FETCH_COLUMN => Fetchs::internalFetchColumn($this->getStatement(), $fetchArgument),
-            PDO::FETCH_ASSOC => Fetchs::internalFetchAssoc($this->getStatement()),
-            PDO::FETCH_NUM => Fetchs::internalFetchNum($this->getStatement()),
-            default => Fetchs::internalFetchBoth($this->getStatement()),
-        };
+        return $this->getFetchHandler()->fetch($fetchStyle, $fetchArgument, $optArgs);
     }
 
     /**
@@ -564,18 +576,11 @@ class PDOConnection implements IConnection
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array|bool The next row from the statement as an array, or false if there are no more rows.
+     * @throws ReflectionException
      */
     public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
-        return match ($fetchStyle) {
-            PDO::FETCH_OBJ,
-            PDO::FETCH_INTO,
-            PDO::FETCH_CLASS => Fetchs::internalFetchAllClass($this->getStatement(), $fetchArgument, $optArgs),
-            PDO::FETCH_COLUMN => Fetchs::internalFetchAllColumn($this->getStatement(), $fetchArgument),
-            PDO::FETCH_ASSOC => Fetchs::internalFetchAllAssoc($this->getStatement()),
-            PDO::FETCH_NUM => Fetchs::internalFetchAllNum($this->getStatement()),
-            default => Fetchs::internalFetchAllBoth($this->getStatement()),
-        };
+        return $this->getFetchHandler()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
     }
 
     /**

@@ -18,13 +18,12 @@ class Fetchs
      */
     private static function getResourceId(mixed $statement): string
     {
-        if (is_array($statement)) {
-            return 'array_' . md5(serialize($statement));
-        }
-        if (is_resource($statement)) {
-            return 'resource_' . (string) $statement;
-        }
-        return 'null';
+        return match (true) {
+            is_resource($statement) => (string)$statement,
+            is_object($statement) => spl_object_hash($statement),
+            is_array($statement) => md5(serialize($statement)),
+            default => 'null',
+        };
     }
 
     /**
@@ -67,6 +66,7 @@ class Fetchs
      * Handles resetting the fetch position and cache management
      *
      * @param mixed $statement The statement to handle
+     * @return void
      */
     private static function handleFetchReset(mixed $statement): void
     {

@@ -16,15 +16,14 @@ class Fetchs
      * @param mixed $statement The statement to get ID for
      * @return string Unique identifier for the statement
      */
-    private static function getResourceId($statement): string
+    private static function getResourceId(mixed $statement): string
     {
-        if (is_array($statement)) {
-            return 'array_' . md5(serialize($statement));
-        }
-        if (is_resource($statement)) {
-            return 'resource_' . (string) $statement;
-        }
-        return 'null';
+        return match (true) {
+            is_resource($statement) => (string)$statement,
+            is_object($statement) => spl_object_hash($statement),
+            is_array($statement) => md5(serialize($statement)),
+            default => 'null',
+        };
     }
 
     /**
@@ -33,7 +32,7 @@ class Fetchs
      * @param mixed $statement The statement to cache results from
      * @return string The statement identifier
      */
-    private static function cacheResults($statement): string
+    private static function cacheResults(mixed $statement): string
     {
         $statementId = self::getResourceId($statement);
         if (!isset(self::$cachedResults[$statementId])) {
@@ -64,7 +63,7 @@ class Fetchs
      * @param mixed $statement The statement resource
      * @return void
      */
-    private static function handleFetchReset($statement): void
+    private static function handleFetchReset(mixed $statement): void
     {
         if (!$statement) {
             return;

@@ -2,6 +2,9 @@
 
 namespace GenericDatabase;
 
+/**
+ * Provides an interface for connecting to a database.
+ */
 interface IConnection
 {
     /**

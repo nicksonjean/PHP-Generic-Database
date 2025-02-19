@@ -16,27 +16,26 @@ class Fetchs
     /**
      * Gets a unique identifier for the statement resource
      *
-     * @param object|array $statement The statement to get ID for
+     * @param mixed $statement The statement to get ID for
      * @return string Unique identifier for the statement
      */
-    private static function getResourceId(object|array $statement): string
+    private static function getResourceId(mixed $statement): string
     {
-        if (is_object($statement)) {
-            return spl_object_hash($statement);
-        }
-        if (is_array($statement)) {
-            return md5(serialize($statement));
-        }
-        return 'null';
+        return match (true) {
+            is_resource($statement) => (string)$statement,
+            is_object($statement) => spl_object_hash($statement),
+            is_array($statement) => md5(serialize($statement)),
+            default => 'null',
+        };
     }
 
     /**
      * Caches the results from a statement for future use
      *
-     * @param PDOStatement|array $statement The statement to cache results from
+     * @param mixed $statement The statement to cache results from
      * @return string The statement identifier
      */
-    private static function cacheResults(PDOStatement|array $statement): string
+    private static function cacheResults(mixed $statement): string
     {
         $statementId = self::getResourceId($statement);
         if (!isset(self::$cachedResults[$statementId])) {
@@ -57,10 +56,10 @@ class Fetchs
     /**
      * Handles resetting the fetch position and caching results if not already cached
      *
-     * @param PDOStatement|array $statement The statement resource
+     * @param mixed $statement The statement resource
      * @return void
      */
-    private static function handleFetchReset(PDOStatement|array $statement): void
+    private static function handleFetchReset(mixed $statement): void
     {
         if (!$statement) {
             return;

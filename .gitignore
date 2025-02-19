@@ -497,4 +497,12 @@ composer.lock
 .phpunit.result.cache
 ###< phpunit/phpunit ###
 
+/.devcontainer/
+/.devtools/
+/.idea/
+/.phpunit.cache/
+/.qodo/
+/.stubs/
+/.vscode/
+
 resources/database/firebird/system/security3.fdb

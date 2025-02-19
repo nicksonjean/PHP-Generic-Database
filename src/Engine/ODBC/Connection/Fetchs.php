@@ -14,21 +14,17 @@ class Fetchs
     /**
      * Gets a unique identifier for the statement resource
      *
-     * @param resource|object|array $statement The statement to get ID for
+     * @param mixed $statement The statement to get ID for
      * @return string Unique identifier for the statement
      */
     private static function getResourceId(mixed $statement): string
     {
-        if (is_resource($statement)) {
-            return (string)$statement;
-        }
-        if (is_object($statement)) {
-            return spl_object_hash($statement);
-        }
-        if (is_array($statement)) {
-            return md5(serialize($statement));
-        }
-        return 'null';
+        return match (true) {
+            is_resource($statement) => (string)$statement,
+            is_object($statement) => spl_object_hash($statement),
+            is_array($statement) => md5(serialize($statement)),
+            default => 'null',
+        };
     }
 
     /**
