@@ -2,8 +2,7 @@
 
 namespace GenericDatabase\Engine\PgSQL\QueryBuilder;
 
-use GenericDatabase\Connection;
-use GenericDatabase\Engine\PgSQLConnection;
+use GenericDatabase\Interfaces\IConnection;
 
 trait Context
 {
@@ -12,10 +11,10 @@ trait Context
     /**
      * Set default context for all instances
      *
-     * @param Connection|PgSQLConnection $context
+     * @param IConnection $context
      * @return void
      */
-    protected static function setContext(Connection|PgSQLConnection $context): void
+    protected static function setContext(IConnection $context): void
     {
         self::$context = $context;
     }
@@ -23,9 +22,9 @@ trait Context
     /**
      * Get context for current instance
      *
-     * @return Connection|PgSQLConnection
+     * @return IConnection
      */
-    protected function getContext(): Connection|PgSQLConnection
+    protected function getContext(): IConnection
     {
         return self::$context;
     }

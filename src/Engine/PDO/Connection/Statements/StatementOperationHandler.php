@@ -2,11 +2,12 @@
 
 namespace GenericDatabase\Engine\PDO\Connection\Statements;
 
-use GenericDatabase\Interfaces\Statements\IStatementOperations;
-use GenericDatabase\Abstract\Statements\AbstractStatements;
+use GenericDatabase\Shared\Run;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Engine\PDOConnection;
+use GenericDatabase\Abstract\Statements\AbstractStatements;
+use GenericDatabase\Interfaces\Statements\IStatementOperations;
 use PDOStatement;
 use PDO;
 
@@ -69,7 +70,7 @@ class StatementOperationHandler extends AbstractStatements implements IStatement
         AND (SELECT current_database()) = :databaseName";
         $stmt = $this->getInstance()->getConnection()->prepare($query);
         $stmt->bindValue(':tableName', $name, PDO::PARAM_STR);
-        $stmt->bindValue(':databaseName', PDOConnection::getInstance()->getDatabase(), PDO::PARAM_STR);
+        $stmt->bindValue(':databaseName', Run::call([$this->getInstance(), 'getDatabase']), PDO::PARAM_STR);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row && isset($row['last_value']) && is_null($row['last_value']) && isset($row['name'])) {
@@ -185,7 +186,7 @@ class StatementOperationHandler extends AbstractStatements implements IStatement
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        $driver = PDOConnection::getInstance()->getDriver();
+        $driver = Run::call([$this->getInstance(), 'getDriver']);
         return match ($driver) {
             'mysql' => $this->lastInsertIdMySQL($name),
             'pgsql' => $this->lastInsertIdPgSQL($name),
@@ -331,7 +332,7 @@ class StatementOperationHandler extends AbstractStatements implements IStatement
      */
     public function parse(mixed ...$params): string
     {
-        $driver = PDOConnection::getInstance()->getDriver();
+        $driver = Run::call([$this->getInstance(), 'getDriver']);
         $dialectQuote = match ($driver) {
             'mysql' => SQL::SQL_DIALECT_BACKTICK,
             'pgsql', 'sqlsrv', 'oci', 'firebird' => SQL::SQL_DIALECT_DOUBLE_QUOTE,
@@ -351,7 +352,7 @@ class StatementOperationHandler extends AbstractStatements implements IStatement
     {
         $this->setAllMetadata();
         if (!empty($params)) {
-            $driver = PDOConnection::getInstance()->getDriver();
+            $driver = Run::call([$this->getInstance(), 'getDriver']);
             $cursor = match ($driver) {
                 'oci', 'mysql', 'pgsql' => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
                 'firebird', 'sqlsrv' => [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL],

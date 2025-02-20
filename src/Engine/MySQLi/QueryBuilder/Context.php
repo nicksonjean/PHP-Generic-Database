@@ -2,8 +2,7 @@
 
 namespace GenericDatabase\Engine\MySQLi\QueryBuilder;
 
-use GenericDatabase\Connection;
-use GenericDatabase\Engine\MySQLiConnection;
+use GenericDatabase\Interfaces\IConnection;
 
 trait Context
 {
@@ -12,10 +11,10 @@ trait Context
     /**
      * Set default context for all instances
      *
-     * @param Connection|MySQLiConnection $context
+     * @param IConnection $context
      * @return void
      */
-    protected static function setContext(Connection|MySQLiConnection $context): void
+    protected static function setContext(IConnection $context): void
     {
         self::$context = $context;
     }
@@ -23,9 +22,9 @@ trait Context
     /**
      * Get context for current instance
      *
-     * @return Connection|MySQLiConnection
+     * @return IConnection
      */
-    protected function getContext(): Connection|MySQLiConnection
+    protected function getContext(): IConnection
     {
         return self::$context;
     }

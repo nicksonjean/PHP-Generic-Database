@@ -4,8 +4,8 @@ namespace GenericDatabase\Engine;
 
 use stdClass;
 use ReflectionException;
-use GenericDatabase\Connection;
-use GenericDatabase\Engine\ODBCConnection;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\IQueryBuilder;
 use GenericDatabase\Core\Join;
 use GenericDatabase\Core\Where;
 use GenericDatabase\Core\Having;
@@ -13,7 +13,6 @@ use GenericDatabase\Core\Select;
 use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Grouping;
 use GenericDatabase\Core\Junction;
-use GenericDatabase\IQueryBuilder;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Shared\Singleton;
@@ -36,7 +35,7 @@ class ODBCQueryBuilder implements IQueryBuilder
 
     private static bool $cursorExhausted = false;
 
-    public function __construct(Connection|ODBCConnection $context = null)
+    public function __construct(IConnection $context = null)
     {
         $this->query = new stdClass();
         self::$context = $context;
@@ -46,10 +45,10 @@ class ODBCQueryBuilder implements IQueryBuilder
     /**
      * Static initializer with context
      *
-     * @param Connection|ODBCConnection $context
+     * @param IConnection $context
      * @return self
      */
-    public static function with(Connection|ODBCConnection $context): self
+    public static function with(IConnection $context): self
     {
         self::$context = $context;
         self::$self = new static($context);

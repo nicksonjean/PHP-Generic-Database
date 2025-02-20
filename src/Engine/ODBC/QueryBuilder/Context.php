@@ -2,8 +2,7 @@
 
 namespace GenericDatabase\Engine\ODBC\QueryBuilder;
 
-use GenericDatabase\Connection;
-use GenericDatabase\Engine\ODBCConnection;
+use GenericDatabase\Interfaces\IConnection;
 
 trait Context
 {
@@ -12,10 +11,10 @@ trait Context
     /**
      * Set default context for all instances
      *
-     * @param Connection|ODBCConnection $context
+     * @param IConnection $context
      * @return void
      */
-    protected static function setContext(Connection|ODBCConnection $context): void
+    protected static function setContext(IConnection $context): void
     {
         self::$context = $context;
     }
@@ -23,9 +22,9 @@ trait Context
     /**
      * Get context for current instance
      *
-     * @return Connection|ODBCConnection
+     * @return IConnection
      */
-    protected function getContext(): Connection|ODBCConnection
+    protected function getContext(): IConnection
     {
         return self::$context;
     }

@@ -2,12 +2,13 @@
 
 namespace GenericDatabase\Engine\ODBC\Connection\Statements;
 
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Statements\IStatementOperations;
+use GenericDatabase\Abstract\Statements\AbstractStatements;
+use GenericDatabase\Shared\Run;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
-use GenericDatabase\Engine\ODBCConnection;
-use GenericDatabase\Abstract\Statements\AbstractStatements;
-use GenericDatabase\Interfaces\Statements\IStatementOperations;
 
 /**
  * Concrete implementation for PDO database
@@ -62,7 +63,7 @@ class StatementOperationHandler extends AbstractStatements implements IStatement
         WHERE table_identities.TABLE_NAME = ?
         AND (SELECT current_database()) = ?";
         $stmt = odbc_prepare($this->getInstance()->getConnection(), $query);
-        odbc_execute($stmt, [$name, ODBCConnection::getInstance()->getDatabase()]);
+        Run::call('odbc_execute', $stmt, [$name, Run::call([$this->getInstance(), 'getDatabase'])]);
         if ($stmt && odbc_fetch_row($stmt)) {
             $sequenceName = odbc_result($stmt, "NAME");
             $query = "SELECT currval('$sequenceName') AS last_value";
@@ -169,7 +170,7 @@ class StatementOperationHandler extends AbstractStatements implements IStatement
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        $driver = ODBCConnection::getInstance()->getDriver();
+        $driver = Run::call([$this->getInstance(), 'getDriver']);
         return match ($driver) {
             'mysql' => $this->lastInsertIdMySQL($name),
             'pgsql' => $this->lastInsertIdPgSQL($name),
@@ -306,7 +307,7 @@ class StatementOperationHandler extends AbstractStatements implements IStatement
      */
     public function parse(mixed ...$params): string
     {
-        $driver = ODBCConnection::getInstance()->getDriver();
+        $driver = Run::call([$this->getInstance(), 'getDriver']);
         $dialectQuote = match ($driver) {
             'mysql' => SQL::SQL_DIALECT_BACKTICK,
             'pgsql', 'sqlsrv', 'oci', 'firebird' => SQL::SQL_DIALECT_DOUBLE_QUOTE,
@@ -339,9 +340,9 @@ class StatementOperationHandler extends AbstractStatements implements IStatement
      * This function executes an SQL statement and returns the result set as a statement object.
      *
      * @param mixed $params Statement to be queried
-     * @return ODBCConnection|null
+     * @return IConnection
      */
-    public function query(mixed ...$params): ?ODBCConnection
+    public function query(mixed ...$params): IConnection
     {
         if (!empty($params) && ($statement = $this->prepareStatement(...$params)) && $this->exec($statement)) {
             $colCount = is_resource($statement) ? odbc_num_fields($statement) : 0;
@@ -372,9 +373,9 @@ class StatementOperationHandler extends AbstractStatements implements IStatement
      * This function binds the parameters to a prepared query.
      *
      * @param mixed ...$params
-     * @return ODBCConnection|null
+     * @return IConnection
      */
-    public function prepare(mixed ...$params): ?ODBCConnection
+    public function prepare(mixed ...$params): IConnection
     {
         if (!empty($params) && ($this->prepareStatement(...$params))) {
             $bindParams = Schemas::makeArgs([$this->getStatement(), ...$params]);

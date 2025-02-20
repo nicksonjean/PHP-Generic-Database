@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Engine\SQLSrv\QueryBuilder;
 
-use GenericDatabase\IQueryBuilder;
+use GenericDatabase\Interfaces\IQueryBuilder;
 use GenericDatabase\Core\Join;
 use GenericDatabase\Core\Table;
 use GenericDatabase\Core\Where;

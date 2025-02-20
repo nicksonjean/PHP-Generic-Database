@@ -2,8 +2,7 @@
 
 namespace GenericDatabase\Engine\OCI\QueryBuilder;
 
-use GenericDatabase\Connection;
-use GenericDatabase\Engine\OCIConnection;
+use GenericDatabase\Interfaces\IConnection;
 
 trait Context
 {
@@ -12,10 +11,10 @@ trait Context
     /**
      * Set default context for all instances
      *
-     * @param Connection|OCIConnection $context
+     * @param IConnection $context
      * @return void
      */
-    protected static function setContext(Connection|OCIConnection $context): void
+    protected static function setContext(IConnection $context): void
     {
         self::$context = $context;
     }
@@ -23,9 +22,9 @@ trait Context
     /**
      * Get context for current instance
      *
-     * @return Connection|OCIConnection
+     * @return IConnection
      */
-    protected function getContext(): Connection|OCIConnection
+    protected function getContext(): IConnection
     {
         return self::$context;
     }

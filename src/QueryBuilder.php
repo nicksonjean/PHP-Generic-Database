@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace GenericDatabase;
 
-use GenericDatabase\IQueryBuilder;
+use GenericDatabase\Interfaces\IQueryBuilder;
+use GenericDatabase\Interfaces\Strategy\IQueryBuilderStrategy;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Shared\Run;
 use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Connection;
 use GenericDatabase\Engine\FirebirdQueryBuilder;
 use GenericDatabase\Engine\OCIQueryBuilder;
 use GenericDatabase\Engine\PgSQLQueryBuilder;
@@ -24,7 +26,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     /**
      * Property of the type object who define the connection
      */
-    private static Connection $context;
+    private static IConnection $context;
 
     private static $self;
 
@@ -36,9 +38,9 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     /**
      * Constructor with context
      *
-     * @param Connection $context
+     * @param IConnection $context
      */
-    public function __construct(Connection $context = null)
+    public function __construct(IConnection $context = null)
     {
         self::$context = $context;
         self::$self = $this;
@@ -48,10 +50,10 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     /**
      * Static initializer with context
      *
-     * @param Connection $context
+     * @param IConnection $context
      * @return self
      */
-    public static function with(Connection $context): self
+    public static function with(IConnection $context): self
     {
         self::$context = $context;
         self::$self = new static($context);
@@ -87,7 +89,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      */
     private function initStrategy(): void
     {
-        $engine = self::$context->getEngine();
+        $engine = Run::call([self::$context, 'getEngine']);
 
         if (!is_string($engine)) {
             throw new Exception('Engine must be a string');
