@@ -9,23 +9,24 @@ use SensitiveParameter;
 use AllowDynamicProperties;
 use Exception;
 use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\Fetchs\IFetchOperations;
-use GenericDatabase\Interfaces\Statements\IStatementOperations;
-use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
-use GenericDatabase\Engine\SQLSrv\Connection\Fetchs\FetchOperationsHandler;
-use GenericDatabase\Engine\SQLSrv\Connection\Fetchs\Strategy\FetchStrategy;
-use GenericDatabase\Engine\SQLSrv\Connection\Statements\StatementOperationHandler;
-use GenericDatabase\Engine\SQLSrv\Connection\Arguments;
-use GenericDatabase\Engine\SQLSrv\Connection\Options;
-use GenericDatabase\Engine\SQLSrv\Connection\Attributes;
-use GenericDatabase\Engine\SQLSrv\Connection\DSN;
-use GenericDatabase\Engine\SQLSrv\Connection\Dump;
-use GenericDatabase\Engine\SQLSrv\Connection\Transaction;
-use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Interfaces\DSN\IDSN;
+use GenericDatabase\Interfaces\Fetch\IFetch;
+use GenericDatabase\Interfaces\Statements\IStatements;
 use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Shared\Singleton;
+use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Helpers\Compare;
+use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
+use GenericDatabase\Engine\SQLSrv\Connection\Dump;
+use GenericDatabase\Engine\SQLSrv\Connection\Options;
+use GenericDatabase\Engine\SQLSrv\Connection\Arguments;
+use GenericDatabase\Engine\SQLSrv\Connection\Attributes;
+use GenericDatabase\Engine\SQLSrv\Connection\Transaction;
+use GenericDatabase\Engine\SQLSrv\Connection\DSN\DSNHandler;
+use GenericDatabase\Engine\SQLSrv\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\SQLSrv\Connection\Fetch\Strategy\FetchStrategy;
+use GenericDatabase\Engine\SQLSrv\Connection\Statements\StatementsHandler;
 
 /**
  * Dynamic and Static container class for SQLSrvConnection connections.
@@ -56,7 +57,7 @@ use GenericDatabase\Shared\Singleton;
  * @method static SQLSrvConnection|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
-class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOperations
+class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN
 {
     use Methods;
     use Singleton;
@@ -67,27 +68,35 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     private static mixed $connection;
 
-    private static IFetchOperations $fetchHandler;
+    private static IFetch $fetchHandler;
 
-    private static IStatementOperations $statementHandler;
+    private static IStatements $statementsHandler;
+
+    private static IDSN $dsnHandler;
 
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
     public function __construct()
     {
-        self::$fetchHandler = new FetchOperationsHandler($this, new FetchStrategy());
-        self::$statementHandler = new StatementOperationHandler($this);
+        self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
+        self::$statementsHandler = new StatementsHandler($this);
+        self::$dsnHandler = new DSNHandler($this);
     }
 
-    private function getFetchHandler(): IFetchOperations
+    private function getFetchHandler(): IFetch
     {
         return self::$fetchHandler;
     }
 
-    private function getStatementHandler(): IStatementOperations
+    private function getStatementsHandler(): IStatements
     {
-        return self::$statementHandler;
+        return self::$statementsHandler;
+    }
+
+    private function getDsnHandler(): IDSN
+    {
+        return self::$dsnHandler;
     }
 
     /**
@@ -267,7 +276,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     private function parseDsn(): string|Exceptions
     {
-        return DSN::parse();
+        return $this->getDsnHandler()->parse();
     }
 
     /**
@@ -355,7 +364,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function lastInsertId(?string $name = null): string|int|false
     {
-        return $this->getStatementHandler()->lastInsertId($name);
+        return $this->getStatementsHandler()->lastInsertId($name);
     }
 
     /**
@@ -366,7 +375,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function quote(mixed ...$params): mixed
     {
-        return $this->getStatementHandler()->quote(...$params);
+        return $this->getStatementsHandler()->quote(...$params);
     }
 
     /**
@@ -376,7 +385,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function setAllMetadata(): void
     {
-        $this->getStatementHandler()->setAllMetadata();
+        $this->getStatementsHandler()->setAllMetadata();
     }
 
     /**
@@ -386,7 +395,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function getAllMetadata(): object
     {
-        return $this->getStatementHandler()->getAllMetadata();
+        return $this->getStatementsHandler()->getAllMetadata();
     }
 
     /**
@@ -396,7 +405,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function getQueryString(): string
     {
-        return $this->getStatementHandler()->getQueryString();
+        return $this->getStatementsHandler()->getQueryString();
     }
 
     /**
@@ -406,7 +415,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function setQueryString(string $params): void
     {
-        $this->getStatementHandler()->setQueryString($params);
+        $this->getStatementsHandler()->setQueryString($params);
     }
 
     /**
@@ -416,7 +425,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function getQueryParameters(): ?array
     {
-        return $this->getStatementHandler()->getQueryParameters();
+        return $this->getStatementsHandler()->getQueryParameters();
     }
 
     /**
@@ -426,7 +435,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function setQueryParameters(?array $params): void
     {
-        $this->getStatementHandler()->setQueryParameters($params);
+        $this->getStatementsHandler()->setQueryParameters($params);
     }
 
     /**
@@ -436,7 +445,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function getQueryRows(): int|false
     {
-        return $this->getStatementHandler()->getQueryRows();
+        return $this->getStatementsHandler()->getQueryRows();
     }
 
     /**
@@ -447,7 +456,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function setQueryRows(callable|int|false $params): void
     {
-        $this->getStatementHandler()->setQueryRows($params);
+        $this->getStatementsHandler()->setQueryRows($params);
     }
 
     /**
@@ -457,7 +466,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function getQueryColumns(): int|false
     {
-        return $this->getStatementHandler()->getQueryColumns();
+        return $this->getStatementsHandler()->getQueryColumns();
     }
 
     /**
@@ -468,7 +477,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function setQueryColumns(int|false $params): void
     {
-        $this->getStatementHandler()->setQueryColumns($params);
+        $this->getStatementsHandler()->setQueryColumns($params);
     }
 
     /**
@@ -478,7 +487,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function getAffectedRows(): int|false
     {
-        return $this->getStatementHandler()->getAffectedRows();
+        return $this->getStatementsHandler()->getAffectedRows();
     }
 
     /**
@@ -489,7 +498,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function setAffectedRows(int|false $params): void
     {
-        $this->getStatementHandler()->setAffectedRows($params);
+        $this->getStatementsHandler()->setAffectedRows($params);
     }
 
     /**
@@ -499,7 +508,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function getStatement(): mixed
     {
-        return $this->getStatementHandler()->getStatement();
+        return $this->getStatementsHandler()->getStatement();
     }
 
     /**
@@ -509,7 +518,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function setStatement(mixed $statement): void
     {
-        $this->getStatementHandler()->setStatement($statement);
+        $this->getStatementsHandler()->setStatement($statement);
     }
 
     /**
@@ -520,7 +529,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function bindParam(object $params): void
     {
-        $this->getStatementHandler()->bindParam($params);
+        $this->getStatementsHandler()->bindParam($params);
     }
 
     /**
@@ -531,7 +540,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function parse(mixed ...$params): string
     {
-        return $this->getStatementHandler()->parse(...$params);
+        return $this->getStatementsHandler()->parse(...$params);
     }
 
     /**
@@ -542,7 +551,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function query(mixed ...$params): static|null
     {
-        return $this->getStatementHandler()->query(...$params);
+        return $this->getStatementsHandler()->query(...$params);
     }
 
     /**
@@ -553,7 +562,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function prepare(mixed ...$params): static|null
     {
-        return $this->getStatementHandler()->prepare(...$params);
+        return $this->getStatementsHandler()->prepare(...$params);
     }
 
     /**
@@ -564,7 +573,7 @@ class SQLSrvConnection implements IConnection, IFetchOperations, IStatementOpera
      */
     public function exec(mixed ...$params): mixed
     {
-        return $this->getStatementHandler()->exec(...$params);
+        return $this->getStatementsHandler()->exec(...$params);
     }
 
     /**

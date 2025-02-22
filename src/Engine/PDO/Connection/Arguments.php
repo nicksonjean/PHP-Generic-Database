@@ -46,22 +46,6 @@ class Arguments
     }
 
     /**
-     * Remove unused objects from PDO SQLite
-     *
-     * @param mixed $driver
-     * @return void
-     */
-    private static function resetArgs(mixed $driver): void
-    {
-        if ($driver === 'sqlite') {
-            unset(PDOConnection::getInstance()->host);
-            unset(PDOConnection::getInstance()->port);
-            unset(PDOConnection::getInstance()->user);
-            unset(PDOConnection::getInstance()->password);
-        }
-    }
-
-    /**
      * Determines arguments type by calling to format type
      *
      * @param string $format Accept formats json, xml, ini and yaml
@@ -85,7 +69,6 @@ class Arguments
                         [self::setConstant(($format === 'json' || $format === 'yaml') ? $value : [$value])]
                     );
                 } else {
-                    self::resetArgs($value);
                     call_user_func_array(
                         [PDOConnection::getInstance(), 'set' . ucfirst($key)],
                         [self::setType($value)]
@@ -104,7 +87,6 @@ class Arguments
      */
     private static function callWithByStaticArray(array $arguments): PDOConnection
     {
-        self::resetArgs($arguments['driver']);
         foreach ($arguments as $key => $value) {
             call_user_func_array([PDOConnection::getInstance(), 'set' . ucfirst($key)], [$value]);
         }

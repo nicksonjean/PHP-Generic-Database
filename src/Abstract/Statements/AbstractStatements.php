@@ -4,6 +4,7 @@ namespace GenericDatabase\Abstract\Statements;
 
 use GenericDatabase\Generic\Statements\Metadata;
 use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Shared\Run;
 use AllowDynamicProperties;
 
 #[AllowDynamicProperties]
@@ -27,6 +28,16 @@ abstract class AbstractStatements
     public function getInstance(): IConnection
     {
         return self::$connection;
+    }
+
+    public function set(string $name, mixed $value): void
+    {
+        Run::call([$this->getInstance(), 'set' . ucfirst($name)], $value);
+    }
+
+    public function get(string $name): mixed
+    {
+        return Run::call([$this->getInstance(), 'get' . ucfirst($name)]);
     }
 
     public function setAllMetadata(): void
