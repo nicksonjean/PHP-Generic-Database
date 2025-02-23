@@ -4,29 +4,32 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use PDOException;
 use Exception;
 use SensitiveParameter;
 use ReflectionException;
 use AllowDynamicProperties;
-use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\DSN\IDSN;
-use GenericDatabase\Interfaces\Fetch\IFetch;
-use GenericDatabase\Interfaces\Statements\IStatements;
-use GenericDatabase\Generic\Connection\Methods;
-use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Shared\Singleton;
+use GenericDatabase\Generic\Connection\Methods;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Connection\IDSN;
+use GenericDatabase\Interfaces\Connection\IFetch;
+use GenericDatabase\Interfaces\Connection\IStatements;
+use GenericDatabase\Interfaces\Connection\IAttributes;
+use GenericDatabase\Interfaces\Connection\IArguments;
 use PDO;
 use GenericDatabase\Engine\PDO\Connection\Dump;
 use GenericDatabase\Engine\PDO\Connection\Options;
 use GenericDatabase\Engine\PDO\Connection\Arguments;
-use GenericDatabase\Engine\PDO\Connection\Attributes;
 use GenericDatabase\Engine\PDO\Connection\Transaction;
 use GenericDatabase\Engine\PDO\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\PDO\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\PDO\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\PDO\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\PDO\Connection\Statements\StatementsHandler;
+use PDOException;
 
 /**
  * Dynamic and Static container class for PDOConnection connections.
@@ -57,7 +60,7 @@ use GenericDatabase\Engine\PDO\Connection\Statements\StatementsHandler;
  * @method static PDOConnection|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
-class PDOConnection implements IConnection, IFetch, IStatements, IDSN
+class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArguments
 {
     use Methods;
     use Singleton;
@@ -74,6 +77,8 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN
 
     private static IDSN $dsnHandler;
 
+    private static IAttributes $attributesHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -82,6 +87,7 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
+        self::$attributesHandler = new AttributesHandler($this);
     }
 
     private function getFetchHandler(): IFetch
@@ -97,6 +103,11 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN
     private function getDsnHandler(): IDSN
     {
         return self::$dsnHandler;
+    }
+
+    private function getAttributesHandler(): IAttributes
+    {
+        return self::$attributesHandler;
     }
 
     /**
@@ -153,7 +164,7 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN
     private function postConnect(): PDOConnection
     {
         Options::define();
-        Attributes::define();
+        $this->getAttributesHandler()->define();
         return $this;
     }
 

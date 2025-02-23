@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Engine\MySQLi\Connection\Fetch\Strategy;
 
-use GenericDatabase\Interfaces\Fetch\Strategy\IFetchStrategy;
+use GenericDatabase\Interfaces\Connection\IFetchStrategy;
 use GenericDatabase\Helpers\Types\Specials\Resources;
 use GenericDatabase\Generic\Fetch\FetchCache;
 use mysqli_result;

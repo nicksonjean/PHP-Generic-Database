@@ -2,9 +2,9 @@
 
 namespace GenericDatabase\Engine\SQLSrv\Connection\Fetch;
 
-use GenericDatabase\Interfaces\Fetch\IFetch;
+use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
-use GenericDatabase\Abstract\Fetch\AbstractFetch;
+use GenericDatabase\Abstract\AbstractFetch;
 use ReflectionException;
 
 /**

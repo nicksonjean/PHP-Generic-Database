@@ -3,8 +3,8 @@
 namespace GenericDatabase\Engine\SQLSrv\Connection\Statements;
 
 use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\Statements\IStatements;
-use GenericDatabase\Abstract\Statements\AbstractStatements;
+use GenericDatabase\Interfaces\Connection\IStatements;
+use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;

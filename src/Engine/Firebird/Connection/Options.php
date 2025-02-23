@@ -11,19 +11,14 @@ class Options
     private static array $options = [];
 
     /**
-     * This method is responsible for obtaining all options already defined by the user.
+     * This method is responsible for obtain all options already defined by user
      *
-     * @param ?int $type = null
+     * @param mixed $type = null
      * @return mixed
      */
-    public static function getOptions(?int $type = null): mixed
+    public static function getOptions(mixed $type = null): mixed
     {
-        if (!is_null($type)) {
-            $result = self::$options[$type] ?? null;
-        } else {
-            $result = self::$options;
-        }
-        return $result;
+        return !is_null($type) ? self::$options[$type] ?? null : self::$options;
     }
 
     /**

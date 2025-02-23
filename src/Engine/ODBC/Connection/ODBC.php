@@ -2,10 +2,11 @@
 
 namespace GenericDatabase\Engine\ODBC\Connection;
 
-use GenericDatabase\Helpers\Parsers\INI;
-use GenericDatabase\Helpers\Types\Compounds\Arrays;
-use GenericDatabase\Helpers\Reflections;
 use ReflectionException;
+use GenericDatabase\Helpers\Parsers\INI;
+use GenericDatabase\Helpers\Reflections;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
+use GenericDatabase\Engine\ODBC\Connection\DSN\DSNHandler;
 
 class ODBC
 {
@@ -264,7 +265,7 @@ class ODBC
      */
     public static function getMapperAliases(): array|string
     {
-        self::$mapperAliases = DSN::load();
+        self::$mapperAliases = DSNHandler::load();
         return self::$mapperAliases;
     }
 

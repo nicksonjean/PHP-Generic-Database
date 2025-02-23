@@ -4,27 +4,29 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
-use ReflectionException;
-use SensitiveParameter;
-use AllowDynamicProperties;
 use Exception;
-use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\DSN\IDSN;
-use GenericDatabase\Interfaces\Fetch\IFetch;
-use GenericDatabase\Interfaces\Statements\IStatements;
-use GenericDatabase\Generic\Connection\Methods;
-use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Helpers\Exceptions;
+use SensitiveParameter;
+use ReflectionException;
+use AllowDynamicProperties;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Compare;
+use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Shared\Singleton;
+use GenericDatabase\Generic\Connection\Methods;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Connection\IDSN;
+use GenericDatabase\Interfaces\Connection\IFetch;
+use GenericDatabase\Interfaces\Connection\IStatements;
+use GenericDatabase\Interfaces\Connection\IAttributes;
+use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 use GenericDatabase\Engine\MySQLi\Connection\Dump;
 use GenericDatabase\Engine\MySQLi\Connection\Options;
 use GenericDatabase\Engine\MySQLi\Connection\Arguments;
-use GenericDatabase\Engine\MySQLi\Connection\Attributes;
 use GenericDatabase\Engine\MySQLi\Connection\Transaction;
 use GenericDatabase\Engine\MySQLi\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\MySQLi\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\MySQLi\Connection\Statements\StatementsHandler;
 
@@ -57,7 +59,7 @@ use GenericDatabase\Engine\MySQLi\Connection\Statements\StatementsHandler;
  * @method static MySQLiConnection|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
-class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN
+class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArguments
 {
     use Methods;
     use Singleton;
@@ -74,6 +76,8 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN
 
     private static IDSN $dsnHandler;
 
+    private static IAttributes $attributesHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -82,6 +86,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
+        self::$attributesHandler = new AttributesHandler($this);
     }
 
     private function getFetchHandler(): IFetch
@@ -97,6 +102,11 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN
     private function getDsnHandler(): IDSN
     {
         return self::$dsnHandler;
+    }
+
+    private function getAttributesHandler(): IAttributes
+    {
+        return self::$attributesHandler;
     }
 
     /**
@@ -155,7 +165,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN
     private function postConnect(): MySQLiConnection
     {
         Options::define();
-        Attributes::define();
+        $this->getAttributesHandler()->define();
         return $this;
     }
 

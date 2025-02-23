@@ -13,12 +13,12 @@ class Options
     /**
      * This method is responsible for obtain all options already defined by user
      *
-     * @param ?string $type = null
-     * @return array
+     * @param mixed $type = null
+     * @return mixed
      */
-    public static function getOptions(?string $type = null): array
+    public static function getOptions(mixed $type = null): mixed
     {
-        return !is_null($type) ? self::$options[$type] : self::$options;
+        return !is_null($type) ? self::$options[$type] ?? null : self::$options;
     }
 
     /**

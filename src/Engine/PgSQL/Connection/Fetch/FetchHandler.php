@@ -2,9 +2,9 @@
 
 namespace GenericDatabase\Engine\PgSQL\Connection\Fetch;
 
-use GenericDatabase\Interfaces\Fetch\IFetch;
+use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
-use GenericDatabase\Abstract\Fetch\AbstractFetch;
+use GenericDatabase\Abstract\AbstractFetch;
 use ReflectionException;
 
 /**

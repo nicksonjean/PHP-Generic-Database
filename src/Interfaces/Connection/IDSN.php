@@ -1,12 +1,10 @@
 <?php
 
-namespace GenericDatabase\Engine\Firebird\Connection;
+namespace GenericDatabase\Interfaces\Connection;
 
 use GenericDatabase\Helpers\Exceptions;
-use AllowDynamicProperties;
 
-#[AllowDynamicProperties]
 interface IDSN
 {
-    public static function parse(): string|Exceptions;
+    public function parse(): string|Exceptions;
 }

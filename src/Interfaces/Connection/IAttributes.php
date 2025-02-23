@@ -12,5 +12,5 @@ interface IAttributes
      * @param array $arguments
      * @return void
      */
-    public static function define(): void;
+    public function define(): void;
 }

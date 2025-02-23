@@ -2,9 +2,9 @@
 
 namespace GenericDatabase\Engine\OCI\Connection\Fetch;
 
-use GenericDatabase\Interfaces\Fetch\IFetch;
+use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Engine\OCI\Connection\OCI;
-use GenericDatabase\Abstract\Fetch\AbstractFetch;
+use GenericDatabase\Abstract\AbstractFetch;
 use ReflectionException;
 
 /**

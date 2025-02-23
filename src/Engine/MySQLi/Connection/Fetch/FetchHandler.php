@@ -2,9 +2,9 @@
 
 namespace GenericDatabase\Engine\MySQLi\Connection\Fetch;
 
-use GenericDatabase\Interfaces\Fetch\IFetch;
+use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
-use GenericDatabase\Abstract\Fetch\AbstractFetch;
+use GenericDatabase\Abstract\AbstractFetch;
 use ReflectionException;
 
 /**
