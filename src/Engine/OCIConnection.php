@@ -19,13 +19,14 @@ use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\OCI\Connection\OCI;
 use GenericDatabase\Engine\OCI\Connection\Dump;
-use GenericDatabase\Engine\OCI\Connection\Options;
 use GenericDatabase\Engine\OCI\Connection\Arguments;
 use GenericDatabase\Engine\OCI\Connection\Transaction;
 use GenericDatabase\Engine\OCI\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\OCI\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\OCI\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\OCI\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\OCI\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\OCI\Connection\Statements\StatementsHandler;
@@ -78,6 +79,8 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
 
     private static IAttributes $attributesHandler;
 
+    private static IOptions $optionsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -86,7 +89,8 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
-        self::$attributesHandler = new AttributesHandler($this);
+        self::$optionsHandler = new OptionsHandler($this);
+        self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
     }
 
     private function getFetchHandler(): IFetch
@@ -107,6 +111,11 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
     private function getAttributesHandler(): IAttributes
     {
         return self::$attributesHandler;
+    }
+
+    private function getOptionsHandler(): IOptions
+    {
+        return self::$optionsHandler;
     }
 
     /**
@@ -149,9 +158,8 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
      */
     private function preConnect(): OCIConnection
     {
-        Options::setOptions((array) static::getOptions());
-        $options = Options::getOptions();
-        static::setOptions($options);
+        $this->getOptionsHandler()->setOptions(static::getOptions());
+        static::setOptions($this->getOptionsHandler()->getOptions());
         return $this;
     }
 
@@ -163,7 +171,7 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
      */
     private function postConnect(): OCIConnection
     {
-        Options::define();
+        $this->getOptionsHandler()->define();
         $this->getAttributesHandler()->define();
         return $this;
     }
@@ -190,7 +198,7 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
     ): OCIConnection {
         $dsn = vsprintf('%s:%s/%s', [$host, $port, $database]);
         $this->setConnection(
-            (string) !Options::getOptions(OCI::ATTR_PERSISTENT)
+            (string) !$this->getOptionsHandler()->getOptions(OCI::ATTR_PERSISTENT)
                 ? oci_connect($user, $password, $dsn, $charset)
                 : oci_pconnect($user, $password, $dsn, $charset)
         );
@@ -206,12 +214,7 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
     public function connect(): OCIConnection
     {
         if (!extension_loaded('oci8')) {
-            $message = sprintf(
-                "Invalid or not loaded '%s' extension in '%s' settings",
-                'oci8',
-                'PHP.ini'
-            );
-            throw new Exceptions($message);
+            throw new Exceptions("Invalid or not loaded 'oci8' extension in PHP.ini settings");
         }
 
         try {
@@ -256,7 +259,7 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
     {
         if ($this->isConnected()) {
             static::setConnected(false);
-            if (!Options::getOptions(OCI::ATTR_PERSISTENT)) {
+            if (!$this->getOptionsHandler()->getOptions(OCI::ATTR_PERSISTENT)) {
                 if (Compare::connection($this->getConnection()) === 'oci') {
                     oci_close($this->getConnection());
                 }

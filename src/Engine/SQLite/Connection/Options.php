@@ -11,35 +11,6 @@ class Options
     private static array $options = [];
 
     /**
-     * @throws ReflectionException
-     */
-    public static function flags(): int
-    {
-        $options = Options::getOptions();
-        $result = [];
-
-        foreach (Reflections::getClassConstants(SQLite::class) as $value) {
-            $attribute = "SQLite::ATTR_" . mb_strtoupper((string) $value);
-            $attributeValue = SQLiteConnection::getInstance()->getAttribute($attribute);
-
-            if ($attributeValue === true && in_array($attribute, $options)) {
-                if ($value === 1) {
-                    $result[] = $value;
-                } elseif ($value === 2 || $value === 4) {
-                    $result = [$value];
-                    break;
-                }
-            }
-        }
-
-        if (empty($result)) {
-            $result = [6];
-        }
-
-        return $result[0];
-    }
-
-    /**
      * This method is responsible for obtain all options already defined by user
      *
      * @param mixed $type = null

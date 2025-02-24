@@ -61,7 +61,7 @@ class Options
     {
         foreach (array_keys(self::getOptions()) as $key) {
             if ($key === 'ATTR_CONNECT_TIMEOUT' && ini_get('oci8.persistent_timeout') !== '1') {
-                ini_set('oci8.persistent_timeout ', Options::getOptions(OCI::ATTR_CONNECT_TIMEOUT));
+                ini_set('oci8.persistent_timeout ', self::getOptions(OCI::ATTR_CONNECT_TIMEOUT));
             }
         }
     }

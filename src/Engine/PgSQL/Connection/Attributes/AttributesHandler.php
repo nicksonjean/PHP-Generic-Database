@@ -3,18 +3,15 @@
 namespace GenericDatabase\Engine\PgSQL\Connection\Attributes;
 
 use AllowDynamicProperties;
-use GenericDatabase\Generic\Connection\Instance;
+use GenericDatabase\Abstract\AbstractAttributes;
+use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Interfaces\Connection\IAttributes;
-use GenericDatabase\Engine\PgSQL\Connection\Options;
 use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
 
 #[AllowDynamicProperties]
-class AttributesHandler implements IAttributes
+class AttributesHandler extends AbstractAttributes implements IAttributes
 {
-    use Instance;
-
     /**
      * static attributes constants
      *
@@ -87,17 +84,17 @@ class AttributesHandler implements IAttributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => (bool) Options::getOptions(PgSQL::ATTR_AUTOCOMMIT),
+                'AUTOCOMMIT' => (bool) $this->getOptionsHandler()->getOptions(PgSQL::ATTR_AUTOCOMMIT),
                 'CASE' => 0,
                 'ERRMODE' => 1,
                 'CLIENT_VERSION' => $settings['version']['client'],
                 'CONNECTION_STATUS' => $this->connectionStatus(),
-                'PERSISTENT' => (bool) Options::getOptions(PgSQL::ATTR_PERSISTENT),
+                'PERSISTENT' => (bool) $this->getOptionsHandler()->getOptions(PgSQL::ATTR_PERSISTENT),
                 'SERVER_INFO' => $this->serverInfo(),
                 'SERVER_VERSION' => $settings['version']['server'],
-                'TIMEOUT' => (int) Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) ?: 30,
+                'TIMEOUT' => (int) $this->getOptionsHandler()->getOptions(PgSQL::ATTR_CONNECT_TIMEOUT) ?: 30,
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => Options::getOptions(PgSQL::ATTR_DEFAULT_FETCH_MODE) ?? PgSQL::FETCH_BOTH,
+                'DEFAULT_FETCH_MODE' => $this->getOptionsHandler()->getOptions(PgSQL::ATTR_DEFAULT_FETCH_MODE) ?? PgSQL::FETCH_BOTH,
                 'CHARACTER_SET' => pg_client_encoding($this->getInstance()->getConnection()),
                 'COLLATION' => ($settings['collate'] !== false && property_exists($settings['collate'], 'lc_collate'))
                     ? $settings['collate']->lc_collate

@@ -7,25 +7,24 @@ use GenericDatabase\Interfaces\IConnection;
 
 trait Instance
 {
+    protected static IConnection $instance;
 
-    private IConnection $connection;
-
-    public function __construct(IConnection $connection)
+    public function __construct(IConnection $instance)
     {
-        $this->connection = $connection;
+        self::$instance = $instance;
     }
 
     public function getInstance(): IConnection
     {
-        return $this->connection;
+        return self::$instance;
     }
 
-    private function set(string $name, mixed $value): void
+    public function set(string $name, mixed $value): void
     {
         Run::call([$this->getInstance(), 'set' . ucfirst($name)], $value);
     }
 
-    private function get(string $name): mixed
+    public function get(string $name): mixed
     {
         return Run::call([$this->getInstance(), 'get' . ucfirst($name)]);
     }

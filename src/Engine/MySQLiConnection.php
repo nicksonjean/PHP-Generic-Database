@@ -19,13 +19,14 @@ use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 use GenericDatabase\Engine\MySQLi\Connection\Dump;
-use GenericDatabase\Engine\MySQLi\Connection\Options;
 use GenericDatabase\Engine\MySQLi\Connection\Arguments;
 use GenericDatabase\Engine\MySQLi\Connection\Transaction;
 use GenericDatabase\Engine\MySQLi\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\MySQLi\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\MySQLi\Connection\Statements\StatementsHandler;
@@ -78,6 +79,8 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
 
     private static IAttributes $attributesHandler;
 
+    private static IOptions $optionsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -86,7 +89,8 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
-        self::$attributesHandler = new AttributesHandler($this);
+        self::$optionsHandler = new OptionsHandler($this);
+        self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
     }
 
     private function getFetchHandler(): IFetch
@@ -107,6 +111,11 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     private function getAttributesHandler(): IAttributes
     {
         return self::$attributesHandler;
+    }
+
+    private function getOptionsHandler(): IOptions
+    {
+        return self::$optionsHandler;
     }
 
     /**
@@ -150,9 +159,8 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     private function preConnect(): MySQLiConnection
     {
         $this->setConnection(mysqli_init());
-        Options::setOptions((array) static::getOptions());
-        $options = Options::getOptions();
-        static::setOptions($options);
+        $this->getOptionsHandler()->setOptions(static::getOptions());
+        static::setOptions($this->getOptionsHandler()->getOptions());
         return $this;
     }
 
@@ -164,7 +172,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     private function postConnect(): MySQLiConnection
     {
-        Options::define();
+        $this->getOptionsHandler()->define();
         $this->getAttributesHandler()->define();
         return $this;
     }
@@ -188,9 +196,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         mixed $port
     ): MySQLiConnection {
         if (!static::getHost()) {
-            $host = (string) !Options::getOptions(MySQL::ATTR_PERSISTENT)
-                ? $host
-                : 'p:' . $host;
+            $host = (string) !$this->getOptionsHandler()->getOptions(MySQL::ATTR_PERSISTENT) ? $host : 'p:' . $host;
             static::setHost($host);
         }
         $this->parseDsn();
@@ -207,12 +213,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     public function connect(): MySQLiConnection
     {
         if (!extension_loaded('mysqli')) {
-            $message = sprintf(
-                "Invalid or not loaded '%s' extension in '%s' settings",
-                'mysqli',
-                'PHP.ini'
-            );
-            throw new Exceptions($message);
+            throw new Exceptions("Invalid or not loaded 'mysqli' extension in PHP.ini settings");
         }
 
         try {
@@ -255,7 +256,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     {
         if ($this->isConnected()) {
             static::setConnected(false);
-            if (!Options::getOptions(MySQL::ATTR_PERSISTENT)) {
+            if (!$this->getOptionsHandler()->getOptions(MySQL::ATTR_PERSISTENT)) {
                 if (Compare::connection($this->getConnection()) === 'mysqli') {
                     mysqli_close($this->getConnection());
                 }

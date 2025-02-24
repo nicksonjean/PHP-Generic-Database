@@ -19,13 +19,14 @@ use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
 use GenericDatabase\Engine\SQLSrv\Connection\Dump;
-use GenericDatabase\Engine\SQLSrv\Connection\Options;
 use GenericDatabase\Engine\SQLSrv\Connection\Arguments;
 use GenericDatabase\Engine\SQLSrv\Connection\Transaction;
 use GenericDatabase\Engine\SQLSrv\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\SQLSrv\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\SQLSrv\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\SQLSrv\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\SQLSrv\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\SQLSrv\Connection\Statements\StatementsHandler;
@@ -78,6 +79,8 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
 
     private static IAttributes $attributesHandler;
 
+    private static IOptions $optionsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -85,8 +88,9 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     {
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
-        self::$dsnHandler = new DSNHandler($this);
-        self::$attributesHandler = new AttributesHandler($this);
+        self::$optionsHandler = new OptionsHandler($this);
+        self::$dsnHandler = new DSNHandler($this, self::$optionsHandler);
+        self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
     }
 
     private function getFetchHandler(): IFetch
@@ -107,6 +111,11 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     private function getAttributesHandler(): IAttributes
     {
         return self::$attributesHandler;
+    }
+
+    private function getOptionsHandler(): IOptions
+    {
+        return self::$optionsHandler;
     }
 
     /**
@@ -149,9 +158,8 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     private function preConnect(): SQLSrvConnection
     {
-        Options::setOptions((array) static::getOptions());
-        $options = Options::getOptions();
-        static::setOptions($options);
+        $this->getOptionsHandler()->setOptions(static::getOptions());
+        static::setOptions($this->getOptionsHandler()->getOptions());
         if (static::getCharset()) {
             static::setCharset((static::getCharset() == 'utf8') ? 'UTF-8' : static::getCharset());
         }
@@ -166,7 +174,7 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     private function postConnect(): SQLSrvConnection
     {
-        Options::define();
+        $this->getOptionsHandler()->define();
         $this->getAttributesHandler()->define();
         return $this;
     }
@@ -194,8 +202,8 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         if (static::getCharset()) {
             $connectionInfo['CharacterSet'] = static::getCharset();
         }
-        if (Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)) {
-            $connectionInfo['LoginTimeout'] = Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT);
+        if ($this->getOptionsHandler()->getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)) {
+            $connectionInfo['LoginTimeout'] = $this->getOptionsHandler()->getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT);
         }
         $this->setConnection(sqlsrv_connect($serverName, $connectionInfo));
         return $this;
@@ -259,7 +267,7 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     {
         if ($this->isConnected()) {
             static::setConnected(false);
-            if (!Options::getOptions(SQLSrv::ATTR_PERSISTENT)) {
+            if (!$this->getOptionsHandler()->getOptions(SQLSrv::ATTR_PERSISTENT)) {
                 if (Compare::connection($this->getConnection()) === 'sqlsrv') {
                     sqlsrv_close($this->getConnection());
                 }

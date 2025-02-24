@@ -12,23 +12,25 @@ use GenericDatabase\Generic\Statements\Metadata;
 abstract class AbstractStatements implements IStatements
 {
     protected mixed $statement = null;
+
     protected Metadata $metadata;
-    protected static IConnection $connection;
+
+    protected static IConnection $instance;
 
     /**
      * Constructor for AbstractStatements.
      *
-     * @param IConnection $connection The connection instance to be used for database interactions.
+     * @param IConnection $instance The connection instance to be used for database interactions.
      */
-    public function __construct(IConnection $connection)
+    public function __construct(IConnection $instance)
     {
-        self::$connection = $connection;
+        self::$instance = $instance;
         $this->metadata = new Metadata();
     }
 
     public function getInstance(): IConnection
     {
-        return self::$connection;
+        return self::$instance;
     }
 
     public function set(string $name, mixed $value): void

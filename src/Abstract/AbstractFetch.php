@@ -14,12 +14,13 @@ use GenericDatabase\Interfaces\Connection\IFetchStrategy;
 abstract class AbstractFetch implements IFetchAbstract
 {
     protected IFetchStrategy $fetchStrategy;
-    protected static IConnection $connection;
 
-    public function __construct(IConnection $connection, IFetchStrategy $fetchStrategy)
+    protected static IConnection $instance;
+
+    public function __construct(IConnection $instance, IFetchStrategy $fetchStrategy)
     {
+        self::$instance = $instance;
         $this->fetchStrategy = $fetchStrategy;
-        self::$connection = $connection;
     }
 
     public function getStrategy(): IFetchStrategy
@@ -29,7 +30,7 @@ abstract class AbstractFetch implements IFetchAbstract
 
     public function getInstance(): IConnection
     {
-        return self::$connection;
+        return self::$instance;
     }
 
     /**

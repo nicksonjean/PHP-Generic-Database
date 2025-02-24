@@ -3,18 +3,15 @@
 namespace GenericDatabase\Engine\MySQLi\Connection\Attributes;
 
 use AllowDynamicProperties;
-use GenericDatabase\Generic\Connection\Instance;
+use GenericDatabase\Abstract\AbstractAttributes;
+use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Interfaces\Connection\IAttributes;
-use GenericDatabase\Engine\MySQLi\Connection\Options;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 
 #[AllowDynamicProperties]
-class AttributesHandler implements IAttributes
+class AttributesHandler extends AbstractAttributes implements IAttributes
 {
-    use Instance;
-
     private static int $fetchMode = MYSQLI_BOTH;
 
     private static int $errorMode = MYSQLI_REPORT_ERROR;
@@ -259,17 +256,17 @@ class AttributesHandler implements IAttributes
         foreach ($keys as $key) {
             $attribute = self::$attributeList[$key];
             $result[$attribute] = match ($attribute) {
-                'AUTOCOMMIT' => (bool) Options::getOptions(MySQL::ATTR_AUTOCOMMIT),
+                'AUTOCOMMIT' => (bool) $this->getOptionsHandler()->getOptions(MySQL::ATTR_AUTOCOMMIT),
                 'ERRMODE' => self::$errorMode,
                 'CASE' => (int) $settings['lower_case_table_names'] === 1 ? 0 : 1,
                 'CLIENT_VERSION' => $this->getInstance()->getConnection()->client_info,
                 'CONNECTION_STATUS' => $this->connectionStatus(),
-                'PERSISTENT' => (bool) Options::getOptions(MySQL::ATTR_PERSISTENT),
+                'PERSISTENT' => (bool) $this->getOptionsHandler()->getOptions(MySQL::ATTR_PERSISTENT),
                 'SERVER_INFO' => $this->getInstance()->getConnection()->stat(),
                 'SERVER_VERSION' => $this->getInstance()->getConnection()->server_info,
                 'TIMEOUT' => (int) $settings['connect_timeout'],
                 'EMULATE_PREPARES' => true,
-                'DEFAULT_FETCH_MODE' => Options::getOptions(MySQL::ATTR_DEFAULT_FETCH_MODE)
+                'DEFAULT_FETCH_MODE' => $this->getOptionsHandler()->getOptions(MySQL::ATTR_DEFAULT_FETCH_MODE)
                     ?? self::$fetchMode
                     ?: MySQL::FETCH_BOTH,
                 'CHARACTER_SET' => $this->getVariables($type)['charset'],

@@ -3,17 +3,15 @@
 namespace GenericDatabase\Engine\PDO\Connection\Attributes;
 
 use AllowDynamicProperties;
-use GenericDatabase\Generic\Connection\Instance;
+use GenericDatabase\Abstract\AbstractAttributes;
+use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Helpers\Exceptions;
 use PDOException;
 use Exception;
-use GenericDatabase\Interfaces\Connection\IAttributes;
 
 #[AllowDynamicProperties]
-class AttributesHandler implements IAttributes
+class AttributesHandler extends AbstractAttributes implements IAttributes
 {
-    use Instance;
-
     /**
      * static attributes constants
      *

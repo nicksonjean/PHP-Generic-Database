@@ -3,17 +3,45 @@
 namespace GenericDatabase\Engine\PgSQL\Connection\DSN;
 
 use AllowDynamicProperties;
-use GenericDatabase\Generic\Connection\Instance;
-use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Interfaces\Connection\IDSN;
+use GenericDatabase\Interfaces\Connection\IOptions;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Shared\Run;
+use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
-use GenericDatabase\Engine\PgSQL\Connection\Options;
-
 
 #[AllowDynamicProperties]
 class DSNHandler implements IDSN
 {
-    use Instance;
+    private IConnection $connection;
+
+    private static IOptions $optionsHandler;
+
+    public function __construct(IConnection $connection, IOptions $optionsHandler)
+    {
+        $this->connection = $connection;
+        self::$optionsHandler = $optionsHandler;
+    }
+
+    public function getInstance(): IConnection
+    {
+        return $this->connection;
+    }
+
+    private function getOptionsHandler(): IOptions
+    {
+        return self::$optionsHandler;
+    }
+
+    private function set(string $name, mixed $value): void
+    {
+        Run::call([$this->getInstance(), 'set' . ucfirst($name)], $value);
+    }
+
+    private function get(string $name): mixed
+    {
+        return Run::call([$this->getInstance(), 'get' . ucfirst($name)]);
+    }
 
     public function parse(): string|Exceptions
     {
@@ -31,8 +59,8 @@ class DSNHandler implements IDSN
                     $this->get('database'),
                     $this->get('user'),
                     $this->get('password'),
-                    Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
-                        ? ' connect_timeout=' . Options::getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
+                    $this->getOptionsHandler()->getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
+                        ? ' connect_timeout=' . $this->getOptionsHandler()->getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
                         : '',
                     $this->get('charset')
                 ]

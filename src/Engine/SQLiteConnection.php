@@ -11,6 +11,7 @@ use AllowDynamicProperties;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\IConnection;
@@ -19,13 +20,14 @@ use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\SQLite\Connection\SQLite;
 use GenericDatabase\Engine\SQLite\Connection\Dump;
-use GenericDatabase\Engine\SQLite\Connection\Options;
 use GenericDatabase\Engine\SQLite\Connection\Arguments;
 use GenericDatabase\Engine\SQLite\Connection\Transaction;
 use GenericDatabase\Engine\SQLite\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\SQLite\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\SQLite\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\SQLite\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\SQLite\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\SQLite\Connection\Statements\StatementsHandler;
@@ -79,6 +81,8 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
 
     private static IAttributes $attributesHandler;
 
+    private static IOptions $optionsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -87,7 +91,8 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
-        self::$attributesHandler = new AttributesHandler($this);
+        self::$optionsHandler = new OptionsHandler($this);
+        self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
     }
 
     private function getFetchHandler(): IFetch
@@ -108,6 +113,11 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     private function getAttributesHandler(): IAttributes
     {
         return self::$attributesHandler;
+    }
+
+    private function getOptionsHandler(): IOptions
+    {
+        return self::$optionsHandler;
     }
 
     /**
@@ -150,9 +160,8 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     private function preConnect(): SQLiteConnection
     {
-        Options::setOptions((array) static::getOptions());
-        $options = Options::getOptions();
-        static::setOptions($options);
+        $this->getOptionsHandler()->setOptions(static::getOptions());
+        static::setOptions($this->getOptionsHandler()->getOptions());
         return $this;
     }
 
@@ -164,9 +173,48 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     private function postConnect(): SQLiteConnection
     {
-        Options::define();
+        $this->getOptionsHandler()->define();
         $this->getAttributesHandler()->define();
         return $this;
+    }
+
+    /**
+     * Determines and returns the flags for the SQLite connection.
+     *
+     * This method iterates over the class constants of the SQLite class,
+     * constructing attribute names and checking their values against the
+     * provided options. If an attribute's value is true and it exists in
+     * the options, specific flag values are added to the result array.
+     * The method prioritizes values of 2 or 4 if found, otherwise includes
+     * a value of 1 if encountered. If no valid flags are identified, a
+     * default flag value of 6 is returned.
+     *
+     * @return int The determined flag value for the connection.
+     */
+    public function getFlags(): int
+    {
+        $options = $this->getOptionsHandler()->getOptions();
+        $result = [];
+
+        foreach (Reflections::getClassConstants(SQLite::class) as $value) {
+            $attribute = "SQLite::ATTR_" . mb_strtoupper((string) $value);
+            $attributeValue = $this->getAttribute($attribute);
+
+            if ($attributeValue === true && in_array($attribute, $options)) {
+                if ($value === 1) {
+                    $result[] = $value;
+                } elseif ($value === 2 || $value === 4) {
+                    $result = [$value];
+                    break;
+                }
+            }
+        }
+
+        if (empty($result)) {
+            $result = [6];
+        }
+
+        return $result[0];
     }
 
     /**
@@ -196,12 +244,7 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     public function connect(): SQLiteConnection
     {
         if (!extension_loaded('sqlite3')) {
-            $message = sprintf(
-                "Invalid or not loaded '%s' extension in '%s' settings",
-                'sqlite3',
-                'PHP.ini'
-            );
-            throw new Exceptions($message);
+            throw new Exceptions("Invalid or not loaded 'sqlite3' extension in PHP.ini settings");
         }
 
         try {
@@ -212,7 +255,7 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
                 ->setDsn($this->parseDsn())
                 ->realConnect(
                     static::getDatabase(),
-                    Options::flags()
+                    $this->getFlags()
                 )
                 ->postConnect()
                 ->setConnected(true);
@@ -242,7 +285,7 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     {
         if ($this->isConnected()) {
             static::setConnected(false);
-            if (!Options::getOptions(SQLite::ATTR_PERSISTENT)) {
+            if (!$this->getOptionsHandler()->getOptions(SQLite::ATTR_PERSISTENT)) {
                 if (
                     Compare::connection($this->getConnection()) === 'sqlite'
                     || Compare::connection($this->getConnection()) === 'sqlite3'

@@ -19,13 +19,14 @@ use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IOptions;
 use PDO;
 use GenericDatabase\Engine\PDO\Connection\Dump;
-use GenericDatabase\Engine\PDO\Connection\Options;
 use GenericDatabase\Engine\PDO\Connection\Arguments;
 use GenericDatabase\Engine\PDO\Connection\Transaction;
 use GenericDatabase\Engine\PDO\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\PDO\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\PDO\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\PDO\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\PDO\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\PDO\Connection\Statements\StatementsHandler;
@@ -79,6 +80,8 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
 
     private static IAttributes $attributesHandler;
 
+    private static IOptions $optionsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -87,7 +90,8 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
-        self::$attributesHandler = new AttributesHandler($this);
+        self::$optionsHandler = new OptionsHandler($this);
+        self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
     }
 
     private function getFetchHandler(): IFetch
@@ -108,6 +112,11 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
     private function getAttributesHandler(): IAttributes
     {
         return self::$attributesHandler;
+    }
+
+    private function getOptionsHandler(): IOptions
+    {
+        return self::$optionsHandler;
     }
 
     /**
@@ -149,9 +158,8 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
      */
     private function preConnect(): PDOConnection
     {
-        Options::setOptions((array) static::getOptions());
-        $options = Options::getOptions();
-        static::setOptions($options);
+        $this->getOptionsHandler()->setOptions(static::getOptions());
+        static::setOptions($this->getOptionsHandler()->getOptions());
         return $this;
     }
 
@@ -163,7 +171,7 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
      */
     private function postConnect(): PDOConnection
     {
-        Options::define();
+        $this->getOptionsHandler()->define();
         $this->getAttributesHandler()->define();
         return $this;
     }
@@ -197,13 +205,9 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
     public function connect(): PDOConnection
     {
         if (!extension_loaded('pdo')) {
-            $message = sprintf(
-                "Invalid or not loaded '%s' extension in '%s' settings",
-                'pdo',
-                'PHP.ini'
-            );
-            throw new Exceptions($message);
+            throw new Exceptions("Invalid or not loaded 'pdo' extension in PHP.ini settings");
         }
+
         try {
             $this->setInstance($this);
             $this

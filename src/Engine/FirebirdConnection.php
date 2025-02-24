@@ -19,13 +19,14 @@ use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\Firebird\Connection\Firebird;
 use GenericDatabase\Engine\Firebird\Connection\Dump;
-use GenericDatabase\Engine\Firebird\Connection\Options;
 use GenericDatabase\Engine\Firebird\Connection\Arguments;
 use GenericDatabase\Engine\Firebird\Connection\Transaction;
 use GenericDatabase\Engine\Firebird\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\Firebird\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\Firebird\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\Firebird\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\Firebird\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\Firebird\Connection\Statements\StatementsHandler;
@@ -78,6 +79,8 @@ class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArg
 
     private static IAttributes $attributesHandler;
 
+    private static IOptions $optionsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -86,7 +89,8 @@ class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArg
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
-        self::$attributesHandler = new AttributesHandler($this);
+        self::$optionsHandler = new OptionsHandler($this);
+        self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
     }
 
     private function getFetchHandler(): IFetch
@@ -107,6 +111,11 @@ class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArg
     private function getAttributesHandler(): IAttributes
     {
         return self::$attributesHandler;
+    }
+
+    private function getOptionsHandler(): IOptions
+    {
+        return self::$optionsHandler;
     }
 
     /**
@@ -149,9 +158,8 @@ class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArg
      */
     private function preConnect(): FirebirdConnection
     {
-        Options::setOptions((array) static::getOptions());
-        $options = Options::getOptions();
-        static::setOptions($options);
+        $this->getOptionsHandler()->setOptions(static::getOptions());
+        static::setOptions($this->getOptionsHandler()->getOptions());
         return $this;
     }
 
@@ -163,7 +171,7 @@ class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArg
      */
     private function postConnect(): FirebirdConnection
     {
-        Options::define();
+        $this->getOptionsHandler()->define();
         $this->getAttributesHandler()->define();
         return $this;
     }
@@ -188,11 +196,10 @@ class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArg
     ): FirebirdConnection {
         $dsn = vsprintf('%s/%s:%s', [$host, $port, $database]);
         $this->setConnection(
-            (string) !Options::getOptions(Firebird::ATTR_PERSISTENT)
+            (string) !$this->getOptionsHandler()->getOptions(Firebird::ATTR_PERSISTENT)
                 ? ibase_connect($dsn, $user, $password)
                 : ibase_pconnect($dsn, $user, $password)
         );
-
         return $this;
     }
 
@@ -205,12 +212,7 @@ class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArg
     public function connect(): FirebirdConnection
     {
         if (!extension_loaded('interbase')) {
-            $message = sprintf(
-                "Invalid or not loaded '%s' extension in '%s' settings",
-                'interbase',
-                'PHP.ini'
-            );
-            throw new Exceptions($message);
+            throw new Exceptions("Invalid or not loaded 'interbase' extension in PHP.ini settings");
         }
 
         try {
@@ -254,7 +256,7 @@ class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArg
     {
         if ($this->isConnected()) {
             static::setConnected(false);
-            if (!Options::getOptions(Firebird::ATTR_PERSISTENT)) {
+            if (!$this->getOptionsHandler()->getOptions(Firebird::ATTR_PERSISTENT)) {
                 if (Compare::connection($this->getConnection()) === 'firebird/ibase') {
                     ibase_close($this->getConnection());
                 }

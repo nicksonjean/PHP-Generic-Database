@@ -9,7 +9,7 @@
     <img alt="License" src="https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge&color=purple">
 </p>
 
-PHP-Generic-Database is a set of PHP classes for connecting, displaying and generically manipulating data from a database, making it possible to centralize or standardize all the most varied types and behaviors of each database in a single format, using the standard Strategy, heavily inspired by [Medoo](https://medoo.in/) and [Dibi](https://dibiphp.com/en/).
+PHP-Generic-Database is a set of PHP classes for connecting, displaying and generically manipulating data from a database, making it possible to centralize or standardize all the most varied types and behaviors of each database in a single format, using the standard Strategy, heavily inspired by [Medoo](https://medoo.in/) and [Dibi](https://dibiphp.com/en/) and [PowerLite](https://www.powerlitepdo.com/).
 
 ## Supported Databases
 
@@ -212,6 +212,16 @@ Below is a series of readmes containing examples of how to use the lib and a [to
     - SQLite with sqlite3: [SQLiteQueryBuilder.md](./readme/Engines/SQLiteQueryBuilder.md)
     - PDO: [PDOQueryBuilder.md](./readme/Engines/PDOQueryBuilder.md)
     - ODBC: [ODBCQueryBuilder.md](./readme/Engines/ODBCQueryBuilder.md)
+
+### ToDo
+  - [ ] Add Logging Property and Mechanism
+  - [ ] Add Transactions Mechanism
+  - [ ] Add Caching Property and Mechanism
+  - [ ] Add Events Property and Mechanism
+  - [ ] Add Validations Mechanism
+  - [ ] Add Middlewares Mechanism
+  - [ ] Remove Exception Property
+  - [ ] Fetch One Method;
 
 ## License
 

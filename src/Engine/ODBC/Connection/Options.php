@@ -61,7 +61,7 @@ class Options
     {
         foreach (array_keys(self::getOptions()) as $key) {
             if ($key === 'ATTR_PERSISTENT' && ini_get('odbc.allow_persistent') !== '1') {
-                ini_set('odbc.allow_persistent ', Options::getOptions(ODBC::ATTR_PERSISTENT));
+                ini_set('odbc.allow_persistent ', self::getOptions(ODBC::ATTR_PERSISTENT));
             }
         }
     }

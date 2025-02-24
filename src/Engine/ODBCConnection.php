@@ -19,13 +19,14 @@ use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\ODBC\Connection\ODBC;
 use GenericDatabase\Engine\ODBC\Connection\Dump;
-use GenericDatabase\Engine\ODBC\Connection\Options;
 use GenericDatabase\Engine\ODBC\Connection\Arguments;
 use GenericDatabase\Engine\ODBC\Connection\Transaction;
 use GenericDatabase\Engine\ODBC\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\ODBC\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\ODBC\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\ODBC\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\ODBC\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\ODBC\Connection\Statements\StatementsHandler;
@@ -78,6 +79,8 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
 
     private static IAttributes $attributesHandler;
 
+    private static IOptions $optionsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -86,7 +89,8 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
-        self::$attributesHandler = new AttributesHandler($this);
+        self::$optionsHandler = new OptionsHandler($this);
+        self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
     }
 
     private function getFetchHandler(): IFetch
@@ -107,6 +111,11 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     private function getAttributesHandler(): IAttributes
     {
         return self::$attributesHandler;
+    }
+
+    private function getOptionsHandler(): IOptions
+    {
+        return self::$optionsHandler;
     }
 
     /**
@@ -149,9 +158,8 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     private function preConnect(): ODBCConnection
     {
-        Options::setOptions((array) static::getOptions());
-        $options = Options::getOptions();
-        static::setOptions($options);
+        $this->getOptionsHandler()->setOptions(static::getOptions());
+        static::setOptions($this->getOptionsHandler()->getOptions());
         return $this;
     }
 
@@ -163,7 +171,7 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     private function postConnect(): ODBCConnection
     {
-        Options::define();
+        $this->getOptionsHandler()->define();
         $this->getAttributesHandler()->define();
         return $this;
     }
@@ -184,18 +192,18 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         #[SensitiveParameter] string $password = null,
         int $options = null
     ): ODBCConnection {
-        $this->setConnection((!Options::getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') ?
+        $this->setConnection((!$this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') ?
             odbc_connect($dsn, (string) $user, (string) $password, $options) :
             odbc_pconnect($dsn, (string) $user, (string) $password, $options));
-        if (!Options::getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') {
+        if (!$this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') {
             $nonPersistent = [];
-            foreach (Options::getOptions() as $key => $value) {
+            foreach ($this->getOptionsHandler()->getOptions() as $key => $value) {
                 if ($key !== ODBC::ATTR_PERSISTENT) {
                     $nonPersistent[$key] = $value;
                 }
             }
             $nonPersistent[ODBC::ATTR_PERSISTENT] = false;
-            Options::setOptions($nonPersistent);
+            $this->getOptionsHandler()->setOptions($nonPersistent);
         }
         return $this;
     }
@@ -209,12 +217,7 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     public function connect(): ODBCConnection
     {
         if (!extension_loaded('odbc')) {
-            $message = sprintf(
-                "Invalid or not loaded '%s' extension in '%s' settings",
-                'odbc',
-                'PHP.ini'
-            );
-            throw new Exceptions($message);
+            throw new Exceptions("Invalid or not loaded 'odbc' extension in PHP.ini settings");
         }
 
         try {

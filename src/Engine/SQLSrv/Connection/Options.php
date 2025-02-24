@@ -61,7 +61,7 @@ class Options
     {
         foreach (array_keys(self::getOptions()) as $key) {
             if ($key === 'ATTR_CONNECT_TIMEOUT' && ini_get('sqlsrv.persistent_timeout') !== '1') {
-                ini_set('sqlsrv.persistent_timeout', Options::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT));
+                ini_set('sqlsrv.persistent_timeout', self::getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT));
             }
         }
     }

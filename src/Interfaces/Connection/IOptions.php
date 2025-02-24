@@ -2,8 +2,6 @@
 
 namespace GenericDatabase\Interfaces\Connection;
 
-use ReflectionException;
-
 interface IOptions
 {
     /**
@@ -12,16 +10,15 @@ interface IOptions
      * @param ?int $type = null
      * @return mixed
      */
-    public static function getOptions(?int $type = null): mixed;
+    public function getOptions(?int $type = null): mixed;
 
     /**
      * This method is responsible for set options before connect in database
      *
      * @param ?array $options = null
      * @return void
-     * @throws ReflectionException
      */
-    public static function setOptions(?array $options = null): void;
+    public function setOptions(?array $options = null): void;
 
     /**
      * This method is responsible for set options after connect in database,
@@ -29,5 +26,5 @@ interface IOptions
      *
      * @return void
      */
-    public static function define(): void;
+    public function define(): void;
 }

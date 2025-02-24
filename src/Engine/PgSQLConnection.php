@@ -19,13 +19,14 @@ use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
 use GenericDatabase\Engine\PgSQL\Connection\Dump;
-use GenericDatabase\Engine\PgSQL\Connection\Options;
 use GenericDatabase\Engine\PgSQL\Connection\Arguments;
 use GenericDatabase\Engine\PgSQL\Connection\Transaction;
 use GenericDatabase\Engine\PgSQL\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\PgSQL\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\PgSQL\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\PgSQL\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\PgSQL\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\PgSQL\Connection\Statements\StatementsHandler;
@@ -78,6 +79,8 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
 
     private static IAttributes $attributesHandler;
 
+    private static IOptions $optionsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -85,8 +88,9 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
     {
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
-        self::$dsnHandler = new DSNHandler($this);
-        self::$attributesHandler = new AttributesHandler($this);
+        self::$optionsHandler = new OptionsHandler($this);
+        self::$dsnHandler = new DSNHandler($this, self::$optionsHandler);
+        self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
     }
 
     private function getFetchHandler(): IFetch
@@ -107,6 +111,11 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
     private function getAttributesHandler(): IAttributes
     {
         return self::$attributesHandler;
+    }
+
+    private function getOptionsHandler(): IOptions
+    {
+        return self::$optionsHandler;
     }
 
     /**
@@ -149,9 +158,8 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
      */
     private function preConnect(): PgSQLConnection
     {
-        Options::setOptions((array) static::getOptions());
-        $options = Options::getOptions();
-        static::setOptions($options);
+        $this->getOptionsHandler()->setOptions(static::getOptions());
+        static::setOptions($this->getOptionsHandler()->getOptions());
         return $this;
     }
 
@@ -163,17 +171,30 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
      */
     private function postConnect(): PgSQLConnection
     {
-        Options::define();
+        $this->getOptionsHandler()->define();
         $this->getAttributesHandler()->define();
         return $this;
     }
 
+    /**
+     * Determines and returns the flags for the SQLite connection.
+     *
+     * This method iterates over the class constants of the SQLite class,
+     * constructing attribute names and checking their values against the
+     * provided options. If an attribute's value is true and it exists in
+     * the options, specific flag values are added to the result array.
+     * The method prioritizes values of 2 or 4 if found, otherwise includes
+     * a value of 1 if encountered. If no valid flags are identified, a
+     * default flag value of 6 is returned.
+     *
+     * @return int The determined flag value for the connection.
+     */
     private function getFlags(): int
     {
         $flags = 0;
-        if (Options::getOptions(PgSQL::ATTR_CONNECT_FORCE_NEW)) {
+        if ($this->getOptionsHandler()->getOptions(PgSQL::ATTR_CONNECT_FORCE_NEW)) {
             $flags |= PGSQL_CONNECT_FORCE_NEW;
-        } elseif (Options::getOptions(PgSQL::ATTR_CONNECT_ASYNC)) {
+        } elseif ($this->getOptionsHandler()->getOptions(PgSQL::ATTR_CONNECT_ASYNC)) {
             $flags |= PGSQL_CONNECT_ASYNC;
         }
         return $flags;
@@ -189,7 +210,7 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
     private function realConnect(string $dsn): PgSQLConnection
     {
         $this->setConnection(
-            (string) !Options::getOptions(PgSQL::ATTR_PERSISTENT)
+            (string) !$this->getOptionsHandler()->getOptions(PgSQL::ATTR_PERSISTENT)
                 ? pg_connect($dsn, $this->getFlags())
                 : pg_pconnect($dsn, $this->getFlags())
         );
@@ -205,12 +226,7 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
     public function connect(): PgSQLConnection
     {
         if (!extension_loaded('pgsql')) {
-            $message = sprintf(
-                "Invalid or not loaded '%s' extension in '%s' settings",
-                'pgsql',
-                'PHP.ini'
-            );
-            throw new Exceptions($message);
+            throw new Exceptions("Invalid or not loaded 'pgsql' extension in PHP.ini settings");
         }
 
         try {
@@ -249,7 +265,7 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
     {
         if ($this->isConnected()) {
             static::setConnected(false);
-            if (!Options::getOptions(PgSQL::ATTR_PERSISTENT)) {
+            if (!$this->getOptionsHandler()->getOptions(PgSQL::ATTR_PERSISTENT)) {
                 if (Compare::connection($this->getConnection()) === 'pgsql') {
                     pg_close($this->getConnection());
                 }
