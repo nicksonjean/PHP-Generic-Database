@@ -22,7 +22,6 @@ use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\ODBC\Connection\ODBC;
 use GenericDatabase\Engine\ODBC\Connection\Dump;
-use GenericDatabase\Engine\ODBC\Connection\Arguments;
 use GenericDatabase\Engine\ODBC\Connection\Transaction;
 use GenericDatabase\Engine\ODBC\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\ODBC\Connection\Fetch\FetchHandler;
@@ -30,6 +29,8 @@ use GenericDatabase\Engine\ODBC\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\ODBC\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\ODBC\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\ODBC\Connection\Statements\StatementsHandler;
+use GenericDatabase\Engine\ODBC\Connection\Arguments\ArgumentsHandler;
+use GenericDatabase\Engine\ODBC\Connection\Arguments\Strategy\ArgumentsStrategy;
 
 /**
  * Dynamic and Static container class for ODBCConnection connections.
@@ -81,6 +82,8 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
 
     private static IOptions $optionsHandler;
 
+    private static IArguments $argumentsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -88,9 +91,10 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     {
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
-        self::$dsnHandler = new DSNHandler($this);
         self::$optionsHandler = new OptionsHandler($this);
+        self::$dsnHandler = new DSNHandler($this);
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
+        self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
     }
 
     private function getFetchHandler(): IFetch
@@ -118,23 +122,21 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         return self::$optionsHandler;
     }
 
+    private function getArgumentsHandler(): IArguments
+    {
+        return self::$argumentsHandler;
+    }
+
     /**
      * Triggered when invoking inaccessible methods in an object context
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return ODBCConnection|string|int|bool|array|null
+     * @return IConnection|string|int|bool|array|null
      */
-    public function __call(string $name, array $arguments): ODBCConnection|string|int|bool|array|null
+    public function __call(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
-        $method = substr($name, 0, 3);
-        $field = mb_strtolower(substr($name, 3));
-        if ($method == 'set') {
-            $this->__set($field, ...$arguments);
-        } elseif ($method == 'get') {
-            return $this->__get($field);
-        }
-        return $this;
+        return $this->getArgumentsHandler()->__call($name, $arguments);
     }
 
     /**
@@ -142,12 +144,12 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      *
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
-     * @return ODBCConnection
+     * @return IConnection|string|int|bool|array|null
      * @throws ReflectionException
      */
-    public static function __callStatic(string $name, array $arguments): ODBCConnection
+    public static function __callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
-        return Arguments::call($name, $arguments);
+        return self::getInstance()->getArgumentsHandler()->__callStatic($name, $arguments);
     }
 
     /**

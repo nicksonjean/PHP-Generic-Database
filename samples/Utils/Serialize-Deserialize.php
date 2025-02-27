@@ -3,6 +3,7 @@
 use GenericDatabase\Connection;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 use GenericDatabase\Modules\Chainable;
+use GenericDatabase\Modules\Fluent;
 use Dotenv\Dotenv;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
@@ -63,6 +64,13 @@ $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false
 // $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+
+// $context = Fluent::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Fluent::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Fluent::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Fluent::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Fluent::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Fluent::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 // $context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();

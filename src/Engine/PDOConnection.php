@@ -22,7 +22,6 @@ use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IOptions;
 use PDO;
 use GenericDatabase\Engine\PDO\Connection\Dump;
-use GenericDatabase\Engine\PDO\Connection\Arguments;
 use GenericDatabase\Engine\PDO\Connection\Transaction;
 use GenericDatabase\Engine\PDO\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\PDO\Connection\Fetch\FetchHandler;
@@ -30,6 +29,8 @@ use GenericDatabase\Engine\PDO\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\PDO\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\PDO\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\PDO\Connection\Statements\StatementsHandler;
+use GenericDatabase\Engine\PDO\Connection\Arguments\ArgumentsHandler;
+use GenericDatabase\Engine\PDO\Connection\Arguments\Strategy\ArgumentsStrategy;
 use PDOException;
 
 /**
@@ -82,6 +83,8 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
 
     private static IOptions $optionsHandler;
 
+    private static IArguments $argumentsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -89,9 +92,10 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
     {
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
-        self::$dsnHandler = new DSNHandler($this);
         self::$optionsHandler = new OptionsHandler($this);
+        self::$dsnHandler = new DSNHandler($this);
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
+        self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
     }
 
     private function getFetchHandler(): IFetch
@@ -119,23 +123,21 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
         return self::$optionsHandler;
     }
 
+    private function getArgumentsHandler(): IArguments
+    {
+        return self::$argumentsHandler;
+    }
+
     /**
      * Triggered when invoking inaccessible methods in an object context
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return PDOConnection|string|int|bool|array|null
+     * @return IConnection|string|int|bool|array|null
      */
-    public function __call(string $name, array $arguments): PDOConnection|string|int|bool|array|null
+    public function __call(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
-        $method = substr($name, 0, 3);
-        $field = mb_strtolower(substr($name, 3));
-        if ($method == 'set') {
-            $this->__set($field, ...$arguments);
-        } elseif ($method == 'get') {
-            return $this->__get($field);
-        }
-        return $this;
+        return $this->getArgumentsHandler()->__call($name, $arguments);
     }
 
     /**
@@ -143,11 +145,12 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
      *
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
-     * @return PDOConnection
+     * @return IConnection|string|int|bool|array|null
+     * @throws ReflectionException
      */
-    public static function __callStatic(string $name, array $arguments): PDOConnection
+    public static function __callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
-        return Arguments::call($name, $arguments);
+        return self::getInstance()->getArgumentsHandler()->__callStatic($name, $arguments);
     }
 
     /**

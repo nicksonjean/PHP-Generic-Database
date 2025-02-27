@@ -23,7 +23,6 @@ use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\SQLite\Connection\SQLite;
 use GenericDatabase\Engine\SQLite\Connection\Dump;
-use GenericDatabase\Engine\SQLite\Connection\Arguments;
 use GenericDatabase\Engine\SQLite\Connection\Transaction;
 use GenericDatabase\Engine\SQLite\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\SQLite\Connection\Fetch\FetchHandler;
@@ -31,6 +30,8 @@ use GenericDatabase\Engine\SQLite\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\SQLite\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\SQLite\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\SQLite\Connection\Statements\StatementsHandler;
+use GenericDatabase\Engine\SQLite\Connection\Arguments\ArgumentsHandler;
+use GenericDatabase\Engine\SQLite\Connection\Arguments\Strategy\ArgumentsStrategy;
 use SQLite3;
 
 /**
@@ -83,6 +84,8 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
 
     private static IOptions $optionsHandler;
 
+    private static IArguments $argumentsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -90,9 +93,10 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     {
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
-        self::$dsnHandler = new DSNHandler($this);
         self::$optionsHandler = new OptionsHandler($this);
+        self::$dsnHandler = new DSNHandler($this);
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
+        self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
     }
 
     private function getFetchHandler(): IFetch
@@ -120,23 +124,21 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         return self::$optionsHandler;
     }
 
+    private function getArgumentsHandler(): IArguments
+    {
+        return self::$argumentsHandler;
+    }
+
     /**
      * Triggered when invoking inaccessible methods in an object context
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return SQLiteConnection|string|int|bool|array|null
+     * @return IConnection|string|int|bool|array|null
      */
-    public function __call(string $name, array $arguments): SQLiteConnection|string|int|bool|array|null
+    public function __call(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
-        $method = substr($name, 0, 3);
-        $field = mb_strtolower(substr($name, 3));
-        if ($method == 'set') {
-            $this->__set($field, ...$arguments);
-        } elseif ($method == 'get') {
-            return $this->__get($field);
-        }
-        return $this;
+        return $this->getArgumentsHandler()->__call($name, $arguments);
     }
 
     /**
@@ -144,12 +146,12 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      *
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
-     * @return SQLiteConnection
+     * @return IConnection|string|int|bool|array|null
      * @throws ReflectionException
      */
-    public static function __callStatic(string $name, array $arguments): SQLiteConnection
+    public static function __callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
-        return Arguments::call($name, $arguments);
+        return self::getInstance()->getArgumentsHandler()->__callStatic($name, $arguments);
     }
 
     /**

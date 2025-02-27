@@ -22,7 +22,6 @@ use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
 use GenericDatabase\Engine\SQLSrv\Connection\Dump;
-use GenericDatabase\Engine\SQLSrv\Connection\Arguments;
 use GenericDatabase\Engine\SQLSrv\Connection\Transaction;
 use GenericDatabase\Engine\SQLSrv\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\SQLSrv\Connection\Fetch\FetchHandler;
@@ -30,6 +29,8 @@ use GenericDatabase\Engine\SQLSrv\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\SQLSrv\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\SQLSrv\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\SQLSrv\Connection\Statements\StatementsHandler;
+use GenericDatabase\Engine\SQLSrv\Connection\Arguments\ArgumentsHandler;
+use GenericDatabase\Engine\SQLSrv\Connection\Arguments\Strategy\ArgumentsStrategy;
 
 /**
  * Dynamic and Static container class for SQLSrvConnection connections.
@@ -81,6 +82,8 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
 
     private static IOptions $optionsHandler;
 
+    private static IArguments $argumentsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -91,6 +94,7 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         self::$optionsHandler = new OptionsHandler($this);
         self::$dsnHandler = new DSNHandler($this, self::$optionsHandler);
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
+        self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
     }
 
     private function getFetchHandler(): IFetch
@@ -118,23 +122,21 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         return self::$optionsHandler;
     }
 
+    private function getArgumentsHandler(): IArguments
+    {
+        return self::$argumentsHandler;
+    }
+
     /**
      * Triggered when invoking inaccessible methods in an object context
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return SQLSrvConnection|string|int|bool|array|null
+     * @return IConnection|string|int|bool|array|null
      */
-    public function __call(string $name, array $arguments): SQLSrvConnection|string|int|bool|array|null
+    public function __call(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
-        $method = substr($name, 0, 3);
-        $field = mb_strtolower(substr($name, 3));
-        if ($method == 'set') {
-            $this->__set($field, ...$arguments);
-        } elseif ($method == 'get') {
-            return $this->__get($field);
-        }
-        return $this;
+        return $this->getArgumentsHandler()->__call($name, $arguments);
     }
 
     /**
@@ -142,12 +144,12 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      *
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
-     * @return SQLSrvConnection
+     * @return IConnection|string|int|bool|array|null
      * @throws ReflectionException
      */
-    public static function __callStatic(string $name, array $arguments): SQLSrvConnection
+    public static function __callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
-        return Arguments::call($name, $arguments);
+        return self::getInstance()->getArgumentsHandler()->__callStatic($name, $arguments);
     }
 
     /**
