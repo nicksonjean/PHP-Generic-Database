@@ -2,9 +2,10 @@
 
 namespace GenericDatabase\Engine\ODBC\Connection\DSN;
 
-use GenericDatabase\Engine\ODBC\Connection\ODBC;
 use AllowDynamicProperties;
-use GenericDatabase\Generic\Connection\Instance;
+use GenericDatabase\Engine\ODBC\Connection\ODBC;
+use GenericDatabase\Shared\Run;
+use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Helpers\Path;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Interfaces\Connection\IDSN;
@@ -12,7 +13,27 @@ use GenericDatabase\Interfaces\Connection\IDSN;
 #[AllowDynamicProperties]
 class DSNHandler implements IDSN
 {
-    use Instance;
+    protected static IConnection $instance;
+
+    public function __construct(IConnection $instance)
+    {
+        self::$instance = $instance;
+    }
+
+    public function getInstance(): IConnection
+    {
+        return self::$instance;
+    }
+
+    public function set(string $name, mixed $value): void
+    {
+        Run::call([$this->getInstance(), 'set' . ucfirst($name)], $value);
+    }
+
+    public function get(string $name): mixed
+    {
+        return Run::call([$this->getInstance(), 'get' . ucfirst($name)]);
+    }
 
     private static array $dsnFile;
 

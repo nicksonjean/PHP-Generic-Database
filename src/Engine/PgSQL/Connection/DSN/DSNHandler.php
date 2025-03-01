@@ -13,34 +13,34 @@ use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
 #[AllowDynamicProperties]
 class DSNHandler implements IDSN
 {
-    private IConnection $connection;
+    protected static IConnection $instance;
 
     private static IOptions $optionsHandler;
 
-    public function __construct(IConnection $connection, IOptions $optionsHandler)
+    public function __construct(IConnection $instance, IOptions $optionsHandler)
     {
-        $this->connection = $connection;
+        self::$instance = $instance;
         self::$optionsHandler = $optionsHandler;
     }
 
     public function getInstance(): IConnection
     {
-        return $this->connection;
+        return self::$instance;
+    }
+
+    public function set(string $name, mixed $value): void
+    {
+        Run::call([$this->getInstance(), 'set' . ucfirst($name)], $value);
+    }
+
+    public function get(string $name): mixed
+    {
+        return Run::call([$this->getInstance(), 'get' . ucfirst($name)]);
     }
 
     private function getOptionsHandler(): IOptions
     {
         return self::$optionsHandler;
-    }
-
-    private function set(string $name, mixed $value): void
-    {
-        Run::call([$this->getInstance(), 'set' . ucfirst($name)], $value);
-    }
-
-    private function get(string $name): mixed
-    {
-        return Run::call([$this->getInstance(), 'get' . ucfirst($name)]);
     }
 
     public function parse(): string|Exceptions

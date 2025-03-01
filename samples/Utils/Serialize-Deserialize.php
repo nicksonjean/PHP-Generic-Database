@@ -58,11 +58,11 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 // var_dump($serialized);
 
-$context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
-// $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 // $context = Fluent::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
@@ -154,19 +154,32 @@ var_dump($r->fetchAll(Connection::FETCH_OBJ));
 // $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'PDC', 'TI', 210);
 // $b = $context->prepare('DELETE FROM estado WHERE id IN (:id)', [[':id' => '271'], [':id' => '272'], [':id' => '273']]);
 
-$b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE', ':sigla' => 'T1'], [':nome' => 'TESTE', ':sigla' => 'T2'], [':nome' => 'TESTE', ':sigla' => 'T5']]);
-var_dump($b->getAllMetadata());
+try {
 
-var_dump($b->lastInsertId('estado'));
+    $context->beginTransaction();
 
-$c = $context->prepare('UPDATE estado SET sigla = :sigla WHERE nome = :nome', [':sigla' => 'T3', ':nome' => 'TESTE']);
-var_dump($c->getAllMetadata());
+    $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE', ':sigla' => 'T1'], [':nome' => 'TESTE', ':sigla' => 'T2'], [':nome' => 'TESTE', ':sigla' => 'T5']]);
+    var_dump($b->getAllMetadata());
 
-$d = $context->query("UPDATE estado SET sigla = 'T4' WHERE nome = 'TESTE'");
-var_dump($d->getAllMetadata());
+    var_dump($b->lastInsertId('estado'));
 
-$f = $context->query("DELETE FROM estado WHERE nome IN ('TESTE')");
-var_dump($f->getAllMetadata());
+    $c = $context->prepare('UPDATE estado SET sigla = :sigla WHERE nome = :nome', [':sigla' => 'T3', ':nome' => 'TESTE']);
+    var_dump($c->getAllMetadata());
+
+    $d = $context->query("UPDATE estado SET sigla = 'T4' WHERE nome = 'TESTE'");
+    var_dump($d->getAllMetadata());
+
+    $f = $context->query("DELETE FROM estado WHERE nome IN ('TESTE')");
+    var_dump($f->getAllMetadata());
+
+    $context->commit();
+
+    var_dump("Transação completada com sucesso!");
+} catch (Exception $e) {
+
+    $context->rollback();
+    var_dump("Erro na transação: " . $e->getMessage());
+}
 
 // var_dump([
 //     'queryString' => $b->getQueryString(),

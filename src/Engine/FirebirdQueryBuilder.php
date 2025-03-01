@@ -3,7 +3,6 @@
 namespace GenericDatabase\Engine;
 
 use stdClass;
-use ReflectionException;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\IQueryBuilder;
 use GenericDatabase\Core\Join;
@@ -29,7 +28,7 @@ class FirebirdQueryBuilder implements IQueryBuilder
     use Context;
     use Singleton;
 
-    private static $self;
+    private static FirebirdQueryBuilder $self;
 
     private static ?string $lastQuery = null;
 
@@ -448,7 +447,7 @@ class FirebirdQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws ReflectionException
+     * @throws Exceptions
      */
     private function runOnce(): void
     {
@@ -462,7 +461,7 @@ class FirebirdQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws ReflectionException
+     * @return void
      */
     public function reset(): void
     {
@@ -471,8 +470,8 @@ class FirebirdQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws ReflectionException
      * @return string
+     * @throws Exceptions
      */
     private function parse(): string
     {
@@ -504,7 +503,6 @@ class FirebirdQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws Exceptions
      * @return array
      */
     public function getValues(): array
@@ -523,8 +521,11 @@ class FirebirdQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws ReflectionException
+     * @param int|null $fetchStyle
+     * @param mixed|null $fetchArgument
+     * @param mixed|null $optArgs
      * @return mixed
+     * @throws Exceptions
      */
     public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
@@ -539,8 +540,11 @@ class FirebirdQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws ReflectionException
+     * @param int|null $fetchStyle
+     * @param mixed|null $fetchArgument
+     * @param mixed|null $optArgs
      * @return array|bool
+     * @throws Exceptions
      */
     public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {

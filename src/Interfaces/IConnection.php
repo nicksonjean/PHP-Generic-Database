@@ -49,16 +49,6 @@ interface IConnection
     public function setConnection(mixed $connection): mixed;
 
     /**
-     * Import SQL dump from file - extremely fast.
-     *
-     * @param string $file The file dumped to be imported
-     * @param string $delimiter = ';' The delimiter of the dump
-     * @param ?callable $onProgress = null
-     * @return int
-     */
-    public function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int;
-
-    /**
      * This function creates a new transaction, in order to be able to commit or rollback changes made to the database.
      *
      * @return bool

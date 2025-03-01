@@ -11,12 +11,11 @@ use GenericDatabase\Generic\Statements\Metadata;
 #[AllowDynamicProperties]
 abstract class AbstractStatements implements IStatements
 {
+    protected static IConnection $instance;
+
     protected mixed $statement = null;
 
     protected Metadata $metadata;
-
-    protected static IConnection $instance;
-
     /**
      * Constructor for AbstractStatements.
      *

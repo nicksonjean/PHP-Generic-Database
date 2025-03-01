@@ -9,7 +9,6 @@ use SensitiveParameter;
 use ReflectionException;
 use AllowDynamicProperties;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Generic\Connection\Methods;
@@ -20,9 +19,8 @@ use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IOptions;
+use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\ODBC\Connection\ODBC;
-use GenericDatabase\Engine\ODBC\Connection\Dump;
-use GenericDatabase\Engine\ODBC\Connection\Transaction;
 use GenericDatabase\Engine\ODBC\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\ODBC\Connection\Fetch\FetchHandler;
 use GenericDatabase\Engine\ODBC\Connection\Options\OptionsHandler;
@@ -31,6 +29,7 @@ use GenericDatabase\Engine\ODBC\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\ODBC\Connection\Statements\StatementsHandler;
 use GenericDatabase\Engine\ODBC\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\ODBC\Connection\Arguments\Strategy\ArgumentsStrategy;
+use GenericDatabase\Engine\ODBC\Connection\Transactions\TransactionsHandler;
 
 /**
  * Dynamic and Static container class for ODBCConnection connections.
@@ -61,7 +60,7 @@ use GenericDatabase\Engine\ODBC\Connection\Arguments\Strategy\ArgumentsStrategy;
  * @method static ODBCConnection|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
-class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArguments
+class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions
 {
     use Methods;
     use Singleton;
@@ -84,6 +83,8 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
 
     private static IArguments $argumentsHandler;
 
+    private static ITransactions $transactionsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -95,6 +96,7 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         self::$dsnHandler = new DSNHandler($this);
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
         self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
+        self::$transactionsHandler = new TransactionsHandler($this);
     }
 
     private function getFetchHandler(): IFetch
@@ -127,12 +129,18 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         return self::$argumentsHandler;
     }
 
+    private function getTransactionsHandler(): ITransactions
+    {
+        return self::$transactionsHandler;
+    }
+
     /**
      * Triggered when invoking inaccessible methods in an object context
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
      * @return IConnection|string|int|bool|array|null
+     * @throws ReflectionException
      */
     public function __call(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
@@ -156,7 +164,6 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * This method is responsible for prepare the connection options before connect.
      *
      * @return ODBCConnection
-     * @throws ReflectionException
      */
     private function preConnect(): ODBCConnection
     {
@@ -169,7 +176,6 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * This method is responsible for update in date late binding the connection.
      *
      * @return ODBCConnection
-     * @throws Exceptions
      */
     private function postConnect(): ODBCConnection
     {
@@ -186,7 +192,6 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param ?string $password = null The password of the database
      * @param int|null $options
      * @return ODBCConnection
-     * @throws ReflectionException
      */
     private function realConnect(
         string $dsn,
@@ -318,27 +323,13 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     }
 
     /**
-     * Import SQL dump from file - extremely fast.
-     *
-     * @param string $file The file dumped to be imported
-     * @param string $delimiter = ';' The delimiter of the dump
-     * @param ?callable $onProgress = null
-     * @return int
-     * @throws Exception
-     */
-    public function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
-    {
-        return Dump::loadFromFile($file, $delimiter, $onProgress);
-    }
-
-    /**
      * This function creates a new transaction, in order to be able to commit or rollback changes made to the database.
      *
      * @return bool
      */
     public function beginTransaction(): bool
     {
-        return Transaction::beginTransaction();
+        return $this->getTransactionsHandler()->beginTransaction();
     }
 
     /**
@@ -348,29 +339,29 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function commit(): bool
     {
-        return Transaction::commit();
+        return $this->getTransactionsHandler()->commit();
     }
 
     /**
      * This function rolls back any changes made to the database during
-     *  this transaction and restores the data to its original state.
+     * this transaction and restores the data to its original state.
      *
      * @return bool
      */
     public function rollback(): bool
     {
-        return Transaction::rollback();
+        return $this->getTransactionsHandler()->rollback();
     }
 
     /**
      * This function returns the last ID generated by an auto-increment column,
-     *  either the last one inserted during the current transaction, or by passing in the optional name parameter.
+     * either the last one inserted during the current transaction, or by passing in the optional name parameter.
      *
      * @return bool
      */
     public function inTransaction(): bool
     {
-        return Transaction::inTransaction();
+        return $this->getTransactionsHandler()->inTransaction();
     }
 
     /**
@@ -601,7 +592,6 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
-     * @throws ReflectionException
      */
     public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
@@ -615,7 +605,6 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array|bool The next row from the statement as an array, or false if there are no more rows.
-     * @throws ReflectionException
      */
     public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {

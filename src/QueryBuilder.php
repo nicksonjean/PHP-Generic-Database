@@ -28,7 +28,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      */
     private static IConnection $context;
 
-    private static $self;
+    private static QueryBuilder $self;
 
     /**
      * Property of the type object who define the strategy
@@ -38,7 +38,8 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     /**
      * Constructor with context
      *
-     * @param IConnection $context
+     * @param IConnection|null $context
+     * @throws Exception
      */
     public function __construct(IConnection $context = null)
     {
@@ -52,6 +53,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      *
      * @param IConnection $context
      * @return self
+     * @throws Exception
      */
     public static function with(IConnection $context): self
     {

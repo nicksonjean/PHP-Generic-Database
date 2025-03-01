@@ -20,9 +20,8 @@ use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IOptions;
+use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
-use GenericDatabase\Engine\MySQLi\Connection\Dump;
-use GenericDatabase\Engine\MySQLi\Connection\Transaction;
 use GenericDatabase\Engine\MySQLi\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Fetch\FetchHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Options\OptionsHandler;
@@ -31,6 +30,7 @@ use GenericDatabase\Engine\MySQLi\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\MySQLi\Connection\Statements\StatementsHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Arguments\Strategy\ArgumentsStrategy;
+use GenericDatabase\Engine\MySQLi\Connection\Transactions\TransactionsHandler;
 
 /**
  * Dynamic and Static container class for MySQLiConnection connections.
@@ -61,7 +61,7 @@ use GenericDatabase\Engine\MySQLi\Connection\Arguments\Strategy\ArgumentsStrateg
  * @method static MySQLiConnection|mixed getException($value = null): mixed
  */
 #[AllowDynamicProperties]
-class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArguments
+class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions
 {
     use Methods;
     use Singleton;
@@ -84,6 +84,8 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
 
     private static IArguments $argumentsHandler;
 
+    private static ITransactions $transactionsHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
@@ -95,6 +97,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         self::$dsnHandler = new DSNHandler($this);
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
         self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
+        self::$transactionsHandler = new TransactionsHandler($this);
     }
 
     private function getFetchHandler(): IFetch
@@ -127,12 +130,18 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         return self::$argumentsHandler;
     }
 
+    private function getTransactionsHandler(): ITransactions
+    {
+        return self::$transactionsHandler;
+    }
+
     /**
      * Triggered when invoking inaccessible methods in an object context
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
      * @return IConnection|string|int|bool|array|null
+     * @throws ReflectionException
      */
     public function __call(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
@@ -156,7 +165,6 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * This method is responsible for prepare the connection options before connect.
      *
      * @return MySQLiConnection
-     * @throws ReflectionException
      */
     private function preConnect(): MySQLiConnection
     {
@@ -170,7 +178,6 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * This method is responsible for update in date late binding the connection.
      *
      * @return MySQLiConnection
-     * @throws Exceptions
      */
     private function postConnect(): MySQLiConnection
     {
@@ -281,7 +288,6 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * This method is responsible for parsing the DSN from DSN class.
      *
      * @return string|Exceptions
-     * @throws Exceptions
      */
     private function parseDsn(): string|Exceptions
     {
@@ -311,26 +317,13 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     }
 
     /**
-     * Import SQL dump from file - extremely fast.
-     *
-     * @param string $file The file dumped to be imported
-     * @param string $delimiter = ';' The delimiter of the dump
-     * @param ?callable $onProgress = null
-     * @return int
-     */
-    public function loadFromFile(string $file, string $delimiter = ';', ?callable $onProgress = null): int
-    {
-        return Dump::loadFromFile($file, $delimiter, $onProgress);
-    }
-
-    /**
      * This function creates a new transaction, in order to be able to commit or rollback changes made to the database.
      *
      * @return bool
      */
     public function beginTransaction(): bool
     {
-        return Transaction::beginTransaction();
+        return $this->getTransactionsHandler()->beginTransaction();
     }
 
     /**
@@ -340,7 +333,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     public function commit(): bool
     {
-        return Transaction::commit();
+        return $this->getTransactionsHandler()->commit();
     }
 
     /**
@@ -351,7 +344,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     public function rollback(): bool
     {
-        return Transaction::rollback();
+        return $this->getTransactionsHandler()->rollback();
     }
 
     /**
@@ -362,7 +355,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     public function inTransaction(): bool
     {
-        return Transaction::inTransaction();
+        return $this->getTransactionsHandler()->inTransaction();
     }
 
     /**
@@ -593,7 +586,6 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
-     * @throws ReflectionException
      */
     public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
@@ -607,7 +599,6 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * @param mixed $fetchArgument From the Fetch Into or Fetch Class.
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array|bool The next row from the statement as an array, or false if there are no more rows.
-     * @throws ReflectionException
      */
     public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {

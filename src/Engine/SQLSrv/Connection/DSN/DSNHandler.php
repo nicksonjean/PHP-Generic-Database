@@ -13,19 +13,19 @@ use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
 #[AllowDynamicProperties]
 class DSNHandler implements IDSN
 {
-    private IConnection $connection;
+    protected static IConnection $instance;
 
     private static IOptions $optionsHandler;
 
-    public function __construct(IConnection $connection, IOptions $optionsHandler)
+    public function __construct(IConnection $instance, IOptions $optionsHandler)
     {
-        $this->connection = $connection;
+        self::$instance = $instance;
         self::$optionsHandler = $optionsHandler;
     }
 
     public function getInstance(): IConnection
     {
-        return $this->connection;
+        return self::$instance;
     }
 
     private function getOptionsHandler(): IOptions
