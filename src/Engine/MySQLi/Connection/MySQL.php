@@ -53,9 +53,44 @@ class MySQL
     final public const ATTR_OPT_SSL_VERIFY_SERVER_CERT = 1012;
 
     /**
+     * Connection attribute to verify the server certificate in SSL.
+     */
+    final public const ATTR_OPT_LOCAL_INFILE = 1008;
+
+    /**
      * Connection attribute to set the default fetch mode.
      */
     final public const ATTR_DEFAULT_FETCH_MODE = 1100;
+
+    /**
+     * Connection attribute to set the default report mode.
+     */
+    final public const ATTR_REPORT = 1110;
+
+    /**
+     * Turns reporting off alias for MYSQLI_REPORT_OFF
+     */
+    final public const REPORT_OFF = 0;
+
+    /**
+     * Report errors from mysqli function calls alias for MYSQLI_REPORT_ERROR
+     */
+    final public const REPORT_ERROR = 1;
+
+    /**
+     * Throw exception for errors instead of warnings alias for MYSQLI_REPORT_STRICT
+     */
+    final public const REPORT_STRICT = 2;
+
+    /**
+     * Report if no index or bad index was used in a query alias for MYSQLI_REPORT_INDEX
+     */
+    final public const REPORT_INDEX = 4;
+
+    /**
+     * Report all errors alias for MYSQLI_REPORT_ALL
+     */
+    final public const REPORT_ALL = 255;
 
     /**
      * Fetch mode that starts fetching rows only when they are requested.

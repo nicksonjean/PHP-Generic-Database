@@ -7,6 +7,7 @@ use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Engine\PDO\Connection\XPDO;
 use PDOStatement;
 use PDO;
 
@@ -347,6 +348,12 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function prepareStatement(mixed ...$params): PDOStatement|false
     {
+        $report = $this->getOptionsHandler()->getOptions(XPDO::ATTR_REPORT);
+        if (!empty($report) || !is_null($report)) {
+            $reportHandler = $this->getReportHandler();
+            $reportHandler->setReportMode($report);
+        }
+
         $this->setAllMetadata();
         if (!empty($params)) {
             $cursor = match ($this->get('driver')) {

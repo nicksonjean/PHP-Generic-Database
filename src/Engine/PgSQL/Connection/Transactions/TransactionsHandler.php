@@ -2,6 +2,7 @@
 
 namespace GenericDatabase\Engine\PgSQL\Connection\Transactions;
 
+use ErrorException;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\ITransactions;
 
@@ -25,6 +26,9 @@ class TransactionsHandler implements ITransactions
 
     public function beginTransaction(): bool
     {
+        set_error_handler(function ($severity, $message, $file, $line) {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        });
         if (!self::$transactionCounter++) {
             self::$inTransaction = true;
             return pg_query($this->getInstance()->getConnection(), 'BEGIN') !== false;
@@ -35,6 +39,7 @@ class TransactionsHandler implements ITransactions
 
     public function commit(): bool
     {
+        restore_error_handler();
         if (!--self::$transactionCounter) {
             self::$inTransaction = false;
             return pg_query($this->getInstance()->getConnection(), 'COMMIT') !== false;

@@ -48,40 +48,33 @@ class OptionsHandler extends AbstractOptions implements IOptions
     {
         foreach ($this->getOptions() as $key => $value) {
             switch ($key) {
-                case 'ATTR_PERSISTENT':
+                case MySQL::ATTR_PERSISTENT:
                     if (ini_get('mysqli.allow_persistent') !== '1') {
                         ini_set('mysqli.allow_persistent', 1);
                     }
                     break;
-                case 'ATTR_OPT_LOCAL_INFILE':
+                case MySQL::ATTR_OPT_LOCAL_INFILE:
                     if (ini_get('mysqli.allow_local_infile') !== '1') {
                         ini_set('mysqli.allow_local_infile', 1);
                     }
                     break;
-                case 'ATTR_INIT_COMMAND':
+                case MySQL::ATTR_INIT_COMMAND:
                     $this->getInstance()->getConnection()->query($value);
                     break;
-                case 'ATTR_SET_CHARSET_NAME':
+                case MySQL::ATTR_SET_CHARSET_NAME:
                     $this->getInstance()->getConnection()->set_charset($value);
                     break;
-                case 'ATTR_OPT_CONNECT_TIMEOUT':
-                    $this->getInstance()->getConnection()->query(
-                        "SET GLOBAL connect_timeout=" . $value
-                    );
-                    $this->getInstance()->getConnection()->query(
-                        "SET SESSION interactive_timeout=" . $value
-                    );
-                    $this->getInstance()->getConnection()->query(
-                        "SET SESSION wait_timeout=" . $value
-                    );
+                case MySQL::ATTR_OPT_CONNECT_TIMEOUT:
+                    $this->getInstance()->getConnection()->query("SET GLOBAL connect_timeout=" . $value);
+                    $this->getInstance()->getConnection()->query("SET SESSION interactive_timeout=" . $value);
+                    $this->getInstance()->getConnection()->query("SET SESSION wait_timeout=" . $value);
                     break;
-                case 'ATTR_OPT_READ_TIMEOUT':
-                    $this->getInstance()->getConnection()->query(
-                        "SET SESSION net_read_timeout=" . $value
-                    );
-                    $this->getInstance()->getConnection()->query(
-                        "SET SESSION net_write_timeout=" . ($value * 2)
-                    );
+                case MySQL::ATTR_OPT_READ_TIMEOUT:
+                    $this->getInstance()->getConnection()->query("SET SESSION net_read_timeout=" . $value);
+                    $this->getInstance()->getConnection()->query("SET SESSION net_write_timeout=" . ($value * 2));
+                    break;
+                case MySQL::ATTR_REPORT:
+                    mysqli_report($this->getOptions($value));
                     break;
                 default:
                     $this->getInstance()->getConnection()->query("SET SESSION sql_mode=''");

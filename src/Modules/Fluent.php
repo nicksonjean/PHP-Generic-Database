@@ -56,7 +56,8 @@ class Fluent
                 MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
                 MySQL::ATTR_OPT_READ_TIMEOUT => 30,
                 MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M",
-                MySQL::ATTR_DEFAULT_FETCH_MODE => MySQL::FETCH_OBJ
+                MySQL::ATTR_DEFAULT_FETCH_MODE => MySQL::FETCH_OBJ,
+                MySQL::ATTR_REPORT => MySQL::REPORT_ERROR | MySQL::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -90,7 +91,8 @@ class Fluent
                 PgSQL::ATTR_CONNECT_ASYNC => true,
                 PgSQL::ATTR_CONNECT_FORCE_NEW => true,
                 PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
-                PgSQL::ATTR_DEFAULT_FETCH_MODE => PgSQL::FETCH_OBJ
+                PgSQL::ATTR_DEFAULT_FETCH_MODE => PgSQL::FETCH_OBJ,
+                PgSQL::ATTR_REPORT => PgSQL::REPORT_ERROR | PgSQL::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -123,7 +125,8 @@ class Fluent
             ::setOptions([
                 SQLSrv::ATTR_PERSISTENT => $persistent,
                 SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
-                SQLSrv::ATTR_DEFAULT_FETCH_MODE => SQLSrv::FETCH_OBJ
+                SQLSrv::ATTR_DEFAULT_FETCH_MODE => SQLSrv::FETCH_OBJ,
+                SQLSrv::ATTR_REPORT => SQLSrv::REPORT_ERROR | SQLSrv::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -155,7 +158,8 @@ class Fluent
             ::setOptions([
                 OCI::ATTR_PERSISTENT => $persistent,
                 OCI::ATTR_CONNECT_TIMEOUT => 28800,
-                OCI::ATTR_DEFAULT_FETCH_MODE => OCI::FETCH_OBJ
+                OCI::ATTR_DEFAULT_FETCH_MODE => OCI::FETCH_OBJ,
+                OCI::ATTR_REPORT => OCI::REPORT_ERROR | OCI::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -187,7 +191,8 @@ class Fluent
             ::setOptions([
                 Firebird::ATTR_PERSISTENT => $persistent,
                 Firebird::ATTR_CONNECT_TIMEOUT => 28800,
-                Firebird::ATTR_DEFAULT_FETCH_MODE => Firebird::FETCH_OBJ
+                Firebird::ATTR_DEFAULT_FETCH_MODE => Firebird::FETCH_OBJ,
+                Firebird::ATTR_REPORT => Firebird::REPORT_ERROR | Firebird::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -219,7 +224,8 @@ class Fluent
                 SQLite::ATTR_CONNECT_TIMEOUT => 28800,
                 SQLite::ATTR_PERSISTENT => $persistent,
                 SQLite::ATTR_AUTOCOMMIT => true,
-                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ
+                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
+                SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -251,7 +257,8 @@ class Fluent
                 SQLite::ATTR_CONNECT_TIMEOUT => 28800,
                 SQLite::ATTR_PERSISTENT => $persistent,
                 SQLite::ATTR_AUTOCOMMIT => true,
-                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ
+                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
+                SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -511,7 +518,8 @@ class Fluent
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -545,7 +553,8 @@ class Fluent
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -579,7 +588,8 @@ class Fluent
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -613,7 +623,8 @@ class Fluent
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -647,7 +658,8 @@ class Fluent
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -677,7 +689,8 @@ class Fluent
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -709,7 +722,8 @@ class Fluent
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -739,7 +753,8 @@ class Fluent
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -769,7 +784,8 @@ class Fluent
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
             ])
             ::setException(true);
 
@@ -798,7 +814,8 @@ class Fluent
             ::setCharset($env['SQLITE_CHARSET'])
             ::setOptions([
                 ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ
+                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
             ])
             ::setException(true);
 

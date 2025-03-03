@@ -30,6 +30,7 @@ use GenericDatabase\Engine\PgSQL\Connection\Statements\StatementsHandler;
 use GenericDatabase\Engine\PgSQL\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\PgSQL\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\PgSQL\Connection\Transactions\TransactionsHandler;
+use GenericDatabase\Engine\PgSQL\Connection\Report\ReportHandler;
 
 /**
  * Dynamic and Static container class for PgSQLConnection connections.
@@ -91,9 +92,9 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
     public function __construct()
     {
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
-        self::$statementsHandler = new StatementsHandler($this);
         self::$optionsHandler = new OptionsHandler($this);
         self::$dsnHandler = new DSNHandler($this, self::$optionsHandler);
+        self::$statementsHandler = new StatementsHandler($this, self::$optionsHandler, new ReportHandler());
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
         self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
         self::$transactionsHandler = new TransactionsHandler($this);

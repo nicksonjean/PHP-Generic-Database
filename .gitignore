@@ -506,3 +506,4 @@ composer.lock
 /.vscode/
 
 resources/database/firebird/system/security3.fdb
+.todo

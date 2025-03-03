@@ -9,6 +9,7 @@ use GenericDatabase\Shared\Run;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
+use GenericDatabase\Engine\ODBC\Connection\ODBC;
 
 /**
  * Concrete implementation for PDO database
@@ -323,6 +324,12 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function prepareStatement(mixed ...$params): mixed
     {
+        $report = $this->getOptionsHandler()->getOptions(ODBC::ATTR_REPORT);
+        if (!empty($report) || !is_null($report)) {
+            $reportHandler = $this->getReportHandler();
+            $reportHandler->setReportMode($report);
+        }
+
         $this->setAllMetadata();
         if (!empty($params)) {
             $statement = odbc_prepare($this->getInstance()->getConnection(), $this->parse(...$params));

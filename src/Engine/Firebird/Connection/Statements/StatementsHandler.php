@@ -9,6 +9,7 @@ use GenericDatabase\Core\Query;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
+use GenericDatabase\Engine\Firebird\Connection\Firebird;
 
 /**
  * Concrete implementation for Firebird database
@@ -192,6 +193,12 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function prepareStatement(mixed ...$params): mixed
     {
+        $report = $this->getOptionsHandler()->getOptions(Firebird::ATTR_REPORT);
+        if (!empty($report) || !is_null($report)) {
+            $reportHandler = $this->getReportHandler();
+            $reportHandler->setReportMode($report);
+        }
+
         $this->setAllMetadata();
         if (!empty($params)) {
             $statement = call_user_func_array((reset($params)[1] === Query::RAW) ? 'ibase_query' : 'ibase_prepare', [$this->getInstance()->getConnection(), $this->parse(reset($params)[0])]);

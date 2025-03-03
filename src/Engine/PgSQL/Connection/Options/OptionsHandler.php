@@ -47,12 +47,16 @@ class OptionsHandler extends AbstractOptions implements IOptions
     public function define(): void
     {
         foreach (array_keys($this->getOptions()) as $key) {
-            if ($key === 'ATTR_PERSISTENT' && ini_get('pgsql.allow_persistent') !== '1') {
-                ini_set('pgsql.allow_persistent', 1);
-            } else {
-                if ($this->get('charset')) {
-                    pg_set_client_encoding($this->getInstance()->getConnection(), $this->get('charset'));
-                }
+            switch ($key) {
+                case PgSQL::ATTR_PERSISTENT:
+                    if (ini_get('pgsql.allow_persistent') !== '1') {
+                        ini_set('pgsql.allow_persistent', 1);
+                    }
+                    break;
+                default:
+                    if ($this->get('charset')) {
+                        pg_set_client_encoding($this->getInstance()->getConnection(), $this->get('charset'));
+                    }
             }
         }
     }

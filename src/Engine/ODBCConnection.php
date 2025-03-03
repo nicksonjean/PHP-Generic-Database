@@ -30,6 +30,7 @@ use GenericDatabase\Engine\ODBC\Connection\Statements\StatementsHandler;
 use GenericDatabase\Engine\ODBC\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\ODBC\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\ODBC\Connection\Transactions\TransactionsHandler;
+use GenericDatabase\Engine\ODBC\Connection\Report\ReportHandler;
 
 /**
  * Dynamic and Static container class for ODBCConnection connections.
@@ -91,9 +92,9 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     public function __construct()
     {
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
-        self::$statementsHandler = new StatementsHandler($this);
         self::$optionsHandler = new OptionsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
+        self::$statementsHandler = new StatementsHandler($this, self::$optionsHandler, new ReportHandler());
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
         self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
         self::$transactionsHandler = new TransactionsHandler($this);

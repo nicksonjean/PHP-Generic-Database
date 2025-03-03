@@ -2,12 +2,14 @@
 
 namespace GenericDatabase\Engine\SQLSrv\Connection\Statements;
 
-use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\Connection\IStatements;
-use GenericDatabase\Abstract\AbstractStatements;
+use Exception;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Abstract\AbstractStatements;
+use GenericDatabase\Engine\SQLSrv\Connection\SQLSrv;
+use GenericDatabase\Interfaces\Connection\IStatements;
 
 /**
  * Concrete implementation for SQLSrv database
@@ -189,6 +191,25 @@ class StatementsHandler extends AbstractStatements implements IStatements
     }
 
     /**
+     * Executes a query with the given parameters and options.
+     *
+     * @param string $query The SQL query to execute.
+     * @param array $params The parameters to bind to the query.
+     * @param array $options The options to use when executing the query.
+     * @return mixed The result of the query, either a statement resource or false.
+     * @throws Exception If the query fails to execute.
+     */
+    private function sqlsrv_query(string $query, array $params = [], array $options = []): mixed
+    {
+        $statement = sqlsrv_query($this->getInstance()->getConnection(), $query, $params, $options);
+        if ($statement === false) {
+            $errors = sqlsrv_errors();
+            throw new Exception(json_encode($errors));
+        }
+        return $statement;
+    }
+
+    /**
      * This function binds the parameters to a prepared statement.
      *
      * @param mixed ...$params
@@ -196,15 +217,21 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function prepareStatement(mixed ...$params): mixed
     {
+        $report = $this->getOptionsHandler()->getOptions(SQLSrv::ATTR_REPORT);
+        if (!empty($report) || !is_null($report)) {
+            $reportHandler = $this->getReportHandler();
+            $reportHandler->setReportMode($report);
+        }
+
         $this->setAllMetadata();
         if (!empty($params)) {
             $bindParams = Schemas::makeArgs([null, ...$params]);
             if ($bindParams->by->array) {
                 foreach (($bindParams->is->array->multi ? $bindParams->query->arguments : [$bindParams->query->arguments]) as $bindParam) {
-                    $statement = sqlsrv_query($this->getInstance()->getConnection(), $this->parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
+                    $statement = self::sqlsrv_query($this->parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
                 }
             } else {
-                $statement = sqlsrv_query($this->getInstance()->getConnection(), $this->parse(...$params));
+                $statement = self::sqlsrv_query($this->parse(...$params));
             }
             if ($statement) {
                 $this->setStatement($statement);

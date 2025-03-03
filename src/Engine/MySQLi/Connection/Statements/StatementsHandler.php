@@ -2,12 +2,13 @@
 
 namespace GenericDatabase\Engine\MySQLi\Connection\Statements;
 
-use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\Connection\IStatements;
-use GenericDatabase\Abstract\AbstractStatements;
+use mysqli_stmt;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
-use mysqli_stmt;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Abstract\AbstractStatements;
+use GenericDatabase\Engine\MySQLi\Connection\MySQL;
+use GenericDatabase\Interfaces\Connection\IStatements;
 
 /**
  * Concrete implementation for MySQLi database
@@ -202,6 +203,12 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function prepareStatement(mixed ...$params): mixed
     {
+        $report = $this->getOptionsHandler()->getOptions(MySQL::ATTR_REPORT);
+        if (!empty($report) || !is_null($report)) {
+            $reportHandler = $this->getReportHandler();
+            $reportHandler->setReportMode($report);
+        }
+
         $this->setAllMetadata();
         if (!empty($params)) {
             $statement = $this->getInstance()->getConnection()->prepare($this->parse(...$params));

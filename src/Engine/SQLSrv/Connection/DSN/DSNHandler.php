@@ -15,7 +15,7 @@ class DSNHandler implements IDSN
 {
     protected static IConnection $instance;
 
-    private static IOptions $optionsHandler;
+    protected static IOptions $optionsHandler;
 
     public function __construct(IConnection $instance, IOptions $optionsHandler)
     {

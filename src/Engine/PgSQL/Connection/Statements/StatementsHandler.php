@@ -10,6 +10,7 @@ use GenericDatabase\Helpers\Hash;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
+use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
 use \PgSql\Result;
 
 /**
@@ -246,6 +247,12 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function prepareStatement(mixed ...$params): mixed
     {
+        $report = $this->getOptionsHandler()->getOptions(PgSQL::ATTR_REPORT);
+        if (!empty($report) || !is_null($report)) {
+            $reportHandler = $this->getReportHandler();
+            $reportHandler->setReportMode($report);
+        }
+
         $this->setAllMetadata();
         if (!empty($params)) {
             $this->setStmtName(Hash::hash());

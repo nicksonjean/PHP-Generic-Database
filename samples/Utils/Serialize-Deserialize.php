@@ -60,9 +60,9 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 // $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
-// $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
-$context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 // $context = Fluent::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
@@ -87,11 +87,6 @@ $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: fal
 // $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 var_dump($context);
-
-// $d = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :id', [':id' => 10]);
-// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id = :id', '27');
-// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id IN(:idA, :idB, :idC)', '25', '26', '27');
-// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id');
 
 // OBJ, INTO, CLASS, COLUMN, ASSOC, NUM, BOTH
 
@@ -134,26 +129,6 @@ while ($row = $r->fetch(Connection::FETCH_OBJ)) {
 
 var_dump($r->fetchAll(Connection::FETCH_OBJ));
 
-// var_dump([
-//     'queryString' => $a->getQueryString(),
-//     'queryParameters' => $a->getQueryParameters(),
-//     'queryRows' => $a->getQueryRows(),
-//     'queryColumns' => $a->getQueryColumns(),
-//     'affectedRows' => $a->getAffectedRows()
-// ]);
-
-// var_dump($a->fetchAll(Connection::FETCH_OBJ));
-
-// while ($row = $a->fetch(Connection::FETCH_OBJ)) {
-//     echo vsprintf("<pre>%s, %s/%s</pre>", [$row->Codigo, $row->Estado, $row->Sigla]);
-// }
-
-// $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE1', ':sigla' => 'T1'], [':nome' => 'TESTE2', ':sigla' => 'T2']]);
-// $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [':nome' => 'TESTE', ':sigla' => 'TE']);
-// $b = $context->prepare('UPDATE estado SET nome = :nome WHERE id = :id', [':nome' => 'TE', ':id' => '210']);
-// $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'PDC', 'TI', 210);
-// $b = $context->prepare('DELETE FROM estado WHERE id IN (:id)', [[':id' => '271'], [':id' => '272'], [':id' => '273']]);
-
 try {
 
     $context->beginTransaction();
@@ -181,6 +156,31 @@ try {
     var_dump("Erro na transação: " . $e->getMessage());
 }
 
+// $d = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :id', [':id' => 10]);
+// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id = :id', '27');
+// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id IN(:idA, :idB, :idC)', '25', '26', '27');
+// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id');
+
+// var_dump([
+//     'queryString' => $a->getQueryString(),
+//     'queryParameters' => $a->getQueryParameters(),
+//     'queryRows' => $a->getQueryRows(),
+//     'queryColumns' => $a->getQueryColumns(),
+//     'affectedRows' => $a->getAffectedRows()
+// ]);
+
+// var_dump($a->fetchAll(Connection::FETCH_OBJ));
+
+// while ($row = $a->fetch(Connection::FETCH_OBJ)) {
+//     echo vsprintf("<pre>%s, %s/%s</pre>", [$row->Codigo, $row->Estado, $row->Sigla]);
+// }
+
+// $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE1', ':sigla' => 'T1'], [':nome' => 'TESTE2', ':sigla' => 'T2']]);
+// $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [':nome' => 'TESTE', ':sigla' => 'TE']);
+// $b = $context->prepare('UPDATE estado SET nome = :nome WHERE id = :id', [':nome' => 'TE', ':id' => '210']);
+// $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'PDC', 'TI', 210);
+// $b = $context->prepare('DELETE FROM estado WHERE id IN (:id)', [[':id' => '271'], [':id' => '272'], [':id' => '273']]);
+
 // var_dump([
 //     'queryString' => $b->getQueryString(),
 //     'queryParameters' => $b->getQueryParameters(),
@@ -197,3 +197,11 @@ PgSQL:  'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM "e
 SQLSrv: 'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM "estado" ORDER BY "id"'
 OCI: 'SELECT "id" AS "Codigo", "nome" AS "Estado", "sigla" AS "Sigla" FROM HR."estado" ORDER BY "id"'
 */
+
+/*
+    0   MYSQLI_REPORT_OFF	    Turns reporting off
+    1   MYSQLI_REPORT_ERROR	    Report errors from mysqli function calls
+    2   MYSQLI_REPORT_STRICT	Throw mysqli_sql_exception for errors instead of warnings
+    4   MYSQLI_REPORT_INDEX	    Report if no index or bad index was used in a query
+    255 MYSQLI_REPORT_ALL       Set all options (report all)
+ */

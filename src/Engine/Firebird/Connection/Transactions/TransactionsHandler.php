@@ -2,6 +2,7 @@
 
 namespace GenericDatabase\Engine\Firebird\Connection\Transactions;
 
+use ErrorException;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\ITransactions;
 
@@ -30,6 +31,9 @@ class TransactionsHandler implements ITransactions
      */
     public function beginTransaction(): bool
     {
+        set_error_handler(function ($severity, $message, $file, $line) {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        });
         if (!self::$transactionCounter++) {
             self::$inTransaction = true;
             $transaction = ibase_trans(IBASE_DEFAULT, $this->getInstance()->getConnection());
@@ -50,6 +54,7 @@ class TransactionsHandler implements ITransactions
      */
     public function commit(): bool
     {
+        restore_error_handler();
         if (!--self::$transactionCounter) {
             self::$inTransaction = false;
             return ibase_commit($this->getInstance()->getConnection()) ?? false;

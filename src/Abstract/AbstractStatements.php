@@ -5,7 +5,9 @@ namespace GenericDatabase\Abstract;
 use AllowDynamicProperties;
 use GenericDatabase\Shared\Run;
 use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Interfaces\Connection\IStatements;
+use GenericDatabase\Interfaces\Connection\IReport;
 use GenericDatabase\Generic\Statements\Metadata;
 
 #[AllowDynamicProperties]
@@ -13,21 +15,23 @@ abstract class AbstractStatements implements IStatements
 {
     protected static IConnection $instance;
 
+    protected static IOptions $optionsHandler;
+
+    protected static IReport $reportHandler;
+
     protected mixed $statement = null;
 
     protected Metadata $metadata;
-    /**
-     * Constructor for AbstractStatements.
-     *
-     * @param IConnection $instance The connection instance to be used for database interactions.
-     */
-    public function __construct(IConnection $instance)
+
+    public function __construct(IConnection $instance, IOptions $optionsHandler, IReport $reportHandler)
     {
         self::$instance = $instance;
+        self::$optionsHandler = $optionsHandler;
+        self::$reportHandler = $reportHandler;
         $this->metadata = new Metadata();
     }
 
-    public function getInstance(): IConnection
+    public static function getInstance(): IConnection
     {
         return self::$instance;
     }
@@ -40,6 +44,16 @@ abstract class AbstractStatements implements IStatements
     public function get(string $name): mixed
     {
         return Run::call([$this->getInstance(), 'get' . ucfirst($name)]);
+    }
+
+    public function getOptionsHandler(): IOptions
+    {
+        return self::$optionsHandler;
+    }
+
+    public function getReportHandler(): IReport
+    {
+        return self::$reportHandler;
     }
 
     public function setAllMetadata(): void

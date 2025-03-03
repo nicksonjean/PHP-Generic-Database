@@ -7,6 +7,7 @@ use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Engine\OCI\Connection\OCI;
 
 /**
  * Concrete implementation for OCI database
@@ -193,6 +194,12 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function prepareStatement(mixed ...$params): mixed
     {
+        $report = $this->getOptionsHandler()->getOptions(OCI::ATTR_REPORT);
+        if (!empty($report) || !is_null($report)) {
+            $reportHandler = $this->getReportHandler();
+            $reportHandler->setReportMode($report);
+        }
+
         $this->setAllMetadata();
         if (!empty($params)) {
             $statement = oci_parse($this->getInstance()->getConnection(), $this->parse(...$params));

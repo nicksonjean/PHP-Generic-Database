@@ -31,6 +31,7 @@ use GenericDatabase\Engine\Firebird\Connection\Statements\StatementsHandler;
 use GenericDatabase\Engine\Firebird\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\Firebird\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\Firebird\Connection\Transactions\TransactionsHandler;
+use GenericDatabase\Engine\Firebird\Connection\Report\ReportHandler;
 
 /**
  * Dynamic and Static container class for FirebirdConnection connections.
@@ -92,9 +93,9 @@ class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArg
     public function __construct()
     {
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
-        self::$statementsHandler = new StatementsHandler($this);
         self::$optionsHandler = new OptionsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
+        self::$statementsHandler = new StatementsHandler($this, self::$optionsHandler, new ReportHandler());
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
         self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
         self::$transactionsHandler = new TransactionsHandler($this);

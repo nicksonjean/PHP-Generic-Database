@@ -213,16 +213,6 @@ Below is a series of readmes containing examples of how to use the lib and a [to
     - PDO: [PDOQueryBuilder.md](./readme/Engines/PDOQueryBuilder.md)
     - ODBC: [ODBCQueryBuilder.md](./readme/Engines/ODBCQueryBuilder.md)
 
-### ToDo
-  - [ ] Add Logging Property and Mechanism
-  - [ ] Add Transactions Mechanism
-  - [ ] Add Caching Property and Mechanism
-  - [ ] Add Events Property and Mechanism
-  - [ ] Add Validations Mechanism
-  - [ ] Add Middlewares Mechanism
-  - [ ] Remove Exception Property
-  - [ ] Fetch One Method;
-
 ## License
 
 PHP-Generic-Database is released under the MIT license.
