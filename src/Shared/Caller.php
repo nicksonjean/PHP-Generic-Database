@@ -4,11 +4,24 @@ namespace GenericDatabase\Shared;
 
 use ReflectionException;
 use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Shared\{Getter, Setter};
+use GenericDatabase\Shared\Getter;
+use GenericDatabase\Shared\Setter;
 
+/**
+ * This trait uses the Getter and Setter traits to facilitate dynamic
+ * property access. The __call method handles instance method calls,
+ * while __callStatic manages static method calls. Both methods
+ * interpret method names starting with 'set' or 'get' to perform
+ * corresponding actions on properties.
+ *
+ * Methods:
+ * - `__call(string $name, array $arguments): mixed:` Handles dynamic instance method calls.
+ * - `__callStatic(string $name, array $arguments): mixed:` Handles dynamic static method calls.
+ */
 trait Caller
 {
-    use Getter, Setter;
+    use Getter;
+    use Setter;
 
     /**
      * Triggered when invoking inaccessible methods in an object context

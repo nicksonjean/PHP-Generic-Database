@@ -46,9 +46,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
         $string = reset($params);
         return match (true) {
@@ -63,7 +63,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     public function bindParam(object $params): void
@@ -105,7 +105,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ($this->exec($this->getStatement())) {
                 if ($this->getQueryColumns() === 0) {
                     $affectedRows++;
-                    $this->setAffectedRows((int) $affectedRows);
+                    $this->setAffectedRows($affectedRows);
                 }
             }
         }
@@ -133,8 +133,8 @@ class StatementsHandler extends AbstractStatements implements IStatements
         $this->setStatement(@$this->internalBindVariable($params->query->arguments, $params->statement->object));
         if ($result = $this->exec($this->getStatement())) {
             $colCount = (is_object($result) && get_class($result) === 'SQLite3Result' && method_exists($result, 'numColumns')) ? $result->numColumns() : 0;
-            $this->setQueryColumns((int) $colCount);
-            if ((int) $colCount > 0) {
+            $this->setQueryColumns($colCount);
+            if ($colCount > 0) {
                 $this->setQueryRows(
                     (function (mixed $result): int {
                         $rows = 0;
@@ -142,7 +142,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                             $rows++;
                         }
                         return $rows;
-                    })($result) ?? 0
+                    })($result)
                 );
             } else {
                 $this->setAffectedRows($this->getInstance()->getConnection()->changes());
@@ -235,7 +235,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                         }
                         $this->setStatement(['results' => $results]);
                         return $rows;
-                    })($result) ?? 0
+                    })($result)
                 );
             } else {
                 $this->setAffectedRows($this->getInstance()->getConnection()->changes());

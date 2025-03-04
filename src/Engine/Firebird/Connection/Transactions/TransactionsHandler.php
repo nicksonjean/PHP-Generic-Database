@@ -28,6 +28,7 @@ class TransactionsHandler implements ITransactions
      * This function creates a new transaction, in order to be able to commit or rollback changes made to the database.
      *
      * @return bool
+     * @throws ErrorException
      */
     public function beginTransaction(): bool
     {
@@ -36,6 +37,7 @@ class TransactionsHandler implements ITransactions
         });
         if (!self::$transactionCounter++) {
             self::$inTransaction = true;
+            /** @var resource|object|false $transaction */
             $transaction = ibase_trans(IBASE_DEFAULT, $this->getInstance()->getConnection());
             if ($transaction !== false) {
                 return true;
@@ -57,7 +59,7 @@ class TransactionsHandler implements ITransactions
         restore_error_handler();
         if (!--self::$transactionCounter) {
             self::$inTransaction = false;
-            return ibase_commit($this->getInstance()->getConnection()) ?? false;
+            return ibase_commit($this->getInstance()->getConnection());
         }
         return self::$transactionCounter >= 0;
     }

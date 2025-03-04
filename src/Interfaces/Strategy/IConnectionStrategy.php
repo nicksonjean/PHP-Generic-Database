@@ -9,7 +9,7 @@ interface IConnectionStrategy
     /**
      * Defines the strategy instance
      *
-     * @param mixed $strategy
+     * @param IConnection $strategy
      * @return void
      */
     public function setStrategy(IConnection $strategy): void;
@@ -17,7 +17,7 @@ interface IConnectionStrategy
     /**
      * Get the strategy instance
      *
-     * @return mixed
+     * @return IConnection
      */
     public function getStrategy(): IConnection;
 }

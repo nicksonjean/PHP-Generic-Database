@@ -12,4 +12,7 @@
         <property name="absoluteLineLimit" value="360"/>
     </properties>
   </rule>
+  <rule ref="Generic.Files.LineEndings">
+    <exclude name="Generic.Files.LineEndings.InvalidEOLChar"/>
+  </rule>
 </ruleset>

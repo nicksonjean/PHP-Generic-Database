@@ -94,7 +94,6 @@
 </p>
 
         
-        
     
         
 
@@ -178,76 +177,6 @@ starts with the word "SELECT" (case-insensitive).</li>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;string
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_detectQueryType">detectQueryType</a>(string $query)
-        
-                                            <p><p>Detects the type of the given query.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
-                    static&nbsp;bool
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_isSelect">isSelect</a>(string $query)
-        
-                                            <p><p>Determines if the given query is a SELECT statement.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
-                    static&nbsp;bool
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_isInsert">isInsert</a>(string $query)
-        
-                                            <p><p>Determines if the given query is a INSERT statement.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
-                    static&nbsp;bool
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_isUpdate">isUpdate</a>(string $query)
-        
-                                            <p><p>Determines if the given query is a UPDATE statement.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
-                    static&nbsp;bool
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_isDelete">isDelete</a>(string $query)
-        
-                                            <p><p>Determines if the given query is a DELETE statement.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
-                    static&nbsp;bool
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_isReplace">isReplace</a>(string $query)
-        
-                                            <p><p>Determines if the given query is a REPLACE statement.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
-                    static&nbsp;bool
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_isMerge">isMerge</a>(string $query)
-        
-                                            <p><p>Determines if the given query is a MERGE statement.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
                     static&nbsp;mixed
                 </div>
                 <div class="col-md-8">
@@ -271,7 +200,6 @@ starts with the word "SELECT" (case-insensitive).</li>
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -314,7 +242,6 @@ starts with the word "SELECT" (case-insensitive).</li>
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -359,7 +286,6 @@ Returns NULL otherwise.</p></td>
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -395,316 +321,13 @@ Returns NULL otherwise.</p></td>
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_detectQueryType">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L112">at line 112</a></div>
-        <code>        static            string
-    <strong>detectQueryType</strong>(string $query)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Detects the type of the given query.</p></p>                        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td>string</td>
-                <td>$query</td>
-                <td><p>The query to detect the type of.</p></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td>string</td>
-            <td><p>The type of the query. Possible values are "SELECT", "INSERT", "UPDATE", "DELETE", "REPLACE",
-or "MERGE". If the query does not match any of these types, "SELECT" is returned as the default.</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
-                    <h3 id="method_isSelect">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L131">at line 131</a></div>
-        <code>        static            bool
-    <strong>isSelect</strong>(string $query)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Determines if the given query is a SELECT statement.</p></p>                        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td>string</td>
-                <td>$query</td>
-                <td><p>The query to check.</p></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td>bool</td>
-            <td><p>Returns true if the query is a SELECT statement, false otherwise.</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
-                    <h3 id="method_isInsert">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L143">at line 143</a></div>
-        <code>        static            bool
-    <strong>isInsert</strong>(string $query)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Determines if the given query is a INSERT statement.</p></p>                        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td>string</td>
-                <td>$query</td>
-                <td><p>The query to check.</p></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td>bool</td>
-            <td><p>Returns true if the query is a INSERT statement, false otherwise.</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
-                    <h3 id="method_isUpdate">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L155">at line 155</a></div>
-        <code>        static            bool
-    <strong>isUpdate</strong>(string $query)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Determines if the given query is a UPDATE statement.</p></p>                        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td>string</td>
-                <td>$query</td>
-                <td><p>The query to check.</p></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td>bool</td>
-            <td><p>Returns true if the query is a UPDATE statement, false otherwise.</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
-                    <h3 id="method_isDelete">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L167">at line 167</a></div>
-        <code>        static            bool
-    <strong>isDelete</strong>(string $query)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Determines if the given query is a DELETE statement.</p></p>                        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td>string</td>
-                <td>$query</td>
-                <td><p>The query to check.</p></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td>bool</td>
-            <td><p>Returns true if the query is a DELETE statement, false otherwise.</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
-                    <h3 id="method_isReplace">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L179">at line 179</a></div>
-        <code>        static            bool
-    <strong>isReplace</strong>(string $query)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Determines if the given query is a REPLACE statement.</p></p>                        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td>string</td>
-                <td>$query</td>
-                <td><p>The query to check.</p></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td>bool</td>
-            <td><p>Returns true if the query is a REPLACE statement, false otherwise.</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
-                    <h3 id="method_isMerge">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L191">at line 191</a></div>
-        <code>        static            bool
-    <strong>isMerge</strong>(string $query)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Determines if the given query is a MERGE statement.</p></p>                        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td>string</td>
-                <td>$query</td>
-                <td><p>The query to check.</p></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td>bool</td>
-            <td><p>Returns true if the query is a MERGE statement, false otherwise.</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
                     <h3 id="method_detectTypes">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L200">at line 200</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L109">at line 109</a></div>
         <code>        static            mixed
     <strong>detectTypes</strong>(mixed $data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 

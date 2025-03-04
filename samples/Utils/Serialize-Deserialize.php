@@ -4,6 +4,8 @@ use GenericDatabase\Connection;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 use GenericDatabase\Modules\Chainable;
 use GenericDatabase\Modules\Fluent;
+use GenericDatabase\Modules\StaticArgs;
+use GenericDatabase\Modules\StaticArray;
 use Dotenv\Dotenv;
 
 define("PATH_ROOT", dirname(__DIR__, 2));
@@ -58,9 +60,9 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 // var_dump($serialized);
 
-// $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
-$context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
@@ -71,6 +73,20 @@ $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false
 // $context = Fluent::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Fluent::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Fluent::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+
+// $context = StaticArgs::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = StaticArgs::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = StaticArgs::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = StaticArgs::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = StaticArgs::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = StaticArgs::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+
+// $context = StaticArray::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = StaticArray::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = StaticArray::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = StaticArray::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = StaticArray::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = StaticArray::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 // $context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();

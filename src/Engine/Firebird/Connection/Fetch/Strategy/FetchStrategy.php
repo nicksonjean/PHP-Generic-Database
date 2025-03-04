@@ -8,7 +8,8 @@ use GenericDatabase\Generic\Fetch\FetchCache;
 
 class FetchStrategy implements IFetchStrategy
 {
-    use Resources, FetchCache;
+    use Resources;
+    use FetchCache;
 
     /**
      * Caches the results from a statement for future use

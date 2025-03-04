@@ -14,7 +14,7 @@ class TransporterTraitTest extends TestCase
     {
         $className = 'TestTransporterClass_' . uniqid();
 
-        eval ('
+        eval('
             class ' . $className . ' {
                 use \GenericDatabase\Shared\Transporter;
 

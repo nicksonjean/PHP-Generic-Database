@@ -16,7 +16,7 @@ use PDO;
  */
 class StatementsHandler extends AbstractStatements implements IStatements
 {
-    private function lastInsertIdMySQL(?string $name = null): string|int|false
+    private function lastInsertIdMySQL(?string $name = null): int
     {
         if (!$name) {
             return (int) $this->getInstance()->getConnection()->lastInsertId();
@@ -38,10 +38,10 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 return (int) $maxIndex;
             }
         }
-        return ($autoKey['COLUMN_NAME'] ? (int) $autoKey['COLUMN_NAME'] : 0) ?? false;
+        return ($autoKey['COLUMN_NAME'] ? (int) $autoKey['COLUMN_NAME'] : 0);
     }
 
-    private function lastInsertIdPgSQL(?string $name = null): string|int|false
+    private function lastInsertIdPgSQL(?string $name = null): int|false
     {
         if (!$name) {
             return (int) $this->getInstance()->getConnection()->lastInsertId();
@@ -87,7 +87,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return false;
     }
 
-    private function lastInsertIdSQLSrv(?string $name = null): string|int|false
+    private function lastInsertIdSQLSrv(?string $name = null): int|false
     {
         if (!$name) {
             $query = "SELECT CAST(@@IDENTITY AS BIGINT) AS LastInsertedID";
@@ -112,7 +112,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return false;
     }
 
-    private function lastInsertIdOCI(?string $name = null): string|int|false
+    private function lastInsertIdOCI(?string $name = null): int|false
     {
         if ($name !== null) {
             $filter = "WHERE OWNER = USER AND identity_column = 'YES' AND TABLE_NAME = :tableName";
@@ -137,7 +137,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return false;
     }
 
-    private function lastInsertIdFirebird(?string $name = null): string|int|false
+    private function lastInsertIdFirebird(?string $name = null): int|false
     {
         if (!$name) {
             return 0;
@@ -256,7 +256,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ($this->exec($this->getStatement())) {
                 if ($this->getQueryColumns() === 0) {
                     $affectedRows++;
-                    $this->setAffectedRows((int) $affectedRows);
+                    $this->setAffectedRows($affectedRows);
                 }
             }
         }
@@ -265,7 +265,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private function internalBindParamArraySingle(object $params): void

@@ -2,6 +2,14 @@
 
 namespace GenericDatabase\Shared;
 
+/**
+ * Trait Cleaner provides magic methods to handle isset() and unset() operations
+ * on inaccessible or non-existing properties within a class.
+ *
+ * Methods:
+ * - `__isset(string $name): bool:` Checks if a property is set.
+ * - `__unset(string $name): void:` Unsets a property.
+ */
 trait Cleaner
 {
     use Property;

@@ -177,6 +177,9 @@ class DSNHandler implements IDSN
             );
     }
 
+    /**
+     * @throws Exceptions
+     */
     private function handleFirebird(): string
     {
         if (!Path::isAbsolute($this->get('database'))) {
@@ -194,6 +197,9 @@ class DSNHandler implements IDSN
         );
     }
 
+    /**
+     * @throws Exceptions
+     */
     private function handleSQLite(): string
     {
         if (!Path::isAbsolute($this->get('database')) && $this->get('database') !== 'memory') {
@@ -217,8 +223,12 @@ class DSNHandler implements IDSN
         return $result;
     }
 
+    /**
+     * @throws Exceptions
+     */
     private function handleDefault(): string
     {
+        $result = null;
         if (!Path::isAbsolute($this->get('database')) && $this->get('database') !== 'memory') {
             $this->set('database', Path::toAbsolute($this->get('database')));
             $result = vsprintf(

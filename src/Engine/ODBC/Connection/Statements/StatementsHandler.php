@@ -16,7 +16,7 @@ use GenericDatabase\Engine\ODBC\Connection\ODBC;
  */
 class StatementsHandler extends AbstractStatements implements IStatements
 {
-    private function lastInsertIdMySQL(?string $name = null): string|int|false
+    private function lastInsertIdMySQL(?string $name = null): int|false
     {
         if (!$name) {
             return false;
@@ -36,7 +36,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return false;
     }
 
-    private function lastInsertIdPgSQL(?string $name = null): string|int|false
+    private function lastInsertIdPgSQL(?string $name = null): int|false
     {
         if (!$name) {
             return false;
@@ -76,7 +76,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return false;
     }
 
-    private function lastInsertIdSQLSrv(?string $name = null): string|int|false
+    private function lastInsertIdSQLSrv(?string $name = null): int|false
     {
         if (!$name) {
             $query = "SELECT CAST(@@IDENTITY AS BIGINT) AS LastInsertedID";
@@ -101,7 +101,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return false;
     }
 
-    private function lastInsertIdOCI(?string $name = null): string|int|false
+    private function lastInsertIdOCI(?string $name = null): int|false
     {
         if ($name !== null) {
             $filter = "WHERE OWNER = USER AND identity_column = 'YES' AND TABLE_NAME = ?";
@@ -122,7 +122,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return false;
     }
 
-    private function lastInsertIdFirebird(?string $name = null): string|int|false
+    private function lastInsertIdFirebird(?string $name = null): int|false
     {
         if (!$name) {
             return false;
@@ -186,9 +186,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
         $string = reset($params);
         return match (true) {
@@ -214,7 +214,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         } else {
             $this->internalBindParamArgs($params);
         }
-        $this->setQueryColumns((int) odbc_num_fields($params->statement->object));
+        $this->setQueryColumns(odbc_num_fields($params->statement->object));
     }
 
     /**
@@ -246,7 +246,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ($this->exec($params->statement->object, array_values($argument))) {
                 if ($this->getQueryColumns() === 0) {
                     $affectedRows++;
-                    $this->setAffectedRows((int) $affectedRows);
+                    $this->setAffectedRows($affectedRows);
                 }
             }
         }
@@ -255,7 +255,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private function internalBindParamArraySingle(object $params): void
@@ -281,7 +281,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 $this->setStatement(['results' => $results]);
                 $this->setQueryRows(count($results));
             } else {
-                $this->setAffectedRows((int) odbc_num_rows($params->statement->object));
+                $this->setAffectedRows(odbc_num_rows($params->statement->object));
             }
         }
     }
@@ -292,11 +292,11 @@ class StatementsHandler extends AbstractStatements implements IStatements
      * allowing for more precise parameter binding.
      *
      * @param mixed $preparedParams The prepared statement to bind variables to.
-     * @return mixed The prepared statement with bound variables.
+     * @return void The prepared statement with bound variables.
      */
-    private static function internalBindVariable(mixed $preparedParams): mixed
+    private static function internalBindVariable(mixed $preparedParams): void
     {
-        return Validations::detectTypes($preparedParams);
+        Validations::detectTypes($preparedParams);
     }
 
     /**
@@ -363,7 +363,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                         }
                         $this->setStatement(['results' => $results, 'statement' => $stmt]);
                         return $rows;
-                    })($statement) ?? 0
+                    })($statement)
                 );
             } else {
                 if (is_resource($statement)) {

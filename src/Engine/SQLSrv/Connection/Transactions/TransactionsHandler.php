@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Engine\SQLSRV\Connection\Transactions;
+namespace GenericDatabase\Engine\SQLSrv\Connection\Transactions;
 
 use ErrorException;
 use GenericDatabase\Interfaces\IConnection;

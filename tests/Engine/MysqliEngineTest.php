@@ -33,7 +33,6 @@ class MysqliEngineTest extends TestCase
         ];
 
         $this->connection = Chainable::nativeMySQLi($this->mysqlEnv, false, false);
-
     }
 
 

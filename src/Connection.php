@@ -154,7 +154,10 @@ class Connection implements IConnection, IConnectionStrategy
      * Empty constructor since initialization is handled through factory methods
      * and the Strategy pattern implementation
      */
-    public function __construct() {}
+    public function __construct()
+    {
+        // Empty constructor
+    }
 
     /**
      * Triggered when invoking inaccessible methods in an object context
@@ -222,7 +225,7 @@ class Connection implements IConnection, IConnectionStrategy
     /**
      * Get the strategy instance
      *
-     * @return IConnection 
+     * @return IConnection
      */
     public function getStrategy(): IConnection
     {

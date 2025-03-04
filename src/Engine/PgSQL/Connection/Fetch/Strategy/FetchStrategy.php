@@ -5,11 +5,12 @@ namespace GenericDatabase\Engine\PgSQL\Connection\Fetch\Strategy;
 use GenericDatabase\Interfaces\Connection\IFetchStrategy;
 use GenericDatabase\Helpers\Types\Specials\Resources;
 use GenericDatabase\Generic\Fetch\FetchCache;
-use \PgSql\Result;
+use PgSql\Result;
 
 class FetchStrategy implements IFetchStrategy
 {
-    use Resources, FetchCache;
+    use Resources;
+    use FetchCache;
 
     /**
      * Caches the results from a statement for future use

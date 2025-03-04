@@ -94,10 +94,17 @@
 </p>
 
         
-        
     
         
 
+            <div class="description">
+            <p><p>Handles the serialization process by preparing the object for serialization.</p></p>            <p><p>It stores non-empty 'property' fields in the property array and returns
+an array of object variable names to be serialized.</p>
+<p>Methods:</p>
+<ul>
+<li><code>__sleep(): array:</code> Sleep instance used by serialize/unserialize.</li>
+<li><code>__wakeup: void:</code> Wakeup instance used by serialize/unserialize</li>
+</ul></p>        </div>
             
                 <h2>Traits</h2>
 
@@ -106,7 +113,7 @@
                     <div class="row">
                 <div class="col-md-6">
                     <a href="../../GenericDatabase/Shared/Property.html"><abbr title="GenericDatabase\Shared\Property">Property</abbr></a>    </div>
-                <div class="col-md-6"></div>
+                <div class="col-md-6"><p>Trait Property</p></div>
             </div>
             </div>
     
@@ -143,13 +150,12 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method___sleep">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Transporter.php#L14">at line 14</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Transporter.php#L23">at line 23</a></div>
         <code>                    array
     <strong>__sleep</strong>()
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -176,13 +182,12 @@
             </div>
                     <div class="method-item">
                     <h3 id="method___wakeup">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Transporter.php#L30">at line 30</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Transporter.php#L39">at line 39</a></div>
         <code>                    void
     <strong>__wakeup</strong>()
         </code>
     </h3>
     <div class="details">    
-            
     
             
 

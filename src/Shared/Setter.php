@@ -2,6 +2,10 @@
 
 namespace GenericDatabase\Shared;
 
+/**
+ * Methods:
+ * - `__set(string $name, mixed $value): void:` Magic method to set the value of inaccessible or non-existing properties.
+ */
 trait Setter
 {
     use Property;

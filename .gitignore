@@ -505,5 +505,6 @@ composer.lock
 /.stubs/
 /.vscode/
 
-resources/database/firebird/system/security3.fdb
+*/security3.fdb
 .todo
+.reminder.md

@@ -10,7 +10,8 @@ use SQLite3Result;
 
 class FetchStrategy implements IFetchStrategy
 {
-    use Resources, FetchCache;
+    use Resources;
+    use FetchCache;
 
     /**
      * Caches the results from a statement for future use

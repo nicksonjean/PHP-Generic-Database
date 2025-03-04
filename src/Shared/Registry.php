@@ -6,6 +6,23 @@ use ReflectionClass;
 use ReflectionException;
 use GenericDatabase\Helpers\Exceptions;
 
+/**
+ * Trait Registry
+ *
+ * Provides a mechanism to manage a collection of items within a class.
+ * Ensures the collection is initialized and accessible, allowing items
+ * to be added, retrieved, checked for existence, and removed.
+ *
+ * Methods:
+ * - `ensureCollectionExists(): array:` Ensures the collection property exists and is initialized.
+ * - `initializeCollection(): void:` Initializes the collection property if it does not exist.
+ * - `add(mixed $object, string|null $name): void:` Adds an item to the collection.
+ * - `get(string $name): mixed:` Retrieves an item from the collection by name.
+ * - `contains(string $name): bool:` Checks if an item exists in the collection.
+ * - `remove(string $name): void:` Removes an item from the collection by name.
+ *
+ * @throws ReflectionException
+ */
 trait Registry
 {
     /**

@@ -2,6 +2,7 @@
 
 namespace GenericDatabase\Abstract;
 
+use AllowDynamicProperties;
 use ReflectionException;
 use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Interfaces\IConnection;
@@ -9,37 +10,91 @@ use GenericDatabase\Interfaces\Connection\IFetchAbstract;
 use GenericDatabase\Interfaces\Connection\IFetchStrategy;
 
 /**
- * Abstract base class implementing the template methods for fetching
+ * The `GenericDatabase\Abstract\AbstractFetch` class implements the `IFetchAbstract` interface
+ * and serves as a base class for fetching data in a generic database context. It manages the 
+ * database connection and the fetch strategy, and provides a set of methods for fetching data 
+ * in various formats (e.g., as objects, associative arrays, numeric arrays, etc.).
+ * 
+ * Main functionalities:
+ * - Manages the database connection and fetch strategy.
+ * - Provides a base implementation for fetching data from a database using a generic approach.
+ * - Supports fetching data in various formats (e.g., as objects, associative arrays, numeric arrays, etc.).
+ * - Acts as a foundation for implementing the IFetchAbstract interface.
+ *
+ * Methods:
+ * - `getStrategy(): IFetchStrategy:` Returns the current fetch strategy.
+ * - `getInstance(): IConnection:` Returns the database connection instance.
+ * - `setStrategy(IFetchStrategy $strategy): void:` Sets the fetch strategy.
+ * - `internalFetchAssoc(): array|false|null:` Fetches the current row as an associative array.
+ * - `internalFetchNum(): array|false|null:` Fetches the current row as a numeric array.
+ * - `internalFetchBoth(): bool|array:` Fetches the current row as both an associative and a numeric array.
+ * - `internalFetchColumn(int $columnIndex = 0): false|string:` Fetches a single value from the result set, or false if there are no more rows.
+ * - `internalFetchClass(?array $constructorArguments = null, ?string $aClassOrObject = '\stdClass'): object|false:` Fetches a single row from the result set as an object.
+ * - `internalFetchAllAssoc(): array:` Fetches all rows from the result set as an associative array, or an empty array if there are no more rows.
+ * - `internalFetchAllNum(): array:` Fetches all rows from the result set as a numeric array, or an empty array if there are no more rows.
+ * - `internalFetchAllBoth(): array:` Fetches all rows from the result set as an array of arrays, where each row is both numerically and associatively indexed.
+ * - `internalFetchAllColumn(int $columnIndex = 0): array:` Fetches all values of a single column from the result set as an array of strings.
+ * - `internalFetchAllClass(?array $constructorArguments = [], ?string $aClassOrObject = '\stdClass'): array:` Fetches all rows from the result set as an array of objects, each one being an instance of the provided class.
+ * 
+ * Fields:
+ * - `$instance`: The connection instance used for dynamic operations.
+ * - `$fetchStrategy`: The options handler for managing configuration.
+ * 
+ * Concrete implementations of this class should inherit from `AbstractFetch` and provide their own implementation of the database connection and fetch strategy.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Abstract
+ * @category Database
+ * @abstract
  */
+#[AllowDynamicProperties]
 abstract class AbstractFetch implements IFetchAbstract
 {
-    protected static IFetchStrategy $fetchStrategy;
-
+    /** @var IConnection Database connection instance */
     protected static IConnection $instance;
 
+    /** @var IFetchStrategy Strategy for fetching results */
+    protected static IFetchStrategy $fetchStrategy;
+
+    /**
+     * Initialize fetch abstraction with connection and strategy
+     * 
+     * @param IConnection $instance Database connection instance
+     * @param IFetchStrategy $fetchStrategy Strategy for fetching results
+     */
     public function __construct(IConnection $instance, IFetchStrategy $fetchStrategy)
     {
         self::$instance = $instance;
         self::$fetchStrategy = $fetchStrategy;
     }
 
+    /**
+     * Get the current fetch strategy
+     * 
+     * @return IFetchStrategy Current fetch strategy instance
+     */
     public function getStrategy(): IFetchStrategy
     {
         return self::$fetchStrategy;
     }
 
+    /**
+     * Get the database connection instance
+     * 
+     * @return IConnection Current database connection instance
+     */
     public function getInstance(): IConnection
     {
         return self::$instance;
     }
 
     /**
-     * Fetches a single row from the result set, or false if there are no more rows.
+     * Fetches a single row from the result set as an object
      *
-     * @param array|null $constructorArguments Arguments to pass to the class constructor.
-     * @param string|null $aClassOrObject Class name or object to hydrate.
-     * @return object|false
-     * @throws ReflectionException
+     * @param array|null $constructorArguments Arguments to pass to class constructor
+     * @param string|null $aClassOrObject Class name or object to hydrate
+     * @return object|false Object instance or false if no more rows
+     * @throws ReflectionException If reflection fails
      */
     public function internalFetchClass(?array $constructorArguments = null, ?string $aClassOrObject = '\stdClass'): object|false
     {
@@ -116,7 +171,7 @@ abstract class AbstractFetch implements IFetchAbstract
     /**
      * Fetches the current row as a numeric array.
      *
-     * @return bool|array|null Returns a numeric array if successful, null if no row was found, or false on failure.
+     * @return array|false|null Returns a numeric array if successful, null if no row was found, or false on failure.
      */
     public function internalFetchNum(): array|false|null
     {

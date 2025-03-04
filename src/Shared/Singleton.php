@@ -2,6 +2,20 @@
 
 namespace GenericDatabase\Shared;
 
+/**
+ * Trait Singleton
+ *
+ * This trait provides methods to manage a single instance of a class or multiple
+ * instances identified by a unique hash. It includes methods to get, create, set,
+ * and clear instances.
+ *
+ * Methods:
+ * - `getInstance(): self:` Retrieves an existing instance or creates a new one.
+ * - `newInstance(): self:` Creates a new instance and sets it as the current instance.
+ * - `setInstance(): void:` Sets a specific instance, optionally identified by a hash.
+ * - `clearInstance(): void:` Clears a specific instance or the default instance.
+ * - `clearAllInstances(): void:` Clears all instances, including the default one.
+ */
 trait Singleton
 {
     /**

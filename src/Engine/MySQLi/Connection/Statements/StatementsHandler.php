@@ -44,7 +44,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 return (int) $maxIndex;
             }
         }
-        return (int) $autoKey['COLUMN_NAME'] ?? 0;
+        return (int) $autoKey['COLUMN_NAME'];
     }
 
     /**
@@ -112,7 +112,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ($this->exec($this->getStatement())) {
                 if ($this->getQueryColumns() === 0) {
                     $affectedRows++;
-                    $this->setAffectedRows((int) $affectedRows);
+                    $this->setAffectedRows($affectedRows);
                 }
             }
         }
@@ -121,7 +121,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private function internalBindParamArraySingle(object $params): void
@@ -241,7 +241,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                         $results = $result->fetch_all(MYSQLI_ASSOC);
                         $this->setStatement(['results' => $results]);
                         return $result->num_rows;
-                    })($statement) ?? 0
+                    })($statement)
                 );
             } else {
                 $this->setStatement(['results' => []]);

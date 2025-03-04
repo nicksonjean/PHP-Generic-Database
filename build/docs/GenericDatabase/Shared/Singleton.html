@@ -94,10 +94,21 @@
 </p>
 
         
-        
     
         
 
+            <div class="description">
+            <p><p>Trait Singleton</p></p>            <p><p>This trait provides methods to manage a single instance of a class or multiple
+instances identified by a unique hash. It includes methods to get, create, set,
+and clear instances.</p>
+<p>Methods:</p>
+<ul>
+<li><code>getInstance(): self:</code> Retrieves an existing instance or creates a new one.</li>
+<li><code>newInstance(): self:</code> Creates a new instance and sets it as the current instance.</li>
+<li><code>setInstance(): void:</code> Sets a specific instance, optionally identified by a hash.</li>
+<li><code>clearInstance(): void:</code> Clears a specific instance or the default instance.</li>
+<li><code>clearAllInstances(): void:</code> Clears all instances, including the default one.</li>
+</ul></p>        </div>
             
         
     
@@ -165,13 +176,12 @@ If hash is provided, creates/returns instance for that hash</p></p>             
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_getInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L29">at line 29</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L39">at line 39</a></div>
         <code>        static            <a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
     <strong>getInstance</strong>(string|null $hash = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -210,13 +220,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_newInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L50">at line 50</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L60">at line 60</a></div>
         <code>        static            <a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
     <strong>newInstance</strong>(string|null $hash = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -253,13 +262,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_setInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L68">at line 68</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L78">at line 78</a></div>
         <code>        static            void
     <strong>setInstance</strong>(<a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> $instance, string|null $hash = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -301,13 +309,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_clearInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L84">at line 84</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L94">at line 94</a></div>
         <code>        static            void
     <strong>clearInstance</strong>(string|null $hash = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -344,13 +351,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_clearAllInstances">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L99">at line 99</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L109">at line 109</a></div>
         <code>        static            void
     <strong>clearAllInstances</strong>()
         </code>
     </h3>
     <div class="details">    
-            
     
             
 

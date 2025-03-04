@@ -531,7 +531,7 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     public function bindParam(object $params): void

@@ -59,9 +59,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
         $string = reset($params);
         return match (true) {
@@ -76,7 +76,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     /**
      * Binds a parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     public function bindParam(object $params): void
@@ -119,7 +119,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ($this->exec($params->statement->object, array_values($param))) {
                 if ($this->getQueryColumns() === 0) {
                     $affectedRows++;
-                    $this->setAffectedRows((int) $affectedRows);
+                    $this->setAffectedRows($affectedRows);
                 }
             }
         }
@@ -157,7 +157,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                         }
                         $this->setStatement(['results' => $results]);
                         return $rows;
-                    })($params->statement->object) ?? 0
+                    })($params->statement->object)
                 );
             } else {
                 $this->setAffectedRows((int) sqlsrv_rows_affected($params->statement->object));
@@ -199,7 +199,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
      * @return mixed The result of the query, either a statement resource or false.
      * @throws Exception If the query fails to execute.
      */
-    private function sqlsrv_query(string $query, array $params = [], array $options = []): mixed
+    private function sqlsrvQuery(string $query, array $params = [], array $options = []): mixed
     {
         $statement = sqlsrv_query($this->getInstance()->getConnection(), $query, $params, $options);
         if ($statement === false) {
@@ -214,6 +214,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
      *
      * @param mixed ...$params
      * @return mixed
+     * @throws Exception
      */
     private function prepareStatement(mixed ...$params): mixed
     {
@@ -226,12 +227,13 @@ class StatementsHandler extends AbstractStatements implements IStatements
         $this->setAllMetadata();
         if (!empty($params)) {
             $bindParams = Schemas::makeArgs([null, ...$params]);
+            $statement = null;
             if ($bindParams->by->array) {
                 foreach (($bindParams->is->array->multi ? $bindParams->query->arguments : [$bindParams->query->arguments]) as $bindParam) {
-                    $statement = self::sqlsrv_query($this->parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
+                    $statement = self::sqlsrvQuery($this->parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
                 }
             } else {
-                $statement = self::sqlsrv_query($this->parse(...$params));
+                $statement = self::sqlsrvQuery($this->parse(...$params));
             }
             if ($statement) {
                 $this->setStatement($statement);
@@ -246,6 +248,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
      *
      * @param mixed $params Statement to be queried
      * @return IConnection
+     * @throws Exception
      */
     public function query(mixed ...$params): IConnection
     {
@@ -263,7 +266,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                         }
                         $this->setStatement(['results' => $results, 'statement' => $stmt]);
                         return $rows;
-                    })($statement) ?? 0
+                    })($statement)
                 );
             } else {
                 $this->setAffectedRows(sqlsrv_rows_affected($statement));
@@ -278,6 +281,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
      *
      * @param mixed ...$params
      * @return IConnection
+     * @throws Exception
      */
     public function prepare(mixed ...$params): IConnection
     {

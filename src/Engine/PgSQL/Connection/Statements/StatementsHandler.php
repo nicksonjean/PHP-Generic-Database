@@ -11,7 +11,7 @@ use GenericDatabase\Helpers\Schemas;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
-use \PgSql\Result;
+use PgSql\Result;
 
 /**
  * Concrete implementation for PgSQL database
@@ -37,7 +37,8 @@ class StatementsHandler extends AbstractStatements implements IStatements
     /**
      * Sets the statement for the function.
      *
-     * @param string $statement The statement to be set.
+     * @param string $stmtName
+     * @return void
      */
     public function setStmtName(string $stmtName): void
     {
@@ -164,7 +165,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ($this->exec($this->getStmtName(), array_values($argument))) {
                 if ($this->getQueryColumns() === 0) {
                     $affectedRows++;
-                    $this->setAffectedRows((int) $affectedRows);
+                    $this->setAffectedRows($affectedRows);
                 }
             }
         }
@@ -173,7 +174,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private function internalBindParamArraySingle(object $params): void
@@ -204,7 +205,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                         }
                         $this->setStatement(['results' => $results]);
                         return $rows;
-                    })($result) ?? 0
+                    })($result)
                 );
             } else {
                 $this->setStatement(['results' => []]);
@@ -220,11 +221,11 @@ class StatementsHandler extends AbstractStatements implements IStatements
      * allowing for more precise parameter binding.
      *
      * @param mixed $preparedParams The prepared statement to bind variables to.
-     * @return mixed The prepared statement with bound variables.
+     * @return void The prepared statement with bound variables.
      */
-    private static function internalBindVariable(mixed $preparedParams): mixed
+    private static function internalBindVariable(mixed $preparedParams): void
     {
-        return Validations::detectTypes($preparedParams);
+        Validations::detectTypes($preparedParams);
     }
 
     /**

@@ -2,6 +2,15 @@
 
 namespace GenericDatabase\Shared;
 
+/**
+ * Handles the serialization process by preparing the object for serialization.
+ * It stores non-empty 'property' fields in the property array and returns
+ * an array of object variable names to be serialized.
+ *
+ * Methods:
+ * - `__sleep(): array:` Sleep instance used by serialize/unserialize.
+ * - `__wakeup: void:` Wakeup instance used by serialize/unserialize
+ */
 trait Transporter
 {
     use Property;

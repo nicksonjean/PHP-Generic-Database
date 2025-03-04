@@ -21,7 +21,7 @@
     "**/sqlsrv.stub.php/**": true,
     "**/uuid.stub.php/**": true,
   },
-  "CodeGPT.apiKey": "Google AI Studio",
+  "CodeGPT.apiKey": "CodeGPT Plus Beta",
   "php.version": "8.3",
   "sqltools.connections": []
 }

@@ -90,10 +90,9 @@
 
     
     <p>        class
-    <strong>QueryBuilder</strong>        implements        <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>, <a href="../GenericDatabase/IQueryBuilderStrategy.html"><abbr title="GenericDatabase\IQueryBuilderStrategy">IQueryBuilderStrategy</abbr></a>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php">View source</a>)
+    <strong>QueryBuilder</strong>        implements        <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>, <a href="../GenericDatabase/Interfaces/Strategy/IQueryBuilderStrategy.html"><abbr title="GenericDatabase\Interfaces\Strategy\IQueryBuilderStrategy">IQueryBuilderStrategy</abbr></a>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php">View source</a>)
 </p>
 
-        
         
     
         
@@ -177,10 +176,9 @@ If hash is provided, creates/returns instance for that hash</p></p>             
                     
                 </div>
                 <div class="col-md-8">
-                    <a href="#method___construct">__construct</a>(<a href="../GenericDatabase/Connection.html"><abbr title="GenericDatabase\Connection">Connection</abbr></a> $context = null)
+                    <a href="#method___construct">__construct</a>(<a href="../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $context = null)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Constructor with context</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -188,7 +186,7 @@ If hash is provided, creates/returns instance for that hash</p></p>             
                     static&nbsp;<a href="../GenericDatabase/QueryBuilder.html"><abbr title="GenericDatabase\QueryBuilder">QueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_with">with</a>(<a href="../GenericDatabase/Connection.html"><abbr title="GenericDatabase\Connection">Connection</abbr></a> $context)
+                    <a href="#method_with">with</a>(<a href="../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $context)
         
                                             <p><p>Static initializer with context</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -198,14 +196,14 @@ If hash is provided, creates/returns instance for that hash</p></p>             
                     void
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_setStrategy">setStrategy</a>(<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a> $strategy)
+                    <a href="#method_setStrategy">setStrategy</a>(<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a> $strategy)
         
                                             <p><p>Defines the strategy instance</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
                     <a href="#method_getStrategy">getStrategy</a>()
@@ -215,266 +213,242 @@ If hash is provided, creates/returns instance for that hash</p></p>             
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_select">select</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_select">select</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Specifies the columns to select in the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_distinct">distinct</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_distinct">distinct</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Specifies that the query should return distinct results.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_from">from</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_from">from</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Specifies the table(s) to select from.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_join">join</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_join">join</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds a join clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_selfJoin">selfJoin</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_selfJoin">selfJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds a self join clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_leftJoin">leftJoin</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_leftJoin">leftJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds a left join clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_rightJoin">rightJoin</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_rightJoin">rightJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds a right join clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_innerJoin">innerJoin</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_innerJoin">innerJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an inner join clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_outerJoin">outerJoin</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_outerJoin">outerJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an outer join clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_crossJoin">crossJoin</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_crossJoin">crossJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds a cross join clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_on">on</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_on">on</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an ON clause to the current join.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_andOn">andOn</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_andOn">andOn</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an AND ON clause to the current join.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_orOn">orOn</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_orOn">orOn</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an OR ON clause to the current join.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_where">where</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_where">where</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds a WHERE clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_andWhere">andWhere</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_andWhere">andWhere</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an AND WHERE clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_orWhere">orWhere</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_orWhere">orWhere</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an OR WHERE clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_having">having</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_having">having</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds a HAVING clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_andHaving">andHaving</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_andHaving">andHaving</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an AND HAVING clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_orHaving">orHaving</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_orHaving">orHaving</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an OR HAVING clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_group">group</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_group">group</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds a GROUP BY clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_order">order</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_order">order</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an ORDER BY clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_orderAsc">orderAsc</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_orderAsc">orderAsc</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an ORDER BY clause with ASC sorting to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_orderDesc">orderDesc</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_orderDesc">orderDesc</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds an ORDER BY clause with DESC sorting to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+                    static&nbsp;<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_limit">limit</a>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+                    <a href="#method_limit">limit</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Adds a LIMIT clause to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -484,8 +458,7 @@ If hash is provided, creates/returns instance for that hash</p></p>             
                 <div class="col-md-8">
                     <a href="#method_build">build</a>()
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Builds the final SQL query string.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -495,8 +468,7 @@ If hash is provided, creates/returns instance for that hash</p></p>             
                 <div class="col-md-8">
                     <a href="#method_buildRaw">buildRaw</a>()
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Builds the final SQL query string without any modifications.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -506,8 +478,7 @@ If hash is provided, creates/returns instance for that hash</p></p>             
                 <div class="col-md-8">
                     <a href="#method_getValues">getValues</a>()
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Gets the values that will be bound to the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -517,8 +488,7 @@ If hash is provided, creates/returns instance for that hash</p></p>             
                 <div class="col-md-8">
                     <a href="#method_getAllMetadata">getAllMetadata</a>()
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Gets all the metadata associated with the query.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -528,19 +498,17 @@ If hash is provided, creates/returns instance for that hash</p></p>             
                 <div class="col-md-8">
                     <a href="#method_fetch">fetch</a>(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Executes the query and returns the result.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    <abbr title="GenericDatabase\array|bool">array|bool</abbr>
+                    <abbr title="GenericDatabase\Interfaces\array|bool">array|bool</abbr>
                 </div>
                 <div class="col-md-8">
                     <a href="#method_fetchAll">fetchAll</a>(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Executes the query and returns all the results.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
             </div>
@@ -552,13 +520,12 @@ If hash is provided, creates/returns instance for that hash</p></p>             
                     <div class="method-item">
                     <h3 id="method_getInstance">
         <div class="location">in <a href="../GenericDatabase/Shared/Singleton.html#method_getInstance">
-<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L29">at line 29</a></div>
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L25">at line 25</a></div>
         <code>        static            <a href="../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
     <strong>getInstance</strong>(string|null $hash = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -598,13 +565,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <div class="method-item">
                     <h3 id="method_newInstance">
         <div class="location">in <a href="../GenericDatabase/Shared/Singleton.html#method_newInstance">
-<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L50">at line 50</a></div>
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L46">at line 46</a></div>
         <code>        static            <a href="../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
     <strong>newInstance</strong>(string|null $hash = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -642,13 +608,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <div class="method-item">
                     <h3 id="method_setInstance">
         <div class="location">in <a href="../GenericDatabase/Shared/Singleton.html#method_setInstance">
-<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L68">at line 68</a></div>
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L64">at line 64</a></div>
         <code>        static            void
     <strong>setInstance</strong>(<a href="../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> $instance, string|null $hash = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -691,13 +656,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <div class="method-item">
                     <h3 id="method_clearInstance">
         <div class="location">in <a href="../GenericDatabase/Shared/Singleton.html#method_clearInstance">
-<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L84">at line 84</a></div>
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L80">at line 80</a></div>
         <code>        static            void
     <strong>clearInstance</strong>(string|null $hash = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -735,13 +699,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <div class="method-item">
                     <h3 id="method_clearAllInstances">
         <div class="location">in <a href="../GenericDatabase/Shared/Singleton.html#method_clearAllInstances">
-<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L99">at line 99</a></div>
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L95">at line 95</a></div>
         <code>        static            void
     <strong>clearAllInstances</strong>()
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -768,26 +731,24 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method___construct">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L39">at line 39</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L44">at line 44</a></div>
         <code>                    
-    <strong>__construct</strong>(<a href="../GenericDatabase/Connection.html"><abbr title="GenericDatabase\Connection">Connection</abbr></a> $context = null)
+    <strong>__construct</strong>(<a href="../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $context = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Constructor with context</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><a href="../GenericDatabase/Connection.html"><abbr title="GenericDatabase\Connection">Connection</abbr></a></td>
+                <td><a href="../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
                 <td>$context</td>
                 <td></td>
             </tr>
@@ -812,13 +773,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_with">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L52">at line 52</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L58">at line 58</a></div>
         <code>        static            <a href="../GenericDatabase/QueryBuilder.html"><abbr title="GenericDatabase\QueryBuilder">QueryBuilder</abbr></a>
-    <strong>with</strong>(<a href="../GenericDatabase/Connection.html"><abbr title="GenericDatabase\Connection">Connection</abbr></a> $context)
+    <strong>with</strong>(<a href="../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $context)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -830,7 +790,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><a href="../GenericDatabase/Connection.html"><abbr title="GenericDatabase\Connection">Connection</abbr></a></td>
+                <td><a href="../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
                 <td>$context</td>
                 <td></td>
             </tr>
@@ -847,6 +807,15 @@ If hash is provided, creates/returns instance for that hash</p></p>
     </table>
 
             
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/Exception">Exception</a></td>
+                <td></td>
+            </tr>
+            </table>
+
             
             
                     </div>
@@ -855,13 +824,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_setStrategy">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L65">at line 65</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L71">at line 71</a></div>
         <code>                    void
-    <strong>setStrategy</strong>(<a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a> $strategy)
+    <strong>setStrategy</strong>(<a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a> $strategy)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -873,7 +841,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
+                <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
                 <td>$strategy</td>
                 <td></td>
             </tr>
@@ -898,13 +866,12 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_getStrategy">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L75">at line 75</a></div>
-        <code>                    <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L81">at line 81</a></div>
+        <code>                    <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
     <strong>getStrategy</strong>()
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
@@ -917,7 +884,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
             <td></td>
         </tr>
     </table>
@@ -931,28 +898,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_select">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L113">at line 113</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>select</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L119">at line 119</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>select</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Specifies the columns to select in the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The columns to select.</p></td>
             </tr>
             </table>
 
@@ -961,8 +926,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -975,28 +940,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_distinct">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L119">at line 119</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>distinct</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L125">at line 125</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>distinct</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Specifies that the query should return distinct results.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The columns to select distinctly.</p></td>
             </tr>
             </table>
 
@@ -1005,8 +968,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1019,28 +982,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_from">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L125">at line 125</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>from</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L131">at line 131</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>from</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Specifies the table(s) to select from.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The table(s) to select from.</p></td>
             </tr>
             </table>
 
@@ -1049,8 +1010,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1063,28 +1024,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_join">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L131">at line 131</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>join</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L137">at line 137</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>join</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds a join clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The join clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1093,8 +1052,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1107,28 +1066,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_selfJoin">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L137">at line 137</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>selfJoin</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L143">at line 143</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>selfJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds a self join clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The self join clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1137,8 +1094,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1151,28 +1108,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_leftJoin">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L143">at line 143</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>leftJoin</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L149">at line 149</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>leftJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds a left join clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The left join clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1181,8 +1136,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1195,28 +1150,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_rightJoin">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L149">at line 149</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>rightJoin</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L155">at line 155</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>rightJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds a right join clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The right join clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1225,8 +1178,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1239,28 +1192,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_innerJoin">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L155">at line 155</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>innerJoin</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L161">at line 161</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>innerJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an inner join clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The inner join clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1269,8 +1220,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1283,28 +1234,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_outerJoin">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L161">at line 161</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>outerJoin</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L167">at line 167</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>outerJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an outer join clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The outer join clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1313,8 +1262,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1327,28 +1276,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_crossJoin">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L167">at line 167</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>crossJoin</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L173">at line 173</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>crossJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds a cross join clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The cross join clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1357,8 +1304,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1371,28 +1318,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_on">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L173">at line 173</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>on</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L179">at line 179</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>on</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an ON clause to the current join.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The ON clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1401,8 +1346,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1415,28 +1360,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_andOn">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L179">at line 179</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>andOn</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L185">at line 185</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>andOn</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an AND ON clause to the current join.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The AND ON clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1445,8 +1388,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1459,28 +1402,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_orOn">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L185">at line 185</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>orOn</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L191">at line 191</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>orOn</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an OR ON clause to the current join.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The OR ON clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1489,8 +1430,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1503,28 +1444,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_where">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L191">at line 191</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>where</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L197">at line 197</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>where</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds a WHERE clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The WHERE clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1533,8 +1472,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1547,28 +1486,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_andWhere">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L197">at line 197</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>andWhere</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L203">at line 203</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>andWhere</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an AND WHERE clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The AND WHERE clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1577,8 +1514,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1591,28 +1528,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_orWhere">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L203">at line 203</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>orWhere</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L209">at line 209</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>orWhere</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an OR WHERE clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The OR WHERE clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1621,8 +1556,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1635,28 +1570,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_having">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L209">at line 209</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>having</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L215">at line 215</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>having</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds a HAVING clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The HAVING clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1665,8 +1598,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1679,28 +1612,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_andHaving">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L215">at line 215</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>andHaving</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L221">at line 221</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>andHaving</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an AND HAVING clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The AND HAVING clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1709,8 +1640,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1723,28 +1654,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_orHaving">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L221">at line 221</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>orHaving</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L227">at line 227</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>orHaving</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an OR HAVING clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The OR HAVING clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1753,8 +1682,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1767,28 +1696,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_group">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L227">at line 227</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>group</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L233">at line 233</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>group</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds a GROUP BY clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The GROUP BY clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1797,8 +1724,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1811,28 +1738,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_order">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L233">at line 233</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>order</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L239">at line 239</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>order</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an ORDER BY clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The ORDER BY clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1841,8 +1766,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1855,28 +1780,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_orderAsc">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L239">at line 239</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>orderAsc</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L245">at line 245</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>orderAsc</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an ORDER BY clause with ASC sorting to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The ORDER BY clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1885,8 +1808,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1899,28 +1822,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_orderDesc">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L245">at line 245</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>orderDesc</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L251">at line 251</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>orderDesc</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds an ORDER BY clause with DESC sorting to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The ORDER BY clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1929,8 +1850,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1943,28 +1864,26 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_limit">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L251">at line 251</a></div>
-        <code>        static            <a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a>
-    <strong>limit</strong>(<abbr title="GenericDatabase\array|string">array|string</abbr> ...$data)
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L257">at line 257</a></div>
+        <code>        static            <a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>limit</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Adds a LIMIT clause to the query.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="GenericDatabase\array|string">array|string</abbr></td>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
                 <td>...$data</td>
-                <td></td>
+                <td><p>The LIMIT clause parameters.</p></td>
             </tr>
             </table>
 
@@ -1973,8 +1892,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../GenericDatabase/IQueryBuilder.html"><abbr title="GenericDatabase\IQueryBuilder">IQueryBuilder</abbr></a></td>
-            <td></td>
+            <td><a href="../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
         </tr>
     </table>
 
@@ -1987,19 +1906,17 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_build">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L257">at line 257</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L263">at line 263</a></div>
         <code>                    string
     <strong>build</strong>()
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Builds the final SQL query string.</p></p>                        
         </div>
         <div class="tags">
             
@@ -2008,7 +1925,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <table class="table table-condensed">
         <tr>
             <td>string</td>
-            <td></td>
+            <td><p>The SQL query string.</p></td>
         </tr>
     </table>
 
@@ -2021,19 +1938,17 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_buildRaw">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L262">at line 262</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L268">at line 268</a></div>
         <code>                    string
     <strong>buildRaw</strong>()
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Builds the final SQL query string without any modifications.</p></p>                        
         </div>
         <div class="tags">
             
@@ -2042,7 +1957,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <table class="table table-condensed">
         <tr>
             <td>string</td>
-            <td></td>
+            <td><p>The raw SQL query string.</p></td>
         </tr>
     </table>
 
@@ -2055,19 +1970,17 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_getValues">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L267">at line 267</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L273">at line 273</a></div>
         <code>                    array
     <strong>getValues</strong>()
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Gets the values that will be bound to the query.</p></p>                        
         </div>
         <div class="tags">
             
@@ -2076,7 +1989,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <table class="table table-condensed">
         <tr>
             <td>array</td>
-            <td></td>
+            <td><p>The bound values.</p></td>
         </tr>
     </table>
 
@@ -2089,19 +2002,17 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_getAllMetadata">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L272">at line 272</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L278">at line 278</a></div>
         <code>                    object
     <strong>getAllMetadata</strong>()
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Gets all the metadata associated with the query.</p></p>                        
         </div>
         <div class="tags">
             
@@ -2110,7 +2021,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <table class="table table-condensed">
         <tr>
             <td>object</td>
-            <td></td>
+            <td><p>The query metadata.</p></td>
         </tr>
     </table>
 
@@ -2123,19 +2034,17 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_fetch">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L277">at line 277</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L283">at line 283</a></div>
         <code>                    mixed
     <strong>fetch</strong>(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Executes the query and returns the result.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -2144,17 +2053,17 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <tr>
                 <td>int</td>
                 <td>$fetchStyle</td>
-                <td></td>
+                <td><p>The fetch style to use.</p></td>
             </tr>
                     <tr>
                 <td>mixed</td>
                 <td>$fetchArgument</td>
-                <td></td>
+                <td><p>The fetch argument to use.</p></td>
             </tr>
                     <tr>
                 <td>mixed</td>
                 <td>$optArgs</td>
-                <td></td>
+                <td><p>Additional options for the fetch operation.</p></td>
             </tr>
             </table>
 
@@ -2164,7 +2073,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <table class="table table-condensed">
         <tr>
             <td>mixed</td>
-            <td></td>
+            <td><p>The query result.</p></td>
         </tr>
     </table>
 
@@ -2177,19 +2086,17 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchAll">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L282">at line 282</a></div>
-        <code>                    <abbr title="GenericDatabase\array|bool">array|bool</abbr>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/QueryBuilder.php#L288">at line 288</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\array|bool">array|bool</abbr>
     <strong>fetchAll</strong>(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
         </code>
     </h3>
     <div class="details">    
-            
     
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Executes the query and returns all the results.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -2198,17 +2105,17 @@ If hash is provided, creates/returns instance for that hash</p></p>
                     <tr>
                 <td>int</td>
                 <td>$fetchStyle</td>
-                <td></td>
+                <td><p>The fetch style to use.</p></td>
             </tr>
                     <tr>
                 <td>mixed</td>
                 <td>$fetchArgument</td>
-                <td></td>
+                <td><p>The fetch argument to use.</p></td>
             </tr>
                     <tr>
                 <td>mixed</td>
                 <td>$optArgs</td>
-                <td></td>
+                <td><p>Additional options for the fetch operation.</p></td>
             </tr>
             </table>
 
@@ -2217,8 +2124,8 @@ If hash is provided, creates/returns instance for that hash</p></p>
 
                     <table class="table table-condensed">
         <tr>
-            <td><abbr title="GenericDatabase\array|bool">array|bool</abbr></td>
-            <td></td>
+            <td><abbr title="GenericDatabase\Interfaces\array|bool">array|bool</abbr></td>
+            <td><p>The query results or false on failure.</p></td>
         </tr>
     </table>
 

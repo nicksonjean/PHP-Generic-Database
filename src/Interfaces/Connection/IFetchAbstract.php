@@ -34,7 +34,7 @@ interface IFetchAbstract
     /**
      * Fetches the current row as a numeric array.
      *
-     * @return bool|array|null Returns a numeric array if successful, null if no row was found, or false on failure.
+     * @return array|false|null Returns a numeric array if successful, null if no row was found, or false on failure.
      */
     public function internalFetchNum(): array|false|null;
 

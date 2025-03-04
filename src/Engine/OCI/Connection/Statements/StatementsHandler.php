@@ -50,9 +50,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
         $string = reset($params);
         return match (true) {
@@ -110,7 +110,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ($this->exec($this->getStatement())) {
                 if ($this->getQueryColumns() === 0) {
                     $affectedRows++;
-                    $this->setAffectedRows((int) $affectedRows);
+                    $this->setAffectedRows($affectedRows);
                 }
             }
         }
@@ -119,7 +119,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private function internalBindParamArraySingle(object $params): void
@@ -148,7 +148,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                         }
                         $this->setStatement(['results' => $results]);
                         return $rows;
-                    })($this->getStatement()) ?? 0
+                    })($this->getStatement())
                 );
             } else {
                 $this->setAffectedRows((int) oci_num_rows($this->getStatement()));
@@ -161,9 +161,8 @@ class StatementsHandler extends AbstractStatements implements IStatements
      * This method binds variables to a prepared statement based on their types,
      * allowing for more precise parameter binding.
      *
+     * @param array $params
      * @param mixed $statement An array containing the parameters to bind.
-     * @param mixed $param The prepared statement to bind variables to.
-     * @param mixed $value The prepared statement to bind variables to.
      * @return mixed
      */
     private static function internalBindVariable(array $params, mixed $statement): mixed
@@ -233,7 +232,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                         }
                         $this->setStatement(['results' => $results, 'statement' => $stmt]);
                         return $rows;
-                    })($statement) ?? 0
+                    })($statement)
                 );
             } else {
                 $this->setAffectedRows(oci_num_rows($statement));

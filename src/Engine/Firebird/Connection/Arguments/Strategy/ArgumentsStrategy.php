@@ -9,10 +9,19 @@ use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Engine\Firebird\Connection\Arguments\ArgumentsHandler;
 use ReflectionException;
 
+/**
+ * Class ArgumentsStrategy
+ * Implements the IArgumentsStrategy interface to provide methods for obtaining instances and options handlers.
+ */
 class ArgumentsStrategy implements IArgumentsStrategy
 {
     /**
-     * Obtém a instância de conexão a partir de ArgumentsHandler
+     * Retrieves an instance of IConnection.
+     *
+     * This method returns an instance of IConnection by calling the getInstance method
+     * of the ArgumentsHandler class.
+     *
+     * @return IConnection An instance of IConnection.
      */
     public function getInstance(): IConnection
     {
@@ -20,7 +29,12 @@ class ArgumentsStrategy implements IArgumentsStrategy
     }
 
     /**
-     * Obtém o manipulador de opções a partir de ArgumentsHandler
+     * Retrieves the options handler.
+     *
+     * This method returns an instance of IOptions by calling the static method
+     * getOptionsHandler() from the ArgumentsHandler class.
+     *
+     * @return IOptions The options handler instance.
      */
     public function getOptionsHandler(): IOptions
     {
@@ -28,10 +42,14 @@ class ArgumentsStrategy implements IArgumentsStrategy
     }
 
     /**
-     * Transform variables in constants
+     * Sets the constant options for the Firebird connection.
      *
-     * @param array $value
-     * @return array
+     * This method uses the Generators::setConstant function to set the constant options
+     * for the Firebird connection. It then updates the options handler with the new options
+     * and returns the updated options.
+     *
+     * @param array $value The array of values to be set as constants.
+     * @return array The updated options after setting the constants.
      * @throws ReflectionException
      */
     public function setConstant(array $value): array

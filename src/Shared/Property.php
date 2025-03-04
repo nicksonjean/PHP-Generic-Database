@@ -2,6 +2,15 @@
 
 namespace GenericDatabase\Shared;
 
+/**
+ * Trait Property
+ *
+ * Provides a private array property intended for use with
+ * magic setter and getter methods.
+ *
+ * Fields:
+ * - `$property`: The name of the property to access.
+ */
 trait Property
 {
     /**

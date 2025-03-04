@@ -31,6 +31,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         $filter = 'WHERE RDB$RELATION_NAME = ? AND RDB$IDENTITY_TYPE = 1';
         $query = sprintf('SELECT RDB$FIELD_NAME, RDB$GENERATOR_NAME FROM RDB$RELATION_FIELDS %s', $filter);
         $stmt = ibase_prepare($this->getInstance()->getConnection(), $query);
+        /** @var bool|resource|object $result */
         $result = ibase_execute($stmt, $name);
         if (!$result) {
             return false;
@@ -39,6 +40,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         if (isset($row['RDB$GENERATOR_NAME'])) {
             $identityColumn = $row['RDB$GENERATOR_NAME'];
             $query = sprintf('SELECT GEN_ID(%s, 0) AS LASTINSERTEDID FROM RDB$DATABASE', $identityColumn);
+            /** @var bool|resource|object $stmt */
             $stmt = ibase_query($this->getInstance()->getConnection(), $query);
             if (!$stmt) {
                 return false;
@@ -55,9 +57,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
      * This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).
      *
      * @param mixed $params Content to be quoted
-     * @return mixed
+     * @return string|int
      */
-    public function quote(mixed ...$params): mixed
+    public function quote(mixed ...$params): string|int
     {
         $string = reset($params);
         return match (true) {
@@ -114,7 +116,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ($this->exec($params->statement->object, array_values($argument))) {
                 if ($this->getQueryColumns() === 0) {
                     $affectedRows++;
-                    $this->setAffectedRows((int) $affectedRows);
+                    $this->setAffectedRows($affectedRows);
                 }
             }
         }
@@ -123,7 +125,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     /**
      * Binds an array single parameter to a variable in the SQL statement.
      *
-     * @param mixed $params The name of the parameter or an array of parameters and values.
+     * @param object $params The name of the parameter or an array of parameters and values.
      * @return void
      */
     private function internalBindParamArraySingle(object $params): void
@@ -144,7 +146,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
             $this->setStatement($stmt);
             $colCount = is_resource($params->statement->object) ? ibase_num_fields($params->statement->object) : 0;
             if ($colCount > 0) {
-                $this->setQueryColumns((int) $colCount);
+                $this->setQueryColumns($colCount);
                 $rowCount = 0;
                 $rows = [];
                 while ($line = ibase_fetch_assoc($stmt)) {
@@ -155,7 +157,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 $this->setStatement(['results' => $rows]);
             } else {
                 $this->setStatement(['results' => []]);
-                $this->setAffectedRows((int) ibase_affected_rows($this->getInstance()->getConnection()));
+                $this->setAffectedRows(ibase_affected_rows($this->getInstance()->getConnection()));
             }
         }
     }

@@ -2,6 +2,23 @@
 
 namespace GenericDatabase\Shared;
 
+/**
+ * Trait Objectable
+ *
+ * Provides magic methods for dynamic property access and manipulation,
+ * including getter, setter, isset, and unset operations. Supports serialization
+ * and deserialization through __sleep and __wakeup methods. Converts object
+ * properties to an associative array with the toArray method.
+ * 
+ * Methods:
+ * - `__get(string $name): mixed:` Magic getter method
+ * - `__set(string $name, mixed $value): void:` Magic setter method to dynamically set properties.
+ * - `__isset(string $name): bool:` This method is triggered by calling isset() or empty() on inaccessible (protected or private) or non-existing properties.
+ * - `__unset(string $name): void:` This method is invoked when unset() is used on inaccessible (protected or private) or non-existing properties.
+ * - `__sleep(): array:` Sleep instance used by serialize/unserialize
+ * - `__wakeup(): void:` Wakeup instance used by serialize/unserialize
+ * - `toArray(): array:` Returns the object properties as an associative array
+ */
 trait Objectable
 {
     /**
@@ -10,7 +27,7 @@ trait Objectable
      * @param string $name Name of the property to access
      * @return mixed|null The value of the property, or null if it does not exist
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         return $this->$name ?? ($this->$name = new self());
     }
@@ -26,7 +43,7 @@ trait Objectable
      * @param mixed $value Value to assign to the property
      * @return void
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         if (is_array($value) && isset($this->$name) && $this->$name instanceof self) {
             foreach ($value as $k => $v) {
@@ -76,14 +93,14 @@ trait Objectable
      *
      * @return void
      */
-    public function __wakeup() {}
+    public function __wakeup(): void {}
 
     /**
      * Returns the object properties as an associative array
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $result = [];
         foreach (get_object_vars($this) as $key => $value) {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Doctum\Doctum;
@@ -9,7 +10,7 @@ $dir = __DIR__ . '/src';
 $iterator = Finder::create()
     ->files()
     ->name('*.php')
-    ->in(__DIR__ . '/src');
+    ->in($dir);
 
 return new Doctum($iterator, [
     'title' => 'PHP Generic Database Documentation',
