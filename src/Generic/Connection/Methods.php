@@ -5,9 +5,8 @@ namespace GenericDatabase\Generic\Connection;
 use GenericDatabase\Generic\Connection\Settings;
 
 /**
- * Trait Methods provides magic methods for dynamic property access and manipulation.
- * 
- * This trait includes methods for getting, setting, checking existence, and unsetting
+ * Trait Methods provides magic methods for dynamic property access and manipulation 
+ * and also includes methods for getting, setting, checking existence, and unsetting
  * properties dynamically. It also handles serialization and deserialization of the 
  * property using the __sleep and __wakeup magic methods.
  * 

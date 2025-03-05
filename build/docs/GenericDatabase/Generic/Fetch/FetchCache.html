@@ -97,6 +97,22 @@
     
         
 
+            <div class="description">
+            <p><p>Trait FetchCache</p></p>            <p><p>Provides caching functionality for fetch operations, allowing results to be stored
+and retrieved efficiently. It maintains the state of cached results, their positions,
+and handles resetting fetch positions when necessary.</p>
+<p>Methods:</p>
+<ul>
+<li><code>cacheResults(mixed $resource): array:</code> Caches the results from a statement for future use.</li>
+<li><code>handleFetchReset(mixed $resource): void:</code> Handles resetting the fetch position and caching results if not already cached.</li>
+<li><code>cacheResource(mixed $resource): array:</code> Abstract method to be implemented in the class using this trait.</li>
+</ul>
+<p>Fields:</p>
+<ul>
+<li><code>$cachedResults</code>: Stores the cached results of fetch operations.</li>
+<li><code>$positions</code>: Keeps track of the positions of fetched data.</li>
+<li><code>$lastFetchAll</code>: Stores the results of the last fetch all operation.</li>
+</ul></p>        </div>
             
         
     
@@ -142,7 +158,7 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_cacheResults">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Fetch/FetchCache.php#L18">at line 18</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Fetch/FetchCache.php#L49">at line 49</a></div>
         <code>                    array
     <strong>cacheResults</strong>(mixed $resource)
         </code>
@@ -184,7 +200,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_handleFetchReset">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Fetch/FetchCache.php#L34">at line 34</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Fetch/FetchCache.php#L65">at line 65</a></div>
         <code>                    void
     <strong>handleFetchReset</strong>(mixed $resource)
         </code>
@@ -226,7 +242,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_cacheResource">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Fetch/FetchCache.php#L48">at line 48</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Fetch/FetchCache.php#L79">at line 79</a></div>
         <code>    abstract        protected        string
     <strong>cacheResource</strong>(mixed $resource)
         </code>

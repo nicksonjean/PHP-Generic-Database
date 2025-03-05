@@ -2,10 +2,41 @@
 
 namespace GenericDatabase\Generic\Fetch;
 
+/**
+ * Trait FetchCache
+ *
+ * Provides caching functionality for fetch operations, allowing results to be stored
+ * and retrieved efficiently. It maintains the state of cached results, their positions,
+ * and handles resetting fetch positions when necessary.
+ *
+ * Methods:
+ * - `cacheResults(mixed $resource): array:` Caches the results from a statement for future use.
+ * - `handleFetchReset(mixed $resource): void:` Handles resetting the fetch position and caching results if not already cached.
+ * - `cacheResource(mixed $resource): array:` Abstract method to be implemented in the class using this trait.
+ * 
+ * Fields:
+ * - `$cachedResults`: Stores the cached results of fetch operations.
+ * - `$positions`: Keeps track of the positions of fetched data.
+ * - `$lastFetchAll`: Stores the results of the last fetch all operation.
+ * 
+ * @package GenericDatabase\Generic
+ * @subpackage Fetch
+ */
 trait FetchCache
 {
+    /**
+     * @var array $cachedResults Stores the cached results of fetch operations.
+     */
     private array $cachedResults = [];
+
+    /**
+     * @var array $positions Keeps track of the positions of fetched data.
+     */
     private array $positions = [];
+
+    /**
+     * @var array $lastFetchAll Stores the results of the last fetch all operation.
+     */
     private array $lastFetchAll = [];
 
     /**

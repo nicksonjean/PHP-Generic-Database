@@ -213,7 +213,7 @@ Implements the IArgumentsStrategy interface to provide methods for obtaining ins
 <abbr title="GenericDatabase\Engine\SQLite\Connection\Attributes\AttributesHandler">AttributesHandler</abbr>#attributeList</a> &mdash; <em>Property in class <a href="GenericDatabase/Engine/SQLite/Connection/Attributes/AttributesHandler.html"><abbr title="GenericDatabase\Engine\SQLite\Connection\Attributes\AttributesHandler">AttributesHandler</abbr></a></em></dt>
                     <dd><p>static attributes constants</p></dd><dt>$<a href="GenericDatabase/Generic/Statements/QueryMetadata.html#property_arguments">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>#arguments</a> &mdash; <em>Property in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt>$<a href="GenericDatabase/Generic/Statements/RowsMetadata.html#property_affected">
+                    <dd><p>Holds the arguments for the database query.</p></dd><dt>$<a href="GenericDatabase/Generic/Statements/RowsMetadata.html#property_affected">
 <abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr>#affected</a> &mdash; <em>Property in class <a href="GenericDatabase/Generic/Statements/RowsMetadata.html"><abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr></a></em></dt>
                     <dd></dd><dt><a href="GenericDatabase/Helpers/Parsers/SQL.html#method_arguments">
 <abbr title="GenericDatabase\Helpers\Parsers\SQL">SQL</abbr>::arguments</a>() &mdash; <em>Method in class <a href="GenericDatabase/Helpers/Parsers/SQL.html"><abbr title="GenericDatabase\Helpers\Parsers\SQL">SQL</abbr></a></em></dt>
@@ -525,7 +525,7 @@ the way in which the class is instantiated, as well as its arguments.</p></dd><d
 <abbr title="GenericDatabase\Generic\Fetch\FetchCache">FetchCache</abbr>::cacheResource</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Fetch/FetchCache.html"><abbr title="GenericDatabase\Generic\Fetch\FetchCache">FetchCache</abbr></a></em></dt>
                     <dd><p>Método abstrato para ser implementado na classe que usa a trait</p></dd><dt>$<a href="GenericDatabase/Generic/Statements/QueryMetadata.html#property_columns">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>#columns</a> &mdash; <em>Property in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Helpers/Compare.html"><abbr title="GenericDatabase\Helpers\Compare">Compare</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Helpers.html">GenericDatabase\Helpers</a></em></dt>
+                    <dd><p>The number of columns returned by the database query.</p></dd><dt><a href="GenericDatabase/Helpers/Compare.html"><abbr title="GenericDatabase\Helpers\Compare">Compare</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Helpers.html">GenericDatabase\Helpers</a></em></dt>
                     <dd><p>The <code>GenericDatabase\Helpers\Compare</code> class provides methods
 for determining the type of given database connection.</p></dd><dt><a href="GenericDatabase/Helpers/Compare.html#method_connection">
 <abbr title="GenericDatabase\Helpers\Compare">Compare</abbr>::connection</a>() &mdash; <em>Method in class <a href="GenericDatabase/Helpers/Compare.html"><abbr title="GenericDatabase\Helpers\Compare">Compare</abbr></a></em></dt>
@@ -945,7 +945,7 @@ and previous exception.</p></dd><dt><a href="GenericDatabase/Helpers/Parsers/SQL
                     <dd></dd><dt><a href="GenericDatabase/Engine/SQLite/QueryBuilder/Internal.html#method_from">
 <abbr title="GenericDatabase\Engine\SQLite\QueryBuilder\Internal">Internal</abbr>::from</a>() &mdash; <em>Method in class <a href="GenericDatabase/Engine/SQLite/QueryBuilder/Internal.html"><abbr title="GenericDatabase\Engine\SQLite\QueryBuilder\Internal">Internal</abbr></a></em></dt>
                     <dd></dd><dt><a href="GenericDatabase/Generic/Fetch/FetchCache.html"><abbr title="GenericDatabase\Generic\Fetch\FetchCache">FetchCache</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Generic/Fetch.html">GenericDatabase\Generic\Fetch</a></em></dt>
-                    <dd></dd><dt>$<a href="GenericDatabase/Generic/Statements/RowsMetadata.html#property_fetched">
+                    <dd><p>Trait FetchCache</p></dd><dt>$<a href="GenericDatabase/Generic/Statements/RowsMetadata.html#property_fetched">
 <abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr>#fetched</a> &mdash; <em>Property in class <a href="GenericDatabase/Generic/Statements/RowsMetadata.html"><abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr></a></em></dt>
                     <dd></dd><dt><a href="GenericDatabase/Interfaces/Connection/IFetch.html#method_fetch">
 <abbr title="GenericDatabase\Interfaces\Connection\IFetch">IFetch</abbr>::fetch</a>() &mdash; <em>Method in class <a href="GenericDatabase/Interfaces/Connection/IFetch.html"><abbr title="GenericDatabase\Interfaces\Connection\IFetch">IFetch</abbr></a></em></dt>
@@ -1862,19 +1862,19 @@ Provides methods to create database connections for various database engines.</p
 <abbr title="GenericDatabase\Engine\SQLite\QueryBuilder\Regex">Regex</abbr>::getWhereHaving</a>() &mdash; <em>Method in class <a href="GenericDatabase/Engine/SQLite/QueryBuilder/Regex.html"><abbr title="GenericDatabase\Engine\SQLite\QueryBuilder\Regex">Regex</abbr></a></em></dt>
                     <dd></dd><dt><a href="GenericDatabase/Generic/Statements/Metadata.html#method_getQuery">
 <abbr title="GenericDatabase\Generic\Statements\Metadata">Metadata</abbr>::getQuery</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/Metadata.html"><abbr title="GenericDatabase\Generic\Statements\Metadata">Metadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_getString">
+                    <dd><p>Retrieves the QueryMetadata object.</p></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_getString">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>::getString</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_getArguments">
+                    <dd><p>Gets the query string.</p></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_getArguments">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>::getArguments</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_getColumns">
+                    <dd><p>Gets the query arguments.</p></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_getColumns">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>::getColumns</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_getRows">
+                    <dd><p>Gets the number of columns.</p></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_getRows">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>::getRows</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/RowsMetadata.html#method_getFetched">
+                    <dd><p>Gets the rows metadata.</p></dd><dt><a href="GenericDatabase/Generic/Statements/RowsMetadata.html#method_getFetched">
 <abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr>::getFetched</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/RowsMetadata.html"><abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/RowsMetadata.html#method_getAffected">
+                    <dd><p>Gets the number of rows fetched.</p></dd><dt><a href="GenericDatabase/Generic/Statements/RowsMetadata.html#method_getAffected">
 <abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr>::getAffected</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/RowsMetadata.html"><abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Helpers/Generators.html"><abbr title="GenericDatabase\Helpers\Generators">Generators</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Helpers.html">GenericDatabase\Helpers</a></em></dt>
+                    <dd><p>Gets the number of rows affected.</p></dd><dt><a href="GenericDatabase/Helpers/Generators.html"><abbr title="GenericDatabase\Helpers\Generators">Generators</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Helpers.html">GenericDatabase\Helpers</a></em></dt>
                     <dd><p>The <code>GenericDatabase\Helpers\Generators</code> class provides methods
 for generating options and determining the type of values.</p></dd><dt><a href="GenericDatabase/Helpers/Generators.html#method_generateHash">
 <abbr title="GenericDatabase\Helpers\Generators">Generators</abbr>::generateHash</a>() &mdash; <em>Method in class <a href="GenericDatabase/Helpers/Generators.html"><abbr title="GenericDatabase\Helpers\Generators">Generators</abbr></a></em></dt>
@@ -2482,8 +2482,11 @@ either the last one inserted during the current transaction, or by passing in th
                     <dd></dd><dt><a href="GenericDatabase/Engine/SQLite/QueryBuilder/Internal.html#method_makeHaving">
 <abbr title="GenericDatabase\Engine\SQLite\QueryBuilder\Internal">Internal</abbr>::makeHaving</a>() &mdash; <em>Method in class <a href="GenericDatabase/Engine/SQLite/QueryBuilder/Internal.html"><abbr title="GenericDatabase\Engine\SQLite\QueryBuilder\Internal">Internal</abbr></a></em></dt>
                     <dd></dd><dt><a href="GenericDatabase/Generic/Connection/Methods.html"><abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Generic/Connection.html">GenericDatabase\Generic\Connection</a></em></dt>
-                    <dd><p>Trait Methods provides magic methods for dynamic property access and manipulation.</p></dd><dt><a href="GenericDatabase/Generic/Statements/Metadata.html"><abbr title="GenericDatabase\Generic\Statements\Metadata">Metadata</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Generic/Statements.html">GenericDatabase\Generic\Statements</a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Helpers/Schemas.html#method_makeArgs">
+                    <dd><p>Trait Methods provides magic methods for dynamic property access and manipulation
+and also includes methods for getting, setting, checking existence, and unsetting
+properties dynamically. It also handles serialization and deserialization of the
+property using the <strong>sleep and </strong>wakeup magic methods.</p></dd><dt><a href="GenericDatabase/Generic/Statements/Metadata.html"><abbr title="GenericDatabase\Generic\Statements\Metadata">Metadata</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Generic/Statements.html">GenericDatabase\Generic\Statements</a></em></dt>
+                    <dd><p>The Metadata class represents metadata associated with a query, and it contains a single property $query of type QueryMetadata.</p></dd><dt><a href="GenericDatabase/Helpers/Schemas.html#method_makeArgs">
 <abbr title="GenericDatabase\Helpers\Schemas">Schemas</abbr>::makeArgs</a>() &mdash; <em>Method in class <a href="GenericDatabase/Helpers/Schemas.html"><abbr title="GenericDatabase\Helpers\Schemas">Schemas</abbr></a></em></dt>
                     <dd><p>This method makes an arguments list</p></dd><dt><a href="GenericDatabase/Helpers/Types/Compounds/Arrays.html#method_matchValues">
 <abbr title="GenericDatabase\Helpers\Types\Compounds\Arrays">Arrays</abbr>::matchValues</a>() &mdash; <em>Method in class <a href="GenericDatabase/Helpers/Types/Compounds/Arrays.html"><abbr title="GenericDatabase\Helpers\Types\Compounds\Arrays">Arrays</abbr></a></em></dt>
@@ -3152,7 +3155,7 @@ while the <code>isAbsolute</code> method checks if a given path is absolute or n
                     <dd></dd><dt>$<a href="GenericDatabase/Generic/Statements/Metadata.html#property_query">
 <abbr title="GenericDatabase\Generic\Statements\Metadata">Metadata</abbr>#query</a> &mdash; <em>Property in class <a href="GenericDatabase/Generic/Statements/Metadata.html"><abbr title="GenericDatabase\Generic\Statements\Metadata">Metadata</abbr></a></em></dt>
                     <dd></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Generic/Statements.html">GenericDatabase\Generic\Statements</a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Interfaces/Connection/IStatements.html#method_quote">
+                    <dd><p>Class QueryMetadata</p></dd><dt><a href="GenericDatabase/Interfaces/Connection/IStatements.html#method_quote">
 <abbr title="GenericDatabase\Interfaces\Connection\IStatements">IStatements</abbr>::quote</a>() &mdash; <em>Method in class <a href="GenericDatabase/Interfaces/Connection/IStatements.html"><abbr title="GenericDatabase\Interfaces\Connection\IStatements">IStatements</abbr></a></em></dt>
                     <dd><p>This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).</p></dd><dt><a href="GenericDatabase/Interfaces/Connection/IStatements.html#method_query">
 <abbr title="GenericDatabase\Interfaces\Connection\IStatements">IStatements</abbr>::query</a>() &mdash; <em>Method in class <a href="GenericDatabase/Interfaces/Connection/IStatements.html"><abbr title="GenericDatabase\Interfaces\Connection\IStatements">IStatements</abbr></a></em></dt>
@@ -3269,8 +3272,8 @@ this transaction and restores the data to its original state.</p></dd><dt><a hre
 this transaction and restores the data to its original state.</p></dd><dt><a href="GenericDatabase/Engine/SQLite/QueryBuilder/Regex.html"><abbr title="GenericDatabase\Engine\SQLite\QueryBuilder\Regex">Regex</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Engine/SQLite/QueryBuilder.html">GenericDatabase\Engine\SQLite\QueryBuilder</a></em></dt>
                     <dd></dd><dt>$<a href="GenericDatabase/Generic/Statements/QueryMetadata.html#property_rows">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>#rows</a> &mdash; <em>Property in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/RowsMetadata.html"><abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Generic/Statements.html">GenericDatabase\Generic\Statements</a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Helpers/Reflections.html"><abbr title="GenericDatabase\Helpers\Reflections">Reflections</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Helpers.html">GenericDatabase\Helpers</a></em></dt>
+                    <dd><p>Holds the metadata for the rows returned by the database query.</p></dd><dt><a href="GenericDatabase/Generic/Statements/RowsMetadata.html"><abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Generic/Statements.html">GenericDatabase\Generic\Statements</a></em></dt>
+                    <dd><p>Class RowsMetadata</p></dd><dt><a href="GenericDatabase/Helpers/Reflections.html"><abbr title="GenericDatabase\Helpers\Reflections">Reflections</abbr></a> &mdash; <em>Class in namespace <a href="GenericDatabase/Helpers.html">GenericDatabase\Helpers</a></em></dt>
                     <dd><p>The <code>GenericDatabase\Helpers\Reflections</code> class provides various reflection-based
 methods to interact with classes and objects in PHP.</p></dd><dt><a href="GenericDatabase/Helpers/Types/Compounds/Arrays.html#method_recombine">
 <abbr title="GenericDatabase\Helpers\Types\Compounds\Arrays">Arrays</abbr>::recombine</a>() &mdash; <em>Method in class <a href="GenericDatabase/Helpers/Types/Compounds/Arrays.html"><abbr title="GenericDatabase\Helpers\Types\Compounds\Arrays">Arrays</abbr></a></em></dt>
@@ -3861,17 +3864,17 @@ this transaction and restores the data to its original state.</p></dd><dt><a hre
 for accessing and modifying properties. It utilizes traits for handling
 property access, setting, checking existence, and unsetting.</p></dd><dt>$<a href="GenericDatabase/Generic/Statements/QueryMetadata.html#property_string">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>#string</a> &mdash; <em>Property in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_setString">
+                    <dd><p>Represents the metadata of a database query, including the query string, arguments, column count, and row metadata.</p></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_setString">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>::setString</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_setArguments">
+                    <dd><p>Sets the query string.</p></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_setArguments">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>::setArguments</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_setColumns">
+                    <dd><p>Sets the query arguments.</p></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method_setColumns">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>::setColumns</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/RowsMetadata.html#method_setFetched">
+                    <dd><p>Sets the number of columns.</p></dd><dt><a href="GenericDatabase/Generic/Statements/RowsMetadata.html#method_setFetched">
 <abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr>::setFetched</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/RowsMetadata.html"><abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/RowsMetadata.html#method_setAffected">
+                    <dd><p>Sets the number of rows fetched.</p></dd><dt><a href="GenericDatabase/Generic/Statements/RowsMetadata.html#method_setAffected">
 <abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr>::setAffected</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/RowsMetadata.html"><abbr title="GenericDatabase\Generic\Statements\RowsMetadata">RowsMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Helpers/Generators.html#method_setConstant">
+                    <dd><p>Sets the number of rows affected.</p></dd><dt><a href="GenericDatabase/Helpers/Generators.html#method_setConstant">
 <abbr title="GenericDatabase\Helpers\Generators">Generators</abbr>::setConstant</a>() &mdash; <em>Method in class <a href="GenericDatabase/Helpers/Generators.html"><abbr title="GenericDatabase\Helpers\Generators">Generators</abbr></a></em></dt>
                     <dd><p>Sets a constant and generates options based on the provided value,
 instance, class name, constant name, and attributes.</p></dd><dt><a href="GenericDatabase/Helpers/Generators.html#method_setType">
@@ -4260,9 +4263,9 @@ the way in which the class is instantiated, as well as its arguments.</p></dd><d
 <abbr title="GenericDatabase\Generic\Connection\Settings">Settings</abbr>::__debugInfo</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Connection/Settings.html"><abbr title="GenericDatabase\Generic\Connection\Settings">Settings</abbr></a></em></dt>
                     <dd><p>Magic method for debugging.</p></dd><dt><a href="GenericDatabase/Generic/Statements/Metadata.html#method___construct">
 <abbr title="GenericDatabase\Generic\Statements\Metadata">Metadata</abbr>::__construct</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/Metadata.html"><abbr title="GenericDatabase\Generic\Statements\Metadata">Metadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method___construct">
+                    <dd><p>Metadata constructor.</p></dd><dt><a href="GenericDatabase/Generic/Statements/QueryMetadata.html#method___construct">
 <abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr>::__construct</a>() &mdash; <em>Method in class <a href="GenericDatabase/Generic/Statements/QueryMetadata.html"><abbr title="GenericDatabase\Generic\Statements\QueryMetadata">QueryMetadata</abbr></a></em></dt>
-                    <dd></dd><dt><a href="GenericDatabase/Helpers/Exceptions.html#method___construct">
+                    <dd><p>QueryMetadata constructor.</p></dd><dt><a href="GenericDatabase/Helpers/Exceptions.html#method___construct">
 <abbr title="GenericDatabase\Helpers\Exceptions">Exceptions</abbr>::__construct</a>() &mdash; <em>Method in class <a href="GenericDatabase/Helpers/Exceptions.html"><abbr title="GenericDatabase\Helpers\Exceptions">Exceptions</abbr></a></em></dt>
                     <dd><p>Constructor method for Exceptions</p></dd><dt><a href="GenericDatabase/Interfaces/Connection/IArguments.html#method___call">
 <abbr title="GenericDatabase\Interfaces\Connection\IArguments">IArguments</abbr>::__call</a>() &mdash; <em>Method in class <a href="GenericDatabase/Interfaces/Connection/IArguments.html"><abbr title="GenericDatabase\Interfaces\Connection\IArguments">IArguments</abbr></a></em></dt>
