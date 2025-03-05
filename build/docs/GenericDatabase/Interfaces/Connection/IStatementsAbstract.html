@@ -98,7 +98,8 @@
         
 
             <div class="description">
-            <p><p>Interface that defines the specialized statements operations</p></p>                    </div>
+            <p><p>This interface defines the abstract methods for database statement operations.</p></p>            <p><p>Implementing classes should provide concrete implementations for these methods
+to handle database interactions.</p></p>        </div>
             
         
     
@@ -325,7 +326,7 @@ either the last one inserted during the current transaction, or by passing in th
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_setAllMetadata">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L15">at line 15</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L20">at line 20</a></div>
         <code>                    void
     <strong>setAllMetadata</strong>()
         </code>
@@ -357,7 +358,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_getAllMetadata">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L22">at line 22</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L27">at line 27</a></div>
         <code>                    object
     <strong>getAllMetadata</strong>()
         </code>
@@ -389,7 +390,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_getQueryString">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L29">at line 29</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L34">at line 34</a></div>
         <code>                    string
     <strong>getQueryString</strong>()
         </code>
@@ -421,7 +422,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_setQueryString">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L36">at line 36</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L41">at line 41</a></div>
         <code>                    void
     <strong>setQueryString</strong>(string $params)
         </code>
@@ -463,7 +464,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_getQueryParameters">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L43">at line 43</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L48">at line 48</a></div>
         <code>                    array|null
     <strong>getQueryParameters</strong>()
         </code>
@@ -495,7 +496,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_setQueryParameters">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L50">at line 50</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L55">at line 55</a></div>
         <code>                    void
     <strong>setQueryParameters</strong>(array|null $params)
         </code>
@@ -537,7 +538,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_getQueryRows">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L57">at line 57</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L62">at line 62</a></div>
         <code>                    <abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr>
     <strong>getQueryRows</strong>()
         </code>
@@ -569,7 +570,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_setQueryRows">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L65">at line 65</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L70">at line 70</a></div>
         <code>                    void
     <strong>setQueryRows</strong>(<abbr title="GenericDatabase\Interfaces\Connection\callable|int|false">callable|int|false</abbr> $params)
         </code>
@@ -611,7 +612,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_getQueryColumns">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L72">at line 72</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L77">at line 77</a></div>
         <code>                    <abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr>
     <strong>getQueryColumns</strong>()
         </code>
@@ -643,7 +644,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_setQueryColumns">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L80">at line 80</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L85">at line 85</a></div>
         <code>                    void
     <strong>setQueryColumns</strong>(<abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr> $params)
         </code>
@@ -685,7 +686,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_getAffectedRows">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L87">at line 87</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L92">at line 92</a></div>
         <code>                    <abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr>
     <strong>getAffectedRows</strong>()
         </code>
@@ -717,7 +718,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_setAffectedRows">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L95">at line 95</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L100">at line 100</a></div>
         <code>                    void
     <strong>setAffectedRows</strong>(<abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr> $params)
         </code>
@@ -759,7 +760,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_getStatement">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L102">at line 102</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L107">at line 107</a></div>
         <code>                    mixed
     <strong>getStatement</strong>()
         </code>
@@ -791,7 +792,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_setStatement">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L109">at line 109</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L114">at line 114</a></div>
         <code>                    void
     <strong>setStatement</strong>(mixed $statement)
         </code>
@@ -833,7 +834,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_quote">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L117">at line 117</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L122">at line 122</a></div>
         <code>                    mixed
     <strong>quote</strong>(mixed ...$params)
         </code>
@@ -875,7 +876,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_lastInsertId">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L126">at line 126</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L131">at line 131</a></div>
         <code>                    <abbr title="GenericDatabase\Interfaces\Connection\string|int|false">string|int|false</abbr>
     <strong>lastInsertId</strong>(string|null $name = null)
         </code>
@@ -918,7 +919,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_bindParam">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L134">at line 134</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L139">at line 139</a></div>
         <code>                    void
     <strong>bindParam</strong>(object $params)
         </code>
@@ -960,7 +961,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_parse">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L142">at line 142</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L147">at line 147</a></div>
         <code>                    string
     <strong>parse</strong>(mixed ...$params)
         </code>
@@ -1002,7 +1003,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_query">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L150">at line 150</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L155">at line 155</a></div>
         <code>                    mixed
     <strong>query</strong>(mixed ...$params)
         </code>
@@ -1044,7 +1045,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_prepare">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L158">at line 158</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L163">at line 163</a></div>
         <code>                    mixed
     <strong>prepare</strong>(mixed ...$params)
         </code>
@@ -1086,7 +1087,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_exec">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L166">at line 166</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IStatementsAbstract.php#L171">at line 171</a></div>
         <code>                    mixed
     <strong>exec</strong>(mixed ...$params)
         </code>

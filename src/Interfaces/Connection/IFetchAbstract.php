@@ -4,6 +4,14 @@ namespace GenericDatabase\Interfaces\Connection;
 
 use ReflectionException;
 
+/**
+ * This interface defines the contract for fetching data from a database.
+ * Implementing classes should provide concrete implementations for the methods
+ * declared in this interface to handle data retrieval operations.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
+ */
 interface IFetchAbstract
 {
     /**

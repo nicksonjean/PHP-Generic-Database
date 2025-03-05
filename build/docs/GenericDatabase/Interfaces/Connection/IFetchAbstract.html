@@ -97,6 +97,9 @@
     
         
 
+            <div class="description">
+            <p><p>This interface defines the contract for fetching data from a database.</p></p>            <p><p>Implementing classes should provide concrete implementations for the methods
+declared in this interface to handle data retrieval operations.</p></p>        </div>
             
         
     
@@ -214,7 +217,7 @@ converting all values to strings, or an empty array if there are no more rows.</
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_internalFetchClass">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L17">at line 17</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L25">at line 25</a></div>
         <code>                    <abbr title="GenericDatabase\Interfaces\Connection\object|false">object|false</abbr>
     <strong>internalFetchClass</strong>(array|null $constructorArguments = null, string|null $aClassOrObject = &#039;\\stdClass&#039;)
         </code>
@@ -270,7 +273,7 @@ converting all values to strings, or an empty array if there are no more rows.</
             </div>
                     <div class="method-item">
                     <h3 id="method_internalFetchBoth">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L24">at line 24</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L32">at line 32</a></div>
         <code>                    <abbr title="GenericDatabase\Interfaces\Connection\bool|array">bool|array</abbr>
     <strong>internalFetchBoth</strong>()
         </code>
@@ -302,7 +305,7 @@ converting all values to strings, or an empty array if there are no more rows.</
             </div>
                     <div class="method-item">
                     <h3 id="method_internalFetchAssoc">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L32">at line 32</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L40">at line 40</a></div>
         <code>                    <abbr title="GenericDatabase\Interfaces\Connection\array|null|false">array|null|false</abbr>
     <strong>internalFetchAssoc</strong>()
         </code>
@@ -335,7 +338,7 @@ converting all values to strings, or returns false if there are no more rows.</p
             </div>
                     <div class="method-item">
                     <h3 id="method_internalFetchNum">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L39">at line 39</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L47">at line 47</a></div>
         <code>                    <abbr title="GenericDatabase\Interfaces\Connection\array|false|null">array|false|null</abbr>
     <strong>internalFetchNum</strong>()
         </code>
@@ -367,7 +370,7 @@ converting all values to strings, or returns false if there are no more rows.</p
             </div>
                     <div class="method-item">
                     <h3 id="method_internalFetchColumn">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L47">at line 47</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L55">at line 55</a></div>
         <code>                    <abbr title="GenericDatabase\Interfaces\Connection\false|string">false|string</abbr>
     <strong>internalFetchColumn</strong>(int $columnIndex = 0)
         </code>
@@ -409,7 +412,7 @@ converting all values to strings, or returns false if there are no more rows.</p
             </div>
                     <div class="method-item">
                     <h3 id="method_internalFetchAllAssoc">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L54">at line 54</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L62">at line 62</a></div>
         <code>                    array
     <strong>internalFetchAllAssoc</strong>()
         </code>
@@ -441,7 +444,7 @@ converting all values to strings, or returns false if there are no more rows.</p
             </div>
                     <div class="method-item">
                     <h3 id="method_internalFetchAllNum">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L62">at line 62</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L70">at line 70</a></div>
         <code>                    array
     <strong>internalFetchAllNum</strong>()
         </code>
@@ -474,7 +477,7 @@ converting all values to strings, or an empty array if there are no more rows.</
             </div>
                     <div class="method-item">
                     <h3 id="method_internalFetchAllBoth">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L70">at line 70</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L78">at line 78</a></div>
         <code>                    array
     <strong>internalFetchAllBoth</strong>()
         </code>
@@ -506,7 +509,7 @@ converting all values to strings, or an empty array if there are no more rows.</
             </div>
                     <div class="method-item">
                     <h3 id="method_internalFetchAllColumn">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L78">at line 78</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L86">at line 86</a></div>
         <code>                    array
     <strong>internalFetchAllColumn</strong>(int $columnIndex = 0)
         </code>
@@ -548,7 +551,7 @@ converting all values to strings, or an empty array if there are no more rows.</
             </div>
                     <div class="method-item">
                     <h3 id="method_internalFetchAllClass">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L90">at line 90</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/IFetchAbstract.php#L98">at line 98</a></div>
         <code>                    array
     <strong>internalFetchAllClass</strong>(array|null $constructorArguments = [], string|null $aClassOrObject = &#039;\\stdClass&#039;)
         </code>

@@ -3,7 +3,12 @@
 namespace GenericDatabase\Interfaces\Connection;
 
 /**
- * Interface that defines the specialized statements operations
+ * This interface defines the contract for database statement operations.
+ * Implementing classes should provide concrete implementations for
+ * executing and managing database statements.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
  */
 interface IStatements
 {

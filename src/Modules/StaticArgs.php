@@ -23,13 +23,45 @@ use GenericDatabase\Engine\ODBC\Connection\ODBC;
 use GenericDatabase\Engine\PDOConnection;
 use PDO;
 
+/**
+ * Class StaticArgs
+ * Provides methods to create database connections for various database engines.
+ * 
+ * Methods:
+ * - `nativeMySQLi(array $env, bool $persistent = false, bool $strategy = false): Connection|MySQLiConnection`: Creates a native MySQLi connection.
+ * - `nativePgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PgSQLConnection`: Creates a native PostgreSQL connection.
+ * - `nativeSQLSrv(array $env, bool $persistent = false, bool $strategy = false): Connection|SQLSrvConnection`: Creates a native SQL Server connection.
+ * - `nativeOCI(array $env, bool $persistent = false, bool $strategy = false): Connection|OCIConnection`: Creates a native Oracle OCI connection.
+ * - `nativeFirebird(array $env, bool $persistent = false, bool $strategy = false): Connection|FirebirdConnection`: Creates a native Firebird connection.
+ * - `nativeSQLite(array $env, bool $persistent = false, bool $strategy = false): Connection|SQLiteConnection`: Creates a native SQLite connection.
+ * - `nativeMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|SQLiteConnection`: Creates a native SQLite in-memory connection.
+ * - `pdoMySQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`: Creates a PDO MySQL connection.
+ * - `pdoPgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`: Creates a PDO PostgreSQL connection.
+ * - `pdoSQLSrv(array $env, bool $strategy = false): Connection|PDOConnection`: Creates a PDO SQL Server connection.
+ * - `pdoOCI(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`: Creates a PDO Oracle OCI connection.
+ * - `pdoFirebird(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`: Creates a PDO Firebird connection.
+ * - `pdoSQLite(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`: Creates a PDO SQLite connection.
+ * - `pdoMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`:Creates a PDO SQLite in-memory connection.
+ * - `odbcMySQL(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`:Creates an ODBC MySQL connection.
+ * - `odbcPgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`:Creates an ODBC PostgreSQL connection.
+ * - `odbcSQLSrv(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`:Creates an ODBC SQL Server connection.
+ * - `odbcOCI(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`:Creates an ODBC Oracle OCI connection.
+ * - `odbcFirebird(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Firebird connection.
+ * - `odbcSQLite(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC SQLite connection.
+ * - `odbcAccess(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Microsoft Access connection.
+ * - `odbcExcel(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Microsoft Excel connection.
+ * - `odbcText(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Text connection.
+ * - `odbcMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC SQLite in-memory connection.
+ */
 class StaticArgs
 {
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|MySQLiConnection
+     * Creates a native MySQLi connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing MySQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|MySQLiConnection Returns a MySQLi connection instance.
      */
     public static function nativeMySQLi(
         array $env,
@@ -67,10 +99,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PgSQLConnection
+     * Creates a native PgSQL connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing PgSQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PgSQLConnection Returns a PgSQL connection instance.
      */
     public static function nativePgSQL(
         array $env,
@@ -104,10 +138,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|SQLSrvConnection
+     * Creates a native SQLSrv connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLSrv connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|SQLSrvConnection Returns a SQLSrv connection instance.
      */
     public static function nativeSQLSrv(
         array $env,
@@ -139,10 +175,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|OCIConnection
+     * Creates a native OCI connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing OCI connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|OCIConnection Returns a OCI connection instance.
      */
     public static function nativeOCI(
         array $env,
@@ -174,10 +212,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|FirebirdConnection
+     * Creates a native Firebird connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Firebird connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|FirebirdConnection Returns a Firebird connection instance.
      */
     public static function nativeFirebird(
         array $env,
@@ -209,10 +249,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|SQLiteConnection
+     * Creates a native SQLite connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLite connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|SQLiteConnection Returns a SQLite connection instance.
      */
     public static function nativeSQLite(
         array $env,
@@ -244,10 +286,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|SQLiteConnection
+     * Creates a native SQLite in-memory connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLite connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|SQLiteConnection Returns a SQLite connection instance.
      */
     public static function nativeMemory(
         array $env,
@@ -279,10 +323,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO MySQL connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing MySQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a MySQL connection instance.
      */
     public static function pdoMySQL(
         array $env,
@@ -314,10 +360,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO PgSQL connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing PgSQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a PgSQL connection instance.
      */
     public static function pdoPgSQL(
         array $env,
@@ -349,9 +397,11 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO SQLSrv connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLSrv connection parameters.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a SQLSrv connection instance.
      */
     public static function pdoSQLSrv(
         array $env,
@@ -381,10 +431,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO OCI connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing OCI connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a OCI connection instance.
      */
     public static function pdoOCI(
         array $env,
@@ -416,10 +468,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO Firebird connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Firebird connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a Firebird connection instance.
      */
     public static function pdoFirebird(
         array $env,
@@ -451,10 +505,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO SQLite connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLite connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a SQLite connection instance.
      */
     public static function pdoSQLite(
         array $env,
@@ -482,10 +538,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO SQLite in-memory connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLite connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a SQLite connection instance.
      */
     public static function pdoMemory(
         array $env,
@@ -513,10 +571,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC MySQL connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing MySQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a MySQL connection instance.
      */
     public static function odbcMySQL(
         array $env,
@@ -549,10 +609,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC PgSQL connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing PgSQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a PgSQL connection instance.
      */
     public static function odbcPgSQL(
         array $env,
@@ -585,10 +647,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC SQLSrv connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLSrv connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a SQLSrv connection instance.
      */
     public static function odbcSQLSrv(
         array $env,
@@ -621,10 +685,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC OCI connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing OCI connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a OCI connection instance.
      */
     public static function odbcOCI(
         array $env,
@@ -657,10 +723,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC Firebird connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Firebird connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a Firebird connection instance.
      */
     public static function odbcFirebird(
         array $env,
@@ -693,10 +761,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC SQLite connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLite connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a SQLite connection instance.
      */
     public static function odbcSQLite(
         array $env,
@@ -725,10 +795,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC Access connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Access connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a Access connection instance.
      */
     public static function odbcAccess(
         array $env,
@@ -759,10 +831,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC Excel connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Excel connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a Excel connection instance.
      */
     public static function odbcExcel(
         array $env,
@@ -791,10 +865,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC Text connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Text connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a Text connection instance.
      */
     public static function odbcText(
         array $env,
@@ -823,10 +899,12 @@ class StaticArgs
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC Memory connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing ODBC Memory connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a ODBC Memory connection instance.
      */
     public static function odbcMemory(
         array $env,

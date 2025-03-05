@@ -3,7 +3,10 @@
 namespace GenericDatabase\Interfaces\Connection;
 
 /**
- * Defines the interface for an arguments strategy that can set constant values.
+ * This interface defines the strategy for handling arguments in database connections.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
  */
 interface IArgumentsStrategy
 {

@@ -2,6 +2,14 @@
 
 namespace GenericDatabase\Interfaces\Connection;
 
+/**
+ * This interface defines the contract for transaction management in a database connection.
+ * Implementing classes should provide methods to handle database transactions, 
+ * such as beginning, committing, and rolling back transactions.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
+ */
 interface ITransactions
 {
     /**

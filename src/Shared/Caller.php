@@ -15,8 +15,13 @@ use GenericDatabase\Shared\Setter;
  * corresponding actions on properties.
  *
  * Methods:
+ * - `__get(string $name): mixed:` Retrieves the value of a property if it exists, or returns null if the property is inaccessible or non-existent.
+ * - `__set(string $name, mixed $value): void:` Magic method to set the value of inaccessible or non-existing properties.
  * - `__call(string $name, array $arguments): mixed:` Handles dynamic instance method calls.
  * - `__callStatic(string $name, array $arguments): mixed:` Handles dynamic static method calls.
+ * 
+ * Fields:
+ * - `$property`: Stores properties for dynamic property access.
  */
 trait Caller
 {

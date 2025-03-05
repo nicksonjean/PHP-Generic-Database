@@ -10,6 +10,9 @@ namespace GenericDatabase\Shared;
  * Methods:
  * - `__sleep(): array:` Sleep instance used by serialize/unserialize.
  * - `__wakeup: void:` Wakeup instance used by serialize/unserialize
+ * 
+ * Fields:
+ * - `$property`: Stores properties for dynamic property access.
  */
 trait Transporter
 {

@@ -4,6 +4,12 @@ namespace GenericDatabase\Interfaces\Connection;
 
 use GenericDatabase\Interfaces\IConnection;
 
+/**
+ * This interface defines the abstract options for database connections.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
+ */
 interface IOptionsAbstract
 {
     /**

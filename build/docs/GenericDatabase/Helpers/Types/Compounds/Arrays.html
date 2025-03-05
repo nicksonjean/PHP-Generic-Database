@@ -154,25 +154,15 @@ $result = Arrays::assocToIndexCombine($array1, $array2);</code></pre>
 </ul>
 <p>Methods:</p>
 <ul>
-<li><code>exceptByKeys(array $array, array $keys): array</code>:
-Finds elements in an array except by keys.</li>
-<li><code>exceptByValues(array $array, array $values): array</code>:
-Finds elements in an array except by values.</li>
-<li><code>matchValues(array $list, array $array, ?string $apply = 'mb_strtolower'): string</code>:
-Finds the first element that matches between two arrays.</li>
-<li><code>recombine(array $array): array</code>:
-Combines the indices and values of an array into a new array.</li>
-<li><code>assocToIndex(array $array): array</code>:
-Combines the values of an array by substituting the indices
-into sequential numbers starting at zero into a new array.</li>
-<li><code>isAssoc(mixed $array): bool</code>:
-Determines if an array is indexed or associative.</li>
-<li><code>isMultidimensional(array $array): bool</code>:
-Determines if an array is multidimensional.</li>
-<li><code>arrayValuesRecursive(array $array): array</code>:
-Gets the array values recursively.</li>
-<li><code>assocToIndexCombine(array ...$arrays): array</code>:
-Creates an index or list array to</li>
+<li><code>exceptByKeys(array $array, array $keys): array</code>: Finds elements in an array except by keys.</li>
+<li><code>exceptByValues(array $array, array $values): array</code>: Finds elements in an array except by values.</li>
+<li><code>matchValues(array $list, array $array, ?string $apply = 'mb_strtolower'): string</code>: Finds the first element that matches between two arrays.</li>
+<li><code>recombine(array $array): array</code>: Combines the indices and values of an array into a new array.</li>
+<li><code>assocToIndex(array $array): array</code>: Combines the values of an array by substituting the indices into sequential numbers starting at zero into a new array.</li>
+<li><code>isAssoc(mixed $array): bool</code>: Determines if an array is indexed or associative.</li>
+<li><code>isMultidimensional(array $array): bool</code>: Determines if an array is multidimensional.</li>
+<li><code>arrayValuesRecursive(array $array): array</code>: Gets the array values recursively.</li>
+<li><code>assocToIndexCombine(array ...$arrays): array</code>: Creates an index or list array to</li>
 </ul></p>        </div>
             
         
@@ -322,7 +312,7 @@ combining the associative array with the numeric array into a single array.</p><
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_exceptByKeys">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L121">at line 121</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L111">at line 111</a></div>
         <code>        static            array
     <strong>exceptByKeys</strong>(array $array, array $keys)
         </code>
@@ -369,7 +359,7 @@ combining the associative array with the numeric array into a single array.</p><
             </div>
                     <div class="method-item">
                     <h3 id="method_exceptByValues">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L133">at line 133</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L123">at line 123</a></div>
         <code>        static            array
     <strong>exceptByValues</strong>(array $array, array $values)
         </code>
@@ -416,7 +406,7 @@ combining the associative array with the numeric array into a single array.</p><
             </div>
                     <div class="method-item">
                     <h3 id="method_matchValues">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L147">at line 147</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L137">at line 137</a></div>
         <code>        static            string
     <strong>matchValues</strong>(array $list, array $array, string|null $apply = &#039;mb_strtolower&#039;)
         </code>
@@ -468,7 +458,7 @@ combining the associative array with the numeric array into a single array.</p><
             </div>
                     <div class="method-item">
                     <h3 id="method_recombine">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L165">at line 165</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L155">at line 155</a></div>
         <code>        static            array
     <strong>recombine</strong>(array $array)
         </code>
@@ -510,7 +500,7 @@ combining the associative array with the numeric array into a single array.</p><
             </div>
                     <div class="method-item">
                     <h3 id="method_assocToIndex">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L177">at line 177</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L167">at line 167</a></div>
         <code>        static            array
     <strong>assocToIndex</strong>(array $array)
         </code>
@@ -553,7 +543,7 @@ the indices into sequential numbers starting at zero into a new array</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_isAssoc">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L188">at line 188</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L178">at line 178</a></div>
         <code>        static            bool
     <strong>isAssoc</strong>(mixed $array)
         </code>
@@ -595,7 +585,7 @@ the indices into sequential numbers starting at zero into a new array</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_isMultidimensional">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L205">at line 205</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L195">at line 195</a></div>
         <code>        static            bool
     <strong>isMultidimensional</strong>(<abbr title="GenericDatabase\Helpers\Types\Compounds\array|string">array|string</abbr> $array)
         </code>
@@ -637,7 +627,7 @@ the indices into sequential numbers starting at zero into a new array</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_isDepthArray">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L219">at line 219</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L209">at line 209</a></div>
         <code>        static            int
     <strong>isDepthArray</strong>(array $array)
         </code>
@@ -679,7 +669,7 @@ the indices into sequential numbers starting at zero into a new array</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_arrayValuesRecursive">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L236">at line 236</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L226">at line 226</a></div>
         <code>        static            array
     <strong>arrayValuesRecursive</strong>(array $array)
         </code>
@@ -721,7 +711,7 @@ the indices into sequential numbers starting at zero into a new array</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_assocToIndexCombine">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L255">at line 255</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L245">at line 245</a></div>
         <code>        static            array
     <strong>assocToIndexCombine</strong>(array ...$arrays)
         </code>
@@ -765,7 +755,7 @@ combining the associative array with the numeric array into a single array.</p><
             </div>
                     <div class="method-item">
                     <h3 id="method_arrayFlatten">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L275">at line 275</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L265">at line 265</a></div>
         <code>        static            array
     <strong>arrayFlatten</strong>(array $array)
         </code>
@@ -807,7 +797,7 @@ combining the associative array with the numeric array into a single array.</p><
             </div>
                     <div class="method-item">
                     <h3 id="method_arrayGroupBy">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L293">at line 293</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L283">at line 283</a></div>
         <code>        static            array
     <strong>arrayGroupBy</strong>(array $arr, <abbr title="GenericDatabase\Helpers\Types\Compounds\string|callable">string|callable</abbr> $criteria)
         </code>
@@ -854,7 +844,7 @@ combining the associative array with the numeric array into a single array.</p><
             </div>
                     <div class="method-item">
                     <h3 id="method_arraySafe">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L311">at line 311</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L301">at line 301</a></div>
         <code>        static            array
     <strong>arraySafe</strong>(array $array)
         </code>

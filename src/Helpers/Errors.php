@@ -26,16 +26,11 @@ namespace GenericDatabase\Helpers;
  * - Throwing exceptions with error messages and locations
  *
  * Methods:
- * - `setError(mixed $value): mixed`:
- * Sets the error display setting to the specified value and returns the previous value.
- * - `turnOff(): mixed`:
- * Turns off error display by setting the error display setting to 0 and returns the previous value.
- * - `turnOn(): mixed`:
- * Turns on error display by setting the error display setting to 1 and returns the previous value.
- * - `throw(object $exception): never`:
- * Throws the specified exception and displays the error message and location.
- * - `newThrow(object $exception, object $message): never`:
- * Throws a custom exception with the specified error message and displays the error message and location.
+ * - `setError(mixed $value): mixed`: Sets the error display setting to the specified value and returns the previous value.
+ * - `turnOff(): mixed`: Turns off error display by setting the error display setting to 0 and returns the previous value.
+ * - `turnOn(): mixed`: Turns on error display by setting the error display setting to 1 and returns the previous value.
+ * - `throw(object $exception): never`: Throws the specified exception and displays the error message and location.
+ * - `newThrow(object $exception, object $message): never`: Throws a custom exception with the specified error message and displays the error message and location.
  *
  * Fields:
  * - `error`: Stores the previous error display setting.

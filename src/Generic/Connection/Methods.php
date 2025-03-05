@@ -11,7 +11,17 @@ use GenericDatabase\Generic\Connection\Settings;
  * properties dynamically. It also handles serialization and deserialization of the 
  * property using the __sleep and __wakeup magic methods.
  * 
- * @property ?Settings $property Stores settings for dynamic property access.
+ * Methods:
+ * - `__construct(array $property = [])`: Constructor to initialize the Settings object.
+ * - `__get(string $name): mixed`: Magic getter method
+ * - `__set(string $name, mixed $value): void`: Magic setter method to dynamically set properties.
+ * - `__isset(string $name): bool`: This method is triggered by calling isset() or empty() on inaccessible (protected or private) or non-existing properties.
+ * - `__unset(string $name): void`: This method is invoked when unset() is used on inaccessible (protected or private) or non-existing properties.
+ * - `__sleep(): array`: Sleep instance used by serialize/unserialize
+ * - `__wakeup(): void`: Wakeup instance used by serialize/unserialize
+ * 
+ * Fields:
+ * - `$property`: Stores settings for dynamic property access.
  */
 trait Methods
 {

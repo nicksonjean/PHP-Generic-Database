@@ -100,7 +100,19 @@
             <div class="description">
             <p><p>Class Settings provides a configuration container using magic methods
 for accessing and modifying properties. It utilizes traits for handling
-property access, setting, checking existence, and unsetting.</p></p>                    </div>
+property access, setting, checking existence, and unsetting.</p></p>            <p><p>Methods:</p>
+<ul>
+<li><code>__get(string $name): mixed</code>: Magic getter method</li>
+<li><code>__set(string $name, mixed $value): void</code>: Magic setter method to dynamically set properties.</li>
+<li><code>__isset(string $name): bool</code>: This method is triggered by calling isset() or empty() on inaccessible (protected or private) or non-existing properties.</li>
+<li><code>__unset(string $name): void</code>: This method is invoked when unset() is used on inaccessible (protected or private) or non-existing properties.</li>
+<li><code>__construct(array $property = [])</code>: Constructor to initialize the Settings object.</li>
+<li><code>__debugInfo(): array</code>: Magic method for debugging.</li>
+</ul>
+<p>Fields:</p>
+<ul>
+<li><code>$property</code>: Stores properties for dynamic property access.</li>
+</ul></p>        </div>
             
                 <h2>Traits</h2>
 
@@ -230,7 +242,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>         
                     <div class="method-item">
                     <h3 id="method___get">
         <div class="location">in <a href="../../../GenericDatabase/Shared/Getter.html#method___get">
-<abbr title="GenericDatabase\Shared\Getter">Getter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Getter.php#L19">at line 19</a></div>
+<abbr title="GenericDatabase\Shared\Getter">Getter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Getter.php#L22">at line 22</a></div>
         <code>                    mixed
     <strong>__get</strong>(string $name)
         </code>
@@ -273,7 +285,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>         
                     <div class="method-item">
                     <h3 id="method___set">
         <div class="location">in <a href="../../../GenericDatabase/Shared/Setter.html#method___set">
-<abbr title="GenericDatabase\Shared\Setter">Setter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Setter.php#L20">at line 20</a></div>
+<abbr title="GenericDatabase\Shared\Setter">Setter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Setter.php#L23">at line 23</a></div>
         <code>                    void
     <strong>__set</strong>(string $name, mixed $value)
         </code>
@@ -321,7 +333,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>         
                     <div class="method-item">
                     <h3 id="method___isset">
         <div class="location">in <a href="../../../GenericDatabase/Shared/Cleaner.html#method___isset">
-<abbr title="GenericDatabase\Shared\Cleaner">Cleaner</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Cleaner.php#L24">at line 24</a></div>
+<abbr title="GenericDatabase\Shared\Cleaner">Cleaner</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Cleaner.php#L27">at line 27</a></div>
         <code>                    bool
     <strong>__isset</strong>(string $name)
         </code>
@@ -365,7 +377,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
                     <div class="method-item">
                     <h3 id="method___unset">
         <div class="location">in <a href="../../../GenericDatabase/Shared/Cleaner.html#method___unset">
-<abbr title="GenericDatabase\Shared\Cleaner">Cleaner</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Cleaner.php#L36">at line 36</a></div>
+<abbr title="GenericDatabase\Shared\Cleaner">Cleaner</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Cleaner.php#L39">at line 39</a></div>
         <code>                    void
     <strong>__unset</strong>(string $name)
         </code>
@@ -408,7 +420,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method___construct">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Connection/Settings.php#L30">at line 30</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Connection/Settings.php#L39">at line 39</a></div>
         <code>                    
     <strong>__construct</strong>(array $property = [])
         </code>
@@ -441,7 +453,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method___debugInfo">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Connection/Settings.php#L42">at line 42</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Connection/Settings.php#L51">at line 51</a></div>
         <code>                    array
     <strong>__debugInfo</strong>()
         </code>

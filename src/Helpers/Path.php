@@ -25,16 +25,12 @@ namespace GenericDatabase\Helpers;
  * `Output: Absolute path`
  *
  * Main functionalities:
- * - The `toAbsolute` method converts a relative path to an absolute path by replacing the directory
- * separator with a forward slash ('/') and removing any occurrences of '.' (current directory).
- * - The `isAbsolute` method checks if a path is absolute by using regular expressions to match the path against a
- * pattern that includes optional wrappers (e.g., 'http://') and a root (e.g., 'C:/') followed by the path itself.
+ * - The `toAbsolute` method converts a relative path to an absolute path by replacing the directory separator with a forward slash ('/') and removing any occurrences of '.' (current directory).
+ * - The `isAbsolute` method checks if a path is absolute by using regular expressions to match the path against a pattern that includes optional wrappers (e.g., 'http://') and a root (e.g., 'C:/') followed by the path itself.
  *
  * Methods:
- * - `toAbsolute(string $path): string`:
- * Converts a relative path to an absolute path.
- * - `isAbsolute(string $path): bool`:
- * Checks if a path is absolute.
+ * - `toAbsolute(string $path): string`: Converts a relative path to an absolute path.
+ * - `isAbsolute(string $path): bool`: Checks if a path is absolute.
  *
  * @package GenericDatabase\Helpers
  */

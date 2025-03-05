@@ -5,6 +5,12 @@ namespace GenericDatabase\Interfaces\Connection;
 use ReflectionException;
 use GenericDatabase\Interfaces\IConnection;
 
+/**
+ * This interface defines the contract for handling arguments in database connections.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
+ */
 interface IArguments
 {
     /**

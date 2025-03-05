@@ -97,6 +97,9 @@
     
         
 
+            <div class="description">
+            <p><p>This interface defines the contract for transaction management in a database connection.</p></p>            <p><p>Implementing classes should provide methods to handle database transactions,
+such as beginning, committing, and rolling back transactions.</p></p>        </div>
             
         
     
@@ -154,7 +157,7 @@ either the last one inserted during the current transaction, or by passing in th
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_beginTransaction">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/ITransactions.php#L12">at line 12</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/ITransactions.php#L20">at line 20</a></div>
         <code>                    bool
     <strong>beginTransaction</strong>()
         </code>
@@ -186,7 +189,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_commit">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/ITransactions.php#L19">at line 19</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/ITransactions.php#L27">at line 27</a></div>
         <code>                    bool
     <strong>commit</strong>()
         </code>
@@ -218,7 +221,7 @@ either the last one inserted during the current transaction, or by passing in th
             </div>
                     <div class="method-item">
                     <h3 id="method_rollback">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/ITransactions.php#L27">at line 27</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/ITransactions.php#L35">at line 35</a></div>
         <code>                    bool
     <strong>rollback</strong>()
         </code>
@@ -251,7 +254,7 @@ this transaction and restores the data to its original state.</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_inTransaction">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/ITransactions.php#L35">at line 35</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Interfaces/Connection/ITransactions.php#L43">at line 43</a></div>
         <code>                    bool
     <strong>inTransaction</strong>()
         </code>

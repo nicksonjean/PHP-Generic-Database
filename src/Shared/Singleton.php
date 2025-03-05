@@ -15,6 +15,10 @@ namespace GenericDatabase\Shared;
  * - `setInstance(): void:` Sets a specific instance, optionally identified by a hash.
  * - `clearInstance(): void:` Clears a specific instance or the default instance.
  * - `clearAllInstances(): void:` Clears all instances, including the default one.
+ * 
+ * Fields:
+ * - `$instance`: Static instance for classic singleton pattern.
+ * - `$instances`: Array to store multiple instances by hash.
  */
 trait Singleton
 {

@@ -3,7 +3,12 @@
 namespace GenericDatabase\Interfaces\Connection;
 
 /**
- * Interface that defines the specialized fetch operations
+ * This interface defines the strategy for fetching data from a database.
+ * Implementations of this interface should provide specific methods for
+ * retrieving data according to the defined strategy.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
  */
 interface IFetchStrategy
 {

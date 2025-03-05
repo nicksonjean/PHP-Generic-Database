@@ -138,29 +138,18 @@ $argsArray = Reflections::argsToArray($arg1, $arg2, $arg3);</code></pre>
 </ul>
 <p>Methods:</p>
 <ul>
-<li><code>getSingletonInstance($class)</code>:
-Retrieves the singleton instance of a class by calling a static method.
-Throws an exception if the method does not exist.</li>
-<li><code>isSingletonMethodExists($class)</code>:
-Checks if a method exists and is static in a class.
-Throws an exception if the method does not exist or is not static.</li>
-<li><code>getClassInstance($class)</code>:
-Returns a <code>ReflectionClass</code> instance for the given class.</li>
-<li><code>getClassConstants($class)</code>:
-Returns an array of all constants defined in the class.</li>
-<li><code>getClassConstantName($class, $field)</code>:
-Returns the name of a constant by its value.</li>
-<li><code>getClassPropertyName($class, $prop)</code>:
-Returns the value of a class property by its name.</li>
-<li><code>createObjectAndSetPropertiesCaseInsensitive($classOrObject, $constructorArgArray, $propertyList)</code>:
-Creates an object and sets its properties in a case-insensitive manner.</li>
-<li><code>argsToArray(...$args)</code>:
-Converts multiple arguments into an associative array.</li>
+<li><code>getSingletonInstance($class)</code>: Retrieves the singleton instance of a class by calling a static method. Throws an exception if the method does not exist.</li>
+<li><code>isSingletonMethodExists($class)</code>: Checks if a method exists and is static in a class. Throws an exception if the method does not exist or is not static.</li>
+<li><code>getClassInstance($class)</code>: Returns a <code>ReflectionClass</code> instance for the given class.</li>
+<li><code>getClassConstants($class)</code>: Returns an array of all constants defined in the class.</li>
+<li><code>getClassConstantName($class, $field)</code>: Returns the name of a constant by its value.</li>
+<li><code>getClassPropertyName($class, $prop)</code>: Returns the value of a class property by its name.</li>
+<li><code>createObjectAndSetPropertiesCaseInsensitive($classOrObject, $constructorArgArray, $propertyList)</code>: Creates an object and sets its properties in a case-insensitive manner.</li>
+<li><code>argsToArray(...$args)</code>: Converts multiple arguments into an associative array.</li>
 </ul>
 <p>Fields:</p>
 <ul>
-<li><code>defaultMethod</code>:
-A static field that stores the default method name (<code>getInstance</code>) used for getting singleton instances.</li>
+<li><code>defaultMethod</code>: A static field that stores the default method name (<code>getInstance</code>) used for getting singleton instances.</li>
 </ul></p>        </div>
             
         
@@ -271,7 +260,7 @@ A static field that stores the default method name (<code>getInstance</code>) us
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_getSingletonInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L92">at line 92</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L81">at line 81</a></div>
         <code>        static            <abbr title="GenericDatabase\Helpers\object|false">object|false</abbr>
     <strong>getSingletonInstance</strong>(mixed $class)
         </code>
@@ -322,7 +311,7 @@ A static field that stores the default method name (<code>getInstance</code>) us
             </div>
                     <div class="method-item">
                     <h3 id="method_isSingletonMethodExists">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L107">at line 107</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L96">at line 96</a></div>
         <code>        static            bool
     <strong>isSingletonMethodExists</strong>(mixed $class)
         </code>
@@ -373,7 +362,7 @@ A static field that stores the default method name (<code>getInstance</code>) us
             </div>
                     <div class="method-item">
                     <h3 id="method_getClassInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L119">at line 119</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L108">at line 108</a></div>
         <code>        static            <a target="_blank" rel="noopener" href="https://www.php.net/ReflectionClass">ReflectionClass</a>
     <strong>getClassInstance</strong>(mixed $class)
         </code>
@@ -424,7 +413,7 @@ A static field that stores the default method name (<code>getInstance</code>) us
             </div>
                     <div class="method-item">
                     <h3 id="method_getClassConstants">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L131">at line 131</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L120">at line 120</a></div>
         <code>        static            array
     <strong>getClassConstants</strong>(mixed $class)
         </code>
@@ -475,7 +464,7 @@ A static field that stores the default method name (<code>getInstance</code>) us
             </div>
                     <div class="method-item">
                     <h3 id="method_getClassConstantName">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L144">at line 144</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L133">at line 133</a></div>
         <code>        static            <abbr title="GenericDatabase\Helpers\string|int|bool">string|int|bool</abbr>
     <strong>getClassConstantName</strong>(mixed $class, mixed $field)
         </code>
@@ -531,7 +520,7 @@ A static field that stores the default method name (<code>getInstance</code>) us
             </div>
                     <div class="method-item">
                     <h3 id="method_getClassPropertyName">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L157">at line 157</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L146">at line 146</a></div>
         <code>        static            mixed
     <strong>getClassPropertyName</strong>(mixed $class, mixed $prop)
         </code>
@@ -587,7 +576,7 @@ A static field that stores the default method name (<code>getInstance</code>) us
             </div>
                     <div class="method-item">
                     <h3 id="method_createObjectAndSetPropertiesCaseInsensitive">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L171">at line 171</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L160">at line 160</a></div>
         <code>        static            mixed
     <strong>createObjectAndSetPropertiesCaseInsensitive</strong>(mixed $classOrObject, array $constructorArgArray, array $propertyList)
         </code>
@@ -648,7 +637,7 @@ A static field that stores the default method name (<code>getInstance</code>) us
             </div>
                     <div class="method-item">
                     <h3 id="method_argsToArray">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L255">at line 255</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L244">at line 244</a></div>
         <code>        static            array
     <strong>argsToArray</strong>(mixed ...$args)
         </code>

@@ -51,28 +51,17 @@ use ReflectionObject;
  * - Convert multiple arguments into an associative array
  *
  * Methods:
- * - `getSingletonInstance($class)`:
- * Retrieves the singleton instance of a class by calling a static method.
- * Throws an exception if the method does not exist.
- * - `isSingletonMethodExists($class)`:
- * Checks if a method exists and is static in a class.
- * Throws an exception if the method does not exist or is not static.
- * - `getClassInstance($class)`:
- * Returns a `ReflectionClass` instance for the given class.
- * - `getClassConstants($class)`:
- * Returns an array of all constants defined in the class.
- * - `getClassConstantName($class, $field)`:
- * Returns the name of a constant by its value.
- * - `getClassPropertyName($class, $prop)`:
- * Returns the value of a class property by its name.
- * - `createObjectAndSetPropertiesCaseInsensitive($classOrObject, $constructorArgArray, $propertyList)`:
- * Creates an object and sets its properties in a case-insensitive manner.
- * - `argsToArray(...$args)`:
- * Converts multiple arguments into an associative array.
+ * - `getSingletonInstance($class)`: Retrieves the singleton instance of a class by calling a static method. Throws an exception if the method does not exist.
+ * - `isSingletonMethodExists($class)`: Checks if a method exists and is static in a class. Throws an exception if the method does not exist or is not static.
+ * - `getClassInstance($class)`: Returns a `ReflectionClass` instance for the given class.
+ * - `getClassConstants($class)`: Returns an array of all constants defined in the class.
+ * - `getClassConstantName($class, $field)`: Returns the name of a constant by its value.
+ * - `getClassPropertyName($class, $prop)`: Returns the value of a class property by its name.
+ * - `createObjectAndSetPropertiesCaseInsensitive($classOrObject, $constructorArgArray, $propertyList)`: Creates an object and sets its properties in a case-insensitive manner.
+ * - `argsToArray(...$args)`: Converts multiple arguments into an associative array.
  *
  * Fields:
- * - `defaultMethod`:
- * A static field that stores the default method name (`getInstance`) used for getting singleton instances.
+ * - `defaultMethod`: A static field that stores the default method name (`getInstance`) used for getting singleton instances.
  */
 class Reflections
 {

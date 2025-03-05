@@ -3,7 +3,12 @@
 namespace GenericDatabase\Interfaces\Connection;
 
 /**
- * Interface that defines the specialized statements operations
+ * This interface defines the abstract methods for database statement operations.
+ * Implementing classes should provide concrete implementations for these methods
+ * to handle database interactions.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
  */
 interface IStatementsAbstract
 {

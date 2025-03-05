@@ -51,9 +51,7 @@ use GenericDatabase\Core\Types as An;
  * - Handles various types of database connections, including PDO, MySQLi, SQLite3, and custom connection classes.
  *
  * Methods:
- * - `connection($cnx): string`:
- * Determines the type of the given connection.
- * It accepts either a resource or an object connection and returns a string representing the connection type.
+ * - `connection($cnx): string`: Determines the type of the given connection. It accepts either a resource or an object connection and returns a string representing the connection type.
  *
  * @package GenericDatabase\Helpers
  */
@@ -90,7 +88,7 @@ class Compare
      */
     private static function getResourceConnectionType($cnx): string
     {
-        $its = fn ($name) => $name->value;
+        $its = fn($name) => $name->value;
         return match (true) {
             is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_ODBC) => 'odbc',
             is_resource($cnx) && get_resource_type($cnx) === $its(An::NAT_ODBC_PERSISTENT) => 'odbc',
@@ -118,8 +116,8 @@ class Compare
      */
     private static function getObjectConnectionType(object $cnx): string
     {
-        $its = fn ($name) => $name->value;
-        $attr = fn ($cnx) => $cnx->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $its = fn($name) => $name->value;
+        $attr = fn($cnx) => $cnx->getAttribute(PDO::ATTR_DRIVER_NAME);
         return match (true) {
             is_a($cnx, $its(An::NAT_MYSQLI)) && $cnx::class === $its(An::NAT_MYSQLI) => 'mysqli',
             is_a($cnx, $its(An::NAT_SQLITE)) && $cnx::class === $its(An::NAT_SQLITE) => 'sqlite',

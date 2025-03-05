@@ -3,7 +3,10 @@
 namespace GenericDatabase\Interfaces\Connection;
 
 /**
- * Interface for fetch operations
+ * This interface defines the contract for fetching data from a database.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
  */
 interface IFetch
 {

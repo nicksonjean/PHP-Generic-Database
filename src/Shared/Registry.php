@@ -21,7 +21,6 @@ use GenericDatabase\Helpers\Exceptions;
  * - `contains(string $name): bool:` Checks if an item exists in the collection.
  * - `remove(string $name): void:` Removes an item from the collection by name.
  *
- * @throws ReflectionException
  */
 trait Registry
 {

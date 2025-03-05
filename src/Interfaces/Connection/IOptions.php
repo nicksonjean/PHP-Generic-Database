@@ -2,6 +2,12 @@
 
 namespace GenericDatabase\Interfaces\Connection;
 
+/**
+ * This interface defines the contract for database connection options.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
+ */
 interface IOptions
 {
     /**

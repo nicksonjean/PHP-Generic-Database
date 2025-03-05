@@ -86,25 +86,15 @@ namespace GenericDatabase\Helpers\Types\Compounds;
  * - Creating an index or list array to an associative array
  *
  * Methods:
- * - `exceptByKeys(array $array, array $keys): array`:
- * Finds elements in an array except by keys.
- * - `exceptByValues(array $array, array $values): array`:
- * Finds elements in an array except by values.
- * - `matchValues(array $list, array $array, ?string $apply = 'mb_strtolower'): string`:
- * Finds the first element that matches between two arrays.
- * - `recombine(array $array): array`:
- * Combines the indices and values of an array into a new array.
- * - `assocToIndex(array $array): array`:
- * Combines the values of an array by substituting the indices
- * into sequential numbers starting at zero into a new array.
- * - `isAssoc(mixed $array): bool`:
- * Determines if an array is indexed or associative.
- * - `isMultidimensional(array $array): bool`:
- * Determines if an array is multidimensional.
- * - `arrayValuesRecursive(array $array): array`:
- * Gets the array values recursively.
- * - `assocToIndexCombine(array ...$arrays): array`:
- * Creates an index or list array to
+ * - `exceptByKeys(array $array, array $keys): array`: Finds elements in an array except by keys.
+ * - `exceptByValues(array $array, array $values): array`: Finds elements in an array except by values.
+ * - `matchValues(array $list, array $array, ?string $apply = 'mb_strtolower'): string`: Finds the first element that matches between two arrays.
+ * - `recombine(array $array): array`: Combines the indices and values of an array into a new array.
+ * - `assocToIndex(array $array): array`: Combines the values of an array by substituting the indices into sequential numbers starting at zero into a new array.
+ * - `isAssoc(mixed $array): bool`: Determines if an array is indexed or associative.
+ * - `isMultidimensional(array $array): bool`: Determines if an array is multidimensional.
+ * - `arrayValuesRecursive(array $array): array`: Gets the array values recursively.
+ * - `assocToIndexCombine(array ...$arrays): array`: Creates an index or list array to
  *
  * @package GenericDatabase\Helpers
  * @noinspection SpellCheckingInspection

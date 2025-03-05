@@ -108,6 +108,11 @@ and clear instances.</p>
 <li><code>setInstance(): void:</code> Sets a specific instance, optionally identified by a hash.</li>
 <li><code>clearInstance(): void:</code> Clears a specific instance or the default instance.</li>
 <li><code>clearAllInstances(): void:</code> Clears all instances, including the default one.</li>
+</ul>
+<p>Fields:</p>
+<ul>
+<li><code>$instance</code>: Static instance for classic singleton pattern.</li>
+<li><code>$instances</code>: Array to store multiple instances by hash.</li>
 </ul></p>        </div>
             
         
@@ -176,7 +181,7 @@ If hash is provided, creates/returns instance for that hash</p></p>             
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_getInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L39">at line 39</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L43">at line 43</a></div>
         <code>        static            <a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
     <strong>getInstance</strong>(string|null $hash = null)
         </code>
@@ -220,7 +225,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_newInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L60">at line 60</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L64">at line 64</a></div>
         <code>        static            <a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
     <strong>newInstance</strong>(string|null $hash = null)
         </code>
@@ -262,7 +267,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_setInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L78">at line 78</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L82">at line 82</a></div>
         <code>        static            void
     <strong>setInstance</strong>(<a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> $instance, string|null $hash = null)
         </code>
@@ -309,7 +314,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_clearInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L94">at line 94</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L98">at line 98</a></div>
         <code>        static            void
     <strong>clearInstance</strong>(string|null $hash = null)
         </code>
@@ -351,7 +356,7 @@ If hash is provided, creates/returns instance for that hash</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_clearAllInstances">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L109">at line 109</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L113">at line 113</a></div>
         <code>        static            void
     <strong>clearAllInstances</strong>()
         </code>

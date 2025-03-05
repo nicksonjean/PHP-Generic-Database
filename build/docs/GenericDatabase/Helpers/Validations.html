@@ -116,27 +116,18 @@ $length = 10;
 $randomString = Validations::randomString($length);
 echo $randomString;</code></pre>
 <p><code>Output: Random string of length 10</code></p>
-<pre><code>// Detect if a query is a SELECT statement
-$stmt = 'SELECT * FROM table';
-$isSelect = Validations::isSelect($stmt);
-echo $isSelect ? 'SELECT statement' : 'Not a SELECT statement';</code></pre>
-<p><code>Output: SELECT statement</code></p>
 <p>Main functionalities:</p>
 <ul>
 <li>The <code>isNumber</code> method checks if a value is numeric by using the is_numeric function.</li>
-<li>The <code>isBoolean</code> method checks "Booleanic" conditions
-by using the <code>filter_var</code> function with the <code>FILTER_VALIDATE_BOOLEAN</code> flag.</li>
-<li>The <code>randomString</code> method generates a random string of a specified length by selecting
-random characters from an array of letters.</li>
-<li>The <code>isSelect</code> method detects if a query is a SELECT statement by checking if the query
-starts with the word "SELECT" (case-insensitive).</li>
+<li>The <code>isBoolean</code> method checks "Booleanic" conditions by using the <code>filter_var</code> function with the <code>FILTER_VALIDATE_BOOLEAN</code> flag.</li>
+<li>The <code>randomString</code> method generates a random string of a specified length by selecting random characters from an array of letters.</li>
+<li>The <code>isSelect</code> method detects if a query is a SELECT statement by checking if the query starts with the word "SELECT" (case-insensitive).</li>
 </ul>
 <p>Methods:</p>
 <ul>
 <li><code>isNumber(string $value): bool</code>: Checks if a value is numeric.</li>
 <li><code>isBoolean(mixed $value): mixed</code>: Checks "Booleanic" conditions.</li>
 <li><code>randomString(int $length): string</code>: Generates a random string of a specified length.</li>
-<li><code>isSelect(string $stmt): bool</code>: Detects if a query is a SELECT statement.</li>
 </ul></p>        </div>
             
         
@@ -182,8 +173,7 @@ starts with the word "SELECT" (case-insensitive).</li>
                 <div class="col-md-8">
                     <a href="#method_detectTypes">detectTypes</a>(mixed $data)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Converts elements of an array to specific types based on their original type.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
             </div>
@@ -194,7 +184,7 @@ starts with the word "SELECT" (case-insensitive).</li>
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_isNumber">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L68">at line 68</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L56">at line 56</a></div>
         <code>        static            bool
     <strong>isNumber</strong>(string $value)
         </code>
@@ -236,7 +226,7 @@ starts with the word "SELECT" (case-insensitive).</li>
             </div>
                     <div class="method-item">
                     <h3 id="method_isBoolean">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L81">at line 81</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L69">at line 69</a></div>
         <code>        static            mixed
     <strong>isBoolean</strong>(mixed $value)
         </code>
@@ -280,7 +270,7 @@ Returns NULL otherwise.</p></td>
             </div>
                     <div class="method-item">
                     <h3 id="method_randomString">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L95">at line 95</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L83">at line 83</a></div>
         <code>        static            string
     <strong>randomString</strong>(int $length)
         </code>
@@ -322,7 +312,7 @@ Returns NULL otherwise.</p></td>
             </div>
                     <div class="method-item">
                     <h3 id="method_detectTypes">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L109">at line 109</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Validations.php#L105">at line 105</a></div>
         <code>        static            mixed
     <strong>detectTypes</strong>(mixed $data)
         </code>
@@ -332,8 +322,7 @@ Returns NULL otherwise.</p></td>
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Converts elements of an array to specific types based on their original type.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -342,7 +331,7 @@ Returns NULL otherwise.</p></td>
                     <tr>
                 <td>mixed</td>
                 <td>$data</td>
-                <td></td>
+                <td><p>An array of mixed data types to be processed.</p></td>
             </tr>
             </table>
 
@@ -352,7 +341,15 @@ Returns NULL otherwise.</p></td>
                     <table class="table table-condensed">
         <tr>
             <td>mixed</td>
-            <td></td>
+            <td><p>An array with elements converted to specific types:</p>
+<ul>
+<li>Booleans and integers are cast to integers.</li>
+<li>Strings remain as strings.</li>
+<li>Arrays are converted to comma-separated strings.</li>
+<li>Objects are serialized.</li>
+<li>Resources are converted to strings if they are streams, otherwise serialized.</li>
+<li>Other types remain unchanged.</li>
+</ul></td>
         </tr>
     </table>
 

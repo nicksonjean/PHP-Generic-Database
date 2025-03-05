@@ -23,13 +23,45 @@ use GenericDatabase\Engine\ODBC\Connection\ODBC;
 use GenericDatabase\Engine\PDOConnection;
 use PDO;
 
+/**
+ * Class Fluent
+ * Provides methods to create database connections for various database engines.
+ * 
+ * Methods:
+ * - `nativeMySQLi(array $env, bool $persistent = false, bool $strategy = false): Connection|MySQLiConnection`: Creates a native MySQLi connection.
+ * - `nativePgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PgSQLConnection`: Creates a native PostgreSQL connection.
+ * - `nativeSQLSrv(array $env, bool $persistent = false, bool $strategy = false): Connection|SQLSrvConnection`: Creates a native SQL Server connection.
+ * - `nativeOCI(array $env, bool $persistent = false, bool $strategy = false): Connection|OCIConnection`: Creates a native Oracle OCI connection.
+ * - `nativeFirebird(array $env, bool $persistent = false, bool $strategy = false): Connection|FirebirdConnection`: Creates a native Firebird connection.
+ * - `nativeSQLite(array $env, bool $persistent = false, bool $strategy = false): Connection|SQLiteConnection`: Creates a native SQLite connection.
+ * - `nativeMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|SQLiteConnection`: Creates a native SQLite in-memory connection.
+ * - `pdoMySQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`: Creates a PDO MySQL connection.
+ * - `pdoPgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`: Creates a PDO PostgreSQL connection.
+ * - `pdoSQLSrv(array $env, bool $strategy = false): Connection|PDOConnection`: Creates a PDO SQL Server connection.
+ * - `pdoOCI(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`: Creates a PDO Oracle OCI connection.
+ * - `pdoFirebird(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`: Creates a PDO Firebird connection.
+ * - `pdoSQLite(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`: Creates a PDO SQLite connection.
+ * - `pdoMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection`:Creates a PDO SQLite in-memory connection.
+ * - `odbcMySQL(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`:Creates an ODBC MySQL connection.
+ * - `odbcPgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`:Creates an ODBC PostgreSQL connection.
+ * - `odbcSQLSrv(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`:Creates an ODBC SQL Server connection.
+ * - `odbcOCI(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`:Creates an ODBC Oracle OCI connection.
+ * - `odbcFirebird(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Firebird connection.
+ * - `odbcSQLite(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC SQLite connection.
+ * - `odbcAccess(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Microsoft Access connection.
+ * - `odbcExcel(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Microsoft Excel connection.
+ * - `odbcText(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Text connection.
+ * - `odbcMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC SQLite in-memory connection.
+ */
 class Fluent
 {
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|MySQLiConnection
+     * Creates a native MySQLi connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing MySQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|MySQLiConnection Returns a MySQLi connection instance.
      */
     public static function nativeMySQLi(
         array $env,
@@ -40,7 +72,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'mysqli');
         }
-        /** @var Connection|MySQLiConnection $className */
+        /** @var Connection|MySQLiConnection $instance */
         $instance = $className::setHost($env['MYSQL_HOST']);
         $instance::setPort((int) $env['MYSQL_PORT'])
             ::setDatabase($env['MYSQL_DATABASE'])
@@ -65,10 +97,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PgSQLConnection
+     * Creates a native PgSQL connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing PgSQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PgSQLConnection Returns a PgSQL connection instance.
      */
     public static function nativePgSQL(
         array $env,
@@ -79,7 +113,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pgsql');
         }
-        /** @var Connection|PgSQLConnection $className */
+        /** @var Connection|PgSQLConnection $instance */
         $instance = $className::setHost($env['PGSQL_HOST']);
         $instance::setPort((int) $env['PGSQL_PORT'])
             ::setDatabase($env['PGSQL_DATABASE'])
@@ -100,10 +134,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|SQLSrvConnection
+     * Creates a native SQLSrv connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLSrv connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|SQLSrvConnection Returns a SQLSrv connection instance.
      */
     public static function nativeSQLSrv(
         array $env,
@@ -114,7 +150,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlsrv');
         }
-        /** @var Connection|SQLSrvConnection $className */
+        /** @var Connection|SQLSrvConnection $instance */
         $instance = $className::setHost($env['SQLSRV_HOST']);
         $instance::setPort((int) $env['SQLSRV_PORT'])
             ::setPort((int) $env['SQLSRV_PORT'])
@@ -134,10 +170,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|OCIConnection
+     * Creates a native OCI connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing OCI connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|OCIConnection Returns a OCI connection instance.
      */
     public static function nativeOCI(
         array $env,
@@ -148,7 +186,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'oci');
         }
-        /** @var Connection|OCIConnection $className */
+        /** @var Connection|OCIConnection $instance */
         $instance = $className::setHost($env['OCI_HOST']);
         $instance::setPort((int) $env['OCI_PORT'])
             ::setDatabase($env['OCI_DATABASE'])
@@ -167,10 +205,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|FirebirdConnection
+     * Creates a native Firebird connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Firebird connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|FirebirdConnection Returns a Firebird connection instance.
      */
     public static function nativeFirebird(
         array $env,
@@ -181,7 +221,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'firebird');
         }
-        /** @var Connection|FirebirdConnection $className */
+        /** @var Connection|FirebirdConnection $instance */
         $instance = $className::setHost($env['IBASE_HOST']);
         $instance::setPort((int) $env['IBASE_PORT'])
             ::setDatabase($env['IBASE_DATABASE'])
@@ -200,10 +240,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|SQLiteConnection
+     * Creates a native SQLite connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLite connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|SQLiteConnection Returns a SQLite connection instance.
      */
     public static function nativeSQLite(
         array $env,
@@ -214,7 +256,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlite');
         }
-        /** @var Connection|SQLiteConnection $className */
+        /** @var Connection|SQLiteConnection $instance */
         $instance = $className::setDatabase($env['SQLITE_DATABASE']);
         $instance::setCharset($env['SQLITE_CHARSET'])
             ::setOptions([
@@ -233,10 +275,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|SQLiteConnection
+     * Creates a native SQLite in-memory connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLite connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|SQLiteConnection Returns a SQLite connection instance.
      */
     public static function nativeMemory(
         array $env,
@@ -247,7 +291,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlite');
         }
-        /** @var Connection|SQLiteConnection $className */
+        /** @var Connection|SQLiteConnection $instance */
         $instance = $className::setDatabase($env['SQLITE_DATABASE_MEMORY']);
         $instance::setCharset($env['SQLITE_CHARSET'])
             ::setOptions([
@@ -266,10 +310,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO MySQL connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing MySQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a MySQL connection instance.
      */
     public static function pdoMySQL(
         array $env,
@@ -280,7 +326,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOConnection $className */
+        /** @var Connection|PDOConnection $instance */
         $instance = $className::setDriver('mysql');
         $instance::setHost($env['MYSQL_HOST'])
             ::setPort((int) $env['MYSQL_PORT'])
@@ -299,10 +345,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO PgSQL connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing PgSQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a PgSQL connection instance.
      */
     public static function pdoPgSQL(
         array $env,
@@ -313,7 +361,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOConnection $className */
+        /** @var Connection|PDOConnection $instance */
         $instance = $className::setDriver('pgsql');
         $instance
             ::setHost($env['PGSQL_HOST'])
@@ -333,9 +381,11 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO SQLSrv connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLSrv connection parameters.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a SQLSrv connection instance.
      */
     public static function pdoSQLSrv(
         array $env,
@@ -345,7 +395,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOConnection $className */
+        /** @var Connection|PDOConnection $instance */
         $instance = $className::setDriver('sqlsrv');
         $instance
             ::setHost($env['SQLSRV_HOST'])
@@ -364,10 +414,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO OCI connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing OCI connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a OCI connection instance.
      */
     public static function pdoOCI(
         array $env,
@@ -378,7 +430,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOConnection $className */
+        /** @var Connection|PDOConnection $instance */
         $instance = $className::setDriver('oci');
         $instance
             ::setHost($env['OCI_HOST'])
@@ -398,10 +450,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO Firebird connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Firebird connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a Firebird connection instance.
      */
     public static function pdoFirebird(
         array $env,
@@ -412,7 +466,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOConnection $className */
+        /** @var Connection|PDOConnection $instance */
         $instance = $className::setDriver('firebird');
         $instance
             ::setHost($env['FBIRD_HOST'])
@@ -432,10 +486,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO SQLite connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLite connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a SQLite connection instance.
      */
     public static function pdoSQLite(
         array $env,
@@ -446,7 +502,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOConnection $className */
+        /** @var Connection|PDOConnection $instance */
         $instance = $className::setDriver('sqlite');
         $instance
             ::setDatabase($env['SQLITE_DATABASE'])
@@ -462,10 +518,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|PDOConnection
+     * Creates a PDO SQLite in-memory connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLite connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|PDOConnection Returns a SQLite connection instance.
      */
     public static function pdoMemory(
         array $env,
@@ -476,7 +534,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
-        /** @var Connection|PDOConnection $className */
+        /** @var Connection|PDOConnection $instance */
         $instance = $className::setDriver('sqlite');
         $instance
             ::setDatabase($env['SQLITE_DATABASE_MEMORY'])
@@ -492,10 +550,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC MySQL connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing MySQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a MySQL connection instance.
      */
     public static function odbcMySQL(
         array $env,
@@ -506,7 +566,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCConnection $className */
+        /** @var Connection|ODBCConnection $instance */
         $instance = $className::setDriver('mysql');
         $instance
             ::setHost($env['MYSQL_HOST'])
@@ -527,10 +587,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC PgSQL connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing PgSQL connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a PgSQL connection instance.
      */
     public static function odbcPgSQL(
         array $env,
@@ -541,7 +603,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCConnection $className */
+        /** @var Connection|ODBCConnection $instance */
         $instance = $className::setDriver('pgsql');
         $instance
             ::setHost($env['PGSQL_HOST'])
@@ -562,10 +624,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC SQLSrv connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLSrv connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a SQLSrv connection instance.
      */
     public static function odbcSQLSrv(
         array $env,
@@ -576,7 +640,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCConnection $className */
+        /** @var Connection|ODBCConnection $instance */
         $instance = $className::setDriver('sqlsrv');
         $instance
             ::setHost($env['SQLSRV_HOST'])
@@ -597,10 +661,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC OCI connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing OCI connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a OCI connection instance.
      */
     public static function odbcOCI(
         array $env,
@@ -611,7 +677,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCConnection $className */
+        /** @var Connection|ODBCConnection $instance */
         $instance = $className::setDriver('oci');
         $instance
             ::setHost($env['OCI_HOST'])
@@ -632,10 +698,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC Firebird connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Firebird connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a Firebird connection instance.
      */
     public static function odbcFirebird(
         array $env,
@@ -646,7 +714,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCConnection $className */
+        /** @var Connection|ODBCConnection $instance */
         $instance = $className::setDriver('firebird');
         $instance
             ::setHost($env['FBIRD_HOST'])
@@ -667,10 +735,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC SQLite connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing SQLite connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a SQLite connection instance.
      */
     public static function odbcSQLite(
         array $env,
@@ -681,7 +751,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCConnection $className */
+        /** @var Connection|ODBCConnection $instance */
         $instance = $className::setDriver('sqlite');
         $instance
             ::setDatabase($env['SQLITE_DATABASE'])
@@ -698,10 +768,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC Access connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Access connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a Access connection instance.
      */
     public static function odbcAccess(
         array $env,
@@ -712,7 +784,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCConnection $className */
+        /** @var Connection|ODBCConnection $instance */
         $instance = $className::setDriver('access');
         $instance
             ::setDatabase($env['ACCESS_DATABASE'])
@@ -731,10 +803,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC Excel connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Excel connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a Excel connection instance.
      */
     public static function odbcExcel(
         array $env,
@@ -745,7 +819,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCConnection $className */
+        /** @var Connection|ODBCConnection $instance */
         $instance = $className::setDriver('excel');
         $instance
             ::setDatabase($env['EXCEL_DATABASE'])
@@ -762,10 +836,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC Text connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing Text connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a Text connection instance.
      */
     public static function odbcText(
         array $env,
@@ -776,7 +852,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCConnection $className */
+        /** @var Connection|ODBCConnection $instance */
         $instance = $className::setDriver('text');
         $instance
             ::setDatabase($env['TEXT_DATABASE'])
@@ -793,10 +869,12 @@ class Fluent
     }
 
     /**
-     * @param array $env
-     * @param bool $persistent
-     * @param bool $strategy
-     * @return Connection|ODBCConnection
+     * Creates a ODBC Memory connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing ODBC Memory connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|ODBCConnection Returns a ODBC Memory connection instance.
      */
     public static function odbcMemory(
         array $env,
@@ -807,7 +885,7 @@ class Fluent
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
-        /** @var Connection|ODBCConnection $className */
+        /** @var Connection|ODBCConnection $instance */
         $instance = $className::setDriver('sqlite');
         $instance
             ::setDatabase($env['SQLITE_DATABASE_MEMORY'])

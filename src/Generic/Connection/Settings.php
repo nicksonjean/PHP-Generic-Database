@@ -12,7 +12,16 @@ use GenericDatabase\Shared\Cleaner;
  * for accessing and modifying properties. It utilizes traits for handling
  * property access, setting, checking existence, and unsetting.
  *
- * @package GenericDatabase\Generic\Connection
+ * Methods:
+ * - `__get(string $name): mixed`: Magic getter method
+ * - `__set(string $name, mixed $value): void`: Magic setter method to dynamically set properties.
+ * - `__isset(string $name): bool`: This method is triggered by calling isset() or empty() on inaccessible (protected or private) or non-existing properties.
+ * - `__unset(string $name): void`: This method is invoked when unset() is used on inaccessible (protected or private) or non-existing properties.
+ * - `__construct(array $property = [])`: Constructor to initialize the Settings object.
+ * - `__debugInfo(): array`: Magic method for debugging.
+ * 
+ * Fields:
+ * - `$property`: Stores properties for dynamic property access.
  */
 class Settings
 {

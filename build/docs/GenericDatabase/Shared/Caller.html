@@ -104,8 +104,14 @@ while </strong>callStatic manages static method calls. Both methods
 interpret method names starting with 'set' or 'get' to perform
 corresponding actions on properties.</p></p>            <p><p>Methods:</p>
 <ul>
+<li><code>__get(string $name): mixed:</code> Retrieves the value of a property if it exists, or returns null if the property is inaccessible or non-existent.</li>
+<li><code>__set(string $name, mixed $value): void:</code> Magic method to set the value of inaccessible or non-existing properties.</li>
 <li><code>__call(string $name, array $arguments): mixed:</code> Handles dynamic instance method calls.</li>
 <li><code>__callStatic(string $name, array $arguments): mixed:</code> Handles dynamic static method calls.</li>
+</ul>
+<p>Fields:</p>
+<ul>
+<li><code>$property</code>: Stores properties for dynamic property access.</li>
 </ul></p>        </div>
             
                 <h2>Traits</h2>
@@ -196,7 +202,7 @@ corresponding actions on properties.</p></p>            <p><p>Methods:</p>
                     <div class="method-item">
                     <h3 id="method___get">
         <div class="location">in <a href="../../GenericDatabase/Shared/Getter.html#method___get">
-<abbr title="GenericDatabase\Shared\Getter">Getter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Getter.php#L19">at line 19</a></div>
+<abbr title="GenericDatabase\Shared\Getter">Getter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Getter.php#L22">at line 22</a></div>
         <code>                    mixed
     <strong>__get</strong>(string $name)
         </code>
@@ -239,7 +245,7 @@ corresponding actions on properties.</p></p>            <p><p>Methods:</p>
                     <div class="method-item">
                     <h3 id="method___set">
         <div class="location">in <a href="../../GenericDatabase/Shared/Setter.html#method___set">
-<abbr title="GenericDatabase\Shared\Setter">Setter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Setter.php#L20">at line 20</a></div>
+<abbr title="GenericDatabase\Shared\Setter">Setter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Setter.php#L23">at line 23</a></div>
         <code>                    void
     <strong>__set</strong>(string $name, mixed $value)
         </code>
@@ -286,7 +292,7 @@ corresponding actions on properties.</p></p>            <p><p>Methods:</p>
             </div>
                     <div class="method-item">
                     <h3 id="method___call">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Caller.php#L34">at line 34</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Caller.php#L39">at line 39</a></div>
         <code>                    mixed
     <strong>__call</strong>(string $name, array $arguments)
         </code>
@@ -333,7 +339,7 @@ corresponding actions on properties.</p></p>            <p><p>Methods:</p>
             </div>
                     <div class="method-item">
                     <h3 id="method___callStatic">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Caller.php#L58">at line 58</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Caller.php#L63">at line 63</a></div>
         <code>        static            mixed
     <strong>__callStatic</strong>(string $name, array $arguments)
         </code>

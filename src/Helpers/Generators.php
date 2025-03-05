@@ -32,17 +32,12 @@ use GenericDatabase\Helpers\Types\Compounds\Arrays;
  * `Output: $type will be 123`
  *
  * Main functionalities:
- * - Setting a constant and generating options based on a provided value,
- * instance, class name, constant name, and attributes.
+ * - Setting a constant and generating options based on a provided value, instance, class name, constant name, and attributes.
  * - Determining the type of value based on its characteristics.
  *
  * Methods:
- * - `setConstant($value, $instance, $className, $constantName, $attributes)`:
- * Sets a constant and generates options based on the provided value, instance,
- * class name, constant name, and attributes. Returns the generated options as an array.
- * - `setType($value)`:
- * Determines the type of value based on its characteristics.
- * Returns the determined type as a boolean, integer, or string.
+ * - `setConstant($value, $instance, $className, $constantName, $attributes)`: Sets a constant and generates options based on the provided value, instance, class name, constant name, and attributes. Returns the generated options as an array.
+ * - `setType($value)`: Determines the type of value based on its characteristics. Returns the determined type as a boolean, integer, or string.
  *
  * @package GenericDatabase\Helpers
  */

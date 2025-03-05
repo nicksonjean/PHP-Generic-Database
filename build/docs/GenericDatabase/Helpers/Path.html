@@ -113,17 +113,13 @@ echo $isAbsolute ? 'Absolute path' : 'Relative path';</code></pre>
 <p><code>Output: Absolute path</code></p>
 <p>Main functionalities:</p>
 <ul>
-<li>The <code>toAbsolute</code> method converts a relative path to an absolute path by replacing the directory
-separator with a forward slash ('/') and removing any occurrences of '.' (current directory).</li>
-<li>The <code>isAbsolute</code> method checks if a path is absolute by using regular expressions to match the path against a
-pattern that includes optional wrappers (e.g., 'http://') and a root (e.g., 'C:/') followed by the path itself.</li>
+<li>The <code>toAbsolute</code> method converts a relative path to an absolute path by replacing the directory separator with a forward slash ('/') and removing any occurrences of '.' (current directory).</li>
+<li>The <code>isAbsolute</code> method checks if a path is absolute by using regular expressions to match the path against a pattern that includes optional wrappers (e.g., 'http://') and a root (e.g., 'C:/') followed by the path itself.</li>
 </ul>
 <p>Methods:</p>
 <ul>
-<li><code>toAbsolute(string $path): string</code>:
-Converts a relative path to an absolute path.</li>
-<li><code>isAbsolute(string $path): bool</code>:
-Checks if a path is absolute.</li>
+<li><code>toAbsolute(string $path): string</code>: Converts a relative path to an absolute path.</li>
+<li><code>isAbsolute(string $path): bool</code>: Checks if a path is absolute.</li>
 </ul></p>        </div>
             
         
@@ -160,7 +156,7 @@ Checks if a path is absolute.</li>
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_toAbsolute">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Path.php#L49">at line 49</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Path.php#L45">at line 45</a></div>
         <code>        static            string
     <strong>toAbsolute</strong>(string $path)
         </code>
@@ -202,7 +198,7 @@ Checks if a path is absolute.</li>
             </div>
                     <div class="method-item">
                     <h3 id="method_isAbsolute">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Path.php#L81">at line 81</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Path.php#L77">at line 77</a></div>
         <code>        static            bool
     <strong>isAbsolute</strong>(string $path)
         </code>

@@ -35,8 +35,7 @@ use GenericDatabase\Helpers\Types\Compounds\Arrays;
  * - Retrieves the regular expression patterns and extracted information from the input string
  *
  * Methods:
- * - `getPattern(string $input):` Parses and validates the input string using the regular expression patterns and
- * returns the extracted information.
+ * - `getPattern(string $input):` Parses and validates the input string using the regular expression patterns and returns the extracted information.
  *
  * Fields
  * - `TIME_SEPARATOR`: Regular expression pattern for matching time separators (e.g., ':', '.').

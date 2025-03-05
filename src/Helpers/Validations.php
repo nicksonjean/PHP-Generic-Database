@@ -32,28 +32,16 @@ namespace GenericDatabase\Helpers;
  * </code>
  * `Output: Random string of length 10`
  *
- * <code>
- * // Detect if a query is a SELECT statement
- * $stmt = 'SELECT * FROM table';
- * $isSelect = Validations::isSelect($stmt);
- * echo $isSelect ? 'SELECT statement' : 'Not a SELECT statement';
- * </code>
- * `Output: SELECT statement`
- *
  * Main functionalities:
  * - The `isNumber` method checks if a value is numeric by using the is_numeric function.
- * - The `isBoolean` method checks "Booleanic" conditions
- * by using the `filter_var` function with the `FILTER_VALIDATE_BOOLEAN` flag.
- * - The `randomString` method generates a random string of a specified length by selecting
- * random characters from an array of letters.
- * - The `isSelect` method detects if a query is a SELECT statement by checking if the query
- * starts with the word "SELECT" (case-insensitive).
+ * - The `isBoolean` method checks "Booleanic" conditions by using the `filter_var` function with the `FILTER_VALIDATE_BOOLEAN` flag.
+ * - The `randomString` method generates a random string of a specified length by selecting random characters from an array of letters.
+ * - The `isSelect` method detects if a query is a SELECT statement by checking if the query starts with the word "SELECT" (case-insensitive).
  *
  * Methods:
  * - `isNumber(string $value): bool`: Checks if a value is numeric.
  * - `isBoolean(mixed $value): mixed`: Checks "Booleanic" conditions.
  * - `randomString(int $length): string`: Generates a random string of a specified length.
- * - `isSelect(string $stmt): bool`: Detects if a query is a SELECT statement.
  *
  * @package GenericDatabase\Helpers
  */
@@ -103,8 +91,16 @@ class Validations
     }
 
     /**
-     * @param mixed $data
-     * @return mixed
+     * Converts elements of an array to specific types based on their original type.
+     *
+     * @param mixed $data An array of mixed data types to be processed.
+     * @return mixed An array with elements converted to specific types:
+     *               - Booleans and integers are cast to integers.
+     *               - Strings remain as strings.
+     *               - Arrays are converted to comma-separated strings.
+     *               - Objects are serialized.
+     *               - Resources are converted to strings if they are streams, otherwise serialized.
+     *               - Other types remain unchanged.
      */
     public static function detectTypes(mixed $data): mixed
     {

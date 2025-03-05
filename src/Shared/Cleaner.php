@@ -9,6 +9,9 @@ namespace GenericDatabase\Shared;
  * Methods:
  * - `__isset(string $name): bool:` Checks if a property is set.
  * - `__unset(string $name): void:` Unsets a property.
+ * 
+ * Fields:
+ * - `$property`: Stores properties for dynamic property access.
  */
 trait Cleaner
 {

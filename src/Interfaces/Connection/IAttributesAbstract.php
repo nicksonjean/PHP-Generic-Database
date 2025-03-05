@@ -5,6 +5,15 @@ namespace GenericDatabase\Interfaces\Connection;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IOptions;
 
+/**
+ * Interface IAttributesAbstract
+ *
+ * This interface defines the abstract methods for handling attributes
+ * in a database connection.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
+ */
 interface IAttributesAbstract
 {
     /**

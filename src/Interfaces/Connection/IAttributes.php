@@ -2,6 +2,12 @@
 
 namespace GenericDatabase\Interfaces\Connection;
 
+/**
+ * This interface defines the attributes for a database connection.
+ *
+ * @package PHP-Generic-Database
+ * @subpackage Interfaces\Connection
+ */
 interface IAttributes
 {
     /**

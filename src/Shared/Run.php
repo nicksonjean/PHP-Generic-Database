@@ -4,10 +4,10 @@ namespace GenericDatabase\Shared;
 
 /**
  * Static method to dynamically call any function, method, or instance.
- *
- * @param mixed $callable Can be a string (global function), array [Class, method], [Object, method], or Closure.
- * @param mixed ...$args Arguments to be passed to the method/function.
- * @return mixed Returns the result of the call.
+ * 
+ * Methods:
+ * - `call(mixed $callable, mixed ...$args): mixed:` Calls a function, method, or instance dynamically.
+ * - `callArray(mixed $callable, array $args = []): mixed:` Calls a function or method with an array of arguments.
  */
 class Run
 {

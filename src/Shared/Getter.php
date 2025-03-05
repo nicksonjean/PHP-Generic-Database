@@ -5,6 +5,9 @@ namespace GenericDatabase\Shared;
 /**
  * Methods:
  * - `__get(string $name): mixed:` Retrieves the value of a property if it exists, or returns null if the property is inaccessible or non-existent.
+ * 
+ * Fields:
+ * - `$property`: Stores properties for dynamic property access.
  */
 trait Getter
 {
