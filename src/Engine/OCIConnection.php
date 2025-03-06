@@ -36,30 +36,30 @@ use GenericDatabase\Engine\OCI\Connection\Report\ReportHandler;
 /**
  * Dynamic and Static container class for OCIConnection connections.
  *
- * @method static OCIConnection|void setDriver(mixed $value): void
- * @method static OCIConnection|string getDriver($value = null): string
- * @method static OCIConnection|void setHost(mixed $value): void
- * @method static OCIConnection|string getHost($value = null): string
- * @method static OCIConnection|void setPort(mixed $value): void
- * @method static OCIConnection|int getPort($value = null): int
- * @method static OCIConnection|void setUser(mixed $value): void
- * @method static OCIConnection|string getUser($value = null): string
- * @method static OCIConnection|void setPassword(mixed $value): void
- * @method static OCIConnection|string getPassword($value = null): string
- * @method static OCIConnection|void setDatabase(mixed $value): void
- * @method static OCIConnection|string getDatabase($value = null): string
- * @method static OCIConnection|void setOptions(mixed $value): void
- * @method static OCIConnection|array|null getOptions($value = null): array|null
- * @method static OCIConnection|static setConnected(mixed $value): void
- * @method static OCIConnection|mixed getConnected($value = null): mixed
- * @method static OCIConnection|void setDsn(mixed $value): void
- * @method static OCIConnection|mixed getDsn($value = null): mixed
- * @method static OCIConnection|void setAttributes(mixed $value): void
- * @method static OCIConnection|mixed getAttributes($value = null): mixed
- * @method static OCIConnection|void setCharset(mixed $value): void
- * @method static OCIConnection|string getCharset($value = null): string
- * @method static OCIConnection|void setException(mixed $value): void
- * @method static OCIConnection|mixed getException($value = null): mixed
+ * @method static OCIConnection|void setDriver(mixed $value): Sets a driver from the database.
+ * @method static OCIConnection|string getDriver($value = null): Retrieves a driver from the database.
+ * @method static OCIConnection|void setHost(mixed $value): Sets a host from the database.
+ * @method static OCIConnection|string getHost($value = null): Retrieves a host from the database.
+ * @method static OCIConnection|void setPort(mixed $value): Sets a port from the database.
+ * @method static OCIConnection|int getPort($value = null): Retrieves a port from the database.
+ * @method static OCIConnection|void setUser(mixed $value): Sets a user from the database.
+ * @method static OCIConnection|string getUser($value = null): Retrieves a user from the database.
+ * @method static OCIConnection|void setPassword(mixed $value): Sets a password from the database.
+ * @method static OCIConnection|string getPassword($value = null): Retrieves a password from the database.
+ * @method static OCIConnection|void setDatabase(mixed $value): Sets a database name from the database.
+ * @method static OCIConnection|string getDatabase($value = null): Retrieves a database name from the database.
+ * @method static OCIConnection|void setOptions(mixed $value): Sets a options from the database.
+ * @method static OCIConnection|array|null getOptions($value = null): Retrieves a options from the database.
+ * @method static OCIConnection|static setConnected(mixed $value): Sets a connected status from the database.
+ * @method static OCIConnection|mixed getConnected($value = null): Retrieves a connected status from the database.
+ * @method static OCIConnection|void setDsn(mixed $value): Sets a dsn string from the database.
+ * @method static OCIConnection|mixed getDsn($value = null): Retrieves a dsn string from the database.
+ * @method static OCIConnection|void setAttributes(mixed $value): Sets a attributes from the database.
+ * @method static OCIConnection|mixed getAttributes($value = null): Retrieves a attributes from the database.
+ * @method static OCIConnection|void setCharset(mixed $value): Sets a charset from the database.
+ * @method static OCIConnection|string getCharset($value = null): Retrieves a charset from the database.
+ * @method static OCIConnection|void setException(mixed $value): Sets a exception from the database.
+ * @method static OCIConnection|mixed getException($value = null): Retrieves a exception from the database.
  */
 #[AllowDynamicProperties]
 class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions

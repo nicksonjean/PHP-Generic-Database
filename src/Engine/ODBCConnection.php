@@ -35,30 +35,30 @@ use GenericDatabase\Engine\ODBC\Connection\Report\ReportHandler;
 /**
  * Dynamic and Static container class for ODBCConnection connections.
  *
- * @method static ODBCConnection|void setDriver(mixed $value): void
- * @method static ODBCConnection|string getDriver($value = null): string
- * @method static ODBCConnection|void setHost(mixed $value): void
- * @method static ODBCConnection|string getHost($value = null): string
- * @method static ODBCConnection|void setPort(mixed $value): void
- * @method static ODBCConnection|int getPort($value = null): int
- * @method static ODBCConnection|void setUser(mixed $value): void
- * @method static ODBCConnection|string getUser($value = null): string
- * @method static ODBCConnection|void setPassword(mixed $value): void
- * @method static ODBCConnection|string getPassword($value = null): string
- * @method static ODBCConnection|void setDatabase(mixed $value): void
- * @method static ODBCConnection|string getDatabase($value = null): string
- * @method static ODBCConnection|void setOptions(mixed $value): void
- * @method static ODBCConnection|array|null getOptions($value = null): array|null
- * @method static ODBCConnection|static setConnected(mixed $value): void
- * @method static ODBCConnection|mixed getConnected($value = null): mixed
- * @method static ODBCConnection|void setDsn(mixed $value): void
- * @method static ODBCConnection|mixed getDsn($value = null): mixed
- * @method static ODBCConnection|void setAttributes(mixed $value): void
- * @method static ODBCConnection|mixed getAttributes($value = null): mixed
- * @method static ODBCConnection|void setCharset(mixed $value): void
- * @method static ODBCConnection|string getCharset($value = null): string
- * @method static ODBCConnection|void setException(mixed $value): void
- * @method static ODBCConnection|mixed getException($value = null): mixed
+ * @method static ODBCConnection|void setDriver(mixed $value): Sets a driver from the database.
+ * @method static ODBCConnection|string getDriver($value = null): Retrieves a driver from the database.
+ * @method static ODBCConnection|void setHost(mixed $value): Sets a host from the database.
+ * @method static ODBCConnection|string getHost($value = null): Retrieves a host from the database.
+ * @method static ODBCConnection|void setPort(mixed $value): Sets a port from the database.
+ * @method static ODBCConnection|int getPort($value = null): Retrieves a port from the database.
+ * @method static ODBCConnection|void setUser(mixed $value): Sets a user from the database.
+ * @method static ODBCConnection|string getUser($value = null): Retrieves a user from the database.
+ * @method static ODBCConnection|void setPassword(mixed $value): Sets a password from the database.
+ * @method static ODBCConnection|string getPassword($value = null): Retrieves a password from the database.
+ * @method static ODBCConnection|void setDatabase(mixed $value): Sets a database name from the database.
+ * @method static ODBCConnection|string getDatabase($value = null): Retrieves a database name from the database.
+ * @method static ODBCConnection|void setOptions(mixed $value): Sets a options from the database.
+ * @method static ODBCConnection|array|null getOptions($value = null): Retrieves a options from the database.
+ * @method static ODBCConnection|static setConnected(mixed $value): Sets a connected status from the database.
+ * @method static ODBCConnection|mixed getConnected($value = null): Retrieves a connected status from the database.
+ * @method static ODBCConnection|void setDsn(mixed $value): Sets a dsn string from the database.
+ * @method static ODBCConnection|mixed getDsn($value = null): Retrieves a dsn string from the database.
+ * @method static ODBCConnection|void setAttributes(mixed $value): Sets a attributes from the database.
+ * @method static ODBCConnection|mixed getAttributes($value = null): Retrieves a attributes from the database.
+ * @method static ODBCConnection|void setCharset(mixed $value): Sets a charset from the database.
+ * @method static ODBCConnection|string getCharset($value = null): Retrieves a charset from the database.
+ * @method static ODBCConnection|void setException(mixed $value): Sets a exception from the database.
+ * @method static ODBCConnection|mixed getException($value = null): Retrieves a exception from the database.
  */
 #[AllowDynamicProperties]
 class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions

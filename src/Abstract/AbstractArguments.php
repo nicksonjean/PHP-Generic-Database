@@ -124,6 +124,18 @@ abstract class AbstractArguments implements IArgumentsAbstract
     }
 
     /**
+     * Transform variables in constants
+     *
+     * @param array $value
+     * @return array
+     * @throws ReflectionException
+     */
+    public static function setConstant(array $value): array
+    {
+        return self::getArgumentsStrategy()->setConstant($value);
+    }
+
+    /**
      * Determines arguments type by calling to format type
      *
      * @param string $format Accept formats json, xml, ini and yaml

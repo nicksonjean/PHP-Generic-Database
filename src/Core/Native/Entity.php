@@ -68,5 +68,5 @@ enum Entity: string
     /**
      * The fully qualified arguments class name of the internal classes databases.
      */
-    case CASE_ARGUMENT_CLASS = 'GenericDatabase\Engine\%s\Connection\Arguments';
+    case CASE_ARGUMENT_CLASS = 'GenericDatabase\Engine\%s\Connection\Arguments\ArgumentsHandler';
 }

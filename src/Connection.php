@@ -4,26 +4,28 @@ declare(strict_types=1);
 
 namespace GenericDatabase;
 
+use ReflectionClass;
 use ReflectionException;
 use AllowDynamicProperties;
-use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\Strategy\IConnectionStrategy;
 use GenericDatabase\Core\Entity;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Parsers\INI;
 use GenericDatabase\Helpers\Parsers\XML;
-use GenericDatabase\Helpers\Parsers\JSON;
-use GenericDatabase\Helpers\Parsers\YAML;
-use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Engine\OCIConnection;
 use GenericDatabase\Engine\PDOConnection;
+use GenericDatabase\Helpers\Parsers\JSON;
+use GenericDatabase\Helpers\Parsers\NEON;
+use GenericDatabase\Helpers\Parsers\YAML;
 use GenericDatabase\Engine\ODBCConnection;
 use GenericDatabase\Engine\PgSQLConnection;
+use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Engine\MySQLiConnection;
 use GenericDatabase\Engine\SQLiteConnection;
 use GenericDatabase\Engine\SQLSrvConnection;
 use GenericDatabase\Engine\FirebirdConnection;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
+use GenericDatabase\Interfaces\Strategy\IConnectionStrategy;
 
 /**
  * The `GenericDatabase\Connection` class is responsible for establishing and managing database connections.
@@ -59,32 +61,32 @@ use GenericDatabase\Engine\FirebirdConnection;
  *
  * Dynamic and Static container class for Connection connections.
  *
- * @method static Connection|static setEngine(mixed $value): void
- * @method static Connection|static getEngine($value = null): mixed
- * @method static Connection|static setDriver(mixed $value): void
- * @method static Connection|static getDriver($value = null): mixed
- * @method static Connection|static setHost(mixed $value): void
- * @method static Connection|static getHost($value = null): mixed
- * @method static Connection|static setPort(mixed $value): void
- * @method static Connection|static getPort($value = null): mixed
- * @method static Connection|static setUser(mixed $value): void
- * @method static Connection|static getUser($value = null): mixed
- * @method static Connection|static setPassword(mixed $value): void
- * @method static Connection|static getPassword($value = null): mixed
- * @method static Connection|static setDatabase(mixed $value): void
- * @method static Connection|static getDatabase($value = null): mixed
- * @method static Connection|static setOptions(mixed $value): void
- * @method static Connection|static getOptions($value = null): mixed
- * @method static Connection|static setConnected(mixed $value): void
- * @method static Connection|static getConnected($value = null): mixed
- * @method static Connection|static setDsn(mixed $value): void
- * @method static Connection|static getDsn($value = null): mixed
- * @method static Connection|static setAttributes(mixed $value): void
- * @method static Connection|static getAttributes($value = null): mixed
- * @method static Connection|static setCharset(mixed $value): void
- * @method static Connection|static getCharset($value = null): mixed
- * @method static Connection|static setException(mixed $value): void
- * @method static Connection|static getException($value = null): mixed
+ * @method static Connection|void setEngine(mixed $value): Sets a engine from the database.
+ * @method static Connection|static getEngine($value = null): Retrieves a engine from the database.
+ * @method static Connection|void setDriver(mixed $value): Sets a driver from the database.
+ * @method static Connection|string getDriver($value = null): Retrieves a driver from the database.
+ * @method static Connection|void setHost(mixed $value): Sets a host from the database.
+ * @method static Connection|string getHost($value = null): Retrieves a host from the database.
+ * @method static Connection|void setPort(mixed $value): Sets a port from the database.
+ * @method static Connection|int getPort($value = null): Retrieves a port from the database.
+ * @method static Connection|void setUser(mixed $value): Sets a user from the database.
+ * @method static Connection|string getUser($value = null): Retrieves a user from the database.
+ * @method static Connection|void setPassword(mixed $value): Sets a password from the database.
+ * @method static Connection|string getPassword($value = null): Retrieves a password from the database.
+ * @method static Connection|void setDatabase(mixed $value): Sets a database name from the database.
+ * @method static Connection|string getDatabase($value = null): Retrieves a database name from the database.
+ * @method static Connection|void setOptions(mixed $value): Sets a options from the database.
+ * @method static Connection|array|null getOptions($value = null): Retrieves a options from the database.
+ * @method static Connection|static setConnected(mixed $value): Sets a connected status from the database.
+ * @method static Connection|mixed getConnected($value = null): Retrieves a connected status from the database.
+ * @method static Connection|void setDsn(mixed $value): Sets a dsn string from the database.
+ * @method static Connection|mixed getDsn($value = null): Retrieves a dsn string from the database.
+ * @method static Connection|void setAttributes(mixed $value): Sets a attributes from the database.
+ * @method static Connection|mixed getAttributes($value = null): Retrieves a attributes from the database.
+ * @method static Connection|void setCharset(mixed $value): Sets a charset from the database.
+ * @method static Connection|string getCharset($value = null): Retrieves a charset from the database.
+ * @method static Connection|void setException(mixed $value): Sets a exception from the database.
+ * @method static Connection|mixed getException($value = null): Retrieves a exception from the database.
  */
 #[AllowDynamicProperties]
 class Connection implements IConnection, IConnectionStrategy
@@ -198,6 +200,7 @@ class Connection implements IConnection, IConnectionStrategy
                 YAML::isValidYAML(...$argumentsFile) => self::callArgumentsByFormat('yaml', $argumentsFile),
                 INI::isValidINI(...$argumentsFile) => self::callArgumentsByFormat('ini', $argumentsFile),
                 XML::isValidXML(...$argumentsFile) => self::callArgumentsByFormat('xml', $argumentsFile),
+                NEON::isValidNEON(...$argumentsFile) => self::callArgumentsByFormat('neon', $argumentsFile),
                 default => Arrays::isAssoc(...$argumentsFile)
                     ? self::callWithByStaticArray(...$arguments)
                     : self::callWithByStaticArgs($arguments),
@@ -313,6 +316,8 @@ class Connection implements IConnection, IConnectionStrategy
             $data = XML::parseXML(...$arguments);
         } elseif ($format === 'yaml') {
             $data = YAML::parseYAML(...$arguments);
+        } elseif ($format === 'neon') {
+            $data = NEON::parseNEON(...$arguments);
         }
         self::call(self::getInstance(), 'initFactory', Arrays::assocToIndex(Arrays::recombine($data)));
         $instance = Reflections::getClassInstance(

@@ -43,6 +43,14 @@ interface IArgumentsAbstract
     public static function setType(mixed $value): string|int|bool;
 
     /**
+     * Transform variables in constants
+     *
+     * @param array $value
+     * @return array
+     */
+    public static function setConstant(array $value): array;
+
+    /**
      * Calls the arguments by format.
      * @param string $format The format to call the arguments by.
      * @param mixed $arguments The arguments to call.

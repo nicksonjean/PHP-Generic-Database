@@ -36,30 +36,30 @@ use GenericDatabase\Engine\Firebird\Connection\Report\ReportHandler;
 /**
  * Dynamic and Static container class for FirebirdConnection connections.
  *
- * @method static FirebirdConnection|void setDriver(mixed $value): void
- * @method static FirebirdConnection|string getDriver($value = null): string
- * @method static FirebirdConnection|void setHost(mixed $value): void
- * @method static FirebirdConnection|string getHost($value = null): string
- * @method static FirebirdConnection|void setPort(mixed $value): void
- * @method static FirebirdConnection|int getPort($value = null): int
- * @method static FirebirdConnection|void setUser(mixed $value): void
- * @method static FirebirdConnection|string getUser($value = null): string
- * @method static FirebirdConnection|void setPassword(mixed $value): void
- * @method static FirebirdConnection|string getPassword($value = null): string
- * @method static FirebirdConnection|void setDatabase(mixed $value): void
- * @method static FirebirdConnection|string getDatabase($value = null): string
- * @method static FirebirdConnection|void setOptions(mixed $value): void
- * @method static FirebirdConnection|array|null getOptions($value = null): array|null
- * @method static FirebirdConnection|static setConnected(mixed $value): void
- * @method static FirebirdConnection|mixed getConnected($value = null): mixed
- * @method static FirebirdConnection|void setDsn(mixed $value): void
- * @method static FirebirdConnection|mixed getDsn($value = null): mixed
- * @method static FirebirdConnection|void setAttributes(mixed $value): void
- * @method static FirebirdConnection|mixed getAttributes($value = null): mixed
- * @method static FirebirdConnection|void setCharset(mixed $value): void
- * @method static FirebirdConnection|string getCharset($value = null): string
- * @method static FirebirdConnection|void setException(mixed $value): void
- * @method static FirebirdConnection|mixed getException($value = null): mixed
+ * @method static FirebirdConnection|void setDriver(mixed $value): Sets a driver from the database.
+ * @method static FirebirdConnection|string getDriver($value = null): Retrieves a driver from the database.
+ * @method static FirebirdConnection|void setHost(mixed $value): Sets a host from the database.
+ * @method static FirebirdConnection|string getHost($value = null): Retrieves a host from the database.
+ * @method static FirebirdConnection|void setPort(mixed $value): Sets a port from the database.
+ * @method static FirebirdConnection|int getPort($value = null): Retrieves a port from the database.
+ * @method static FirebirdConnection|void setUser(mixed $value): Sets a user from the database.
+ * @method static FirebirdConnection|string getUser($value = null): Retrieves a user from the database.
+ * @method static FirebirdConnection|void setPassword(mixed $value): Sets a password from the database.
+ * @method static FirebirdConnection|string getPassword($value = null): Retrieves a password from the database.
+ * @method static FirebirdConnection|void setDatabase(mixed $value): Sets a database name from the database.
+ * @method static FirebirdConnection|string getDatabase($value = null): Retrieves a database name from the database.
+ * @method static FirebirdConnection|void setOptions(mixed $value): Sets a options from the database.
+ * @method static FirebirdConnection|array|null getOptions($value = null): Retrieves a options from the database.
+ * @method static FirebirdConnection|static setConnected(mixed $value): Sets a connected status from the database.
+ * @method static FirebirdConnection|mixed getConnected($value = null): Retrieves a connected status from the database.
+ * @method static FirebirdConnection|void setDsn(mixed $value): Sets a dsn string from the database.
+ * @method static FirebirdConnection|mixed getDsn($value = null): Retrieves a dsn string from the database.
+ * @method static FirebirdConnection|void setAttributes(mixed $value): Sets a attributes from the database.
+ * @method static FirebirdConnection|mixed getAttributes($value = null): Retrieves a attributes from the database.
+ * @method static FirebirdConnection|void setCharset(mixed $value): Sets a charset from the database.
+ * @method static FirebirdConnection|string getCharset($value = null): Retrieves a charset from the database.
+ * @method static FirebirdConnection|void setException(mixed $value): Sets a exception from the database.
+ * @method static FirebirdConnection|mixed getException($value = null): Retrieves a exception from the database.
  */
 #[AllowDynamicProperties]
 class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions
