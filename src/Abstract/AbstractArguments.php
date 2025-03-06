@@ -9,6 +9,7 @@ use GenericDatabase\Helpers\Parsers\INI;
 use GenericDatabase\Helpers\Parsers\XML;
 use GenericDatabase\Helpers\Parsers\JSON;
 use GenericDatabase\Helpers\Parsers\YAML;
+use GenericDatabase\Helpers\Parsers\NEON;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Interfaces\Connection\IOptions;
@@ -17,12 +18,9 @@ use GenericDatabase\Interfaces\Connection\IArgumentsStrategy;
 
 /**
  * The `GenericDatabase\Abstract\AbstractArguments` class is an abstract  class implements the `IArgumentsAbstract` interface and that provides a framework for handling database connection arguments. 
- * It manages static instances of IConnection, IOptions, and IArgumentsStrategy and provides methods to manipulate and retrieve these instances.
- * This class manages static instances of IConnection, IOptions, and IArgumentsStrategy,
- * and provides methods to manipulate and retrieve these instances. It includes functionality
- * for setting types, transforming variables into constants, and handling arguments in various
- * formats such as JSON, XML, INI, and YAML. The class also supports dynamic method invocation
- * and acts as a factory for instantiating classes with specific arguments.
+ * It manages static instances of IConnection, IOptions, and IArgumentsStrategy and provides methods to manipulate and retrieve these instances and manages static instances of IConnection, IOptions, 
+ * and IArgumentsStrategy, and provides methods to manipulate and retrieve these instances. It includes functionality for setting types, transforming variables into constants, and handling arguments 
+ * in various formats such as JSON, XML, INI, and YAML. The class also supports dynamic method invocation and acts as a factory for instantiating classes with specific arguments.
  * 
  * Main functionalities:
  * - Manages static instances of IConnection, IOptions, and IArgumentsStrategy.
@@ -141,6 +139,7 @@ abstract class AbstractArguments implements IArgumentsAbstract
             'ini' => INI::parseINI(...$arguments),
             'xml' => XML::parseXML(...$arguments),
             'yaml' => YAML::parseYAML(...$arguments),
+            'neon' => NEON::parseNEON(...$arguments),
             default => null,
         };
         if ($data) {
@@ -218,6 +217,7 @@ abstract class AbstractArguments implements IArgumentsAbstract
                 YAML::isValidYAML(...$argumentsFile) => self::callArgumentsByFormat('yaml', $argumentsFile),
                 INI::isValidINI(...$argumentsFile) => self::callArgumentsByFormat('ini', $argumentsFile),
                 XML::isValidXML(...$argumentsFile) => self::callArgumentsByFormat('xml', $argumentsFile),
+                NEON::isValidNEON(...$argumentsFile) => self::callArgumentsByFormat('neon', $argumentsFile),
                 default => Arrays::isAssoc(...$argumentsFile)
                     ? self::callWithByStaticArray(...$arguments)
                     : self::callWithByStaticArgs($arguments)

@@ -46,20 +46,13 @@ use SimpleXMLElement;
  * - Parse XML data into an array
  *
  * Methods:
- * - `isValidXML($xml)`: Checks if an XML string is valid by loading it as a `SimpleXMLElement` object
- * and using `XMLReader` to validate it.
- * - `convertData($data)`: Converts data to appropriate types, such as integers, floats, booleans,
- * or leaves it as a string.
- * - `decodeXML($xml, $attributesKey, $reduce, $alwaysArray, $valueKeys)`: Decodes a `SimpleXMLElement`
- * object into an array or a string. It extracts attributes, values, and children elements recursively.
- * - `extractAttributes($xml, $attributesKey, &$arr)`: Extracts attributes from a `SimpleXMLElement`
- * object and adds them to an array.
- * - `extractValue($xml, &$arr, $valueKeys)`: Extracts the value from a `SimpleXMLElement` object and
- * adds it to an array.
- * - `processChildren($xml, &$arr, $attributesKey, $reduce, $alwaysArray, $valueKeys)`: Processes the
- * children of a `SimpleXMLElement` object and adds them to an array.
- * - `parseXML($xml)`: Parses XML data into an array. It uses decodeXML to decode the XML and extract
- * options as a separate array.
+ * - `isValidXML($xml)`: Checks if an XML string is valid by loading it as a `SimpleXMLElement` object and using `XMLReader` to validate it.
+ * - `convertData($data)`: Converts data to appropriate types, such as integers, floats, booleans, or leaves it as a string.
+ * - `decodeXML($xml, $attributesKey, $reduce, $alwaysArray, $valueKeys)`: Decodes a `SimpleXMLElement` object into an array or a string. It extracts attributes, values, and children elements recursively.
+ * - `extractAttributes($xml, $attributesKey, &$arr)`: Extracts attributes from a `SimpleXMLElement` object and adds them to an array.
+ * - `extractValue($xml, &$arr, $valueKeys)`: Extracts the value from a `SimpleXMLElement` object and adds it to an array.
+ * - `processChildren($xml, &$arr, $attributesKey, $reduce, $alwaysArray, $valueKeys)`: Processes the children of a `SimpleXMLElement` object and adds them to an array.
+ * - `parseXML($xml)`: Parses XML data into an array. It uses decodeXML to decode the XML and extract options as a separate array.
  *
  * @package GenericDatabase\Helpers
  */

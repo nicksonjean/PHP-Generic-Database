@@ -27,10 +27,8 @@ namespace GenericDatabase\Helpers\Parsers;
  * - Parse a valid JSON string into an array
  *
  * Methods:
- * - `isValidJSON($json)`:
- * Checks if a given string is a valid JSON. Returns a boolean value indicating the result.
- * - `parseJSON($json)`:
- * Parses a valid JSON string into an array. Returns the parsed JSON data as an array.
+ * - `isValidJSON($json)`: Checks if a given string is a valid JSON. Returns a boolean value indicating the result.
+ * - `parseJSON($json)`: Parses a valid JSON string into an array. Returns the parsed JSON data as an array.
  *
  * @package GenericDatabase\Helpers
  */

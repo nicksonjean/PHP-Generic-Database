@@ -1,18 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GenericDatabase\Core;
 
-enum Having: string
-{
-    case DEFAULT = 'DEFAULT';
-    case NONE = 'NONE';
-    case FUNCTION = 'FUNCTION';
-    case NEGATION = 'NEGATION';
-    case AFFIRMATION = 'AFFIRMATION';
-    case BETWEEN = 'BETWEEN';
-    case IN = 'IN';
-    case LIKE = 'LIKE';
-    case EXISTS = 'EXISTS';
-    case ISNULL = 'ISNULL';
-    case IFNULL = 'IFNULL';
+if (PHP_VERSION_ID < 80100) {
+    require_once __DIR__ . '/Emulated/Having.php';
+} else {
+    require_once __DIR__ . '/Native/Having.php';
 }

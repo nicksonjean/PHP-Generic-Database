@@ -1,12 +1,11 @@
 <?php
 
-/** @noinspection ALL */
+declare(strict_types=1);
 
 namespace GenericDatabase\Core;
 
-enum Junction: string
-{
-    case NONE = 'NONE';
-    case CONJUNCTION = 'CONJUNCTION';
-    case DISJUNCTION = 'DISJUNCTION';
+if (PHP_VERSION_ID < 80100) {
+    require_once __DIR__ . '/Emulated/Junction.php';
+} else {
+    require_once __DIR__ . '/Native/Junction.php';
 }

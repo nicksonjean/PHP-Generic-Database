@@ -23,10 +23,8 @@ namespace GenericDatabase\Helpers\Parsers;
  * `$parsedYAML will be an array containing the parsed YAML data`
  *
  * Main functionalities:
- * - The `isValidYAML` method checks if a YAML string is valid by verifying that it is a string and ends
- * with the extension '.yaml'. It also uses the `yaml_parse_file` function to further validate the YAML syntax.
- * - The `parseYAML` method parses a valid YAML string by using the `yaml_parse_file` function and returns the
- * parsed data as an array.
+ * - The `isValidYAML` method checks if a YAML string is valid by verifying that it is a string and ends with the extension '.yaml'. It also uses the `yaml_parse_file` function to further validate the YAML syntax.
+ * - The `parseYAML` method parses a valid YAML string by using the `yaml_parse_file` function and returns the parsed data as an array.
  *
  * Methods:
  * - `isValidYAML(mixed $yaml): bool`: Checks if a YAML string is valid.

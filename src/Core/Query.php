@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GenericDatabase\Core;
 
-enum Query: int
-{
-    case RAW = 0;
-    case PREPARED = 1;
+if (PHP_VERSION_ID < 80100) {
+    require_once __DIR__ . '/Emulated/Query.php';
+} else {
+    require_once __DIR__ . '/Native/Query.php';
 }

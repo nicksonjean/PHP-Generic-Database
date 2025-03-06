@@ -18,10 +18,10 @@ use GenericDatabase\Interfaces\Connection\IOptionsAbstract;
  * - Provides a common interface for all options classes.
  * 
  * Methods:
- * - `getInstance()`: Returns the current database connection instance.
- * - `set(string $name, mixed $value)`: Sets an option value dynamically by calling a method on the connection instance.
- * - `get(string $name)`: Retrieves an option value dynamically by calling a method on the connection instance.
- * - `getOptions(?int $type = null)`: Returns all options or a specific type of options if the `$type` parameter is provided.   
+ * - `getInstance(): IConnection:` Returns the static instance of IConnection.
+ * - `set(string $name, mixed $value): void:` Sets an option value dynamically by calling a method on the connection instance.
+ * - `get(string $name): mixed:` Retrieves an option value dynamically by calling a method on the connection instance.
+ * - `getOptions(?int $type = null)`: mixed:` Returns all options or a specific type of options if the `$type` parameter is provided.   
  * 
  * Fields:
  * - `$instance`: The connection instance used for dynamic operations.

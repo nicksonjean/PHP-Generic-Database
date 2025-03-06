@@ -1,14 +1,11 @@
 <?php
 
-/** @noinspection ALL */
+declare(strict_types=1);
 
 namespace GenericDatabase\Core;
 
-enum Sorting: string
-{
-    case NONE = 'NONE';
-    case ASCENDING = 'ASCENDING';
-    case DESCENDING = 'DESCENDING';
-    case METADATA = 'METADATA';
-    case FUNCTION = 'FUNCTION';
+if (PHP_VERSION_ID < 80100) {
+    require_once __DIR__ . '/Emulated/Sorting.php';
+} else {
+    require_once __DIR__ . '/Native/Sorting.php';
 }

@@ -43,10 +43,11 @@
     "ext-sqlite3": "*",
     "ext-xmlreader": "*",
     "ext-yaml": "*",
+    "marc-mabe/enum-cl": "dev-main",
     "nette/neon": "^3.5@dev",
-    "vlucas/phpdotenv": "^5.5@dev",
     "symfony/polyfill-php82": "1.x-dev",
-    "symfony/polyfill-php83": "1.x-dev"
+    "symfony/polyfill-php83": "1.x-dev",
+    "vlucas/phpdotenv": "^5.5@dev"
   },
   "autoload-dev": {
     "psr-4": {

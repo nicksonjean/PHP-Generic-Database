@@ -1,16 +1,11 @@
 <?php
 
-/** @noinspection ALL */
+declare(strict_types=1);
 
 namespace GenericDatabase\Core;
 
-enum Join: string
-{
-    case DEFAULT = 'DEFAULT';
-    case SELF = 'SELF';
-    case LEFT = 'LEFT';
-    case RIGHT = 'RIGHT';
-    case INNER = 'INNER';
-    case OUTER = 'OUTER';
-    case CROSS = 'CROSS';
+if (PHP_VERSION_ID < 80100) {
+    require_once __DIR__ . '/Emulated/Join.php';
+} else {
+    require_once __DIR__ . '/Native/Join.php';
 }

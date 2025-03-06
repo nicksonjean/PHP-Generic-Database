@@ -25,10 +25,8 @@ namespace GenericDatabase\Helpers\Parsers;
  * - Parse a valid INI file and return its contents as an array
  *
  * Methods:
- * - `isValidINI($ini)`:
- * Checks if a given argument is a valid INI file. Returns true if the argument is a valid INI file, false otherwise.
- * - `parseINI($ini)`:
- * Parses a valid INI file and returns its contents as an array.
+ * - `isValidINI($ini)`: Checks if a given argument is a valid INI file. Returns true if the argument is a valid INI file, false otherwise.
+ * - `parseINI($ini)`: Parses a valid INI file and returns its contents as an array.
  *
  * @package GenericDatabase\Helpers
  */
