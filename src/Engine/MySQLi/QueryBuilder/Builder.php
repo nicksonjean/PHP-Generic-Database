@@ -152,10 +152,10 @@ class Builder
                     array_fill(0, count(explode(', ', $data['arguments']['unlimited'])), '?')
                 ) : '';
             $output[] = match ($data['aggregation']['type']) {
-                Where::NONE => "$condition $type $signal ?",
-                Where::BETWEEN => "$condition $type $assert BETWEEN ? AND ?",
-                Where::IN => "$condition $type $assert IN ($placeholders)",
-                Where::LIKE => "$condition $type $assert LIKE ?",
+                Where::NONE() => "$condition $type $signal ?",
+                Where::BETWEEN() => "$condition $type $assert BETWEEN ? AND ?",
+                Where::IN() => "$condition $type $assert IN ($placeholders)",
+                Where::LIKE() => "$condition $type $assert LIKE ?",
                 default => "",
             };
         }
@@ -178,8 +178,8 @@ class Builder
             $column = $data['column'] ?? ' ';
             $signal = isset($data['signal']) ? trim($data['signal']) : '';
             $assert = ($data['aggregation']['assert'] === Having::NEGATION()) ? 'NOT' : ' ';
-            $function = $data['type'] === Having::FUNCTION ? $data['function'] : ' ';
-            $type = ($data['type'] === Having::DEFAULT) ? "$alias$column" : "$function($alias$column)";
+            $function = $data['type'] === Having::FUNCTION() ? $data['function'] : ' ';
+            $type = ($data['type'] === Having::DEFAULT()) ? "$alias$column" : "$function($alias$column)";
             $placeholders = isset($data['arguments']['unlimited']) ?
                 implode(
                     ', ',

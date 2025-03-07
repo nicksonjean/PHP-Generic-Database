@@ -69,7 +69,7 @@ class StaticArgs
         bool $strategy = false
     ): Connection|MySQLiConnection {
         /** @var Connection|MySQLiConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_MYSQLI_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_MYSQLI_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -136,7 +136,7 @@ class StaticArgs
         bool $strategy = false
     ): Connection|PgSQLConnection {
         /** @var Connection|PgSQLConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PGSQL_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PGSQL_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -195,7 +195,7 @@ class StaticArgs
         bool $strategy = false
     ): Connection|SQLSrvConnection {
         /** @var Connection|SQLSrvConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLSRV_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_SQLSRV_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -250,7 +250,7 @@ class StaticArgs
         bool $strategy = false
     ): Connection|OCIConnection {
         /** @var Connection|OCIConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_OCI_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_OCI_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -305,7 +305,7 @@ class StaticArgs
         bool $strategy = false
     ): Connection|FirebirdConnection {
         /** @var Connection|FirebirdConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_FIREBIRD_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_FIREBIRD_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
