@@ -98,12 +98,9 @@
         
 
             <div class="description">
-            <p><p>The <code>GenericDatabase\Abstract\AbstractArguments</code> class is an abstract  class implements the <code>IArgumentsAbstract</code> interface and that provides a framework for handling database connection arguments.</p></p>            <p><p>It manages static instances of IConnection, IOptions, and IArgumentsStrategy and provides methods to manipulate and retrieve these instances.
-This class manages static instances of IConnection, IOptions, and IArgumentsStrategy,
-and provides methods to manipulate and retrieve these instances. It includes functionality
-for setting types, transforming variables into constants, and handling arguments in various
-formats such as JSON, XML, INI, and YAML. The class also supports dynamic method invocation
-and acts as a factory for instantiating classes with specific arguments.</p>
+            <p><p>The <code>GenericDatabase\Abstract\AbstractArguments</code> class is an abstract  class implements the <code>IArgumentsAbstract</code> interface and that provides a framework for handling database connection arguments.</p></p>            <p><p>It manages static instances of IConnection, IOptions, and IArgumentsStrategy and provides methods to manipulate and retrieve these instances and manages static instances of IConnection, IOptions,
+and IArgumentsStrategy, and provides methods to manipulate and retrieve these instances. It includes functionality for setting types, transforming variables into constants, and handling arguments
+in various formats such as JSON, XML, INI, and YAML. The class also supports dynamic method invocation and acts as a factory for instantiating classes with specific arguments.</p>
 <p>Main functionalities:</p>
 <ul>
 <li>Manages static instances of IConnection, IOptions, and IArgumentsStrategy.</li>
@@ -221,6 +218,16 @@ and acts as a factory for instantiating classes with specific arguments.</p>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setConstant">setConstant</a>(array $value)
+        
+                                            <p><p>Transform variables in constants</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
                     static&nbsp;<a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
                 </div>
                 <div class="col-md-8">
@@ -268,7 +275,7 @@ the way in which the class is instantiated, as well as its arguments.</p></p>   
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method___construct">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L80">at line 80</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L78">at line 78</a></div>
         <code>                    
     <strong>__construct</strong>(<a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $instance, <a href="../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a> $optionsHandler, <a href="../../GenericDatabase/Interfaces/Connection/IArgumentsStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IArgumentsStrategy">IArgumentsStrategy</abbr></a> $argumentsStrategy)
         </code>
@@ -311,7 +318,7 @@ the way in which the class is instantiated, as well as its arguments.</p></p>   
             </div>
                     <div class="method-item">
                     <h3 id="method_getInstance">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L92">at line 92</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L90">at line 90</a></div>
         <code>        static            <a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
     <strong>getInstance</strong>()
         </code>
@@ -343,7 +350,7 @@ the way in which the class is instantiated, as well as its arguments.</p></p>   
             </div>
                     <div class="method-item">
                     <h3 id="method_getOptionsHandler">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L102">at line 102</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L100">at line 100</a></div>
         <code>        static            <a href="../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a>
     <strong>getOptionsHandler</strong>()
         </code>
@@ -375,7 +382,7 @@ the way in which the class is instantiated, as well as its arguments.</p></p>   
             </div>
                     <div class="method-item">
                     <h3 id="method_getArgumentsStrategy">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L112">at line 112</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L110">at line 110</a></div>
         <code>        static            <a href="../../GenericDatabase/Interfaces/Connection/IArgumentsStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IArgumentsStrategy">IArgumentsStrategy</abbr></a>
     <strong>getArgumentsStrategy</strong>()
         </code>
@@ -407,7 +414,7 @@ the way in which the class is instantiated, as well as its arguments.</p></p>   
             </div>
                     <div class="method-item">
                     <h3 id="method_setType">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L123">at line 123</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L121">at line 121</a></div>
         <code>        static            <abbr title="GenericDatabase\Interfaces\Connection\string|int|bool">string|int|bool</abbr>
     <strong>setType</strong>(mixed $value)
         </code>
@@ -448,8 +455,59 @@ the way in which the class is instantiated, as well as its arguments.</p></p>   
 
             </div>
                     <div class="method-item">
+                    <h3 id="method_setConstant">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L133">at line 133</a></div>
+        <code>        static            array
+    <strong>setConstant</strong>(array $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Transform variables in constants</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
                     <h3 id="method_callArgumentsByFormat">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L137">at line 137</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L147">at line 147</a></div>
         <code>        static            <a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
     <strong>callArgumentsByFormat</strong>(string $format, mixed $arguments)
         </code>
@@ -505,7 +563,7 @@ the way in which the class is instantiated, as well as its arguments.</p></p>   
             </div>
                     <div class="method-item">
                     <h3 id="method_callWithByStaticArgs">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L179">at line 179</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L191">at line 191</a></div>
         <code>        static            <a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
     <strong>callWithByStaticArgs</strong>(array $arguments)
         </code>
@@ -547,7 +605,7 @@ the way in which the class is instantiated, as well as its arguments.</p></p>   
             </div>
                     <div class="method-item">
                     <h3 id="method_call">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L191">at line 191</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L203">at line 203</a></div>
         <code>                    <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
     <strong>call</strong>(string $name, array $arguments)
         </code>
@@ -594,7 +652,7 @@ the way in which the class is instantiated, as well as its arguments.</p></p>   
             </div>
                     <div class="method-item">
                     <h3 id="method_callStatic">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L212">at line 212</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L224">at line 224</a></div>
         <code>        static            <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
     <strong>callStatic</strong>(string $name, array $arguments)
         </code>

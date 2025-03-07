@@ -67,5 +67,5 @@ final class Entity extends EmulatedStringEnum
     /**
      * The fully qualified arguments class name of the internal classes databases.
      */
-    protected const CASE_ARGUMENT_CLASS = 'GenericDatabase\Engine\%s\Connection\Arguments';
+    protected const CASE_ARGUMENT_CLASS = 'GenericDatabase\Engine\%s\Connection\Arguments\ArgumentsHandler';
 }

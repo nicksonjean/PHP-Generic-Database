@@ -26,7 +26,7 @@ use PDO;
 /**
  * Class Fluent
  * Provides methods to create database connections for various database engines.
- * 
+ *
  * Methods:
  * - `nativeMySQLi(array $env, bool $persistent = false, bool $strategy = false): Connection|MySQLiConnection`: Creates a native MySQLi connection.
  * - `nativePgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PgSQLConnection`: Creates a native PostgreSQL connection.
@@ -68,7 +68,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|MySQLiConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_MYSQLI_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_MYSQLI_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'mysqli');
         }
@@ -109,7 +109,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PgSQLConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PGSQL_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PGSQL_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pgsql');
         }
@@ -146,7 +146,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|SQLSrvConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLSRV_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_SQLSRV_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlsrv');
         }
@@ -182,7 +182,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|OCIConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_OCI_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_OCI_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'oci');
         }
@@ -217,7 +217,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|FirebirdConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_FIREBIRD_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_FIREBIRD_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'firebird');
         }
@@ -252,7 +252,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|SQLiteConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_SQLITE_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlite');
         }
@@ -287,7 +287,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|SQLiteConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_SQLITE_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'sqlite');
         }
@@ -322,7 +322,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
@@ -357,7 +357,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
@@ -391,7 +391,7 @@ class Fluent
         array $env,
         bool $strategy = false
     ): Connection|PDOConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
@@ -426,7 +426,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
@@ -462,7 +462,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
@@ -498,7 +498,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
@@ -530,7 +530,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|PDOConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'pdo');
         }
@@ -562,7 +562,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|ODBCConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
@@ -599,7 +599,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|ODBCConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
@@ -636,7 +636,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|ODBCConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
@@ -673,7 +673,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|ODBCConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
@@ -710,7 +710,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|ODBCConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
@@ -747,7 +747,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|ODBCConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
@@ -780,7 +780,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|ODBCConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
@@ -815,7 +815,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|ODBCConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
@@ -848,7 +848,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|ODBCConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }
@@ -881,7 +881,7 @@ class Fluent
         bool $persistent = false,
         bool $strategy = false
     ): Connection|ODBCConnection {
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
         if ($strategy) {
             call_user_func([$className, 'setEngine'], 'odbc');
         }

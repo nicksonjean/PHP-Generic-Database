@@ -26,7 +26,7 @@ use PDO;
 /**
  * Class StaticArray
  * Provides methods to create database connections for various database engines.
- * 
+ *
  * Methods:
  * - `nativeMySQLi(array $env, bool $persistent = false, bool $strategy = false): Connection|MySQLiConnection`: Creates a native MySQLi connection.
  * - `nativePgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PgSQLConnection`: Creates a native PostgreSQL connection.
@@ -262,7 +262,7 @@ class StaticArray
         bool $strategy = false
     ): Connection|SQLiteConnection {
         /** @var Connection|SQLiteConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_SQLITE_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
@@ -299,7 +299,7 @@ class StaticArray
         bool $strategy = false
     ): Connection|SQLiteConnection {
         /** @var Connection|SQLiteConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_SQLITE_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];

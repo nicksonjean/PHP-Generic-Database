@@ -126,20 +126,13 @@ $parsedData = XML::parseXML($xmlData);</code></pre>
 </ul>
 <p>Methods:</p>
 <ul>
-<li><code>isValidXML($xml)</code>: Checks if an XML string is valid by loading it as a <code>SimpleXMLElement</code> object
-and using <code>XMLReader</code> to validate it.</li>
-<li><code>convertData($data)</code>: Converts data to appropriate types, such as integers, floats, booleans,
-or leaves it as a string.</li>
-<li><code>decodeXML($xml, $attributesKey, $reduce, $alwaysArray, $valueKeys)</code>: Decodes a <code>SimpleXMLElement</code>
-object into an array or a string. It extracts attributes, values, and children elements recursively.</li>
-<li><code>extractAttributes($xml, $attributesKey, &amp;$arr)</code>: Extracts attributes from a <code>SimpleXMLElement</code>
-object and adds them to an array.</li>
-<li><code>extractValue($xml, &amp;$arr, $valueKeys)</code>: Extracts the value from a <code>SimpleXMLElement</code> object and
-adds it to an array.</li>
-<li><code>processChildren($xml, &amp;$arr, $attributesKey, $reduce, $alwaysArray, $valueKeys)</code>: Processes the
-children of a <code>SimpleXMLElement</code> object and adds them to an array.</li>
-<li><code>parseXML($xml)</code>: Parses XML data into an array. It uses decodeXML to decode the XML and extract
-options as a separate array.</li>
+<li><code>isValidXML($xml)</code>: Checks if an XML string is valid by loading it as a <code>SimpleXMLElement</code> object and using <code>XMLReader</code> to validate it.</li>
+<li><code>convertData($data)</code>: Converts data to appropriate types, such as integers, floats, booleans, or leaves it as a string.</li>
+<li><code>decodeXML($xml, $attributesKey, $reduce, $alwaysArray, $valueKeys)</code>: Decodes a <code>SimpleXMLElement</code> object into an array or a string. It extracts attributes, values, and children elements recursively.</li>
+<li><code>extractAttributes($xml, $attributesKey, &amp;$arr)</code>: Extracts attributes from a <code>SimpleXMLElement</code> object and adds them to an array.</li>
+<li><code>extractValue($xml, &amp;$arr, $valueKeys)</code>: Extracts the value from a <code>SimpleXMLElement</code> object and adds it to an array.</li>
+<li><code>processChildren($xml, &amp;$arr, $attributesKey, $reduce, $alwaysArray, $valueKeys)</code>: Processes the children of a <code>SimpleXMLElement</code> object and adds them to an array.</li>
+<li><code>parseXML($xml)</code>: Parses XML data into an array. It uses decodeXML to decode the XML and extract options as a separate array.</li>
 </ul></p>        </div>
             
         
@@ -176,7 +169,7 @@ options as a separate array.</li>
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_isValidXML">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/XML.php#L74">at line 74</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/XML.php#L67">at line 67</a></div>
         <code>        static            bool
     <strong>isValidXML</strong>(mixed $xml)
         </code>
@@ -218,7 +211,7 @@ options as a separate array.</li>
             </div>
                     <div class="method-item">
                     <h3 id="method_parseXML">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/XML.php#L129">at line 129</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/XML.php#L122">at line 122</a></div>
         <code>        static            <abbr title="GenericDatabase\Helpers\Parsers\string|array">string|array</abbr>
     <strong>parseXML</strong>(string $xml)
         </code>

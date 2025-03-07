@@ -174,10 +174,11 @@ abstract class AbstractArguments implements IArgumentsAbstract
      */
     private static function callWithByStaticArray(array $arguments): IConnection
     {
-        foreach ($arguments as $key => $value) {
-            self::getInstance()->$key = $value ?? null;
+        $instance = self::getInstance();
+        foreach (array_keys($arguments) as $property) {
+            $instance->$property = $arguments[$property] ?? null;
         }
-        return self::getInstance();
+        return $instance;
     }
 
     /**

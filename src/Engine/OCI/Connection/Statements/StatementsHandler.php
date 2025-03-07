@@ -167,8 +167,8 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private static function internalBindVariable(array $params, mixed $statement): mixed
     {
-        foreach ($params as $key => $value) {
-            oci_bind_by_name($statement, $key, $params[$key]);
+        foreach ($params as $key => &$param) {
+            oci_bind_by_name($statement, $key, $param);
         }
         return $statement;
     }

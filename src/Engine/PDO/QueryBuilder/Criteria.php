@@ -20,13 +20,13 @@ class Criteria
         $data = array_key_exists('data', $arguments) ? trim($arguments['data']) : [];
         if (preg_match(Regex::getSelect(), $data, $matches)) {
             $result = $matches['function_name'] ? Arrays::arraySafe([
-                'type' => Column::FUNCTION,
+                'type' => Column::FUNCTION(),
                 'value' => trim($data),
                 'function' => $matches['function_name'],
                 'arguments' => $matches['function_arguments'],
                 'alias' => $matches['function_column_alias'] ?? null,
             ]) : Arrays::arraySafe([
-                'type' => Column::METADATA,
+                'type' => Column::METADATA(),
                 'value' => trim($data),
                 'prefix' => $matches['table_prefix'] ?? null,
                 'column' => $matches['column_name'],
@@ -43,7 +43,7 @@ class Criteria
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         if (preg_match(Regex::getFrom(), $data, $matches)) {
             $result = Arrays::arraySafe([
-                'type' => is_null($type) ? Table::METADATA : $type,
+                'type' => is_null($type) ? Table::METADATA() : $type,
                 'value' => trim($data),
                 'table' => $matches['table_name'],
                 'alias' => $matches['table_alias'] ?? null,
@@ -83,7 +83,7 @@ class Criteria
     public static function getOn(array $arguments): array
     {
         $result = [];
-        $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE;
+        $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         if (preg_match(Regex::getOn(), $data, $matches)) {
             $result = Arrays::arraySafe([
@@ -108,25 +108,25 @@ class Criteria
         $result = [];
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Where::class;
-        $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE;
+        $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
 
         if (preg_match(Regex::getWhereHaving(), $data, $matches)) {
             $aggregationType = match (true) {
-                str_contains($data, 'IN') => $enum::IN,
-                str_contains($data, 'LIKE') => $enum::LIKE,
-                str_contains($data, 'BETWEEN') => $enum::BETWEEN,
-                default => $enum::NONE
+                str_contains($data, 'IN') => $enum::IN(),
+                str_contains($data, 'LIKE') => $enum::LIKE(),
+                str_contains($data, 'BETWEEN') => $enum::BETWEEN(),
+                default => $enum::NONE()
             };
 
             $aggregationAssert = match (true) {
-                str_contains($data, 'NOT') => $enum::NEGATION,
-                default => $enum::AFFIRMATION
+                str_contains($data, 'NOT') => $enum::NEGATION(),
+                default => $enum::AFFIRMATION()
             };
 
             $result = isset($matches['function_name']) ? Arrays::arraySafe([
                 'type' => $enum::FUNCTION,
                 'value' => trim($data),
-                'function' => $matches['function_name'] ?? null,
+                'function' => $matches['function_name'],
                 'alias' => $matches['function_table_alias'] ?? null,
                 'column' => $matches['function_column_name'] ?? null,
                 'arguments' => [
@@ -142,7 +142,7 @@ class Criteria
                 'signal' => $matches['function_signal'] ?? null,
                 'condition' => $condition,
             ]) : Arrays::arraySafe([
-                'type' => $enum::DEFAULT,
+                'type' => $enum::DEFAULT(),
                 'value' => trim($data),
                 'alias' => $matches['table_alias'] ?? null,
                 'column' => $matches['column_name'] ?? null,
@@ -170,7 +170,7 @@ class Criteria
         if (preg_match(Regex::getGroupOrder(), $data, $matches)) {
             if (isset($matches['function_name'])) {
                 $result = Arrays::arraySafe([
-                    'type' => Grouping::FUNCTION,
+                    'type' => Grouping::FUNCTION(),
                     'value' => trim($data),
                     'function' => $matches['function_name'],
                     'arguments' => $matches['function_arguments'],
@@ -178,7 +178,7 @@ class Criteria
                 unset($result['prefix']);
             } else {
                 $result = Arrays::arraySafe([
-                    'type' => Grouping::METADATA,
+                    'type' => Grouping::METADATA(),
                     'value' => trim($data),
                     'prefix' => $matches['table_prefix'] ?? null,
                     'column' => $matches['column_name'],
@@ -191,12 +191,12 @@ class Criteria
     public static function getOrder(array $arguments): array
     {
         $result = [];
-        $sorting = array_key_exists('sorting', $arguments) ? $arguments['sorting'] : Sorting::NONE;
+        $sorting = array_key_exists('sorting', $arguments) ? $arguments['sorting'] : Sorting::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         if (preg_match(Regex::getGroupOrder(), $data, $matches)) {
             if ($matches['function_name']) {
                 $result = Arrays::arraySafe([
-                    'type' => Sorting::FUNCTION,
+                    'type' => Sorting::FUNCTION(),
                     'value' => trim($data),
                     'function' => $matches['function_name'],
                     'arguments' => $matches['function_arguments'],
@@ -205,7 +205,7 @@ class Criteria
                 unset($result['prefix']);
             } else {
                 $result = Arrays::arraySafe([
-                    'type' => Sorting::METADATA,
+                    'type' => Sorting::METADATA(),
                     'value' => trim($data),
                     'prefix' => $matches['table_prefix'] ?? null,
                     'column' => $matches['column_name'],
@@ -233,7 +233,7 @@ class Criteria
                 $limit = (int) $matches['limit'];
             }
             $result = Arrays::arraySafe([
-                'type' => isset($matches['offset']) ? LIMIT::OFFSET : LIMIT::DEFAULT,
+                'type' => isset($matches['offset']) ? Limit::OFFSET() : Limit::DEFAULT(),
                 'value' => $value,
                 'limit' => $limit,
                 'offset' => isset($matches['offset']) ? (int) $matches['offset'] : null,

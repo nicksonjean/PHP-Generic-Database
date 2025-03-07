@@ -26,7 +26,7 @@ use PDO;
 /**
  * Class StaticArgs
  * Provides methods to create database connections for various database engines.
- * 
+ *
  * Methods:
  * - `nativeMySQLi(array $env, bool $persistent = false, bool $strategy = false): Connection|MySQLiConnection`: Creates a native MySQLi connection.
  * - `nativePgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PgSQLConnection`: Creates a native PostgreSQL connection.
@@ -74,28 +74,52 @@ class StaticArgs
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'mysqli'] : [],
-            host: $env['MYSQL_HOST'],
-            port: (int) $env['MYSQL_PORT'],
-            database: $env['MYSQL_DATABASE'],
-            user: $env['MYSQL_USERNAME'],
-            password: $env['MYSQL_PASSWORD'],
-            charset: 'utf8',
-            options: [
-                MySQL::ATTR_PERSISTENT => $persistent,
-                MySQL::ATTR_AUTOCOMMIT => true,
-                MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
-                MySQL::ATTR_SET_CHARSET_NAME => "utf8",
-                MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
-                MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
-                MySQL::ATTR_OPT_READ_TIMEOUT => 30,
-                MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M",
-                MySQL::ATTR_DEFAULT_FETCH_MODE => MySQL::FETCH_OBJ,
-                MySQL::ATTR_REPORT => MySQL::REPORT_ERROR | MySQL::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'mysqli',
+                host: $env['MYSQL_HOST'],
+                port: (int) $env['MYSQL_PORT'],
+                database: $env['MYSQL_DATABASE'],
+                user: $env['MYSQL_USERNAME'],
+                password: $env['MYSQL_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    MySQL::ATTR_PERSISTENT => $persistent,
+                    MySQL::ATTR_AUTOCOMMIT => true,
+                    MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
+                    MySQL::ATTR_SET_CHARSET_NAME => "utf8",
+                    MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
+                    MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
+                    MySQL::ATTR_OPT_READ_TIMEOUT => 30,
+                    MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M",
+                    MySQL::ATTR_DEFAULT_FETCH_MODE => MySQL::FETCH_OBJ,
+                    MySQL::ATTR_REPORT => MySQL::REPORT_ERROR | MySQL::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                host: $env['MYSQL_HOST'],
+                port: (int) $env['MYSQL_PORT'],
+                database: $env['MYSQL_DATABASE'],
+                user: $env['MYSQL_USERNAME'],
+                password: $env['MYSQL_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    MySQL::ATTR_PERSISTENT => $persistent,
+                    MySQL::ATTR_AUTOCOMMIT => true,
+                    MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
+                    MySQL::ATTR_SET_CHARSET_NAME => "utf8",
+                    MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
+                    MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
+                    MySQL::ATTR_OPT_READ_TIMEOUT => 30,
+                    MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M",
+                    MySQL::ATTR_DEFAULT_FETCH_MODE => MySQL::FETCH_OBJ,
+                    MySQL::ATTR_REPORT => MySQL::REPORT_ERROR | MySQL::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -117,24 +141,44 @@ class StaticArgs
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'pgsql'] : [],
-            host: $env['PGSQL_HOST'],
-            port: (int) $env['PGSQL_PORT'],
-            database: $env['PGSQL_DATABASE'],
-            user: $env['PGSQL_USERNAME'],
-            password: $env['PGSQL_PASSWORD'],
-            charset: 'utf8',
-            options: [
-                PgSQL::ATTR_PERSISTENT => $persistent,
-                PgSQL::ATTR_CONNECT_ASYNC => true,
-                PgSQL::ATTR_CONNECT_FORCE_NEW => true,
-                PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
-                PgSQL::ATTR_DEFAULT_FETCH_MODE => PgSQL::FETCH_OBJ,
-                PgSQL::ATTR_REPORT => PgSQL::REPORT_ERROR | PgSQL::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'pgsql',
+                host: $env['PGSQL_HOST'],
+                port: (int) $env['PGSQL_PORT'],
+                database: $env['PGSQL_DATABASE'],
+                user: $env['PGSQL_USERNAME'],
+                password: $env['PGSQL_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PgSQL::ATTR_PERSISTENT => $persistent,
+                    PgSQL::ATTR_CONNECT_ASYNC => true,
+                    PgSQL::ATTR_CONNECT_FORCE_NEW => true,
+                    PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
+                    PgSQL::ATTR_DEFAULT_FETCH_MODE => PgSQL::FETCH_OBJ,
+                    PgSQL::ATTR_REPORT => PgSQL::REPORT_ERROR | PgSQL::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                host: $env['PGSQL_HOST'],
+                port: (int) $env['PGSQL_PORT'],
+                database: $env['PGSQL_DATABASE'],
+                user: $env['PGSQL_USERNAME'],
+                password: $env['PGSQL_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PgSQL::ATTR_PERSISTENT => $persistent,
+                    PgSQL::ATTR_CONNECT_ASYNC => true,
+                    PgSQL::ATTR_CONNECT_FORCE_NEW => true,
+                    PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
+                    PgSQL::ATTR_DEFAULT_FETCH_MODE => PgSQL::FETCH_OBJ,
+                    PgSQL::ATTR_REPORT => PgSQL::REPORT_ERROR | PgSQL::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -156,22 +200,40 @@ class StaticArgs
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'sqlsrv'] : [],
-            host: $env['SQLSRV_HOST'],
-            port: (int) $env['SQLSRV_PORT'],
-            database: $env['SQLSRV_DATABASE'],
-            user: $env['SQLSRV_USERNAME'],
-            password: $env['SQLSRV_PASSWORD'],
-            charset: 'utf8',
-            options: [
-                SQLSrv::ATTR_PERSISTENT => $persistent,
-                SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
-                SQLSrv::ATTR_DEFAULT_FETCH_MODE => SQLSrv::FETCH_OBJ,
-                SQLSrv::ATTR_REPORT => SQLSrv::REPORT_ERROR | SQLSrv::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'sqlsrv',
+                host: $env['SQLSRV_HOST'],
+                port: (int) $env['SQLSRV_PORT'],
+                database: $env['SQLSRV_DATABASE'],
+                user: $env['SQLSRV_USERNAME'],
+                password: $env['SQLSRV_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    SQLSrv::ATTR_PERSISTENT => $persistent,
+                    SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
+                    SQLSrv::ATTR_DEFAULT_FETCH_MODE => SQLSrv::FETCH_OBJ,
+                    SQLSrv::ATTR_REPORT => SQLSrv::REPORT_ERROR | SQLSrv::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                host: $env['SQLSRV_HOST'],
+                port: (int) $env['SQLSRV_PORT'],
+                database: $env['SQLSRV_DATABASE'],
+                user: $env['SQLSRV_USERNAME'],
+                password: $env['SQLSRV_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    SQLSrv::ATTR_PERSISTENT => $persistent,
+                    SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
+                    SQLSrv::ATTR_DEFAULT_FETCH_MODE => SQLSrv::FETCH_OBJ,
+                    SQLSrv::ATTR_REPORT => SQLSrv::REPORT_ERROR | SQLSrv::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -193,22 +255,40 @@ class StaticArgs
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'oci'] : [],
-            host: $env['OCI_HOST'],
-            port: (int) $env['OCI_PORT'],
-            database: $env['OCI_DATABASE'],
-            user: $env['OCI_USERNAME'],
-            password: $env['OCI_PASSWORD'],
-            charset: 'utf8',
-            options: [
-                OCI::ATTR_PERSISTENT => $persistent,
-                OCI::ATTR_CONNECT_TIMEOUT => 28800,
-                OCI::ATTR_DEFAULT_FETCH_MODE => OCI::FETCH_OBJ,
-                OCI::ATTR_REPORT => OCI::REPORT_ERROR | OCI::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'oci',
+                host: $env['OCI_HOST'],
+                port: (int) $env['OCI_PORT'],
+                database: $env['OCI_DATABASE'],
+                user: $env['OCI_USERNAME'],
+                password: $env['OCI_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    OCI::ATTR_PERSISTENT => $persistent,
+                    OCI::ATTR_CONNECT_TIMEOUT => 28800,
+                    OCI::ATTR_DEFAULT_FETCH_MODE => OCI::FETCH_OBJ,
+                    OCI::ATTR_REPORT => OCI::REPORT_ERROR | OCI::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                host: $env['OCI_HOST'],
+                port: (int) $env['OCI_PORT'],
+                database: $env['OCI_DATABASE'],
+                user: $env['OCI_USERNAME'],
+                password: $env['OCI_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    OCI::ATTR_PERSISTENT => $persistent,
+                    OCI::ATTR_CONNECT_TIMEOUT => 28800,
+                    OCI::ATTR_DEFAULT_FETCH_MODE => OCI::FETCH_OBJ,
+                    OCI::ATTR_REPORT => OCI::REPORT_ERROR | OCI::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -230,22 +310,40 @@ class StaticArgs
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'firebird'] : [],
-            host: $env['IBASE_HOST'],
-            port: (int) $env['IBASE_PORT'],
-            database: $env['IBASE_DATABASE'],
-            user: $env['IBASE_USERNAME'],
-            password: $env['IBASE_PASSWORD'],
-            charset: 'utf8',
-            options: [
-                Firebird::ATTR_PERSISTENT => $persistent,
-                Firebird::ATTR_CONNECT_TIMEOUT => 28800,
-                Firebird::ATTR_DEFAULT_FETCH_MODE => Firebird::FETCH_OBJ,
-                Firebird::ATTR_REPORT => Firebird::REPORT_ERROR | Firebird::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'firebird',
+                host: $env['IBASE_HOST'],
+                port: (int) $env['IBASE_PORT'],
+                database: $env['IBASE_DATABASE'],
+                user: $env['IBASE_USERNAME'],
+                password: $env['IBASE_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    Firebird::ATTR_PERSISTENT => $persistent,
+                    Firebird::ATTR_CONNECT_TIMEOUT => 28800,
+                    Firebird::ATTR_DEFAULT_FETCH_MODE => Firebird::FETCH_OBJ,
+                    Firebird::ATTR_REPORT => Firebird::REPORT_ERROR | Firebird::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                host: $env['IBASE_HOST'],
+                port: (int) $env['IBASE_PORT'],
+                database: $env['IBASE_DATABASE'],
+                user: $env['IBASE_USERNAME'],
+                password: $env['IBASE_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    Firebird::ATTR_PERSISTENT => $persistent,
+                    Firebird::ATTR_CONNECT_TIMEOUT => 28800,
+                    Firebird::ATTR_DEFAULT_FETCH_MODE => Firebird::FETCH_OBJ,
+                    Firebird::ATTR_REPORT => Firebird::REPORT_ERROR | Firebird::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -262,27 +360,45 @@ class StaticArgs
         bool $strategy = false
     ): Connection|SQLiteConnection {
         /** @var Connection|SQLiteConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_SQLITE_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'sqlite'] : [],
-            database: $env['SQLITE_DATABASE'],
-            charset: 'utf8',
-            options: [
-                SQLite::ATTR_OPEN_READONLY => false,
-                SQLite::ATTR_OPEN_READWRITE => true,
-                SQLite::ATTR_OPEN_CREATE => true,
-                SQLite::ATTR_CONNECT_TIMEOUT => 28800,
-                SQLite::ATTR_PERSISTENT => $persistent,
-                SQLite::ATTR_AUTOCOMMIT => true,
-                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
-                SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'sqlite',
+                database: $env['SQLITE_DATABASE'],
+                charset: 'utf8',
+                options: [
+                    SQLite::ATTR_OPEN_READONLY => false,
+                    SQLite::ATTR_OPEN_READWRITE => true,
+                    SQLite::ATTR_OPEN_CREATE => true,
+                    SQLite::ATTR_CONNECT_TIMEOUT => 28800,
+                    SQLite::ATTR_PERSISTENT => $persistent,
+                    SQLite::ATTR_AUTOCOMMIT => true,
+                    SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
+                    SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                database: $env['SQLITE_DATABASE'],
+                charset: 'utf8',
+                options: [
+                    SQLite::ATTR_OPEN_READONLY => false,
+                    SQLite::ATTR_OPEN_READWRITE => true,
+                    SQLite::ATTR_OPEN_CREATE => true,
+                    SQLite::ATTR_CONNECT_TIMEOUT => 28800,
+                    SQLite::ATTR_PERSISTENT => $persistent,
+                    SQLite::ATTR_AUTOCOMMIT => true,
+                    SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
+                    SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -299,27 +415,45 @@ class StaticArgs
         bool $strategy = false
     ): Connection|SQLiteConnection {
         /** @var Connection|SQLiteConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_SQLITE_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_SQLITE_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'sqlite'] : [],
-            database: $env['SQLITE_DATABASE_MEMORY'],
-            charset: 'utf8',
-            options: [
-                SQLite::ATTR_OPEN_READONLY => false,
-                SQLite::ATTR_OPEN_READWRITE => true,
-                SQLite::ATTR_OPEN_CREATE => true,
-                SQLite::ATTR_CONNECT_TIMEOUT => 28800,
-                SQLite::ATTR_PERSISTENT => $persistent,
-                SQLite::ATTR_AUTOCOMMIT => true,
-                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
-                SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'sqlite',
+                database: $env['SQLITE_DATABASE_MEMORY'],
+                charset: 'utf8',
+                options: [
+                    SQLite::ATTR_OPEN_READONLY => false,
+                    SQLite::ATTR_OPEN_READWRITE => true,
+                    SQLite::ATTR_OPEN_CREATE => true,
+                    SQLite::ATTR_CONNECT_TIMEOUT => 28800,
+                    SQLite::ATTR_PERSISTENT => $persistent,
+                    SQLite::ATTR_AUTOCOMMIT => true,
+                    SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
+                    SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                database: $env['SQLITE_DATABASE_MEMORY'],
+                charset: 'utf8',
+                options: [
+                    SQLite::ATTR_OPEN_READONLY => false,
+                    SQLite::ATTR_OPEN_READWRITE => true,
+                    SQLite::ATTR_OPEN_CREATE => true,
+                    SQLite::ATTR_CONNECT_TIMEOUT => 28800,
+                    SQLite::ATTR_PERSISTENT => $persistent,
+                    SQLite::ATTR_AUTOCOMMIT => true,
+                    SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
+                    SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -336,27 +470,45 @@ class StaticArgs
         bool $strategy = false
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            driver: 'mysql',
-            host: $env['MYSQL_HOST'],
-            port: (int) $env['MYSQL_PORT'],
-            database: $env['MYSQL_DATABASE'],
-            user: $env['MYSQL_USERNAME'],
-            password: $env['MYSQL_PASSWORD'],
-            charset: 'utf8',
-            options: [
-                PDO::ATTR_PERSISTENT => $persistent,
-                PDO::ATTR_EMULATE_PREPARES => true,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'pdo',
+                driver: 'mysql',
+                host: $env['MYSQL_HOST'],
+                port: (int) $env['MYSQL_PORT'],
+                database: $env['MYSQL_DATABASE'],
+                user: $env['MYSQL_USERNAME'],
+                password: $env['MYSQL_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'mysql',
+                host: $env['MYSQL_HOST'],
+                port: (int) $env['MYSQL_PORT'],
+                database: $env['MYSQL_DATABASE'],
+                user: $env['MYSQL_USERNAME'],
+                password: $env['MYSQL_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -373,27 +525,45 @@ class StaticArgs
         bool $strategy = false
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            driver: 'pgsql',
-            host: $env['PGSQL_HOST'],
-            port: (int) $env['PGSQL_PORT'],
-            database: $env['PGSQL_DATABASE'],
-            user: $env['PGSQL_USERNAME'],
-            password: $env['PGSQL_PASSWORD'],
-            charset: 'utf8',
-            options: [
-                PDO::ATTR_PERSISTENT => $persistent,
-                PDO::ATTR_EMULATE_PREPARES => true,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'pdo',
+                driver: 'pgsql',
+                host: $env['PGSQL_HOST'],
+                port: (int) $env['PGSQL_PORT'],
+                database: $env['PGSQL_DATABASE'],
+                user: $env['PGSQL_USERNAME'],
+                password: $env['PGSQL_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'pgsql',
+                host: $env['PGSQL_HOST'],
+                port: (int) $env['PGSQL_PORT'],
+                database: $env['PGSQL_DATABASE'],
+                user: $env['PGSQL_USERNAME'],
+                password: $env['PGSQL_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -408,26 +578,43 @@ class StaticArgs
         bool $strategy = false
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            driver: 'sqlsrv',
-            host: $env['SQLSRV_HOST'],
-            port: (int) $env['SQLSRV_PORT'],
-            database: $env['SQLSRV_DATABASE'],
-            user: $env['SQLSRV_USERNAME'],
-            password: $env['SQLSRV_PASSWORD'],
-            charset: 'utf8',
-            options: [
-                PDO::ATTR_EMULATE_PREPARES => true,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'pdo',
+                driver: 'sqlsrv',
+                host: $env['SQLSRV_HOST'],
+                port: (int) $env['SQLSRV_PORT'],
+                database: $env['SQLSRV_DATABASE'],
+                user: $env['SQLSRV_USERNAME'],
+                password: $env['SQLSRV_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'sqlsrv',
+                host: $env['SQLSRV_HOST'],
+                port: (int) $env['SQLSRV_PORT'],
+                database: $env['SQLSRV_DATABASE'],
+                user: $env['SQLSRV_USERNAME'],
+                password: $env['SQLSRV_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -444,27 +631,45 @@ class StaticArgs
         bool $strategy = false
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            driver: 'oci',
-            host: $env['OCI_HOST'],
-            port: (int) $env['OCI_PORT'],
-            database: $env['OCI_DATABASE'],
-            user: $env['OCI_USERNAME'],
-            password: $env['OCI_PASSWORD'],
-            charset: 'utf8',
-            options: [
-                PDO::ATTR_PERSISTENT => $persistent,
-                PDO::ATTR_EMULATE_PREPARES => true,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'pdo',
+                driver: 'oci',
+                host: $env['OCI_HOST'],
+                port: (int) $env['OCI_PORT'],
+                database: $env['OCI_DATABASE'],
+                user: $env['OCI_USERNAME'],
+                password: $env['OCI_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'oci',
+                host: $env['OCI_HOST'],
+                port: (int) $env['OCI_PORT'],
+                database: $env['OCI_DATABASE'],
+                user: $env['OCI_USERNAME'],
+                password: $env['OCI_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -481,27 +686,45 @@ class StaticArgs
         bool $strategy = false
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            driver: 'firebird',
-            host: $env['FBIRD_HOST'],
-            port: (int) $env['FBIRD_PORT'],
-            database: $env['FBIRD_DATABASE'],
-            user: $env['FBIRD_USERNAME'],
-            password: $env['FBIRD_PASSWORD'],
-            charset: 'utf8',
-            options: [
-                PDO::ATTR_PERSISTENT => $persistent,
-                PDO::ATTR_EMULATE_PREPARES => true,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'pdo',
+                driver: 'firebird',
+                host: $env['FBIRD_HOST'],
+                port: (int) $env['FBIRD_PORT'],
+                database: $env['FBIRD_DATABASE'],
+                user: $env['FBIRD_USERNAME'],
+                password: $env['FBIRD_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'firebird',
+                host: $env['FBIRD_HOST'],
+                port: (int) $env['FBIRD_PORT'],
+                database: $env['FBIRD_DATABASE'],
+                user: $env['FBIRD_USERNAME'],
+                password: $env['FBIRD_PASSWORD'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -518,23 +741,37 @@ class StaticArgs
         bool $strategy = false
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            driver: 'sqlite',
-            database: $env['SQLITE_DATABASE'],
-            charset: 'utf8',
-            options: [
-                PDO::ATTR_PERSISTENT => $persistent,
-                PDO::ATTR_EMULATE_PREPARES => true,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'pdo',
+                driver: 'sqlite',
+                database: $env['SQLITE_DATABASE'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'sqlite',
+                database: $env['SQLITE_DATABASE'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -551,23 +788,37 @@ class StaticArgs
         bool $strategy = false
     ): Connection|PDOConnection {
         /** @var Connection|PDOConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_PDO_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_PDO_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            driver: 'sqlite',
-            database: $env['SQLITE_DATABASE_MEMORY'],
-            charset: 'utf8',
-            options: [
-                PDO::ATTR_PERSISTENT => $persistent,
-                PDO::ATTR_EMULATE_PREPARES => true,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'pdo',
+                driver: 'sqlite',
+                database: $env['SQLITE_DATABASE_MEMORY'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'sqlite',
+                database: $env['SQLITE_DATABASE_MEMORY'],
+                charset: 'utf8',
+                options: [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -584,28 +835,47 @@ class StaticArgs
         bool $strategy = false
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            driver: 'mysql',
-            host: $env['MYSQL_HOST'],
-            port: (int) $env['MYSQL_PORT'],
-            database: $env['MYSQL_DATABASE'],
-            user: $env['MYSQL_USERNAME'],
-            password: $env['MYSQL_PASSWORD'],
-            charset: $env['MYSQL_CHARSET'],
-            options: [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'odbc',
+                driver: 'mysql',
+                host: $env['MYSQL_HOST'],
+                port: (int) $env['MYSQL_PORT'],
+                database: $env['MYSQL_DATABASE'],
+                user: $env['MYSQL_USERNAME'],
+                password: $env['MYSQL_PASSWORD'],
+                charset: $env['MYSQL_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'mysql',
+                host: $env['MYSQL_HOST'],
+                port: (int) $env['MYSQL_PORT'],
+                database: $env['MYSQL_DATABASE'],
+                user: $env['MYSQL_USERNAME'],
+                password: $env['MYSQL_PASSWORD'],
+                charset: $env['MYSQL_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -622,28 +892,48 @@ class StaticArgs
         bool $strategy = false
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            driver: 'pgsql',
-            host: $env['PGSQL_HOST'],
-            port: (int) $env['PGSQL_PORT'],
-            database: $env['PGSQL_DATABASE'],
-            user: $env['PGSQL_USERNAME'],
-            password: $env['PGSQL_PASSWORD'],
-            charset: $env['PGSQL_CHARSET'],
-            options: [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'odbc',
+                driver: 'pgsql',
+                host: $env['PGSQL_HOST'],
+                port: (int) $env['PGSQL_PORT'],
+                database: $env['PGSQL_DATABASE'],
+                user: $env['PGSQL_USERNAME'],
+                password: $env['PGSQL_PASSWORD'],
+                charset: $env['PGSQL_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'mysql',
+                driver: 'pgsql',
+                host: $env['PGSQL_HOST'],
+                port: (int) $env['PGSQL_PORT'],
+                database: $env['PGSQL_DATABASE'],
+                user: $env['PGSQL_USERNAME'],
+                password: $env['PGSQL_PASSWORD'],
+                charset: $env['PGSQL_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -660,28 +950,47 @@ class StaticArgs
         bool $strategy = false
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            driver: 'sqlsrv',
-            host: $env['SQLSRV_HOST'],
-            port: (int) $env['SQLSRV_PORT'],
-            database: $env['SQLSRV_DATABASE'],
-            user: $env['SQLSRV_USERNAME'],
-            password: $env['SQLSRV_PASSWORD'],
-            charset: $env['SQLSRV_CHARSET'],
-            options: [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'odbc',
+                driver: 'sqlsrv',
+                host: $env['SQLSRV_HOST'],
+                port: (int) $env['SQLSRV_PORT'],
+                database: $env['SQLSRV_DATABASE'],
+                user: $env['SQLSRV_USERNAME'],
+                password: $env['SQLSRV_PASSWORD'],
+                charset: $env['SQLSRV_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'sqlsrv',
+                host: $env['SQLSRV_HOST'],
+                port: (int) $env['SQLSRV_PORT'],
+                database: $env['SQLSRV_DATABASE'],
+                user: $env['SQLSRV_USERNAME'],
+                password: $env['SQLSRV_PASSWORD'],
+                charset: $env['SQLSRV_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -698,28 +1007,47 @@ class StaticArgs
         bool $strategy = false
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            driver: 'oci',
-            host: $env['OCI_HOST'],
-            port: (int) $env['OCI_PORT'],
-            database: $env['OCI_DATABASE'],
-            user: $env['OCI_USERNAME'],
-            password: $env['OCI_PASSWORD'],
-            charset: $env['OCI_CHARSET'],
-            options: [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'odbc',
+                driver: 'oci',
+                host: $env['OCI_HOST'],
+                port: (int) $env['OCI_PORT'],
+                database: $env['OCI_DATABASE'],
+                user: $env['OCI_USERNAME'],
+                password: $env['OCI_PASSWORD'],
+                charset: $env['OCI_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'oci',
+                host: $env['OCI_HOST'],
+                port: (int) $env['OCI_PORT'],
+                database: $env['OCI_DATABASE'],
+                user: $env['OCI_USERNAME'],
+                password: $env['OCI_PASSWORD'],
+                charset: $env['OCI_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -736,28 +1064,47 @@ class StaticArgs
         bool $strategy = false
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            driver: 'firebird',
-            host: $env['FBIRD_HOST'],
-            port: (int) $env['FBIRD_PORT'],
-            database: $env['FBIRD_DATABASE'],
-            user: $env['FBIRD_USERNAME'],
-            password: $env['FBIRD_PASSWORD'],
-            charset: $env['FBIRD_CHARSET'],
-            options: [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'odbc',
+                driver: 'firebird',
+                host: $env['FBIRD_HOST'],
+                port: (int) $env['FBIRD_PORT'],
+                database: $env['FBIRD_DATABASE'],
+                user: $env['FBIRD_USERNAME'],
+                password: $env['FBIRD_PASSWORD'],
+                charset: $env['FBIRD_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'firebird',
+                host: $env['FBIRD_HOST'],
+                port: (int) $env['FBIRD_PORT'],
+                database: $env['FBIRD_DATABASE'],
+                user: $env['FBIRD_USERNAME'],
+                password: $env['FBIRD_PASSWORD'],
+                charset: $env['FBIRD_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -774,24 +1121,39 @@ class StaticArgs
         bool $strategy = false
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            driver: 'sqlite',
-            database: $env['SQLITE_DATABASE'],
-            charset: $env['SQLITE_CHARSET'],
-            options: [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'odbc',
+                driver: 'sqlite',
+                database: $env['SQLITE_DATABASE'],
+                charset: $env['SQLITE_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'sqlite',
+                database: $env['SQLITE_DATABASE'],
+                charset: $env['SQLITE_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -808,26 +1170,43 @@ class StaticArgs
         bool $strategy = false
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            driver: 'access',
-            database: $env['ACCESS_DATABASE'],
-            user: $env['ACCESS_USERNAME'],
-            password: $env['ACCESS_PASSWORD'],
-            charset: $env['ACCESS_CHARSET'],
-            options: [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'odbc',
+                driver: 'access',
+                database: $env['ACCESS_DATABASE'],
+                user: $env['ACCESS_USERNAME'],
+                password: $env['ACCESS_PASSWORD'],
+                charset: $env['ACCESS_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'access',
+                database: $env['ACCESS_DATABASE'],
+                user: $env['ACCESS_USERNAME'],
+                password: $env['ACCESS_PASSWORD'],
+                charset: $env['ACCESS_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -844,24 +1223,39 @@ class StaticArgs
         bool $strategy = false
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            driver: 'excel',
-            database: $env['EXCEL_DATABASE'],
-            charset: $env['EXCEL_CHARSET'],
-            options: [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'odbc',
+                driver: 'excel',
+                database: $env['EXCEL_DATABASE'],
+                charset: $env['EXCEL_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'excel',
+                database: $env['EXCEL_DATABASE'],
+                charset: $env['EXCEL_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -878,24 +1272,39 @@ class StaticArgs
         bool $strategy = false
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            driver: 'text',
-            database: $env['TEXT_DATABASE'],
-            charset: $env['TEXT_CHARSET'],
-            options: [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'odbc',
+                driver: 'text',
+                database: $env['TEXT_DATABASE'],
+                charset: $env['TEXT_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'text',
+                database: $env['TEXT_DATABASE'],
+                charset: $env['TEXT_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 
     /**
@@ -912,23 +1321,38 @@ class StaticArgs
         bool $strategy = false
     ): Connection|ODBCConnection {
         /** @var Connection|ODBCConnection $className */
-        $className = $strategy ? Entity::CLASS_CONNECTION->value : Entity::CLASS_ODBC_ENGINE->value;
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_ODBC_ENGINE()->value;
 
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor(
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            driver: 'sqlite',
-            database: $env['SQLITE_DATABASE_MEMORY'],
-            charset: $env['SQLITE_CHARSET'],
-            options: [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
-            ],
-            exception: true
-        );
+        if ($strategy) {
+            return $constructor(
+                engine: 'odbc',
+                driver: 'sqlite',
+                database: $env['SQLITE_DATABASE_MEMORY'],
+                charset: $env['SQLITE_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                driver: 'sqlite',
+                database: $env['SQLITE_DATABASE_MEMORY'],
+                charset: $env['SQLITE_CHARSET'],
+                options: [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
     }
 }

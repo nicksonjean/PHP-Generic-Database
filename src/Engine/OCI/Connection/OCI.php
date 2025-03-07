@@ -10,97 +10,97 @@ class OCI
     /**
      * Connection attribute to set the connection timeout.
      */
-    final public const ATTR_CONNECT_TIMEOUT = 1001;
+    public const ATTR_CONNECT_TIMEOUT = 1001;
 
     /**
      * Connection attribute to set the default fetch mode.
      */
-    final public const ATTR_DEFAULT_FETCH_MODE = 1100;
+    public const ATTR_DEFAULT_FETCH_MODE = 1100;
 
     /**
      * Connection attribute to set the auto-commit mode.
      */
-    final public const ATTR_AUTOCOMMIT = 1010;
+    public const ATTR_AUTOCOMMIT = 1010;
 
     /**
      * Connection attribute to set the default report mode.
      */
-    final public const ATTR_REPORT = 1110;
+    public const ATTR_REPORT = 1110;
 
     /**
      * Turns reporting off
      */
-    final public const REPORT_OFF = 0;
+    public const REPORT_OFF = 0;
 
     /**
      * Report errors from mysqli function calls
      */
-    final public const REPORT_ERROR = 1;
+    public const REPORT_ERROR = 1;
 
     /**
      * Throw exception for errors instead of warnings
      */
-    final public const REPORT_STRICT = 2;
+    public const REPORT_STRICT = 2;
 
     /**
      * Report if no index or bad index was used in a query
      */
-    final public const REPORT_INDEX = 4;
+    public const REPORT_INDEX = 4;
 
     /**
      * Report all errors
      */
-    final public const REPORT_ALL = 255;
+    public const REPORT_ALL = 255;
 
     /**
      * Connection attribute to set persistence of the connection.
      */
-    final public const ATTR_PERSISTENT = 13;
+    public const ATTR_PERSISTENT = 13;
 
     /**
      * Fetch mode that starts fetching rows only when they are requested.
      */
-    final public const FETCH_LAZY = 1;
+    public const FETCH_LAZY = 1;
 
     /**
      * Constant for the fetch mode representing fetching as an associative array
      */
-    final public const FETCH_ASSOC = 2;
+    public const FETCH_ASSOC = 2;
 
     /**
      * Constant for the fetch mode representing fetching as a numeric array
      */
-    final public const FETCH_NUM = 3;
+    public const FETCH_NUM = 3;
 
     /**
      * Constant for the fetch mode representing fetching as both a numeric and associative array
      */
-    final public const FETCH_BOTH = 4;
+    public const FETCH_BOTH = 4;
 
     /**
      * Constant for the fetch mode representing fetching as an object
      */
-    final public const FETCH_OBJ = 5;
+    public const FETCH_OBJ = 5;
 
     /**
      * Fetch mode that requires explicit binding of PHP variables to fetch values.
      */
-    final public const FETCH_BOUND = 6;
+    public const FETCH_BOUND = 6;
 
     /**
      * Constant for the fetch mode representing fetching a single column
      */
-    final public const FETCH_COLUMN = 7;
+    public const FETCH_COLUMN = 7;
 
     /**
      * Constant for the fetch mode representing fetching into a new instance of a specified class
      */
-    final public const FETCH_CLASS = 8;
+    public const FETCH_CLASS = 8;
 
     /**
      * Constant for the fetch mode representing fetching into an existing object
      */
-    final public const FETCH_INTO = 9;
+    public const FETCH_INTO = 9;
 
     /**
      * Array of data attributes.

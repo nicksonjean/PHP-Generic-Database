@@ -17,7 +17,7 @@ class FetchStrategy implements IFetchStrategy
      * @param mixed $resource The statement to cache results from
      * @return string The statement identifier
      */
-    private function cacheResource(mixed $resource): string
+    public function cacheResource(mixed $resource): string
     {
         $resourceId = $this->getResourceId($resource);
         if (!isset($this->cachedResults[$resourceId])) {

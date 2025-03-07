@@ -10,132 +10,132 @@ class MySQL
     /**
      * Connection attribute to set the connection timeout.
      */
-    final public const ATTR_OPT_CONNECT_TIMEOUT = 2;
+    public const ATTR_OPT_CONNECT_TIMEOUT = 2;
 
     /**
      * Connection attribute to set the read timeout.
      */
-    final public const ATTR_OPT_READ_TIMEOUT = 3;
+    public const ATTR_OPT_READ_TIMEOUT = 3;
 
     /**
      * Connection attribute to set persistence of the connection.
      */
-    final public const ATTR_PERSISTENT = 13;
+    public const ATTR_PERSISTENT = 13;
 
     /**
      * Connection attribute to set the auto-commit mode.
      */
-    final public const ATTR_AUTOCOMMIT = 14;
+    public const ATTR_AUTOCOMMIT = 14;
 
     /**
      * Connection attribute to set the initial command.
      */
-    final public const ATTR_INIT_COMMAND = 1002;
+    public const ATTR_INIT_COMMAND = 1002;
 
     /**
      * Connection attribute to set the character set.
      */
-    final public const ATTR_SET_CHARSET_NAME = 4;
+    public const ATTR_SET_CHARSET_NAME = 4;
 
     /**
      * Connection attribute to set the read default group.
      */
-    final public const ATTR_READ_DEFAULT_GROUP = 1007;
+    public const ATTR_READ_DEFAULT_GROUP = 1007;
 
     /**
      * Connection attribute to set integer and float values as native types.
      */
-    final public const ATTR_OPT_INT_AND_FLOAT_NATIVE = 1011;
+    public const ATTR_OPT_INT_AND_FLOAT_NATIVE = 1011;
 
     /**
      * Connection attribute to verify the server certificate in SSL.
      */
-    final public const ATTR_OPT_SSL_VERIFY_SERVER_CERT = 1012;
+    public const ATTR_OPT_SSL_VERIFY_SERVER_CERT = 1012;
 
     /**
      * Connection attribute to verify the server certificate in SSL.
      */
-    final public const ATTR_OPT_LOCAL_INFILE = 1008;
+    public const ATTR_OPT_LOCAL_INFILE = 1008;
 
     /**
      * Connection attribute to set the default fetch mode.
      */
-    final public const ATTR_DEFAULT_FETCH_MODE = 1100;
+    public const ATTR_DEFAULT_FETCH_MODE = 1100;
 
     /**
      * Connection attribute to set the default report mode.
      */
-    final public const ATTR_REPORT = 1110;
+    public const ATTR_REPORT = 1110;
 
     /**
      * Turns reporting off alias for MYSQLI_REPORT_OFF
      */
-    final public const REPORT_OFF = 0;
+    public const REPORT_OFF = 0;
 
     /**
      * Report errors from mysqli function calls alias for MYSQLI_REPORT_ERROR
      */
-    final public const REPORT_ERROR = 1;
+    public const REPORT_ERROR = 1;
 
     /**
      * Throw exception for errors instead of warnings alias for MYSQLI_REPORT_STRICT
      */
-    final public const REPORT_STRICT = 2;
+    public const REPORT_STRICT = 2;
 
     /**
      * Report if no index or bad index was used in a query alias for MYSQLI_REPORT_INDEX
      */
-    final public const REPORT_INDEX = 4;
+    public const REPORT_INDEX = 4;
 
     /**
      * Report all errors alias for MYSQLI_REPORT_ALL
      */
-    final public const REPORT_ALL = 255;
+    public const REPORT_ALL = 255;
 
     /**
      * Fetch mode that starts fetching rows only when they are requested.
      */
-    final public const FETCH_LAZY = 1;
+    public const FETCH_LAZY = 1;
 
     /**
      * Constant for the fetch mode representing fetching as an associative array
      */
-    final public const FETCH_ASSOC = 2;
+    public const FETCH_ASSOC = 2;
 
     /**
      * Constant for the fetch mode representing fetching as a numeric array
      */
-    final public const FETCH_NUM = 3;
+    public const FETCH_NUM = 3;
 
     /**
      * Constant for the fetch mode representing fetching as both a numeric and associative array
      */
-    final public const FETCH_BOTH = 4;
+    public const FETCH_BOTH = 4;
 
     /**
      * Constant for the fetch mode representing fetching as an object
      */
-    final public const FETCH_OBJ = 5;
+    public const FETCH_OBJ = 5;
 
     /**
      * Fetch mode that requires explicit binding of PHP variables to fetch values.
      */
-    final public const FETCH_BOUND = 6;
+    public const FETCH_BOUND = 6;
 
     /**
      * Constant for the fetch mode representing fetching a single column
      */
-    final public const FETCH_COLUMN = 7;
+    public const FETCH_COLUMN = 7;
 
     /**
      * Constant for the fetch mode representing fetching into a new instance of a specified class
      */
-    final public const FETCH_CLASS = 8;
+    public const FETCH_CLASS = 8;
 
     /**
      * Constant for the fetch mode representing fetching into an existing object
      */
-    final public const FETCH_INTO = 9;
+    public const FETCH_INTO = 9;
 
     /**
      * Array of data attributes.

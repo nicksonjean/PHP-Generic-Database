@@ -19,140 +19,140 @@ final class Types extends EmulatedStringEnum
     /**
      * Oracle OCI8 connection
      */
-    protected const NAT_OCI = 'oci8 connection';
+    public const NAT_OCI = 'oci8 connection';
 
     /**
      * Persistent Oracle OCI8 connection
      */
-    protected const NAT_OCI_PERSISTENT = 'oci8 persistent connection';
+    public const NAT_OCI_PERSISTENT = 'oci8 persistent connection';
 
     /**
      * Persistent SQL Server connection
      */
-    protected const NAT_SQLSRV_PERSISTENT = 'SQL Server Connection';
+    public const NAT_SQLSRV_PERSISTENT = 'SQL Server Connection';
 
     /**
      * MySQL link
      */
-    protected const NAT_MYSQL = 'mysql link';
+    public const NAT_MYSQL = 'mysql link';
 
     /**
      * PgSql Connection
      */
-    protected const NAT_PGSQL = \PgSql\Connection::class;
+    public const NAT_PGSQL = \PgSql\Connection::class;
 
     /**
      * Microsoft SQL Server link
      */
-    protected const NAT_MSSQL = 'mssql link';
+    public const NAT_MSSQL = 'mssql link';
 
     /**
      * Firebird link
      */
-    protected const NAT_FIREBIRD = 'Firebird link';
+    public const NAT_FIREBIRD = 'Firebird link';
 
     /**
      * InterBase link
      */
-    protected const NAT_INTERBASE = 'InterBase link';
+    public const NAT_INTERBASE = 'InterBase link';
 
     /**
      * Persistent Firebird link
      */
-    protected const NAT_FIREBIRD_PERSISTENT = 'Firebird persistent link';
+    public const NAT_FIREBIRD_PERSISTENT = 'Firebird persistent link';
 
     /**
      * Persistent InterBase link
      */
-    protected const NAT_INTERBASE_PERSISTENT = 'InterBase persistent link';
+    public const NAT_INTERBASE_PERSISTENT = 'InterBase persistent link';
 
     /**
      * Firebird/InterBase link
      */
-    protected const NAT_FIREBIRD_INTERBASE = 'Firebird/InterBase link';
+    public const NAT_FIREBIRD_INTERBASE = 'Firebird/InterBase link';
 
     /**
      * Persistent Firebird/InterBase link
      */
-    protected const NAT_FIREBIRD_INTERBASE_PERSISTENT = 'Firebird/InterBase persistent link';
+    public const NAT_FIREBIRD_INTERBASE_PERSISTENT = 'Firebird/InterBase persistent link';
 
     /**
      * MySQL link
      */
-    protected const NAT_ODBC = 'odbc link';
+    public const NAT_ODBC = 'odbc link';
 
     /**
      * ODBC extension
      */
-    protected const NAT_ODBC_PERSISTENT = 'odbc link persistent';
+    public const NAT_ODBC_PERSISTENT = 'odbc link persistent';
 
     /**
      * Sybase link
      */
-    protected const NAT_SYBASE = 'sybase link';
+    public const NAT_SYBASE = 'sybase link';
 
     /**
      * MySQLi extension
      */
-    protected const NAT_MYSQLI = 'mysqli';
+    public const NAT_MYSQLI = 'mysqli';
 
     /**
      * SQLite3 extension
      */
-    protected const NAT_SQLITE = 'SQLite3';
+    public const NAT_SQLITE = 'SQLite3';
 
     /**
      * PDO MySQL driver
      */
-    protected const PDO_MYSQL = 'mysql';
+    public const PDO_MYSQL = 'mysql';
 
     /**
      * PDO PDO PgSQL driver
      */
-    protected const PDO_PGSQL = 'pgsql';
+    public const PDO_PGSQL = 'pgsql';
 
     /**
      * PDO SQLite driver
      */
-    protected const PDO_SQLITE = 'sqlite';
+    public const PDO_SQLITE = 'sqlite';
 
     /**
      * PDO SQL Server driver
      */
-    protected const PDO_SQLSRV = 'sqlsrv';
+    public const PDO_SQLSRV = 'sqlsrv';
 
     /**
      * PDO Oracle driver
      */
-    protected const PDO_OCI = 'oci';
+    public const PDO_OCI = 'oci';
 
     /**
      * PDO Firebird driver
      */
-    protected const PDO_FIREBIRD = 'firebird';
+    public const PDO_FIREBIRD = 'firebird';
 
     /**
      * PDO IBM driver
      */
-    protected const PDO_IBM = 'ibm';
+    public const PDO_IBM = 'ibm';
 
     /**
      * PDO Informix driver
      */
-    protected const PDO_INFORMIX = 'informix';
+    public const PDO_INFORMIX = 'informix';
 
     /**
      * PDO Microsoft SQL Server driver
      */
-    protected const PDO_MSSQL = 'mssql';
+    public const PDO_MSSQL = 'mssql';
 
     /**
      * PDO DBLIB driver
      */
-    protected const PDO_DBLIB = 'dblib';
+    public const PDO_DBLIB = 'dblib';
 
     /**
      * PDO ODBC driver
      */
-    protected const PDO_ODBC = 'odbc';
+    public const PDO_ODBC = 'odbc';
 }

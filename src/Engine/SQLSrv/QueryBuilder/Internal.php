@@ -21,7 +21,7 @@ class Internal
     public static function select(array $arguments): IQueryBuilder
     {
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
-        $type = array_key_exists('type', $arguments) ? $arguments['type'] : Select::DEFAULT;
+        $type = array_key_exists('type', $arguments) ? $arguments['type'] : Select::DEFAULT();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $self->query->select['type'] = $type;
         $getSelect = fn($value) => Criteria::getSelect($value);
@@ -51,17 +51,17 @@ class Internal
         foreach ($data as $table) {
             if (is_array($table)) {
                 foreach ($table as $tableName) {
-                    $self->query->from[] = Criteria::getFrom(['type' => Table::METADATA, 'data' => trim($tableName)]);
+                    $self->query->from[] = Criteria::getFrom(['type' => Table::METADATA(), 'data' => trim($tableName)]);
                 }
             } elseif (is_string($table)) {
                 if (str_contains($table, ',')) {
                     foreach (explode(',', $table) as $tableName) {
                         $self->query->from[] = Criteria::getFrom(
-                            ['type' => Table::METADATA, 'data' => trim($tableName)]
+                            ['type' => Table::METADATA(), 'data' => trim($tableName)]
                         );
                     }
                 } else {
-                    $self->query->from[] = Criteria::getFrom(['type' => Table::METADATA, 'data' => $table]);
+                    $self->query->from[] = Criteria::getFrom(['type' => Table::METADATA(), 'data' => $table]);
                 }
             }
         }
@@ -71,8 +71,8 @@ class Internal
     public static function join(array $arguments): IQueryBuilder
     {
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
-        $type = array_key_exists('type', $arguments) ? $arguments['type'] : Join::DEFAULT;
-        $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE;
+        $type = array_key_exists('type', $arguments) ? $arguments['type'] : Join::DEFAULT();
+        $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         if (Arrays::isMultidimensional(reset($data))) {
             $parsedJoin = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => $data]);
@@ -104,7 +104,7 @@ class Internal
     public static function on(array $arguments): IQueryBuilder
     {
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
-        $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE;
+        $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         foreach ($data as $table) {
             if (is_array($table)) {
@@ -132,7 +132,7 @@ class Internal
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Where::class;
-        $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE;
+        $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
         $getWhere = fn($arrayData) => Criteria::getWhereHaving($arrayData);
         foreach ($data as $column) {
             if (is_array($column)) {
@@ -166,7 +166,7 @@ class Internal
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Having::class;
-        $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE;
+        $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
         $getHaving = fn($arrayData) => Criteria::getWhereHaving($arrayData);
         foreach ($data as $column) {
             if (is_array($column)) {
@@ -217,7 +217,7 @@ class Internal
     public static function order(array $arguments): IQueryBuilder
     {
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
-        $sorting = array_key_exists('sorting', $arguments) ? $arguments['sorting'] : Sorting::NONE;
+        $sorting = array_key_exists('sorting', $arguments) ? $arguments['sorting'] : Sorting::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $getOrder = fn($value) => Criteria::getOrder($value);
         foreach ($data as $column) {

@@ -71,33 +71,33 @@ class SQL
      * SQL Dialect used by MySQL, MariaDB, Percona and Other Forks,
      * also as Drizzle, Derby H2, HSQLDB and SQLite
      */
-    final public const SQL_DIALECT_BACKTICK = 1;
+    public const SQL_DIALECT_BACKTICK = 1;
 
     /**
      * SQL Dialect used by IBM DB2, Firebird, PostgreSQL, Oracle,
      * also as Microsoft SQL Server and Sybase
      */
-    final public const SQL_DIALECT_DOUBLE_QUOTE = 2;
+    public const SQL_DIALECT_DOUBLE_QUOTE = 2;
 
     /**
      * SQL Dialect used by Cassandra, MongoDB and other Hybrid, Databases.
      */
-    final public const SQL_DIALECT_SINGLE_QUOTE = 3;
+    public const SQL_DIALECT_SINGLE_QUOTE = 3;
 
     /**
      * For none SQL Dialect and bypass character escape.
      */
-    final public const SQL_DIALECT_NONE = 4;
+    public const SQL_DIALECT_NONE = 4;
 
     /**
      * For the dialects that need question marks notation
      */
-    final public const BIND_QUESTION_MARK = 1;
+    public const BIND_QUESTION_MARK = 1;
 
     /**
      * For the dialects that need dollar sign notation
      */
-    final public const BIND_DOLLAR_SIGN = 2;
+    public const BIND_DOLLAR_SIGN = 2;
 
     /**
      * Regex patterns for use in class

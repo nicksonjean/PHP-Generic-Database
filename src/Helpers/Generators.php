@@ -70,7 +70,7 @@ class Generators
             $instance->setAttribute($key, $value);
 
             if (!in_array($keyName, $attributes)) {
-                $optionKey = constant(sprintf(Entity::CASE_INTERNAL_CLASS->value, $constantName, $className, $index));
+                $optionKey = constant(sprintf(Entity::CASE_INTERNAL_CLASS()->value, $constantName, $className, $index));
                 $instance->setOptions($optionKey, $value);
             }
 
@@ -130,7 +130,7 @@ class Generators
      */
     private static function generateOptionKey(string $className, string $constantName, string $index): string
     {
-        return constant(sprintf(Entity::CASE_INTERNAL_CLASS->value, $constantName, $className, $index));
+        return constant(sprintf(Entity::CASE_INTERNAL_CLASS()->value, $constantName, $className, $index));
     }
 
     /**

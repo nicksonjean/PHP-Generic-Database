@@ -61,7 +61,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function select(array|string ...$data): static
     {
         /** @var static */
-        return Internal::select(['type' => Select::DEFAULT, 'data' => $data, 'self' => self::$self]);
+        return Internal::select(['type' => Select::DEFAULT(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -71,7 +71,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function distinct(array|string ...$data): static
     {
         /** @var static */
-        return Internal::select(['type' => Select::DISTINCT, 'data' => $data, 'self' => self::$self]);
+        return Internal::select(['type' => Select::DISTINCT(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -92,7 +92,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     {
         /** @var static */
         return Internal::join(
-            ['type' => Join::DEFAULT, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
+            ['type' => Join::DEFAULT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
 
@@ -104,7 +104,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     {
         /** @var static */
         return Internal::join(
-            ['type' => Join::SELF, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
+            ['type' => Join::SELF(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
 
@@ -116,7 +116,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     {
         /** @var static */
         return Internal::join(
-            ['type' => Join::LEFT, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
+            ['type' => Join::LEFT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
 
@@ -128,7 +128,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     {
         /** @var static */
         return Internal::join(
-            ['type' => Join::RIGHT, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
+            ['type' => Join::RIGHT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
 
@@ -140,7 +140,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     {
         /** @var static */
         return Internal::join(
-            ['type' => Join::INNER, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
+            ['type' => Join::INNER(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
 
@@ -152,7 +152,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     {
         /** @var static */
         return Internal::join(
-            ['type' => Join::OUTER, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
+            ['type' => Join::OUTER(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
 
@@ -164,7 +164,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     {
         /** @var static */
         return Internal::join(
-            ['type' => Join::CROSS, 'junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]
+            ['type' => Join::CROSS(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
 
@@ -175,7 +175,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function on(array|string ...$data): static
     {
         /** @var static */
-        return Internal::on(['junction' => Junction::NONE, 'data' => $data, 'self' => self::$self]);
+        return Internal::on(['junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -185,7 +185,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function andOn(array|string ...$data): static
     {
         /** @var static */
-        return Internal::on(['junction' => Junction::CONJUNCTION, 'data' => $data, 'self' => self::$self]);
+        return Internal::on(['junction' => Junction::CONJUNCTION(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -195,7 +195,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function orOn(array|string ...$data): static
     {
         /** @var static */
-        return Internal::on(['junction' => Junction::DISJUNCTION, 'data' => $data, 'self' => self::$self]);
+        return Internal::on(['junction' => Junction::DISJUNCTION(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -207,11 +207,11 @@ class ODBCQueryBuilder implements IQueryBuilder
         if (Arrays::isDepthArray($data) > 2) {
             $result = [];
             foreach (reset($data) as $value) {
-                $condition = Condition::NONE;
+                $condition = Condition::NONE();
                 $keys = array_keys($value)[0];
                 $values = array_values($value);
                 if (is_string($keys)) {
-                    $condition = $keys === 'AND' ? Condition::CONJUNCTION : Condition::DISJUNCTION;
+                    $condition = $keys === 'AND' ? Condition::CONJUNCTION() : Condition::DISJUNCTION();
                 }
                 $result[] = [
                     'enum' => Where::class,
@@ -226,7 +226,7 @@ class ODBCQueryBuilder implements IQueryBuilder
             /** @var static */
             return Internal::where([
                 'enum' => Where::class,
-                'condition' => Condition::NONE,
+                'condition' => Condition::NONE(),
                 'data' => $data,
                 'self' => self::$self
             ]);
@@ -242,11 +242,11 @@ class ODBCQueryBuilder implements IQueryBuilder
         if (Arrays::isDepthArray($data) > 2) {
             $result = [];
             foreach (reset($data) as $value) {
-                $condition = Condition::CONJUNCTION;
+                $condition = Condition::CONJUNCTION();
                 $keys = array_keys($value)[0];
                 $values = array_values($value);
                 if (is_string($keys)) {
-                    $condition = $keys === 'AND' ? Condition::CONJUNCTION : Condition::DISJUNCTION;
+                    $condition = $keys === 'AND' ? Condition::CONJUNCTION() : Condition::DISJUNCTION();
                 }
                 $result[] = [
                     'enum' => Where::class,
@@ -261,7 +261,7 @@ class ODBCQueryBuilder implements IQueryBuilder
             /** @var static */
             return Internal::where([
                 'enum' => Where::class,
-                'condition' => Condition::CONJUNCTION,
+                'condition' => Condition::CONJUNCTION(),
                 'data' => $data,
                 'self' => self::$self
             ]);
@@ -277,11 +277,11 @@ class ODBCQueryBuilder implements IQueryBuilder
         if (Arrays::isDepthArray($data) > 2) {
             $result = [];
             foreach (reset($data) as $value) {
-                $condition = Condition::DISJUNCTION;
+                $condition = Condition::DISJUNCTION();
                 $keys = array_keys($value)[0];
                 $values = array_values($value);
                 if (is_string($keys)) {
-                    $condition = $keys === 'AND' ? Condition::CONJUNCTION : Condition::DISJUNCTION;
+                    $condition = $keys === 'AND' ? Condition::CONJUNCTION() : Condition::DISJUNCTION();
                 }
                 $result[] = [
                     'enum' => Where::class,
@@ -296,7 +296,7 @@ class ODBCQueryBuilder implements IQueryBuilder
             /** @var static */
             return Internal::where([
                 'enum' => Where::class,
-                'condition' => Condition::DISJUNCTION,
+                'condition' => Condition::DISJUNCTION(),
                 'data' => $data,
                 'self' => self::$self
             ]);
@@ -312,11 +312,11 @@ class ODBCQueryBuilder implements IQueryBuilder
         if (Arrays::isDepthArray($data) > 2) {
             $result = [];
             foreach (reset($data) as $value) {
-                $condition = Condition::NONE;
+                $condition = Condition::NONE();
                 $keys = array_keys($value)[0];
                 $values = array_values($value);
                 if (is_string($keys)) {
-                    $condition = $keys === 'AND' ? Condition::CONJUNCTION : Condition::DISJUNCTION;
+                    $condition = $keys === 'AND' ? Condition::CONJUNCTION() : Condition::DISJUNCTION();
                 }
                 $result[] = [
                     'enum' => Having::class,
@@ -331,7 +331,7 @@ class ODBCQueryBuilder implements IQueryBuilder
             /** @var static */
             return Internal::having([
                 'enum' => Having::class,
-                'condition' => Condition::NONE,
+                'condition' => Condition::NONE(),
                 'data' => $data,
                 'self' => self::$self
             ]);
@@ -349,7 +349,7 @@ class ODBCQueryBuilder implements IQueryBuilder
             foreach (reset($data) as $value) {
                 $result[] = [
                     'enum' => Having::class,
-                    'condition' => Condition::CONJUNCTION,
+                    'condition' => Condition::CONJUNCTION(),
                     'data' => [$value],
                     'self' => self::$self
                 ];
@@ -360,7 +360,7 @@ class ODBCQueryBuilder implements IQueryBuilder
             /** @var static */
             return Internal::having([
                 'enum' => Having::class,
-                'condition' => Condition::CONJUNCTION,
+                'condition' => Condition::CONJUNCTION(),
                 'data' => $data,
                 'self' => self::$self
             ]);
@@ -378,7 +378,7 @@ class ODBCQueryBuilder implements IQueryBuilder
             foreach (reset($data) as $value) {
                 $result[] = [
                     'enum' => Having::class,
-                    'condition' => Condition::DISJUNCTION,
+                    'condition' => Condition::DISJUNCTION(),
                     'data' => [$value],
                     'self' => self::$self
                 ];
@@ -389,7 +389,7 @@ class ODBCQueryBuilder implements IQueryBuilder
             /** @var static */
             return Internal::having([
                 'enum' => Having::class,
-                'condition' => Condition::DISJUNCTION,
+                'condition' => Condition::DISJUNCTION(),
                 'data' => $data,
                 'self' => self::$self
             ]);
@@ -403,7 +403,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function group(array|string ...$data): static
     {
         /** @var static */
-        return Internal::group(['sorting' => Grouping::DEFAULT, 'data' => $data, 'self' => self::$self]);
+        return Internal::group(['sorting' => Grouping::DEFAULT(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -413,7 +413,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function order(array|string ...$data): static
     {
         /** @var static */
-        return Internal::order(['sorting' => Sorting::NONE, 'data' => $data, 'self' => self::$self]);
+        return Internal::order(['sorting' => Sorting::NONE(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -423,7 +423,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function orderAsc(array|string ...$data): static
     {
         /** @var static */
-        return Internal::order(['sorting' => Sorting::ASCENDING, 'data' => $data, 'self' => self::$self]);
+        return Internal::order(['sorting' => Sorting::ASCENDING(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -433,7 +433,7 @@ class ODBCQueryBuilder implements IQueryBuilder
     public static function orderDesc(array|string ...$data): static
     {
         /** @var static */
-        return Internal::order(['sorting' => Sorting::DESCENDING, 'data' => $data, 'self' => self::$self]);
+        return Internal::order(['sorting' => Sorting::DESCENDING(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**

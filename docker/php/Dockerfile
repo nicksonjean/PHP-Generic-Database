@@ -65,10 +65,10 @@ RUN \
 
 # Install pecl extensions
 RUN \
-  if [ "$PHP_VERSION" = "7.3" ] || [ "$PHP_VERSION" = "7.4" ] || [ "$PHP_VERSION" = "8.0" ]; then \
+  if [ "$PHP_VERSION" = "7.3" ] || [ "$PHP_VERSION" = "7.4" ]; then \
     ( curl -sSLf https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o - || echo 'return 1' ) | sh -s \
     xdebug yaml pcov mcrypt; \
-  elif [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ]; then \
+  elif [ "$PHP_VERSION" = "8.0" ] || [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ]; then \
     pecl install xdebug yaml pcov mcrypt && \
     docker-php-ext-enable xdebug yaml pcov mcrypt; \
   else \
@@ -124,8 +124,8 @@ RUN \
   ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/lib/libmyodbc9w.so && \
   ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/local/lib/libmyodbc9a.so && \
   ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/local/lib/libmyodbc9w.so && \
-  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/lib64/libmyodbc9a.so && \
-  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/lib64/libmyodbc9w.so && \
+  #ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/lib64/libmyodbc9a.so && \
+  #ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/lib64/libmyodbc9w.so && \
   /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 ANSI Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so" && \
   /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 Unicode Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so"  && \
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/odbc && \

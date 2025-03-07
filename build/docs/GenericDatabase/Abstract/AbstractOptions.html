@@ -107,10 +107,10 @@
 </ul>
 <p>Methods:</p>
 <ul>
-<li><code>getInstance()</code>: Returns the current database connection instance.</li>
-<li><code>set(string $name, mixed $value)</code>: Sets an option value dynamically by calling a method on the connection instance.</li>
-<li><code>get(string $name)</code>: Retrieves an option value dynamically by calling a method on the connection instance.</li>
-<li><code>getOptions(?int $type = null)</code>: Returns all options or a specific type of options if the <code>$type</code> parameter is provided.</li>
+<li><code>getInstance(): IConnection:</code> Returns the static instance of IConnection.</li>
+<li><code>set(string $name, mixed $value): void:</code> Sets an option value dynamically by calling a method on the connection instance.</li>
+<li><code>get(string $name): mixed:</code> Retrieves an option value dynamically by calling a method on the connection instance.</li>
+<li><code>getOptions(?int $type = null)</code>: mixed:<code>Returns all options or a specific type of options if the</code>$type` parameter is provided.</li>
 </ul>
 <p>Fields:</p>
 <ul>

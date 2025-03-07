@@ -55,24 +55,24 @@
     }
   },
   "require-dev": {
-    "php": "^8.1",
+    "php": "^8.0",
     "code-lts/doctum": "^5.5",
     "composer/semver": "^3.3",
     "pcov/clobber": "^2.0",
     "php-parallel-lint/php-parallel-lint": "dev-develop",
-    "phpmd/phpmd": "3.x-dev",
-    "phpro/grumphp": "v2.x-dev",
+    "phpmd/phpmd": "dev-master",
+    "phpro/grumphp": "v1.x-dev",
     "phpstan/phpstan": "^1.10.25",
-    "phpunit/php-code-coverage": "^10.0",
-    "phpunit/phpunit": "^10.0",
-    "squizlabs/php_codesniffer": "^3.7.2"
+    "phpunit/php-code-coverage": "9.2.x-dev",
+    "phpunit/phpunit": "9.6.x-dev",
+    "squizlabs/php_codesniffer": "4.0.x-dev"
   },
   "config": {
     "process-timeout": 0,
     "sort-packages": true,
     "optimize-autoloader": true,
     "platform": {
-      "php": "8.1"
+      "php": "8.0"
     },
     "allow-plugins": {
       "phpro/grumphp": true,
@@ -118,7 +118,7 @@
     ],
     "grumphp": "php ./vendor/bin/grumphp -n run",
     "phpstan": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
-    "phpmd": "php vendor/bin/phpmd src/,samples/,tests/ ansi phpmd.xml",
+    "phpmd": "php vendor/bin/phpmd src/,samples/ ansi phpmd.xml",
     "phpcs": "php vendor/bin/phpcs --extensions=php --ignore-annotations --standard=./phpcs.xml src/ tests/",
     "phpcbf": "php vendor/bin/phpcbf --extensions=php --ignore-annotations --standard=./phpcs.xml src/ tests/",
     "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude connections --exclude pdo.stub.php --exclude pgsql.stub.php --exclude vendor .",

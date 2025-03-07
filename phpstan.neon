@@ -7,8 +7,10 @@ parameters:
 	excludePaths:
 		- tests/
 		- samples/
+		- src/Core/Emulated/
 		- src/Modules/StaticArgs.php
 		- src/Helpers/Schemas.php
 	ignoreErrors:
 		- '#^Unsafe usage of new static#'
 		- '#^Function ibase_prepare invoked with 2 parameters, 3 required#'
+		- '#Call to an undefined static method GenericDatabase\\Core#'

@@ -26,11 +26,11 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
 
     private const RX_ERROR = "[%d] %s\n";
 
-    final public const CLIENT = 0;
+    public const CLIENT = 0;
 
-    final public const RESULTS = 1;
+    public const RESULTS = 1;
 
-    final public const CONNECTION = 2;
+    public const CONNECTION = 2;
 
     /**
      * static attributes constants

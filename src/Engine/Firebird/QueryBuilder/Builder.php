@@ -33,12 +33,12 @@ class Builder
             throw new Exceptions("No columns specified in SELECT clause.");
         }
         $output = [];
-        $distinct = isset($this->query->select['type']) && $this->query->select['type'] === Select::DISTINCT
+        $distinct = isset($this->query->select['type']) && $this->query->select['type'] === Select::DISTINCT()
             ? 'DISTINCT'
             : '';
         foreach ($this->query->select['columns'] as $data) {
             if (is_array($data)) {
-                if ($data['type'] === Column::METADATA) {
+                if ($data['type'] === Column::METADATA()) {
                     $prefix = isset($data['prefix']) ? $data['prefix'] . '.' : ' ';
                     if (isset($data['alias'])) {
                         $output[] = "$prefix{$data['column']} AS {$data['alias']}";
@@ -64,7 +64,7 @@ class Builder
         $output = [];
         foreach ($this->query->from as $data) {
             if (is_array($data)) {
-                if ($data['type'] === Column::METADATA) {
+                if ($data['type'] === Column::METADATA()) {
                     if (isset($data['alias'])) {
                         $output[] = "{$data['table']} AS {$data['alias']}";
                     } else {
@@ -90,12 +90,12 @@ class Builder
         $type = '';
         foreach ($this->query->join as $data) {
             $type = match ($data['type']) {
-                Join::SELF => 'SELF',
-                Join::LEFT => 'LEFT',
-                Join::RIGHT => 'RIGHT',
-                Join::INNER => 'INNER',
-                Join::OUTER => 'OUTER',
-                Join::CROSS => 'CROSS',
+                Join::SELF() => 'SELF',
+                Join::LEFT() => 'LEFT',
+                Join::RIGHT() => 'RIGHT',
+                Join::INNER() => 'INNER',
+                Join::OUTER() => 'OUTER',
+                Join::CROSS() => 'CROSS',
                 default => ''
             };
             if ($data['alias']) {
@@ -117,8 +117,8 @@ class Builder
         }
         $output = [];
         foreach ($this->query->on as $data) {
-            $junctionType = $data['junction'] === Junction::DISJUNCTION ? 'OR' : 'AND';
-            $junction = $data['junction'] === Junction::NONE ? 'ON ' : $junctionType . ' ';
+            $junctionType = $data['junction'] === Junction::DISJUNCTION() ? 'OR' : 'AND';
+            $junction = $data['junction'] === Junction::NONE() ? 'ON ' : $junctionType . ' ';
             $tableHost = ($data['host']['table']) ? $data['host']['table'] . '.' : ' ';
             $host = $tableHost . $data['host']['column'];
             $tableConsumer = ($data['consumer']['table']) ? $data['consumer']['table'] . '.' : ' ';
@@ -138,24 +138,24 @@ class Builder
         }
         $output = [];
         foreach ($this->query->where as $data) {
-            $conditionType = $data['condition'] === Condition::DISJUNCTION ? 'OR' : 'AND';
-            $condition = $data['condition'] === Condition::NONE ? 'WHERE' : $conditionType;
+            $conditionType = $data['condition'] === Condition::DISJUNCTION() ? 'OR' : 'AND';
+            $condition = $data['condition'] === Condition::NONE() ? 'WHERE' : $conditionType;
             $alias = isset($data['alias']) ? trim($data['alias']) . '.' : '';
             $column = $data['column'] ?? ' ';
             $signal = isset($data['signal']) ? trim($data['signal']) : '';
-            $assert = $data['aggregation']['assert'] === Where::NEGATION ? 'NOT' : ' ';
-            $function = $data['type'] === Where::FUNCTION ? $data['function'] : ' ';
-            $type = $data['type'] === Where::DEFAULT ? "$alias$column" : "$function($alias$column)";
+            $assert = $data['aggregation']['assert'] === Where::NEGATION() ? 'NOT' : ' ';
+            $function = $data['type'] === Where::FUNCTION() ? $data['function'] : ' ';
+            $type = $data['type'] === Where::DEFAULT() ? "$alias$column" : "$function($alias$column)";
             $placeholders = isset($data['arguments']['unlimited']) ?
                 implode(
                     ', ',
                     array_fill(0, count(explode(', ', $data['arguments']['unlimited'])), '?')
                 ) : '';
             $output[] = match ($data['aggregation']['type']) {
-                Where::NONE => "$condition $type $signal ?",
-                Where::BETWEEN => "$condition $type $assert BETWEEN ? AND ?",
-                Where::IN => "$condition $type $assert IN ($placeholders)",
-                Where::LIKE => "$condition $type $assert LIKE ?",
+                Where::NONE() => "$condition $type $signal ?",
+                Where::BETWEEN() => "$condition $type $assert BETWEEN ? AND ?",
+                Where::IN() => "$condition $type $assert IN ($placeholders)",
+                Where::LIKE() => "$condition $type $assert LIKE ?",
                 default => "",
             };
         }
@@ -172,24 +172,24 @@ class Builder
         }
         $output = [];
         foreach ($this->query->having as $data) {
-            $conditionType = $data['condition'] === Condition::DISJUNCTION ? 'OR' : 'AND';
-            $condition = $data['condition'] === Condition::NONE ? 'HAVING' : $conditionType;
+            $conditionType = $data['condition'] === Condition::DISJUNCTION() ? 'OR' : 'AND';
+            $condition = $data['condition'] === Condition::NONE() ? 'HAVING' : $conditionType;
             $alias = isset($data['alias']) ? trim($data['alias']) . '.' : '';
             $column = $data['column'] ?? ' ';
             $signal = isset($data['signal']) ? trim($data['signal']) : '';
-            $assert = ($data['aggregation']['assert'] === Having::NEGATION) ? 'NOT' : ' ';
-            $function = $data['type'] === Having::FUNCTION ? $data['function'] : ' ';
-            $type = ($data['type'] === Having::DEFAULT) ? "$alias$column" : "$function($alias$column)";
+            $assert = ($data['aggregation']['assert'] === Having::NEGATION()) ? 'NOT' : ' ';
+            $function = $data['type'] === Having::FUNCTION() ? $data['function'] : ' ';
+            $type = ($data['type'] === Having::DEFAULT()) ? "$alias$column" : "$function($alias$column)";
             $placeholders = isset($data['arguments']['unlimited']) ?
                 implode(
                     ', ',
                     array_fill(0, count(explode(', ', $data['arguments']['unlimited'])), '?')
                 ) : '';
             $output[] = match ($data['aggregation']['type']) {
-                Having::NONE => "$condition $type $signal ?",
-                Having::BETWEEN => "$condition $type $assert BETWEEN ? AND ?",
-                Having::IN => "$condition $type $assert IN ($placeholders)",
-                Having::LIKE => "$condition $type $assert LIKE ?",
+                Having::NONE() => "$condition $type $signal ?",
+                Having::BETWEEN() => "$condition $type $assert BETWEEN ? AND ?",
+                Having::IN() => "$condition $type $assert IN ($placeholders)",
+                Having::LIKE() => "$condition $type $assert LIKE ?",
                 default => "",
             };
         }
@@ -207,7 +207,7 @@ class Builder
         $output = [];
         foreach ($this->query->group as $data) {
             if (is_array($data)) {
-                if ($data['type'] === Grouping::METADATA) {
+                if ($data['type'] === Grouping::METADATA()) {
                     $prefix = ($data['prefix']) ? $data['prefix'] . '.' : ' ';
                     $output[] = "$prefix{$data['column']}";
                 } else {
@@ -229,12 +229,12 @@ class Builder
         $output = [];
         foreach ($this->query->order as $data) {
             $type = match ($data['sorting']) {
-                Sorting::ASCENDING => 'ASC',
-                Sorting::DESCENDING => 'DESC',
+                Sorting::ASCENDING() => 'ASC',
+                Sorting::DESCENDING() => 'DESC',
                 default => ''
             };
             if (is_array($data)) {
-                if ($data['type'] === Column::METADATA) {
+                if ($data['type'] === Column::METADATA()) {
                     $prefix = ($data['prefix']) ? $data['prefix'] . '.' : ' ';
                     $output[] = "$prefix{$data['column']} $type";
                 } else {
