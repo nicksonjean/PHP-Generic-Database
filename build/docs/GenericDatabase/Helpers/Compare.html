@@ -98,14 +98,10 @@
         
 
             <div class="description">
-            <p><p>The <code>GenericDatabase\Helpers\Compare</code> class provides methods
-for determining the type of given database connection.</p></p>            <p><p>This class can identify the type of database connection
-whether it is a resource connection or an object connection.</p>
-<p>The code snippet is a part of the Compare class, and it contains
-two private methods: getResourceConnectionType and getObjectConnectionType.
-These methods are used to determine the type of given database connection,
-whether it is a resource connection or an object connection.</p>
-<p>Example Usage:</p>
+            <p><p>The <code>GenericDatabase\Helpers\Compare</code> class provides methods for determining the type of given
+database connection this class can identify the type of database connection whether it is a
+resource connection or an object connection, and it can also determine the type of database
+connection whether it is a resource connection or an object connection.</p></p>            <p><p>Example Usage:</p>
 <pre><code>//Using a resource-based database connection (e.g., OCI)
 $ociConnection = oci_connect("username", "password", "localhost/xe");
 $type = Compare::connection($ociConnection);
@@ -129,6 +125,8 @@ echo "Database type: $type";</code></pre>
 <p>Methods:</p>
 <ul>
 <li><code>connection($cnx): string</code>: Determines the type of the given connection. It accepts either a resource or an object connection and returns a string representing the connection type.</li>
+<li><code>getResourceConnectionType($cnx): string</code>: Determines the type of a resource-based database connection.</li>
+<li><code>getObjectConnectionType($cnx): string</code>: Determines the type of an object-based database connection.</li>
 </ul></p>        </div>
             
         
@@ -144,7 +142,7 @@ echo "Database type: $type";</code></pre>
                 <div class="col-md-8">
                     <a href="#method_connection">connection</a>(mixed $cnx)
         
-                                            <p><p>Determines the type of given database connection.</p></p>                </div>
+                                            <p><p>Determines the type of the given connection. It accepts either a resource or an object connection and returns a string representing the connection type.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
             </div>
@@ -155,7 +153,7 @@ echo "Database type: $type";</code></pre>
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_connection">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Compare.php#L66">at line 66</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Compare.php#L64">at line 64</a></div>
         <code>        static            string
     <strong>connection</strong>(mixed $cnx)
         </code>
@@ -165,7 +163,7 @@ echo "Database type: $type";</code></pre>
             
 
         <div class="method-description">
-                            <p><p>Determines the type of given database connection.</p></p>                        
+                            <p><p>Determines the type of the given connection. It accepts either a resource or an object connection and returns a string representing the connection type.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>

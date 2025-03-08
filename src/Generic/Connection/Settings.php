@@ -8,7 +8,7 @@ use GenericDatabase\Shared\Setter;
 use GenericDatabase\Shared\Cleaner;
 
 /**
- * Class Settings provides a configuration container using magic methods
+ * This class provides a configuration container using magic methods
  * for accessing and modifying properties. It utilizes traits for handling
  * property access, setting, checking existence, and unsetting.
  *

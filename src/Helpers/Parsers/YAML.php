@@ -3,7 +3,7 @@
 namespace GenericDatabase\Helpers\Parsers;
 
 /**
- * The `GenericDatabase\Helpers\YAML` class provides validation and parsing functionalities for YAML strings.
+ * The `GenericDatabase\Helpers\Parsers\YAML` class provides validation and parsing functionalities for YAML strings.
  * It contains two static methods: isValidYAML and parseYAML.
  *
  * Example Usage:
@@ -30,7 +30,8 @@ namespace GenericDatabase\Helpers\Parsers;
  * - `isValidYAML(mixed $yaml): bool`: Checks if a YAML string is valid.
  * - `parseYAML(string $yaml): array`: Parses a valid YAML string and returns the parsed data as an array.
  *
- * @package GenericDatabase\Helpers
+ * @package GenericDatabase\Helpers\Parsers
+ * @subpackage YAML
  */
 class YAML
 {

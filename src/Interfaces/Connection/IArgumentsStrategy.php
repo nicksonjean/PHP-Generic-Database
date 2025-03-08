@@ -5,8 +5,8 @@ namespace GenericDatabase\Interfaces\Connection;
 /**
  * This interface defines the strategy for handling arguments in database connections.
  *
- * @package PHP-Generic-Database
- * @subpackage Interfaces\Connection
+ * @package PHP-Generic-Database\Interfaces\Connection
+ * @subpackage IArgumentsStrategy
  */
 interface IArgumentsStrategy
 {

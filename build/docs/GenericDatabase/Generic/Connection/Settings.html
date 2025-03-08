@@ -98,7 +98,7 @@
         
 
             <div class="description">
-            <p><p>Class Settings provides a configuration container using magic methods
+            <p><p>This class provides a configuration container using magic methods
 for accessing and modifying properties. It utilizes traits for handling
 property access, setting, checking existence, and unsetting.</p></p>            <p><p>Methods:</p>
 <ul>
@@ -121,44 +121,41 @@ property access, setting, checking existence, and unsetting.</p></p>            
                     <div class="row">
                 <div class="col-md-6">
                     <a href="../../../GenericDatabase/Shared/Property.html"><abbr title="GenericDatabase\Shared\Property">Property</abbr></a>    </div>
-                <div class="col-md-6"><p>Trait Property</p></div>
+                <div class="col-md-6"><p>This trait provides a private array property intended for use with
+magic setter and getter methods.</p></div>
             </div>
                     <div class="row">
                 <div class="col-md-6">
                     <a href="../../../GenericDatabase/Shared/Getter.html"><abbr title="GenericDatabase\Shared\Getter">Getter</abbr></a>    </div>
-                <div class="col-md-6"><p>Methods:</p>
-<ul>
-<li><code>__get(string $name): mixed:</code> Retrieves the value of a property if it exists, or returns null if the property is inaccessible or non-existent.</li>
-</ul></div>
+                <div class="col-md-6"><p>This trait is utilized for reading data from inaccessible (protected or private) or non-existing properties.</p></div>
             </div>
                     <div class="row">
                 <div class="col-md-6">
                     <a href="../../../GenericDatabase/Shared/Setter.html"><abbr title="GenericDatabase\Shared\Setter">Setter</abbr></a>    </div>
-                <div class="col-md-6"><p>Methods:</p>
-<ul>
-<li><code>__set(string $name, mixed $value): void:</code> Magic method to set the value of inaccessible or non-existing properties.</li>
-</ul></div>
+                <div class="col-md-6"><p>This trait is run when writing data to inaccessible (protected or private) or non-existing properties.</p></div>
             </div>
                     <div class="row">
                 <div class="col-md-6">
                     <a href="../../../GenericDatabase/Shared/Cleaner.html"><abbr title="GenericDatabase\Shared\Cleaner">Cleaner</abbr></a>    </div>
-                <div class="col-md-6"><p>Trait Cleaner provides magic methods to handle isset() and unset() operations
-on inaccessible or non-existing properties within a class.</p></div>
+                <div class="col-md-6"><p>This trait provides magic methods to handle <code>__isset</code> and <code>unset</code> operations on inaccessible or non-existing properties within a class.</p></div>
             </div>
                     <div class="row">
                 <div class="col-md-6">
                     <a href="../../../GenericDatabase/Shared/Property.html"><abbr title="GenericDatabase\Shared\Property">Property</abbr></a>    </div>
-                <div class="col-md-6"><p>Trait Property</p></div>
+                <div class="col-md-6"><p>This trait provides a private array property intended for use with
+magic setter and getter methods.</p></div>
             </div>
                     <div class="row">
                 <div class="col-md-6">
                     <a href="../../../GenericDatabase/Shared/Property.html"><abbr title="GenericDatabase\Shared\Property">Property</abbr></a>    </div>
-                <div class="col-md-6"><p>Trait Property</p></div>
+                <div class="col-md-6"><p>This trait provides a private array property intended for use with
+magic setter and getter methods.</p></div>
             </div>
                     <div class="row">
                 <div class="col-md-6">
                     <a href="../../../GenericDatabase/Shared/Property.html"><abbr title="GenericDatabase\Shared\Property">Property</abbr></a>    </div>
-                <div class="col-md-6"><p>Trait Property</p></div>
+                <div class="col-md-6"><p>This trait provides a private array property intended for use with
+magic setter and getter methods.</p></div>
             </div>
             </div>
     
@@ -242,7 +239,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>         
                     <div class="method-item">
                     <h3 id="method___get">
         <div class="location">in <a href="../../../GenericDatabase/Shared/Getter.html#method___get">
-<abbr title="GenericDatabase\Shared\Getter">Getter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Getter.php#L22">at line 22</a></div>
+<abbr title="GenericDatabase\Shared\Getter">Getter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Getter.php#L24">at line 24</a></div>
         <code>                    mixed
     <strong>__get</strong>(string $name)
         </code>
@@ -285,7 +282,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>         
                     <div class="method-item">
                     <h3 id="method___set">
         <div class="location">in <a href="../../../GenericDatabase/Shared/Setter.html#method___set">
-<abbr title="GenericDatabase\Shared\Setter">Setter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Setter.php#L23">at line 23</a></div>
+<abbr title="GenericDatabase\Shared\Setter">Setter</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Setter.php#L25">at line 25</a></div>
         <code>                    void
     <strong>__set</strong>(string $name, mixed $value)
         </code>
@@ -333,7 +330,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>         
                     <div class="method-item">
                     <h3 id="method___isset">
         <div class="location">in <a href="../../../GenericDatabase/Shared/Cleaner.html#method___isset">
-<abbr title="GenericDatabase\Shared\Cleaner">Cleaner</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Cleaner.php#L27">at line 27</a></div>
+<abbr title="GenericDatabase\Shared\Cleaner">Cleaner</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Cleaner.php#L26">at line 26</a></div>
         <code>                    bool
     <strong>__isset</strong>(string $name)
         </code>
@@ -377,7 +374,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
                     <div class="method-item">
                     <h3 id="method___unset">
         <div class="location">in <a href="../../../GenericDatabase/Shared/Cleaner.html#method___unset">
-<abbr title="GenericDatabase\Shared\Cleaner">Cleaner</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Cleaner.php#L39">at line 39</a></div>
+<abbr title="GenericDatabase\Shared\Cleaner">Cleaner</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Cleaner.php#L38">at line 38</a></div>
         <code>                    void
     <strong>__unset</strong>(string $name)
         </code>

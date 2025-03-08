@@ -36,30 +36,30 @@ use PDOException;
 /**
  * Dynamic and Static container class for PDOConnection connections.
  *
- * @method static PDOConnection|void setDriver(mixed $value): Sets a driver from the database.
- * @method static PDOConnection|string getDriver($value = null): Retrieves a driver from the database.
- * @method static PDOConnection|void setHost(mixed $value): Sets a host from the database.
- * @method static PDOConnection|string getHost($value = null): Retrieves a host from the database.
- * @method static PDOConnection|void setPort(mixed $value): Sets a port from the database.
- * @method static PDOConnection|int getPort($value = null): Retrieves a port from the database.
- * @method static PDOConnection|void setUser(mixed $value): Sets a user from the database.
- * @method static PDOConnection|string getUser($value = null): Retrieves a user from the database.
- * @method static PDOConnection|void setPassword(mixed $value): Sets a password from the database.
- * @method static PDOConnection|string getPassword($value = null): Retrieves a password from the database.
- * @method static PDOConnection|void setDatabase(mixed $value): Sets a database name from the database.
- * @method static PDOConnection|string getDatabase($value = null): Retrieves a database name from the database.
- * @method static PDOConnection|void setOptions(mixed $value): Sets a options from the database.
- * @method static PDOConnection|array|null getOptions($value = null): Retrieves a options from the database.
- * @method static PDOConnection|static setConnected(mixed $value): Sets a connected status from the database.
- * @method static PDOConnection|mixed getConnected($value = null): Retrieves a connected status from the database.
- * @method static PDOConnection|void setDsn(mixed $value): Sets a dsn string from the database.
- * @method static PDOConnection|mixed getDsn($value = null): Retrieves a dsn string from the database.
- * @method static PDOConnection|void setAttributes(mixed $value): Sets a attributes from the database.
- * @method static PDOConnection|mixed getAttributes($value = null): Retrieves a attributes from the database.
- * @method static PDOConnection|void setCharset(mixed $value): Sets a charset from the database.
- * @method static PDOConnection|string getCharset($value = null): Retrieves a charset from the database.
- * @method static PDOConnection|void setException(mixed $value): Sets a exception from the database.
- * @method static PDOConnection|mixed getException($value = null): Retrieves a exception from the database.
+ * @method static PDOConnection|void setDriver(mixed $value) Sets a driver from the database.
+ * @method static PDOConnection|string getDriver($value = null) Retrieves a driver from the database.
+ * @method static PDOConnection|void setHost(mixed $value) Sets a host from the database.
+ * @method static PDOConnection|string getHost($value = null) Retrieves a host from the database.
+ * @method static PDOConnection|void setPort(mixed $value) Sets a port from the database.
+ * @method static PDOConnection|int getPort($value = null) Retrieves a port from the database.
+ * @method static PDOConnection|void setUser(mixed $value) Sets a user from the database.
+ * @method static PDOConnection|string getUser($value = null) Retrieves a user from the database.
+ * @method static PDOConnection|void setPassword(mixed $value) Sets a password from the database.
+ * @method static PDOConnection|string getPassword($value = null) Retrieves a password from the database.
+ * @method static PDOConnection|void setDatabase(mixed $value) Sets a database name from the database.
+ * @method static PDOConnection|string getDatabase($value = null) Retrieves a database name from the database.
+ * @method static PDOConnection|void setOptions(mixed $value) Sets a options from the database.
+ * @method static PDOConnection|array|null getOptions($value = null) Retrieves a options from the database.
+ * @method static PDOConnection|static setConnected(mixed $value) Sets a connected status from the database.
+ * @method static PDOConnection|mixed getConnected($value = null) Retrieves a connected status from the database.
+ * @method static PDOConnection|void setDsn(mixed $value) Sets a dsn string from the database.
+ * @method static PDOConnection|mixed getDsn($value = null) Retrieves a dsn string from the database.
+ * @method static PDOConnection|void setAttributes(mixed $value) Sets a attributes from the database.
+ * @method static PDOConnection|mixed getAttributes($value = null) Retrieves a attributes from the database.
+ * @method static PDOConnection|void setCharset(mixed $value) Sets a charset from the database.
+ * @method static PDOConnection|string getCharset($value = null) Retrieves a charset from the database.
+ * @method static PDOConnection|void setException(mixed $value) Sets a exception from the database.
+ * @method static PDOConnection|mixed getException($value = null) Retrieves a exception from the database.
  */
 #[AllowDynamicProperties]
 class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions

@@ -2,6 +2,12 @@
 
 namespace GenericDatabase\Helpers\Types\Specials;
 
+/**
+ * The `GenericDatabase\Helpers\Types\Specials\Resources` trait provides methods for working with resources.
+ *
+ * @package GenericDatabase\Helpers\Types\Specials
+ * @subpackage Resources
+ */
 trait Resources
 {
     /**

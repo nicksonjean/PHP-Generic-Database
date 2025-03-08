@@ -6,7 +6,7 @@ use XMLReader;
 use SimpleXMLElement;
 
 /**
- * The `GenericDatabase\Helpers\XML` class provides a set of static methods for working with XML data.
+ * The `GenericDatabase\Helpers\Parsers\XML` class provides a set of static methods for working with XML data.
  * It includes functionalities to check if an XML string is valid, convert data to appropriate types,
  * decode a SimpleXMLElement object into an array or a string, and parse XML data into an array.
  *
@@ -54,7 +54,8 @@ use SimpleXMLElement;
  * - `processChildren($xml, &$arr, $attributesKey, $reduce, $alwaysArray, $valueKeys)`: Processes the children of a `SimpleXMLElement` object and adds them to an array.
  * - `parseXML($xml)`: Parses XML data into an array. It uses decodeXML to decode the XML and extract options as a separate array.
  *
- * @package GenericDatabase\Helpers
+ * @package GenericDatabase\Helpers\Parsers
+ * @subpackage XML
  */
 class XML
 {

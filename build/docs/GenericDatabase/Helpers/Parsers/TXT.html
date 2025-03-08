@@ -97,6 +97,21 @@
     
         
 
+            <div class="description">
+            <p><p>The <code>GenericDatabase\Helpers\Parsers\TXT</code> class provides methods for parsing, analyzing, and writing TXT and CSV files.</p></p>            <p><p>Main funcionalities:</p>
+<ul>
+<li>Checks if all columns in the given data are null</li>
+<li>Uses the structure method to generate the schema information</li>
+<li>Analyze method to determine the column types.</li>
+</ul>
+<p>Methods:</p>
+<ul>
+<li><code>allColumnsNull($data)</code>: Checks if all columns in the given data are null.</li>
+<li><code>parse($filePath)</code>: Parses a CSV file at the given file path and returns an array of data.</li>
+<li><code>analyze($data)</code>: Analyzes the given data and returns an array of column types (e.g., integer, float, datetime, string).</li>
+<li><code>structure($filePath, $separator)</code>: Returns an array of schema information for CSV files in the given folder path, using the given separator.</li>
+<li><code>write($overwrite = false)</code>: Writes schema information to a file named "Schemas.ini" in the folder path, overwriting the file if specified.</li>
+</ul></p>        </div>
             
         
     
@@ -109,10 +124,9 @@
                     static&nbsp;array
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_parse">parse</a>($filePath)
+                    <a href="#method_parse">parse</a>(string $filePath)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Parses a CSV file and returns its data as an array.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -120,10 +134,9 @@
                     static&nbsp;array
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_structure">structure</a>($filePath, $separator)
+                    <a href="#method_structure">structure</a>(string $filePath, string $separator)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Generates the structure of the CSV files in the specified folder.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -131,10 +144,9 @@
                     static&nbsp;void
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_write">write</a>($overwrite = false)
+                    <a href="#method_write">write</a>(bool $overwrite = false)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Writes the schema information to a Schemas.ini file.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
             </div>
@@ -145,9 +157,9 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_parse">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/TXT.php#L22">at line 22</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/TXT.php#L59">at line 59</a></div>
         <code>        static            array
-    <strong>parse</strong>($filePath)
+    <strong>parse</strong>(string $filePath)
         </code>
     </h3>
     <div class="details">    
@@ -155,17 +167,16 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Parses a CSV file and returns its data as an array.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td></td>
+                <td>string</td>
                 <td>$filePath</td>
-                <td></td>
+                <td><p>The path to the CSV file.</p></td>
             </tr>
             </table>
 
@@ -175,7 +186,7 @@
                     <table class="table table-condensed">
         <tr>
             <td>array</td>
-            <td></td>
+            <td><p>The parsed data.</p></td>
         </tr>
     </table>
 
@@ -188,9 +199,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_structure">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/TXT.php#L74">at line 74</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/TXT.php#L124">at line 124</a></div>
         <code>        static            array
-    <strong>structure</strong>($filePath, $separator)
+    <strong>structure</strong>(string $filePath, string $separator)
         </code>
     </h3>
     <div class="details">    
@@ -198,22 +209,21 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Generates the structure of the CSV files in the specified folder.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td></td>
+                <td>string</td>
                 <td>$filePath</td>
-                <td></td>
+                <td><p>The path to the folder containing CSV files.</p></td>
             </tr>
                     <tr>
-                <td></td>
+                <td>string</td>
                 <td>$separator</td>
-                <td></td>
+                <td><p>The separator used in the CSV files.</p></td>
             </tr>
             </table>
 
@@ -223,7 +233,7 @@
                     <table class="table table-condensed">
         <tr>
             <td>array</td>
-            <td></td>
+            <td><p>An associative array where keys are file names and values are arrays of column schemas.</p></td>
         </tr>
     </table>
 
@@ -236,9 +246,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_write">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/TXT.php#L92">at line 92</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/TXT.php#L148">at line 148</a></div>
         <code>        static            void
-    <strong>write</strong>($overwrite = false)
+    <strong>write</strong>(bool $overwrite = false)
         </code>
     </h3>
     <div class="details">    
@@ -246,17 +256,16 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Writes the schema information to a Schemas.ini file.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td></td>
+                <td>bool</td>
                 <td>$overwrite</td>
-                <td></td>
+                <td><p>Whether to overwrite the existing Schemas.ini file.</p></td>
             </tr>
             </table>
 

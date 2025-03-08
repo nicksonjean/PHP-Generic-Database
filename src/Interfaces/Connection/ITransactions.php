@@ -7,8 +7,8 @@ namespace GenericDatabase\Interfaces\Connection;
  * Implementing classes should provide methods to handle database transactions, 
  * such as beginning, committing, and rolling back transactions.
  *
- * @package PHP-Generic-Database
- * @subpackage Interfaces\Connection
+ * @package PHP-Generic-Database\Interfaces\Connection
+ * @subpackage ITransactions
  */
 interface ITransactions
 {

@@ -61,9 +61,8 @@ use GenericDatabase\Helpers\Types\Compounds\Arrays;
  * - `$bindingMap`: An array mapping bind types to their corresponding bind characters.
  * - `$resWords`: An instance of the reserved word dictionary, loaded from a JSON file.
  *
- * @package PHP-Generic-Database
- * @subpackage Helpers\Parsers
- * @category Database
+ * @package GenericDatabase\Helpers\Parsers
+ * @subpackage SQL
  */
 class SQL
 {

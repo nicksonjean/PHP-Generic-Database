@@ -3,9 +3,7 @@
 namespace GenericDatabase\Shared;
 
 /**
- * Trait Property
- *
- * Provides a private array property intended for use with
+ * This trait provides a private array property intended for use with
  * magic setter and getter methods.
  *
  * Fields:

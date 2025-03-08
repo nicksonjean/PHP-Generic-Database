@@ -8,10 +8,8 @@ use GenericDatabase\Shared\Getter;
 use GenericDatabase\Shared\Setter;
 
 /**
- * This trait uses the Getter and Setter traits to facilitate dynamic
- * property access. The __call method handles instance method calls,
- * while __callStatic manages static method calls. Both methods
- * interpret method names starting with 'set' or 'get' to perform
+ * This trait uses the Getter and Setter traits to facilitate dynamic property access. The `__call` method handles instance method calls,
+ * while `__callStatic` manages static method calls. Both methods interpret method names starting with 'set' or 'get' to perform
  * corresponding actions on properties.
  *
  * Methods:

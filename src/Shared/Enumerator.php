@@ -2,6 +2,17 @@
 
 namespace GenericDatabase\Shared;
 
+/**
+ * This trait provides utility methods for handling enum cases.
+ *
+ * Methods:
+ * - names(): Returns an array of enum case names.
+ * - values(): Returns an array of enum case values.
+ * - array(): Combines enum values and names into an associative array.
+ * - casesIndexedByName(): Returns an associative array of enum cases indexed by their names.
+ * - isValidCase(string $name): Checks if a given name is a valid enum case.
+ * - fromName(string $name): Retrieves the enum case by name, throws an exception if not found.
+ */
 trait Enumerator
 {
     public static function names(): array
@@ -21,7 +32,7 @@ trait Enumerator
 
     public static function casesIndexedByName()
     {
-        return array_combine(array_map(fn(self $case) => $case->name,self::cases()),self::cases());
+        return array_combine(array_map(fn(self $case) => $case->name, self::cases()), self::cases());
     }
 
     public static function isValidCase(string $name): bool

@@ -22,6 +22,58 @@ use GenericDatabase\Engine\OCI\QueryBuilder\Query;
 use GenericDatabase\Engine\OCI\QueryBuilder\Builder;
 use GenericDatabase\Engine\OCI\QueryBuilder\Internal;
 
+/**
+ * The `OCIQueryBuilder` class implements the `IQueryBuilder` interfaces to provide a flexible query building mechanism using various database engines.
+ * Utilizes the Singleton pattern to ensure a single instance. The class allows setting and retrieving query strategies based on the database engine, and provides methods for
+ * constructing SQL queries with various clauses such as SELECT, JOIN, WHERE, and ORDER. It also supports fetching results and metadata.
+ * It uses the Singleton pattern to ensure a single instance and provides a flexible query building mechanism using various database engines.
+ *
+ * Methods:
+ * - `__construct(IConnection $context = null)`: Initializes the query builder with a database connection context.
+ * - `with(IConnection $context)`: Static initializer that sets the database connection context and returns the query builder instance.
+ * - `setContext(IQueryBuilder $context)`: Sets the query context instance.
+ * - `getContext()`: Returns the query context instance.
+ *
+ * Query Building Methods:
+ * - `select(array|string ...$data)`: Adds a SELECT clause to the query.
+ * - `distinct(array|string ...$data)`: Adds a DISTINCT clause to the query.
+ * - `from(array|string ...$data)`: Adds a FROM clause to the query.
+ * - `join(array|string ...$data)`: Adds a JOIN clause to the query.
+ * - `selfJoin(array|string ...$data)`: Adds a SELF JOIN clause to the query.
+ * - `leftJoin(array|string ...$data)`: Adds a LEFT JOIN clause to the query.
+ * - `rightJoin(array|string ...$data)`: Adds a RIGHT JOIN clause to the query.
+ * - `innerJoin(array|string ...$data)`: Adds an INNER JOIN clause to the query.
+ * - `outerJoin(array|string ...$data)`: Adds an OUTER JOIN clause to the query.
+ * - `crossJoin(array|string ...$data)`: Adds a CROSS JOIN clause to the query.
+ * - `on(array|string ...$data)`: Adds an ON clause to the query.
+ * - `andOn(array|string ...$data)`: Adds an AND ON clause to the query.
+ * - `orOn(array|string ...$data)`: Adds an OR ON clause to the query.
+ * - `where(array|string ...$data)`: Adds a WHERE clause to the query.
+ * - `andWhere(array|string ...$data)`: Adds an AND WHERE clause to the query.
+ * - `orWhere(array|string ...$data)`: Adds an OR WHERE clause to the query.
+ * - `having(array|string ...$data)`: Adds a HAVING clause to the query.
+ * - `andHaving(array|string ...$data)`: Adds an AND HAVING clause to the query.
+ * - `orHaving(array|string ...$data)`: Adds an OR HAVING clause to the query.
+ * - `group(array|string ...$data)`: Adds a GROUP BY clause to the query.
+ * - `order(array|string ...$data)`: Adds an ORDER BY clause to the query.
+ * - `orderAsc(array|string ...$data)`: Adds an ORDER BY ASC clause to the query.
+ * - `orderDesc(array|string ...$data)`: Adds an ORDER BY DESC clause to the query.
+ * - `limit(array|string ...$data)`: Adds a LIMIT clause to the query.
+ *
+ * Query Execution Methods:
+ * - `build()`: Builds the query string.
+ * - `buildRaw()`: Builds the raw query string.
+ * - `getValues()`: Returns the query values.
+ * - `getAllMetadata()`: Returns the query metadata.
+ * - `fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)`: Fetches a single row from the query result.
+ * - `fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)`: Fetches all rows from the query result.
+ *
+ * Properties:
+ * - `$context`: The database connection context.
+ * - `$self`: The singleton instance of the QueryBuilder.
+ * - `$lastQuery`: The last query executed.
+ * - `$cursorExhausted`: The current query cursor exhausted status.
+ */
 class OCIQueryBuilder implements IQueryBuilder
 {
     use Query;

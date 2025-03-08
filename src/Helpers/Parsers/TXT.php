@@ -2,11 +2,42 @@
 
 namespace GenericDatabase\Helpers\Parsers;
 
+/**
+ * The `GenericDatabase\Helpers\Parsers\TXT` class provides methods for parsing, analyzing, and writing TXT and CSV files.
+ *
+ * Main funcionalities:
+ * - Checks if all columns in the given data are null
+ * - Uses the structure method to generate the schema information
+ * - Analyze method to determine the column types.
+ * 
+ * Methods:
+ * - `allColumnsNull($data)`: Checks if all columns in the given data are null.
+ * - `parse($filePath)`: Parses a CSV file at the given file path and returns an array of data.
+ * - `analyze($data)`: Analyzes the given data and returns an array of column types (e.g., integer, float, datetime, string).
+ * - `structure($filePath, $separator)`: Returns an array of schema information for CSV files in the given folder path, using the given separator.
+ * - `write($overwrite = false)`: Writes schema information to a file named "Schemas.ini" in the folder path, overwriting the file if specified.
+ *
+ * @package GenericDatabase\Helpers\Parsers
+ * @subpackage TXT
+ */
 class TXT
 {
+    /**
+     * @var string $folderPath The path to the folder containing CSV files.
+     */
     private static string $folderPath;
+
+    /**
+     * @var string $separator The separator used in the CSV files.
+     */
     private static string $separator = ';';
 
+    /**
+     * Checks if all columns in the provided data are null.
+     * 
+     * @param array $data The data to check.
+     * @return bool True if all columns are null, false otherwise.
+     */
     private static function allColumnsNull($data): bool
     {
         foreach ($data as $row) {
@@ -19,6 +50,12 @@ class TXT
         return true;
     }
 
+    /**
+     * Parses a CSV file and returns its data as an array.
+     * 
+     * @param string $filePath The path to the CSV file.
+     * @return array The parsed data.
+     */
     public static function parse($filePath): array
     {
         $data = [];
@@ -43,6 +80,12 @@ class TXT
         return $data;
     }
 
+    /**
+     * Analyzes the data and determines the type of each column.
+     * 
+     * @param array $data The data to analyze.
+     * @return array An associative array where keys are column names and values are their types.
+     */
     private static function analyze($data): array
     {
         $types = [];
@@ -71,6 +114,13 @@ class TXT
         return $types;
     }
 
+    /**
+     * Generates the structure of the CSV files in the specified folder.
+     * 
+     * @param string $filePath The path to the folder containing CSV files.
+     * @param string $separator The separator used in the CSV files.
+     * @return array An associative array where keys are file names and values are arrays of column schemas.
+     */
     public static function structure($filePath, $separator): array
     {
         self::$folderPath = $filePath;
@@ -89,6 +139,12 @@ class TXT
         return $schemas;
     }
 
+    /**
+     * Writes the schema information to a Schemas.ini file.
+     * 
+     * @param bool $overwrite Whether to overwrite the existing Schemas.ini file.
+     * @return void
+     */
     public static function write($overwrite = false): void
     {
         $schemaFilePath = self::$folderPath . '\Schemas.ini';

@@ -98,11 +98,8 @@
         
 
             <div class="description">
-            <p><p>Trait Objectable</p></p>            <p><p>Provides magic methods for dynamic property access and manipulation,
-including getter, setter, isset, and unset operations. Supports serialization
-and deserialization through <strong>sleep and </strong>wakeup methods. Converts object
-properties to an associative array with the toArray method.</p>
-<p>Methods:</p>
+            <p><p>This trait provides magic methods for dynamic property access and manipulation, including getter, setter, isset, and unset operations. Supports serialization
+and deserialization through <code>__sleep</code> and <code>__wakeup</code> methods. Converts object properties to an associative array with the toArray method.</p></p>            <p><p>Methods:</p>
 <ul>
 <li><code>__get(string $name): mixed:</code> Magic getter method</li>
 <li><code>__set(string $name, mixed $value): void:</code> Magic setter method to dynamically set properties.</li>
@@ -199,7 +196,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>         
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method___get">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L30">at line 30</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L26">at line 26</a></div>
         <code>                    mixed
     <strong>__get</strong>(string $name)
         </code>
@@ -241,7 +238,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>         
             </div>
                     <div class="method-item">
                     <h3 id="method___set">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L46">at line 46</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L42">at line 42</a></div>
         <code>                    void
     <strong>__set</strong>(string $name, mixed $value)
         </code>
@@ -290,7 +287,7 @@ Otherwise, it assigns the value directly to the property.</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method___isset">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L64">at line 64</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L60">at line 60</a></div>
         <code>                    bool
     <strong>__isset</strong>(string $name)
         </code>
@@ -333,7 +330,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method___unset">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L76">at line 76</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L72">at line 72</a></div>
         <code>                    void
     <strong>__unset</strong>(string $name)
         </code>
@@ -376,7 +373,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method___sleep">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L86">at line 86</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L82">at line 82</a></div>
         <code>                    array
     <strong>__sleep</strong>()
         </code>
@@ -408,7 +405,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method___wakeup">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L96">at line 96</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L92">at line 92</a></div>
         <code>                    void
     <strong>__wakeup</strong>()
         </code>
@@ -440,7 +437,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_toArray">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L103">at line 103</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L99">at line 99</a></div>
         <code>                    array
     <strong>toArray</strong>()
         </code>

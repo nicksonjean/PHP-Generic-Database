@@ -3,8 +3,6 @@
 namespace GenericDatabase\Generic\Statements;
 
 /**
- * Class QueryMetadata
- * 
  * This class provides metadata for a database query, including the query string, 
  * arguments, columns, and rows.
  * 

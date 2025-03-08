@@ -35,30 +35,30 @@ use GenericDatabase\Engine\PgSQL\Connection\Report\ReportHandler;
 /**
  * Dynamic and Static container class for PgSQLConnection connections.
  *
- * @method static PgSQLConnection|void setDriver(mixed $value): Sets a driver from the database.
- * @method static PgSQLConnection|string getDriver($value = null): Retrieves a driver from the database.
- * @method static PgSQLConnection|void setHost(mixed $value): Sets a host from the database.
- * @method static PgSQLConnection|string getHost($value = null): Retrieves a host from the database.
- * @method static PgSQLConnection|void setPort(mixed $value): Sets a port from the database.
- * @method static PgSQLConnection|int getPort($value = null): Retrieves a port from the database.
- * @method static PgSQLConnection|void setUser(mixed $value): Sets a user from the database.
- * @method static PgSQLConnection|string getUser($value = null): Retrieves a user from the database.
- * @method static PgSQLConnection|void setPassword(mixed $value): Sets a password from the database.
- * @method static PgSQLConnection|string getPassword($value = null): Retrieves a password from the database.
- * @method static PgSQLConnection|void setDatabase(mixed $value): Sets a database name from the database.
- * @method static PgSQLConnection|string getDatabase($value = null): Retrieves a database name from the database.
- * @method static PgSQLConnection|void setOptions(mixed $value): Sets a options from the database.
- * @method static PgSQLConnection|array|null getOptions($value = null): Retrieves a options from the database.
- * @method static PgSQLConnection|static setConnected(mixed $value): Sets a connected status from the database.
- * @method static PgSQLConnection|mixed getConnected($value = null): Retrieves a connected status from the database.
- * @method static PgSQLConnection|void setDsn(mixed $value): Sets a dsn string from the database.
- * @method static PgSQLConnection|mixed getDsn($value = null): Retrieves a dsn string from the database.
- * @method static PgSQLConnection|void setAttributes(mixed $value): Sets a attributes from the database.
- * @method static PgSQLConnection|mixed getAttributes($value = null): Retrieves a attributes from the database.
- * @method static PgSQLConnection|void setCharset(mixed $value): Sets a charset from the database.
- * @method static PgSQLConnection|string getCharset($value = null): Retrieves a charset from the database.
- * @method static PgSQLConnection|void setException(mixed $value): Sets a exception from the database.
- * @method static PgSQLConnection|mixed getException($value = null): Retrieves a exception from the database.
+ * @method static PgSQLConnection|void setDriver(mixed $value) Sets a driver from the database.
+ * @method static PgSQLConnection|string getDriver($value = null) Retrieves a driver from the database.
+ * @method static PgSQLConnection|void setHost(mixed $value) Sets a host from the database.
+ * @method static PgSQLConnection|string getHost($value = null) Retrieves a host from the database.
+ * @method static PgSQLConnection|void setPort(mixed $value) Sets a port from the database.
+ * @method static PgSQLConnection|int getPort($value = null) Retrieves a port from the database.
+ * @method static PgSQLConnection|void setUser(mixed $value) Sets a user from the database.
+ * @method static PgSQLConnection|string getUser($value = null) Retrieves a user from the database.
+ * @method static PgSQLConnection|void setPassword(mixed $value) Sets a password from the database.
+ * @method static PgSQLConnection|string getPassword($value = null) Retrieves a password from the database.
+ * @method static PgSQLConnection|void setDatabase(mixed $value) Sets a database name from the database.
+ * @method static PgSQLConnection|string getDatabase($value = null) Retrieves a database name from the database.
+ * @method static PgSQLConnection|void setOptions(mixed $value) Sets a options from the database.
+ * @method static PgSQLConnection|array|null getOptions($value = null) Retrieves a options from the database.
+ * @method static PgSQLConnection|static setConnected(mixed $value) Sets a connected status from the database.
+ * @method static PgSQLConnection|mixed getConnected($value = null) Retrieves a connected status from the database.
+ * @method static PgSQLConnection|void setDsn(mixed $value) Sets a dsn string from the database.
+ * @method static PgSQLConnection|mixed getDsn($value = null) Retrieves a dsn string from the database.
+ * @method static PgSQLConnection|void setAttributes(mixed $value) Sets a attributes from the database.
+ * @method static PgSQLConnection|mixed getAttributes($value = null) Retrieves a attributes from the database.
+ * @method static PgSQLConnection|void setCharset(mixed $value) Sets a charset from the database.
+ * @method static PgSQLConnection|string getCharset($value = null) Retrieves a charset from the database.
+ * @method static PgSQLConnection|void setException(mixed $value) Sets a exception from the database.
+ * @method static PgSQLConnection|mixed getException($value = null) Retrieves a exception from the database.
  */
 #[AllowDynamicProperties]
 class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions

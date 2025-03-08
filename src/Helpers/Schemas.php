@@ -8,12 +8,13 @@ use GenericDatabase\Shared\Objectable;
 use AllowDynamicProperties;
 
 /**
- * Class Definition: The Schemas class is a helper class that uses the Objectable trait and allows dynamic properties. It has a single static method makeArgs.
+ * The `GenericDatabase\Helpers\Schemas` class is a helper class that uses the Objectable trait and allows dynamic properties. It has a single static method makeArgs.
  * 
  * Method: 
  * - `makeArgs(array $params): object:` This method makes an arguments list
  *
- * Note that the Objectable trait and the AllowDynamicProperties attribute are not defined in this code snippet, so their exact behavior is unknown.
+ * @package GenericDatabase\Helpers
+ * @subpackage Schemas
  */
 #[AllowDynamicProperties]
 class Schemas

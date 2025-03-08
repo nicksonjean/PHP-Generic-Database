@@ -7,8 +7,8 @@ use GenericDatabase\Interfaces\IConnection;
 /**
  * This interface defines the abstract options for database connections.
  *
- * @package PHP-Generic-Database
- * @subpackage Interfaces\Connection
+ * @package PHP-Generic-Database\Interfaces\Connection
+ * @subpackage IOptionsAbstract
  */
 interface IOptionsAbstract
 {

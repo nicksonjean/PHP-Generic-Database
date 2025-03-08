@@ -214,10 +214,10 @@
                         <a href="GenericDatabase/Generic/Connection/Methods.html"><abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>Trait Methods provides magic methods for dynamic property access and manipulation
+                        <p>This trait provides magic methods for dynamic property access and manipulation
 and also includes methods for getting, setting, checking existence, and unsetting
 properties dynamically. It also handles serialization and deserialization of the
-property using the <strong>sleep and </strong>wakeup magic methods.</p>
+property using the <code>__sleep</code> and <code>__wakeup</code> magic methods.</p>
                     </div>
                 </div>
                                                                     <div class="row">
@@ -225,7 +225,9 @@ property using the <strong>sleep and </strong>wakeup magic methods.</p>
                         <a href="GenericDatabase/Generic/Fetch/FetchCache.html"><abbr title="GenericDatabase\Generic\Fetch\FetchCache">FetchCache</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>Trait FetchCache</p>
+                        <p>Provides caching functionality for fetch operations, allowing results to be stored
+and retrieved efficiently. It maintains the state of cached results, their positions,
+and handles resetting fetch positions when necessary.</p>
                     </div>
                 </div>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     <div class="row">
@@ -233,7 +235,7 @@ property using the <strong>sleep and </strong>wakeup magic methods.</p>
                         <a href="GenericDatabase/Helpers/Types/Specials/Resources.html"><abbr title="GenericDatabase\Helpers\Types\Specials\Resources">Resources</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        
+                        <p>The <code>GenericDatabase\Helpers\Types\Specials\Resources</code> trait provides methods for working with resources.</p>
                     </div>
                 </div>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <div class="row">
@@ -241,10 +243,8 @@ property using the <strong>sleep and </strong>wakeup magic methods.</p>
                         <a href="GenericDatabase/Shared/Caller.html"><abbr title="GenericDatabase\Shared\Caller">Caller</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>This trait uses the Getter and Setter traits to facilitate dynamic
-property access. The <strong>call method handles instance method calls,
-while </strong>callStatic manages static method calls. Both methods
-interpret method names starting with 'set' or 'get' to perform
+                        <p>This trait uses the Getter and Setter traits to facilitate dynamic property access. The <code>__call</code> method handles instance method calls,
+while <code>__callStatic</code> manages static method calls. Both methods interpret method names starting with 'set' or 'get' to perform
 corresponding actions on properties.</p>
                     </div>
                 </div>
@@ -253,8 +253,7 @@ corresponding actions on properties.</p>
                         <a href="GenericDatabase/Shared/Cleaner.html"><abbr title="GenericDatabase\Shared\Cleaner">Cleaner</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>Trait Cleaner provides magic methods to handle isset() and unset() operations
-on inaccessible or non-existing properties within a class.</p>
+                        <p>This trait provides magic methods to handle <code>__isset</code> and <code>unset</code> operations on inaccessible or non-existing properties within a class.</p>
                     </div>
                 </div>
                                                 <div class="row">
@@ -262,7 +261,7 @@ on inaccessible or non-existing properties within a class.</p>
                         <a href="GenericDatabase/Shared/Enumerator.html"><abbr title="GenericDatabase\Shared\Enumerator">Enumerator</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        
+                        <p>This trait provides utility methods for handling enum cases.</p>
                     </div>
                 </div>
                                                 <div class="row">
@@ -270,10 +269,7 @@ on inaccessible or non-existing properties within a class.</p>
                         <a href="GenericDatabase/Shared/Getter.html"><abbr title="GenericDatabase\Shared\Getter">Getter</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>Methods:</p>
-<ul>
-<li><code>__get(string $name): mixed:</code> Retrieves the value of a property if it exists, or returns null if the property is inaccessible or non-existent.</li>
-</ul>
+                        <p>This trait is utilized for reading data from inaccessible (protected or private) or non-existing properties.</p>
                     </div>
                 </div>
                                                 <div class="row">
@@ -281,7 +277,8 @@ on inaccessible or non-existing properties within a class.</p>
                         <a href="GenericDatabase/Shared/Objectable.html"><abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>Trait Objectable</p>
+                        <p>This trait provides magic methods for dynamic property access and manipulation, including getter, setter, isset, and unset operations. Supports serialization
+and deserialization through <code>__sleep</code> and <code>__wakeup</code> methods. Converts object properties to an associative array with the toArray method.</p>
                     </div>
                 </div>
                                                 <div class="row">
@@ -289,7 +286,8 @@ on inaccessible or non-existing properties within a class.</p>
                         <a href="GenericDatabase/Shared/Property.html"><abbr title="GenericDatabase\Shared\Property">Property</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>Trait Property</p>
+                        <p>This trait provides a private array property intended for use with
+magic setter and getter methods.</p>
                     </div>
                 </div>
                                                 <div class="row">
@@ -297,7 +295,7 @@ on inaccessible or non-existing properties within a class.</p>
                         <a href="GenericDatabase/Shared/Registry.html"><abbr title="GenericDatabase\Shared\Registry">Registry</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>Trait Registry</p>
+                        <p>This trait provides a mechanism to manage a collection of items within a class.</p>
                     </div>
                 </div>
                                                                     <div class="row">
@@ -305,10 +303,7 @@ on inaccessible or non-existing properties within a class.</p>
                         <a href="GenericDatabase/Shared/Setter.html"><abbr title="GenericDatabase\Shared\Setter">Setter</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>Methods:</p>
-<ul>
-<li><code>__set(string $name, mixed $value): void:</code> Magic method to set the value of inaccessible or non-existing properties.</li>
-</ul>
+                        <p>This trait is run when writing data to inaccessible (protected or private) or non-existing properties.</p>
                     </div>
                 </div>
                                                 <div class="row">
@@ -316,7 +311,9 @@ on inaccessible or non-existing properties within a class.</p>
                         <a href="GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>Trait Singleton</p>
+                        <p>This trait provides methods to manage a single instance of a class or multiple
+instances identified by a unique hash. It includes methods to get, create, set,
+and clear instances.</p>
                     </div>
                 </div>
                                                 <div class="row">
@@ -324,7 +321,8 @@ on inaccessible or non-existing properties within a class.</p>
                         <a href="GenericDatabase/Shared/Transporter.html"><abbr title="GenericDatabase\Shared\Transporter">Transporter</abbr></a>
                     </div>
                     <div class="col-md-6">
-                        <p>Handles the serialization process by preparing the object for serialization.</p>
+                        <p>This trait provides handles the serialization process by preparing the object for serialization and stores
+non-empty 'property' fields in the property array and returns an array of object variable names to be serialized.</p>
                     </div>
                 </div>
                         </div>

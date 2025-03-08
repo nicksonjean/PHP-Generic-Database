@@ -6,6 +6,9 @@ namespace GenericDatabase\Interfaces;
  * Defines an interface for a query builder that can be used to construct SQL queries.
  * The query builder provides a fluent API for building complex queries with features like
  * select, join, where, order, limit, and more.
+ * 
+ * @package PHP-Generic-Database\Interfaces
+ * @subpackage IQueryBuilder
  */
 interface IQueryBuilder
 {

@@ -3,7 +3,7 @@
 namespace GenericDatabase\Helpers;
 
 /**
- * The GenericDatabase\Helpers\Errors class provides static methods for manipulating error display settings
+ * The `GenericDatabase\Helpers\Errors` class provides static methods for manipulating error display settings
  * and throwing exceptions with error messages and locations.
  *
  * Example Usage:
@@ -36,6 +36,7 @@ namespace GenericDatabase\Helpers;
  * - `error`: Stores the previous error display setting.
  *
  * @package GenericDatabase\Helpers
+ * @subpackage Errors
  */
 class Errors
 {

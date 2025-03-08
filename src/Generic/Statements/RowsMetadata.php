@@ -3,9 +3,7 @@
 namespace GenericDatabase\Generic\Statements;
 
 /**
- * Class RowsMetadata
- *
- * Represents metadata for database rows, including the number of rows fetched
+ * This class represents metadata for database rows, including the number of rows fetched
  * and affected by a query. Provides methods to get and set these values.
  *
  * Methods:

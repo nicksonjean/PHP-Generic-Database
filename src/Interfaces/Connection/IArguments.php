@@ -8,8 +8,8 @@ use GenericDatabase\Interfaces\IConnection;
 /**
  * This interface defines the contract for handling arguments in database connections.
  *
- * @package PHP-Generic-Database
- * @subpackage Interfaces\Connection
+ * @package PHP-Generic-Database\Interfaces\Connection
+ * @subpackage IArguments
  */
 interface IArguments
 {

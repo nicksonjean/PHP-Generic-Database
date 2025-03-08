@@ -3,7 +3,7 @@
 namespace GenericDatabase\Helpers\Parsers;
 
 /**
- * The `GenericDatabase\Helpers\JSON` class provides two static methods for working with JSON data.
+ * The `GenericDatabase\Helpers\Parsers\JSON` class provides two static methods for working with JSON data.
  * The isValidJSON method checks if a given string is a valid JSON, and the parseJSON method parses
  * a valid JSON string into an array.
  *
@@ -30,7 +30,8 @@ namespace GenericDatabase\Helpers\Parsers;
  * - `isValidJSON($json)`: Checks if a given string is a valid JSON. Returns a boolean value indicating the result.
  * - `parseJSON($json)`: Parses a valid JSON string into an array. Returns the parsed JSON data as an array.
  *
- * @package GenericDatabase\Helpers
+ * @package GenericDatabase\Helpers\Parsers
+ * @subpackage JSON
  */
 class JSON
 {

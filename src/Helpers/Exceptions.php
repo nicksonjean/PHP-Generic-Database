@@ -20,6 +20,7 @@ use Throwable;
  * - `__construct($message = "Custom Exception", $code = 0, Throwable $previous = null)`: Constructor method that sets the exception message, code, and previous exception using the parent constructor from the Exception class.
  *
  * @package GenericDatabase\Helpers
+ * @subpackage Exceptions
  */
 class Exceptions extends Exception
 {

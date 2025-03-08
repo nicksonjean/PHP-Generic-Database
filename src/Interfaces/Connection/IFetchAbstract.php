@@ -9,8 +9,8 @@ use ReflectionException;
  * Implementing classes should provide concrete implementations for the methods
  * declared in this interface to handle data retrieval operations.
  *
- * @package PHP-Generic-Database
- * @subpackage Interfaces\Connection
+ * @package PHP-Generic-Database\Interfaces\Connection
+ * @subpackage IFetchAbstract
  */
 interface IFetchAbstract
 {

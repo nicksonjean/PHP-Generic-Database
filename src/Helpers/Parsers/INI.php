@@ -3,7 +3,7 @@
 namespace GenericDatabase\Helpers\Parsers;
 
 /**
- * The `GenericDatabase\Helpers\INI` class provides methods for working with INI files.
+ * The `GenericDatabase\Helpers\Parsers\INI` class provides methods for working with INI files.
  * It includes a method to check if a given argument is a valid INI file and a method
  * to parse a valid INI file and return its contents as an array.
  *
@@ -28,7 +28,8 @@ namespace GenericDatabase\Helpers\Parsers;
  * - `isValidINI($ini)`: Checks if a given argument is a valid INI file. Returns true if the argument is a valid INI file, false otherwise.
  * - `parseINI($ini)`: Parses a valid INI file and returns its contents as an array.
  *
- * @package GenericDatabase\Helpers
+ * @package GenericDatabase\Helpers\Parsers
+ * @subpackage INI
  */
 class INI
 {

@@ -3,12 +3,8 @@
 namespace GenericDatabase\Shared;
 
 /**
- * Trait Objectable
- *
- * Provides magic methods for dynamic property access and manipulation,
- * including getter, setter, isset, and unset operations. Supports serialization
- * and deserialization through __sleep and __wakeup methods. Converts object
- * properties to an associative array with the toArray method.
+ * This trait provides magic methods for dynamic property access and manipulation, including getter, setter, isset, and unset operations. Supports serialization
+ * and deserialization through `__sleep` and `__wakeup` methods. Converts object properties to an associative array with the toArray method.
  * 
  * Methods:
  * - `__get(string $name): mixed:` Magic getter method

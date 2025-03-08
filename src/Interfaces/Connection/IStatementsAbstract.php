@@ -7,8 +7,8 @@ namespace GenericDatabase\Interfaces\Connection;
  * Implementing classes should provide concrete implementations for these methods
  * to handle database interactions.
  *
- * @package PHP-Generic-Database
- * @subpackage Interfaces\Connection
+ * @package PHP-Generic-Database\Interfaces\Connection
+ * @subpackage IStatementsAbstract
  */
 interface IStatementsAbstract
 {

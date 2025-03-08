@@ -98,7 +98,7 @@
         
 
             <div class="description">
-            <p><p>Static method to dynamically call any function, method, or instance.</p></p>            <p><p>Methods:</p>
+            <p><p>This trait provides static method to dynamically call any function, method, or instance.</p></p>            <p><p>Methods:</p>
 <ul>
 <li><code>call(mixed $callable, mixed ...$args): mixed:</code> Calls a function, method, or instance dynamically.</li>
 <li><code>callArray(mixed $callable, array $args = []): mixed:</code> Calls a function or method with an array of arguments.</li>
@@ -117,7 +117,7 @@
                 <div class="col-md-8">
                     <a href="#method_call">call</a>(mixed $callable, mixed ...$args)
         
-                                            <p><p>Método estático para chamar qualquer função, método ou instância dinamicamente.</p></p>                </div>
+                                            <p><p>Static method to dynamically call any function, method, or instance.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -127,7 +127,7 @@
                 <div class="col-md-8">
                     <a href="#method_callArray">callArray</a>(mixed $callable, array $args = [])
         
-                                            <p><p>Método estático para chamar uma função/método passando os argumentos como um array.</p></p>                </div>
+                                            <p><p>Static method to call a function or method with an array of arguments.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
             </div>
@@ -148,7 +148,7 @@
             
 
         <div class="method-description">
-                            <p><p>Método estático para chamar qualquer função, método ou instância dinamicamente.</p></p>                        
+                            <p><p>Static method to dynamically call any function, method, or instance.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -157,12 +157,12 @@
                     <tr>
                 <td>mixed</td>
                 <td>$callable</td>
-                <td><p>Pode ser uma string (função global), array [Classe, método], [Objeto, método] ou Closure.</p></td>
+                <td><p>string or (global function) or array [class, method], [object, method] or closure.</p></td>
             </tr>
                     <tr>
                 <td>mixed</td>
                 <td>...$args</td>
-                <td><p>Argumentos a serem passados para o método/função.</p></td>
+                <td><p>arguments to send to the callable</p></td>
             </tr>
             </table>
 
@@ -172,7 +172,7 @@
                     <table class="table table-condensed">
         <tr>
             <td>mixed</td>
-            <td><p>Retorna o resultado da chamada.</p></td>
+            <td><p>return the result of the call</p></td>
         </tr>
     </table>
 
@@ -195,7 +195,7 @@
             
 
         <div class="method-description">
-                            <p><p>Método estático para chamar uma função/método passando os argumentos como um array.</p></p>                        
+                            <p><p>Static method to call a function or method with an array of arguments.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -204,12 +204,12 @@
                     <tr>
                 <td>mixed</td>
                 <td>$callable</td>
-                <td><p>Pode ser uma string (função global), array [Classe, método], [Objeto, método] ou Closure.</p></td>
+                <td><p>string or (global function) or array [class, method], [object, method] or closure.</p></td>
             </tr>
                     <tr>
                 <td>array</td>
                 <td>$args</td>
-                <td><p>Array de argumentos a serem passados.</p></td>
+                <td><p>arguments to send to the callable</p></td>
             </tr>
             </table>
 
@@ -219,7 +219,7 @@
                     <table class="table table-condensed">
         <tr>
             <td>mixed</td>
-            <td><p>Retorna o resultado da chamada.</p></td>
+            <td><p>return the result of the call</p></td>
         </tr>
     </table>
 

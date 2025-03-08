@@ -3,8 +3,6 @@
 namespace GenericDatabase\Shared;
 
 /**
- * Trait Singleton
- *
  * This trait provides methods to manage a single instance of a class or multiple
  * instances identified by a unique hash. It includes methods to get, create, set,
  * and clear instances.

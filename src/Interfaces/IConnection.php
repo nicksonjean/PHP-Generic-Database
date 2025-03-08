@@ -4,6 +4,9 @@ namespace GenericDatabase\Interfaces;
 
 /**
  * Provides an interface for connecting to a database.
+ * 
+ * @package PHP-Generic-Database\Interfaces
+ * @subpackage IConnection
  */
 interface IConnection
 {

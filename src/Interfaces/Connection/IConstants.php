@@ -6,8 +6,8 @@ namespace GenericDatabase\Interfaces\Connection;
  * This interface defines a set of constants to be used for database connections.
  * Implementing classes should provide specific values for these constants.
  *
- * @package PHP-Generic-Database
- * @subpackage Interfaces\Connection
+ * @package PHP-Generic-Database\Interfaces\Connection
+ * @subpackage IConstants
  */
 interface IConstants
 {

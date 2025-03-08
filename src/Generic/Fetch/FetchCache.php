@@ -3,8 +3,6 @@
 namespace GenericDatabase\Generic\Fetch;
 
 /**
- * Trait FetchCache
- *
  * Provides caching functionality for fetch operations, allowing results to be stored
  * and retrieved efficiently. It maintains the state of cached results, their positions,
  * and handles resetting fetch positions when necessary.
@@ -73,6 +71,7 @@ trait FetchCache
 
     /**
      * Método abstrato para ser implementado na classe que usa a trait
+     * 
      * @param mixed $resource
      * @return string
      */

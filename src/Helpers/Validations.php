@@ -44,6 +44,7 @@ namespace GenericDatabase\Helpers;
  * - `randomString(int $length): string`: Generates a random string of a specified length.
  *
  * @package GenericDatabase\Helpers
+ * @subpackage Validations
  */
 class Validations
 {

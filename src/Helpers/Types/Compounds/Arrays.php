@@ -3,7 +3,7 @@
 namespace GenericDatabase\Helpers\Types\Compounds;
 
 /**
- * The `GenericDatabase\Helpers\Arrays` class provides a collection of static methods for manipulating arrays in PHP.
+ * The `GenericDatabase\Helpers\Types\Compounds\Arrays` class provides a collection of static methods for manipulating arrays in PHP.
  * It includes functions for finding elements in an array, combining array indices and values, determining the type
  * of array, and more.
  *
@@ -96,8 +96,8 @@ namespace GenericDatabase\Helpers\Types\Compounds;
  * - `arrayValuesRecursive(array $array): array`: Gets the array values recursively.
  * - `assocToIndexCombine(array ...$arrays): array`: Creates an index or list array to
  *
- * @package GenericDatabase\Helpers
- * @noinspection SpellCheckingInspection
+ * @package GenericDatabase\Helpers\Types\Compounds
+ * @subpackage Arrays
  */
 class Arrays
 {

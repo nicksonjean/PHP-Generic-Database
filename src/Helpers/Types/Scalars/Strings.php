@@ -3,11 +3,10 @@
 namespace GenericDatabase\Helpers\Types\Scalars;
 
 /**
- * Class Strings
- *
- * This class provides helper methods for string manipulation.
+ * The `GenericDatabase\Helpers\Types\Scalars\Strings` class provides methods for manipulating strings.
  *
  * @package GenericDatabase\Helpers\Types\Scalars
+ * @subpackage Strings
  */
 class Strings
 {

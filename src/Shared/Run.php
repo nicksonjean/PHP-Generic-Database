@@ -3,7 +3,7 @@
 namespace GenericDatabase\Shared;
 
 /**
- * Static method to dynamically call any function, method, or instance.
+ * This trait provides static method to dynamically call any function, method, or instance.
  * 
  * Methods:
  * - `call(mixed $callable, mixed ...$args): mixed:` Calls a function, method, or instance dynamically.
@@ -12,11 +12,11 @@ namespace GenericDatabase\Shared;
 class Run
 {
     /**
-     * Método estático para chamar qualquer função, método ou instância dinamicamente.
+     * Static method to dynamically call any function, method, or instance.
      *
-     * @param mixed $callable Pode ser uma string (função global), array [Classe, método], [Objeto, método] ou Closure.
-     * @param mixed ...$args Argumentos a serem passados para o método/função.
-     * @return mixed Retorna o resultado da chamada.
+     * @param mixed $callable string or (global function) or array [class, method], [object, method] or closure.
+     * @param mixed ...$args arguments to send to the callable
+     * @return mixed return the result of the call
      */
     public static function call($callable, ...$args)
     {
@@ -24,11 +24,11 @@ class Run
     }
 
     /**
-     * Método estático para chamar uma função/método passando os argumentos como um array.
+     * Static method to call a function or method with an array of arguments.
      *
-     * @param mixed $callable Pode ser uma string (função global), array [Classe, método], [Objeto, método] ou Closure.
-     * @param array $args Array de argumentos a serem passados.
-     * @return mixed Retorna o resultado da chamada.
+     * @param mixed $callable string or (global function) or array [class, method], [object, method] or closure.
+     * @param array $args arguments to send to the callable
+     * @return mixed return the result of the call
      */
     public static function callArray($callable, array $args = [])
     {

@@ -10,15 +10,10 @@ use PgSQL\Connection as PgCNX;
 use GenericDatabase\Core\Types as An;
 
 /**
- * The `GenericDatabase\Helpers\Compare` class provides methods
- * for determining the type of given database connection.
- * This class can identify the type of database connection
- * whether it is a resource connection or an object connection.
- *
- * The code snippet is a part of the Compare class, and it contains
- * two private methods: getResourceConnectionType and getObjectConnectionType.
- * These methods are used to determine the type of given database connection,
- * whether it is a resource connection or an object connection.
+ * The `GenericDatabase\Helpers\Compare` class provides methods for determining the type of given 
+ * database connection this class can identify the type of database connection whether it is a 
+ * resource connection or an object connection, and it can also determine the type of database 
+ * connection whether it is a resource connection or an object connection.
  *
  * Example Usage:
  *
@@ -52,13 +47,16 @@ use GenericDatabase\Core\Types as An;
  *
  * Methods:
  * - `connection($cnx): string`: Determines the type of the given connection. It accepts either a resource or an object connection and returns a string representing the connection type.
+ * - `getResourceConnectionType($cnx): string`: Determines the type of a resource-based database connection.
+ * - `getObjectConnectionType($cnx): string`: Determines the type of an object-based database connection.
  *
  * @package GenericDatabase\Helpers
+ * @subpackage Compare
  */
 class Compare
 {
     /**
-     * Determines the type of given database connection.
+     * Determines the type of the given connection. It accepts either a resource or an object connection and returns a string representing the connection type.
      *
      * @param resource|object $cnx The database connection.
      * @return string The type of the database connection.

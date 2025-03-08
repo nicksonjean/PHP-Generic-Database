@@ -7,8 +7,8 @@ namespace GenericDatabase\Interfaces\Connection;
  * Implementations of this interface should provide specific methods for
  * retrieving data according to the defined strategy.
  *
- * @package PHP-Generic-Database
- * @subpackage Interfaces\Connection
+ * @package PHP-Generic-Database\Interfaces\Connection
+ * @subpackage IFetchStrategy
  */
 interface IFetchStrategy
 {

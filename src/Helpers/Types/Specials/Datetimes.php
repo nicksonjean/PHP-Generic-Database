@@ -7,7 +7,7 @@ use GenericDatabase\Helpers\Types\Compounds\Arrays;
 
 /**
 
- * The `GenericDatabase\Helpers\Datetimes` class provides regular expression
+ * The `GenericDatabase\Helpers\Types\Specials\Datetimes` class provides regular expression
  * patterns for parsing and validating date and time strings. It also includes
  * methods for retrieving the regular expression patterns and extracting information from the input string.
  *
@@ -79,7 +79,8 @@ use GenericDatabase\Helpers\Types\Compounds\Arrays;
  * - `LEAP_YEAR`: Regular expression pattern for matching leap year.
  * - `YEAR`: Regular expression pattern for matching year (YYYY or YY).
  *
- * @package Datetimes
+ * @package GenericDatabase\Helpers\Types\Specials
+ * @subpackage Datetimes
  */
 class Datetimes
 {

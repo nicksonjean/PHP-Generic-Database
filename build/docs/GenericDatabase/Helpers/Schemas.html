@@ -98,11 +98,10 @@
         
 
             <div class="description">
-            <p><p>Class Definition: The Schemas class is a helper class that uses the Objectable trait and allows dynamic properties. It has a single static method makeArgs.</p></p>            <p><p>Method:</p>
+            <p><p>The <code>GenericDatabase\Helpers\Schemas</code> class is a helper class that uses the Objectable trait and allows dynamic properties. It has a single static method makeArgs.</p></p>            <p><p>Method:</p>
 <ul>
 <li><code>makeArgs(array $params): object:</code> This method makes an arguments list</li>
-</ul>
-<p>Note that the Objectable trait and the AllowDynamicProperties attribute are not defined in this code snippet, so their exact behavior is unknown.</p></p>        </div>
+</ul></p>        </div>
             
                 <h2>Traits</h2>
 
@@ -111,7 +110,8 @@
                     <div class="row">
                 <div class="col-md-6">
                     <a href="../../GenericDatabase/Shared/Objectable.html"><abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a>    </div>
-                <div class="col-md-6"><p>Trait Objectable</p></div>
+                <div class="col-md-6"><p>This trait provides magic methods for dynamic property access and manipulation, including getter, setter, isset, and unset operations. Supports serialization
+and deserialization through <code>__sleep</code> and <code>__wakeup</code> methods. Converts object properties to an associative array with the toArray method.</p></div>
             </div>
             </div>
     
@@ -218,7 +218,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>         
                     <div class="method-item">
                     <h3 id="method___get">
         <div class="location">in <a href="../../GenericDatabase/Shared/Objectable.html#method___get">
-<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L30">at line 30</a></div>
+<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L26">at line 26</a></div>
         <code>                    mixed
     <strong>__get</strong>(string $name)
         </code>
@@ -261,7 +261,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>         
                     <div class="method-item">
                     <h3 id="method___set">
         <div class="location">in <a href="../../GenericDatabase/Shared/Objectable.html#method___set">
-<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L46">at line 46</a></div>
+<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L42">at line 42</a></div>
         <code>                    void
     <strong>__set</strong>(string $name, mixed $value)
         </code>
@@ -311,7 +311,7 @@ Otherwise, it assigns the value directly to the property.</p></p>
                     <div class="method-item">
                     <h3 id="method___isset">
         <div class="location">in <a href="../../GenericDatabase/Shared/Objectable.html#method___isset">
-<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L64">at line 64</a></div>
+<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L60">at line 60</a></div>
         <code>                    bool
     <strong>__isset</strong>(string $name)
         </code>
@@ -355,7 +355,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
                     <div class="method-item">
                     <h3 id="method___unset">
         <div class="location">in <a href="../../GenericDatabase/Shared/Objectable.html#method___unset">
-<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L76">at line 76</a></div>
+<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L72">at line 72</a></div>
         <code>                    void
     <strong>__unset</strong>(string $name)
         </code>
@@ -399,7 +399,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
                     <div class="method-item">
                     <h3 id="method___sleep">
         <div class="location">in <a href="../../GenericDatabase/Shared/Objectable.html#method___sleep">
-<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L86">at line 86</a></div>
+<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L82">at line 82</a></div>
         <code>                    array
     <strong>__sleep</strong>()
         </code>
@@ -432,7 +432,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
                     <div class="method-item">
                     <h3 id="method___wakeup">
         <div class="location">in <a href="../../GenericDatabase/Shared/Objectable.html#method___wakeup">
-<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L96">at line 96</a></div>
+<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L92">at line 92</a></div>
         <code>                    void
     <strong>__wakeup</strong>()
         </code>
@@ -465,7 +465,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
                     <div class="method-item">
                     <h3 id="method_toArray">
         <div class="location">in <a href="../../GenericDatabase/Shared/Objectable.html#method_toArray">
-<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L103">at line 103</a></div>
+<abbr title="GenericDatabase\Shared\Objectable">Objectable</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Objectable.php#L99">at line 99</a></div>
         <code>                    array
     <strong>toArray</strong>()
         </code>
@@ -497,7 +497,7 @@ inaccessible (protected or private) or non-existing properties.</p></p>
             </div>
                     <div class="method-item">
                     <h3 id="method_makeArgs">
-        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Schemas.php#L29">at line 29</a></div>
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Schemas.php#L30">at line 30</a></div>
         <code>        static            object
     <strong>makeArgs</strong>(array $params)
         </code>

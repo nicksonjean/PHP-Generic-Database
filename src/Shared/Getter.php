@@ -3,6 +3,8 @@
 namespace GenericDatabase\Shared;
 
 /**
+ * This trait is utilized for reading data from inaccessible (protected or private) or non-existing properties.
+ * 
  * Methods:
  * - `__get(string $name): mixed:` Retrieves the value of a property if it exists, or returns null if the property is inaccessible or non-existent.
  * 

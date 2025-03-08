@@ -38,8 +38,12 @@ use GenericDatabase\Helpers\Types\Compounds\Arrays;
  * Methods:
  * - `setConstant($value, $instance, $className, $constantName, $attributes)`: Sets a constant and generates options based on the provided value, instance, class name, constant name, and attributes. Returns the generated options as an array.
  * - `setType($value)`: Determines the type of value based on its characteristics. Returns the determined type as a boolean, integer, or string.
+ * - `generateKeyName($index, $constantName)`: Generates a key name based on the index and constant name. Returns the generated key name as a string.
+ * - `generateOptionKey($className, $constantName, $index)`: Generates an option key based on the class name, constant name, and index. Returns the generated option key as a string.
+ * - `generateHash()`: Generates a random hash value. Returns the generated hash value as a string.
  *
  * @package GenericDatabase\Helpers
+ * @subpackage Generators
  */
 class Generators
 {
@@ -62,18 +66,14 @@ class Generators
         array $attributes
     ): array {
         $options = [];
-
         foreach (Arrays::recombine(...$value) as $key => $value) {
             $index = str_replace("$className::", '', $key);
             $keyName = !in_array($index, $attributes) ? self::generateKeyName($index, $constantName) : $index;
-
             $instance->setAttribute($key, $value);
-
             if (!in_array($keyName, $attributes)) {
                 $optionKey = constant(sprintf(Entity::CASE_INTERNAL_CLASS()->value, $constantName, $className, $index));
                 $instance->setOptions($optionKey, $value);
             }
-
             $options[self::generateOptionKey($className, $constantName, $index)] = $value;
         }
 

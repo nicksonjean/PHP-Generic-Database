@@ -7,9 +7,7 @@ use ReflectionException;
 use GenericDatabase\Helpers\Exceptions;
 
 /**
- * Trait Registry
- *
- * Provides a mechanism to manage a collection of items within a class.
+ * This trait provides a mechanism to manage a collection of items within a class.
  * Ensures the collection is initialized and accessible, allowing items
  * to be added, retrieved, checked for existence, and removed.
  *

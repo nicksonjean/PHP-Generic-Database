@@ -33,6 +33,7 @@ namespace GenericDatabase\Helpers;
  * - `isAbsolute(string $path): bool`: Checks if a path is absolute.
  *
  * @package GenericDatabase\Helpers
+ * @subpackage Path
  */
 class Path
 {
