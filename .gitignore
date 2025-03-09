@@ -454,8 +454,6 @@ gradle-app.setting
 /coverage/
 /coverage/**
 /cache/**
-/docs/
-/docs/**
 
 ##### Composer
 composer.phar

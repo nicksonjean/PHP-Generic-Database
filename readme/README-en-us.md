@@ -1,7 +1,7 @@
 # PHP-Generic-Database
 
 <p align="center">
-    <img src="./assets/logo.png" width="256">
+    <img src="../assets/logo.png" width="256">
 </p>
 
 <p align="center">

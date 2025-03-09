@@ -14,7 +14,7 @@ $iterator = Finder::create()
 
 return new Doctum($iterator, [
     'title' => 'PHP Generic Database Documentation',
-    'build_dir' => __DIR__ . '/build/docs',
+    'build_dir' => __DIR__ . '/docs',
     'cache_dir' => __DIR__ . '/cache',
     'default_opened_level' => 2,
     'remote_repository' => new GitHubRemoteRepository('nicksonjean/PHP-Generic-Database', dirname($dir)),
