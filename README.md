@@ -215,164 +215,446 @@ Below is a series of readmes containing examples of how to use the lib and a [to
 
 ## Diagram
 
-The diagram clearly shows the organization of your project, which appears to be a database abstraction library with support for multiple engines (MySQL, PostgreSQL, SQLite, SQL Server, Firebird, OCI, and ODBC), as well as a well-defined structure of abstract classes and interfaces.
+The vertical flowchart/diagram also (from top to bottom) clearly shows the organization of your directory structure, as it allows a more natural visualization of the file and folder hierarchy, for the database abstraction library with support for multiple engines (MySQL, PostgreSQL, SQLite, SQL Server, Firebird, OCI and ODBC), as well as a well-defined structure of abstract classes, interfaces and helpers.
 
 ```mermaid
-graph TD
-    Root["Root"]
+flowchart TB
+    Root["PHP Generic Database"]
     
-    Root --> Connection["Connection.php"]
-    Root --> QueryBuilder["QueryBuilder.php"]
+    Root --- Connection["Connection.php"]
+    Root --- QueryBuilder["QueryBuilder.php"]
+    Root --- Abstract["Abstract/"]
+    Root --- Core["Core/"]
+    Root --- Engine["Engine/"]
+    Root --- Generic["Generic/"]
+    Root --- Helpers["Helpers/"]
+    Root --- Interfaces["Interfaces/"]
+    Root --- Modules["Modules/"]
+    Root --- Shared["Shared/"]
     
-    %% Abstract folder
-    Root --> Abstract["Abstract/"]
-    Abstract --> AbstractArguments["AbstractArguments.php"]
-    Abstract --> AbstractAttributes["AbstractAttributes.php"]
-    Abstract --> AbstractFetch["AbstractFetch.php"]
-    Abstract --> AbstractOptions["AbstractOptions.php"]
-    Abstract --> AbstractStatements["AbstractStatements.php"]
+    Abstract --- AbstractFiles["
+        AbstractArguments.php
+        AbstractAttributes.php
+        AbstractFetch.php
+        AbstractOptions.php
+        AbstractStatements.php
+    "]
     
-    %% Core folder
-    Root --> Core["Core/"]
-    Core --> Build["Build.php"]
-    Core --> Column["Column.php"]
-    Core --> Condition["Condition.php"]
-    Core --> Entity["Entity.php"]
-    Core --> Grouping["Grouping.php"]
-    Core --> Having["Having.php"]
-    Core --> Insert["Insert.php"]
-    Core --> Join["Join.php"]
-    Core --> Junction["Junction.php"]
-    Core --> Limit["Limit.php"]
-    Core --> Query["Query.php"]
-    Core --> Select["Select.php"]
-    Core --> Sorting["Sorting.php"]
-    Core --> Table["Table.php"]
-    Core --> Types["Types.php"]
-    Core --> Where["Where.php"]
+    Core --- CoreFiles["
+        Build.php
+        Column.php
+        Condition.php
+        Entity.php
+        Grouping.php
+        Having.php
+        Insert.php
+        Join.php
+        Junction.php
+        Limit.php
+        Query.php
+        Select.php
+        Sorting.php
+        Table.php
+        Types.php
+        Where.php
+    "]
+    Core --- Emulated["Emulated/"]
+    Core --- Native["Native/"]
     
-    Core --> Emulated["Core/Emulated/"]
-    Emulated --> EmulatedBuild["Build.php"]
-    Emulated --> EmulatedColumn["Column.php"]
-    Emulated --> EmulatedCondition["Condition.php"]
-    Emulated --> EmulatedEntity["Entity.php"]
-    Emulated --> EmulatedGrouping["Grouping.php"]
-    Emulated --> EmulatedHaving["Having.php"]
-    Emulated --> EmulatedInsert["Insert.php"]
-    Emulated --> EmulatedJoin["Join.php"]
-    Emulated --> EmulatedJunction["Junction.php"]
-    Emulated --> EmulatedLimit["Limit.php"]
-    Emulated --> EmulatedQuery["Query.php"]
-    Emulated --> EmulatedSelect["Select.php"]
-    Emulated --> EmulatedSorting["Sorting.php"]
-    Emulated --> EmulatedTable["Table.php"]
-    Emulated --> EmulatedTypes["Types.php"]
-    Emulated --> EmulatedWhere["Where.php"]
+    Emulated --- EmulatedFiles["
+        Build.php
+        Column.php
+        Condition.php
+        Entity.php
+        Grouping.php
+        Having.php
+        Insert.php
+        Join.php
+        Junction.php
+        Limit.php
+        Query.php
+        Select.php
+        Sorting.php
+        Table.php
+        Types.php
+        Where.php
+    "]
     
-    Core --> Native["Core/Native/"]
-    Native --> NativeBuild["Build.php"]
-    Native --> NativeColumn["Column.php"]
-    Native --> NativeCondition["Condition.php"]
-    Native --> NativeEntity["Entity.php"]
-    Native --> NativeGrouping["Grouping.php"]
-    Native --> NativeHaving["Having.php"]
-    Native --> NativeInsert["Insert.php"]
-    Native --> NativeJoin["Join.php"]
-    Native --> NativeJunction["Junction.php"]
-    Native --> NativeLimit["Limit.php"]
-    Native --> NativeQuery["Query.php"]
-    Native --> NativeSelect["Select.php"]
-    Native --> NativeSorting["Sorting.php"]
-    Native --> NativeTable["Table.php"]
-    Native --> NativeTypes["Types.php"]
-    Native --> NativeWhere["Where.php"]
+    Native --- NativeFiles["
+        Build.php
+        Column.php
+        Condition.php
+        Entity.php
+        Grouping.php
+        Having.php
+        Insert.php
+        Join.php
+        Junction.php
+        Limit.php
+        Query.php
+        Select.php
+        Sorting.php
+        Table.php
+        Types.php
+        Where.php
+    "]
     
-    %% Engine folder (simplified to main drivers)
-    Root --> Engine["Engine/"]
-    Engine --> EngineConnections["Connection Files (.php)"]
-    Engine --> EngineBuilders["QueryBuilder Files (.php)"]
+    Engine --- EngineFiles["
+        FirebirdConnection.php
+        FirebirdQueryBuilder.php
+        MySQLiConnection.php
+        MySQLiQueryBuilder.php
+        OCIConnection.php
+        OCIQueryBuilder.php
+        ODBCConnection.php
+        ODBCQueryBuilder.php
+        PDOConnection.php
+        PDOQueryBuilder.php
+        PgSQLConnection.php
+        PgSQLQueryBuilder.php
+        SQLiteConnection.php
+        SQLiteQueryBuilder.php
+        SQLSrvConnection.php
+        SQLSrvQueryBuilder.php
+    "]
     
-    Engine --> MySQL["Engine/MySQLi/"]
-    MySQL --> MySQLConnection["Connection/"]
-    MySQL --> MySQLQueryBuilder["QueryBuilder/"]
+    Engine --- FirebirdDir["Firebird/"]
+    Engine --- MySQLiDir["MySQLi/"]
+    Engine --- OCIDir["OCI/"]
+    Engine --- ODBCDir["ODBC/"]
+    Engine --- PDODir["PDO/"]
+    Engine --- PgSQLDir["PgSQL/"]
+    Engine --- SQLiteDir["SQLite/"]
+    Engine --- SQLSrvDir["SQLSrv/"]
     
-    Engine --> PDO["Engine/PDO/"]
-    PDO --> PDOConnection["Connection/"]
-    PDO --> PDOQueryBuilder["QueryBuilder/"]
+    FirebirdDir --- FirebirdSubdir["
+        Connection/
+        QueryBuilder/
+    "]
     
-    Engine --> PostgreSQL["Engine/PgSQL/"]
-    PostgreSQL --> PostgreSQLConnection["Connection/"]
-    PostgreSQL --> PostgreSQLQueryBuilder["QueryBuilder/"]
+    FirebirdSubdir --- FirebirdConnection["Connection:
+        Firebird.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
     
-    Engine --> SQLite["Engine/SQLite/"]
-    SQLite --> SQLiteConnection["Connection/"]
-    SQLite --> SQLiteQueryBuilder["QueryBuilder/"]
+    FirebirdSubdir --- FirebirdBuilder["QueryBuilder:
+        Builder.php
+        Context.php
+        Criteria.php
+        Internal.php
+        Query.php
+        Regex.php
+    "]
     
-    Engine --> SQLServer["Engine/SQLSrv/"]
-    SQLServer --> SQLServerConnection["Connection/"]
-    SQLServer --> SQLServerQueryBuilder["QueryBuilder/"]
+    MySQLiDir --- MySQLiSubdir["
+        Connection/
+        QueryBuilder/
+    "]
     
-    Engine --> Firebird["Engine/Firebird/"]
-    Firebird --> FirebirdConnection["Connection/"]
-    Firebird --> FirebirdQueryBuilder["QueryBuilder/"]
+    MySQLiSubdir --- MySQLiConnection["Connection:
+        MySQL.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
     
-    Engine --> OCI["Engine/OCI/"]
-    OCI --> OCIConnection["Connection/"]
-    OCI --> OCIQueryBuilder["QueryBuilder/"]
+    MySQLiSubdir --- MySQLiBuilder["QueryBuilder:
+        Builder.php
+        Context.php
+        Criteria.php
+        Internal.php
+        Query.php
+        Regex.php
+    "]
     
-    Engine --> ODBC["Engine/ODBC/"]
-    ODBC --> ODBCConnection["Connection/"]
-    ODBC --> ODBCQueryBuilder["QueryBuilder/"]
+    OCIDir --- OCISubdir["
+        Connection/
+        QueryBuilder/
+    "]
+
+    OCISubdir --- OCIConnection["Connection:
+        OCI.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
     
-    %% Generic folder
-    Root --> Generic["Generic/"]
-    Generic --> GenericConnection["Connection/"]
-    Generic --> GenericFetch["Fetch/"]
-    Generic --> GenericStatements["Statements/"]
+    OCISubdir --- OCIBuilder["QueryBuilder:
+        Builder.php
+        Context.php
+        Criteria.php
+        Internal.php
+        Query.php
+        Regex.php
+    "]
     
-    %% Helpers folder
-    Root --> Helpers["Helpers/"]
-    Helpers --> Compare["Compare.php"]
-    Helpers --> Errors["Errors.php"]
-    Helpers --> Exceptions["Exceptions.php"]
-    Helpers --> Generators["Generators.php"]
-    Helpers --> Hash["Hash.php"]
-    Helpers --> Path["Path.php"]
-    Helpers --> Reflections["Reflections.php"]
-    Helpers --> Schemas["Schemas.php"]
-    Helpers --> Validations["Validations.php"]
+    ODBCDir --- ODBCSubdir["
+        Connection/
+        QueryBuilder/
+    "]
+
+    ODBCSubdir --- ODBCConnection["Connection:
+        ODBC.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
     
-    Helpers --> Parsers["Parsers/"]
-    Helpers --> Types["Types/"]
+    ODBCSubdir --- ODBCBuilder["QueryBuilder:
+        Builder.php
+        Context.php
+        Criteria.php
+        Internal.php
+        Query.php
+        Regex.php
+    "]
     
-    %% Interfaces folder
-    Root --> Interfaces["Interfaces/"]
-    Interfaces --> IConnection["IConnection.php"]
-    Interfaces --> IQueryBuilder["IQueryBuilder.php"]
-    Interfaces --> ConnectionInt["Connection/"]
-    Interfaces --> QueryBuilderInt["QueryBuilder/"]
-    Interfaces --> StrategyInt["Strategy/"]
+    PDODir --- PDOSubdir["
+        Connection/
+        QueryBuilder/
+    "]
     
-    %% Modules folder
-    Root --> Modules["Modules/"]
-    Modules --> Chainable["Chainable.php"]
-    Modules --> Fluent["Fluent.php"]
-    Modules --> StaticArgs["StaticArgs.php"]
-    Modules --> StaticArray["StaticArray.php"]
+    PDOSubdir --- PDOConnection["Connection:
+        XPDO.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
     
-    %% Shared folder
-    Root --> Shared["Shared/"]
-    Shared --> Caller["Caller.php"]
-    Shared --> Cleaner["Cleaner.php"]
-    Shared --> Enumerator["Enumerator.php"]
-    Shared --> Getter["Getter.php"]
-    Shared --> Objectable["Objectable.php"]
-    Shared --> Property["Property.php"]
-    Shared --> Registry["Registry.php"]
-    Shared --> Run["Run.php"]
-    Shared --> Setter["Setter.php"]
-    Shared --> Singleton["Singleton.php"]
-    Shared --> Transporter["Transporter.php"]
+    PDOSubdir --- PDOBuilder["QueryBuilder:
+        Builder.php
+        Context.php
+        Criteria.php
+        Internal.php
+        Query.php
+        Regex.php
+    "]
+    
+    PgSQLDir --- PgSQLSubdir["
+        Connection/
+        QueryBuilder/
+    "]
+
+    PgSQLSubdir --- PgSQLConnection["Connection:
+        PgSQL.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+    
+    PgSQLSubdir --- PgSQLBuilder["QueryBuilder:
+        Builder.php
+        Context.php
+        Criteria.php
+        Internal.php
+        Query.php
+        Regex.php
+    "]
+    
+    SQLiteDir --- SQLiteSubdir["
+        Connection/
+        QueryBuilder/
+    "]
+
+    SQLiteSubdir --- SQLiteConnection["Connection:
+        SQLite.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+    
+    SQLiteSubdir --- SQLiteBuilder["QueryBuilder:
+        Builder.php
+        Context.php
+        Criteria.php
+        Internal.php
+        Query.php
+        Regex.php
+    "]
+    
+    SQLSrvDir --- SQLSrvSubdir["
+        Connection/
+        QueryBuilder/
+    "]
+    
+    SQLSrvSubdir --- SQLSrvConnection["Connection:
+        SQLSrv.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+    
+    SQLSrvSubdir --- SQLSrvBuilder["QueryBuilder:
+        Builder.php
+        Context.php
+        Criteria.php
+        Internal.php
+        Query.php
+        Regex.php
+    "]
+    
+    Generic --- GenericDir["
+        Connection/
+        Fetch/
+        Statements/
+    "]
+    
+    GenericDir --- GenericConnection["Connection:
+        Methods.php
+        Settings.php
+    "]
+    
+    GenericDir --- GenericFetch["Fetch:
+        FetchCache.php
+    "]
+    
+    GenericDir --- GenericStatements["Statements:
+        Metadata.php
+        QueryMetadata.php
+        RowsMetadata.php
+    "]
+    
+    Helpers --- HelpersFiles["
+        Compare.php
+        Errors.php
+        Exceptions.php
+        Generators.php
+        Hash.php
+        Path.php
+        Reflections.php
+        Schemas.php
+        Validations.php
+    "]
+    
+    Helpers --- ParsersDir["Parsers/"]
+    Helpers --- TypesDir["Types/"]
+    
+    ParsersDir --- ParsersFiles["
+        INI.php
+        JSON.php
+        NEON.php
+        SQL.php
+        TXT.php
+        XML.php
+        YAML.php
+        SQL/
+    "]
+    
+    TypesDir --- TypesSubdirs["
+        Compounds/
+        Scalars/
+        Specials/
+    "]
+    
+    TypesSubdirs --- CompoundsDir["Compounds:
+        Arrays.php
+    "]
+    
+    TypesSubdirs --- ScalarsDir["Scalars:
+        Strings.php
+    "]
+    
+    TypesSubdirs --- SpecialsDir["Specials:
+        Datetimes.php
+        Resources.php
+        Datetimes/
+    "]
+    
+    Interfaces --- InterfacesFiles["
+        IConnection.php
+        IQueryBuilder.php
+    "]
+    
+    Interfaces --- ConnectionInterfaces["Connection/"]
+    Interfaces --- QueryBuilderInterfaces["QueryBuilder/"]
+    Interfaces --- StrategyInterfaces["Strategy/"]
+    
+    ConnectionInterfaces --- ConnInterfaceFiles["
+        IArguments.php
+        IArgumentsAbstract.php
+        IArgumentsStrategy.php
+        IAttributes.php
+        IAttributesAbstract.php
+        IConstants.php
+        IDSN.php
+        IFetch.php
+        IFetchAbstract.php
+        IFetchStrategy.php
+        IOptions.php
+        IOptionsAbstract.php
+        IReport.php
+        IStatements.php
+        IStatementsAbstract.php
+        ITransactions.php
+    "]
+    
+    StrategyInterfaces --- StrategyInterfaceFiles["
+        IConnectionStrategy.php
+        IQueryBuilderStrategy.php
+    "]
+    
+    Modules --- ModulesFiles["
+        Chainable.php
+        Fluent.php
+        StaticArgs.php
+        StaticArray.php
+    "]
+    
+    Shared --- SharedFiles["
+        Caller.php
+        Cleaner.php
+        Enumerator.php
+        Getter.php
+        Objectable.php
+        Property.php
+        Registry.php
+        Run.php
+        Setter.php
+        Singleton.php
+        Transporter.php
+    "]
 ```
 
 ## License
