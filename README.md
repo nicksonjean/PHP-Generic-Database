@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-    <img alt="PHP - &gt;=8.1" src="https://img.shields.io/badge/PHP-%3E=8.1-777BB4?style=for-the-badge&logo=php&logoColor=white">
+    <img alt="PHP - &gt;=8.0" src="https://img.shields.io/badge/PHP-%3E=8.0-777BB4?style=for-the-badge&logo=php&logoColor=white">
     <img alt="License" src="https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge&color=purple">
 </p>
 
@@ -69,60 +69,77 @@ PHP-Generic-Database currently supports the following mechanisms/database:
   - **XML** ***(ext-libxml, ext-xmlreader, ext-simplexml)***
   - **JSON** ***(php native compilation)***
   - **YAML** ***(ext-yaml)***
+  - **NEON** ***[(nette/neon)](https://github.com/nette/neon)***
 
-## PHP Settings
+## Local Instalation with XAMPP
 
-- DLLs Compiled from each database engine for each PHP version.
-  - DLL package for [PHP 8.1](./assets/DLL/PHP8.1/PHP8.1.zip) version.
-  - DLL package for [PHP 8.2](./assets/DLL/PHP8.2/PHP8.2.zip) version.
-- PHP.ini configuration and extension instalation.
+1) Make sure Git is installed, otherwise install from the [official website](https://git-scm.com/downloads).
 
-## Extension Instalation
+```bash
+git clone https://github.com/nicksonjean/PHP-Generic-Database.git
+```
 
-1) Edit the php.ini file and remove the &#039;;&#039; for the database extension you want to install.
-2) The .dll is for Windows and the .so is for Linux/UNIX.
-3) Uncomment the lines of the extensions you want to enable.
+2. Install the [XAMPP](https://www.apachefriends.org/pt_br/index.html).
+
+### Only for Windows
+
+3. Navigate to the `assets/DLL` folder, select the PHP version you installed, and extract the DLL package containing the compiled libraries for each database engine.  
+  3.1. DLL package for [PHP 8.0](./assets/DLL/PHP8.0/PHP8.0.zip).  
+  3.2. DLL package for [PHP 8.1](./assets/DLL/PHP8.1/PHP8.1.zip).  
+  3.3. DLL package for [PHP 8.2](./assets/DLL/PHP8.2/PHP8.2.zip).  
+  3.4. DLL package for [PHP 8.3](./assets/DLL/PHP8.3/PHP8.3.zip).  
+4. Copy the files from the `DLL` folder to the `PHP/ext` directory.
+5. Open the `php.ini` file and uncomment the extensions you want to use, edit the `php.ini` file and remove the &#039;;&#039; for the database extension you want to install as shown in the example below:  
 
 - From
 
 ```ini
 ;extension=php_pdo_mysql.dll
-;extension=php_pdo_mysql.so
 ```
 
 - To
 
 ```ini
 extension=php_pdo_mysql.dll
+```
+
+### Only for Linux and MacOS
+
+3. Download the third party libraries like a Oracle and SQLSrv for each database engine and extract them to the `PHP/ext` directory.
+4. Compile the PHP source code and install the PHP extension you want to use.
+5. Open the `php.ini` file and uncomment the extensions you want to use, edit the `php.ini` file and remove the &#039;;&#039; for the database extension you want to install as shown in the example below:  
+
+- From
+
+```ini
+
+```
+
+- To
+
+```ini
 extension=php_pdo_mysql.so
 ```
 
-4) Save it, and restart the PHP or Apache Server.
-5) If the extension is installed successfully, you can find it on phpinfo() output.
+### for All Systems
 
-## Manual Installation
-
-1) Make sure Composer is installed, otherwise install from the [official website](https://getcomposer.org/download/).
-2) Make sure Git is installed, otherwise install from the [official website](https://git-scm.com/downloads).
-3) After Composer and Git are installed, clone this repository with the command line below:
-
-```bash
-git clone https://github.com/nicksonjean/PHP-Generic-Database.git
-```
-
-4) Then run the following command to install all packages and dependencies for this project:
+6. Save it, and restart the PHP or Apache Server.
+7. If the extension is installed successfully, you can find it on phpinfo() output.
+8) Make sure Composer is installed, otherwise install from the [official website](https://getcomposer.org/download/).
+9) After Composer and Git are installed, clone this repository with the command line below:
+10) Then run the following command to install all packages and dependencies for this project:
 
 ```bash
 composer install
 ```
 
-5) [Optional] If you need to reinstall, run the following command:
+11) [Optional] If you need to reinstall, run the following command:
 
 ```bash
 composer setup
 ```
 
-## Installation via Docker
+## Local Installation via Docker
 
 1) Make sure Docker Desktop is installed, otherwise install from the [official website](https://www.docker.com/products/docker-desktop/).
 2) Create an account to use Docker Desktop/Hub, and be able to clone containers hosted on the Docker network.
@@ -134,13 +151,13 @@ docker pull php-generic-database:8.3-full
 
 or
 
-for Windows:
+### Only for Windows
 
 ```bash
 .\setup.bat --build-arg PHP_VERSION=8.3 --build-arg PHP_PORT=8300 --run "docker compose up -d"
 ```
 
-for Linux or Mac:
+### Only for Linux and MacOS
 
 ```bash
 .\setup.sh --build-arg PHP_VERSION=8.3 --build-arg PHP_PORT=8300 --run "docker compose up -d"
@@ -165,6 +182,8 @@ composer update
 ```
 
 ## Documentation
+
+A complete documentation of the lib is available at [Complete Documentation](./build/docs/index.html).
 
 ### How to use
 
