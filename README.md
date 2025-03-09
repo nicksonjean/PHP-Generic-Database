@@ -37,7 +37,7 @@ PHP-Generic-Database currently supports the following mechanisms/database:
 
 ## Requirements
 
-- **PHP >= 8.1**
+- **PHP >= 8.0**
 - **Composer**
 - **Native Extensions**
   - **MySQL/MariaDB** ***(MySQLi)*** *[php_mysqli.dll/so]*
@@ -212,6 +212,168 @@ Below is a series of readmes containing examples of how to use the lib and a [to
     - SQLite with sqlite3: [SQLiteQueryBuilder.md](./readme/Engines/SQLiteQueryBuilder.md)
     - PDO: [PDOQueryBuilder.md](./readme/Engines/PDOQueryBuilder.md)
     - ODBC: [ODBCQueryBuilder.md](./readme/Engines/ODBCQueryBuilder.md)
+
+## Diagram
+
+The diagram clearly shows the organization of your project, which appears to be a database abstraction library with support for multiple engines (MySQL, PostgreSQL, SQLite, SQL Server, Firebird, OCI, and ODBC), as well as a well-defined structure of abstract classes and interfaces.
+
+```mermaid
+graph TD
+    Root["Root"]
+    
+    Root --> Connection["Connection.php"]
+    Root --> QueryBuilder["QueryBuilder.php"]
+    
+    %% Abstract folder
+    Root --> Abstract["Abstract/"]
+    Abstract --> AbstractArguments["AbstractArguments.php"]
+    Abstract --> AbstractAttributes["AbstractAttributes.php"]
+    Abstract --> AbstractFetch["AbstractFetch.php"]
+    Abstract --> AbstractOptions["AbstractOptions.php"]
+    Abstract --> AbstractStatements["AbstractStatements.php"]
+    
+    %% Core folder
+    Root --> Core["Core/"]
+    Core --> Build["Build.php"]
+    Core --> Column["Column.php"]
+    Core --> Condition["Condition.php"]
+    Core --> Entity["Entity.php"]
+    Core --> Grouping["Grouping.php"]
+    Core --> Having["Having.php"]
+    Core --> Insert["Insert.php"]
+    Core --> Join["Join.php"]
+    Core --> Junction["Junction.php"]
+    Core --> Limit["Limit.php"]
+    Core --> Query["Query.php"]
+    Core --> Select["Select.php"]
+    Core --> Sorting["Sorting.php"]
+    Core --> Table["Table.php"]
+    Core --> Types["Types.php"]
+    Core --> Where["Where.php"]
+    
+    Core --> Emulated["Core/Emulated/"]
+    Emulated --> EmulatedBuild["Build.php"]
+    Emulated --> EmulatedColumn["Column.php"]
+    Emulated --> EmulatedCondition["Condition.php"]
+    Emulated --> EmulatedEntity["Entity.php"]
+    Emulated --> EmulatedGrouping["Grouping.php"]
+    Emulated --> EmulatedHaving["Having.php"]
+    Emulated --> EmulatedInsert["Insert.php"]
+    Emulated --> EmulatedJoin["Join.php"]
+    Emulated --> EmulatedJunction["Junction.php"]
+    Emulated --> EmulatedLimit["Limit.php"]
+    Emulated --> EmulatedQuery["Query.php"]
+    Emulated --> EmulatedSelect["Select.php"]
+    Emulated --> EmulatedSorting["Sorting.php"]
+    Emulated --> EmulatedTable["Table.php"]
+    Emulated --> EmulatedTypes["Types.php"]
+    Emulated --> EmulatedWhere["Where.php"]
+    
+    Core --> Native["Core/Native/"]
+    Native --> NativeBuild["Build.php"]
+    Native --> NativeColumn["Column.php"]
+    Native --> NativeCondition["Condition.php"]
+    Native --> NativeEntity["Entity.php"]
+    Native --> NativeGrouping["Grouping.php"]
+    Native --> NativeHaving["Having.php"]
+    Native --> NativeInsert["Insert.php"]
+    Native --> NativeJoin["Join.php"]
+    Native --> NativeJunction["Junction.php"]
+    Native --> NativeLimit["Limit.php"]
+    Native --> NativeQuery["Query.php"]
+    Native --> NativeSelect["Select.php"]
+    Native --> NativeSorting["Sorting.php"]
+    Native --> NativeTable["Table.php"]
+    Native --> NativeTypes["Types.php"]
+    Native --> NativeWhere["Where.php"]
+    
+    %% Engine folder (simplified to main drivers)
+    Root --> Engine["Engine/"]
+    Engine --> EngineConnections["Connection Files (.php)"]
+    Engine --> EngineBuilders["QueryBuilder Files (.php)"]
+    
+    Engine --> MySQL["Engine/MySQLi/"]
+    MySQL --> MySQLConnection["Connection/"]
+    MySQL --> MySQLQueryBuilder["QueryBuilder/"]
+    
+    Engine --> PDO["Engine/PDO/"]
+    PDO --> PDOConnection["Connection/"]
+    PDO --> PDOQueryBuilder["QueryBuilder/"]
+    
+    Engine --> PostgreSQL["Engine/PgSQL/"]
+    PostgreSQL --> PostgreSQLConnection["Connection/"]
+    PostgreSQL --> PostgreSQLQueryBuilder["QueryBuilder/"]
+    
+    Engine --> SQLite["Engine/SQLite/"]
+    SQLite --> SQLiteConnection["Connection/"]
+    SQLite --> SQLiteQueryBuilder["QueryBuilder/"]
+    
+    Engine --> SQLServer["Engine/SQLSrv/"]
+    SQLServer --> SQLServerConnection["Connection/"]
+    SQLServer --> SQLServerQueryBuilder["QueryBuilder/"]
+    
+    Engine --> Firebird["Engine/Firebird/"]
+    Firebird --> FirebirdConnection["Connection/"]
+    Firebird --> FirebirdQueryBuilder["QueryBuilder/"]
+    
+    Engine --> OCI["Engine/OCI/"]
+    OCI --> OCIConnection["Connection/"]
+    OCI --> OCIQueryBuilder["QueryBuilder/"]
+    
+    Engine --> ODBC["Engine/ODBC/"]
+    ODBC --> ODBCConnection["Connection/"]
+    ODBC --> ODBCQueryBuilder["QueryBuilder/"]
+    
+    %% Generic folder
+    Root --> Generic["Generic/"]
+    Generic --> GenericConnection["Connection/"]
+    Generic --> GenericFetch["Fetch/"]
+    Generic --> GenericStatements["Statements/"]
+    
+    %% Helpers folder
+    Root --> Helpers["Helpers/"]
+    Helpers --> Compare["Compare.php"]
+    Helpers --> Errors["Errors.php"]
+    Helpers --> Exceptions["Exceptions.php"]
+    Helpers --> Generators["Generators.php"]
+    Helpers --> Hash["Hash.php"]
+    Helpers --> Path["Path.php"]
+    Helpers --> Reflections["Reflections.php"]
+    Helpers --> Schemas["Schemas.php"]
+    Helpers --> Validations["Validations.php"]
+    
+    Helpers --> Parsers["Parsers/"]
+    Helpers --> Types["Types/"]
+    
+    %% Interfaces folder
+    Root --> Interfaces["Interfaces/"]
+    Interfaces --> IConnection["IConnection.php"]
+    Interfaces --> IQueryBuilder["IQueryBuilder.php"]
+    Interfaces --> ConnectionInt["Connection/"]
+    Interfaces --> QueryBuilderInt["QueryBuilder/"]
+    Interfaces --> StrategyInt["Strategy/"]
+    
+    %% Modules folder
+    Root --> Modules["Modules/"]
+    Modules --> Chainable["Chainable.php"]
+    Modules --> Fluent["Fluent.php"]
+    Modules --> StaticArgs["StaticArgs.php"]
+    Modules --> StaticArray["StaticArray.php"]
+    
+    %% Shared folder
+    Root --> Shared["Shared/"]
+    Shared --> Caller["Caller.php"]
+    Shared --> Cleaner["Cleaner.php"]
+    Shared --> Enumerator["Enumerator.php"]
+    Shared --> Getter["Getter.php"]
+    Shared --> Objectable["Objectable.php"]
+    Shared --> Property["Property.php"]
+    Shared --> Registry["Registry.php"]
+    Shared --> Run["Run.php"]
+    Shared --> Setter["Setter.php"]
+    Shared --> Singleton["Singleton.php"]
+    Shared --> Transporter["Transporter.php"]
+```
 
 ## License
 
