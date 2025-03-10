@@ -169,7 +169,7 @@ or
 
 ## Documentation
 
-A complete documentation of the lib is available at [Complete Documentation](./docs/index.html).
+A complete documentation of the lib is available at [Complete Documentation](https://nicksonjean.github.io/PHP-Generic-Database/).
 
 ### How to use
 
