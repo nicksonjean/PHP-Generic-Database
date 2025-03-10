@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Engine\SQLite\QueryBuilder;
+namespace GenericDatabase\Generic\QueryBuilder;
 
 use GenericDatabase\Interfaces\IConnection;
 

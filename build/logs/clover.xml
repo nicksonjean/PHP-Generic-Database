@@ -949,7 +949,7 @@
       <line num="236" type="stmt" count="0"/>
       <metrics loc="239" ncloc="239" classes="1" methods="8" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="168" coveredstatements="0" elements="176" coveredelements="0"/>
     </file>
-    <file name="/var/www/html/src/Engine/Firebird/QueryBuilder/Internal.php">
+    <file name="/var/www/html/src/Engine/Firebird/QueryBuilder/Clause.php">
       <class name="GenericDatabase\Engine\Firebird\QueryBuilder\Internal" namespace="global">
         <metrics complexity="80" methods="11" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="151" coveredstatements="0" elements="162" coveredelements="0"/>
       </class>
@@ -2468,7 +2468,7 @@
       <line num="231" type="stmt" count="0"/>
       <metrics loc="234" ncloc="234" classes="1" methods="8" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="163" coveredstatements="0" elements="171" coveredelements="0"/>
     </file>
-    <file name="/var/www/html/src/Engine/MySQLi/QueryBuilder/Internal.php">
+    <file name="/var/www/html/src/Engine/MySQLi/QueryBuilder/Clause.php">
       <class name="GenericDatabase\Engine\MySQLi\QueryBuilder\Internal" namespace="global">
         <metrics complexity="80" methods="11" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="146" coveredstatements="0" elements="157" coveredelements="0"/>
       </class>
@@ -3841,7 +3841,7 @@
       <line num="231" type="stmt" count="0"/>
       <metrics loc="234" ncloc="234" classes="1" methods="8" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="163" coveredstatements="0" elements="171" coveredelements="0"/>
     </file>
-    <file name="/var/www/html/src/Engine/OCI/QueryBuilder/Internal.php">
+    <file name="/var/www/html/src/Engine/OCI/QueryBuilder/Clause.php">
       <class name="GenericDatabase\Engine\OCI\QueryBuilder\Internal" namespace="global">
         <metrics complexity="80" methods="11" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="151" coveredstatements="0" elements="162" coveredelements="0"/>
       </class>
@@ -5565,7 +5565,7 @@
       <line num="242" type="stmt" count="0"/>
       <metrics loc="245" ncloc="245" classes="1" methods="8" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="172" coveredstatements="0" elements="180" coveredelements="0"/>
     </file>
-    <file name="/var/www/html/src/Engine/ODBC/QueryBuilder/Internal.php">
+    <file name="/var/www/html/src/Engine/ODBC/QueryBuilder/Clause.php">
       <class name="GenericDatabase\Engine\ODBC\QueryBuilder\Internal" namespace="global">
         <metrics complexity="80" methods="11" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="155" coveredstatements="0" elements="166" coveredelements="0"/>
       </class>
@@ -7107,7 +7107,7 @@
       <line num="242" type="stmt" count="0"/>
       <metrics loc="245" ncloc="245" classes="1" methods="8" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="172" coveredstatements="0" elements="180" coveredelements="0"/>
     </file>
-    <file name="/var/www/html/src/Engine/PDO/QueryBuilder/Internal.php">
+    <file name="/var/www/html/src/Engine/PDO/QueryBuilder/Clause.php">
       <class name="GenericDatabase\Engine\PDO\QueryBuilder\Internal" namespace="global">
         <metrics complexity="80" methods="11" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="155" coveredstatements="0" elements="166" coveredelements="0"/>
       </class>
@@ -8503,7 +8503,7 @@
       <line num="231" type="stmt" count="0"/>
       <metrics loc="234" ncloc="234" classes="1" methods="8" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="163" coveredstatements="0" elements="171" coveredelements="0"/>
     </file>
-    <file name="/var/www/html/src/Engine/PgSQL/QueryBuilder/Internal.php">
+    <file name="/var/www/html/src/Engine/PgSQL/QueryBuilder/Clause.php">
       <class name="GenericDatabase\Engine\PgSQL\QueryBuilder\Internal" namespace="global">
         <metrics complexity="80" methods="11" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="152" coveredstatements="0" elements="163" coveredelements="0"/>
       </class>
@@ -9858,7 +9858,7 @@
       <line num="231" type="stmt" count="0"/>
       <metrics loc="234" ncloc="234" classes="1" methods="8" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="163" coveredstatements="0" elements="171" coveredelements="0"/>
     </file>
-    <file name="/var/www/html/src/Engine/SQLSrv/QueryBuilder/Internal.php">
+    <file name="/var/www/html/src/Engine/SQLSrv/QueryBuilder/Clause.php">
       <class name="GenericDatabase\Engine\SQLSrv\QueryBuilder\Internal" namespace="global">
         <metrics complexity="80" methods="11" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="151" coveredstatements="0" elements="162" coveredelements="0"/>
       </class>
@@ -11262,7 +11262,7 @@
       <line num="231" type="stmt" count="0"/>
       <metrics loc="234" ncloc="234" classes="1" methods="8" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="163" coveredstatements="0" elements="171" coveredelements="0"/>
     </file>
-    <file name="/var/www/html/src/Engine/SQLite/QueryBuilder/Internal.php">
+    <file name="/var/www/html/src/Engine/SQLite/QueryBuilder/Clause.php">
       <class name="GenericDatabase\Engine\SQLite\QueryBuilder\Internal" namespace="global">
         <metrics complexity="80" methods="11" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="151" coveredstatements="0" elements="162" coveredelements="0"/>
       </class>

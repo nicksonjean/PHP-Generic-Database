@@ -353,7 +353,7 @@ flowchart TB
         Builder.php
         Context.php
         Criteria.php
-        Internal.php
+        Clause.php
         Query.php
         Regex.php
     "]
@@ -379,7 +379,7 @@ flowchart TB
         Builder.php
         Context.php
         Criteria.php
-        Internal.php
+        Clause.php
         Query.php
         Regex.php
     "]
@@ -405,7 +405,7 @@ flowchart TB
         Builder.php
         Context.php
         Criteria.php
-        Internal.php
+        Clause.php
         Query.php
         Regex.php
     "]
@@ -431,7 +431,7 @@ flowchart TB
         Builder.php
         Context.php
         Criteria.php
-        Internal.php
+        Clause.php
         Query.php
         Regex.php
     "]
@@ -457,7 +457,7 @@ flowchart TB
         Builder.php
         Context.php
         Criteria.php
-        Internal.php
+        Clause.php
         Query.php
         Regex.php
     "]
@@ -483,7 +483,7 @@ flowchart TB
         Builder.php
         Context.php
         Criteria.php
-        Internal.php
+        Clause.php
         Query.php
         Regex.php
     "]
@@ -509,7 +509,7 @@ flowchart TB
         Builder.php
         Context.php
         Criteria.php
-        Internal.php
+        Clause.php
         Query.php
         Regex.php
     "]
@@ -535,7 +535,7 @@ flowchart TB
         Builder.php
         Context.php
         Criteria.php
-        Internal.php
+        Clause.php
         Query.php
         Regex.php
     "]

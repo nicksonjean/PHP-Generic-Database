@@ -16,8 +16,10 @@ use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Connection;
 use GenericDatabase\Engine\PDOConnection;
+use GenericDatabase\Generic\QueryBuilder\Query;
+use GenericDatabase\Interfaces\QueryBuilder\IBuilder;
 
-class Builder
+class Builder implements IBuilder
 {
     use Query;
 

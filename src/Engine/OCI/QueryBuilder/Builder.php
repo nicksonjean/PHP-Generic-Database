@@ -14,8 +14,10 @@ use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Generic\QueryBuilder\Query;
+use GenericDatabase\Interfaces\QueryBuilder\IBuilder;
 
-class Builder
+class Builder implements IBuilder
 {
     use Query;
 

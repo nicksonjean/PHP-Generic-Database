@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Engine\SQLSrv\QueryBuilder;
+namespace GenericDatabase\Engine\ODBC\QueryBuilder;
 
 use GenericDatabase\Interfaces\IQueryBuilder;
 use GenericDatabase\Core\Join;
@@ -12,15 +12,17 @@ use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
-use GenericDatabase\Engine\SQLSrvQueryBuilder;
+use GenericDatabase\Engine\ODBCQueryBuilder;
+use GenericDatabase\Generic\QueryBuilder\Query;
+use GenericDatabase\Interfaces\QueryBuilder\IClause;
 
-class Internal
+class Clause implements IClause
 {
     use Query;
 
     public static function select(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new ODBCQueryBuilder();
         $type = array_key_exists('type', $arguments) ? $arguments['type'] : Select::DEFAULT();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $self->query->select['type'] = $type;
@@ -46,7 +48,7 @@ class Internal
 
     public static function from(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new ODBCQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         foreach ($data as $table) {
             if (is_array($table)) {
@@ -70,7 +72,7 @@ class Internal
 
     public static function join(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new ODBCQueryBuilder();
         $type = array_key_exists('type', $arguments) ? $arguments['type'] : Join::DEFAULT();
         $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
@@ -103,7 +105,7 @@ class Internal
 
     public static function on(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new ODBCQueryBuilder();
         $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         foreach ($data as $table) {
@@ -127,9 +129,9 @@ class Internal
         return $self;
     }
 
-    private static function makeWhere(array $arguments): IQueryBuilder
+    public static function makeWhere(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new ODBCQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Where::class;
         $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
@@ -163,7 +165,7 @@ class Internal
 
     public static function makeHaving(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new ODBCQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Having::class;
         $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
@@ -197,7 +199,7 @@ class Internal
 
     public static function group(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new ODBCQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $getGroup = fn($value) => Criteria::getGroup($value);
         foreach ($data as $column) {
@@ -216,7 +218,7 @@ class Internal
 
     public static function order(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new ODBCQueryBuilder();
         $sorting = array_key_exists('sorting', $arguments) ? $arguments['sorting'] : Sorting::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $getOrder = fn($value) => Criteria::getOrder($value);
@@ -243,15 +245,19 @@ class Internal
 
     public static function limit(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new ODBCQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        $context = $arguments['context'] ?? null;
         if (Arrays::isDepthArray($data) === 1 && count($data) > 1) {
             $data = [implode(', ', $data)];
         }
         if (Arrays::isMultidimensional($data)) {
-            $self->query->limit = Criteria::getLimit(['data' => implode(', ', reset($data))]);
+            $self->query->limit = Criteria::getLimit([
+                'data' => implode(', ', reset($data)),
+                'context' => $context
+            ]);
         } else {
-            $self->query->limit = Criteria::getLimit(['data' => reset($data)]);
+            $self->query->limit = Criteria::getLimit(['data' => reset($data), 'context' => $context]);
         }
         return $self;
     }

@@ -17,10 +17,10 @@ use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Engine\SQLSrv\QueryBuilder\Context;
-use GenericDatabase\Engine\SQLSrv\QueryBuilder\Query;
+use GenericDatabase\Generic\QueryBuilder\Query;
+use GenericDatabase\Generic\QueryBuilder\Context;
 use GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder;
-use GenericDatabase\Engine\SQLSrv\QueryBuilder\Internal;
+use GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause;
 
 /**
  * The `SQLSrvQueryBuilder` class implements the `IQueryBuilder` interfaces to provide a flexible query building mechanism using various database engines.
@@ -113,7 +113,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function select(array|string ...$data): static
     {
         /** @var static */
-        return Internal::select(['type' => Select::DEFAULT(), 'data' => $data, 'self' => self::$self]);
+        return Clause::select(['type' => Select::DEFAULT(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -123,7 +123,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function distinct(array|string ...$data): static
     {
         /** @var static */
-        return Internal::select(['type' => Select::DISTINCT(), 'data' => $data, 'self' => self::$self]);
+        return Clause::select(['type' => Select::DISTINCT(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -133,7 +133,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function from(array|string ...$data): static
     {
         /** @var static */
-        return Internal::from(['data' => $data, 'self' => self::$self]);
+        return Clause::from(['data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -143,7 +143,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function join(array|string ...$data): static
     {
         /** @var static */
-        return Internal::join(
+        return Clause::join(
             ['type' => Join::DEFAULT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
@@ -155,7 +155,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function selfJoin(array|string ...$data): static
     {
         /** @var static */
-        return Internal::join(
+        return Clause::join(
             ['type' => Join::SELF(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
@@ -167,7 +167,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function leftJoin(array|string ...$data): static
     {
         /** @var static */
-        return Internal::join(
+        return Clause::join(
             ['type' => Join::LEFT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
@@ -179,7 +179,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function rightJoin(array|string ...$data): static
     {
         /** @var static */
-        return Internal::join(
+        return Clause::join(
             ['type' => Join::RIGHT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
@@ -191,7 +191,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function innerJoin(array|string ...$data): static
     {
         /** @var static */
-        return Internal::join(
+        return Clause::join(
             ['type' => Join::INNER(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
@@ -203,7 +203,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function outerJoin(array|string ...$data): static
     {
         /** @var static */
-        return Internal::join(
+        return Clause::join(
             ['type' => Join::OUTER(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
@@ -215,7 +215,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function crossJoin(array|string ...$data): static
     {
         /** @var static */
-        return Internal::join(
+        return Clause::join(
             ['type' => Join::CROSS(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
@@ -227,7 +227,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function on(array|string ...$data): static
     {
         /** @var static */
-        return Internal::on(['junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]);
+        return Clause::on(['junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -237,7 +237,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function andOn(array|string ...$data): static
     {
         /** @var static */
-        return Internal::on(['junction' => Junction::CONJUNCTION(), 'data' => $data, 'self' => self::$self]);
+        return Clause::on(['junction' => Junction::CONJUNCTION(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -247,7 +247,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function orOn(array|string ...$data): static
     {
         /** @var static */
-        return Internal::on(['junction' => Junction::DISJUNCTION(), 'data' => $data, 'self' => self::$self]);
+        return Clause::on(['junction' => Junction::DISJUNCTION(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -273,10 +273,10 @@ class SQLSrvQueryBuilder implements IQueryBuilder
                 ];
             }
             /** @var static */
-            return Internal::where($result);
+            return Clause::where($result);
         } else {
             /** @var static */
-            return Internal::where([
+            return Clause::where([
                 'enum' => Where::class,
                 'condition' => Condition::NONE(),
                 'data' => $data,
@@ -308,10 +308,10 @@ class SQLSrvQueryBuilder implements IQueryBuilder
                 ];
             }
             /** @var static */
-            return Internal::where($result);
+            return Clause::where($result);
         } else {
             /** @var static */
-            return Internal::where([
+            return Clause::where([
                 'enum' => Where::class,
                 'condition' => Condition::CONJUNCTION(),
                 'data' => $data,
@@ -343,10 +343,10 @@ class SQLSrvQueryBuilder implements IQueryBuilder
                 ];
             }
             /** @var static */
-            return Internal::where($result);
+            return Clause::where($result);
         } else {
             /** @var static */
-            return Internal::where([
+            return Clause::where([
                 'enum' => Where::class,
                 'condition' => Condition::DISJUNCTION(),
                 'data' => $data,
@@ -378,10 +378,10 @@ class SQLSrvQueryBuilder implements IQueryBuilder
                 ];
             }
             /** @var static */
-            return Internal::having($result);
+            return Clause::having($result);
         } else {
             /** @var static */
-            return Internal::having([
+            return Clause::having([
                 'enum' => Having::class,
                 'condition' => Condition::NONE(),
                 'data' => $data,
@@ -407,10 +407,10 @@ class SQLSrvQueryBuilder implements IQueryBuilder
                 ];
             }
             /** @var static */
-            return Internal::having($result);
+            return Clause::having($result);
         } else {
             /** @var static */
-            return Internal::having([
+            return Clause::having([
                 'enum' => Having::class,
                 'condition' => Condition::CONJUNCTION(),
                 'data' => $data,
@@ -436,10 +436,10 @@ class SQLSrvQueryBuilder implements IQueryBuilder
                 ];
             }
             /** @var static */
-            return Internal::having($result);
+            return Clause::having($result);
         } else {
             /** @var static */
-            return Internal::having([
+            return Clause::having([
                 'enum' => Having::class,
                 'condition' => Condition::DISJUNCTION(),
                 'data' => $data,
@@ -455,7 +455,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function group(array|string ...$data): static
     {
         /** @var static */
-        return Internal::group(['sorting' => Grouping::DEFAULT(), 'data' => $data, 'self' => self::$self]);
+        return Clause::group(['sorting' => Grouping::DEFAULT(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -465,7 +465,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function order(array|string ...$data): static
     {
         /** @var static */
-        return Internal::order(['sorting' => Sorting::NONE(), 'data' => $data, 'self' => self::$self]);
+        return Clause::order(['sorting' => Sorting::NONE(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -475,7 +475,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function orderAsc(array|string ...$data): static
     {
         /** @var static */
-        return Internal::order(['sorting' => Sorting::ASCENDING(), 'data' => $data, 'self' => self::$self]);
+        return Clause::order(['sorting' => Sorting::ASCENDING(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -485,7 +485,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function orderDesc(array|string ...$data): static
     {
         /** @var static */
-        return Internal::order(['sorting' => Sorting::DESCENDING(), 'data' => $data, 'self' => self::$self]);
+        return Clause::order(['sorting' => Sorting::DESCENDING(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -495,7 +495,7 @@ class SQLSrvQueryBuilder implements IQueryBuilder
     public static function limit(array|string ...$data): static
     {
         /** @var static */
-        return Internal::limit(['data' => $data, 'self' => self::$self]);
+        return Clause::limit(['data' => $data, 'self' => self::$self]);
     }
 
     /**

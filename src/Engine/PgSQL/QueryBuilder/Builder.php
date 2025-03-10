@@ -2,21 +2,22 @@
 
 namespace GenericDatabase\Engine\PgSQL\QueryBuilder;
 
-use GenericDatabase\Core\Join;
-use GenericDatabase\Core\Where;
 use GenericDatabase\Core\Column;
-use GenericDatabase\Core\Having;
 use GenericDatabase\Core\Select;
+use GenericDatabase\Core\Join;
+use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Grouping;
-use GenericDatabase\Core\Junction;
+use GenericDatabase\Core\Where;
+use GenericDatabase\Core\Having;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Engine\PgSQLQueryBuilder;
+use GenericDatabase\Generic\QueryBuilder\Query;
+use GenericDatabase\Interfaces\QueryBuilder\IBuilder;
 
-class Builder
+class Builder implements IBuilder
 {
     use Query;
 

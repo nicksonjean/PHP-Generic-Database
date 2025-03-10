@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Engine\OCI\QueryBuilder;
+namespace GenericDatabase\Engine\MySQLi\QueryBuilder;
 
 use GenericDatabase\Interfaces\IQueryBuilder;
 use GenericDatabase\Core\Join;
@@ -12,15 +12,17 @@ use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
-use GenericDatabase\Engine\OCIQueryBuilder;
+use GenericDatabase\Engine\MySQLiQueryBuilder;
+use GenericDatabase\Generic\QueryBuilder\Query;
+use GenericDatabase\Interfaces\QueryBuilder\IClause;
 
-class Internal
+class Clause implements IClause
 {
     use Query;
 
     public static function select(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new OCIQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new MySQLiQueryBuilder();
         $type = array_key_exists('type', $arguments) ? $arguments['type'] : Select::DEFAULT();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $self->query->select['type'] = $type;
@@ -46,7 +48,7 @@ class Internal
 
     public static function from(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new OCIQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new MySQLiQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         foreach ($data as $table) {
             if (is_array($table)) {
@@ -56,9 +58,7 @@ class Internal
             } elseif (is_string($table)) {
                 if (str_contains($table, ',')) {
                     foreach (explode(',', $table) as $tableName) {
-                        $self->query->from[] = Criteria::getFrom(
-                            ['type' => Table::METADATA(), 'data' => trim($tableName)]
-                        );
+                        $self->query->from[] = Criteria::getFrom(['type' => Table::METADATA(), 'data' => trim($tableName)]);
                     }
                 } else {
                     $self->query->from[] = Criteria::getFrom(['type' => Table::METADATA(), 'data' => $table]);
@@ -70,7 +70,7 @@ class Internal
 
     public static function join(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new OCIQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new MySQLiQueryBuilder();
         $type = array_key_exists('type', $arguments) ? $arguments['type'] : Join::DEFAULT();
         $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
@@ -81,14 +81,10 @@ class Internal
         } else {
             foreach ($data as $table) {
                 if (is_array($table)) {
-                    $self->query->join[] = Criteria::getJoin(
-                        ['type' => $type, 'junction' => $junction, 'data' => $table]
-                    );
+                    $self->query->join[] = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => $table]);
                 } elseif (is_string($table)) {
                     if (!str_contains($table, ',')) {
-                        $self->query->join[] = Criteria::getJoin(
-                            ['type' => $type, 'junction' => $junction, 'data' => $table]
-                        );
+                        $self->query->join[] = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => $table]);
                     } else {
                         $join = array_map(fn($tableName) => [trim($tableName)], explode(',', $table));
                         $parsedJoin = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => [$join]]);
@@ -103,7 +99,7 @@ class Internal
 
     public static function on(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new OCIQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new MySQLiQueryBuilder();
         $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         foreach ($data as $table) {
@@ -127,9 +123,9 @@ class Internal
         return $self;
     }
 
-    private static function makeWhere(array $arguments): IQueryBuilder
+    public static function makeWhere(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new OCIQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new MySQLiQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Where::class;
         $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
@@ -163,7 +159,7 @@ class Internal
 
     public static function makeHaving(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new OCIQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new MySQLiQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Having::class;
         $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
@@ -197,7 +193,7 @@ class Internal
 
     public static function group(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new OCIQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new MySQLiQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $getGroup = fn($value) => Criteria::getGroup($value);
         foreach ($data as $column) {
@@ -205,7 +201,8 @@ class Internal
                 array_map(fn($key) => $self->query->group[] = $getGroup(['data' => $key]), $column);
             } elseif (is_string($column)) {
                 if (str_contains($column, ',')) {
-                    array_map(fn($key) => $self->query->group[] = $getGroup(['data' => $key]), explode(',', $column));
+                    $columns = explode(',', $column);
+                    array_map(fn($key) => $self->query->group[] = $getGroup(['data' => $key]), $columns);
                 } else {
                     $self->query->group[] = $getGroup(['data' => $column]);
                 }
@@ -216,7 +213,7 @@ class Internal
 
     public static function order(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new OCIQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new MySQLiQueryBuilder();
         $sorting = array_key_exists('sorting', $arguments) ? $arguments['sorting'] : Sorting::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $getOrder = fn($value) => Criteria::getOrder($value);
@@ -243,7 +240,7 @@ class Internal
 
     public static function limit(array $arguments): IQueryBuilder
     {
-        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new OCIQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new MySQLiQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         if (Arrays::isDepthArray($data) === 1 && count($data) > 1) {
             $data = [implode(', ', $data)];

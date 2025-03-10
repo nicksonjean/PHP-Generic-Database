@@ -13,8 +13,10 @@ use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Engine\FirebirdQueryBuilder;
+use GenericDatabase\Generic\QueryBuilder\Query;
+use GenericDatabase\Interfaces\QueryBuilder\IClause;
 
-class Internal
+class Clause implements IClause
 {
     use Query;
 
@@ -31,9 +33,7 @@ class Internal
             } elseif (is_string($column)) {
                 if (str_contains($column, ',')) {
                     array_map(
-                        fn($key) => $self->query->select['columns'][] = $getSelect(
-                            ['data' => $key]
-                        ),
+                        fn($key) => $self->query->select['columns'][] = $getSelect(['data' => $key]),
                         explode(',', $column)
                     );
                 } else {
@@ -127,7 +127,7 @@ class Internal
         return $self;
     }
 
-    private static function makeWhere(array $arguments): IQueryBuilder
+    public static function makeWhere(array $arguments): IQueryBuilder
     {
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new FirebirdQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
