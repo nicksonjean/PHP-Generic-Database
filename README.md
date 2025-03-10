@@ -351,10 +351,8 @@ flowchart TB
     
     FirebirdSubdir --- FirebirdBuilder["QueryBuilder:
         Builder.php
-        Context.php
         Criteria.php
         Clause.php
-        Query.php
         Regex.php
     "]
     
@@ -377,10 +375,8 @@ flowchart TB
     
     MySQLiSubdir --- MySQLiBuilder["QueryBuilder:
         Builder.php
-        Context.php
         Criteria.php
         Clause.php
-        Query.php
         Regex.php
     "]
     
@@ -403,10 +399,8 @@ flowchart TB
     
     OCISubdir --- OCIBuilder["QueryBuilder:
         Builder.php
-        Context.php
         Criteria.php
         Clause.php
-        Query.php
         Regex.php
     "]
     
@@ -429,10 +423,8 @@ flowchart TB
     
     ODBCSubdir --- ODBCBuilder["QueryBuilder:
         Builder.php
-        Context.php
         Criteria.php
         Clause.php
-        Query.php
         Regex.php
     "]
     
@@ -455,10 +447,8 @@ flowchart TB
     
     PDOSubdir --- PDOBuilder["QueryBuilder:
         Builder.php
-        Context.php
         Criteria.php
         Clause.php
-        Query.php
         Regex.php
     "]
     
@@ -481,10 +471,8 @@ flowchart TB
     
     PgSQLSubdir --- PgSQLBuilder["QueryBuilder:
         Builder.php
-        Context.php
         Criteria.php
         Clause.php
-        Query.php
         Regex.php
     "]
     
@@ -507,10 +495,8 @@ flowchart TB
     
     SQLiteSubdir --- SQLiteBuilder["QueryBuilder:
         Builder.php
-        Context.php
         Criteria.php
         Clause.php
-        Query.php
         Regex.php
     "]
     
@@ -533,16 +519,15 @@ flowchart TB
     
     SQLSrvSubdir --- SQLSrvBuilder["QueryBuilder:
         Builder.php
-        Context.php
         Criteria.php
         Clause.php
-        Query.php
         Regex.php
     "]
     
     Generic --- GenericDir["
         Connection/
         Fetch/
+        QueryBuilder/
         Statements/
     "]
     
@@ -553,6 +538,11 @@ flowchart TB
     
     GenericDir --- GenericFetch["Fetch:
         FetchCache.php
+    "]
+
+    GenericDir --- GenericQueryBuilder["QueryBuilder:
+        Context.php
+        Query.php
     "]
     
     GenericDir --- GenericStatements["Statements:
@@ -633,6 +623,13 @@ flowchart TB
         IStatements.php
         IStatementsAbstract.php
         ITransactions.php
+    "]
+
+    QueryBuilderInterfaces --- QueryBuilderInterfacesFiles["
+        IBuilder.php
+        IClause.php
+        ICriteria.php
+        IRegex.php
     "]
     
     StrategyInterfaces --- StrategyInterfaceFiles["
