@@ -508,3 +508,4 @@ composer.lock
 .reminder.md
 *.FDB
 *.fdb
+.qodo

@@ -55,7 +55,7 @@
     }
   },
   "require-dev": {
-    "php": "^8.0",
+    "php": "^8.0.2",
     "code-lts/doctum": "^5.5",
     "composer/semver": "^3.3",
     "pcov/clobber": "^2.0",
@@ -65,14 +65,15 @@
     "phpstan/phpstan": "^1.10.25",
     "phpunit/php-code-coverage": "9.2.x-dev",
     "phpunit/phpunit": "9.6.x-dev",
-    "squizlabs/php_codesniffer": "4.0.x-dev"
+    "squizlabs/php_codesniffer": "4.0.x-dev" ,
+    "tasuku43/mermaid-class-diagram": "^0.2.1"
   },
   "config": {
     "process-timeout": 0,
     "sort-packages": true,
     "optimize-autoloader": true,
     "platform": {
-      "php": "8.0"
+      "php": "8.0.2"
     },
     "allow-plugins": {
       "phpro/grumphp": true,
@@ -116,6 +117,8 @@
       "php vendor/bin/phpcs --config-set colors 1",
       "php vendor/bin/phpcs --config-set report_width auto"
     ],
+    "mermaid:class-diagram": "php ./vendor/bin/mermaid-class-diagram generate --path src > class-diagram.mmd 2>&1",
+    "mermaid:flowchart": "php ./scripts/mermaid-flowchart-generate.php",
     "grumphp": "php ./vendor/bin/grumphp -n run",
     "phpstan": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
     "phpmd": "php vendor/bin/phpmd src/,samples/ ansi phpmd.xml",
