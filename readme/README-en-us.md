@@ -114,7 +114,7 @@ extension=php_pdo_mysql.dll
 - From
 
 ```ini
-
+;extension=php_pdo_mysql.so
 ```
 
 - To
@@ -222,10 +222,11 @@ Below is a series of readmes containing examples of how to use the lib and a [to
 
 The vertical flowchart/diagram also (from top to bottom) clearly shows the organization of your directory structure, as it allows a more natural visualization of the file and folder hierarchy, for the database abstraction library with support for multiple engines (MySQL, PostgreSQL, SQLite, SQL Server, Firebird, OCI and ODBC), as well as a well-defined structure of abstract classes, interfaces and helpers.
 
+To view the flowchart, you can also view it in a dynamic editor, access: [Mermaid-Chart.mmd](https://www.mermaidchart.com/play#pako:eNrtXFFv2zYQ_itB3lu_662xncVFnbhxsLVYh4CR2ViFLBkU1TYY9t93FCWZPJIymVBbDLQPNXU83nd3JD9Rjs5_n6flhp4n51_z8ke6JYyf3V18Kc7g321Z8j-_nK-uVme_0YKyLD2bEU4eSEW_nP910Dl78-bN2bQsCpryrCxgyOHi7X67N5U_1pQ9XdRZvqEM1NVL-4B3DxVnJBXudM2JzQdGG3RGLb3z4jErRL9sWDTaKEGlbVl0rmi-p6wCnbZl0VkUnLKvJKVC7XBh0VyWmzpv1NqWRWcNk0I3oCIbUkPqdLnQcnSZSYtSRVV7xx7rHS141STZ7OacZQ81p47-S8rTrb3rZi8m2zFuzQmnCLcPU0xWP3mm682q0M1Oy7zeFVhWbLJ-vfXiecEz_qTLfmNlvc-KR116Rb4bskVRUcZ12fsyQxjv6yI1kT9kuwwNbVa5LlrTHLYJkpWMG67ckYecItHTHk_UH1vK6LEczzKmZXi-q3OYH1hXveia8Ow7nShWDnZgeG-qGyr2VNtMfk1dtKmzJ11ODqRcNn4lPO5ekTcH5YZhctJlxuhDxjboLmf0G7e1XmP5tP74IXONl73u0TfThWsodA2Mm11MnQOhzz1yNbtxDYSugXGPEIlzpOh0j4XONfvuGix7B0dnnA6Mhl77aPdKwMzZzfMET91Em5CJnuWJlrsJyscEhzjBXpu03HunrVrpGzjcNRONAtq8TNCea9PhAulsWZDuHSfAxEwYOiZ0pxLFl8NRRBHO1tfKVXMaUXMrjyCK5JbugR_UBPYHEUV4x0hRkVQd7AxbiXE4A_d9UOLE2rUTS9BXpNjkxuqFcxOnj08R_ekTKhzqLxJbyg2XIuDD3AEw_J9o8zkGVLMwxLoXnwlaMP9RutvFCF60rcRYqGOELlc8oMpGgvfCGJiHTSUeUfqLxLbtxsBX9y94oF4m9l3u74UNeuDZFZ_F8Dqb5qSu0NFkyoDTWUZ06S19pD8HHNTJXt51xENk04hB9NKSgeFB8o3iyTG8Ed5Q6COze6AvUZk9DPvZrB4GE5_Rw_CjsHkY5MuZPAwvLouHYY_B4C7-eoXsDY8IYmVNFzF4G8zopj0YG7ROjq_1yJwhj8zU3l5E5Whf1Gezsy9AfF72RY7CyL5gL-diX6S4LOyLOgb_mjz0Gpl3djEVSwg-onAv2EHWfdgX1E6PfvXY3FGPTcD-fsSlYG9cBwm__VaVRSgte4OOQMze2HGo2RsuAjl7Y0WmZ2_cUQjaQlavkKJXsxvxCsLsJgZBgxndtAc9fwK1k6NnPTRnzCOTs7cXUanZF_XZp2NfgPgk7IschYJ9wV5OwL5IcenXF3UM8jWJ6DVSr_h7pCBf8RmFfoUhDOBBwY3e6XEwim4g8LF5OMSTuFwcgPx8Pg4AGYGTA9Dj8HIAYARuDkCLzM8ByKNwtJWtXiFPy_dERMqbRgymlpYMDA-uloonR9ZGfEOxj0zXgb5EJeww7GdTdhhMfNIOw49C22GQLyfuMLy41B2GPQZ5uwjsddI3GJH0DY1I9A2WDAw_-gbFU6RvPb6h2Men7xBfYtN3APZL6DsAZhT6DsCPRd8BkFHoOwAvOn0HYI9E31YC-9_ouymGaGvglEox_Ea4lbExEVoY3Ep-SlYOcCq6x7t4lG_LTYULKbgomqis-bcjDW7hKUm3NMCY3yRCPJz-HC4LOQp1fF9AhsiGcGLBsXfdlj8qs6dfJG1RoFoqaBaQTMvdnjC0GOeMlQxN1fxnSm2VdU14hBv6V6RCBXorwrd4eX_N5ULB6wKmcUeQ8HeSZxCqrj0ULd4SK8KqpkpSL8Yx1_hhvGquHS6-hpQtZe4W1-i9pffrm2tdcj3HEuOrxLtPd7rg0xJpfH6HJYdCDTOA1k9LEPfy-1T921Thz-FvwUfz0SRP0Kz4TPQlVdbFRk30OiU50VK_3tM0I7k7-41ZA---t94QTdvWTkyMPNkJZdhw66LIimxptyzmpKkjVtswhdm2qR5xgAZ4tsMFYbe0KmuWYnGvPZyzHtPtzX1vSpy6urbq2PIzei3garlGkuUM63yeLbFkOcNLSpbodYXIqEjZJChnfdniSM2UE8PrTum8M7qOg5p9hHj87rhw1EMf5F0Fs6u_8wz3OwqplQ6HZfCz4sT0SLwxokssxdhS5rDc9Dn8tVZvd1KHPXmQRUJbpTfqcJhTz4fWHT801X4nioX1XLiwHQwX9pPhwv1kP-Rel_XmDCKbiXWvOaZHjcdU6fde-wsC6u8KWI4eW5IVZoHsZV7D5OCnMLjvp7DWK7scKN_ihfyRAuWHCyw-kDw3j-eUFFg4L2CbNeccfPzh3ChuffgGSTQjW7ESqBgXNsNEZrAOsbQuzKOy8XAKN6WccsyMzQIWW8LgxfN__gW3qT2R) or  [Mermaid-Live-Editor.mmd](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNrtXG1T2zgQ_iuMPwOBUlrwt5JASacBSpi79o4bRjgiccexM7Lcknb6329lOY71ZiSQ72Cm_dDIq9U-uyvp8TpY-RlE2QQHYXCXZN-jGSJ04-roOt2Af5dZRv--Di5OLzbe4xSTONoYIIpuUY6vg3_WOhtbW1sb_SxNcUTjLIUh64vtxWyhKn8qMFkeFXEywQTUm5f6Ae9uc0pQxNxZNXs6Hwgu0QnW9B6n0zhl_byh0aiiBJWqpdE5xckCkxx0qpZGZ5hSTO5QhJna-kKjOcomRVKqVS2NzhgmBU9AhTe4BtdZ5ULI0UnMLXKVpto7Mi3mOKV5mWS1m1IS3xYUG_pPMI1m-q7zBZtsw7gxRRRLuHWYbLLqyVNdL1eFaLafJcU8lWXpJK7XWy0-TmlMl6LsPcmKRZxORekp-qbIhmmOCRVlH7JYwvhQpJGK_DGex9LQcpWLojFOYJtIsoxQxZUrdJtgSbRcyBP15wwT_FCOBzERMnw8LxKYH1hXtegM0fgb7jWsrO3A8NrUaijbU1Uz_D113qZOn3Q-OZBy3vidcL97hd8cGjcMlZNOYoJvYzKR7nJKv3JbqzVGy_Gnj7FpPO81jz7vD01Doatl3OCobxwIfeaRF4Nz00Doahk3hUiMI1mneSx0jsk302De2zo6prhlNPTqR5tXgsycq3nuyVPXEyakJ2a5J-SuJ-WjJ4fYk71Wabn2Tli13DdweNUMBQqo8tKT9lyVDhPIypYG6cZQAYZqwqQyYVWVNHxZlyIN4WB81rgqq5FmbnkJ0pBc4gXwQzOBdSHSEF4RlOYoag42ht2IsT0DN3VQrGJdtUNN0KconSTK6oW6ieLp0qM_dUKZQ_VFqEu54pIHfJg7AIb_Q2E-u4AqFwZb9-wzlBbMf5TuajGCF1UrVBZqF6HzFQ-ovBHKe6ELzPWmYo8o9UWo23Zd4Df3L3jQvAz1u9zeCx10y7OrXIvJ66yfoCKXSpM-AU4nMRKll3iK71scFMme33XYQ2TZ8EH03JKCYUHypeKLY3glvLbQO2Z3R1-8Mrsb9qNZ3Q3GP6O74XthczfIpzO5G55fFnfD7oLBTfz1DNkbHhHYyuoPffA2mBFNWzA2aL04vhYjM4bcMVNbe-GVo21RH83OtgD-edkW2Qsj24I9nYttkfyysC1qF_yr8tBzZN7BUZ8tIfjwwr1gR7Juw76g9vLoV4zNHHXXBGzvh18KtsY1kPD21zxLXWnZGrQDYrbG9kPN1nAeyNkayzM9W-N2QtAasnqGFH0xOGevIAzOfRA0mBFNW9DzZ1B7cfQshmaMuWNytvbCKzXboj66OrYF8E_CtsheKNgW7OkEbIvkl35tUbsgX5WIniP1sr9HMvJln17olxmSASwouNR7eRwsRdcSeNc87OKJXy52QH48HzuAdMDJDuh-eNkB0AM3O6B55mcH5E44WstWz5Cn-XsiLOVlwwdTc0sKhgVXc8UXR9ZKfG2xd0zXjr54JWw37EdTthuMf9J2w_dC226QTyduNzy_1O2G3QV5mwjsedI3GOH0DQ1P9A2WFAw7-gbFl0jfYnxtsXdP3y6--KZvB-yn0LcDTCf07YDvi74dIL3QtwOed_p2wO6IvrUE9r_Rd3kYojoD1zgpJr8RrmVsmQg1DK4lv0ZW1nBNdIt38TCdZZNcPkhB2aGJXJt_PVLrFu6jaIYdjNlNIsRD8X37sZAHoR7eF5AhNEEUaXD0XZfZ91ztqRdJdSiweVRQPUDSz-YLRKTFeExIRqSpOr6PsO5kXRkeoor-KcqlA3oXiM7k5X2X8IUirwuYxjmShH-gJIZQRe22aOUtcYFIXp6SFA_jqGt8Pb5prhrOvobkrcbcDc-k95Y-jM_PRMnZsSxRvkq8-nwlCj6PJI0v72TJ-qCGGkDlpyaIG_59qvhtKvNn_bfgB_NRJo_RLPsMxSWVFemkmehxhBIkpH68wFGMEnP2S7MK3k1tvSSaqi1UTAQt9YTSbrhykWWFt4RbFjHS1ANWqzCZ2arZLHGABmg8lw-EXeI8K0gki2vt9pzVmGZvbmpTrOpatZuOjb5IrwWcjsaSZDSQdb4MRrJkNJCXFD-itzqILB1SVgnKeL5s-MCZKSOG1Z3SeGc0lYOCfQnx4bvj0HAeei1fnWA29a88k_sNB6kbHQbL4GdOkeoRe2NElGgOY3OZwXLZZ_BXe3p7JTXY44WsJNSd9JY6DOaa9aF2x7dNtV1FMdTWhUNdYTjUV4ZD85N9m3urrJc1CG-G2r1mmJ5mPKpKvfeqXxBo_q6ApvSYoThVD8ieJAVMjvwUBvf9CNZ6rpcD5Wu84D9S0PjhAo0PKEnU8hyjVBYep7DNyjpHLn8oVQ633n6FJKqRXZAMqFg-2AwTGcM6lKVFqpbKysMp3JQSTGVmLBcw2xIKLwabAUQxR_EkCIOfrOM6oFBq4esghOZdRnBOWX5-gSYqaDZeplEQUlLgzYBkxXQWhHdw_4CrYgG1GB7EaErQfKWyQOlfWda8DMKfwX0Qbu293d3ee_V27_Xezu7e64O9w81gGYR7b3a2d1-9OdzfP9g_ONzfff1rM_hRGtjd3j3c2YGuw4P93cODw7f7mwGexJD_Ef-NkPKnQn79C_Ade3Q)
+
 ```mermaid
 flowchart TB
     Root["PHP Generic Database"]
-    
     Root --- Connection["Connection.php"]
     Root --- QueryBuilder["QueryBuilder.php"]
     Root --- Abstract["Abstract/"]
@@ -236,7 +237,7 @@ flowchart TB
     Root --- Interfaces["Interfaces/"]
     Root --- Modules["Modules/"]
     Root --- Shared["Shared/"]
-    
+
     Abstract --- AbstractFiles["
         AbstractArguments.php
         AbstractAttributes.php
@@ -244,7 +245,6 @@ flowchart TB
         AbstractOptions.php
         AbstractStatements.php
     "]
-    
     Core --- CoreFiles["
         Build.php
         Column.php
@@ -263,10 +263,12 @@ flowchart TB
         Types.php
         Where.php
     "]
-    Core --- Emulated["Emulated/"]
-    Core --- Native["Native/"]
-    
-    Emulated --- EmulatedFiles["
+    Core --- CoreDir["
+        Emulated/
+        Native/
+    "]
+
+    CoreDir --- CoreEmulated["Emulated:
         Build.php
         Column.php
         Condition.php
@@ -284,8 +286,8 @@ flowchart TB
         Types.php
         Where.php
     "]
-    
-    Native --- NativeFiles["
+
+    CoreDir --- CoreNative["Native:
         Build.php
         Column.php
         Condition.php
@@ -303,7 +305,6 @@ flowchart TB
         Types.php
         Where.php
     "]
-    
     Engine --- EngineFiles["
         FirebirdConnection.php
         FirebirdQueryBuilder.php
@@ -317,27 +318,28 @@ flowchart TB
         PDOQueryBuilder.php
         PgSQLConnection.php
         PgSQLQueryBuilder.php
-        SQLiteConnection.php
-        SQLiteQueryBuilder.php
         SQLSrvConnection.php
         SQLSrvQueryBuilder.php
+        SQLiteConnection.php
+        SQLiteQueryBuilder.php
     "]
-    
-    Engine --- FirebirdDir["Firebird/"]
-    Engine --- MySQLiDir["MySQLi/"]
-    Engine --- OCIDir["OCI/"]
-    Engine --- ODBCDir["ODBC/"]
-    Engine --- PDODir["PDO/"]
-    Engine --- PgSQLDir["PgSQL/"]
-    Engine --- SQLiteDir["SQLite/"]
-    Engine --- SQLSrvDir["SQLSrv/"]
-    
-    FirebirdDir --- FirebirdSubdir["
+    Engine --- EngineDir["
+        Firebird/
+        MySQLi/
+        OCI/
+        ODBC/
+        PDO/
+        PgSQL/
+        SQLSrv/
+        SQLite/
+    "]
+
+    EngineDir --- EngineFirebird["Firebird:
         Connection/
         QueryBuilder/
     "]
-    
-    FirebirdSubdir --- FirebirdConnection["Connection:
+
+    EngineFirebird --- EngineFirebird_Connection["Connection:
         Firebird.php
         Arguments/
         Attributes/
@@ -348,22 +350,54 @@ flowchart TB
         Statements/
         Transactions/
     "]
-    
-    FirebirdSubdir --- FirebirdBuilder["QueryBuilder:
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineFirebird --- EngineFirebird_QueryBuilder["QueryBuilder:
         Builder.php
-        Context.php
-        Criteria.php
         Clause.php
-        Query.php
+        Criteria.php
         Regex.php
     "]
-    
-    MySQLiDir --- MySQLiSubdir["
+
+    EngineDir --- EngineMySQLi["MySQLi:
         Connection/
         QueryBuilder/
     "]
-    
-    MySQLiSubdir --- MySQLiConnection["Connection:
+
+    EngineMySQLi --- EngineMySQLi_Connection["Connection:
         MySQL.php
         Arguments/
         Attributes/
@@ -374,22 +408,54 @@ flowchart TB
         Statements/
         Transactions/
     "]
-    
-    MySQLiSubdir --- MySQLiBuilder["QueryBuilder:
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineMySQLi --- EngineMySQLi_QueryBuilder["QueryBuilder:
         Builder.php
-        Context.php
-        Criteria.php
         Clause.php
-        Query.php
+        Criteria.php
         Regex.php
     "]
-    
-    OCIDir --- OCISubdir["
+
+    EngineDir --- EngineOCI["OCI:
         Connection/
         QueryBuilder/
     "]
 
-    OCISubdir --- OCIConnection["Connection:
+    EngineOCI --- EngineOCI_Connection["Connection:
         OCI.php
         Arguments/
         Attributes/
@@ -400,22 +466,54 @@ flowchart TB
         Statements/
         Transactions/
     "]
-    
-    OCISubdir --- OCIBuilder["QueryBuilder:
+
+    EngineOCI_Connection --- EngineOCI_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineOCI --- EngineOCI_QueryBuilder["QueryBuilder:
         Builder.php
-        Context.php
-        Criteria.php
         Clause.php
-        Query.php
+        Criteria.php
         Regex.php
     "]
-    
-    ODBCDir --- ODBCSubdir["
+
+    EngineDir --- EngineODBC["ODBC:
         Connection/
         QueryBuilder/
     "]
 
-    ODBCSubdir --- ODBCConnection["Connection:
+    EngineODBC --- EngineODBC_Connection["Connection:
         ODBC.php
         Arguments/
         Attributes/
@@ -426,22 +524,55 @@ flowchart TB
         Statements/
         Transactions/
     "]
-    
-    ODBCSubdir --- ODBCBuilder["QueryBuilder:
+
+    EngineODBC_Connection --- EngineODBC_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_DSN["DSN:
+        DSN.json
+        DSNHandler.php
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineODBC --- EngineODBC_QueryBuilder["QueryBuilder:
         Builder.php
-        Context.php
-        Criteria.php
         Clause.php
-        Query.php
+        Criteria.php
         Regex.php
     "]
-    
-    PDODir --- PDOSubdir["
+
+    EngineDir --- EnginePDO["PDO:
         Connection/
         QueryBuilder/
     "]
-    
-    PDOSubdir --- PDOConnection["Connection:
+
+    EnginePDO --- EnginePDO_Connection["Connection:
         XPDO.php
         Arguments/
         Attributes/
@@ -452,22 +583,54 @@ flowchart TB
         Statements/
         Transactions/
     "]
-    
-    PDOSubdir --- PDOBuilder["QueryBuilder:
+
+    EnginePDO_Connection --- EnginePDO_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EnginePDO --- EnginePDO_QueryBuilder["QueryBuilder:
         Builder.php
-        Context.php
-        Criteria.php
         Clause.php
-        Query.php
+        Criteria.php
         Regex.php
     "]
-    
-    PgSQLDir --- PgSQLSubdir["
+
+    EngineDir --- EnginePgSQL["PgSQL:
         Connection/
         QueryBuilder/
     "]
 
-    PgSQLSubdir --- PgSQLConnection["Connection:
+    EnginePgSQL --- EnginePgSQL_Connection["Connection:
         PgSQL.php
         Arguments/
         Attributes/
@@ -478,48 +641,54 @@ flowchart TB
         Statements/
         Transactions/
     "]
-    
-    PgSQLSubdir --- PgSQLBuilder["QueryBuilder:
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EnginePgSQL --- EnginePgSQL_QueryBuilder["QueryBuilder:
         Builder.php
-        Context.php
-        Criteria.php
         Clause.php
-        Query.php
+        Criteria.php
         Regex.php
     "]
-    
-    SQLiteDir --- SQLiteSubdir["
+
+    EngineDir --- EngineSQLSrv["SQLSrv:
         Connection/
         QueryBuilder/
     "]
 
-    SQLiteSubdir --- SQLiteConnection["Connection:
-        SQLite.php
-        Arguments/
-        Attributes/
-        DSN/
-        Fetch/
-        Options/
-        Report/
-        Statements/
-        Transactions/
-    "]
-    
-    SQLiteSubdir --- SQLiteBuilder["QueryBuilder:
-        Builder.php
-        Context.php
-        Criteria.php
-        Clause.php
-        Query.php
-        Regex.php
-    "]
-    
-    SQLSrvDir --- SQLSrvSubdir["
-        Connection/
-        QueryBuilder/
-    "]
-    
-    SQLSrvSubdir --- SQLSrvConnection["Connection:
+    EngineSQLSrv --- EngineSQLSrv_Connection["Connection:
         SQLSrv.php
         Arguments/
         Attributes/
@@ -530,37 +699,131 @@ flowchart TB
         Statements/
         Transactions/
     "]
-    
-    SQLSrvSubdir --- SQLSrvBuilder["QueryBuilder:
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineSQLSrv --- EngineSQLSrv_QueryBuilder["QueryBuilder:
         Builder.php
-        Context.php
-        Criteria.php
         Clause.php
-        Query.php
+        Criteria.php
         Regex.php
     "]
-    
+
+    EngineDir --- EngineSQLite["SQLite:
+        Connection/
+        QueryBuilder/
+    "]
+
+    EngineSQLite --- EngineSQLite_Connection["Connection:
+        SQLite.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineSQLite --- EngineSQLite_QueryBuilder["QueryBuilder:
+        Builder.php
+        Clause.php
+        Criteria.php
+        Regex.php
+    "]
     Generic --- GenericDir["
         Connection/
         Fetch/
+        QueryBuilder/
         Statements/
     "]
-    
+
     GenericDir --- GenericConnection["Connection:
         Methods.php
         Settings.php
     "]
-    
+
     GenericDir --- GenericFetch["Fetch:
         FetchCache.php
     "]
-    
+
+    GenericDir --- GenericQueryBuilder["QueryBuilder:
+        Context.php
+        Query.php
+    "]
+
     GenericDir --- GenericStatements["Statements:
         Metadata.php
         QueryMetadata.php
         RowsMetadata.php
     "]
-    
     Helpers --- HelpersFiles["
         Compare.php
         Errors.php
@@ -572,11 +835,12 @@ flowchart TB
         Schemas.php
         Validations.php
     "]
-    
-    Helpers --- ParsersDir["Parsers/"]
-    Helpers --- TypesDir["Types/"]
-    
-    ParsersDir --- ParsersFiles["
+    Helpers --- HelpersDir["
+        Parsers/
+        Types/
+    "]
+
+    HelpersDir --- HelpersParsers["Parsers:
         INI.php
         JSON.php
         NEON.php
@@ -586,37 +850,49 @@ flowchart TB
         YAML.php
         SQL/
     "]
-    
-    TypesDir --- TypesSubdirs["
+
+    HelpersParsers --- HelpersParsers_SQL["SQL:
+        SQL.json
+    "]
+
+    HelpersDir --- HelpersTypes["Types:
         Compounds/
         Scalars/
         Specials/
     "]
-    
-    TypesSubdirs --- CompoundsDir["Compounds:
+
+    HelpersTypes --- HelpersTypes_Compounds["Compounds:
         Arrays.php
     "]
-    
-    TypesSubdirs --- ScalarsDir["Scalars:
+
+    HelpersTypes --- HelpersTypes_Scalars["Scalars:
         Strings.php
     "]
-    
-    TypesSubdirs --- SpecialsDir["Specials:
+
+    HelpersTypes --- HelpersTypes_Specials["Specials:
         Datetimes.php
         Resources.php
         Datetimes/
     "]
-    
+
+    HelpersTypes_Specials --- HelpersTypes_Specials_Datetimes["Datetimes:
+        DMY.json
+        HMS.json
+        MDY.json
+        YDM.json
+        YMD.json
+    "]
     Interfaces --- InterfacesFiles["
         IConnection.php
         IQueryBuilder.php
     "]
-    
-    Interfaces --- ConnectionInterfaces["Connection/"]
-    Interfaces --- QueryBuilderInterfaces["QueryBuilder/"]
-    Interfaces --- StrategyInterfaces["Strategy/"]
-    
-    ConnectionInterfaces --- ConnInterfaceFiles["
+    Interfaces --- InterfacesDir["
+        Connection/
+        QueryBuilder/
+        Strategy/
+    "]
+
+    InterfacesDir --- InterfacesConnection["Connection:
         IArguments.php
         IArgumentsAbstract.php
         IArgumentsStrategy.php
@@ -634,19 +910,24 @@ flowchart TB
         IStatementsAbstract.php
         ITransactions.php
     "]
-    
-    StrategyInterfaces --- StrategyInterfaceFiles["
+
+    InterfacesDir --- InterfacesQueryBuilder["QueryBuilder:
+        IBuilder.php
+        IClause.php
+        ICriteria.php
+        IRegex.php
+    "]
+
+    InterfacesDir --- InterfacesStrategy["Strategy:
         IConnectionStrategy.php
         IQueryBuilderStrategy.php
     "]
-    
     Modules --- ModulesFiles["
         Chainable.php
         Fluent.php
         StaticArgs.php
         StaticArray.php
     "]
-    
     Shared --- SharedFiles["
         Caller.php
         Cleaner.php
