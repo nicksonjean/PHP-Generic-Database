@@ -99,12 +99,14 @@
 
             <div class="description">
             <p><p>The QueryObject class represents a query object used for building and managing database queries. It has an internal storage array ($property)
-to store query object data and a list of valid properties ($validProperties) that can be used within the class.</p></p>            <p><p>Methods:
-<strong>construct(): Initializes a new instance of the QueryObject class. (No action is taken in this implementation.)
-</strong>get($name): Returns a reference to the property value if it is a valid property, initializes it as an empty array if it doesn't exist, or returns null if it's not a valid property.
-<strong>set($name, $value): Sets the value of a valid property, removes the property from storage if the value is empty, or does nothing if the property is not valid.
-</strong>isset($name): Returns true if the property exists in the storage array, false otherwise.
-__debugInfo(): Returns the internal storage array for debugging purposes.</p>
+to store query object data and a list of valid properties ($validProperties) that can be used within the class.</p></p>            <p><p>Methods:</p>
+<ul>
+<li>`__construct(): Initializes a new instance of the QueryObject class. (No action is taken in this implementation.)</li>
+<li><code>__get($name): mixed:</code> Returns a reference to the property value if it is a valid property, initializes it as an empty array if it doesn't exist, or returns null if it's not a valid property.</li>
+<li><code>__set($name, $value): void:</code> Sets the value of a valid property, removes the property from storage if the value is empty, or does nothing if the property is not valid.</li>
+<li><code>__isset($name): bool:</code> Returns true if the property exists in the storage array, false otherwise.</li>
+<li><code>__debugInfo(): array:</code> Returns the internal storage array for debugging purposes.</li>
+</ul>
 <p>Fields:</p>
 <ul>
 <li><code>$property</code>: Stores properties for dynamic property access.</li>
