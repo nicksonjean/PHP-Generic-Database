@@ -3,13 +3,13 @@
 namespace GenericDatabase\Shared;
 
 /**
- * This trait provides handles the serialization process by preparing the object for serialization and stores 
+ * This trait provides handles the serialization process by preparing the object for serialization and stores
  * non-empty 'property' fields in the property array and returns an array of object variable names to be serialized.
  *
  * Methods:
  * - `__sleep(): array:` Sleep instance used by serialize/unserialize.
  * - `__wakeup: void:` Wakeup instance used by serialize/unserialize
- * 
+ *
  * Fields:
  * - `$property`: Stores properties for dynamic property access.
  */

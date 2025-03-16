@@ -4,7 +4,7 @@ namespace GenericDatabase\Shared;
 
 /**
  * This trait provides static method to dynamically call any function, method, or instance.
- * 
+ *
  * Methods:
  * - `call(mixed $callable, mixed ...$args): mixed:` Calls a function, method, or instance dynamically.
  * - `callArray(mixed $callable, array $args = []): mixed:` Calls a function or method with an array of arguments.

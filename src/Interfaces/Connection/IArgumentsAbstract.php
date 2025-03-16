@@ -10,7 +10,7 @@ use GenericDatabase\Interfaces\Connection\IArgumentsStrategy;
  * This interface provides methods for retrieving the connection instance, options handler, and arguments strategy.
  * It also defines methods for setting the argument type, calling arguments by format, and calling with static arguments.
  * Additionally, it includes methods for calling with a specific name and arguments, as well as calling statically with a name and arguments.
- * 
+ *
  * @package PHP-Generic-Database\Interfaces\Connection
  * @subpackage IArgumentsAbstract
  */

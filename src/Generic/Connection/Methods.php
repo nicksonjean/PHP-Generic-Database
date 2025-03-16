@@ -5,11 +5,11 @@ namespace GenericDatabase\Generic\Connection;
 use GenericDatabase\Generic\Connection\Settings;
 
 /**
- * This trait provides magic methods for dynamic property access and manipulation 
+ * This trait provides magic methods for dynamic property access and manipulation
  * and also includes methods for getting, setting, checking existence, and unsetting
- * properties dynamically. It also handles serialization and deserialization of the 
+ * properties dynamically. It also handles serialization and deserialization of the
  * property using the `__sleep` and `__wakeup` magic methods.
- * 
+ *
  * Methods:
  * - `__construct(array $property = [])`: Constructor to initialize the Settings object.
  * - `__get(string $name): mixed`: Magic getter method
@@ -18,7 +18,7 @@ use GenericDatabase\Generic\Connection\Settings;
  * - `__unset(string $name): void`: This method is invoked when unset() is used on inaccessible (protected or private) or non-existing properties.
  * - `__sleep(): array`: Sleep instance used by serialize/unserialize
  * - `__wakeup(): void`: Wakeup instance used by serialize/unserialize
- * 
+ *
  * Fields:
  * - `$property`: Stores settings for dynamic property access.
  */

@@ -175,7 +175,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a SELECT clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -187,7 +187,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a DISTINCT clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -199,7 +199,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a FROM clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -211,7 +211,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a JOIN clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -223,7 +223,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a SELF JOIN clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -235,7 +235,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a LEFT JOIN clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -247,7 +247,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a RIGHT JOIN clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -259,7 +259,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a INNER JOIN clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -271,7 +271,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a OUTER JOIN clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -283,7 +283,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a CROSS JOIN clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -295,7 +295,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a ON clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -318,7 +318,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a OR ON clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -330,7 +330,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a WHERE clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -342,7 +342,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a AND WHERE clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -354,7 +354,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a OR WHERE clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -366,7 +366,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a HAVING clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -378,7 +378,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a AND HAVING clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -390,7 +390,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a OR HAVING clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -402,7 +402,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a GROUP clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -414,7 +414,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a ORDER clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -426,7 +426,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a GROUP ASC clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -438,7 +438,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a ORDER DESC clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -450,7 +450,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Adds a LIMIT clause to the query
-     * 
+     *
      * @param array|string[] $data
      * @return QueryBuilder
      */
@@ -480,7 +480,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Returns the query values
-     * 
+     *
      * @return array
      */
     public function getValues(): array
@@ -490,7 +490,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Returns the query metadata
-     * 
+     *
      * @return object
      */
     public function getAllMetadata(): object
@@ -500,7 +500,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Fetches a single row from the query result.
-     * 
+     *
      * @param int $fetchStyle
      * @param mixed $fetchArgument
      * @param mixed $optArgs
@@ -513,7 +513,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Fetches all rows from the query result.
-     * 
+     *
      * @param int $fetchStyle
      * @param mixed $fetchArgument
      * @param mixed $optArgs

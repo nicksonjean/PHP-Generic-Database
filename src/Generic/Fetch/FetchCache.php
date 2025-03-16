@@ -11,12 +11,12 @@ namespace GenericDatabase\Generic\Fetch;
  * - `cacheResults(mixed $resource): array:` Caches the results from a statement for future use.
  * - `handleFetchReset(mixed $resource): void:` Handles resetting the fetch position and caching results if not already cached.
  * - `cacheResource(mixed $resource): array:` Abstract method to be implemented in the class using this trait.
- * 
+ *
  * Fields:
  * - `$cachedResults`: Stores the cached results of fetch operations.
  * - `$positions`: Keeps track of the positions of fetched data.
  * - `$lastFetchAll`: Stores the results of the last fetch all operation.
- * 
+ *
  * @package GenericDatabase\Generic
  * @subpackage Fetch
  */
@@ -71,7 +71,7 @@ trait FetchCache
 
     /**
      * Método abstrato para ser implementado na classe que usa a trait
-     * 
+     *
      * @param mixed $resource
      * @return string
      */

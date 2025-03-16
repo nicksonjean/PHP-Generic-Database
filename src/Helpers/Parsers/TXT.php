@@ -9,7 +9,7 @@ namespace GenericDatabase\Helpers\Parsers;
  * - Checks if all columns in the given data are null
  * - Uses the structure method to generate the schema information
  * - Analyze method to determine the column types.
- * 
+ *
  * Methods:
  * - `allColumnsNull($data)`: Checks if all columns in the given data are null.
  * - `parse($filePath)`: Parses a CSV file at the given file path and returns an array of data.
@@ -34,7 +34,7 @@ class TXT
 
     /**
      * Checks if all columns in the provided data are null.
-     * 
+     *
      * @param array $data The data to check.
      * @return bool True if all columns are null, false otherwise.
      */
@@ -52,7 +52,7 @@ class TXT
 
     /**
      * Parses a CSV file and returns its data as an array.
-     * 
+     *
      * @param string $filePath The path to the CSV file.
      * @return array The parsed data.
      */
@@ -82,7 +82,7 @@ class TXT
 
     /**
      * Analyzes the data and determines the type of each column.
-     * 
+     *
      * @param array $data The data to analyze.
      * @return array An associative array where keys are column names and values are their types.
      */
@@ -116,7 +116,7 @@ class TXT
 
     /**
      * Generates the structure of the CSV files in the specified folder.
-     * 
+     *
      * @param string $filePath The path to the folder containing CSV files.
      * @param string $separator The separator used in the CSV files.
      * @return array An associative array where keys are file names and values are arrays of column schemas.
@@ -141,7 +141,7 @@ class TXT
 
     /**
      * Writes the schema information to a Schemas.ini file.
-     * 
+     *
      * @param bool $overwrite Whether to overwrite the existing Schemas.ini file.
      * @return void
      */

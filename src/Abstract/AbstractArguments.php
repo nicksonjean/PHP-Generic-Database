@@ -17,17 +17,17 @@ use GenericDatabase\Interfaces\Connection\IArgumentsAbstract;
 use GenericDatabase\Interfaces\Connection\IArgumentsStrategy;
 
 /**
- * The `GenericDatabase\Abstract\AbstractArguments` class is an abstract  class implements the `IArgumentsAbstract` interface and that provides a framework for handling database connection arguments. 
- * It manages static instances of IConnection, IOptions, and IArgumentsStrategy and provides methods to manipulate and retrieve these instances and manages static instances of IConnection, IOptions, 
- * and IArgumentsStrategy, and provides methods to manipulate and retrieve these instances. It includes functionality for setting types, transforming variables into constants, and handling arguments 
+ * The `GenericDatabase\Abstract\AbstractArguments` class is an abstract  class implements the `IArgumentsAbstract` interface and that provides a framework for handling database connection arguments.
+ * It manages static instances of IConnection, IOptions, and IArgumentsStrategy and provides methods to manipulate and retrieve these instances and manages static instances of IConnection, IOptions,
+ * and IArgumentsStrategy, and provides methods to manipulate and retrieve these instances. It includes functionality for setting types, transforming variables into constants, and handling arguments
  * in various formats such as JSON, XML, INI, and YAML. The class also supports dynamic method invocation and acts as a factory for instantiating classes with specific arguments.
- * 
+ *
  * Main functionalities:
  * - Manages static instances of IConnection, IOptions, and IArgumentsStrategy.
  * - Provides methods for setting types, transforming variables into constants, and handling arguments in various formats.
  * - Supports dynamic method invocation and acts as a factory for instantiating classes with specific arguments.
  * - Offers a flexible and extensible framework for handling database connection arguments.
- * 
+ *
  * Methods:
  * - `getInstance(): IConnection:` Returns the static instance of IConnection.
  * - `getOptionsHandler(): IOptions:` Returns the static instance of IOptions.
@@ -39,12 +39,12 @@ use GenericDatabase\Interfaces\Connection\IArgumentsStrategy;
  * - `callWithByStaticArgs(array $arguments): IConnection:` Same as callWithByStaticArray, but with a different name.
  * - `call(string $name, array $arguments): IConnection|string|int|bool|array|null:` Triggers when invoking inaccessible methods in an object context. It sets or gets values in the IConnection instance based on the method name.
  * - `callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null:` Works like a factory, identifying the way the class is instantiated and its arguments. It calls the corresponding method based on the name and arguments.
- * 
+ *
  * Fields:
  * - `$instance`: The connection instance used for dynamic operations.
  * - `$optionsHandler`: The options handler for managing configuration.
  * - `$argumentsStrategy`: The arguments strategy handler for managing configuration.
- * 
+ *
  * @package PHP-Generic-Database
  * @subpackage Abstract
  * @category Database

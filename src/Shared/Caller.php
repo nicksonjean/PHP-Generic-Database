@@ -17,7 +17,7 @@ use GenericDatabase\Shared\Setter;
  * - `__set(string $name, mixed $value): void:` Magic method to set the value of inaccessible or non-existing properties.
  * - `__call(string $name, array $arguments): mixed:` Handles dynamic instance method calls.
  * - `__callStatic(string $name, array $arguments): mixed:` Handles dynamic static method calls.
- * 
+ *
  * Fields:
  * - `$property`: Stores properties for dynamic property access.
  */

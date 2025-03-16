@@ -4,10 +4,10 @@ namespace GenericDatabase\Shared;
 
 /**
  * This trait is run when writing data to inaccessible (protected or private) or non-existing properties.
- * 
+ *
  * Methods:
  * - `__set(string $name, mixed $value): void:` Magic method to set the value of inaccessible or non-existing properties.
- * 
+ *
  * Fields:
  * - `$property`: Stores properties for dynamic property access.
  */

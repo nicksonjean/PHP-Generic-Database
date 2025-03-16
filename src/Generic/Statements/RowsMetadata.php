@@ -11,7 +11,7 @@ namespace GenericDatabase\Generic\Statements;
  * - `setFetched(int $fetched): self`: Sets the fetch results.
  * - `getAffected(): int`: Retrieves the affected results.
  * - `setAffected(int $affected): self`: Sets the affected results.
- * 
+ *
  * Fields:
  * - `$fetched`: The number of rows fetched.
  * - `$affected`: The number of rows affected.

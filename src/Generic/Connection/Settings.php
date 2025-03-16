@@ -19,7 +19,7 @@ use GenericDatabase\Shared\Cleaner;
  * - `__unset(string $name): void`: This method is invoked when unset() is used on inaccessible (protected or private) or non-existing properties.
  * - `__construct(array $property = [])`: Constructor to initialize the Settings object.
  * - `__debugInfo(): array`: Magic method for debugging.
- * 
+ *
  * Fields:
  * - `$property`: Stores properties for dynamic property access.
  */

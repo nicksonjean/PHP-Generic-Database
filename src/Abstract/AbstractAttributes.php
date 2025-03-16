@@ -9,7 +9,7 @@ use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Interfaces\Connection\IAttributesAbstract;
 
 /**
- * The `GenericDatabase\Abstract\AbstractAttributes` class implements the `IAttributesAbstract` interface and serves as a base class for 
+ * The `GenericDatabase\Abstract\AbstractAttributes` class implements the `IAttributesAbstract` interface and serves as a base class for
  * defining attributes in the PHP-Generic-Database project. It provides a common interface and shared functionality for all attribute classes.
  * This class provides a structure for managing dynamic properties using a connection instance and options handler. It allows setting
  * and getting properties dynamically by utilizing the Run::call method to invoke methods on the connection instance.
@@ -25,11 +25,11 @@ use GenericDatabase\Interfaces\Connection\IAttributesAbstract;
  * - `getOptionsHandler(): IOptions:` Returns the static instance of IOptions.
  * - `set(string $name, mixed $value): void:` Sets a property dynamically on the connection instance.
  * - `get(string $name): mixed:` Retrieves a property dynamically from the connection instance.
- * 
+ *
  * Fields:
  * - `$instance`: The connection instance used for dynamic operations.
  * - `$optionsHandler`: The options handler for managing configuration.
- * 
+ *
  * @package PHP-Generic-Database
  * @subpackage Abstract
  * @category Database

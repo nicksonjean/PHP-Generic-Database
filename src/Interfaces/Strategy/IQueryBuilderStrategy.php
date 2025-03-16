@@ -10,7 +10,7 @@ use GenericDatabase\Interfaces\IQueryBuilder;
  * Methods:
  * - `setStrategy(IQueryBuilder $strategy)`: Sets the query builder strategy instance. It takes an `IQueryBuilder` object as a parameter and returns nothing (`void`).
  * - `getStrategy()`: Returns the currently set query builder strategy instance as an `IQueryBuilder` object.
- * 
+ *
  * @package PHP-Generic-Database\Interfaces\Strategy
  * @subpackage IQueryBuilderStrategy
  */

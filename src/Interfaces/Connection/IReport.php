@@ -4,7 +4,7 @@ namespace GenericDatabase\Interfaces\Connection;
 
 /**
  * This interface provides methods to set and get report mode, and handle errors.
- * 
+ *
  * @package PHP-Generic-Database\Interfaces\Connection
  * @subpackage IReport
  */

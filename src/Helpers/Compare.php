@@ -10,9 +10,9 @@ use PgSQL\Connection as PgCNX;
 use GenericDatabase\Core\Types as An;
 
 /**
- * The `GenericDatabase\Helpers\Compare` class provides methods for determining the type of given 
- * database connection this class can identify the type of database connection whether it is a 
- * resource connection or an object connection, and it can also determine the type of database 
+ * The `GenericDatabase\Helpers\Compare` class provides methods for determining the type of given
+ * database connection this class can identify the type of database connection whether it is a
+ * resource connection or an object connection, and it can also determine the type of database
  * connection whether it is a resource connection or an object connection.
  *
  * Example Usage:

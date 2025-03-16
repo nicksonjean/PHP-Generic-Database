@@ -3,9 +3,9 @@
 namespace GenericDatabase\Generic\Statements;
 
 /**
- * This class provides metadata for a database query, including the query string, 
+ * This class provides metadata for a database query, including the query string,
  * arguments, columns, and rows.
- * 
+ *
  * Methods:
  * - `getString(): string`: Retrieves the query string.
  * - `setString(string $string): self`: Sets the query string.
@@ -14,7 +14,7 @@ namespace GenericDatabase\Generic\Statements;
  * - `getColumns(): int`: Retrieves the number of columns.
  * - `setColumns(int $columns): self`: Sets the number of columns.
  * - `getRows(): RowsMetadata`: Retrieves the rows metadata.
- * 
+ *
  * Fields:
  * - `$string`: The query string.
  * - `$arguments`: The query arguments.

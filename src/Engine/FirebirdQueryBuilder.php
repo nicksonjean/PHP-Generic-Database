@@ -2,7 +2,6 @@
 
 namespace GenericDatabase\Engine;
 
-use stdClass;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\IQueryBuilder;
 use GenericDatabase\Core\Join;
@@ -88,7 +87,7 @@ class FirebirdQueryBuilder implements IQueryBuilder
 
     public function __construct(IConnection $context = null)
     {
-        $this->query = new stdClass();
+        $this->initQuery();
         self::$context = $context;
         self::$self = $this;
     }

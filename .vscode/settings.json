@@ -1,7 +1,7 @@
 {
   "php.stubs": ["*", "pgsql", "oci8", "yaml", "dbase", "interbase", "sqlsrv", "pdo"],
   "files.exclude": {
-    "**/scripts/**": true,
+    "**/scripts/**": false,
     "**/cache/**": true,
     "**/vendor/**": true,
     "**/.stubs/**": true,
@@ -9,7 +9,7 @@
     "**/.devtools/**": true,
     "**/.qodo/**": true,
     "**/.idea/**": true,
-    "**/.vscode/**": true,
+    "**/.vscode/**": false,
     "**/.phpunit.cache/**": true,
     "**/.phpunit.result.cache/**": true,
     "**/dbase.stub.php/**": true,
@@ -21,7 +21,7 @@
     "**/sqlsrv.stub.php/**": true,
     "**/uuid.stub.php/**": true,
   },
-  "CodeGPT.apiKey": "CodeGPT Plus Beta",
+  "CodeGPT.apiKey": "CodeGPT Plus",
   "php.version": "8.3",
   "sqltools.connections": []
 }

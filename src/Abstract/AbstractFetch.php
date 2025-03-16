@@ -11,10 +11,10 @@ use GenericDatabase\Interfaces\Connection\IFetchStrategy;
 
 /**
  * The `GenericDatabase\Abstract\AbstractFetch` class implements the `IFetchAbstract` interface
- * and serves as a base class for fetching data in a generic database context. It manages the 
- * database connection and the fetch strategy, and provides a set of methods for fetching data 
+ * and serves as a base class for fetching data in a generic database context. It manages the
+ * database connection and the fetch strategy, and provides a set of methods for fetching data
  * in various formats (e.g., as objects, associative arrays, numeric arrays, etc.).
- * 
+ *
  * Main functionalities:
  * - Manages the database connection and fetch strategy.
  * - Provides a base implementation for fetching data from a database using a generic approach.
@@ -35,11 +35,11 @@ use GenericDatabase\Interfaces\Connection\IFetchStrategy;
  * - `internalFetchAllBoth(): array:` Fetches all rows from the result set as an array of arrays, where each row is both numerically and associatively indexed.
  * - `internalFetchAllColumn(int $columnIndex = 0): array:` Fetches all values of a single column from the result set as an array of strings.
  * - `internalFetchAllClass(?array $constructorArguments = [], ?string $aClassOrObject = '\stdClass'): array:` Fetches all rows from the result set as an array of objects, each one being an instance of the provided class.
- * 
+ *
  * Fields:
  * - `$instance`: The connection instance used for dynamic operations.
  * - `$fetchStrategy`: The options handler for managing configuration.
- * 
+ *
  * Concrete implementations of this class should inherit from `AbstractFetch` and provide their own implementation of the database connection and fetch strategy.
  *
  * @package PHP-Generic-Database
@@ -58,7 +58,7 @@ abstract class AbstractFetch implements IFetchAbstract
 
     /**
      * Initialize fetch abstraction with connection and strategy
-     * 
+     *
      * @param IConnection $instance Database connection instance
      * @param IFetchStrategy $fetchStrategy Strategy for fetching results
      */
@@ -70,7 +70,7 @@ abstract class AbstractFetch implements IFetchAbstract
 
     /**
      * Get the current fetch strategy
-     * 
+     *
      * @return IFetchStrategy Current fetch strategy instance
      */
     public function getStrategy(): IFetchStrategy
@@ -80,7 +80,7 @@ abstract class AbstractFetch implements IFetchAbstract
 
     /**
      * Get the database connection instance
-     * 
+     *
      * @return IConnection Current database connection instance
      */
     public function getInstance(): IConnection

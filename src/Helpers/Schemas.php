@@ -9,8 +9,8 @@ use AllowDynamicProperties;
 
 /**
  * The `GenericDatabase\Helpers\Schemas` class is a helper class that uses the Objectable trait and allows dynamic properties. It has a single static method makeArgs.
- * 
- * Method: 
+ *
+ * Method:
  * - `makeArgs(array $params): object:` This method makes an arguments list
  *
  * @package GenericDatabase\Helpers

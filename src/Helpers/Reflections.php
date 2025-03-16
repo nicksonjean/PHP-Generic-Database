@@ -62,7 +62,7 @@ use ReflectionObject;
  *
  * Fields:
  * - `defaultMethod`: A static field that stores the default method name (`getInstance`) used for getting singleton instances.
- * 
+ *
  * @package GenericDatabase\Helpers
  * @subpackage Reflections
  */

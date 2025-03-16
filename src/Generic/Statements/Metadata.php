@@ -8,7 +8,7 @@ namespace GenericDatabase\Generic\Statements;
  * Methods:
  * - `__construct()`: Initializes a new Metadata object by creating a new QueryMetadata object and assigning it to the $query property.
  * - `getQuery(): QueryMetadata`: Retrieves the QueryMetadata object associated with this metadata, returning it as a QueryMetadata object.
- * 
+ *
  * Fields:
  * - `$query`: Stores QuertMetadata for dynamic property access.
  */

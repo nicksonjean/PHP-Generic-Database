@@ -11,15 +11,15 @@ use GenericDatabase\Interfaces\Connection\IReport;
 use GenericDatabase\Generic\Statements\Metadata;
 
 /**
- * 
- * The `GenericDatabase\Abstract\AbstractStatements` that handles database statements. 
+ *
+ * The `GenericDatabase\Abstract\AbstractStatements` that handles database statements.
  * It implements the `IStatements` interface and provides a set of methods for managing database connections, options, reports, and metadata.
- * 
+ *
  * Main functionalities:
  * - Provides a base class for managing database statements.
  * - Allows dynamic setting and getting of options using a connection instance and an options array.
  * - Provides a common interface for all options classes.
- * 
+ *
  * Methods:
  * - `getInstance`: Returns the current database connection instance.
  * - `set`: Sets a value using a dynamic method call on the database connection instance.
@@ -40,16 +40,16 @@ use GenericDatabase\Generic\Statements\Metadata;
  * - `setAffectedRows`: Sets the number of affected rows.
  * - `getStatement`: Returns the current statement object.
  * - `setStatement`: Sets the statement object.
- * 
+ *
  * Fields:
  * - `$instance`: The connection instance used for dynamic operations.
  * - `$optionsHandler`: The options handler for managing configuration.
  * - `$reportHandler`: The report handler for managing configuration.
  * - `$metadata`: The metadata handler for managing configuration.
  * - `$statement`: The statement handler for managing configuration.
- * 
+ *
  * Note that some of these methods are used to manage metadata, which is an instance of the `Metadata` class. The metadata is used to store information about the query,  such as the query string, parameters, rows fetched, and columns.
- * 
+ *
  * @package PHP-Generic-Database
  * @subpackage Abstract
  * @category Database

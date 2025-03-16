@@ -4,10 +4,10 @@ namespace GenericDatabase\Helpers;
 
 /**
  * The `GenericDatabase\Helpers\Hash` class provides a method to generate a hash using a specified algorithm.
- * 
- * Method: 
+ *
+ * Method:
  * - `hash(string $type = 'sha512', int $length = 64): object:` Generates a hash using the specified algorithm and length
- * 
+ *
  * @package GenericDatabase\Helpers
  * @subpackage Hash
  */

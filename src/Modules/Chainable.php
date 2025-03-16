@@ -25,7 +25,7 @@ use PDO;
 /**
  * Class Chainable
  * Provides methods to create database connections for various database engines.
- * 
+ *
  * Methods:
  * - `nativeMySQLi(array $env, bool $persistent = false, bool $strategy = false): Connection|MySQLiConnection`: Creates a native MySQLi connection.
  * - `nativePgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PgSQLConnection`: Creates a native PostgreSQL connection.
