@@ -100,12 +100,12 @@
             <div class="description">
             <p><p>This trait provides utility methods for handling enum cases.</p></p>            <p><p>Methods:</p>
 <ul>
-<li>names(): Returns an array of enum case names.</li>
-<li>values(): Returns an array of enum case values.</li>
-<li>array(): Combines enum values and names into an associative array.</li>
-<li>casesIndexedByName(): Returns an associative array of enum cases indexed by their names.</li>
-<li>isValidCase(string $name): Checks if a given name is a valid enum case.</li>
-<li>fromName(string $name): Retrieves the enum case by name, throws an exception if not found.</li>
+<li><code>names(): array:</code> Returns an array of enum case names.</li>
+<li><code>values(): array:</code> Returns an array of enum case values.</li>
+<li><code>array(): array:</code> Combines enum values and names into an associative array.</li>
+<li><code>casesIndexedByName(): array:</code> Returns an associative array of enum cases indexed by their names.</li>
+<li><code>isValidCase(string $name): bool:</code> Checks if a given name is a valid enum case.</li>
+<li><code>fromName(string $name): self:</code> Retrieves the enum case by name, throws an exception if not found.</li>
 </ul></p>        </div>
             
         
@@ -149,7 +149,7 @@
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    static&nbsp;
+                    static&nbsp;array
                 </div>
                 <div class="col-md-8">
                     <a href="#method_casesIndexedByName">casesIndexedByName</a>()
@@ -288,7 +288,7 @@
                     <div class="method-item">
                     <h3 id="method_casesIndexedByName">
         <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Enumerator.php#L33">at line 33</a></div>
-        <code>        static            
+        <code>        static            array
     <strong>casesIndexedByName</strong>()
         </code>
     </h3>
@@ -302,6 +302,15 @@
         </div>
         <div class="tags">
             
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
             
             
             
