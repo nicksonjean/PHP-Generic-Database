@@ -293,8 +293,8 @@ class SQL
         array $resWords,
         string $quote,
         bool &$inFunction,
-        bool &$inSingleQt,
-        bool &$inDoubleQt
+        bool $inSingleQt,
+        bool $inDoubleQt
     ): string {
         $object = new stdClass();
         $bindQm = self::$bindingMap[self::BIND_QUESTION_MARK];

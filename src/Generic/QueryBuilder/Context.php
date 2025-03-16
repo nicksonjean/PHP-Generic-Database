@@ -6,7 +6,11 @@ use GenericDatabase\Interfaces\IConnection;
 
 trait Context
 {
-    protected static $context;
+    /**
+     * Property to store settings
+     * @var IConnection $context
+     */
+    protected static IConnection $context;
 
     /**
      * Set default context for all instances

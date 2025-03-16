@@ -20,8 +20,8 @@ class Strings
      * @param string $separator The separator used to split words in the input string. Default is '_'.
      * @return string The camelCase formatted string.
      */
-    public static function toCamelize($input, $separator = '_'): string
+    public static function toCamelize(string $input, string $separator = '_'): string
     {
-        return lcfirst(str_replace($separator, '', ucwords((string) $input, $separator)));
+        return lcfirst(str_replace($separator, '', ucwords($input, $separator)));
     }
 }

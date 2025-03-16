@@ -2,7 +2,6 @@
 
 namespace GenericDatabase\Abstract;
 
-use AllowDynamicProperties;
 use GenericDatabase\Shared\Run;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IOptions;
@@ -55,7 +54,6 @@ use GenericDatabase\Generic\Statements\Metadata;
  * @category Database
  * @abstract
  */
-#[AllowDynamicProperties]
 abstract class AbstractStatements implements IStatementsAbstract
 {
     /** @var IConnection Database connection instance */
@@ -177,11 +175,11 @@ abstract class AbstractStatements implements IStatementsAbstract
     /**
      * Set the query string
      *
-     * @param string $queryString Query string to set
+     * @param string $params Query string to set
      */
-    public function setQueryString(string $queryString): void
+    public function setQueryString(string $params): void
     {
-        $this->metadata->getQuery()->setString($queryString);
+        $this->metadata->getQuery()->setString($params);
     }
 
     /**
@@ -197,11 +195,11 @@ abstract class AbstractStatements implements IStatementsAbstract
     /**
      * Set the query parameters
      *
-     * @param array|null $queryParameters Parameters to set
+     * @param array|null $params Parameters to set
      */
-    public function setQueryParameters(?array $queryParameters): void
+    public function setQueryParameters(?array $params): void
     {
-        $this->metadata->getQuery()->setArguments($queryParameters);
+        $this->metadata->getQuery()->setArguments($params);
     }
 
     /**
@@ -217,12 +215,12 @@ abstract class AbstractStatements implements IStatementsAbstract
     /**
      * Set number of rows fetched
      *
-     * @param callable|int|false $queryRows Number of rows to set
+     * @param callable|int|false $params Number of rows to set
      */
-    public function setQueryRows(callable|int|false $queryRows): void
+    public function setQueryRows(callable|int|false $params): void
     {
-        if (is_int($queryRows)) {
-            $this->metadata->getQuery()->getRows()->setFetched($queryRows);
+        if (is_int($params)) {
+            $this->metadata->getQuery()->getRows()->setFetched($params);
         }
     }
 
@@ -239,12 +237,12 @@ abstract class AbstractStatements implements IStatementsAbstract
     /**
      * Set number of columns in result
      *
-     * @param int|false $queryColumns Number of columns to set
+     * @param int|false $params Number of columns to set
      */
-    public function setQueryColumns(int|false $queryColumns): void
+    public function setQueryColumns(int|false $params): void
     {
-        if (is_int($queryColumns)) {
-            $this->metadata->getQuery()->setColumns($queryColumns);
+        if (is_int($params)) {
+            $this->metadata->getQuery()->setColumns($params);
         }
     }
 
@@ -261,12 +259,12 @@ abstract class AbstractStatements implements IStatementsAbstract
     /**
      * Set number of affected rows
      *
-     * @param int|false $affectedRows Number of affected rows to set
+     * @param int|false $params Number of affected rows to set
      */
-    public function setAffectedRows(int|false $affectedRows): void
+    public function setAffectedRows(int|false $params): void
     {
-        if (is_int($affectedRows)) {
-            $this->metadata->getQuery()->getRows()->setAffected($affectedRows);
+        if (is_int($params)) {
+            $this->metadata->getQuery()->getRows()->setAffected($params);
         }
     }
 

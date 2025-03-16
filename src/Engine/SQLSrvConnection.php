@@ -48,18 +48,18 @@ use GenericDatabase\Engine\SQLSrv\Connection\Report\ReportHandler;
  * @method static SQLSrvConnection|string getPassword($value = null) Retrieves a password from the database.
  * @method static SQLSrvConnection|void setDatabase(mixed $value) Sets a database name from the database.
  * @method static SQLSrvConnection|string getDatabase($value = null) Retrieves a database name from the database.
- * @method static SQLSrvConnection|void setOptions(mixed $value) Sets a options from the database.
- * @method static SQLSrvConnection|array|null getOptions($value = null) Retrieves a options from the database.
+ * @method static SQLSrvConnection|void setOptions(mixed $value) Sets an options from the database.
+ * @method static SQLSrvConnection|array|null getOptions($value = null) Retrieves an options from the database.
  * @method static SQLSrvConnection|static setConnected(mixed $value) Sets a connected status from the database.
  * @method static SQLSrvConnection|mixed getConnected($value = null) Retrieves a connected status from the database.
  * @method static SQLSrvConnection|void setDsn(mixed $value) Sets a dsn string from the database.
  * @method static SQLSrvConnection|mixed getDsn($value = null) Retrieves a dsn string from the database.
- * @method static SQLSrvConnection|void setAttributes(mixed $value) Sets a attributes from the database.
- * @method static SQLSrvConnection|mixed getAttributes($value = null) Retrieves a attributes from the database.
+ * @method static SQLSrvConnection|void setAttributes(mixed $value) Sets an attributes from the database.
+ * @method static SQLSrvConnection|mixed getAttributes($value = null) Retrieves an attributes from the database.
  * @method static SQLSrvConnection|void setCharset(mixed $value) Sets a charset from the database.
  * @method static SQLSrvConnection|string getCharset($value = null) Retrieves a charset from the database.
- * @method static SQLSrvConnection|void setException(mixed $value) Sets a exception from the database.
- * @method static SQLSrvConnection|mixed getException($value = null) Retrieves a exception from the database.
+ * @method static SQLSrvConnection|void setException(mixed $value) Sets an exception from the database.
+ * @method static SQLSrvConnection|mixed getException($value = null) Retrieves an exception from the database.
  */
 #[AllowDynamicProperties]
 class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions

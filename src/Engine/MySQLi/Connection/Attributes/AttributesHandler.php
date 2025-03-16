@@ -2,14 +2,12 @@
 
 namespace GenericDatabase\Engine\MySQLi\Connection\Attributes;
 
-use AllowDynamicProperties;
 use GenericDatabase\Abstract\AbstractAttributes;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 
-#[AllowDynamicProperties]
 class AttributesHandler extends AbstractAttributes implements IAttributes
 {
     private static int $fetchMode = MYSQLI_BOTH;

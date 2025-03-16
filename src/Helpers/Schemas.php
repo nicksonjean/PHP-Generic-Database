@@ -5,7 +5,6 @@ namespace GenericDatabase\Helpers;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Shared\Objectable;
-use AllowDynamicProperties;
 
 /**
  * The `GenericDatabase\Helpers\Schemas` class is a helper class that uses the Objectable trait and allows dynamic properties. It has a single static method makeArgs.
@@ -13,10 +12,13 @@ use AllowDynamicProperties;
  * Method:
  * - `makeArgs(array $params): object:` This method makes an arguments list
  *
+ * @property mixed|null $statement
+ * @property mixed|null $query
+ * @property mixed|null $by
+ * @property mixed|null $is
  * @package GenericDatabase\Helpers
  * @subpackage Schemas
  */
-#[AllowDynamicProperties]
 class Schemas
 {
     use Objectable;

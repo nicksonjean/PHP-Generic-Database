@@ -2,8 +2,6 @@
 
 namespace GenericDatabase\Generic\QueryBuilder;
 
-use GenericDatabase\Generic\QueryBuilder\QueryObject;
-
 /**
  * This trait is part of the Generic QueryBuilder module and is used to encapsulate
  * reusable query-building logic for database operations.

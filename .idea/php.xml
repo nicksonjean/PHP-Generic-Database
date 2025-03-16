@@ -121,6 +121,15 @@
       <path value="$PROJECT_DIR$/vendor/psr/event-dispatcher" />
       <path value="$PROJECT_DIR$/vendor/pdepend/pdepend" />
       <path value="$PROJECT_DIR$/vendor/rector/rector" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php82" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php83" />
+      <path value="$PROJECT_DIR$/vendor/nette/neon" />
+      <path value="$PROJECT_DIR$/vendor/tasuku43/mermaid-class-diagram" />
+      <path value="$PROJECT_DIR$/vendor/amphp/parallel-functions" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/vendor/marc-mabe/enum-cl" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php81" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3">
@@ -128,7 +137,7 @@
   </component>
   <component name="PhpStan">
     <PhpStan_settings>
-      <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
+      <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan.phar" />
     </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">

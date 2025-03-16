@@ -38,7 +38,7 @@ class TXT
      * @param array $data The data to check.
      * @return bool True if all columns are null, false otherwise.
      */
-    private static function allColumnsNull($data): bool
+    private static function allColumnsNull(array $data): bool
     {
         foreach ($data as $row) {
             foreach ($row as $value) {
@@ -56,7 +56,7 @@ class TXT
      * @param string $filePath The path to the CSV file.
      * @return array The parsed data.
      */
-    public static function parse($filePath): array
+    public static function parse(string $filePath): array
     {
         $data = [];
         if (($handle = fopen($filePath, 'r')) !== false) {
@@ -86,7 +86,7 @@ class TXT
      * @param array $data The data to analyze.
      * @return array An associative array where keys are column names and values are their types.
      */
-    private static function analyze($data): array
+    private static function analyze(array $data): array
     {
         $types = [];
         if (self::allColumnsNull($data)) {
@@ -121,7 +121,7 @@ class TXT
      * @param string $separator The separator used in the CSV files.
      * @return array An associative array where keys are file names and values are arrays of column schemas.
      */
-    public static function structure($filePath, $separator): array
+    public static function structure(string $filePath, string $separator): array
     {
         self::$folderPath = $filePath;
         self::$separator = $separator;
@@ -145,7 +145,7 @@ class TXT
      * @param bool $overwrite Whether to overwrite the existing Schemas.ini file.
      * @return void
      */
-    public static function write($overwrite = false): void
+    public static function write(bool $overwrite = false): void
     {
         $schemaFilePath = self::$folderPath . '\Schemas.ini';
         if (!file_exists($schemaFilePath) || $overwrite) {

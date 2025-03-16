@@ -121,7 +121,7 @@ class QueryMetadata
     /**
      * Gets the rows metadata.
      *
-     * @return RowsMetadata The rows metadata.
+     * @return RowsMetadata The row's metadata.
      */
     public function getRows(): RowsMetadata
     {

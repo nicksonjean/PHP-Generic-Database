@@ -7,7 +7,6 @@ use GenericDatabase\Interfaces\Connection\IArgumentsStrategy;
 use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Engine\Firebird\Connection\Arguments\ArgumentsHandler;
-use ReflectionException;
 
 /**
  * Class ArgumentsStrategy
@@ -50,7 +49,6 @@ class ArgumentsStrategy implements IArgumentsStrategy
      *
      * @param array $value The array of values to be set as constants.
      * @return array The updated options after setting the constants.
-     * @throws ReflectionException
      */
     public function setConstant(array $value): array
     {

@@ -2,14 +2,12 @@
 
 namespace GenericDatabase\Engine\ODBC\Connection\Attributes;
 
-use AllowDynamicProperties;
 use GenericDatabase\Abstract\AbstractAttributes;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Engine\ODBC\Connection\ODBC;
 
-#[AllowDynamicProperties]
 class AttributesHandler extends AbstractAttributes implements IAttributes
 {
     /**
@@ -69,16 +67,14 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
                 'AUTOCOMMIT' => (bool)$this->getOptionsHandler()->getOptions(ODBC::ATTR_AUTOCOMMIT),
                 'CASE' => 0,
                 'ERRMODE' => 1,
-                'CLIENT_VERSION' => $settings['DriverODBCVer'] ?? '',
-                'SERVER_VERSION' => $settings['DriverODBCVer'] ?? '',
+                'CLIENT_VERSION', 'SERVER_VERSION' => $settings['DriverODBCVer'] ?? '',
                 'CONNECTION_STATUS' => $this->connectionStatus(),
                 'PERSISTENT' => (bool)$this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT),
                 'SERVER_INFO' => $settings,
                 'TIMEOUT' => (int) $this->getOptionsHandler()->getOptions(ODBC::ATTR_CONNECT_TIMEOUT) ?: $settings['CPTimeout'] ?? 0,
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => $this->getOptionsHandler()->getOptions(ODBC::ATTR_DEFAULT_FETCH_MODE) ?? ODBC::FETCH_BOTH,
-                'CHARACTER_SET' => $this->get('charset') ?? '',
-                'COLLATION' => $this->get('charset') ?? '',
+                'CHARACTER_SET', 'COLLATION' => $this->get('charset') ?? '',
                 default => throw new Exceptions("Invalid attribute: $attribute"),
             };
         }

@@ -11,10 +11,10 @@ namespace GenericDatabase\Interfaces\Connection;
 interface IArgumentsStrategy
 {
     /**
-     * Sets a constant value for the arguments strategy.
+     * Sets a constant value for the argument's strategy.
      *
      * @param array $value The constant value to set.
-     * @return array The updated arguments strategy.
+     * @return array The updated argument's strategy.
      */
     public function setConstant(array $value): array;
 }

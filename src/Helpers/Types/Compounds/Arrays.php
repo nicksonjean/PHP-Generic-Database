@@ -305,6 +305,6 @@ class Arrays
                 $array[$key] = self::arraySafe($value);
             }
         }
-        return array_filter($array, fn($value) => isset($value) && !empty($value));
+        return array_filter($array, fn($value) => !empty($value));
     }
 }

@@ -3,8 +3,6 @@
 namespace GenericDatabase\Interfaces\Connection;
 
 use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\Connection\IOptions;
-use GenericDatabase\Interfaces\Connection\IArgumentsStrategy;
 
 /**
  * This interface provides methods for retrieving the connection instance, options handler, and arguments strategy.
@@ -24,13 +22,13 @@ interface IArgumentsAbstract
 
     /**
      * Gets the options handler.
-     * @return IOptions The options handler.
+     * @return IOptions The option's handler.
      */
     public static function getOptionsHandler(): IOptions;
 
     /**
      * Gets the arguments strategy.
-     * @return IArgumentsStrategy The arguments strategy.
+     * @return IArgumentsStrategy The argument's strategy.
      */
     public static function getArgumentsStrategy(): IArgumentsStrategy;
 

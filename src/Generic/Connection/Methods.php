@@ -2,8 +2,6 @@
 
 namespace GenericDatabase\Generic\Connection;
 
-use GenericDatabase\Generic\Connection\Settings;
-
 /**
  * This trait provides magic methods for dynamic property access and manipulation
  * and also includes methods for getting, setting, checking existence, and unsetting
@@ -26,7 +24,7 @@ trait Methods
 {
     /**
      * Property to store settings
-     * @var Settings $property
+     * @var Settings|null $property
      */
     public ?Settings $property = null;
 

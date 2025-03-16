@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace GenericDatabase;
 
-use ReflectionClass;
 use ReflectionException;
 use AllowDynamicProperties;
 use GenericDatabase\Core\Entity;
@@ -61,8 +60,8 @@ use GenericDatabase\Interfaces\Strategy\IConnectionStrategy;
  *
  * Dynamic and Static container class for Connection connections.
  *
- * @method static Connection|void setEngine(mixed $value) Sets a engine from the database.
- * @method static Connection|static getEngine($value = null) Retrieves a engine from the database.
+ * @method static Connection|void setEngine(mixed $value) Sets an engine from the database.
+ * @method static Connection|static getEngine($value = null) Retrieves an engine from the database.
  * @method static Connection|void setDriver(mixed $value) Sets a driver from the database.
  * @method static Connection|string getDriver($value = null) Retrieves a driver from the database.
  * @method static Connection|void setHost(mixed $value) Sets a host from the database.
@@ -75,18 +74,18 @@ use GenericDatabase\Interfaces\Strategy\IConnectionStrategy;
  * @method static Connection|string getPassword($value = null) Retrieves a password from the database.
  * @method static Connection|void setDatabase(mixed $value) Sets a database name from the database.
  * @method static Connection|string getDatabase($value = null) Retrieves a database name from the database.
- * @method static Connection|void setOptions(mixed $value) Sets a options from the database.
- * @method static Connection|array|null getOptions($value = null) Retrieves a options from the database.
+ * @method static Connection|void setOptions(mixed $value) Sets an options from the database.
+ * @method static Connection|array|null getOptions($value = null) Retrieves an options from the database.
  * @method static Connection|static setConnected(mixed $value) Sets a connected status from the database.
  * @method static Connection|mixed getConnected($value = null) Retrieves a connected status from the database.
  * @method static Connection|void setDsn(mixed $value) Sets a dsn string from the database.
  * @method static Connection|mixed getDsn($value = null) Retrieves a dsn string from the database.
- * @method static Connection|void setAttributes(mixed $value) Sets a attributes from the database.
- * @method static Connection|mixed getAttributes($value = null) Retrieves a attributes from the database.
+ * @method static Connection|void setAttributes(mixed $value) Sets an attributes from the database.
+ * @method static Connection|mixed getAttributes($value = null) Retrieves an attributes from the database.
  * @method static Connection|void setCharset(mixed $value) Sets a charset from the database.
  * @method static Connection|string getCharset($value = null) Retrieves a charset from the database.
- * @method static Connection|void setException(mixed $value) Sets a exception from the database.
- * @method static Connection|mixed getException($value = null) Retrieves a exception from the database.
+ * @method static Connection|void setException(mixed $value) Sets an exception from the database.
+ * @method static Connection|mixed getException($value = null) Retrieves an exception from the database.
  */
 #[AllowDynamicProperties]
 class Connection implements IConnection, IConnectionStrategy

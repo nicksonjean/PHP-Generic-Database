@@ -501,7 +501,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     /**
      * Fetches a single row from the query result.
      *
-     * @param int $fetchStyle
+     * @param int|null $fetchStyle
      * @param mixed $fetchArgument
      * @param mixed $optArgs
      * @return mixed
@@ -514,7 +514,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     /**
      * Fetches all rows from the query result.
      *
-     * @param int $fetchStyle
+     * @param int|null $fetchStyle
      * @param mixed $fetchArgument
      * @param mixed $optArgs
      * @return array|bool

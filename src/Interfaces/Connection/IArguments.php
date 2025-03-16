@@ -18,7 +18,7 @@ interface IArguments
      *
      * @param string $name Name of the method
      * @param array $arguments Array of arguments
-     * @return IConnection
+     * @return IConnection|string|int|bool|array|null
      * @throws ReflectionException
      */
     public function __call(string $name, array $arguments): IConnection|string|int|bool|array|null;
@@ -28,7 +28,7 @@ interface IArguments
      *
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
-     * @return IConnection
+     * @return IConnection|string|int|bool|array|null
      * @throws ReflectionException
      */
     public static function __callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null;

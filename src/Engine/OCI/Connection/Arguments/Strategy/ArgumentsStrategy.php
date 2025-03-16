@@ -7,7 +7,6 @@ use GenericDatabase\Interfaces\Connection\IArgumentsStrategy;
 use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Engine\OCI\Connection\Arguments\ArgumentsHandler;
-use ReflectionException;
 
 class ArgumentsStrategy implements IArgumentsStrategy
 {
@@ -32,7 +31,6 @@ class ArgumentsStrategy implements IArgumentsStrategy
      *
      * @param array $value
      * @return array
-     * @throws ReflectionException
      */
     public function setConstant(array $value): array
     {

@@ -2,7 +2,6 @@
 
 namespace GenericDatabase\Engine\MySQLi\Connection\Arguments;
 
-use ReflectionException;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Abstract\AbstractArguments;
 use GenericDatabase\Interfaces\Connection\IArguments;
@@ -27,8 +26,7 @@ class ArgumentsHandler extends AbstractArguments implements IArguments
      *
      * @param string $name
      * @param array $arguments
-     * @return IConnection
-     * @throws ReflectionException
+     * @return IConnection|string|int|bool|array|null
      */
     public static function __callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null
     {

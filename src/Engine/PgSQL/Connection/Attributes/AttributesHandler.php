@@ -2,14 +2,12 @@
 
 namespace GenericDatabase\Engine\PgSQL\Connection\Attributes;
 
-use AllowDynamicProperties;
 use GenericDatabase\Abstract\AbstractAttributes;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
 
-#[AllowDynamicProperties]
 class AttributesHandler extends AbstractAttributes implements IAttributes
 {
     /**

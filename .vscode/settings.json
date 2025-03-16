@@ -1,7 +1,7 @@
 {
   "php.stubs": ["*", "pgsql", "oci8", "yaml", "dbase", "interbase", "sqlsrv", "pdo"],
   "files.exclude": {
-    "**/scripts/**": false,
+    "**/scripts/**": true,
     "**/cache/**": true,
     "**/vendor/**": true,
     "**/.stubs/**": true,
@@ -9,7 +9,7 @@
     "**/.devtools/**": true,
     "**/.qodo/**": true,
     "**/.idea/**": true,
-    "**/.vscode/**": false,
+    "**/.vscode/**": true,
     "**/.phpunit.cache/**": true,
     "**/.phpunit.result.cache/**": true,
     "**/dbase.stub.php/**": true,

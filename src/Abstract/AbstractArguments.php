@@ -2,8 +2,6 @@
 
 namespace GenericDatabase\Abstract;
 
-use ReflectionException;
-use AllowDynamicProperties;
 use GenericDatabase\Helpers\Generators;
 use GenericDatabase\Helpers\Parsers\INI;
 use GenericDatabase\Helpers\Parsers\XML;
@@ -32,7 +30,7 @@ use GenericDatabase\Interfaces\Connection\IArgumentsStrategy;
  * - `getInstance(): IConnection:` Returns the static instance of IConnection.
  * - `getOptionsHandler(): IOptions:` Returns the static instance of IOptions.
  * - `getArgumentsStrategy(): IArgumentsStrategy:` Returns the static instance of IArgumentsStrategy.
- * - `setType(mixed $value): string|int|bool:` Determines the type of a value and returns it as a string, int, or bool.
+ * - `setType(mixed $value): string|int|bool:` Determines the type of value and returns it as a string, int, or bool.
  * - `setConstant(array $value): array:` Transforms variables into constants.
  * - `callArgumentsByFormat(string $format, mixed $arguments):` IConnection: Determines the type of arguments based on the format (json, xml, ini, or yaml) and sets the corresponding values in the IConnection instance.
  * - `callWithByStaticArray(array $arguments): IConnection:` Sets values in the IConnection instance using a static array format.
@@ -50,7 +48,6 @@ use GenericDatabase\Interfaces\Connection\IArgumentsStrategy;
  * @category Database
  * @abstract
  */
-#[AllowDynamicProperties]
 abstract class AbstractArguments implements IArgumentsAbstract
 {
     /**
@@ -128,7 +125,6 @@ abstract class AbstractArguments implements IArgumentsAbstract
      *
      * @param array $value
      * @return array
-     * @throws ReflectionException
      */
     public static function setConstant(array $value): array
     {
@@ -141,8 +137,6 @@ abstract class AbstractArguments implements IArgumentsAbstract
      * @param string $format Accept formats json, xml, ini and yaml
      * @param mixed $arguments Arguments to parse
      * @return IConnection The connection instance
-     * @throws ReflectionException
-     * @noinspection PhpUnused
      */
     public static function callArgumentsByFormat(string $format, mixed $arguments): IConnection
     {
@@ -219,7 +213,6 @@ abstract class AbstractArguments implements IArgumentsAbstract
      * @param string $name Name of the static method
      * @param array $arguments Array of arguments
      * @return IConnection|string|int|bool|array|null The result of the static call
-     * @throws ReflectionException
      */
     public static function callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null
     {

@@ -43,7 +43,7 @@ class NEON
             $content = file_get_contents($neon);
             Neom::decode($content);
             return true;
-        } catch (Exception $exception) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -59,7 +59,7 @@ class NEON
         try {
             $content = file_get_contents($neon);
             return (array) Neom::decode($content);
-        } catch (Exception $exception) {
+        } catch (Exception) {
             return [];
         }
     }

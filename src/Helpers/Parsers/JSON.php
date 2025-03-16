@@ -13,7 +13,7 @@ namespace GenericDatabase\Helpers\Parsers;
  * $json = '{"name": "John", "age": 30}';
  * $isValid = JSON::isValidJSON($json);
  * </code>
- * `Output: $isValid is be true`
+ * `Output: $isValid is being true`
  *
  * <code>
  * // Parse a valid JSON string into an array

@@ -2,7 +2,6 @@
 
 namespace GenericDatabase\Abstract;
 
-use AllowDynamicProperties;
 use GenericDatabase\Shared\Run;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IOptions;
@@ -35,7 +34,6 @@ use GenericDatabase\Interfaces\Connection\IAttributesAbstract;
  * @category Database
  * @abstract
  */
-#[AllowDynamicProperties]
 abstract class AbstractAttributes implements IAttributesAbstract
 {
     /**

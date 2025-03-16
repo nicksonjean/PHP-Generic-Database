@@ -2,14 +2,12 @@
 
 namespace GenericDatabase\Engine\Firebird\Connection\Attributes;
 
-use AllowDynamicProperties;
 use GenericDatabase\Abstract\AbstractAttributes;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Engine\Firebird\Connection\Firebird;
 
-#[AllowDynamicProperties]
 class AttributesHandler extends AbstractAttributes implements IAttributes
 {
     /**
@@ -138,8 +136,7 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
                 'CLIENT_VERSION' => $settings['server_version'],
                 'CONNECTION_STATUS' => $this->connectionStatus(),
                 'PERSISTENT' => (bool)$this->getOptionsHandler()->getOptions(Firebird::ATTR_PERSISTENT),
-                'SERVER_INFO' => $settings['server_info'],
-                'SERVER_VERSION' => $settings['server_info'],
+                'SERVER_INFO', 'SERVER_VERSION' => $settings['server_info'],
                 'TIMEOUT' =>  (int) $this->getOptionsHandler()->getOptions(Firebird::ATTR_CONNECT_TIMEOUT) ?: 30,
                 'EMULATE_PREPARES' => true,
                 'DEFAULT_FETCH_MODE' => $this->getOptionsHandler()->getOptions(Firebird::ATTR_DEFAULT_FETCH_MODE) ?? Firebird::FETCH_BOTH,

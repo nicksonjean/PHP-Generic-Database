@@ -11,7 +11,7 @@ namespace GenericDatabase\Generic\QueryBuilder;
  * - `__set($name, $value): void:` Sets the value of a valid property, removes the property from storage if the value is empty, or does nothing if the property is not valid.
  * - `__isset($name): bool:` Returns true if the property exists in the storage array, false otherwise.
  * - `__debugInfo(): array:` Returns the internal storage array for debugging purposes.
- * 
+ *
  * Fields:
  * - `$property`: Stores properties for dynamic property access.
  */
@@ -34,7 +34,7 @@ class QueryObject
      * used to validate and ensure only predefined properties
      * are allowed in the query building process.
      */
-    private static $validProperties = [
+    private static array $validProperties = [
         'select',
         'from',
         'join',
@@ -50,7 +50,9 @@ class QueryObject
      * Constructor for the QueryObject class.
      * Initializes a new instance of the QueryObject.
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     /**
      * Magic getter method to access dynamic properties, this method returns a reference to the property specified by $name if it is
@@ -69,7 +71,7 @@ class QueryObject
      * @param string $name The name of the property to retrieve.
      * @return mixed A reference to the property value if valid, or null if not.
      */
-    public function &__get($name): mixed
+    public function &__get(string $name): mixed
     {
         if (in_array($name, self::$validProperties)) {
             if (!isset($this->property[$name])) {
@@ -91,7 +93,7 @@ class QueryObject
      * @param mixed $value The value to assign to the property.
      * @return void
      */
-    public function __set($name, $value): void
+    public function __set(string $name, mixed $value): void
     {
         if (in_array($name, self::$validProperties)) {
             if (!empty($value)) {
@@ -109,7 +111,7 @@ class QueryObject
      * @param string $name The name of the property to check.
      * @return bool True if the property exists, false otherwise.
      */
-    public function __isset($name): bool
+    public function __isset(string $name): bool
     {
         return isset($this->property[$name]);
     }

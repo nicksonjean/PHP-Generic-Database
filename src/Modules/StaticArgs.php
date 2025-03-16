@@ -917,7 +917,6 @@ class StaticArgs
             );
         } else {
             return $constructor(
-                driver: 'mysql',
                 driver: 'pgsql',
                 host: $env['PGSQL_HOST'],
                 port: (int) $env['PGSQL_PORT'],

@@ -2,7 +2,6 @@
 
 namespace GenericDatabase\Abstract;
 
-use AllowDynamicProperties;
 use ReflectionException;
 use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Interfaces\IConnection;
@@ -47,7 +46,6 @@ use GenericDatabase\Interfaces\Connection\IFetchStrategy;
  * @category Database
  * @abstract
  */
-#[AllowDynamicProperties]
 abstract class AbstractFetch implements IFetchAbstract
 {
     /** @var IConnection Database connection instance */
