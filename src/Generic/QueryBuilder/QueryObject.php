@@ -7,11 +7,11 @@ namespace GenericDatabase\Generic\QueryBuilder;
  * to store query object data and a list of valid properties ($validProperties) that can be used within the class.
  *
  * Methods:
- * __construct(): Initializes a new instance of the QueryObject class. (No action is taken in this implementation.)
- * __get($name): Returns a reference to the property value if it is a valid property, initializes it as an empty array if it doesn't exist, or returns null if it's not a valid property.
- * __set($name, $value): Sets the value of a valid property, removes the property from storage if the value is empty, or does nothing if the property is not valid.
- * __isset($name): Returns true if the property exists in the storage array, false otherwise.
- * __debugInfo(): Returns the internal storage array for debugging purposes.
+ * - `__construct(): Initializes a new instance of the QueryObject class. (No action is taken in this implementation.)
+ * - `__get($name): mixed:` Returns a reference to the property value if it is a valid property, initializes it as an empty array if it doesn't exist, or returns null if it's not a valid property.
+ * - `__set($name, $value): void:` Sets the value of a valid property, removes the property from storage if the value is empty, or does nothing if the property is not valid.
+ * - `__isset($name): bool:` Returns true if the property exists in the storage array, false otherwise.
+ * - `__debugInfo(): array:` Returns the internal storage array for debugging purposes.
  * 
  * Fields:
  * - `$property`: Stores properties for dynamic property access.
