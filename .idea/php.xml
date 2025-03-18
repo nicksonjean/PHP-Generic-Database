@@ -130,6 +130,8 @@
       <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
       <path value="$PROJECT_DIR$/vendor/marc-mabe/enum-cl" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php81" />
+      <path value="$PROJECT_DIR$/vendor/dave-arg/zod-php" />
+      <path value="$PROJECT_DIR$/vendor/senadir/zod-php-to-schema" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3">

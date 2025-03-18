@@ -10,28 +10,34 @@ use ReflectionException;
 use AllowDynamicProperties;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Compare;
-use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Generic\Connection\Methods;
+use GenericDatabase\Helpers\Exceptions;
+use Dotenv\Exception\ValidationException;
 use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Helpers\Zod\SchemaParser;
+use GenericDatabase\Helpers\Zod\Zod\ZodError;
+use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\Connection\IDSN;
+use GenericDatabase\Helpers\Zod\SchemaConverter;
+use GenericDatabase\Helpers\Zod\SchemaValidator;
 use GenericDatabase\Interfaces\Connection\IFetch;
-use GenericDatabase\Interfaces\Connection\IStatements;
-use GenericDatabase\Interfaces\Connection\IAttributes;
-use GenericDatabase\Interfaces\Connection\IArguments;
-use GenericDatabase\Interfaces\Connection\IOptions;
-use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
+use GenericDatabase\Interfaces\Connection\IOptions;
+use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IAttributes;
+use GenericDatabase\Interfaces\Connection\IStatements;
+use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\MySQLi\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\MySQLi\Connection\Report\ReportHandler;
+use GenericDatabase\Engine\MySQLi\Connection\SchemaParserStrategy;
 use GenericDatabase\Engine\MySQLi\Connection\Options\OptionsHandler;
+use GenericDatabase\Engine\MySQLi\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\MySQLi\Connection\Statements\StatementsHandler;
-use GenericDatabase\Engine\MySQLi\Connection\Arguments\ArgumentsHandler;
-use GenericDatabase\Engine\MySQLi\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\MySQLi\Connection\Transactions\TransactionsHandler;
-use GenericDatabase\Engine\MySQLi\Connection\Report\ReportHandler;
+use GenericDatabase\Engine\MySQLi\Connection\Arguments\Strategy\ArgumentsStrategy;
 
 /**
  * Dynamic and Static container class for MySQLiConnection connections.
@@ -194,23 +200,44 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * @param string $user The user of the database
      * @param string $password The password of the database
      * @param string $database The name of the database
-     * @param mixed $port The port of the database
+     * @param int $port The port of the database
      * @return MySQLiConnection
      * @throws Exception
      */
     private function realConnect(
-        mixed $host,
-        mixed $user,
-        #[SensitiveParameter] mixed $password,
-        mixed $database,
-        mixed $port
+        string $host,
+        string $user,
+        #[SensitiveParameter] string $password,
+        string $database,
+        int $port
     ): MySQLiConnection {
         if (!static::getHost()) {
             $host = (string) !$this->getOptionsHandler()->getOptions(MySQL::ATTR_PERSISTENT) ? $host : 'p:' . $host;
             static::setHost($host);
         }
-        $this->parseDsn();
-        $this->getConnection()->real_connect($host, $user, $password, $database, $port);
+        try {
+            $schemaJson = __DIR__ . '/MySQLi/Connection/MySQL.json';
+            $parser = new SchemaParserStrategy(new SchemaParser($schemaJson));
+            $validJson = $parser->parse($host, $user, $password, $database, $port);
+            $validator = new SchemaValidator($schemaJson);
+            if ($validator->validate($validJson)) {
+                $this->parseDsn();
+                $this->getConnection()->real_connect($host, $user, $password, $database, $port);
+            } else {
+                $errors = $validator->getErrors();
+                if (!empty($errors)) {
+                    throw new ValidationException(implode("\n", array_map(fn($error) => "- $error", $errors)));
+                }
+            }
+        } catch (ZodError $e) {
+            $errorMessages = [];
+            foreach ($e->errors as $error) {
+                $errorMessages[] = "- " . implode('.', $error['path']) . ": {$error['message']}";
+            }
+            throw new Exceptions(implode("\n", $errorMessages));
+        } catch (Exception $error) {
+            die(Errors::throw($error));
+        }
         return $this;
     }
 

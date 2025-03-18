@@ -43,8 +43,10 @@
     "ext-sqlite3": "*",
     "ext-xmlreader": "*",
     "ext-yaml": "*",
+    "dave-arg/zod-php": "dev-master",
     "marc-mabe/enum-cl": "dev-main",
     "nette/neon": "^3.5@dev",
+    "senadir/zod-php-to-schema": "dev-main",
     "symfony/polyfill-php82": "1.x-dev",
     "symfony/polyfill-php83": "1.x-dev",
     "vlucas/phpdotenv": "^5.5@dev"
