@@ -2,13 +2,14 @@
 
 namespace GenericDatabase\Engine\PDO\Connection\DSN;
 
+use PDO;
 use AllowDynamicProperties;
 use GenericDatabase\Shared\Run;
-use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Helpers\Path;
 use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IDSN;
-use PDO;
+use GenericDatabase\Generic\Connection\SensitiveValue;
 
 #[AllowDynamicProperties]
 class DSNHandler implements IDSN
@@ -52,26 +53,22 @@ class DSNHandler implements IDSN
             ));
         }
 
-        $this->set(
-            'dsn',
-            match ($this->get('driver')) {
-                'mysql' => $this->handleMySQL(),
-                'pgsql' => $this->handlePostgres(),
-                'oci' => $this->handleOci(),
-                'dblib', 'sybase' => $this->handleSybase(),
-                'sqlsrv' => $this->handleSqlsrv(),
-                'mssql' => $this->handleMssql(),
-                'ibase', 'firebird' => $this->handleFirebird(),
-                'sqlite' => $this->handleSQLite(),
-                default => $this->handleDefault(),
-            }
-        );
-        return $this->get('dsn');
+        return match ($this->get('driver')) {
+            'mysql' => $this->handleMySQL(),
+            'pgsql' => $this->handlePostgres(),
+            'oci' => $this->handleOci(),
+            'dblib', 'sybase' => $this->handleSybase(),
+            'sqlsrv' => $this->handleSqlsrv(),
+            'mssql' => $this->handleMssql(),
+            'ibase', 'firebird' => $this->handleFirebird(),
+            'sqlite' => $this->handleSQLite(),
+            default => $this->handleDefault(),
+        };
     }
 
     private function handleMySQL(): string
     {
-        return vsprintf(
+        $result = vsprintf(
             "%s:host=%s;dbname=%s;port=%s;charset=%s",
             [
                 $this->get('driver'),
@@ -81,11 +78,17 @@ class DSNHandler implements IDSN
                 $this->get('charset')
             ]
         );
+
+        $this->set(
+            'dsn',
+            $result
+        );
+        return $result;
     }
 
     private function handlePostgres(): string
     {
-        return vsprintf(
+        $result = fn(bool $default = false) => vsprintf(
             "%s:host=%s;dbname=%s;port=%s;user=%s;password=%s;options='--client_encoding=%s'",
             [
                 $this->get('driver'),
@@ -93,15 +96,21 @@ class DSNHandler implements IDSN
                 $this->get('database'),
                 $this->get('port'),
                 $this->get('user'),
-                $this->get('password'),
+                $default ? (new SensitiveValue($this->get('password')))->getMaskedValue() : $this->get('password'),
                 $this->get('charset')
             ]
         );
+
+        $this->set(
+            'dsn',
+            $result(true)
+        );
+        return $result(false);
     }
 
     private function handleOci(): string
     {
-        return (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ?
+        $result = (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ?
             vsprintf(
                 "%s:host=%s:%s/%s;charset=%s",
                 [
@@ -122,11 +131,17 @@ class DSNHandler implements IDSN
                     $this->get('charset')
                 ]
             );
+
+        $this->set(
+            'dsn',
+            $result
+        );
+        return $result;
     }
 
     private function handleSybase(): string
     {
-        return vsprintf(
+        $result = vsprintf(
             "%s:host=%s:%s/%s;charset=%s",
             [
                 $this->get('driver'),
@@ -136,11 +151,17 @@ class DSNHandler implements IDSN
                 $this->get('charset')
             ]
         );
+
+        $this->set(
+            'dsn',
+            $result
+        );
+        return $result;
     }
 
     private function handleSqlsrv(): string
     {
-        return vsprintf(
+        $result = vsprintf(
             "%s:server=%s,%s;database=%s",
             [
                 $this->get('driver'),
@@ -149,13 +170,19 @@ class DSNHandler implements IDSN
                 $this->get('database')
             ]
         );
+
+        $this->set(
+            'dsn',
+            $result
+        );
+        return $result;
     }
 
     private function handleMssql(): string
     {
         $this->set('driver', (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? 'mssql' : 'dblib');
 
-        return (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ?
+        $result = (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ?
             vsprintf(
                 "%s:server=%s,%s;database=%s",
                 [
@@ -175,6 +202,12 @@ class DSNHandler implements IDSN
                     $this->get('charset')
                 ]
             );
+
+        $this->set(
+            'dsn',
+            $result
+        );
+        return $result;
     }
 
     /**
@@ -185,7 +218,7 @@ class DSNHandler implements IDSN
         if (!Path::isAbsolute($this->get('database'))) {
             $this->set('database', Path::toAbsolute($this->get('database')));
         }
-        return vsprintf(
+        $result = vsprintf(
             "%s:dbname=%s/%s:%s;charset=%s",
             [
                 $this->get('driver'),
@@ -195,6 +228,12 @@ class DSNHandler implements IDSN
                 $this->get('charset')
             ]
         );
+
+        $this->set(
+            'dsn',
+            $result
+        );
+        return $result;
     }
 
     /**
@@ -202,6 +241,7 @@ class DSNHandler implements IDSN
      */
     private function handleSQLite(): string
     {
+        $result = null;
         if (!Path::isAbsolute($this->get('database')) && $this->get('database') !== 'memory') {
             $this->set('database', Path::toAbsolute($this->get('database')));
             $result = vsprintf(
@@ -220,6 +260,11 @@ class DSNHandler implements IDSN
                 ]
             );
         }
+
+        $this->set(
+            'dsn',
+            $result
+        );
         return $result;
     }
 
@@ -239,6 +284,11 @@ class DSNHandler implements IDSN
                 ]
             );
         }
+
+        $this->set(
+            'dsn',
+            $result
+        );
         return $result;
     }
 }

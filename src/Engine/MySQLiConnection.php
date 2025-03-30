@@ -8,29 +8,26 @@ use Exception;
 use SensitiveParameter;
 use ReflectionException;
 use AllowDynamicProperties;
-use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Shared\Singleton;
+use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
-use Dotenv\Exception\ValidationException;
-use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Helpers\Zod\SchemaParser;
 use GenericDatabase\Helpers\Zod\Zod\ZodError;
-use GenericDatabase\Generic\Connection\Methods;
-use GenericDatabase\Interfaces\Connection\IDSN;
-use GenericDatabase\Helpers\Zod\SchemaConverter;
 use GenericDatabase\Helpers\Zod\SchemaValidator;
+use Dotenv\Exception\ValidationException;
+use GenericDatabase\Generic\Connection\Methods;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Connection\IDSN;
 use GenericDatabase\Interfaces\Connection\IFetch;
-use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\ITransactions;
+use GenericDatabase\Engine\MySQLi\Connection\MySQL;
 use GenericDatabase\Engine\MySQLi\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Fetch\FetchHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Report\ReportHandler;
-use GenericDatabase\Engine\MySQLi\Connection\SchemaParserStrategy;
 use GenericDatabase\Engine\MySQLi\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\MySQLi\Connection\Attributes\AttributesHandler;
@@ -201,6 +198,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * @param string $password The password of the database
      * @param string $database The name of the database
      * @param int $port The port of the database
+     * @param string $charset The charset of the database
      * @return MySQLiConnection
      * @throws Exception
      */
@@ -209,7 +207,8 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         string $user,
         #[SensitiveParameter] string $password,
         string $database,
-        int $port
+        int $port,
+        string $charset
     ): MySQLiConnection {
         if (!static::getHost()) {
             $host = (string) !$this->getOptionsHandler()->getOptions(MySQL::ATTR_PERSISTENT) ? $host : 'p:' . $host;
@@ -217,12 +216,12 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         }
         try {
             $schemaJson = __DIR__ . '/MySQLi/Connection/MySQL.json';
-            $parser = new SchemaParserStrategy(new SchemaParser($schemaJson));
-            $validJson = $parser->parse($host, $user, $password, $database, $port);
+            $schemaParser = new SchemaParser($schemaJson);
+            $validJson = $schemaParser->parse(['host' => $host, 'user' => $user, 'password' => $password, 'database' => $database, 'port' => $port, 'charset' => $charset]);
             $validator = new SchemaValidator($schemaJson);
             if ($validator->validate($validJson)) {
                 $this->parseDsn();
-                $this->getConnection()->real_connect($host, $user, $password, $database, $port);
+                $this->getConnection()->real_connect($host, $user, $password, $database, $port, $charset);
             } else {
                 $errors = $validator->getErrors();
                 if (!empty($errors)) {
@@ -236,7 +235,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
             }
             throw new Exceptions(implode("\n", $errorMessages));
         } catch (Exception $error) {
-            die(Errors::throw($error));
+            throw new Exceptions($error->getMessage());
         }
         return $this;
     }
@@ -263,14 +262,15 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
                     static::getUser(),
                     static::getPassword(),
                     static::getDatabase(),
-                    static::getPort()
+                    static::getPort(),
+                    static::getCharset()
                 )
                 ->postConnect()
                 ->setConnected(true);
             return $this;
         } catch (Exception $error) {
             $this->disconnect();
-            die(Errors::throw($error));
+            throw new Exceptions($error->getMessage());
         }
     }
 
@@ -317,7 +317,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      *
      * @return string|Exceptions
      */
-    private function parseDsn(): string|Exceptions
+    public function parseDsn(): string|Exceptions
     {
         return $this->getDsnHandler()->parse();
     }

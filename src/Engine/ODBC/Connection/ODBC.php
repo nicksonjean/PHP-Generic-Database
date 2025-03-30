@@ -41,6 +41,11 @@ class ODBC
     public const ATTR_REPORT = 1110;
 
     /**
+     * Connection attribute to set cursor.
+     */
+    public const ATTR_SQL_CUR_USE = 1011;
+
+    /**
      * Turns reporting off
      */
     public const REPORT_OFF = 0;
@@ -119,6 +124,21 @@ class ODBC
      * Path to the ODBC cmdlet on Linux.
      */
     private const LINUX_CMDLET = 'odbcinst -j';
+
+    /**
+     * Path to the ODBC cmdlet on Linux.
+     */
+    public const SQL_CUR_USE_IF_NEEDED = 0;
+
+    /**
+     * Path to the ODBC cmdlet on Linux.
+     */
+    public const SQL_CUR_USE_ODBC = 1;
+
+    /**
+     * Path to the ODBC cmdlet on Linux.
+     */
+    public const SQL_CUR_USE_DRIVER = 2;
 
     /**
      * Array containing the available aliases.

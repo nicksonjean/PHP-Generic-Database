@@ -602,7 +602,8 @@ class StaticArray
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
             'exception' => true
         ]);
@@ -640,7 +641,8 @@ class StaticArray
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
             'exception' => true
         ]);
@@ -678,7 +680,8 @@ class StaticArray
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
             'exception' => true
         ]);
@@ -716,7 +719,8 @@ class StaticArray
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
             'exception' => true
         ]);
@@ -754,7 +758,8 @@ class StaticArray
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
             'exception' => true
         ]);
@@ -788,7 +793,8 @@ class StaticArray
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
             'exception' => true
         ]);
@@ -824,7 +830,8 @@ class StaticArray
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
             'exception' => true
         ]);
@@ -858,7 +865,8 @@ class StaticArray
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
             'exception' => true
         ]);
@@ -892,7 +900,8 @@ class StaticArray
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
             'exception' => true
         ]);
@@ -926,7 +935,8 @@ class StaticArray
                 ODBC::ATTR_PERSISTENT => $persistent,
                 ODBC::ATTR_CONNECT_TIMEOUT => 28800,
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT
+                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
             'exception' => true
         ]);

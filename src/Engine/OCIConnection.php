@@ -8,30 +8,33 @@ use Exception;
 use SensitiveParameter;
 use ReflectionException;
 use AllowDynamicProperties;
-use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Shared\Singleton;
+use GenericDatabase\Helpers\Zod\SchemaParser;
+use GenericDatabase\Helpers\Zod\Zod\ZodError;
+use GenericDatabase\Helpers\Zod\SchemaValidator;
+use Dotenv\Exception\ValidationException;
 use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IDSN;
 use GenericDatabase\Interfaces\Connection\IFetch;
-use GenericDatabase\Interfaces\Connection\IStatements;
-use GenericDatabase\Interfaces\Connection\IAttributes;
-use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IOptions;
+use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IAttributes;
+use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\OCI\Connection\OCI;
 use GenericDatabase\Engine\OCI\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\OCI\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\OCI\Connection\Report\ReportHandler;
 use GenericDatabase\Engine\OCI\Connection\Options\OptionsHandler;
+use GenericDatabase\Engine\OCI\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\OCI\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\OCI\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\OCI\Connection\Statements\StatementsHandler;
-use GenericDatabase\Engine\OCI\Connection\Arguments\ArgumentsHandler;
-use GenericDatabase\Engine\OCI\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\OCI\Connection\Transactions\TransactionsHandler;
-use GenericDatabase\Engine\OCI\Connection\Report\ReportHandler;
+use GenericDatabase\Engine\OCI\Connection\Arguments\Strategy\ArgumentsStrategy;
 
 /**
  * Dynamic and Static container class for OCIConnection connections.
@@ -193,25 +196,47 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
      * @param string $user The user of the database
      * @param string $password The password of the database
      * @param string $database The name of the database
-     * @param mixed $port The port of the database
+     * @param int $port The port of the database
      * @param string $charset The charset of the database
      * @return OCIConnection
      * @throws Exception
      */
     private function realConnect(
-        mixed $host,
-        mixed $user,
-        #[SensitiveParameter] mixed $password,
-        mixed $database,
-        mixed $port,
-        mixed $charset
+        string $host,
+        string $user,
+        #[SensitiveParameter] string $password,
+        string $database,
+        int $port,
+        string $charset
     ): OCIConnection {
-        $dsn = vsprintf('%s:%s/%s', [$host, $port, $database]);
-        $this->setConnection(
-            (string) !$this->getOptionsHandler()->getOptions(OCI::ATTR_PERSISTENT)
-                ? oci_connect($user, $password, $dsn, $charset)
-                : oci_pconnect($user, $password, $dsn, $charset)
-        );
+        try {
+            $schemaJson = __DIR__ . '/OCI/Connection/OCI.json';
+            $schemaParser = new SchemaParser($schemaJson);
+            $validJson = $schemaParser->parse(['host' => $host, 'user' => $user, 'password' => $password, 'database' => $database, 'port' => $port, 'charset' => $charset]);
+            $validator = new SchemaValidator($schemaJson);
+            if ($validator->validate($validJson)) {
+                $this->parseDsn();
+                $dsn = vsprintf('%s:%s/%s', [$host, $port, $database]);
+                $this->setConnection(
+                    (string) !$this->getOptionsHandler()->getOptions(OCI::ATTR_PERSISTENT)
+                        ? oci_connect($user, $password, $dsn, $charset)
+                        : oci_pconnect($user, $password, $dsn, $charset)
+                );
+            } else {
+                $errors = $validator->getErrors();
+                if (!empty($errors)) {
+                    throw new ValidationException(implode("\n", array_map(fn($error) => "- $error", $errors)));
+                }
+            }
+        } catch (ZodError $e) {
+            $errorMessages = [];
+            foreach ($e->errors as $error) {
+                $errorMessages[] = "- " . implode('.', $error['path']) . ": {$error['message']}";
+            }
+            throw new Exceptions(implode("\n", $errorMessages));
+        } catch (Exception $error) {
+            throw new Exceptions($error->getMessage());
+        }
         return $this;
     }
 
@@ -232,7 +257,6 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
             $this
                 ->preConnect()
                 ->getInstance()
-                ->setDsn($this->parseDsn())
                 ->realConnect(
                     static::getHost(),
                     static::getUser(),
@@ -246,7 +270,7 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
             return $this;
         } catch (Exception $error) {
             $this->disconnect();
-            die(Errors::throw($error));
+            throw new Exceptions($error->getMessage());
         }
     }
 
@@ -293,7 +317,7 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
      *
      * @return string|Exceptions
      */
-    private function parseDsn(): string|Exceptions
+    public function parseDsn(): string|Exceptions
     {
         return $this->getDsnHandler()->parse();
     }

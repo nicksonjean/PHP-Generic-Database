@@ -4,34 +4,38 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use PDO;
 use Exception;
+use PDOException;
 use SensitiveParameter;
 use ReflectionException;
 use AllowDynamicProperties;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Generic\Connection\Methods;
+use GenericDatabase\Helpers\Exceptions;
+use Dotenv\Exception\ValidationException;
 use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Helpers\Zod\SchemaParser;
+use GenericDatabase\Helpers\Zod\Zod\ZodError;
+use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\Connection\IDSN;
+use GenericDatabase\Helpers\Zod\SchemaValidator;
 use GenericDatabase\Interfaces\Connection\IFetch;
-use GenericDatabase\Interfaces\Connection\IStatements;
-use GenericDatabase\Interfaces\Connection\IAttributes;
-use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IOptions;
+use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IAttributes;
+use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\ITransactions;
-use PDO;
 use GenericDatabase\Engine\PDO\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\PDO\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\PDO\Connection\Report\ReportHandler;
 use GenericDatabase\Engine\PDO\Connection\Options\OptionsHandler;
+use GenericDatabase\Engine\PDO\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\PDO\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\PDO\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\PDO\Connection\Statements\StatementsHandler;
-use GenericDatabase\Engine\PDO\Connection\Arguments\ArgumentsHandler;
-use GenericDatabase\Engine\PDO\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\PDO\Connection\Transactions\TransactionsHandler;
-use GenericDatabase\Engine\PDO\Connection\Report\ReportHandler;
-use PDOException;
+use GenericDatabase\Engine\PDO\Connection\Arguments\Strategy\ArgumentsStrategy;
 
 /**
  * Dynamic and Static container class for PDOConnection connections.
@@ -198,11 +202,32 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
      */
     private function realConnect(
         string $dsn,
-        mixed $user = null,
-        #[SensitiveParameter] mixed $password = null,
-        mixed $options = null
+        string $user = null,
+        #[SensitiveParameter] string $password = null,
+        array $options = null
     ): PDOConnection {
-        $this->setConnection(new PDO($dsn, $user, $password, $options));
+        try {
+            $schemaJson = __DIR__ . '/PDO/Connection/PDO.json';
+            $schemaParser = new SchemaParser($schemaJson);
+            $validJson = $schemaParser->parse(['dsn' => $dsn, 'user' => $user, 'password' => $password]);
+            $validator = new SchemaValidator($schemaJson);
+            if ($validator->validate($validJson)) {
+                $this->setConnection(new PDO($dsn, $user, $password, $options));
+            } else {
+                $errors = $validator->getErrors();
+                if (!empty($errors)) {
+                    throw new ValidationException(implode("\n", array_map(fn($error) => "- $error", $errors)));
+                }
+            }
+        } catch (ZodError $e) {
+            $errorMessages = [];
+            foreach ($e->errors as $error) {
+                $errorMessages[] = "- " . implode('.', $error['path']) . ": {$error['message']}";
+            }
+            throw new Exceptions(implode("\n", $errorMessages));
+        } catch (Exception $error) {
+            throw new Exceptions($error->getMessage());
+        }
         return $this;
     }
 
@@ -234,7 +259,7 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
             return $this;
         } catch (PDOException | Exception $error) {
             $this->disconnect();
-            die(Errors::throw($error));
+            throw new Exceptions($error->getMessage());
         }
     }
 

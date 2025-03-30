@@ -4,10 +4,11 @@ namespace GenericDatabase\Engine\Firebird\Connection\DSN;
 
 use AllowDynamicProperties;
 use GenericDatabase\Shared\Run;
-use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Helpers\Path;
 use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IDSN;
+use GenericDatabase\Generic\Connection\SensitiveValue;
 
 #[AllowDynamicProperties]
 class DSNHandler implements IDSN
@@ -44,20 +45,22 @@ class DSNHandler implements IDSN
             $this->set('database', Path::toAbsolute($this->get('database')));
         }
 
+        $sanitize = fn(bool $default = false) => vsprintf(
+            "firebird://%s:%s@%s:%s//%s?charset=%s",
+            [
+                $this->get('user'),
+                $default ? (new SensitiveValue($this->get('password')))->getMaskedValue() : $this->get('password'),
+                $this->get('host'),
+                $this->get('port'),
+                $this->get('database'),
+                $this->get('charset')
+            ]
+        );
+
         $this->set(
             'dsn',
-            vsprintf(
-                "firebird://%s:%s@%s:%s//%s?charset=%s",
-                [
-                    $this->get('user'),
-                    $this->get('password'),
-                    $this->get('host'),
-                    $this->get('port'),
-                    $this->get('database'),
-                    $this->get('charset')
-                ]
-            )
+            $sanitize(true)
         );
-        return $this->get('dsn');
+        return $sanitize(false);
     }
 }

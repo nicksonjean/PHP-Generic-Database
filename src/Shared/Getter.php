@@ -2,6 +2,8 @@
 
 namespace GenericDatabase\Shared;
 
+use GenericDatabase\Generic\Connection\SensitiveValue;
+
 /**
  * This trait is utilized for reading data from inaccessible (protected or private) or non-existing properties.
  *
@@ -16,13 +18,19 @@ trait Getter
     use Property;
 
     /**
-     * This method is utilized for reading data from inaccessible (protected or private) or non-existing properties.
+     * Magic method to get the value of inaccessible or non-existing properties.
      *
-     * @param string $name Argument to be tested
-     * @return mixed
+     * @param string $name Property name
+     * @return mixed The property value
      */
     public function __get(string $name): mixed
     {
-        return $this->property[$name] ?? null;
+        if (isset($this->property[$name])) {
+            if ($this->property[$name] instanceof SensitiveValue) {
+                return $this->property[$name]->getValue();
+            }
+            return $this->property[$name];
+        }
+        return null;
     }
 }

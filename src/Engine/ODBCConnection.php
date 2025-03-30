@@ -9,28 +9,32 @@ use SensitiveParameter;
 use ReflectionException;
 use AllowDynamicProperties;
 use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Generic\Connection\Methods;
+use GenericDatabase\Helpers\Exceptions;
+use Dotenv\Exception\ValidationException;
 use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Helpers\Zod\SchemaParser;
+use GenericDatabase\Helpers\Zod\Zod\ZodError;
+use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\Connection\IDSN;
-use GenericDatabase\Interfaces\Connection\IFetch;
-use GenericDatabase\Interfaces\Connection\IStatements;
-use GenericDatabase\Interfaces\Connection\IAttributes;
-use GenericDatabase\Interfaces\Connection\IArguments;
-use GenericDatabase\Interfaces\Connection\IOptions;
-use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\ODBC\Connection\ODBC;
+use GenericDatabase\Helpers\Zod\SchemaValidator;
+use GenericDatabase\Interfaces\Connection\IFetch;
+use GenericDatabase\Interfaces\Connection\IOptions;
+use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IAttributes;
+use GenericDatabase\Interfaces\Connection\IStatements;
+use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\ODBC\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\ODBC\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\ODBC\Connection\Report\ReportHandler;
 use GenericDatabase\Engine\ODBC\Connection\Options\OptionsHandler;
+use GenericDatabase\Engine\ODBC\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\ODBC\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\ODBC\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\ODBC\Connection\Statements\StatementsHandler;
-use GenericDatabase\Engine\ODBC\Connection\Arguments\ArgumentsHandler;
-use GenericDatabase\Engine\ODBC\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\ODBC\Connection\Transactions\TransactionsHandler;
-use GenericDatabase\Engine\ODBC\Connection\Report\ReportHandler;
+use GenericDatabase\Engine\ODBC\Connection\Arguments\Strategy\ArgumentsStrategy;
 
 /**
  * Dynamic and Static container class for ODBCConnection connections.
@@ -186,32 +190,89 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     }
 
     /**
+     * Determines the cursor mode to be used based on the provided options and driver.
+     *
+     * If the ODBC::ATTR_SQL_CUR_USE key exists in the options array, it checks the driver.
+     * For 'sqlsrv' or 'oci' drivers, it returns ODBC::SQL_CUR_USE_IF_NEEDED.
+     * Otherwise, it retrieves the cursor mode from the options handler.
+     * If the key does not exist, it defaults to ODBC::SQL_CUR_USE_DRIVER.
+     *
+     * @param array $options An array of options that may contain the cursor use attribute.
+     * @return int The determined cursor mode constant.
+     */
+    private function cursorMode(array $options): int
+    {
+        return array_key_exists(ODBC::ATTR_SQL_CUR_USE, $options)
+            ? (($this->getDriver() === 'sqlsrv' || $this->getDriver() === 'oci')
+                ? ODBC::SQL_CUR_USE_IF_NEEDED
+                : $this->getOptionsHandler()->getOptions(ODBC::ATTR_SQL_CUR_USE))
+            : ODBC::SQL_CUR_USE_DRIVER;
+    }
+
+    /**
+     * Sets the persistent mode of the connection based on the provided flag.
+     * If the flag is true, it sets the persistent mode to false and updates the options
+     * handler accordingly.
+     *
+     * @param bool &$isPersistent The flag to set the persistent mode.
+     * @return void
+     */
+    private function persistentMode(bool &$isPersistent): void
+    {
+        $isPersistent && $this->getOptionsHandler()->setOptions(
+            array_merge(
+                array_filter(
+                    $this->getOptionsHandler()->getOptions(),
+                    fn($value, $key) => $key !== ODBC::ATTR_PERSISTENT,
+                    ARRAY_FILTER_USE_BOTH
+                ),
+                [ODBC::ATTR_PERSISTENT => false]
+            )
+        );
+    }
+
+    /**
      * This method is responsible for creating a new instance of the ODBC connection.
      *
      * @param string $dsn The Data source name of the connection
      * @param ?string $user = null The user of the database
      * @param ?string $password = null The password of the database
-     * @param int|null $options
+     * @param ?array $options = null The options of the database
      * @return ODBCConnection
+     * @throws Exception
      */
     private function realConnect(
         string $dsn,
         string $user = null,
         #[SensitiveParameter] string $password = null,
-        int $options = null
+        array $options = null
     ): ODBCConnection {
-        $this->setConnection((!$this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') ?
-            odbc_connect($dsn, (string) $user, (string) $password, $options) :
-            odbc_pconnect($dsn, (string) $user, (string) $password, $options));
-        if (!$this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql') {
-            $nonPersistent = [];
-            foreach ($this->getOptionsHandler()->getOptions() as $key => $value) {
-                if ($key !== ODBC::ATTR_PERSISTENT) {
-                    $nonPersistent[$key] = $value;
+        try {
+            $schemaJson = __DIR__ . '/ODBC/Connection/ODBC.json';
+            $schemaParser = new SchemaParser($schemaJson);
+            $validJson = $schemaParser->parse(['dsn' => $dsn, 'user' => $user, 'password' => $password]);
+            $validator = new SchemaValidator($schemaJson);
+            if ($validator->validate($validJson)) {
+                $cursorMode = $this->cursorMode($options);
+                $isPersistent = !$this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql';
+                $this->setConnection($isPersistent ?
+                    odbc_connect($dsn, (string) $user, (string) $password, $cursorMode) :
+                    odbc_pconnect($dsn, (string) $user, (string) $password, $cursorMode));
+                $this->persistentMode($isPersistent);
+            } else {
+                $errors = $validator->getErrors();
+                if (!empty($errors)) {
+                    throw new ValidationException(implode("\n", array_map(fn($error) => "- $error", $errors)));
                 }
             }
-            $nonPersistent[ODBC::ATTR_PERSISTENT] = false;
-            $this->getOptionsHandler()->setOptions($nonPersistent);
+        } catch (ZodError $e) {
+            $errorMessages = [];
+            foreach ($e->errors as $error) {
+                $errorMessages[] = "- " . implode('.', $error['path']) . ": {$error['message']}";
+            }
+            throw new Exceptions(implode("\n", $errorMessages));
+        } catch (Exception $error) {
+            throw new Exceptions($error->getMessage());
         }
         return $this;
     }
@@ -237,14 +298,14 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
                     $this->parseDsn(),
                     static::getUser(),
                     static::getPassword(),
-                    0
+                    static::getOptions()
                 )
                 ->postConnect()
                 ->setConnected(true);
             return $this;
         } catch (Exception $error) {
             $this->disconnect();
-            die(Errors::throw($error));
+            throw new Exceptions($error->getMessage());
         }
     }
 

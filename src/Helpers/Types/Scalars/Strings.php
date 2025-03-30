@@ -24,4 +24,23 @@ class Strings
     {
         return lcfirst(str_replace($separator, '', ucwords($input, $separator)));
     }
+
+    /**
+     * Repeat a given string a specified number of times.
+     *
+     * This method takes a number and a string and returns a new string with the given string repeated
+     * the specified number of times.
+     *
+     * @param int $num The number of times to repeat the string.
+     * @param string $string The string to be repeated.
+     * @return string The repeated string.
+     */
+    public static function strRpeat(int $num, string $string): string
+    {
+        $result = "";
+        for ($x = 0; $x < $num; $x++) {
+            $result .= $string;
+        }
+        return $result;
+    }
 }

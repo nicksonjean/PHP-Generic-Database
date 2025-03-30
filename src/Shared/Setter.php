@@ -2,6 +2,8 @@
 
 namespace GenericDatabase\Shared;
 
+use GenericDatabase\Generic\Connection\SensitiveValue;
+
 /**
  * This trait is run when writing data to inaccessible (protected or private) or non-existing properties.
  *
@@ -24,6 +26,10 @@ trait Setter
      */
     public function __set(string $name, mixed $value): void
     {
-        $this->property[$name] = $value;
+        if (in_array(strtolower($name), ['password'])) {
+            $this->property[$name] = new SensitiveValue($value);
+        } else {
+            $this->property[$name] = $value;
+        }
     }
 }

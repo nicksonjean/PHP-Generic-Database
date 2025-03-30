@@ -31,4 +31,9 @@ class Z
     {
         return new ZodObject($shape);
     }
+
+    public static function null(): ZodNull
+    {
+        return new ZodNull();
+    }
 }

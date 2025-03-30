@@ -7,7 +7,7 @@ namespace GenericDatabase\Helpers\Zod\Zod;
  */
 class ZodObject extends ZodType
 {
-    protected array $shape = [];
+    public array $shape = [];
 
     public function __construct(array $shape)
     {
@@ -19,7 +19,7 @@ class ZodObject extends ZodType
         $errors = [];
         $validated = [];
 
-        // Tratar valor default
+        // Tratar valor default para o objeto como um todo
         if ($value === null && $this->hasDefault) {
             return ['value' => $this->defaultValue, 'errors' => []];
         }
@@ -52,7 +52,15 @@ class ZodObject extends ZodType
                 continue;
             }
 
-            $result = $type->validate($value[$key]);
+            $propertyValue = $value[$key];
+
+            // Verificar se o valor é null e se o tipo permite null
+            if ($propertyValue === null && $type->nullable) {
+                $validated[$key] = null;
+                continue;
+            }
+
+            $result = $type->validate($propertyValue);
             $validated[$key] = $result['value'];
 
             foreach ($result['errors'] as $error) {
@@ -88,8 +96,8 @@ class ZodObject extends ZodType
         foreach ($this->shape as $key => $type) {
             $schema['properties'][$key] = $type->toJsonSchema();
 
-            // Se não tem default, é obrigatório
-            if (!$type->hasDefault) {
+            // Se não tem default e não é nullable, é obrigatório
+            if (!$type->hasDefault && !$type->nullable) {
                 $required[] = $key;
             }
         }

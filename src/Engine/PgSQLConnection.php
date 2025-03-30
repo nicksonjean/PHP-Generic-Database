@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace GenericDatabase\Engine;
 
 use Exception;
+use SensitiveParameter;
 use ReflectionException;
 use AllowDynamicProperties;
-use GenericDatabase\Helpers\Errors;
+use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Shared\Singleton;
+use GenericDatabase\Helpers\Zod\SchemaParser;
+use GenericDatabase\Helpers\Zod\Zod\ZodError;
+use GenericDatabase\Helpers\Zod\SchemaValidator;
+use Dotenv\Exception\ValidationException;
 use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IDSN;
@@ -23,14 +27,14 @@ use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
 use GenericDatabase\Engine\PgSQL\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\PgSQL\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\PgSQL\Connection\Report\ReportHandler;
 use GenericDatabase\Engine\PgSQL\Connection\Options\OptionsHandler;
+use GenericDatabase\Engine\PgSQL\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\PgSQL\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\PgSQL\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\PgSQL\Connection\Statements\StatementsHandler;
-use GenericDatabase\Engine\PgSQL\Connection\Arguments\ArgumentsHandler;
-use GenericDatabase\Engine\PgSQL\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\PgSQL\Connection\Transactions\TransactionsHandler;
-use GenericDatabase\Engine\PgSQL\Connection\Report\ReportHandler;
+use GenericDatabase\Engine\PgSQL\Connection\Arguments\Strategy\ArgumentsStrategy;
 
 /**
  * Dynamic and Static container class for PgSQLConnection connections.
@@ -210,19 +214,52 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
     }
 
     /**
-     * This method is responsible for creating a new instance of the PgSQLConnection connection.
+     * This method is responsible for creating a new instance of the PostgresSQL connection.
      *
-     * @param string $dsn The Data source name of the connection
-     * @return PgSQLConnection
+     * @param string $host The host of the database
+     * @param string $user The user of the database
+     * @param string $password The password of the database
+     * @param string $database The name of the database
+     * @param int $port The port of the database
+     * @param string $charset The charset of the database
+     * @return MySQLiConnection
      * @throws Exception
      */
-    private function realConnect(string $dsn): PgSQLConnection
-    {
-        $this->setConnection(
-            (string) !$this->getOptionsHandler()->getOptions(PgSQL::ATTR_PERSISTENT)
-                ? pg_connect($dsn, $this->getFlags())
-                : pg_pconnect($dsn, $this->getFlags())
-        );
+    private function realConnect(
+        string $host,
+        string $user,
+        #[SensitiveParameter] string $password,
+        string $database,
+        int $port,
+        string $charset
+    ): PgSQLConnection {
+        try {
+            $schemaJson = __DIR__ . '/PgSQL/Connection/PgSQL.json';
+            $schemaParser = new SchemaParser($schemaJson);
+            $validJson = $schemaParser->parse(['host' => $host, 'user' => $user, 'password' => $password, 'database' => $database, 'port' => $port, 'charset' => $charset]);
+            $validator = new SchemaValidator($schemaJson);
+            if ($validator->validate($validJson)) {
+                $dsn = $this->parseDsn();
+                $this->setConnection(
+                    (string) !$this->getOptionsHandler()->getOptions(PgSQL::ATTR_PERSISTENT)
+                        ? pg_connect($dsn, $this->getFlags())
+                        : pg_pconnect($dsn, $this->getFlags())
+                );
+            } else {
+                $errors = $validator->getErrors();
+                if (!empty($errors)) {
+                    throw new ValidationException(implode("\n", array_map(fn($error) => "- $error", $errors)));
+                }
+            }
+        } catch (ZodError $e) {
+            $errorMessages = [];
+            foreach ($e->errors as $error) {
+                $errorMessages[] = "- " . implode('.', $error['path']) . ": {$error['message']}";
+            }
+            throw new Exceptions(implode("\n", $errorMessages));
+        } catch (Exception $error) {
+            throw new Exceptions($error->getMessage());
+        }
         return $this;
     }
 
@@ -244,14 +281,19 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
                 ->preConnect()
                 ->getInstance()
                 ->realConnect(
-                    $this->parseDsn()
+                    static::getHost(),
+                    static::getUser(),
+                    static::getPassword(),
+                    static::getDatabase(),
+                    static::getPort(),
+                    static::getCharset()
                 )
                 ->postConnect()
                 ->setConnected(true);
             return $this;
         } catch (Exception $error) {
             $this->disconnect();
-            die(Errors::throw($error));
+            throw new Exceptions($error->getMessage());
         }
     }
 

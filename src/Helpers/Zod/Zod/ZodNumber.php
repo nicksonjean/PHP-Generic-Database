@@ -7,12 +7,14 @@ namespace GenericDatabase\Helpers\Zod\Zod;
  */
 class ZodNumber extends ZodType
 {
-    protected ?float $min = null;
-    protected ?float $max = null;
-    protected bool $isInteger = false;
-    protected ?string $minError = 'Número deve ser maior ou igual a {min}';
-    protected ?string $maxError = 'Número deve ser menor ou igual a {max}';
-    protected ?string $intError = 'Número deve ser um inteiro';
+    public ?float $min = null;
+    public ?float $max = null;
+    public bool $isInteger = false;
+    public ?bool $nullable = null;
+    public ?string $minError = 'Número deve ser maior ou igual a {min}';
+    public ?string $maxError = 'Número deve ser menor ou igual a {max}';
+    public ?string $intError = 'Número deve ser um inteiro';
+    public ?string $nullableError = 'String pode ser nullable';
 
     public function min(float $min, ?string $message = null): self
     {
@@ -41,6 +43,15 @@ class ZodNumber extends ZodType
         return $this;
     }
 
+    public function nullable(bool $nullable, ?string $message = null): self
+    {
+        $this->nullable = $nullable;
+        if ($message !== null) {
+            $this->nullableError = $message;
+        }
+        return $this;
+    }
+
     public function validate($value): array
     {
         $errors = [];
@@ -58,6 +69,12 @@ class ZodNumber extends ZodType
         if (!is_numeric($value)) {
             $errors[] = ['message' => 'Valor deve ser um número', 'code' => 'invalid_type'];
             return ['value' => $value, 'errors' => $errors];
+        }
+
+        // Validar nulável
+        if ($this->nullable !== null && !is_bool($this->nullable)) {
+            $message = str_replace('{nullable}', $this->nullable, $this->nullableError);
+            $errors[] = ['message' => $message, 'code' => 'nullable'];
         }
 
         // Validar se é inteiro
@@ -93,6 +110,10 @@ class ZodNumber extends ZodType
 
         if ($this->max !== null) {
             $schema['maximum'] = $this->max;
+        }
+
+        if ($this->nullable !== null) {
+            $schema['nullable'] = $this->nullable;
         }
 
         if ($this->hasDefault) {

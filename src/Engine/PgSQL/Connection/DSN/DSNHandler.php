@@ -3,12 +3,13 @@
 namespace GenericDatabase\Engine\PgSQL\Connection\DSN;
 
 use AllowDynamicProperties;
-use GenericDatabase\Interfaces\Connection\IDSN;
-use GenericDatabase\Interfaces\Connection\IOptions;
-use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Shared\Run;
 use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Connection\IDSN;
 use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
+use GenericDatabase\Interfaces\Connection\IOptions;
+use GenericDatabase\Generic\Connection\SensitiveValue;
 
 #[AllowDynamicProperties]
 class DSNHandler implements IDSN
@@ -49,23 +50,25 @@ class DSNHandler implements IDSN
             throw new Exceptions("Invalid or not loaded 'pgsql' extension in PHP.ini settings");
         }
 
+        $sanitize = fn(bool $default = false) => vsprintf(
+            "host=%s port=%s dbname=%s user=%s password=%s%s options='--client_encoding=%s'",
+            [
+                $this->get('host'),
+                $this->get('port'),
+                $this->get('database'),
+                $this->get('user'),
+                $default ? (new SensitiveValue($this->get('password')))->getMaskedValue() : $this->get('password'),
+                $this->getOptionsHandler()->getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
+                    ? ' connect_timeout=' . $this->getOptionsHandler()->getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
+                    : '',
+                $this->get('charset')
+            ]
+        );
+
         $this->set(
             'dsn',
-            vsprintf(
-                "host=%s port=%s dbname=%s user=%s password=%s%s options='--client_encoding=%s'",
-                [
-                    $this->get('host'),
-                    $this->get('port'),
-                    $this->get('database'),
-                    $this->get('user'),
-                    $this->get('password'),
-                    $this->getOptionsHandler()->getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
-                        ? ' connect_timeout=' . $this->getOptionsHandler()->getOptions(PgSQL::ATTR_CONNECT_TIMEOUT)
-                        : '',
-                    $this->get('charset')
-                ]
-            )
+            $sanitize(true)
         );
-        return $this->get('dsn');
+        return $sanitize(false);
     }
 }

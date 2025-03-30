@@ -7,9 +7,9 @@ namespace GenericDatabase\Helpers\Zod\Zod;
  */
 abstract class ZodType
 {
-    protected $description = '';
-    protected $defaultValue = null;
-    protected $hasDefault = false;
+    public $description = '';
+    public $defaultValue = null;
+    public $hasDefault = false;
 
     /**
      * Adiciona uma descrição ao tipo

@@ -7,11 +7,11 @@ namespace GenericDatabase\Helpers\Zod\Zod;
  */
 class ZodArray extends ZodType
 {
-    protected ?ZodType $itemType = null;
-    protected ?int $minLength = null;
-    protected ?int $maxLength = null;
-    protected ?string $minLengthError = 'Array deve ter pelo menos {min} itens';
-    protected ?string $maxLengthError = 'Array não pode ter mais que {max} itens';
+    public ?ZodType $itemType = null;
+    public ?int $minLength = null;
+    public ?int $maxLength = null;
+    public ?string $minLengthError = 'Array deve ter pelo menos {min} itens';
+    public ?string $maxLengthError = 'Array não pode ter mais que {max} itens';
 
     public function of(ZodType $itemType): self
     {

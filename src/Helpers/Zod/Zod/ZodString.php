@@ -7,12 +7,14 @@ namespace GenericDatabase\Helpers\Zod\Zod;
  */
 class ZodString extends ZodType
 {
-    protected ?int $minLength = null;
-    protected ?int $maxLength = null;
-    protected ?string $pattern = null;
-    protected ?string $minLengthError = 'String deve ter pelo menos {min} caracteres';
-    protected ?string $maxLengthError = 'String não pode ter mais que {max} caracteres';
-    protected ?string $patternError = 'String deve corresponder ao padrão especificado';
+    public ?int $minLength = null;
+    public ?int $maxLength = null;
+    public ?string $pattern = null;
+    public ?bool $nullable = null;
+    public ?string $minLengthError = 'String deve ter pelo menos {min} caracteres';
+    public ?string $maxLengthError = 'String não pode ter mais que {max} caracteres';
+    public ?string $patternError = 'String deve corresponder ao padrão especificado';
+    public ?string $nullableError = 'String pode ser nullable';
 
     public function min(int $minLength, ?string $message = null): self
     {
@@ -37,6 +39,15 @@ class ZodString extends ZodType
         $this->pattern = $pattern;
         if ($message !== null) {
             $this->patternError = $message;
+        }
+        return $this;
+    }
+
+    public function nullable(bool $nullable, ?string $message = null): self
+    {
+        $this->nullable = $nullable;
+        if ($message !== null) {
+            $this->nullableError = $message;
         }
         return $this;
     }
@@ -69,6 +80,12 @@ class ZodString extends ZodType
                 $errors[] = ['message' => 'Valor deve ser uma string', 'code' => 'invalid_type'];
                 return ['value' => $value, 'errors' => $errors];
             }
+        }
+
+        // Validar nulável
+        if ($this->nullable !== null && !is_bool($this->nullable)) {
+            $message = str_replace('{nullable}', $this->nullable, $this->nullableError);
+            $errors[] = ['message' => $message, 'code' => 'nullable'];
         }
 
         // Validar comprimento mínimo
@@ -104,6 +121,10 @@ class ZodString extends ZodType
 
         if ($this->maxLength !== null) {
             $schema['maxLength'] = $this->maxLength;
+        }
+
+        if ($this->nullable !== null) {
+            $schema['nullable'] = $this->nullable;
         }
 
         if ($this->pattern !== null) {

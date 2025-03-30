@@ -4,35 +4,39 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine;
 
+use SQLite3;
 use Exception;
 use ReflectionException;
 use AllowDynamicProperties;
 use GenericDatabase\Helpers\Errors;
 use GenericDatabase\Helpers\Compare;
+use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Reflections;
-use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Generic\Connection\Methods;
+use Dotenv\Exception\ValidationException;
 use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Helpers\Zod\SchemaParser;
+use GenericDatabase\Helpers\Zod\Zod\ZodError;
+use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\Connection\IDSN;
+use GenericDatabase\Helpers\Zod\SchemaValidator;
 use GenericDatabase\Interfaces\Connection\IFetch;
-use GenericDatabase\Interfaces\Connection\IStatements;
-use GenericDatabase\Interfaces\Connection\IAttributes;
-use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IOptions;
-use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\SQLite\Connection\SQLite;
+use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IAttributes;
+use GenericDatabase\Interfaces\Connection\IStatements;
+use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\SQLite\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\SQLite\Connection\Fetch\FetchHandler;
+use GenericDatabase\Engine\SQLite\Connection\Report\ReportHandler;
 use GenericDatabase\Engine\SQLite\Connection\Options\OptionsHandler;
+use GenericDatabase\Engine\SQLite\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\SQLite\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\SQLite\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\SQLite\Connection\Statements\StatementsHandler;
-use GenericDatabase\Engine\SQLite\Connection\Arguments\ArgumentsHandler;
-use GenericDatabase\Engine\SQLite\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\SQLite\Connection\Transactions\TransactionsHandler;
-use GenericDatabase\Engine\SQLite\Connection\Report\ReportHandler;
-use SQLite3;
+use GenericDatabase\Engine\SQLite\Connection\Arguments\Strategy\ArgumentsStrategy;
 
 /**
  * Dynamic and Static container class for SQLiteConnection connections.
@@ -211,9 +215,9 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
             $attributeValue = $this->getAttribute($attribute);
 
             if ($attributeValue === true && in_array($attribute, $options)) {
-                if ($value === 1) {
+                if ($value === SQLite::ATTR_OPEN_READONLY) {
                     $result[] = $value;
-                } elseif ($value === 2 || $value === 4) {
+                } elseif ($value === SQLite::ATTR_OPEN_READWRITE || $value === SQLite::ATTR_OPEN_CREATE) {
                     $result = [$value];
                     break;
                 }
@@ -221,7 +225,7 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         }
 
         if (empty($result)) {
-            $result = [6];
+            $result = [SQLite::ATTR_OPEN_READWRITE + SQLite::ATTR_OPEN_CREATE];
         }
 
         return $result[0];
@@ -230,18 +234,40 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
     /**
      * This method is responsible for creating a new instance of the SQLiteConnection connection.
      *
-     * @param mixed $database The path of the database file
-     * @param int|null $flags = null Flags of the database behavior
+     * @param string $database The path of the database file
+     * @param ?int $flags = null Flags of the database behavior
      * @return SQLiteConnection
      * @throws Exception
      */
-    private function realConnect(mixed $database, int $flags = null): SQLiteConnection
+    private function realConnect(string $database, int $flags = null): SQLiteConnection
     {
-        if (!$flags) {
-            $flags = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE;
+        try {
+            $schemaJson = __DIR__ . '/SQLite/Connection/SQLite.json';
+            $schemaParser = new SchemaParser($schemaJson);
+            $validJson = $schemaParser->parse(['database' => $database, 'flags' => $flags]);
+            $validator = new SchemaValidator($schemaJson);
+            if ($validator->validate($validJson)) {
+                if (!$flags) {
+                    $flags = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE;
+                }
+                $database = $database !== 'memory' ? $database : ':' . $database . ':';
+                $this->parseDsn();
+                $this->setConnection(new SQLite3($database, $flags));
+            } else {
+                $errors = $validator->getErrors();
+                if (!empty($errors)) {
+                    throw new ValidationException(implode("\n", array_map(fn($error) => "- $error", $errors)));
+                }
+            }
+        } catch (ZodError $e) {
+            $errorMessages = [];
+            foreach ($e->errors as $error) {
+                $errorMessages[] = "- " . implode('.', $error['path']) . ": {$error['message']}";
+            }
+            throw new Exceptions(implode("\n", $errorMessages));
+        } catch (Exception $error) {
+            throw new Exceptions($error->getMessage());
         }
-        $database = $database !== 'memory' ? $database : ':' . $database . ':';
-        $this->setConnection(new SQLite3($database, $flags));
         return $this;
     }
 
@@ -262,7 +288,6 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
             $this
                 ->preConnect()
                 ->getInstance()
-                ->setDsn($this->parseDsn())
                 ->realConnect(
                     static::getDatabase(),
                     $this->getFlags()
@@ -272,7 +297,7 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
             return $this;
         } catch (Exception $error) {
             $this->disconnect();
-            die(Errors::throw($error));
+            throw new Exceptions($error->getMessage());
         }
     }
 

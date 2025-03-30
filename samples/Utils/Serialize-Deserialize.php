@@ -60,12 +60,12 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 // var_dump($serialized);
 
-$context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeSQLSrv(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
-// $context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 // $context = Fluent::nativeMySQLi(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Fluent::nativePgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
