@@ -222,7 +222,7 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
      * @param string $database The name of the database
      * @param int $port The port of the database
      * @param string $charset The charset of the database
-     * @return MySQLiConnection
+     * @return PgSQLConnection
      * @throws Exception
      */
     private function realConnect(

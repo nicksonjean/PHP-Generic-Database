@@ -219,16 +219,12 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     private function persistentMode(bool &$isPersistent): void
     {
-        $isPersistent && $this->getOptionsHandler()->setOptions(
-            array_merge(
-                array_filter(
-                    $this->getOptionsHandler()->getOptions(),
-                    fn($value, $key) => $key !== ODBC::ATTR_PERSISTENT,
-                    ARRAY_FILTER_USE_BOTH
-                ),
-                [ODBC::ATTR_PERSISTENT => false]
-            )
-        );
+        if ($isPersistent) {
+            $options = $this->getOptionsHandler()->getOptions();
+            unset($options[ODBC::ATTR_PERSISTENT]);
+            $options[ODBC::ATTR_PERSISTENT] = false;
+            $this->getOptionsHandler()->setOptions($options);
+        }
     }
 
     /**

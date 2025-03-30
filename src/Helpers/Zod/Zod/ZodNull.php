@@ -20,9 +20,6 @@ class ZodNull extends ZodType
             $value = true;
         } else {
             $value = false;
-        }
-
-        if (!is_null($value)) {
             $errors[] = ['message' => 'Valor deve ser um null', 'code' => 'invalid_type'];
         }
 

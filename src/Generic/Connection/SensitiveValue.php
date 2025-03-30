@@ -27,7 +27,7 @@ class SensitiveValue
     /**
      * @param mixed $value The value to wrap
      */
-    public function __construct(#[SensitiveParameterValue] private mixed $value)
+    public function __construct(private mixed $value)
     {
         $this->sensitiveValue = $this->transformString($value);
     }
