@@ -2,7 +2,7 @@
 ARG PHP_VERSION
 
 # Usa uma imagem do PHP baseado em Apache
-FROM php:${PHP_VERSION:-8.3}-apache
+FROM php:${PHP_VERSION:-8.3}-apache-bullseye
 
 # Redeclara os argumentos enviados pelo docker-compose.yml
 ARG PHP_VERSION
@@ -294,4 +294,4 @@ RUN \
   a2ensite my-site && \
   service apache2 stop && \
   service apache2 start && \
-  composer install -n --ignore-platform-reqs
+  composer install -n --ignore-platform-reqs --no-dev || composer install -n --ignore-platform-reqs || true
