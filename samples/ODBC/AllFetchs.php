@@ -18,6 +18,8 @@ $context = Chainable::odbcMySQL(env: $_ENV, persistent: true, strategy: false)->
 // $context = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::odbcOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 
+var_dump($context);
+
 $test0 = (new ODBCQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
     ->where(['e.id >= 25']);

@@ -22,7 +22,8 @@ ENV \
   LC_CTYPE=C.UTF-8 \
   LC_ALL=C.UTF-8 \
   LANG=C.UTF-8 \
-  TZ='America/Sao_Paulo'
+  TZ='America/Sao_Paulo' \
+  LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/odbc:/tmp/instantclient_21_6:${LD_LIBRARY_PATH}
 
 # Atualizar o sistema e instalar dependências
 RUN \
@@ -110,7 +111,9 @@ RUN \
   cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec unzip {} \; && \
   cp -r /tmp/Release_x86_64/* /usr/lib/x86_64-linux-gnu/odbc/ && \
   echo "[Firebird/InterBase(r) driver]\nDescription=InterBase/Firebird ODBC\nDriver=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nSetup=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nThreading=1\nFileUsage=1\nCPTimeout=\nCPReuse=" >> /etc/odbcinst.ini && \
-  cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec rm {} \;
+  cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec rm {} \; && \
+  mkdir -p /usr/lib/x86_64-linux-gnu/odbc && \
+  chmod 755 /usr/lib/x86_64-linux-gnu/odbc
 
 # Download and Install MySQL Connector for ODBC
 RUN \
@@ -120,15 +123,14 @@ RUN \
   tar -C . -xzvf mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
   cp -r /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/* /usr/bin/ && \
   cp -r /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/lib/* /usr/lib/x86_64-linux-gnu/odbc/ && \
-  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/lib/libmyodbc9a.so && \
-  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/lib/libmyodbc9w.so && \
-  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/local/lib/libmyodbc9a.so && \
-  ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/local/lib/libmyodbc9w.so && \
-  #ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/lib64/libmyodbc9a.so && \
-  #ln -s /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/lib64/libmyodbc9w.so && \
+  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/lib/libmyodbc9a.so && \
+  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/lib/libmyodbc9w.so && \
+  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/local/lib/libmyodbc9a.so && \
+  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/local/lib/libmyodbc9w.so && \
   /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 ANSI Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so" && \
-  /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 Unicode Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so"  && \
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/odbc && \
+  /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 Unicode Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so" && \
+  echo "/usr/lib/x86_64-linux-gnu/odbc" > /etc/ld.so.conf.d/odbc.conf && \
+  chmod 644 /etc/ld.so.conf.d/odbc.conf && \
   ldconfig && \
   find . -maxdepth 1 -type f -name '*.tar.gz*' -exec rm {} \;
 
@@ -201,6 +203,15 @@ RUN \
   echo /tmp/instantclient_21_6 > /etc/ld.so.conf.d/oracle.conf && \
   ldconfig
 
+# Ensure ODBC library paths are properly configured and permissions are correct
+RUN \
+  chmod -R 755 /usr/lib/x86_64-linux-gnu/odbc && \
+  chmod 644 /etc/ld.so.conf.d/odbc.conf && \
+  ldconfig && \
+  test -f /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so && \
+  test -f /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so && \
+  test -f /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so
+
 # Debug Trace for ODBC
 RUN \
   echo "\n[ODBC]\nTrace=Yes\nTraceFile=/tmp/odbc.log\n" >> /etc/odbcinst.ini
@@ -247,7 +258,8 @@ RUN \
 
 # Apache Configurations, Mod Rewrite
 RUN \
-  ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load
+  ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load && \
+  echo "SetEnv LD_LIBRARY_PATH /usr/lib/x86_64-linux-gnu/odbc:/tmp/instantclient_21_6:\${LD_LIBRARY_PATH}" >> /etc/apache2/conf-enabled/environment.conf
 
 # Write environment variables
 RUN \
