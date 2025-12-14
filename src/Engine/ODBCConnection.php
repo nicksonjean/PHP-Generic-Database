@@ -222,7 +222,6 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         if ($isPersistent) {
             $options = $this->getOptionsHandler()->getOptions();
             unset($options[ODBC::ATTR_PERSISTENT]);
-            $options[ODBC::ATTR_PERSISTENT] = false;
             $this->getOptionsHandler()->setOptions($options);
         }
     }
@@ -250,10 +249,10 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
             $validator = new SchemaValidator($schemaJson);
             if ($validator->validate($validJson)) {
                 $cursorMode = $this->cursorMode($options);
-                $isPersistent = !$this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT) || $this->getDriver() === 'mysql';
+                $isPersistent = $this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT);  
                 $this->setConnection($isPersistent ?
-                    odbc_connect($dsn, (string) $user, (string) $password, $cursorMode) :
-                    odbc_pconnect($dsn, (string) $user, (string) $password, $cursorMode));
+                    odbc_pconnect($dsn, (string) $user, (string) $password, $cursorMode) :
+                    odbc_connect($dsn, (string) $user, (string) $password, $cursorMode));
                 $this->persistentMode($isPersistent);
             } else {
                 $errors = $validator->getErrors();
@@ -365,7 +364,7 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function getConnection(): mixed
     {
-        return self::$connection;
+        return self::$connection ?? null;
     }
 
     /**

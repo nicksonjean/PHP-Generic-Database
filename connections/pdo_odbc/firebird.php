@@ -22,7 +22,7 @@
 
             $instance = new PDO(
                 vsprintf(
-                    "odbc:Driver={Firebird/InterBase(r) driver};DBName=%s/%s:%s;Charset=%s",
+                    "odbc:Driver={Firebird ODBC Driver};DBName=%s/%s:%s;Charset=%s",
                     [
                         $_ENV["{$env}_HOST"],
                         $_ENV["{$env}_PORT"],

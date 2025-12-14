@@ -2,7 +2,7 @@
 ARG PHP_VERSION
 
 # Usa uma imagem do PHP baseado em Apache
-FROM php:${PHP_VERSION:-8.3}-apache-bullseye
+FROM php:${PHP_VERSION:-8.3}-apache-bookworm
 
 # Redeclara os argumentos enviados pelo docker-compose.yml
 ARG PHP_VERSION
@@ -100,25 +100,49 @@ RUN \
     exit 1; \
   fi
 
+# Prepare directories and install dependencies
+RUN \
+  mkdir -p /usr/lib/x86_64-linux-gnu/odbc && \
+  mkdir -p /usr/local/lib/x86_64-linux-gnu && \
+  apt-get update -y && apt-get update && \
+  apt-get install -y --no-install-recommends gcc g++ gnupg
+
+# Install ODBC Firebird
+RUN \
+  apt-get update && \
+  apt-get install -y libfbclient2 firebird3.0-common && \
+  cd /tmp/ && wget https://github.com/user-attachments/files/18010867/linux_libs.zip && \
+  unzip linux_libs.zip && \
+  cp -r /tmp/Release_x86_64/* /usr/lib/x86_64-linux-gnu/odbc/ && \
+  chmod 755 /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/lib/libOdbcFb.so && \
+  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/local/lib/libOdbcFb.so && \
+  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/lib/x86_64-linux-gnu/libOdbcFb.so && \
+  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/local/lib/x86_64-linux-gnu/libOdbcFb.so && \
+  (LIBODBCINST=$(find /usr/lib* -name "libodbcinst.so.1.0.0" 2>/dev/null | head -1) && \
+   if [ -n "$LIBODBCINST" ]; then \
+     ln -sf "$LIBODBCINST" /usr/lib/x86_64-linux-gnu/libodbcinst.so && \
+     ln -sf "$LIBODBCINST" /usr/lib/x86_64-linux-gnu/odbc/libodbcinst.so; \
+   fi) && \
+  echo "[Firebird ODBC Driver]\nDescription=Firebird ODBC Driver\nDriver=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nSetup=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nThreading=1\nFileUsage=1\nCPTimeout=\nCPReuse=" >> /etc/odbcinst.ini && \
+  echo "/usr/lib/x86_64-linux-gnu/odbc" > /etc/ld.so.conf.d/firebird-odbc.conf && \
+  chmod 644 /etc/ld.so.conf.d/firebird-odbc.conf && \
+  ldconfig && \
+  test -f /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+  test -f /usr/lib/x86_64-linux-gnu/libodbcinst.so && \
+  ldd /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+  file /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+  odbcinst -q -d | grep -i firebird && \
+  cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec rm {} \; && \
+  rm -rf /tmp/Release_x86_64
+
 # Install pdo_firebird
 RUN \
   docker-php-ext-install pdo_firebird && \
   docker-php-ext-enable pdo_firebird
 
-# Install odbc firebird
-RUN \
-  cd /tmp/ && wget https://github.com/FirebirdSQL/firebird-odbc-driver/releases/download/v3-0-0-release/linux_libs.zip && \
-  cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec unzip {} \; && \
-  cp -r /tmp/Release_x86_64/* /usr/lib/x86_64-linux-gnu/odbc/ && \
-  echo "[Firebird/InterBase(r) driver]\nDescription=InterBase/Firebird ODBC\nDriver=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nSetup=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nThreading=1\nFileUsage=1\nCPTimeout=\nCPReuse=" >> /etc/odbcinst.ini && \
-  cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec rm {} \; && \
-  mkdir -p /usr/lib/x86_64-linux-gnu/odbc && \
-  chmod 755 /usr/lib/x86_64-linux-gnu/odbc
-
 # Download and Install MySQL Connector for ODBC
 RUN \
-  apt-get update -y && apt-get update && \
-  apt-get install -y --no-install-recommends gcc g++ gnupg && \
   cd /tmp/ && wget https://dev.mysql.com/get/Downloads/Connector-ODBC/9.1/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
   tar -C . -xzvf mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
   cp -r /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/* /usr/bin/ && \
@@ -129,10 +153,11 @@ RUN \
   ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/local/lib/libmyodbc9w.so && \
   /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 ANSI Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so" && \
   /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 Unicode Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so" && \
-  echo "/usr/lib/x86_64-linux-gnu/odbc" > /etc/ld.so.conf.d/odbc.conf && \
-  chmod 644 /etc/ld.so.conf.d/odbc.conf && \
+  echo "/usr/lib/x86_64-linux-gnu/odbc" > /etc/ld.so.conf.d/mysql-odbc.conf && \
+  chmod 644 /etc/ld.so.conf.d/mysql-odbc.conf && \
   ldconfig && \
-  find . -maxdepth 1 -type f -name '*.tar.gz*' -exec rm {} \;
+  cd /tmp && find . -maxdepth 1 -type f -name '*.tar.gz*' -exec rm {} \; && \
+  rm -rf /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit
 
 # Install mysqli and pdo_mysql
 RUN \
@@ -157,7 +182,12 @@ RUN \
   cd /usr/src/php/ext/odbc && \
   phpize && \
   sed -ri 's@^ *test +"\$PHP_.*" *= *"no" *&& *PHP_.*=yes *$@#&@g' configure && \
-  docker-php-ext-configure odbc --with-unixODBC=shared,/usr && \
+  mkdir -p /usr/local/include /usr/local/lib /usr/local/incl && \
+  (test -f /usr/include/sql.h && ln -sf /usr/include/sql.h /usr/local/include/ && ln -sf /usr/include/sql.h /usr/local/incl/ || true) && \
+  (test -f /usr/include/sqlext.h && ln -sf /usr/include/sqlext.h /usr/local/include/ && ln -sf /usr/include/sqlext.h /usr/local/incl/ || true) && \
+  (test -f /usr/include/sqltypes.h && ln -sf /usr/include/sqltypes.h /usr/local/include/ && ln -sf /usr/include/sqltypes.h /usr/local/incl/ || true) && \
+  (test -f /usr/include/sqlucode.h && ln -sf /usr/include/sqlucode.h /usr/local/include/ && ln -sf /usr/include/sqlucode.h /usr/local/incl/ || true) && \
+  docker-php-ext-configure odbc --with-unixODBC=/usr && \
   docker-php-ext-install odbc
 
 # Download and Install sqlsrv and pdo_sqlsrv
@@ -181,7 +211,8 @@ RUN \
   curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
   apt-get update && \
   apt-get -y --no-install-recommends install msodbcsql17 odbc-mdbtools && \
-  apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 # Download and Unzip OCI Instant Client
 RUN \
@@ -206,11 +237,13 @@ RUN \
 # Ensure ODBC library paths are properly configured and permissions are correct
 RUN \
   chmod -R 755 /usr/lib/x86_64-linux-gnu/odbc && \
-  chmod 644 /etc/ld.so.conf.d/odbc.conf && \
+  chmod 644 /etc/ld.so.conf.d/firebird-odbc.conf && \
+  chmod 644 /etc/ld.so.conf.d/mysql-odbc.conf && \
   ldconfig && \
   test -f /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so && \
   test -f /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so && \
-  test -f /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so
+  test -f /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+  ldconfig -p | grep -i odbc
 
 # Debug Trace for ODBC
 RUN \
@@ -259,7 +292,8 @@ RUN \
 # Apache Configurations, Mod Rewrite
 RUN \
   ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load && \
-  echo "SetEnv LD_LIBRARY_PATH /usr/lib/x86_64-linux-gnu/odbc:/tmp/instantclient_21_6:\${LD_LIBRARY_PATH}" >> /etc/apache2/conf-enabled/environment.conf
+  echo "SetEnv LD_LIBRARY_PATH /usr/lib/x86_64-linux-gnu/odbc:/usr/lib/x86_64-linux-gnu:/tmp/instantclient_21_6:\${LD_LIBRARY_PATH}" >> /etc/apache2/conf-enabled/environment.conf && \
+  echo "export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/odbc:/usr/lib/x86_64-linux-gnu:/tmp/instantclient_21_6:\${LD_LIBRARY_PATH}" >> /etc/apache2/envvars
 
 # Write environment variables
 RUN \

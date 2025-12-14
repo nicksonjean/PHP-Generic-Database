@@ -38,10 +38,15 @@
         "alias": "\/MDBTools\/"
     },
     {
-        "driver": "firebird",
+        "driver": "interbase",
         "type": "odbc",
         "alias": "\/Firebird\\\/InterBase\\(r\\) driver\/"
     },
+    {
+        "driver": "firebird",
+        "type": "odbc",
+        "alias": "\/Firebird ODBC Driver\/"
+    },    
     {
         "driver": "sqlite",
         "type": "odbc",

@@ -11,12 +11,14 @@ require_once PATH_ROOT . '/vendor/autoload.php';
 
 Dotenv::createImmutable(PATH_ROOT)->load();
 
-// $context = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
-$context = Chainable::pdoSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::pdoSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoSQLSrv(env: $_ENV, strategy: false)->connect();
 // $context = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+
+var_dump($context);
 
 $test0 = (new PDOQueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
