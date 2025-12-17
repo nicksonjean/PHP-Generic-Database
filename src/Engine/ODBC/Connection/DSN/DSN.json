@@ -126,5 +126,10 @@
         "driver": "mysql",
         "type": "unicode",
         "alias": "\/MySQL ODBC \\d{1}\\.\\d{1} Unicode Driver\/"
+    },
+    {
+        "driver": "mariadb",
+        "type": "unicode",
+        "alias": "\/MariaDB Unicode\/"
     }
 ]
