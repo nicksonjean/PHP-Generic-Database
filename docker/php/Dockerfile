@@ -8,6 +8,9 @@ FROM php:${PHP_VERSION:-8.3}-apache-bookworm
 ARG PHP_VERSION
 ARG PHP_PORT
 
+# Define o driver de ODBC do MySQL
+ARG MYSQL_ODBC_DRIVER=mariadb
+
 # Tag do Autor
 LABEL author="Nickson Jeanmerson (nickson.jeanmerson@gmail.com)"
 
@@ -141,70 +144,74 @@ RUN \
   docker-php-ext-install pdo_firebird && \
   docker-php-ext-enable pdo_firebird
 
-# Instalar dependências do sistema e o MySQL Connector/ODBC (usando odbc-mariadb que é compatível)
-# O pacote odbc-mariadb é compatível com MySQL e está disponível no repositório Debian
-RUN apt-get update && apt-get install -y \
-    odbc-mariadb \
-    && rm -rf /var/lib/apt/lists/*
-
-# Verificar e configurar o driver ODBC do MySQL/MariaDB
-# O pacote odbc-mariadb geralmente registra o driver automaticamente, mas vamos garantir
-# que ele esteja configurado com o nome esperado "MySQL ODBC 9.1 ANSI Driver"
+# Instalar e configurar o driver ODBC do MySQL
+# MYSQL_ODBC_DRIVER pode ser "mariadb" (padrão) ou "mysql"
+# Ambos não podem ser instalados simultaneamente pois compartilham os mesmos nomes de drivers
 RUN \
-  if [ -f /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so ]; then \
-    # Criar links simbólicos para garantir compatibilidade com o caminho esperado
-    ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so || true; \
-    ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so || true; \
-    # Registrar o driver com o nome esperado pelo código (se ainda não estiver registrado)
-    if ! grep -q "\[MySQL ODBC 9.1 ANSI Driver\]" /etc/odbcinst.ini 2>/dev/null; then \
-      echo "" >> /etc/odbcinst.ini && \
-      echo "[MySQL ODBC 9.1 ANSI Driver]" >> /etc/odbcinst.ini && \
-      echo "Description=MySQL ODBC 9.1 ANSI Driver (via MariaDB ODBC)" >> /etc/odbcinst.ini && \
-      echo "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so" >> /etc/odbcinst.ini && \
-      echo "Setup=/usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so" >> /etc/odbcinst.ini && \
-      echo "Threading=1" >> /etc/odbcinst.ini && \
-      echo "FileUsage=1" >> /etc/odbcinst.ini; \
-    fi && \
-    if ! grep -q "\[MySQL ODBC 9.1 Unicode Driver\]" /etc/odbcinst.ini 2>/dev/null; then \
-      echo "" >> /etc/odbcinst.ini && \
-      echo "[MySQL ODBC 9.1 Unicode Driver]" >> /etc/odbcinst.ini && \
-      echo "Description=MySQL ODBC 9.1 Unicode Driver (via MariaDB ODBC)" >> /etc/odbcinst.ini && \
-      echo "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so" >> /etc/odbcinst.ini && \
-      echo "Setup=/usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so" >> /etc/odbcinst.ini && \
-      echo "Threading=1" >> /etc/odbcinst.ini && \
-      echo "FileUsage=1" >> /etc/odbcinst.ini; \
-    fi && \
-    # Configurar o caminho da biblioteca no ld.so.conf
+  if [ "$MYSQL_ODBC_DRIVER" = "mariadb" ]; then \
+    echo "Installing MariaDB ODBC driver (odbc-mariadb package)..." && \
+    apt-get update && apt-get install -y odbc-mariadb && \
+    rm -rf /var/lib/apt/lists/* && \
+    if [ -f /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so ]; then \
+      # Criar links simbólicos para garantir compatibilidade com o caminho esperado
+      ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so || true; \
+      ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so || true; \
+      # Registrar o driver com o nome esperado pelo código (se ainda não estiver registrado)
+      if ! grep -q "\[MySQL ODBC 9.1 ANSI Driver\]" /etc/odbcinst.ini 2>/dev/null; then \
+        echo "" >> /etc/odbcinst.ini && \
+        echo "[MySQL ODBC 9.1 ANSI Driver]" >> /etc/odbcinst.ini && \
+        echo "Description=MySQL ODBC 9.1 ANSI Driver (via MariaDB ODBC)" >> /etc/odbcinst.ini && \
+        echo "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so" >> /etc/odbcinst.ini && \
+        echo "Setup=/usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so" >> /etc/odbcinst.ini && \
+        echo "Threading=1" >> /etc/odbcinst.ini && \
+        echo "FileUsage=1" >> /etc/odbcinst.ini; \
+      fi && \
+      if ! grep -q "\[MySQL ODBC 9.1 Unicode Driver\]" /etc/odbcinst.ini 2>/dev/null; then \
+        echo "" >> /etc/odbcinst.ini && \
+        echo "[MySQL ODBC 9.1 Unicode Driver]" >> /etc/odbcinst.ini && \
+        echo "Description=MySQL ODBC 9.1 Unicode Driver (via MariaDB ODBC)" >> /etc/odbcinst.ini && \
+        echo "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so" >> /etc/odbcinst.ini && \
+        echo "Setup=/usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so" >> /etc/odbcinst.ini && \
+        echo "Threading=1" >> /etc/odbcinst.ini && \
+        echo "FileUsage=1" >> /etc/odbcinst.ini; \
+      fi && \
+      # Configurar o caminho da biblioteca no ld.so.conf
+      echo "/usr/lib/x86_64-linux-gnu/odbc" > /etc/ld.so.conf.d/mysql-odbc.conf && \
+      chmod 644 /etc/ld.so.conf.d/mysql-odbc.conf && \
+      ldconfig && \
+      # Verificar se o driver foi registrado corretamente
+      odbcinst -q -d | grep -i "MySQL ODBC 9.1" && \
+      echo "MariaDB ODBC driver configured successfully"; \
+    else \
+      echo "Error: libmaodbc.so not found at /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so"; \
+      echo "Trying to find alternative location..."; \
+      find /usr -name "libmaodbc.so" 2>/dev/null || echo "libmaodbc.so not found in system"; \
+      exit 1; \
+    fi; \
+  elif [ "$MYSQL_ODBC_DRIVER" = "mysql" ]; then \
+    echo "Installing MySQL Connector/ODBC (official MySQL driver)..." && \
+    cd /tmp/ && wget https://dev.mysql.com/get/Downloads/Connector-ODBC/9.1/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
+    tar -C . -xzvf mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
+    cp -r /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/* /usr/bin/ && \
+    cp -r /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/lib/* /usr/lib/x86_64-linux-gnu/odbc/ && \
+    ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/lib/libmyodbc9a.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/lib/libmyodbc9w.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/local/lib/libmyodbc9a.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/local/lib/libmyodbc9w.so && \
+    /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 ANSI Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so" && \
+    /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 Unicode Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so" && \
     echo "/usr/lib/x86_64-linux-gnu/odbc" > /etc/ld.so.conf.d/mysql-odbc.conf && \
     chmod 644 /etc/ld.so.conf.d/mysql-odbc.conf && \
     ldconfig && \
     # Verificar se o driver foi registrado corretamente
     odbcinst -q -d | grep -i "MySQL ODBC 9.1" && \
-    echo "MySQL ODBC driver configured successfully"; \
+    echo "MySQL ODBC driver configured successfully" && \
+    cd /tmp && find . -maxdepth 1 -type f -name '*.tar.gz*' -exec rm {} \; && \
+    rm -rf /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit; \
   else \
-    echo "Error: libmaodbc.so not found at /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so"; \
-    echo "Trying to find alternative location..."; \
-    find /usr -name "libmaodbc.so" 2>/dev/null || echo "libmaodbc.so not found in system"; \
+    echo "Error: MYSQL_ODBC_DRIVER must be 'mariadb' or 'mysql', got: ${MYSQL_ODBC_DRIVER}"; \
     exit 1; \
   fi
-
-# Backup: Download and Install MySQL Connector for ODBC (manual installation - commented as backup)
-# RUN \
-#   cd /tmp/ && wget https://dev.mysql.com/get/Downloads/Connector-ODBC/9.1/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
-#   tar -C . -xzvf mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit.tar.gz && \
-#   cp -r /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/* /usr/bin/ && \
-#   cp -r /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/lib/* /usr/lib/x86_64-linux-gnu/odbc/ && \
-#   ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/lib/libmyodbc9a.so && \
-#   ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/lib/libmyodbc9w.so && \
-#   ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so /usr/local/lib/libmyodbc9a.so && \
-#   ln -sf /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so /usr/local/lib/libmyodbc9w.so && \
-#   /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 ANSI Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so" && \
-#   /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit/bin/myodbc-installer -a -d -n "MySQL ODBC 9.1 Unicode Driver" -t "Driver=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so;SETUP=/usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so" && \
-#   echo "/usr/lib/x86_64-linux-gnu/odbc" > /etc/ld.so.conf.d/mysql-odbc.conf && \
-#   chmod 644 /etc/ld.so.conf.d/mysql-odbc.conf && \
-#   ldconfig && \
-#   cd /tmp && find . -maxdepth 1 -type f -name '*.tar.gz*' -exec rm {} \; && \
-#   rm -rf /tmp/mysql-connector-odbc-9.1.0-linux-glibc2.28-x86-64bit
 
 # Install mysqli and pdo_mysql
 RUN \
@@ -352,6 +359,7 @@ RUN \
   echo 'SetEnv MYSQL_USERNAME ${MYSQL_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv MYSQL_PASSWORD ${MYSQL_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv MYSQL_CHARSET ${MYSQL_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
+  echo 'SetEnv MYSQL_ODBC_DRIVER ${MYSQL_ODBC_DRIVER}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv PGSQL_HOST ${PGSQL_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv PGSQL_PORT ${PGSQL_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
   echo 'SetEnv PGSQL_DATABASE ${PGSQL_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \

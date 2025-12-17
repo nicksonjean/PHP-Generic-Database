@@ -51,6 +51,97 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
     }
 
     /**
+     * Get database version by executing appropriate query for each driver
+     *
+     * @return string
+     */
+    private function databaseVersion(): string
+    {
+        $driver = $this->get('driver');
+        
+        // For PostgreSQL, use pg_config --version via shell_exec
+        if ($driver === 'pgsql') {
+            if (function_exists('shell_exec')) {
+                $version = @shell_exec('pg_config --version');
+                if ($version !== null && $version !== false) {
+                    return trim($version);
+                }
+            }
+            return '';
+        }
+
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
+            return '';
+        }
+
+        if (!function_exists('odbc_exec') || !function_exists('odbc_result')) {
+            return '';
+        }
+
+        $query = match ($driver) {
+            'oci' => "SELECT * FROM V\$VERSION",
+            'sqlsrv', 'mssql', 'dblib', 'sybase' => "SELECT @@VERSION",
+            'sqlite' => "SELECT sqlite_version()",
+            'mysql', 'mariadb' => "SELECT VERSION()",
+            'firebird', 'ibase' => "SELECT RDB\$GET_CONTEXT('SYSTEM', 'ENGINE_VERSION') FROM RDB\$DATABASE",
+            'access', 'excel', 'text' => '', // File-based drivers don't have database version
+            default => '',
+        };
+
+        if (empty($query)) {
+            return '';
+        }
+
+        $result = odbc_exec($connection, $query);
+        if ($result === false || !$result) {
+            return '';
+        }
+
+        $version = '';
+       
+        // Use unified approach for all drivers - iterate through fields like ODBC::fetchArray does
+        if (function_exists('odbc_num_fields') && function_exists('odbc_field_name')) {
+            $numFields = odbc_num_fields($result);
+            if ($numFields > 0) {
+                // Try to fetch row first
+                if (function_exists('odbc_fetch_row')) {
+                    odbc_fetch_row($result);
+                }
+                
+                // Iterate through fields
+                for ($i = 1; $i <= $numFields; $i++) {
+                    $fieldName = odbc_field_name($result, $i);
+                    // Try by field name first
+                    $resultValue = $fieldName ? odbc_result($result, $fieldName) : false;
+                    // If that didn't work, try by index
+                    if ($resultValue === false || $resultValue === null || $resultValue === '') {
+                        $resultValue = odbc_result($result, $i);
+                    }
+                    // If we got a value, use it and break
+                    if ($resultValue !== false && $resultValue !== null && $resultValue !== '') {
+                        $version = trim((string)$resultValue);
+                        break;
+                    }
+                }
+                
+                // Clean up line breaks and multiple spaces for SQL Server
+                if (!empty($version) && in_array($driver, ['sqlsrv', 'mssql', 'dblib', 'sybase'])) {
+                    $version = preg_replace('/[\r\n\t]+/', ' ', $version);
+                    $version = preg_replace('/\s+/', ' ', $version);
+                    $version = trim($version);
+                }
+            }
+        }
+        
+        if ($result && function_exists('odbc_free_result')) {
+            odbc_free_result($result);
+        }
+
+        return $version;
+    }
+
+    /**
      * Define all ODBC attribute of the connection a ready exist
      *
      * @return void
@@ -67,7 +158,9 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
                 'AUTOCOMMIT' => (bool)$this->getOptionsHandler()->getOptions(ODBC::ATTR_AUTOCOMMIT),
                 'CASE' => 0,
                 'ERRMODE' => 1,
-                'CLIENT_VERSION', 'SERVER_VERSION' => $settings['DriverODBCVer'] ?? '',
+                'CLIENT_VERSION', 'SERVER_VERSION' => !empty($settings['DriverODBCVer'] ?? '') 
+                    ? $settings['DriverODBCVer'] 
+                    : $this->databaseVersion(),
                 'CONNECTION_STATUS' => $this->connectionStatus(),
                 'PERSISTENT' => (bool)$this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT),
                 'SERVER_INFO' => $settings,
