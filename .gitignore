@@ -507,6 +507,7 @@ composer.lock
 .reminder.md
 *.FDB
 *.fdb
+security3.fdb
 .qodo
 
 ### Resources

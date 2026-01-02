@@ -21,7 +21,102 @@ x-php-base: &php-base
       max-file: "5"
       max-size: "10m"
 
+# Template para serviços PHP individuais
+x-php-service: &php-service
+  <<: *php-base
+
 services:
+  # Serviço PHP 8.0
+  app80:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        PHP_VERSION: "8.0"
+        PHP_PORT: "8000"
+        PHP_BASE_TAG: ""
+    image: php-generic-db:8.0
+    container_name: php8.0
+    ports:
+      - "8000:80"
+
+  # Serviço PHP 8.1
+  app81:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        PHP_VERSION: "8.1"
+        PHP_PORT: "8100"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-generic-db:8.1
+    container_name: php8.1
+    ports:
+      - "8100:80"
+
+  # Serviço PHP 8.2
+  app82:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        PHP_VERSION: "8.2"
+        PHP_PORT: "8200"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-generic-db:8.2
+    container_name: php8.2
+    ports:
+      - "8200:80"
+
+  # Serviço PHP 8.3
+  app83:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        PHP_VERSION: "8.3"
+        PHP_PORT: "8300"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-generic-db:8.3
+    container_name: php8.3
+    ports:
+      - "8300:80"
+
+  # Serviço PHP 8.4
+  app84:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        PHP_VERSION: "8.4"
+        PHP_PORT: "8400"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-generic-db:8.4
+    container_name: php8.4
+    ports:
+      - "8400:80"
+
+  # Serviço PHP 8.5
+  app85:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        PHP_VERSION: "8.5"
+        PHP_PORT: "8500"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-generic-db:8.5
+    container_name: php8.5
+    ports:
+      - "8500:80"
+
+  # Serviço app (mantido para compatibilidade com setup.bat/setup.sh individual)
   app:
     <<: *php-base
     build:
