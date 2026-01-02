@@ -54,6 +54,17 @@ for %%A in (%*) do (
     )
 )
 
+rem Calcula PHP_BASE_TAG baseado na versão do PHP
+rem PHP 8.0 não tem imagens bookworm, então não define no .env (usa vazio no Dockerfile)
+rem PHP 8.1+ usa -bookworm para compatibilidade com as bibliotecas
+set "PHP_BASE_TAG=-bookworm"
+if defined PHP_VERSION (
+    if "!PHP_VERSION!"=="8.0" (
+        set "PHP_BASE_TAG="
+        set "PHP_BASE_TAG_IS_EMPTY=true"
+    )
+)
+
 rem Cria um arquivo temporário para o novo conteúdo do env.docker
 set "TEMPFILE=%SOURCE%.tmp"
 
@@ -74,7 +85,24 @@ rem Verifica e atualiza as variáveis no arquivo env.docker
         )
         set "PHP_PORT_EXIST=true"
     )
-    echo !LINE!
+    if "%%B"=="PHP_BASE_TAG" (
+        if "!PHP_BASE_TAG!"=="" (
+            :: Para PHP 8.0, remove PHP_BASE_TAG do .env (não escreve a linha, será removida)
+            set "PHP_BASE_TAG_REMOVE=true"
+        ) else (
+            if not "%%C"=="!PHP_BASE_TAG!" (
+                ::echo Atualizando PHP_BASE_TAG de %%C para !PHP_BASE_TAG!
+                set "LINE=PHP_BASE_TAG=!PHP_BASE_TAG!"
+            )
+        )
+        set "PHP_BASE_TAG_EXIST=true"
+        set "SKIP_LINE=true"
+    )
+    if not defined SKIP_LINE (
+        echo !LINE!
+    ) else (
+        set "SKIP_LINE="
+    )
 )) > "%TEMPFILE%"
 
 rem Adiciona as variáveis ausentes
@@ -86,6 +114,13 @@ if not defined PHP_VERSION_EXIST if defined PHP_VERSION (
 if not defined PHP_PORT_EXIST if defined PHP_PORT (
     ::echo Adicionando PHP_PORT=%PHP_PORT%
     echo PHP_PORT=%PHP_PORT%>>"%TEMPFILE%"
+)
+
+if not defined PHP_BASE_TAG_EXIST if defined PHP_VERSION (
+    ::echo Adicionando PHP_BASE_TAG calculado baseado na versão (apenas se não for vazio)
+    if not "!PHP_BASE_TAG!"=="" (
+        echo PHP_BASE_TAG=!PHP_BASE_TAG!>>"%TEMPFILE%"
+    )
 )
 
 rem Substitui o arquivo env.docker pelo arquivo atualizado

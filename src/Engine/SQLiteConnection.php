@@ -239,7 +239,7 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * @return SQLiteConnection
      * @throws Exception
      */
-    private function realConnect(string $database, int $flags = null): SQLiteConnection
+    private function realConnect(string $database, ?int $flags = null): SQLiteConnection
     {
         try {
             $schemaJson = __DIR__ . '/SQLite/Connection/SQLite.json';
@@ -645,7 +645,7 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
         return $this->getFetchHandler()->fetch($fetchStyle, $fetchArgument, $optArgs);
     }
@@ -658,7 +658,7 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array|bool The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
+    public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
         return $this->getFetchHandler()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
     }

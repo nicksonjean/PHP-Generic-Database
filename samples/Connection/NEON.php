@@ -23,9 +23,13 @@ $context = Connection::new(PATH_ROOT . '/resources/dsn/neon/stg_oci.neon')->conn
 
 var_dump($context);
 
-// $context = Connection::new(PATH_ROOT . '/resources/dsn/neon/stg_firebird.neon')->connect();
+if (extension_loaded('interbase')) {
 
-// var_dump($context);
+    $context = Connection::new(PATH_ROOT . '/resources/dsn/neon/stg_firebird.neon')->connect();
+
+    var_dump($context);
+
+}
 
 $context = Connection::new(PATH_ROOT . '/resources/dsn/neon/stg_sqlite.neon')->connect();
 

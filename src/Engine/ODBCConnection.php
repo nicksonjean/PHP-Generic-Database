@@ -238,9 +238,9 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     private function realConnect(
         string $dsn,
-        string $user = null,
-        #[SensitiveParameter] string $password = null,
-        array $options = null
+        ?string $user = null,
+        #[SensitiveParameter] ?string $password = null,
+        ?array $options = null
     ): ODBCConnection {
         try {
             $schemaJson = __DIR__ . '/ODBC/Connection/ODBC.json';
@@ -650,7 +650,7 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
         return $this->getFetchHandler()->fetch($fetchStyle, $fetchArgument, $optArgs);
     }
@@ -663,7 +663,7 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param mixed $optArgs From the Fetch Into or Fetch Class.
      * @return array|bool The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
+    public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
         return $this->getFetchHandler()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
     }

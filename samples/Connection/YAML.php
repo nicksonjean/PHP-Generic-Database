@@ -23,9 +23,13 @@ $context = Connection::new(PATH_ROOT . '/resources/dsn/yaml/stg_oci.yaml')->conn
 
 var_dump($context);
 
-// $context = Connection::new(PATH_ROOT . '/resources/dsn/yaml/stg_firebird.yaml')->connect();
+if (extension_loaded('interbase')) {
 
-// var_dump($context);
+    $context = Connection::new(PATH_ROOT . '/resources/dsn/yaml/stg_firebird.yaml')->connect();
+
+    var_dump($context);
+
+}
 
 $context = Connection::new(PATH_ROOT . '/resources/dsn/yaml/stg_sqlite.yaml')->connect();
 

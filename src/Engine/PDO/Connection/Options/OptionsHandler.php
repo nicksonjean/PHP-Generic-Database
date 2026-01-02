@@ -33,14 +33,19 @@ class OptionsHandler extends AbstractOptions implements IOptions
         switch ($this->get('driver')) {
             case 'mysql':
                 if ($this->get('charset')) {
-                    $options += [PDO::MYSQL_ATTR_INIT_COMMAND => sprintf(
+                    $initCommandAttr = (PHP_VERSION_ID >= 80500 && class_exists('Pdo\Mysql'))
+                        ? \Pdo\Mysql::ATTR_INIT_COMMAND
+                        : PDO::MYSQL_ATTR_INIT_COMMAND;
+                    $options += [$initCommandAttr => sprintf(
                         "SET NAMES '%s';",
                         $this->get('charset')
                     )];
                 }
-                $options += [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true];
+                $bufferedQueryAttr = (PHP_VERSION_ID >= 80500 && class_exists('Pdo\Mysql'))
+                    ? \Pdo\Mysql::ATTR_USE_BUFFERED_QUERY
+                    : PDO::MYSQL_ATTR_USE_BUFFERED_QUERY;
+                $options += [$bufferedQueryAttr => true];
                 break;
-                // Fall-through intentional
             case 'pgsql':
                 $options += [PDO::ATTR_AUTOCOMMIT => true];
                 break;

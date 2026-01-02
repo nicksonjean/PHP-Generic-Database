@@ -319,9 +319,12 @@ class Connection implements IConnection, IConnectionStrategy
             $data = NEON::parseNEON(...$arguments);
         }
         self::call(self::getInstance(), 'initFactory', Arrays::assocToIndex(Arrays::recombine($data)));
+        $caseArgumentClass = PHP_VERSION_ID >= 80100
+            ? Entity::CASE_ARGUMENT_CLASS->value
+            : Reflections::getClassConstants(Entity::class)['CASE_ARGUMENT_CLASS'];
         $instance = Reflections::getClassInstance(
             sprintf(
-                Entity::CASE_ARGUMENT_CLASS->value,
+                $caseArgumentClass,
                 Arrays::matchValues(self::$engineList, Arrays::assocToIndex(Arrays::recombine($data)))
             )
         );
@@ -650,7 +653,7 @@ class Connection implements IConnection, IConnectionStrategy
      * @param mixed|null $optArgs
      * @return mixed The next row from the statement as an array, or false if there are no more rows.
      */
-    public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
         return $this->getStrategy()->fetch($fetchStyle, $fetchArgument, $optArgs);
     }
@@ -663,7 +666,7 @@ class Connection implements IConnection, IConnectionStrategy
      * @param mixed|null $optArgs
      * @return array|bool An array containing all rows from the statement.
      */
-    public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
+    public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
         return $this->getStrategy()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
     }

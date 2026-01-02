@@ -5,6 +5,7 @@ namespace GenericDatabase\Engine\ODBC\Connection\Fetch\Strategy;
 use GenericDatabase\Interfaces\Connection\IFetchStrategy;
 use GenericDatabase\Helpers\Types\Specials\Resources;
 use GenericDatabase\Generic\Fetch\FetchCache;
+use GenericDatabase\Engine\ODBC\Connection\ODBC;
 
 class FetchStrategy implements IFetchStrategy
 {
@@ -21,14 +22,24 @@ class FetchStrategy implements IFetchStrategy
     {
         $resourceId = $this->getResourceId($resource);
         if (!isset($this->cachedResults[$resourceId])) {
-            if (is_resource($resource)) {
-                $results = [];
+            $this->cachedResults[$resourceId] = [];
+            if (is_resource($resource) || (PHP_VERSION_ID >= 80400 && is_object($resource) && get_class($resource) === 'Odbc\Result')) {
                 while ($row = odbc_fetch_array($resource)) {
-                    $results[] = $row;
+                    $normalizedRow = [];
+                    $numericIndex = 0;
+                    foreach ($row as $key => $value) {
+                        if (is_string($key)) {
+                            $normalizedRow[$key] = $value;
+                            $normalizedRow[$numericIndex] = $value;
+                            $numericIndex++;
+                        }
+                    }
+                    $this->cachedResults[$resourceId][] = $normalizedRow;
                 }
-                $this->cachedResults[$resourceId] = $results;
-                odbc_free_result($resource);
-            } else {
+                if (function_exists('odbc_free_result')) {
+                    odbc_free_result($resource);
+                }
+            } elseif (is_array($resource)) {
                 $this->cachedResults[$resourceId] = $resource['results'] ?? [];
             }
             $this->positions[$resourceId] = 0;

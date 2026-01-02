@@ -23,9 +23,13 @@ $context = Connection::new(PATH_ROOT . '/resources/dsn/xml/stg_oci.xml')->connec
 
 var_dump($context);
 
-$context = Connection::new(PATH_ROOT . '/resources/dsn/xml/stg_firebird.xml')->connect();
+if (extension_loaded('interbase')) {
 
-var_dump($context);
+    $context = Connection::new(PATH_ROOT . '/resources/dsn/xml/stg_firebird.xml')->connect();
+
+    var_dump($context);
+    
+}
 
 $context = Connection::new(PATH_ROOT . '/resources/dsn/xml/stg_sqlite.xml')->connect();
 

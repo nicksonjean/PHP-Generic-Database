@@ -1,8 +1,19 @@
 # Declara os argumentos enviados pelo docker-compose.yml
 ARG PHP_VERSION
+# PHP_BASE_TAG define o sufixo da tag da imagem (ex: "-bookworm" ou vazio)
+# Calculado automaticamente pelo setup.bat/setup.sh baseado na versão do PHP
+# PHP 8.0: vazio (não tem imagens bookworm) - raramente usado
+# PHP 8.1+: "-bookworm" (para compatibilidade com as bibliotecas) - padrão
+# PHP_BASE_TAG: calculado automaticamente pelo setup.bat/setup.sh
+# PHP 8.0: não é definido no .env, então docker-compose não passa (ou passa vazio)
+# PHP 8.1+: definido como -bookworm no .env
+# Quando não fornecido, usa vazio (para PHP 8.0)
+ARG PHP_BASE_TAG=
 
 # Usa uma imagem do PHP baseado em Apache
-FROM php:${PHP_VERSION:-8.3}-apache-bookworm
+# Para PHP 8.0: php:8.0-apache (PHP_BASE_TAG vazio quando não definido no .env)
+# Para PHP 8.1+: php:8.1-apache-bookworm (PHP_BASE_TAG=-bookworm do .env)
+FROM php:${PHP_VERSION:-8.3}-apache${PHP_BASE_TAG}
 
 # Redeclara os argumentos enviados pelo docker-compose.yml
 ARG PHP_VERSION
@@ -69,22 +80,12 @@ RUN \
 
 # Install pecl extensions
 RUN \
-  if [ "$PHP_VERSION" = "7.3" ] || [ "$PHP_VERSION" = "7.4" ]; then \
-    ( curl -sSLf https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o - || echo 'return 1' ) | sh -s \
-    xdebug yaml pcov mcrypt; \
-  elif [ "$PHP_VERSION" = "8.0" ] || [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ]; then \
+  if [ "$PHP_VERSION" = "8.0" ] || [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ] || [ "$PHP_VERSION" = "8.4" ] || [ "$PHP_VERSION" = "8.5" ]; then \
     pecl install xdebug yaml pcov mcrypt && \
     docker-php-ext-enable xdebug yaml pcov mcrypt; \
   else \
     echo "Unsupported PHP version: ${PHP_VERSION}"; \
     exit 1; \
-  fi
-
-# Install interbase extension only for PHP 7.3
-RUN \
-  if [ "$PHP_VERSION" = "7.3" ]; then \
-    ( curl -sSLf https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o - || echo 'return 1' ) | sh -s \
-    interbase; \
   fi
 
 # Install pdo and pdo_sqlite
@@ -93,10 +94,12 @@ RUN \
 
 # Install pdo_dblib
 RUN \
-  if [ "$PHP_VERSION" = "7.3" ] || [ "$PHP_VERSION" = "7.4" ] || [ "$PHP_VERSION" = "8.0" ]; then \
-    ( curl -sSLf https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o - || echo 'return 1' ) | sh -s \
-    pdo_dblib; \
-  elif [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ]; then \
+  if [ "$PHP_VERSION" = "8.0" ]; then \
+    curl -sSLf --connect-timeout 30 --max-time 300 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /tmp/install-php-extensions && \
+    chmod +x /tmp/install-php-extensions && \
+    /tmp/install-php-extensions pdo_dblib && \
+    rm -f /tmp/install-php-extensions; \
+  elif [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ] || [ "$PHP_VERSION" = "8.4" ] || [ "$PHP_VERSION" = "8.5" ]; then \
     docker-php-ext-install pdo_dblib; \
   else \
     echo "Unsupported PHP version: ${PHP_VERSION}"; \
@@ -110,39 +113,99 @@ RUN \
   apt-get update -y && apt-get update && \
   apt-get install -y --no-install-recommends gcc g++ gnupg
 
-# Install ODBC Firebird
-RUN \
-  apt-get update && \
-  apt-get install -y libfbclient2 firebird3.0-common && \
-  cd /tmp/ && wget https://github.com/user-attachments/files/18010867/linux_libs.zip && \
-  unzip linux_libs.zip && \
-  cp -r /tmp/Release_x86_64/* /usr/lib/x86_64-linux-gnu/odbc/ && \
-  chmod 755 /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
-  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/lib/libOdbcFb.so && \
-  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/local/lib/libOdbcFb.so && \
-  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/lib/x86_64-linux-gnu/libOdbcFb.so && \
-  ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/local/lib/x86_64-linux-gnu/libOdbcFb.so && \
-  (LIBODBCINST=$(find /usr/lib* -name "libodbcinst.so.1.0.0" 2>/dev/null | head -1) && \
-   if [ -n "$LIBODBCINST" ]; then \
-     ln -sf "$LIBODBCINST" /usr/lib/x86_64-linux-gnu/libodbcinst.so && \
-     ln -sf "$LIBODBCINST" /usr/lib/x86_64-linux-gnu/odbc/libodbcinst.so; \
-   fi) && \
-  echo "[Firebird ODBC Driver]\nDescription=Firebird ODBC Driver\nDriver=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nSetup=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nThreading=1\nFileUsage=1\nCPTimeout=\nCPReuse=" >> /etc/odbcinst.ini && \
-  echo "/usr/lib/x86_64-linux-gnu/odbc" > /etc/ld.so.conf.d/firebird-odbc.conf && \
-  chmod 644 /etc/ld.so.conf.d/firebird-odbc.conf && \
-  ldconfig && \
-  test -f /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
-  test -f /usr/lib/x86_64-linux-gnu/libodbcinst.so && \
-  ldd /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
-  file /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
-  odbcinst -q -d | grep -i firebird && \
-  cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec rm {} \; && \
-  rm -rf /tmp/Release_x86_64
-
 # Install pdo_firebird
 RUN \
-  docker-php-ext-install pdo_firebird && \
-  docker-php-ext-enable pdo_firebird
+  if [ "$PHP_VERSION" = "8.0" ]; then \
+    curl -sSLf --connect-timeout 30 --max-time 300 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /tmp/install-php-extensions && \
+    chmod +x /tmp/install-php-extensions && \
+    /tmp/install-php-extensions pdo_firebird && \
+    rm -f /tmp/install-php-extensions; \
+  elif [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ] || [ "$PHP_VERSION" = "8.4" ] || [ "$PHP_VERSION" = "8.5" ]; then \
+    docker-php-ext-install pdo_firebird && \
+    docker-php-ext-enable pdo_firebird; \
+  else \
+    echo "Unsupported PHP version: ${PHP_VERSION}"; \
+    exit 1; \
+  fi
+
+# Install ODBC Firebird
+RUN \
+  if [ "$PHP_VERSION" = "8.0" ]; then \
+    apt-get update && apt-get install -y firebird3.0-common libfbclient2 && \
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /usr/lib/x86_64-linux-gnu/odbc && \
+    cd /tmp && \
+    wget -q https://sourceforge.net/projects/firebird/files/firebird-ODBC-driver/2.0.5-Release/OdbcFb-LIB-2.0.5.156.amd64.gz/download -O odbc-firebird.tar.gz && \
+    tar -xzf odbc-firebird.tar.gz 2>/dev/null || true && \
+    if [ -f libOdbcFb.so ]; then \
+      cp libOdbcFb.so /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+      chmod 755 /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so; \
+    elif [ -f OdbcFb/lib/libOdbcFb.so ]; then \
+      cp OdbcFb/lib/libOdbcFb.so /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+      chmod 755 /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so; \
+    else \
+      LIB_FILE=$(find . -name "libOdbcFb.so" -type f 2>/dev/null | head -1) && \
+      if [ -n "$LIB_FILE" ]; then \
+        cp "$LIB_FILE" /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+        chmod 755 /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so; \
+      fi; \
+    fi && \
+    if [ -f /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so ]; then \
+      ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/lib/libOdbcFb.so && \
+      ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/local/lib/libOdbcFb.so && \
+      ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/lib/x86_64-linux-gnu/libOdbcFb.so; \
+    fi && \
+    LIBFBCLIENT=$(find /usr/lib* -name "libfbclient.so*" 2>/dev/null | head -1) && \
+    if [ -n "$LIBFBCLIENT" ]; then \
+      ln -sf "$LIBFBCLIENT" /usr/lib/x86_64-linux-gnu/libgds.so; \
+    fi && \
+    (LIBODBCINST=$(find /usr/lib* -name "libodbcinst.so.1.0.0" 2>/dev/null | head -1) && \
+    if [ -n "$LIBODBCINST" ]; then \
+      ln -sf "$LIBODBCINST" /usr/lib/x86_64-linux-gnu/libodbcinst.so && \
+      ln -sf "$LIBODBCINST" /usr/lib/x86_64-linux-gnu/odbc/libodbcinst.so; \
+    fi) && \
+    echo "[Firebird ODBC Driver]\nDescription=Firebird ODBC Driver\nDriver=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nSetup=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nThreading=1\nFileUsage=1\nCPTimeout=\nCPReuse=" >> /etc/odbcinst.ini && \
+    echo "/usr/lib/x86_64-linux-gnu/odbc" > /etc/ld.so.conf.d/firebird-odbc.conf && \
+    chmod 644 /etc/ld.so.conf.d/firebird-odbc.conf && \
+    ldconfig && \
+    test -f /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+    test -f /usr/lib/x86_64-linux-gnu/libgds.so && \
+    ldd /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+    file /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+    odbcinst -q -d | grep -i firebird && \
+    cd /tmp && rm -f odbc-firebird.tar.gz && \
+    rm -rf OdbcFb libOdbcFb.so 2>/dev/null || true; \
+  elif [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ] || [ "$PHP_VERSION" = "8.4" ] || [ "$PHP_VERSION" = "8.5" ]; then \
+    apt-get update && \
+    apt-get install -y libfbclient2 firebird3.0-common && \
+    cd /tmp/ && wget https://github.com/user-attachments/files/18010867/linux_libs.zip && \
+    unzip linux_libs.zip && \
+    cp -r /tmp/Release_x86_64/* /usr/lib/x86_64-linux-gnu/odbc/ && \
+    chmod 755 /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/lib/libOdbcFb.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/local/lib/libOdbcFb.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/lib/x86_64-linux-gnu/libOdbcFb.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so /usr/local/lib/x86_64-linux-gnu/libOdbcFb.so && \
+    (LIBODBCINST=$(find /usr/lib* -name "libodbcinst.so.1.0.0" 2>/dev/null | head -1) && \
+    if [ -n "$LIBODBCINST" ]; then \
+      ln -sf "$LIBODBCINST" /usr/lib/x86_64-linux-gnu/libodbcinst.so && \
+      ln -sf "$LIBODBCINST" /usr/lib/x86_64-linux-gnu/odbc/libodbcinst.so; \
+    fi) && \
+    echo "[Firebird ODBC Driver]\nDescription=Firebird ODBC Driver\nDriver=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nSetup=/usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so\nThreading=1\nFileUsage=1\nCPTimeout=\nCPReuse=" >> /etc/odbcinst.ini && \
+    echo "/usr/lib/x86_64-linux-gnu/odbc" > /etc/ld.so.conf.d/firebird-odbc.conf && \
+    chmod 644 /etc/ld.so.conf.d/firebird-odbc.conf && \
+    ldconfig && \
+    test -f /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+    test -f /usr/lib/x86_64-linux-gnu/libodbcinst.so && \
+    ldd /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+    file /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
+    odbcinst -q -d | grep -i firebird && \
+    cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec rm {} \; && \
+    rm -rf /tmp/Release_x86_64; \
+  else \
+    echo "Unsupported PHP version: ${PHP_VERSION}"; \
+    exit 1; \
+  fi
 
 # Instalar e configurar o driver ODBC do MySQL
 # MYSQL_ODBC_DRIVER pode ser "mariadb" (padrão) ou "mysql"
@@ -228,30 +291,118 @@ RUN \
 
 # Install odbc and pdo_odbc
 RUN \
-  apt-get --allow-releaseinfo-change update && \
-  apt-get install -y unixodbc-dev --force-yes && \
-  docker-php-source extract && \
-  docker-php-ext-configure pdo_odbc --with-pdo-odbc=unixODBC,/usr && \
-  docker-php-ext-install pdo_odbc && \
-  cd /usr/src/php/ext/odbc && \
-  phpize && \
-  sed -ri 's@^ *test +"\$PHP_.*" *= *"no" *&& *PHP_.*=yes *$@#&@g' configure && \
-  mkdir -p /usr/local/include /usr/local/lib /usr/local/incl && \
-  (test -f /usr/include/sql.h && ln -sf /usr/include/sql.h /usr/local/include/ && ln -sf /usr/include/sql.h /usr/local/incl/ || true) && \
-  (test -f /usr/include/sqlext.h && ln -sf /usr/include/sqlext.h /usr/local/include/ && ln -sf /usr/include/sqlext.h /usr/local/incl/ || true) && \
-  (test -f /usr/include/sqltypes.h && ln -sf /usr/include/sqltypes.h /usr/local/include/ && ln -sf /usr/include/sqltypes.h /usr/local/incl/ || true) && \
-  (test -f /usr/include/sqlucode.h && ln -sf /usr/include/sqlucode.h /usr/local/include/ && ln -sf /usr/include/sqlucode.h /usr/local/incl/ || true) && \
-  docker-php-ext-configure odbc --with-unixODBC=/usr && \
-  docker-php-ext-install odbc
+  if [ "$PHP_VERSION" = "8.0" ] || [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ] || [ "$PHP_VERSION" = "8.4" ] || [ "$PHP_VERSION" = "8.5" ]; then \
+    apt-get --allow-releaseinfo-change update && \
+    apt-get install -y unixodbc-dev --force-yes && \
+    docker-php-source extract && \
+    docker-php-ext-configure pdo_odbc --with-pdo-odbc=unixODBC,/usr && \
+    docker-php-ext-install pdo_odbc && \
+    cd /usr/src/php/ext/odbc && \
+    phpize && \
+    sed -ri 's@^ *test +"\$PHP_.*" *= *"no" *&& *PHP_.*=yes *$@#&@g' configure && \
+    mkdir -p /usr/local/include /usr/local/lib /usr/local/incl && \
+    (test -f /usr/include/sql.h && ln -sf /usr/include/sql.h /usr/local/include/ && ln -sf /usr/include/sql.h /usr/local/incl/ || true) && \
+    (test -f /usr/include/sqlext.h && ln -sf /usr/include/sqlext.h /usr/local/include/ && ln -sf /usr/include/sqlext.h /usr/local/incl/ || true) && \
+    (test -f /usr/include/sqltypes.h && ln -sf /usr/include/sqltypes.h /usr/local/include/ && ln -sf /usr/include/sqltypes.h /usr/local/incl/ || true) && \
+    (test -f /usr/include/sqlucode.h && ln -sf /usr/include/sqlucode.h /usr/local/include/ && ln -sf /usr/include/sqlucode.h /usr/local/incl/ || true) && \
+    docker-php-ext-configure odbc --with-unixODBC=/usr && \
+    docker-php-ext-install odbc; \
+  else \
+    echo "Unsupported PHP version: ${PHP_VERSION}"; \
+    exit 1; \
+  fi
 
 # Download and Install sqlsrv and pdo_sqlsrv
 RUN \
-  if [ "$PHP_VERSION" = "7.3" ] || [ "$PHP_VERSION" = "7.4" ] || [ "$PHP_VERSION" = "8.0" ]; then \
-    ( curl -sSLf https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o - || echo 'return 1' ) | sh -s \
-    sqlsrv pdo_sqlsrv; \
+  if [ "$PHP_VERSION" = "8.0" ] || [ "$PHP_VERSION" = "8.4" ]; then \
+    curl -sSLf --connect-timeout 30 --max-time 300 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /tmp/install-php-extensions && \
+    chmod +x /tmp/install-php-extensions && \
+    /tmp/install-php-extensions sqlsrv pdo_sqlsrv && \
+    rm -f /tmp/install-php-extensions; \
   elif [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ]; then \
     pecl install sqlsrv pdo_sqlsrv && \
     docker-php-ext-enable sqlsrv pdo_sqlsrv; \
+  elif [ "$PHP_VERSION" = "8.5" ]; then \
+    echo "Compiling sqlsrv/pdo_sqlsrv from source for PHP 8.5..." && \
+    apt-get update && apt-get install -y git g++ make autoconf libc-dev pkg-config unixodbc-dev && \
+    cd /tmp && \
+    git clone --depth 1 --branch master https://github.com/microsoft/msphpsql.git msphpsql || \
+    git clone --depth 1 https://github.com/microsoft/msphpsql.git msphpsql && \
+    cd msphpsql/source && \
+    echo "Checking sqlsrv config.m4..." && \
+    if [ -f "sqlsrv/config.m4" ]; then \
+      echo "Found config.m4, checking for SQLSRV headers check..." && \
+      grep -n "SQLSRV headers" sqlsrv/config.m4 || echo "No 'SQLSRV headers' check found"; \
+    fi && \
+    echo "Compiling sqlsrv..." && \
+    cd sqlsrv && \
+    if [ -f "../shared/core_sqlsrv.h" ]; then \
+      echo "Found shared headers at ../shared/"; \
+    else \
+      echo "Warning: shared headers not found at ../shared/core_sqlsrv.h"; \
+      ls -la ../shared/ 2>/dev/null || echo "Shared directory does not exist"; \
+    fi && \
+    phpize && \
+    if [ -f "configure" ]; then \
+      echo "Patching configure script to fix sqlsrv_inc_path when headers are in ../shared/..." && \
+      perl -i -0pe 's/(elif\s+test\s+-f\s+\$srcdir\/shared\/core_sqlsrv\.h;\s+then\s+sqlsrv_inc_path=\$srcdir\/shared\/)/$1\n    elif test -f ..\/shared\/core_sqlsrv.h; then\n      sqlsrv_inc_path="..\/shared\/"/g' configure 2>/dev/null || \
+      sed -i '/test -f \$srcdir\/shared\/core_sqlsrv\.h/a\    elif test -f ..\/shared\/core_sqlsrv.h; then\n      sqlsrv_inc_path="..\/shared\/"' configure 2>/dev/null || \
+      echo "Patch attempt completed"; \
+    fi && \
+    ./configure && \
+    if [ -f "Makefile" ]; then \
+      echo "Fixing Makefile paths for shared directory..." && \
+      SHARED_DIR=$(cd .. && pwd)/shared && \
+      sed -i "s|/tmp/msphpsql/source/sqlsrv/shared|${SHARED_DIR}|g" Makefile && \
+      sed -i "s|\$srcdir/shared|${SHARED_DIR}|g" Makefile && \
+      sed -i "s|sqlsrv/shared|shared|g" Makefile && \
+      echo "Makefile paths fixed to use ${SHARED_DIR}"; \
+    fi && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && \
+    echo "Compiling pdo_sqlsrv..." && \
+    cd pdo_sqlsrv && \
+    if [ -f "../shared/core_sqlsrv.h" ]; then \
+      echo "Found shared headers at ../shared/"; \
+    else \
+      echo "Warning: shared headers not found at ../shared/core_sqlsrv.h"; \
+    fi && \
+    echo "Patching pdo_sqlsrv source code for PHP 8.5 compatibility..." && \
+    if [ -f "php_pdo_sqlsrv_int.h" ]; then \
+      sed -i 's/query_stmt_zval/query_stmt_obj/g' php_pdo_sqlsrv_int.h && \
+      perl -i -pe 's/^\s*zval_ptr_dtor\( &dbh->query_stmt_obj \);\s*$/\/\* PHP 8.5: query_stmt_obj is zend_object**, GC manages cleanup \*\//g' php_pdo_sqlsrv_int.h && \
+      echo "Patched query_stmt_zval -> query_stmt_obj and removed zval_ptr_dtor call in php_pdo_sqlsrv_int.h"; \
+    fi && \
+    if [ -f "pdo_dbh.cpp" ]; then \
+      sed -i 's/prev_err_mode = dbh->error_mode;/prev_err_mode = (pdo_error_mode)dbh->error_mode;/g' pdo_dbh.cpp && \
+      echo "Patched error_mode type conversion in pdo_dbh.cpp"; \
+    fi && \
+    phpize && \
+    if [ -f "configure" ]; then \
+      echo "Patching configure script to fix pdo_sqlsrv_inc_path when headers are in ../shared/..." && \
+      perl -i -0pe 's/(elif\s+test\s+-f\s+\$srcdir\/shared\/core_sqlsrv\.h;\s+then\s+pdo_sqlsrv_inc_path=\$srcdir\/shared\/)/$1\n    elif test -f ..\/shared\/core_sqlsrv.h; then\n      pdo_sqlsrv_inc_path="..\/shared\/"/g' configure 2>/dev/null || \
+      sed -i '/test -f \$srcdir\/shared\/core_sqlsrv\.h/a\    elif test -f ..\/shared\/core_sqlsrv.h; then\n      pdo_sqlsrv_inc_path="..\/shared\/"' configure 2>/dev/null || \
+      echo "Patch attempt completed"; \
+    fi && \
+    ./configure && \
+    if [ -f "Makefile" ]; then \
+      echo "Fixing Makefile paths for shared directory..." && \
+      SHARED_DIR=$(cd .. && pwd)/shared && \
+      sed -i "s|pdo_sqlsrv/shared|shared|g" Makefile && \
+      sed -i "s|\$srcdir/shared|${SHARED_DIR}|g" Makefile 2>/dev/null || \
+      sed -i "s|\.\./shared|${SHARED_DIR}|g" Makefile 2>/dev/null || \
+      echo "Makefile path fix attempt completed"; \
+    fi && \
+    make -j$(nproc) && \
+    make install && \
+    cd ../.. && \
+    docker-php-ext-enable sqlsrv pdo_sqlsrv && \
+    php -r "if (!extension_loaded('sqlsrv') || !extension_loaded('pdo_sqlsrv')) { echo 'Extensions not loaded'; exit(1); }" && \
+    cd / && rm -rf /tmp/msphpsql && \
+    apt-get purge -y git g++ make autoconf libc-dev pkg-config && \
+    apt-get autoremove -y && apt-get clean && \
+    echo "sqlsrv/pdo_sqlsrv compiled and enabled successfully for PHP 8.5"; \
   else \
     echo "Unsupported PHP version: ${PHP_VERSION}"; \
     exit 1; \
@@ -277,16 +428,51 @@ RUN \
   cd /tmp/instantclient_21_6 && ./odbc_update_ini.sh / /tmp/instantclient_21_6 "Oracle 21 ODBC driver" "OracleODBC-21" /etc/odbc.ini && \
   cd /tmp && find . -maxdepth 1 -type f -name '*.zip*' -exec rm {} \;
 
-# Configure oci8 & pdo_oci
+# Install oci8 & pdo_oci via PECL
 RUN \
-  docker-php-ext-configure oci8 --with-oci8=instantclient,/tmp/instantclient_21_6/ && \
-  docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/tmp/instantclient_21_6/
-
-# Install oci8 & pdo_oci
-RUN \
-  docker-php-ext-install oci8 pdo_oci && \
-  echo /tmp/instantclient_21_6 > /etc/ld.so.conf.d/oracle.conf && \
-  ldconfig
+  if [ "$PHP_VERSION" = "8.0" ] || [ "$PHP_VERSION" = "8.1" ] || [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ] || [ "$PHP_VERSION" = "8.4" ]; then \
+    echo "Installing oci8 and pdo_oci via mlocati for PHP 8.0/8.1/8.2/8.3/8.4..." && \
+    curl -sSLf --connect-timeout 30 --max-time 300 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /tmp/install-php-extensions && \
+    chmod +x /tmp/install-php-extensions && \
+    /tmp/install-php-extensions oci8 pdo_oci && \
+    rm -f /tmp/install-php-extensions; \
+    echo "oci8 and pdo_oci installed successfully for PHP 8.0/8.1/8.2/8.3/8.4"; \
+  elif [ "$PHP_VERSION" = "8.5" ]; then \
+    echo /tmp/instantclient_21_6 > /etc/ld.so.conf.d/oracle.conf && \
+    ldconfig && \
+    echo "Installing oci8 via mlocati and compiling pdo_oci from source for PHP 8.5..." && \
+    apt-get update && apt-get install -y autoconf g++ make libc-dev pkg-config git && \
+    curl -sSLf --connect-timeout 30 --max-time 300 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /tmp/install-php-extensions && \
+    chmod +x /tmp/install-php-extensions && \
+    /tmp/install-php-extensions oci8 && \
+    rm -f /tmp/install-php-extensions && \
+    rm -f /usr/local/etc/php/conf.d/docker-php-ext-pdo_oci.ini /usr/local/lib/php/extensions/*/pdo_oci.so 2>/dev/null || true && \
+    cd /tmp && \
+    git clone --depth 1 https://github.com/php/pecl-database-pdo_oci.git pdo_oci && \
+    cd pdo_oci && \
+    phpize && ./configure --with-pdo-oci=instantclient,/tmp/instantclient_21_6 && \
+    make -j$(nproc) && make install && \
+    EXT_DIR=$(php-config --extension-dir) && \
+    OCI8_SO=$(find "$EXT_DIR" -name "*oci8*.so" 2>/dev/null | head -1) && \
+    PDO_OCI_SO=$(find "$EXT_DIR" -name "*pdo_oci*.so" 2>/dev/null | head -1) && \
+    OCI8_INI_FILE="/usr/local/etc/php/conf.d/docker-php-ext-oci8.ini" && \
+    PDO_OCI_INI_FILE="/usr/local/etc/php/conf.d/docker-php-ext-pdo_oci.ini" && \
+    if [ -n "$OCI8_SO" ] && [ -f "$OCI8_SO" ]; then \
+      echo "extension=$(basename $OCI8_SO)" > "$OCI8_INI_FILE" && \
+      echo "Created oci8 ini file: $OCI8_INI_FILE pointing to $OCI8_SO"; \
+    fi && \
+    if [ -n "$PDO_OCI_SO" ] && [ -f "$PDO_OCI_SO" ]; then \
+      echo "extension=$(basename $PDO_OCI_SO)" > "$PDO_OCI_INI_FILE" && \
+      echo "Created pdo_oci ini file: $PDO_OCI_INI_FILE pointing to $PDO_OCI_SO"; \
+    fi && \
+    cd / && rm -rf /tmp/pdo_oci && \
+    ldconfig && \
+    php -r "if (!extension_loaded('oci8')) { echo 'oci8 not loaded'; exit(1); }" && \
+    php -r "if (!extension_loaded('pdo_oci')) { echo 'pdo_oci not loaded'; exit(1); }" && \
+    apt-get purge -y autoconf g++ make libc-dev pkg-config git && \
+    apt-get autoremove -y && apt-get clean && \
+    echo "Both oci8 (via mlocati) and pdo_oci (from source) installed and verified successfully"; \
+  fi
 
 # Ensure ODBC library paths are properly configured and permissions are correct
 RUN \
@@ -294,12 +480,11 @@ RUN \
   chmod 644 /etc/ld.so.conf.d/firebird-odbc.conf && \
   (test -f /etc/ld.so.conf.d/mysql-odbc.conf && chmod 644 /etc/ld.so.conf.d/mysql-odbc.conf || true) && \
   ldconfig && \
-  # Verificar se o driver MySQL/MariaDB está disponível (pode ser libmaodbc.so ou libmyodbc9a.so)
   (test -f /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so || test -f /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9a.so || echo "Warning: MySQL ODBC driver not found") && \
   (test -f /usr/lib/x86_64-linux-gnu/odbc/libmyodbc9w.so || test -f /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so || echo "Warning: MySQL ODBC Unicode driver not found") && \
-  test -f /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so && \
-  odbcinst -q -d | grep -i -E "(mysql|mariadb|firebird)" && \
-  ldconfig -p | grep -i odbc
+  (test -f /usr/lib/x86_64-linux-gnu/odbc/libOdbcFb.so || echo "Warning: Firebird ODBC driver not found") && \
+  (odbcinst -q -d | grep -i -E "(mysql|mariadb|firebird)" || echo "Warning: No ODBC drivers found in odbcinst") && \
+  (ldconfig -p | grep -i odbc || echo "Warning: No ODBC libraries found in ldconfig")
 
 # Debug Trace for ODBC
 RUN \

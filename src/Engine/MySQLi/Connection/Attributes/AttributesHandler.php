@@ -96,7 +96,7 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
      * @param int|null $type = null
      * @noinspection PhpSameParameterValueInspection
      */
-    private function setFetchMode(int $type = null): void
+    private function setFetchMode(?int $type = null): void
     {
         self::$fetchMode = match ($type) {
             1 => MYSQLI_NUM,

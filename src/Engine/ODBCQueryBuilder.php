@@ -85,7 +85,7 @@ class ODBCQueryBuilder implements IQueryBuilder
 
     private static bool $cursorExhausted = false;
 
-    public function __construct(IConnection $context = null)
+    public function __construct(?IConnection $context = null)
     {
         $this->initQuery();
         self::$context = $context;
@@ -503,9 +503,27 @@ class ODBCQueryBuilder implements IQueryBuilder
     private function runOnce(): void
     {
         $currentQuery = $this->parse();
+        $values = $this->getValues();
 
         if (self::$lastQuery !== $currentQuery || self::$cursorExhausted) {
-            $this->getContext()->query($currentQuery);
+            if (PHP_VERSION_ID >= 80400 && !empty($values)) {
+                $processedQuery = $currentQuery;
+                foreach ($values as $value) {
+                    $processedValue = match (true) {
+                        is_string($value) => "'" . str_replace("'", "''", $value) . "'",
+                        is_null($value) => 'NULL',
+                        is_bool($value) => $value ? '1' : '0',
+                        is_numeric($value) => (string)$value,
+                        default => "'" . str_replace("'", "''", (string)$value) . "'"
+                    };
+                    $processedQuery = preg_replace('/\?/', $processedValue, $processedQuery, 1);
+                }
+                $this->getContext()->query($processedQuery);
+            } elseif (!empty($values)) {
+                $this->getContext()->prepare($currentQuery, ...$values);
+            } else {
+                $this->getContext()->query($currentQuery);
+            }
             self::$lastQuery = $currentQuery;
             self::$cursorExhausted = false;
         }
@@ -526,10 +544,12 @@ class ODBCQueryBuilder implements IQueryBuilder
      */
     private function parse(): string
     {
-        $buildRawResult = $this->buildRaw();
+        // Use build() instead of buildRaw() to keep placeholders for odbc_prepare()
+        // PHP 8.4+ requires placeholders in prepared statements
+        $buildResult = $this->build();
         $builder = new Builder($this->query, $this->getContext());
         return $builder->parse(
-            $buildRawResult,
+            $buildResult,
             SQL::SQL_DIALECT_NONE,
             SQL::SQL_DIALECT_SINGLE_QUOTE
         );
@@ -578,7 +598,7 @@ class ODBCQueryBuilder implements IQueryBuilder
      * @return mixed
      * @throws Exceptions
      */
-    public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
         $this->runOnce();
         $result = $this->getContext()->fetch($fetchStyle, $fetchArgument, $optArgs);
@@ -597,7 +617,7 @@ class ODBCQueryBuilder implements IQueryBuilder
      * @return array|bool
      * @throws Exceptions
      */
-    public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
+    public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
         $this->runOnce();
         $result = $this->getContext()->fetchAll($fetchStyle, $fetchArgument, $optArgs);

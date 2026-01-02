@@ -74,28 +74,31 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'mysqli'] : [],
-            'host' => $env['MYSQL_HOST'],
-            'port' => (int) $env['MYSQL_PORT'],
-            'database' => $env['MYSQL_DATABASE'],
-            'user' => $env['MYSQL_USERNAME'],
-            'password' => $env['MYSQL_PASSWORD'],
-            'charset' => 'utf8',
-            'options' => [
-                MySQL::ATTR_PERSISTENT => $persistent,
-                MySQL::ATTR_AUTOCOMMIT => true,
-                MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
-                MySQL::ATTR_SET_CHARSET_NAME => "utf8",
-                MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
-                MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
-                MySQL::ATTR_OPT_READ_TIMEOUT => 30,
-                MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M",
-                MySQL::ATTR_DEFAULT_FETCH_MODE => MySQL::FETCH_OBJ,
-                MySQL::ATTR_REPORT => MySQL::REPORT_ERROR | MySQL::REPORT_STRICT
-            ],
-            'exception' => true
-        ]);
+        $args = $strategy ? ['engine' => 'mysqli'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'host' => $env['MYSQL_HOST'],
+                'port' => (int) $env['MYSQL_PORT'],
+                'database' => $env['MYSQL_DATABASE'],
+                'user' => $env['MYSQL_USERNAME'],
+                'password' => $env['MYSQL_PASSWORD'],
+                'charset' => 'utf8',
+                'options' => [
+                    MySQL::ATTR_PERSISTENT => $persistent,
+                    MySQL::ATTR_AUTOCOMMIT => true,
+                    MySQL::ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
+                    MySQL::ATTR_SET_CHARSET_NAME => "utf8",
+                    MySQL::ATTR_OPT_INT_AND_FLOAT_NATIVE => true,
+                    MySQL::ATTR_OPT_CONNECT_TIMEOUT => 28800,
+                    MySQL::ATTR_OPT_READ_TIMEOUT => 30,
+                    MySQL::ATTR_READ_DEFAULT_GROUP => "MAX_ALLOWED_PACKET=50M",
+                    MySQL::ATTR_DEFAULT_FETCH_MODE => MySQL::FETCH_OBJ,
+                    MySQL::ATTR_REPORT => MySQL::REPORT_ERROR | MySQL::REPORT_STRICT
+                ],
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -117,9 +120,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'pgsql'] : [],
-            'host' => $env['PGSQL_HOST'],
+        $args = $strategy ? ['engine' => 'pgsql'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'host' => $env['PGSQL_HOST'],
             'port' => (int) $env['PGSQL_PORT'],
             'database' => $env['PGSQL_DATABASE'],
             'user' => $env['PGSQL_USERNAME'],
@@ -133,8 +138,9 @@ class StaticArray
                 PgSQL::ATTR_DEFAULT_FETCH_MODE => PgSQL::FETCH_OBJ,
                 PgSQL::ATTR_REPORT => PgSQL::REPORT_ERROR | PgSQL::REPORT_STRICT
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -156,9 +162,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'sqlsrv'] : [],
-            'host' => $env['SQLSRV_HOST'],
+        $args = $strategy ? ['engine' => 'sqlsrv'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'host' => $env['SQLSRV_HOST'],
             'port' => (int) $env['SQLSRV_PORT'],
             'database' => $env['SQLSRV_DATABASE'],
             'user' => $env['SQLSRV_USERNAME'],
@@ -170,8 +178,9 @@ class StaticArray
                 SQLSrv::ATTR_DEFAULT_FETCH_MODE => SQLSrv::FETCH_OBJ,
                 SQLSrv::ATTR_REPORT => SQLSrv::REPORT_ERROR | SQLSrv::REPORT_STRICT
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -193,9 +202,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'oci'] : [],
-            'host' => $env['OCI_HOST'],
+        $args = $strategy ? ['engine' => 'oci'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'host' => $env['OCI_HOST'],
             'port' => (int) $env['OCI_PORT'],
             'database' => $env['OCI_DATABASE'],
             'user' => $env['OCI_USERNAME'],
@@ -207,8 +218,9 @@ class StaticArray
                 OCI::ATTR_DEFAULT_FETCH_MODE => OCI::FETCH_OBJ,
                 OCI::ATTR_REPORT => OCI::REPORT_ERROR | OCI::REPORT_STRICT
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -230,9 +242,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'firebird'] : [],
-            'host' => $env['IBASE_HOST'],
+        $args = $strategy ? ['engine' => 'firebird'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'host' => $env['IBASE_HOST'],
             'port' => (int) $env['IBASE_PORT'],
             'database' => $env['IBASE_DATABASE'],
             'user' => $env['IBASE_USERNAME'],
@@ -244,8 +258,9 @@ class StaticArray
                 Firebird::ATTR_DEFAULT_FETCH_MODE => Firebird::FETCH_OBJ,
                 Firebird::ATTR_REPORT => Firebird::REPORT_ERROR | Firebird::REPORT_STRICT
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -267,22 +282,25 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'sqlite'] : [],
-            'database' => $env['SQLITE_DATABASE'],
-            'charset' => 'utf8',
-            'options' => [
-                SQLite::ATTR_OPEN_READONLY => false,
-                SQLite::ATTR_OPEN_READWRITE => true,
-                SQLite::ATTR_OPEN_CREATE => true,
-                SQLite::ATTR_CONNECT_TIMEOUT => 28800,
-                SQLite::ATTR_PERSISTENT => $persistent,
-                SQLite::ATTR_AUTOCOMMIT => true,
-                SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
-                SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
-            ],
-            'exception' => true
-        ]);
+        $args = $strategy ? ['engine' => 'sqlite'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'database' => $env['SQLITE_DATABASE'],
+                'charset' => 'utf8',
+                'options' => [
+                    SQLite::ATTR_OPEN_READONLY => false,
+                    SQLite::ATTR_OPEN_READWRITE => true,
+                    SQLite::ATTR_OPEN_CREATE => true,
+                    SQLite::ATTR_CONNECT_TIMEOUT => 28800,
+                    SQLite::ATTR_PERSISTENT => $persistent,
+                    SQLite::ATTR_AUTOCOMMIT => true,
+                    SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
+                    SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
+                ],
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -304,9 +322,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'sqlite'] : [],
-            'database' => $env['SQLITE_DATABASE_MEMORY'],
+        $args = $strategy ? ['engine' => 'sqlite'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'database' => $env['SQLITE_DATABASE_MEMORY'],
             'charset' => 'utf8',
             'options' => [
                 SQLite::ATTR_OPEN_READONLY => false,
@@ -318,8 +338,9 @@ class StaticArray
                 SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
                 SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -341,9 +362,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            'driver' => 'mysql',
+        $args = $strategy ? ['engine' => 'pdo'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'mysql',
             'host' => $env['MYSQL_HOST'],
             'port' => (int) $env['MYSQL_PORT'],
             'database' => $env['MYSQL_DATABASE'],
@@ -355,8 +378,9 @@ class StaticArray
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -378,9 +402,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            'driver' => 'pgsql',
+        $args = $strategy ? ['engine' => 'pdo'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'pgsql',
             'host' => $env['PGSQL_HOST'],
             'port' => (int) $env['PGSQL_PORT'],
             'database' => $env['PGSQL_DATABASE'],
@@ -392,8 +418,9 @@ class StaticArray
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -413,9 +440,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            'driver' => 'sqlsrv',
+        $args = $strategy ? ['engine' => 'pdo'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'sqlsrv',
             'host' => $env['SQLSRV_HOST'],
             'port' => (int) $env['SQLSRV_PORT'],
             'database' => $env['SQLSRV_DATABASE'],
@@ -426,8 +455,9 @@ class StaticArray
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -449,9 +479,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            'driver' => 'oci',
+        $args = $strategy ? ['engine' => 'pdo'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'oci',
             'host' => $env['OCI_HOST'],
             'port' => (int) $env['OCI_PORT'],
             'database' => $env['OCI_DATABASE'],
@@ -463,8 +495,9 @@ class StaticArray
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -486,9 +519,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            'driver' => 'firebird',
+        $args = $strategy ? ['engine' => 'pdo'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'firebird',
             'host' => $env['FBIRD_HOST'],
             'port' => (int) $env['FBIRD_PORT'],
             'database' => $env['FBIRD_DATABASE'],
@@ -500,8 +535,9 @@ class StaticArray
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -523,18 +559,21 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            'driver' => 'sqlite',
-            'database' => $env['SQLITE_DATABASE'],
-            'charset' => 'utf8',
-            'options' => [
-                PDO::ATTR_PERSISTENT => $persistent,
-                PDO::ATTR_EMULATE_PREPARES => true,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
-            'exception' => true
-        ]);
+        $args = $strategy ? ['engine' => 'pdo'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'sqlite',
+                'database' => $env['SQLITE_DATABASE'],
+                'charset' => 'utf8',
+                'options' => [
+                    PDO::ATTR_PERSISTENT => $persistent,
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ],
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -556,18 +595,21 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'pdo'] : [],
-            'driver' => 'sqlite',
-            'database' => $env['SQLITE_DATABASE_MEMORY'],
+        $args = $strategy ? ['engine' => 'pdo'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'sqlite',
+                'database' => $env['SQLITE_DATABASE_MEMORY'],
             'charset' => 'utf8',
             'options' => [
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -589,9 +631,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            'driver' => 'mysql',
+        $args = $strategy ? ['engine' => 'odbc'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'mysql',
             'host' => $env['MYSQL_HOST'],
             'port' => (int) $env['MYSQL_PORT'],
             'database' => $env['MYSQL_DATABASE'],
@@ -605,8 +649,9 @@ class StaticArray
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -628,9 +673,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            'driver' => 'pgsql',
+        $args = $strategy ? ['engine' => 'odbc'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'pgsql',
             'host' => $env['PGSQL_HOST'],
             'port' => (int) $env['PGSQL_PORT'],
             'database' => $env['PGSQL_DATABASE'],
@@ -644,8 +691,9 @@ class StaticArray
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -667,9 +715,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            'driver' => 'sqlsrv',
+        $args = $strategy ? ['engine' => 'odbc'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'sqlsrv',
             'host' => $env['SQLSRV_HOST'],
             'port' => (int) $env['SQLSRV_PORT'],
             'database' => $env['SQLSRV_DATABASE'],
@@ -683,8 +733,9 @@ class StaticArray
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -706,9 +757,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            'driver' => 'oci',
+        $args = $strategy ? ['engine' => 'odbc'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'oci',
             'host' => $env['OCI_HOST'],
             'port' => (int) $env['OCI_PORT'],
             'database' => $env['OCI_DATABASE'],
@@ -722,8 +775,9 @@ class StaticArray
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -745,9 +799,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            'driver' => 'firebird',
+        $args = $strategy ? ['engine' => 'odbc'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'firebird',
             'host' => $env['FBIRD_HOST'],
             'port' => (int) $env['FBIRD_PORT'],
             'database' => $env['FBIRD_DATABASE'],
@@ -761,8 +817,9 @@ class StaticArray
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -784,20 +841,23 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            'driver' => 'sqlite',
-            'database' => $env['SQLITE_DATABASE'],
-            'charset' => $env['SQLITE_CHARSET'],
-            'options' => [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
-                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
-            ],
-            'exception' => true
-        ]);
+        $args = $strategy ? ['engine' => 'odbc'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'sqlite',
+                'database' => $env['SQLITE_DATABASE'],
+                'charset' => $env['SQLITE_CHARSET'],
+                'options' => [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                    ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
+                ],
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -819,9 +879,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            'driver' => 'access',
+        $args = $strategy ? ['engine' => 'odbc'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'access',
             'database' => $env['ACCESS_DATABASE'],
             'user' => $env['ACCESS_USERNAME'],
             'password' => $env['ACCESS_PASSWORD'],
@@ -833,8 +895,9 @@ class StaticArray
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -856,9 +919,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            'driver' => 'excel',
+        $args = $strategy ? ['engine' => 'odbc'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'excel',
             'database' => $env['EXCEL_DATABASE'],
             'charset' => $env['EXCEL_CHARSET'],
             'options' => [
@@ -868,8 +933,9 @@ class StaticArray
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -891,9 +957,11 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            'driver' => 'text',
+        $args = $strategy ? ['engine' => 'odbc'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'text',
             'database' => $env['TEXT_DATABASE'],
             'charset' => $env['TEXT_CHARSET'],
             'options' => [
@@ -903,8 +971,9 @@ class StaticArray
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
             ],
-            'exception' => true
-        ]);
+                'exception' => true
+            ]
+        ));
     }
 
     /**
@@ -926,19 +995,22 @@ class StaticArray
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        return $constructor([
-            ...$strategy ? ['engine' => 'odbc'] : [],
-            'driver' => 'sqlite',
-            'database' => $env['SQLITE_DATABASE_MEMORY'],
-            'charset' => $env['SQLITE_CHARSET'],
-            'options' => [
-                ODBC::ATTR_PERSISTENT => $persistent,
-                ODBC::ATTR_CONNECT_TIMEOUT => 28800,
-                ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
-                ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
-                ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
-            ],
-            'exception' => true
-        ]);
+        $args = $strategy ? ['engine' => 'odbc'] : [];
+        return $constructor(array_merge(
+            $args,
+            [
+                'driver' => 'sqlite',
+                'database' => $env['SQLITE_DATABASE_MEMORY'],
+                'charset' => $env['SQLITE_CHARSET'],
+                'options' => [
+                    ODBC::ATTR_PERSISTENT => $persistent,
+                    ODBC::ATTR_CONNECT_TIMEOUT => 28800,
+                    ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
+                    ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
+                    ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
+                ],
+                'exception' => true
+            ]
+        ));
     }
 }

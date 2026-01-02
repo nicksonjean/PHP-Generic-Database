@@ -29,21 +29,29 @@ class TransactionsHandler implements ITransactions
         set_error_handler(function ($severity, $message, $file, $line) {
             throw new ErrorException($message, 0, $severity, $file, $line);
         });
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
+            return false;
+        }
         if (!self::$transactionCounter++) {
             self::$inTransaction = true;
-            return odbc_autocommit($this->getInstance()->getConnection(), false);
+            return @odbc_autocommit($connection, false);
         }
-        odbc_exec($this->getInstance()->getConnection(), 'SAVEPOINT trans' . (self::$transactionCounter));
+        @odbc_exec($connection, 'SAVEPOINT trans' . (self::$transactionCounter));
         return self::$transactionCounter >= 0;
     }
 
     public function commit(): bool
     {
         restore_error_handler();
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
+            return false;
+        }
         if (!--self::$transactionCounter) {
             self::$inTransaction = false;
-            $result = odbc_commit($this->getInstance()->getConnection());
-            odbc_autocommit($this->getInstance()->getConnection(), true);
+            $result = @odbc_commit($connection);
+            @odbc_autocommit($connection, true);
             return $result;
         } else {
             return self::$transactionCounter >= 0;
@@ -57,16 +65,20 @@ class TransactionsHandler implements ITransactions
 
     public function rollback(): bool
     {
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
+            return false;
+        }
         if (--self::$transactionCounter) {
-            odbc_exec(
-                $this->getInstance()->getConnection(),
+            @odbc_exec(
+                $connection,
                 'ROLLBACK TO trans' . (self::$transactionCounter + 1)
             );
             self::$inTransaction = false;
             return true;
         }
-        $result = odbc_rollback($this->getInstance()->getConnection());
-        odbc_autocommit($this->getInstance()->getConnection(), true);
+        $result = @odbc_rollback($connection);
+        @odbc_autocommit($connection, true);
         return $result;
     }
 }

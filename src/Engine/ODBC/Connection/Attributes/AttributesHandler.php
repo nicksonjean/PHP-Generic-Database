@@ -32,10 +32,11 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
 
     private function settings(): array
     {
-        return [
-            ...ODBC::getDriverSettingsByDriver(ODBC::getAliasByDriver($this->get('driver'))),
-            'Alias' => ODBC::getAliasByDriver($this->get('driver'))
-        ];
+        $driverSettings = ODBC::getDriverSettingsByDriver(ODBC::getAliasByDriver($this->get('driver')));
+        return array_merge(
+            is_array($driverSettings) ? $driverSettings : [],
+            ['Alias' => ODBC::getAliasByDriver($this->get('driver'))]
+        );
     }
 
     /** @noinspection PhpUnused */
@@ -59,7 +60,6 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
     {
         $driver = $this->get('driver');
         
-        // For PostgreSQL, use pg_config --version via shell_exec
         if ($driver === 'pgsql') {
             if (function_exists('shell_exec')) {
                 $version = @shell_exec('pg_config --version');
@@ -75,7 +75,19 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
             return '';
         }
 
+        $isValidConnection = is_resource($connection) || (PHP_VERSION_ID >= 80400 && is_object($connection) && get_class($connection) === 'Odbc\Connection');
+
+        if (!$isValidConnection) {
+            return '';
+        }
+
         if (!function_exists('odbc_exec') || !function_exists('odbc_result')) {
+            return '';
+        }
+
+        $isPhp80Firebird = (PHP_VERSION_ID >= 80000 && PHP_VERSION_ID < 80100) &&  in_array($driver, ['firebird', 'ibase']);
+        
+        if ($isPhp80Firebird) {
             return '';
         }
 
@@ -85,7 +97,7 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
             'sqlite' => "SELECT sqlite_version()",
             'mysql', 'mariadb' => "SELECT VERSION()",
             'firebird', 'ibase' => "SELECT RDB\$GET_CONTEXT('SYSTEM', 'ENGINE_VERSION') FROM RDB\$DATABASE",
-            'access', 'excel', 'text' => '', // File-based drivers don't have database version
+            'access', 'excel', 'text' => '',
             default => '',
         };
 
@@ -93,39 +105,36 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
             return '';
         }
 
-        $result = odbc_exec($connection, $query);
+        $result = @odbc_exec($connection, $query);
         if ($result === false || !$result) {
             return '';
         }
 
         $version = '';
        
-        // Use unified approach for all drivers - iterate through fields like ODBC::fetchArray does
-        if (function_exists('odbc_num_fields') && function_exists('odbc_field_name')) {
+        $isValidResult = is_resource($result) || (PHP_VERSION_ID >= 80400 && is_object($result) && get_class($result) === 'Odbc\Result');
+        
+        if ($isValidResult && function_exists('odbc_num_fields') && function_exists('odbc_field_name')) {
             $numFields = odbc_num_fields($result);
             if ($numFields > 0) {
-                // Try to fetch row first
                 if (function_exists('odbc_fetch_row')) {
-                    odbc_fetch_row($result);
+                    @odbc_fetch_row($result);
                 }
                 
-                // Iterate through fields
                 for ($i = 1; $i <= $numFields; $i++) {
-                    $fieldName = odbc_field_name($result, $i);
-                    // Try by field name first
-                    $resultValue = $fieldName ? odbc_result($result, $fieldName) : false;
-                    // If that didn't work, try by index
+                    $resultValue = false;
+                    $fieldName = @odbc_field_name($result, $i);
+                    $resultValue = $fieldName ? @odbc_result($result, $fieldName) : false;
                     if ($resultValue === false || $resultValue === null || $resultValue === '') {
-                        $resultValue = odbc_result($result, $i);
+                        $resultValue = @odbc_result($result, $i);
                     }
-                    // If we got a value, use it and break
+                    
                     if ($resultValue !== false && $resultValue !== null && $resultValue !== '') {
                         $version = trim((string)$resultValue);
                         break;
                     }
                 }
-                
-                // Clean up line breaks and multiple spaces for SQL Server
+
                 if (!empty($version) && in_array($driver, ['sqlsrv', 'mssql', 'dblib', 'sybase'])) {
                     $version = preg_replace('/[\r\n\t]+/', ' ', $version);
                     $version = preg_replace('/\s+/', ' ', $version);
@@ -134,8 +143,8 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
             }
         }
         
-        if ($result && function_exists('odbc_free_result')) {
-            odbc_free_result($result);
+        if ($isValidResult && function_exists('odbc_free_result')) {
+            @odbc_free_result($result);
         }
 
         return $version;

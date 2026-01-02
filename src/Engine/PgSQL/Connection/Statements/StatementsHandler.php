@@ -257,7 +257,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         $this->setAllMetadata();
         if (!empty($params)) {
             $this->setStmtName(Hash::hash());
-            if (reset($params)[1] === Query::RAW) {
+            if (reset($params)[1] === Query::RAW()) {
                 $statement = pg_query($this->getInstance()->getConnection(), $this->parse(reset($params)[0]));
             } else {
                 $statement = pg_prepare($this->getInstance()->getConnection(), $this->getStmtName(), $this->parse(reset($params)[0]));
@@ -278,28 +278,23 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function query(mixed ...$params): IConnection
     {
-        if (!empty($params) && ($statement = $this->prepareStatement([...$params, Query::RAW]))) {
+        if (!empty($params) && ($statement = $this->prepareStatement([...$params, Query::RAW()]))) {
             $colCount = pg_num_fields($statement);
             if ($colCount > 0) {
-                $cloneStmt = function () use ($statement, $params): mixed {
-                    if ($statement instanceof Result) {
-                        return false;
-                    }
-                    return $this->prepareStatement([...$params, Query::RAW]);
-                };
-                $countResult = $cloneStmt();
-                if ($countResult) {
-                    $rowCount = 0;
-                    while (pg_fetch_array($countResult, null, PGSQL_ASSOC)) {
-                        $rowCount++;
-                    }
-                    $this->setQueryRows($rowCount);
+                $results = [];
+                $rowCount = 0;
+                while ($row = pg_fetch_array($statement, null, PGSQL_ASSOC)) {
+                    $results[] = $row;
+                    $rowCount++;
                 }
                 $this->setQueryColumns($colCount);
-                $this->setStatement($statement);
+                $this->setQueryRows($rowCount);
+                $this->setStatement(['results' => $results]);
+                pg_free_result($statement);
             } else {
                 $this->setStatement(['results' => []]);
                 $this->setAffectedRows(pg_affected_rows($statement));
+                pg_free_result($statement);
             }
         }
         return $this->getInstance();
@@ -313,8 +308,8 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function prepare(mixed ...$params): IConnection
     {
-        if (!empty($params) && ($this->prepareStatement([...$params, Query::PREPARED]))) {
-            $bindParams = Schemas::makeArgs([$this->getStatement(), ...$params, $this->getStmtName()]);
+        if (!empty($params) && ($this->prepareStatement([...$params, Query::PREPARED()]))) {
+            $bindParams = Schemas::makeArgs([$this->getStatement(), ...$params]);
             $this->bindParam($bindParams);
         }
         return $this->getInstance();

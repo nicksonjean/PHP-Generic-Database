@@ -76,9 +76,9 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
 
     /**
      * Property of the type object who define the connection
-     * @var IConnection $context
+     * @var IConnection|null $context
      */
-    private static IConnection $context;
+    private static ?IConnection $context = null;
 
     /**
      * The singleton instance of the QueryBuilder.
@@ -98,7 +98,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      * @param IConnection|null $context
      * @throws Exception
      */
-    public function __construct(IConnection $context = null)
+    public function __construct(?IConnection $context = null)
     {
         self::$context = $context;
         self::$self = $this;
@@ -108,11 +108,11 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     /**
      * Static initializer that sets the database connection context and returns the query builder instance.
      *
-     * @param IConnection $context
+     * @param IConnection|null $context
      * @return self
      * @throws Exception
      */
-    public static function with(IConnection $context): self
+    public static function with(?IConnection $context = null): self
     {
         self::$context = $context;
         self::$self = new static($context);
@@ -506,7 +506,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      * @param mixed $optArgs
      * @return mixed
      */
-    public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
         return self::$self->getStrategy()->fetch($fetchStyle, $fetchArgument, $optArgs);
     }
@@ -519,7 +519,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      * @param mixed $optArgs
      * @return array|bool
      */
-    public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
+    public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
         return self::$self->getStrategy()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
     }

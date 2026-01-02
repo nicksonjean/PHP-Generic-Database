@@ -348,7 +348,7 @@ class SQL
      * @param int $dialect The SQL dialect to be used for escaping. Defaults to `SQL::SQL_DIALECT_NONE`.
      * @return string The escaped SQL string.
      */
-    public static function escape(string $input, int $dialect = self::SQL_DIALECT_NONE, int $quoteSkip = null): string
+    public static function escape(string $input, int $dialect = self::SQL_DIALECT_NONE, ?int $quoteSkip = null): string
     {
         foreach (self::$quoteMap as $char) {
             if (!is_null($quoteSkip) && $char !== self::$quoteMap[$quoteSkip]) {
@@ -366,13 +366,44 @@ class SQL
      * @param array|null $values The values to be used for replacing the SQL arguments. Defaults to `null`.
      * @return array The extracted SQL arguments.
      */
-    public static function arguments(string $input, array $values = null): array
+    public static function arguments(string $input, ?array $values = null): array
     {
         preg_match_all(self::$patternMap['sqlArgs'], $input, $matches);
-        if (is_null($values)) {
-            return $matches[1];
+        
+        if (!empty($matches[1])) {
+            if (is_null($values)) {
+                return $matches[1];
+            }
+            if (count($matches[1]) !== count($values)) {
+                throw new \ValueError(sprintf(
+                    'array_combine(): Argument #1 ($keys) and argument #2 ($values) must have the same number of elements. Keys: %d, Values: %d',
+                    count($matches[1]),
+                    count($values)
+                ));
+            }
+            return array_combine($matches[1], $values);
         }
-        return array_combine($matches[1], $values);
+        
+        preg_match_all('/\?/', $input, $questionMatches);
+        $placeholderCount = count($questionMatches[0]);
+        
+        if ($placeholderCount > 0) {
+            if (is_null($values)) {
+                return range(0, $placeholderCount - 1);
+            }
+            
+            if (count($values) !== $placeholderCount) {
+                $values = array_slice(array_pad($values, $placeholderCount, null), 0, $placeholderCount);
+            }
+            
+            return array_combine(range(0, $placeholderCount - 1), $values);
+        }
+        
+        if (is_null($values)) {
+            return [];
+        }
+        
+        return array_combine(array_keys($values), array_values($values));
     }
 
     /**

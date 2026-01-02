@@ -18,7 +18,7 @@ interface IFetch
      * @param mixed|null $optArgs Additional options for the fetch operation.
      * @return mixed The query result.
      */
-    public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed;
+    public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed;
 
     /**
      * Executes the query and returns all the results.
@@ -28,5 +28,5 @@ interface IFetch
      * @param mixed|null $optArgs Additional options for the fetch operation.
      * @return mixed The query result.
      */
-    public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed;
+    public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed;
 }

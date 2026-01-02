@@ -23,9 +23,13 @@ $context = Connection::new(PATH_ROOT . '/resources/dsn/ini/stg_oci.ini')->connec
 
 var_dump($context);
 
-$context = Connection::new(PATH_ROOT . '/resources/dsn/ini/stg_firebird.ini')->connect();
+if (extension_loaded('interbase')) {
 
-var_dump($context);
+    $context = Connection::new(PATH_ROOT . '/resources/dsn/ini/stg_firebird.ini')->connect();
+
+    var_dump($context);
+    
+}
 
 $context = Connection::new(PATH_ROOT . '/resources/dsn/ini/stg_sqlite.ini')->connect();
 

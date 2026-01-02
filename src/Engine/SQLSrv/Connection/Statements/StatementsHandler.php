@@ -201,7 +201,14 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function sqlsrvQuery(string $query, array $params = [], array $options = []): mixed
     {
-        $statement = sqlsrv_query($this->getInstance()->getConnection(), $query, $params, $options);
+        if (empty($params) && empty($options)) {
+            $statement = sqlsrv_query($this->getInstance()->getConnection(), $query);
+        } elseif (empty($options)) {
+            $statement = sqlsrv_query($this->getInstance()->getConnection(), $query, $params);
+        } else {
+            $statement = sqlsrv_query($this->getInstance()->getConnection(), $query, $params, $options);
+        }
+        
         if ($statement === false) {
             $errors = sqlsrv_errors();
             throw new Exception(json_encode($errors));
@@ -230,10 +237,11 @@ class StatementsHandler extends AbstractStatements implements IStatements
             $statement = null;
             if ($bindParams->by->array) {
                 foreach (($bindParams->is->array->multi ? $bindParams->query->arguments : [$bindParams->query->arguments]) as $bindParam) {
-                    $statement = self::sqlsrvQuery($this->parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
+                    $statement = $this->sqlsrvQuery($this->parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
                 }
             } else {
-                $statement = self::sqlsrvQuery($this->parse(...$params));
+                $queryParams = !empty($bindParams->query->arguments) ? array_values($bindParams->query->arguments) : [];
+                $statement = $this->sqlsrvQuery($this->parse(...$params), $queryParams);
             }
             if ($statement) {
                 $this->setStatement($statement);

@@ -229,7 +229,7 @@ class DSNHandler implements IDSN
     private function handleSqlsrv(): string
     {
         $result = fn(bool $default = false) => vsprintf(
-            "Driver={%s};Server=%s,%s;Database=%s;UID=%s;PWD=%s;Charset=%s;",
+            "Driver={%s};Server=%s,%s;Database=%s;UID=%s;PWD=%s;Charset=%s;TrustServerCertificate=yes;",
             [
                 ODBC::getAliasByDriver($this->get('driver')),
                 $this->get('host'),

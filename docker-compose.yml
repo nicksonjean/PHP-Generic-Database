@@ -29,6 +29,7 @@ services:
       args:
         PHP_VERSION: "${PHP_VERSION}"
         PHP_PORT: "${PHP_PORT}"
+        PHP_BASE_TAG: "${PHP_BASE_TAG:-}"
     container_name: php${PHP_VERSION}
     ports:
       - "${PHP_PORT}:80"

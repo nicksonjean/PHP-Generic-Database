@@ -77,19 +77,22 @@ while ($row = $testD->fetch(Connection::FETCH_BOTH)) {
 
 echo '<hr>';
 
-$contextE = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
+if (extension_loaded('interbase')) {
+    
+    $contextE = Chainable::nativeFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
 
-$testE = $contextE->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id');
+    $testE = $contextE->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id');
 
-var_dump($testE);
+    var_dump($testE);
 
-var_dump($testE->getAllMetadata());
+    var_dump($testE->getAllMetadata());
 
-while ($row = $testE->fetch(Connection::FETCH_BOTH)) {
-    var_dump($row);
+    while ($row = $testE->fetch(Connection::FETCH_BOTH)) {
+        var_dump($row);
+    }
+
+    echo '<hr>';
 }
-
-echo '<hr>';
 
 $contextF = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
 

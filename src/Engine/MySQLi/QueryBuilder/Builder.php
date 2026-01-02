@@ -332,7 +332,7 @@ class Builder implements IBuilder
     public function parse(
         string $query,
         int $quoteType = SQL::SQL_DIALECT_BACKTICK,
-        int $quoteSkip = null
+        ?int $quoteSkip = null
     ): string {
         return SQL::binding(SQL::escape(trim($query), $quoteType, $quoteSkip));
     }

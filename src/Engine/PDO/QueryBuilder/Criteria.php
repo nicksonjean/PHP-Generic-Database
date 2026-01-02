@@ -124,7 +124,7 @@ class Criteria
             };
 
             $result = isset($matches['function_name']) ? Arrays::arraySafe([
-                'type' => $enum::FUNCTION,
+                'type' => $enum::FUNCTION(),
                 'value' => trim($data),
                 'function' => $matches['function_name'],
                 'alias' => $matches['function_table_alias'] ?? null,
@@ -224,7 +224,7 @@ class Criteria
         if (preg_match(Regex::getLimit(), $data, $matches)) {
             if ($context->getDriver() === 'firebird') {
                 $lmt = explode(', ', $data);
-                $setLimit = fn(int $rows, int $offset = null): array => isset($offset) ? [$rows, $offset] : [$rows];
+                $setLimit = fn(int $rows, ?int $offset): array => isset($offset) ? [$rows, $offset] : [$rows];
                 $value = ((int) $lmt[0] === 0) ? $setLimit(1, (int) $lmt[1]) : $setLimit((int) $lmt[0], (int) $lmt[1]);
                 $value = trim(implode(', ', $value));
                 $limit = (int) $matches['limit'] === 0 ? 1 : $matches['limit'];

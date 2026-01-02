@@ -65,11 +65,15 @@ class Compare
     {
         if (is_resource($cnx)) {
             return self::getResourceConnectionType($cnx);
-        } elseif ($cnx instanceof PDO || $cnx instanceof SQLite3 || $cnx instanceof MySQLi || $cnx instanceof CNX || $cnx instanceof PgCNX) {
-            return self::getObjectConnectionType($cnx);
-        } else {
-            return 'Unidentified or invalid connection type.';
+        } elseif (is_object($cnx)) {
+            if (PHP_VERSION_ID >= 80400 && get_class($cnx) === 'Odbc\Connection') {
+                return 'odbc';
+            }
+            if ($cnx instanceof PDO || $cnx instanceof SQLite3 || $cnx instanceof MySQLi || $cnx instanceof CNX || $cnx instanceof PgCNX) {
+                return self::getObjectConnectionType($cnx);
+            }
         }
+        return 'Unidentified or invalid connection type.';
     }
 
     /**

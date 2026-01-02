@@ -21,16 +21,23 @@ class StatementsHandler extends AbstractStatements implements IStatements
         if (!$name) {
             return false;
         }
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
+            return false;
+        }
         $filter = "WHERE TABLE_NAME = ? AND COLUMN_KEY = ? AND EXTRA = ?";
         $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
-        $stmt = odbc_prepare($this->getInstance()->getConnection(), $query);
-        odbc_execute($stmt, [$name, 'PRI', 'auto_increment']);
-        if ($stmt && odbc_fetch_row($stmt)) {
-            $identityColumn = odbc_result($stmt, "COLUMN_NAME");
+        $stmt = @odbc_prepare($connection, $query);
+        if (!$stmt) {
+            return false;
+        }
+        @odbc_execute($stmt, [$name, 'PRI', 'auto_increment']);
+        if ($stmt && @odbc_fetch_row($stmt)) {
+            $identityColumn = @odbc_result($stmt, "COLUMN_NAME");
             $query = "SELECT MAX($identityColumn) AS LastInsertedID FROM $name";
-            $stmt = odbc_exec($this->getInstance()->getConnection(), $query);
-            if ($stmt && odbc_fetch_row($stmt)) {
-                return (int) odbc_result($stmt, "LastInsertedID");
+            $stmt = @odbc_exec($connection, $query);
+            if ($stmt && @odbc_fetch_row($stmt)) {
+                return (int) @odbc_result($stmt, "LastInsertedID");
             }
         }
         return false;
@@ -39,6 +46,10 @@ class StatementsHandler extends AbstractStatements implements IStatements
     private function lastInsertIdPgSQL(?string $name = null): int|false
     {
         if (!$name) {
+            return false;
+        }
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
             return false;
         }
         $query = "SELECT
@@ -63,14 +74,17 @@ class StatementsHandler extends AbstractStatements implements IStatements
              ) table_identities ON table_identities.OBJID = s.oid
         WHERE table_identities.TABLE_NAME = ?
         AND (SELECT current_database()) = ?";
-        $stmt = odbc_prepare($this->getInstance()->getConnection(), $query);
-        Run::call('odbc_execute', $stmt, [$name, $this->get('database')]);
-        if ($stmt && odbc_fetch_row($stmt)) {
-            $sequenceName = odbc_result($stmt, "NAME");
+        $stmt = @odbc_prepare($connection, $query);
+        if (!$stmt) {
+            return false;
+        }
+        @Run::call('odbc_execute', $stmt, [$name, $this->get('database')]);
+        if ($stmt && @odbc_fetch_row($stmt)) {
+            $sequenceName = @odbc_result($stmt, "NAME");
             $query = "SELECT currval('$sequenceName') AS last_value";
-            $stmt = odbc_exec($this->getInstance()->getConnection(), $query);
-            if ($stmt && odbc_fetch_row($stmt)) {
-                return (int) odbc_result($stmt, "last_value");
+            $stmt = @odbc_exec($connection, $query);
+            if ($stmt && @odbc_fetch_row($stmt)) {
+                return (int) @odbc_result($stmt, "last_value");
             }
         }
         return false;
@@ -78,24 +92,31 @@ class StatementsHandler extends AbstractStatements implements IStatements
 
     private function lastInsertIdSQLSrv(?string $name = null): int|false
     {
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
+            return false;
+        }
         if (!$name) {
             $query = "SELECT CAST(@@IDENTITY AS BIGINT) AS LastInsertedID";
-            $stmt = odbc_exec($this->getInstance()->getConnection(), $query);
-            if ($stmt && odbc_fetch_row($stmt)) {
-                return (int) odbc_result($stmt, "LastInsertedID");
+            $stmt = @odbc_exec($connection, $query);
+            if ($stmt && @odbc_fetch_row($stmt)) {
+                return (int) @odbc_result($stmt, "LastInsertedID");
             }
             return false;
         }
         $filter = "WHERE TABLE_NAME = ? AND TABLE_SCHEMA = SCHEMA_NAME() AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1";
         $query = sprintf("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS %s", $filter);
-        $stmt = odbc_prepare($this->getInstance()->getConnection(), $query);
-        odbc_execute($stmt, [$name]);
-        if ($stmt && odbc_fetch_row($stmt)) {
-            $identityColumn = odbc_result($stmt, "COLUMN_NAME");
+        $stmt = @odbc_prepare($connection, $query);
+        if (!$stmt) {
+            return false;
+        }
+        @odbc_execute($stmt, [$name]);
+        if ($stmt && @odbc_fetch_row($stmt)) {
+            $identityColumn = @odbc_result($stmt, "COLUMN_NAME");
             $query = "SELECT MAX($identityColumn) AS LastInsertedID FROM $name";
-            $stmt = odbc_exec($this->getInstance()->getConnection(), $query);
-            if ($stmt && odbc_fetch_row($stmt)) {
-                return (int) odbc_result($stmt, "LastInsertedID");
+            $stmt = @odbc_exec($connection, $query);
+            if ($stmt && @odbc_fetch_row($stmt)) {
+                return (int) @odbc_result($stmt, "LastInsertedID");
             }
         }
         return false;
@@ -104,18 +125,25 @@ class StatementsHandler extends AbstractStatements implements IStatements
     private function lastInsertIdOCI(?string $name = null): int|false
     {
         if ($name !== null) {
+            $connection = $this->getInstance()->getConnection();
+            if (!$connection) {
+                return false;
+            }
             $filter = "WHERE OWNER = USER AND identity_column = 'YES' AND TABLE_NAME = ?";
             $query = sprintf("SELECT data_default AS sequence_val, table_name, column_name FROM all_tab_columns %s", $filter);
-            $stmt = odbc_prepare($this->getInstance()->getConnection(), $query);
-            odbc_execute($stmt, [$name]);
-            if ($stmt && odbc_fetch_row($stmt)) {
-                $sequenceVal = odbc_result($stmt, "sequence_val");
+            $stmt = @odbc_prepare($connection, $query);
+            if (!$stmt) {
+                return false;
+            }
+            @odbc_execute($stmt, [$name]);
+            if ($stmt && @odbc_fetch_row($stmt)) {
+                $sequenceVal = @odbc_result($stmt, "sequence_val");
                 $sequenceVal = str_replace('.nextval', '.currval', $sequenceVal);
                 $sequenceVal = str_replace('"', '', $sequenceVal);
                 $query = "SELECT $sequenceVal FROM DUAL";
-                $stmt = odbc_exec($this->getInstance()->getConnection(), $query);
-                if ($stmt && odbc_fetch_row($stmt)) {
-                    return (int) odbc_result($stmt, 1);
+                $stmt = @odbc_exec($connection, $query);
+                if ($stmt && @odbc_fetch_row($stmt)) {
+                    return (int) @odbc_result($stmt, 1);
                 }
             }
         }
@@ -127,19 +155,43 @@ class StatementsHandler extends AbstractStatements implements IStatements
         if (!$name) {
             return false;
         }
+        
+        $isPhp80 = (PHP_VERSION_ID >= 80000 && PHP_VERSION_ID < 80100);
+        if ($isPhp80) {
+            return false;
+        }
+        
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
+            return false;
+        }
         $filter = 'WHERE RDB$RELATION_NAME=? AND RDB$IDENTITY_TYPE=1';
         $query = sprintf('SELECT RDB$FIELD_NAME, RDB$GENERATOR_NAME FROM RDB$RELATION_FIELDS %s', $filter);
-        $stmt = odbc_prepare($this->getInstance()->getConnection(), $query);
-        odbc_execute($stmt, [$name]);
-        if ($stmt && odbc_fetch_row($stmt)) {
-            $identityColumn = odbc_result($stmt, 'RDB$GENERATOR_NAME');
-            $query = sprintf('SELECT GEN_ID(%s,0) AS LASTINSERTEDID FROM RDB$DATABASE', $identityColumn);
-            $stmt = odbc_exec($this->getInstance()->getConnection(), $query);
-            if ($stmt && odbc_fetch_row($stmt)) {
-                return (int) odbc_result($stmt, "LastInsertedID");
-            }
+        $stmt = @odbc_prepare($connection, $query);
+        if (!$stmt) {
+            return false;
         }
-        return false;
+        @odbc_execute($stmt, [$name]);
+        
+        if (!@odbc_fetch_row($stmt)) {
+            return false;
+        }
+        $identityColumn = @odbc_result($stmt, 'RDB$GENERATOR_NAME');
+        
+        if (!$identityColumn) {
+            return false;
+        }
+        
+        $query = sprintf('SELECT GEN_ID(%s,0) AS LASTINSERTEDID FROM RDB$DATABASE', $identityColumn);
+        $stmt = @odbc_exec($connection, $query);
+        if (!$stmt) {
+            return false;
+        }
+        
+        if (!@odbc_fetch_row($stmt)) {
+            return false;
+        }
+        return (int) @odbc_result($stmt, "LastInsertedID");
     }
 
     private function lastInsertIdSQLite(?string $name): int|false
@@ -147,16 +199,20 @@ class StatementsHandler extends AbstractStatements implements IStatements
         if (!$name) {
             return false;
         }
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
+            return false;
+        }
         $query = "SELECT seq FROM sqlite_sequence WHERE name = ?";
-        $stmt = odbc_prepare($this->getInstance()->getConnection(), $query);
+        $stmt = @odbc_prepare($connection, $query);
         if (!$stmt) {
             return false;
         }
-        if (!odbc_execute($stmt, [$name])) {
+        if (!@odbc_execute($stmt, [$name])) {
             return false;
         }
-        if (odbc_fetch_row($stmt)) {
-            return (int) odbc_result($stmt, "seq");
+        if (@odbc_fetch_row($stmt)) {
+            return (int) @odbc_result($stmt, "seq");
         }
         return false;
     }
@@ -332,7 +388,80 @@ class StatementsHandler extends AbstractStatements implements IStatements
 
         $this->setAllMetadata();
         if (!empty($params)) {
-            $statement = odbc_prepare($this->getInstance()->getConnection(), $this->parse(...$params));
+            $connection = $this->getInstance()->getConnection();
+            if ($connection === null) {
+                return false;
+            }
+            
+            $isValidConnection = is_resource($connection) || (PHP_VERSION_ID >= 80400 && is_object($connection) && get_class($connection) === 'Odbc\Connection');
+
+            if (!$isValidConnection) {
+                return false;
+            }
+            
+            $query = reset($params);
+            if (!is_string($query) || empty($query)) {
+                return false;
+            }
+            
+            $query = $this->parse($query);
+            if (!is_string($query) || empty($query)) {
+                return false;
+            }
+            
+            $hasPlaceholders = str_contains($query, '?');
+            
+            if (PHP_VERSION_ID >= 80400) {
+                if (strlen($query) > 65535) {
+                    return false;
+                }
+                
+                if (preg_match('/[\x00-\x08\x0B-\x0C\x0E-\x1F]/', $query)) {
+                    return false;
+                }
+            }
+            
+            $statement = false;
+            
+            if (PHP_VERSION_ID >= 80400) {
+                ob_start();
+                $errorOccurred = false;
+                
+                $errorHandler = set_error_handler(function($severity, $message, $file, $line) use (&$errorOccurred) {
+                    if (str_contains($message, 'Out of memory') || 
+                        str_contains($message, 'memory') ||
+                        str_contains($message, 'tried to allocate')) {
+                        $errorOccurred = true;
+                        return true;
+                    }
+                    return false;
+                });
+                
+                try {
+                    $statement = @odbc_prepare($connection, $query);
+                    
+                    if ($errorOccurred || $statement === false) {
+                        $statement = false;
+                    }
+                } catch (\Throwable $e) {
+                    $statement = false;
+                } finally {
+                    ob_end_clean();
+                    
+                    if ($errorHandler !== null) {
+                        set_error_handler($errorHandler);
+                    } else {
+                        restore_error_handler();
+                    }
+                }
+            } else {
+                $statement = @odbc_prepare($connection, $query);
+            }
+            
+            if (!$statement && PHP_VERSION_ID >= 80400 && !$hasPlaceholders) {
+                $statement = @odbc_exec($connection, $query);
+            }
+            
             if ($statement) {
                 $this->setStatement($statement);
             }
@@ -350,23 +479,26 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function query(mixed ...$params): IConnection
     {
         if (!empty($params) && ($statement = $this->prepareStatement(...$params)) && $this->exec($statement)) {
-            $colCount = is_resource($statement) ? odbc_num_fields($statement) : 0;
-            if ($colCount > 0) {
-                $this->setQueryColumns($colCount);
-                $this->setQueryRows(
-                    (function (mixed $stmt): int {
-                        $results = [];
-                        $rows = 0;
-                        while ($row = odbc_fetch_array($stmt, 0)) {
-                            $results[] = $row;
-                            $rows++;
-                        }
-                        $this->setStatement(['results' => $results, 'statement' => $stmt]);
-                        return $rows;
-                    })($statement)
-                );
-            } else {
-                if (is_resource($statement)) {
+
+            $isValidStatement = is_resource($statement) || (PHP_VERSION_ID >= 80400 && is_object($statement) && get_class($statement) === 'Odbc\Result');
+            
+            if ($isValidStatement) {
+                $colCount = odbc_num_fields($statement);
+                if ($colCount > 0) {
+                    $this->setQueryColumns($colCount);
+                    $this->setQueryRows(
+                        (function (mixed $stmt): int {
+                            $results = [];
+                            $rows = 0;
+                            while ($row = odbc_fetch_array($stmt, 0)) {
+                                $results[] = $row;
+                                $rows++;
+                            }
+                            $this->setStatement(['results' => $results, 'statement' => $stmt]);
+                            return $rows;
+                        })($statement)
+                    );
+                } else {
                     $this->setAffectedRows(odbc_num_rows($statement));
                 }
             }
@@ -382,10 +514,39 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function prepare(mixed ...$params): IConnection
     {
-        if (!empty($params) && ($this->prepareStatement(...$params))) {
+        if (empty($params)) {
+            return $this->getInstance();
+        }
+        
+        $statement = $this->prepareStatement(...$params);
+        
+        if ($statement) {
             $bindParams = Schemas::makeArgs([$this->getStatement(), ...$params]);
             $this->bindParam($bindParams);
         }
+        elseif (PHP_VERSION_ID >= 80400 && count($params) > 1) {
+            $query = reset($params);
+            $values = array_slice($params, 1);
+            
+            if (is_string($query) && !empty($values)) {
+                $processedQuery = $query;
+                foreach ($values as $value) {
+                    $processedValue = is_string($value) ? "'" . str_replace("'", "''", $value) . "'" 
+                        : (is_null($value) ? 'NULL' : (is_bool($value) ? ($value ? '1' : '0') : $value));
+                    $processedQuery = preg_replace('/\?/', (string)$processedValue, $processedQuery, 1);
+                }
+                
+                $connection = $this->getInstance()->getConnection();
+                if ($connection) {
+                    $statement = @odbc_exec($connection, $processedQuery);
+                    if ($statement) {
+                        $this->setStatement($statement);
+                        $this->query($processedQuery);
+                    }
+                }
+            }
+        }
+        
         return $this->getInstance();
     }
 

@@ -85,7 +85,7 @@ class PDOQueryBuilder implements IQueryBuilder
 
     private static bool $cursorExhausted = false;
 
-    public function __construct(IConnection $context = null)
+    public function __construct(?IConnection $context = null)
     {
         $this->initQuery();
         self::$context = $context;
@@ -578,7 +578,7 @@ class PDOQueryBuilder implements IQueryBuilder
      * @return mixed
      * @throws Exceptions
      */
-    public function fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
         $this->runOnce();
         $result = $this->getContext()->fetch($fetchStyle, $fetchArgument, $optArgs);
@@ -597,7 +597,7 @@ class PDOQueryBuilder implements IQueryBuilder
      * @return array|bool
      * @throws Exceptions
      */
-    public function fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
+    public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
         $this->runOnce();
         $result = $this->getContext()->fetchAll($fetchStyle, $fetchArgument, $optArgs);

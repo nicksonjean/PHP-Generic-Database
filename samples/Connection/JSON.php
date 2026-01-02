@@ -23,9 +23,13 @@ $context = Connection::new(PATH_ROOT . '/resources/dsn/json/stg_oci.json')->conn
 
 var_dump($context);
 
-$context = Connection::new(PATH_ROOT . '/resources/dsn/json/stg_firebird.json')->connect();
+if (extension_loaded('interbase')) {
 
-var_dump($context);
+    $context = Connection::new(PATH_ROOT . '/resources/dsn/json/stg_firebird.json')->connect();
+
+    var_dump($context);
+    
+}
 
 $context = Connection::new(PATH_ROOT . '/resources/dsn/json/stg_sqlite.json')->connect();
 
