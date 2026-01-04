@@ -3,7 +3,7 @@
 namespace GenericDatabase\Engine\SQLSrv\Connection\Statements;
 
 use Exception;
-use GenericDatabase\Helpers\Schemas;
+use GenericDatabase\Generic\Statements\Statement;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Interfaces\IConnection;
@@ -233,7 +233,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
 
         $this->setAllMetadata();
         if (!empty($params)) {
-            $bindParams = Schemas::makeArgs([null, ...$params]);
+            $bindParams = Statement::bind([null, ...$params]);
             $statement = null;
             if ($bindParams->by->array) {
                 foreach (($bindParams->is->array->multi ? $bindParams->query->arguments : [$bindParams->query->arguments]) as $bindParam) {
@@ -294,7 +294,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function prepare(mixed ...$params): IConnection
     {
         if (!empty($params) && ($this->prepareStatement(...$params))) {
-            $bindParams = Schemas::makeArgs([$this->getStatement(), ...$params]);
+            $bindParams = Statement::bind([$this->getStatement(), ...$params]);
             $this->bindParam($bindParams);
         }
         return $this->getInstance();

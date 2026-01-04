@@ -502,6 +502,7 @@ composer.lock
 /.qodo/
 /.stubs/
 /.vscode/
+/.cursor/
 
 .todo
 .reminder.md

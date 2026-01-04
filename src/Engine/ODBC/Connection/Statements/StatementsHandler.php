@@ -6,7 +6,7 @@ use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Shared\Run;
-use GenericDatabase\Helpers\Schemas;
+use GenericDatabase\Generic\Statements\Statement;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Engine\ODBC\Connection\ODBC;
@@ -521,7 +521,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         $statement = $this->prepareStatement(...$params);
         
         if ($statement) {
-            $bindParams = Schemas::makeArgs([$this->getStatement(), ...$params]);
+            $bindParams = Statement::bind([$this->getStatement(), ...$params]);
             $this->bindParam($bindParams);
         }
         elseif (PHP_VERSION_ID >= 80400 && count($params) > 1) {

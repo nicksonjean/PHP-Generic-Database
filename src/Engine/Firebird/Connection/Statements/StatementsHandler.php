@@ -6,7 +6,7 @@ use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Core\Query;
-use GenericDatabase\Helpers\Schemas;
+use GenericDatabase\Generic\Statements\Statement;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Engine\Firebird\Connection\Firebird;
@@ -256,7 +256,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function prepare(mixed ...$params): IConnection
     {
         if (!empty($params) && ($this->prepareStatement([...$params, Query::PREPARED]))) {
-            $bindParams = Schemas::makeArgs([$this->getStatement(), ...$params]);
+            $bindParams = Statement::bind([$this->getStatement(), ...$params]);
             $this->bindParam($bindParams);
         }
         return $this->getInstance();

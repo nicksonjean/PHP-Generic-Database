@@ -6,6 +6,7 @@ RUNCOMMAND=false
 RUNVALUE=""
 PHP_VERSION=""
 PHP_PORT=""
+WEB_SERVER="nginx"
 
 # Define arquivos de origem e destino
 SOURCE=".env.docker"
@@ -36,6 +37,8 @@ for ARG in "$@"; do
                 PHP_VERSION="$VALUE"
             elif [ "$KEY" = "PHP_PORT" ]; then
                 PHP_PORT="$VALUE"
+            elif [ "$KEY" = "WEB_SERVER" ]; then
+                WEB_SERVER="$VALUE"
             fi
         elif $RUNCOMMAND; then
             RUNVALUE="$RUNVALUE $ARG"

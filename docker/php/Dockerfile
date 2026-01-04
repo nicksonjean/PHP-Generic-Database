@@ -19,8 +19,9 @@ FROM php:${PHP_VERSION:-8.3}-apache${PHP_BASE_TAG}
 ARG PHP_VERSION
 ARG PHP_PORT
 
-# Define o driver de ODBC do MySQL
+# Define o driver de ODBC do MySQL (com valor padrão)
 ARG MYSQL_ODBC_DRIVER=mariadb
+ENV MYSQL_ODBC_DRIVER=${MYSQL_ODBC_DRIVER}
 
 # Tag do Autor
 LABEL author="Nickson Jeanmerson (nickson.jeanmerson@gmail.com)"
@@ -62,7 +63,8 @@ RUN \
   unzip \
   libxml2-dev \
   libxslt-dev \
-  libaio1 && \
+  libaio1 \
+  ssl-cert && \
   apt-get clean -y && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
   rm /var/log/lastlog /var/log/faillog
@@ -508,9 +510,11 @@ COPY \
 
 # Copy apache settings
 COPY \
-  ./docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+  ./docker/apache/default.conf /etc/apache2/sites-available/default.conf
 COPY \
   ./docker/apache/my-site.conf /etc/apache2/sites-available/my-site.conf
+COPY \
+  ./docker/apache/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 
 # Download and Install Composer
 RUN \
@@ -578,8 +582,12 @@ RUN \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
   a2enmod headers && \
   a2enmod rewrite && \
-  a2dissite 000-default && \
+  a2enmod ssl && \
+  a2enmod autoindex && \
+  a2dissite 000-default 2>/dev/null || true && \
+  a2ensite default && \
   a2ensite my-site && \
+  a2ensite default-ssl && \
   service apache2 stop && \
   service apache2 start && \
   composer install -n --ignore-platform-reqs --no-dev || composer install -n --ignore-platform-reqs || true

@@ -21,7 +21,40 @@ x-php-base: &php-base
       max-file: "5"
       max-size: "10m"
 
-# Template para serviços PHP individuais
+# Template para serviços Nginx individuais
+x-nginx-service: &nginx-service
+  build:
+    context: .
+    dockerfile: ./docker/nginx/Dockerfile
+  restart: unless-stopped
+  volumes:
+    - .:/var/www/html:ro
+  networks:
+    - internal
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "5"
+      max-size: "10m"
+
+# Template para serviços Apache individuais
+x-apache-service: &apache-service
+  <<: *php-base
+  build:
+    context: .
+    dockerfile: ./docker/php/Dockerfile
+  restart: unless-stopped
+  volumes:
+    - .:/var/www/html
+  networks:
+    - internal
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "5"
+      max-size: "10m"
+
+# Template para serviços PHP individuais (PHP-FPM para Nginx)
 x-php-service: &php-service
   <<: *php-base
 
@@ -31,19 +64,201 @@ services:
     <<: *php-service
     build:
       context: .
-      dockerfile: ./docker/php/Dockerfile
+      dockerfile: ./docker/php-fpm/Dockerfile
       args:
         PHP_VERSION: "8.0"
         PHP_PORT: "8000"
         PHP_BASE_TAG: ""
     image: php-generic-db:8.0
     container_name: php8.0
-    ports:
-      - "8000:80"
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
 
   # Serviço PHP 8.1
   app81:
     <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.1"
+        PHP_PORT: "8100"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-generic-db:8.1
+    container_name: php8.1
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço PHP 8.2
+  app82:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.2"
+        PHP_PORT: "8200"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-generic-db:8.2
+    container_name: php8.2
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço PHP 8.3
+  app83:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.3"
+        PHP_PORT: "8300"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-generic-db:8.3
+    container_name: php8.3
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço PHP 8.4
+  app84:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.4"
+        PHP_PORT: "8400"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-generic-db:8.4
+    container_name: php8.4
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço PHP 8.5
+  app85:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.5"
+        PHP_PORT: "8500"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-generic-db:8.5
+    container_name: php8.5
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço app (mantido para compatibilidade com setup.bat/setup.sh individual)
+  app:
+    <<: *php-base
+    build:
+      dockerfile: ./docker/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "${PHP_VERSION}"
+        PHP_PORT: "${PHP_PORT}"
+        PHP_BASE_TAG: "${PHP_BASE_TAG:-}"
+    container_name: php${PHP_VERSION}
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço Nginx para PHP 8.0
+  nginx80:
+    <<: *nginx-service
+    container_name: nginx8.0
+    ports:
+      - "8000:80"
+      - "8043:443"
+    depends_on:
+      - app80
+    environment:
+      - PHP_SERVICE=app80
+
+  # Serviço Nginx para PHP 8.1
+  nginx81:
+    <<: *nginx-service
+    container_name: nginx8.1
+    ports:
+      - "8100:80"
+      - "8143:443"
+    depends_on:
+      - app81
+    environment:
+      - PHP_SERVICE=app81
+
+  # Serviço Nginx para PHP 8.2
+  nginx82:
+    <<: *nginx-service
+    container_name: nginx8.2
+    ports:
+      - "8200:80"
+      - "8243:443"
+    depends_on:
+      - app82
+    environment:
+      - PHP_SERVICE=app82
+
+  # Serviço Nginx para PHP 8.3
+  nginx83:
+    <<: *nginx-service
+    container_name: nginx8.3
+    ports:
+      - "8300:80"
+      - "8343:443"
+    depends_on:
+      - app83
+    environment:
+      - PHP_SERVICE=app83
+
+  # Serviço Nginx para PHP 8.4
+  nginx84:
+    <<: *nginx-service
+    container_name: nginx8.4
+    ports:
+      - "8400:80"
+      - "8443:443"
+    depends_on:
+      - app84
+    environment:
+      - PHP_SERVICE=app84
+
+  # Serviço Nginx para PHP 8.5
+  nginx85:
+    <<: *nginx-service
+    container_name: nginx8.5
+    ports:
+      - "8500:80"
+      - "8543:443"
+    depends_on:
+      - app85
+    environment:
+      - PHP_SERVICE=app85
+
+  # Serviço Nginx genérico (para uso com setup.bat/setup.sh individual)
+  nginx:
+    <<: *nginx-service
+    container_name: nginx${PHP_VERSION}
+    ports:
+      - "${PHP_PORT}:80"
+      - "${PHP_PORT_SSL:-8443}:443"
+    depends_on:
+      - app
+    environment:
+      - PHP_SERVICE=app
+
+  # Serviços Apache para cada versão do PHP (retrocompatibilidade)
+  # Serviço Apache para PHP 8.0
+  apache80:
+    <<: *apache-service
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        PHP_VERSION: "8.0"
+        PHP_PORT: "8000"
+        PHP_BASE_TAG: ""
+    image: php-generic-db-apache:8.0
+    container_name: apache8.0
+    ports:
+      - "8000:80"
+      - "8043:443"
+
+  # Serviço Apache para PHP 8.1
+  apache81:
+    <<: *apache-service
     build:
       context: .
       dockerfile: ./docker/php/Dockerfile
@@ -51,14 +266,15 @@ services:
         PHP_VERSION: "8.1"
         PHP_PORT: "8100"
         PHP_BASE_TAG: "-bookworm"
-    image: php-generic-db:8.1
-    container_name: php8.1
+    image: php-generic-db-apache:8.1
+    container_name: apache8.1
     ports:
       - "8100:80"
+      - "8143:443"
 
-  # Serviço PHP 8.2
-  app82:
-    <<: *php-service
+  # Serviço Apache para PHP 8.2
+  apache82:
+    <<: *apache-service
     build:
       context: .
       dockerfile: ./docker/php/Dockerfile
@@ -66,14 +282,15 @@ services:
         PHP_VERSION: "8.2"
         PHP_PORT: "8200"
         PHP_BASE_TAG: "-bookworm"
-    image: php-generic-db:8.2
-    container_name: php8.2
+    image: php-generic-db-apache:8.2
+    container_name: apache8.2
     ports:
       - "8200:80"
+      - "8243:443"
 
-  # Serviço PHP 8.3
-  app83:
-    <<: *php-service
+  # Serviço Apache para PHP 8.3
+  apache83:
+    <<: *apache-service
     build:
       context: .
       dockerfile: ./docker/php/Dockerfile
@@ -81,14 +298,15 @@ services:
         PHP_VERSION: "8.3"
         PHP_PORT: "8300"
         PHP_BASE_TAG: "-bookworm"
-    image: php-generic-db:8.3
-    container_name: php8.3
+    image: php-generic-db-apache:8.3
+    container_name: apache8.3
     ports:
       - "8300:80"
+      - "8343:443"
 
-  # Serviço PHP 8.4
-  app84:
-    <<: *php-service
+  # Serviço Apache para PHP 8.4
+  apache84:
+    <<: *apache-service
     build:
       context: .
       dockerfile: ./docker/php/Dockerfile
@@ -96,14 +314,15 @@ services:
         PHP_VERSION: "8.4"
         PHP_PORT: "8400"
         PHP_BASE_TAG: "-bookworm"
-    image: php-generic-db:8.4
-    container_name: php8.4
+    image: php-generic-db-apache:8.4
+    container_name: apache8.4
     ports:
       - "8400:80"
+      - "8443:443"
 
-  # Serviço PHP 8.5
-  app85:
-    <<: *php-service
+  # Serviço Apache para PHP 8.5
+  apache85:
+    <<: *apache-service
     build:
       context: .
       dockerfile: ./docker/php/Dockerfile
@@ -111,23 +330,26 @@ services:
         PHP_VERSION: "8.5"
         PHP_PORT: "8500"
         PHP_BASE_TAG: "-bookworm"
-    image: php-generic-db:8.5
-    container_name: php8.5
+    image: php-generic-db-apache:8.5
+    container_name: apache8.5
     ports:
       - "8500:80"
+      - "8543:443"
 
-  # Serviço app (mantido para compatibilidade com setup.bat/setup.sh individual)
-  app:
-    <<: *php-base
+  # Serviço Apache genérico (para uso com setup.bat/setup.sh individual)
+  apache:
+    <<: *apache-service
     build:
+      context: .
       dockerfile: ./docker/php/Dockerfile
       args:
         PHP_VERSION: "${PHP_VERSION}"
         PHP_PORT: "${PHP_PORT}"
         PHP_BASE_TAG: "${PHP_BASE_TAG:-}"
-    container_name: php${PHP_VERSION}
+    container_name: apache${PHP_VERSION}
     ports:
       - "${PHP_PORT}:80"
+      - "${PHP_PORT_SSL:-8443}:443"
 
   mysql:
     image: mysql:latest

@@ -9,6 +9,7 @@ set "RUNCOMMAND=false"
 set "RUNVALUE="
 set "PHP_VERSION="
 set "PHP_PORT="
+set "WEB_SERVER=nginx"
 
 rem Definir arquivos de origem e destino
 set "SOURCE=.env.docker"
@@ -43,6 +44,7 @@ for %%A in (%*) do (
                     rem Salva os valores das envs em variáveis específicas
                     if "!KEY!"=="PHP_VERSION" set "PHP_VERSION=!VALUE!"
                     if "!KEY!"=="PHP_PORT" set "PHP_PORT=!VALUE!"
+                    if "!KEY!"=="WEB_SERVER" set "WEB_SERVER=!VALUE!"
                 )
             )
 

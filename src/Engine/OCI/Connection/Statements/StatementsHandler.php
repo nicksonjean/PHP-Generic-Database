@@ -5,7 +5,7 @@ namespace GenericDatabase\Engine\OCI\Connection\Statements;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Abstract\AbstractStatements;
-use GenericDatabase\Helpers\Schemas;
+use GenericDatabase\Generic\Statements\Statement;
 use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Engine\OCI\Connection\OCI;
 
@@ -251,7 +251,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function prepare(mixed ...$params): IConnection
     {
         if (!empty($params) && ($this->prepareStatement(...$params))) {
-            $bindParams = Schemas::makeArgs([$this->getStatement(), ...$params]);
+            $bindParams = Statement::bind([$this->getStatement(), ...$params]);
             $this->bindParam($bindParams);
         }
         return $this->getInstance();
