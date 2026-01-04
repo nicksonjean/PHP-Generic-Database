@@ -1,3 +1,38 @@
+  <script>
+    // Apply saved theme immediately (before page renders)
+    // This prevents flash of wrong theme when Apache loads default CSS
+    (function() {
+      const savedTheme = localStorage.getItem('apache-directory-theme');
+      if (savedTheme === 'dark' || savedTheme === 'light') {
+        // Wait a tick for stylesheets to be in DOM
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', applyThemeNow);
+        } else {
+          setTimeout(applyThemeNow, 0);
+        }
+        
+        function applyThemeNow() {
+          const links = document.querySelectorAll('link[rel="stylesheet"]');
+          const targetCSS = savedTheme === 'dark' ? 'table-darkmode.css' : 'table.css';
+          
+          for (let link of links) {
+            const href = link.getAttribute('href') || '';
+            if (href.includes('table.css') || href.includes('table-darkmode.css')) {
+              // Extract base path
+              const lastSlash = href.lastIndexOf('/');
+              const basePath = lastSlash !== -1 ? href.substring(0, lastSlash + 1) : '';
+              
+              // Replace with saved theme
+              if (!href.includes(targetCSS)) {
+                link.href = basePath + targetCSS;
+              }
+              break;
+            }
+          }
+        }
+      }
+    })();
+  </script>
   <main>
     <!--
       Add any static information or notices here

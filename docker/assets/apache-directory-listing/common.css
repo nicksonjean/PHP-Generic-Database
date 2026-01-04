@@ -66,4 +66,42 @@ address {
   text-align: center;
   font-size: 0.875rem;
   opacity: 0.875;
+  position: relative;
+}
+
+/* Theme toggle button */
+.theme-toggle-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Ajustar para telas pequenas */
+@media (max-width: 768px) {
+  .theme-toggle-btn {
+    bottom: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
 }

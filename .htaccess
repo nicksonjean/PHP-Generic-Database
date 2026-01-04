@@ -14,7 +14,7 @@ Options +Indexes
   HeaderName "/docker/assets/apache-directory-listing/header.html"
   ReadmeName "/docker/assets/apache-directory-listing/footer.html"
   # Estilos disponíveis: table-automode.css, grid-automode.css, table.css, grid.css, table-darkmode.css, grid-darkmode.css
-  IndexStyleSheet "/docker/assets/apache-directory-listing/table-automode.css"
+  IndexStyleSheet "/docker/assets/apache-directory-listing/table.css"
 
   # Registering icons
   # Default icon
