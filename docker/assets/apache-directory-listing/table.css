@@ -8,7 +8,6 @@
 table tr.indexhead {
   background-color: var(--table-header-bg) !important;
   color: var(--table-header-color) !important;
-  border-bottom-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Ensure header has blue background in light theme - no !important to avoid dark theme conflicts */
@@ -41,79 +40,38 @@ table tr.indexhead th {
   transition: background-color 0.2s ease;
 }
 
+.sort-arrow {
+  margin-left: 5px;
+  font-size: 13px;
+  top: -2px;
+  position: relative;  
+}
+
 /* Add sorting arrows to headers - similar to Nginx */
-/* First column (Name) gets ↓ arrow after text */
-table tr.indexhead th.indexcolname::after {
-  content: "↓";
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.7;
-  font-size: 0.8rem;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-/* Second column (Last modified) gets ⇕ arrow before text */
-table tr.indexhead th.indexcollastmod::before {
-  content: "⇕";
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.7;
-  font-size: 0.8rem;
-  pointer-events: none;
-  margin-right: 5px;
-}
-
-table tr.indexhead th.indexcollastmod {
-  padding-left: 30px;
-}
-
-/* Second column also gets ↓ arrow after text */
-table tr.indexhead th.indexcollastmod::after {
-  content: "↓";
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.7;
-  font-size: 0.8rem;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-/* Third column (Size) gets ⇕ arrow before text */
-table tr.indexhead th.indexcolsize::before {
-  content: "⇕";
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.7;
-  font-size: 0.8rem;
-  pointer-events: none;
-  margin-right: 5px;
-}
-
+/* Space for arrows after text */
+table tr.indexhead th.indexcolname,
+table tr.indexhead th.indexcollastmod,
 table tr.indexhead th.indexcolsize {
-  padding-left: 30px;
+  padding-right: 25px;
+  position: relative;
 }
 
-/* Third column also gets ↓ arrow after text */
+/* ⇕ arrow via ::after (positioned to the right) */
+table tr.indexhead th.indexcolname::after,
+table tr.indexhead th.indexcollastmod::after,
 table tr.indexhead th.indexcolsize::after {
-  content: "↓";
+  content: "⇕";
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  opacity: 0.7;
-  font-size: 0.8rem;
+  opacity: 0.5;
+  font-size: 0.9rem;
   transition: opacity 0.2s ease;
   pointer-events: none;
 }
+
+/* The ↓ arrow will be inserted into the header text via JavaScript */
 
 table tr.indexhead th:hover {
   background-color: var(--hover-color) !important;
@@ -121,15 +79,13 @@ table tr.indexhead th:hover {
 }
 
 /* Hover effect on arrows */
-table tr.indexhead th:hover::after,
-table tr.indexhead th:hover::before {
+table tr.indexhead th:hover::after {
   opacity: 1;
 }
 
 table tr.indexhead a {
   color: var(--table-header-color) !important;
   font-weight: 500;
-  font-size: 0.875rem;
   text-decoration: none;
   font-family: "Poppins", 'Roboto', sans-serif;
 }
@@ -167,11 +123,19 @@ table td {
   padding: 0.75rem;
   vertical-align: middle;
   font-family: "Poppins", 'Roboto', sans-serif;
+  min-height: 1px; /* Ensure minimum height to fix 1px issue */
+  box-sizing: border-box;
 }
 
 /* Column widths */
 table tr .indexcolname {
   width: 60%;
+}
+
+/* Move first column content 25px to the left */
+table .indexhead .indexcolname a {
+  position: relative;
+  left: -25px;
 }
 
 table tr .indexcollastmod {
@@ -264,8 +228,43 @@ table tr.parent a:hover {
   opacity: 0.8;
 }
 
-/* Icon column */
-table tr .indexcolicon {
+/* Merge icon column header with Name column header - visual merge only */
+/* Remove border between icon and name headers */
+table tr.indexhead th.indexcolicon {
+  border-right: none !important;
+  padding-right: 0 !important;
+  padding-left: 0.75rem !important;
+  background-color: var(--table-header-bg) !important;
+  width: auto;
+}
+
+table tr.indexhead th.indexcolname {
+  border-left: none !important;
+  padding-left: 0 !important;
+  background-color: var(--table-header-bg) !important;
+}
+
+/* Ensure merged headers have same background on hover - they act as one */
+/* When hovering either icon or name header, both should highlight */
+table tr.indexhead:hover th.indexcolicon,
+table tr.indexhead:hover th.indexcolname {
+  background-color: var(--hover-color) !important;
+}
+
+/* Individual hover still works */
+table tr.indexhead th.indexcolicon:hover,
+table tr.indexhead th.indexcolname:hover {
+  background-color: var(--hover-color) !important;
+}
+
+/* When hovering icon header, also highlight name header */
+table tr.indexhead th.indexcolicon:hover ~ th.indexcolname,
+table tr.indexhead th.indexcolname:hover ~ th.indexcolicon {
+  background-color: var(--hover-color) !important;
+}
+
+/* Icon column - data rows keep normal padding */
+table tr:not(.indexhead) .indexcolicon {
   padding: 0.75rem 0 0.75rem 0.75rem;
 }
 

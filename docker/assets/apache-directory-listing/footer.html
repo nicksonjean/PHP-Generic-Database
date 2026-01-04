@@ -44,5 +44,43 @@
     path.innerHTML = pathContents.join('&rsaquo;');
   </script>
   
+  <script>
+    // Add sorting arrows (↓) inside header text - similar to Nginx
+    // The ↓ arrow should be inserted into the text content itself
+    function addSortingArrows() {
+      const headers = document.querySelectorAll('table tr.indexhead th');
+      headers.forEach(function(header) {
+        // Check if arrow already added to text
+        const headerLink = header.querySelector('a');
+        if (!headerLink) return;
+        
+        // Check if arrow already in text
+        if (headerLink.textContent.includes('↓')) {
+          return;
+        }
+        
+        // Only add to Name, Last modified, and Size columns
+        if (header.classList.contains('indexcolname') || 
+            header.classList.contains('indexcollastmod') || 
+            header.classList.contains('indexcolsize')) {
+          
+          // Insert ↓ arrow into the text content (after the text)
+          const originalText = headerLink.textContent.trim();
+          headerLink.innerHTML = originalText + ' <span class="sort-arrow">↓</span>';
+        }
+      });
+    }
+    
+    // Run when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', addSortingArrows);
+    } else {
+      addSortingArrows();
+    }
+    
+    // Also try after a short delay to catch dynamically generated headers
+    setTimeout(addSortingArrows, 100);
+  </script>
+  
   <!-- Theme toggle script -->
   <script src="/docker/assets/apache-directory-listing/theme-toggle.js"></script>

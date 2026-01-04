@@ -7,7 +7,7 @@
 
 /* Table rows with dark theme borders */
 table tr {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid #2d2d2d;
   transition: background-color 0.2s ease;
 }
 
@@ -19,12 +19,44 @@ table tr:hover {
 table tr.indexhead {
   background-color: #2d2d2d !important;
   color: #e0e0e0 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 table tr.indexhead th {
   color: #e0e0e0 !important;
   background-color: #2d2d2d !important;
+}
+
+/* Merge icon and name headers in dark theme */
+table tr.indexhead th.indexcolicon {
+  border-right: none !important;
+  padding-right: 0 !important;
+  padding-left: 0.75rem !important;
+  background-color: #2d2d2d !important;
+  width: auto;
+}
+
+table tr.indexhead th.indexcolname {
+  border-left: none !important;
+  padding-left: 0 !important;
+  background-color: #2d2d2d !important;
+}
+
+/* Merged header hover in dark theme - both highlight together */
+table tr.indexhead:hover th.indexcolicon,
+table tr.indexhead:hover th.indexcolname {
+  background-color: var(--hover-color) !important;
+}
+
+/* Individual hover */
+table tr.indexhead th.indexcolicon:hover,
+table tr.indexhead th.indexcolname:hover {
+  background-color: var(--hover-color) !important;
+}
+
+/* When hovering either, highlight both */
+table tr.indexhead th.indexcolicon:hover ~ th.indexcolname,
+table tr.indexhead th.indexcolname:hover ~ th.indexcolicon {
+  background-color: var(--hover-color) !important;
 }
 
 table tr.indexhead a {
