@@ -104,6 +104,7 @@ a {
   text-decoration: none;
   transition: color 0.2s ease;
   border-bottom: none;
+  cursor: pointer; /* Show hand cursor on all links */
 }
 
 a:hover {
