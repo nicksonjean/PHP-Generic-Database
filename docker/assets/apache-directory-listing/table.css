@@ -278,6 +278,66 @@ table tr:hover .indexcolicon img {
   transform: scale(1.05);
 }
 
+/*------------------------------------*\
+    Dark Theme Specific Styles
+\*------------------------------------*/
+
+.dark-theme table tr {
+  border-bottom: 1px solid #2d2d2d;
+}
+
+/* Dark theme header hover - text color should be light blue like Nginx when hovered */
+.dark-theme table tr.indexhead th:hover,
+.dark-theme table tr.indexhead th:hover a {
+  color: #789dca !important;
+}
+
+/* Ensure header text stays white when not hovered in dark theme */
+.dark-theme table tr.indexhead th:not(:hover),
+.dark-theme table tr.indexhead th:not(:hover) a {
+  color: #e0e0e0 !important;
+}
+
+/* Dark theme table cells - bright white text */
+.dark-theme table tr:not(.indexhead) td,
+.dark-theme table tr:not(.indexhead) td *,
+.dark-theme table tr:not(.indexhead) .indexcolname,
+.dark-theme table tr:not(.indexhead) .indexcolname *,
+.dark-theme table tr:not(.indexhead) .indexcollastmod,
+.dark-theme table tr:not(.indexhead) .indexcollastmod *,
+.dark-theme table tr:not(.indexhead) .indexcolsize,
+.dark-theme table tr:not(.indexhead) .indexcolsize * {
+  color: #e0e0e0 !important;
+}
+
+.dark-theme table tr:not(.indexhead) td a,
+.dark-theme table tr:not(.indexhead) .indexcolname a,
+.dark-theme table tr:not(.indexhead) .indexcollastmod a,
+.dark-theme table tr:not(.indexhead) .indexcolsize a {
+  color: #e0e0e0 !important;
+}
+
+/* Dark theme hover effects */
+.dark-theme table tr:hover td a,
+.dark-theme table tr:hover .indexcolname a,
+.dark-theme table tr:hover .indexcollastmod a,
+.dark-theme table tr:hover .indexcolsize a {
+  color: var(--primary-color) !important;
+}
+
+/* Dark theme parent directory links */
+.dark-theme table tr:not(.indexhead).even-parentdir td,
+.dark-theme table tr:not(.indexhead).parent td,
+.dark-theme table tr:not(.indexhead).even-parentdir a,
+.dark-theme table tr:not(.indexhead).parent a {
+  color: #adb5bd !important;
+}
+
+/* Dark theme icons */
+.dark-theme table tr .indexcolicon img {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)) brightness(1.1);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   table th,

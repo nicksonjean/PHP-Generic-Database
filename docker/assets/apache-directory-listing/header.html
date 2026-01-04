@@ -1,34 +1,34 @@
   <script>
-    // Apply saved theme immediately (before page renders)
-    // This prevents flash of wrong theme when Apache loads default CSS
+    // Apply theme IMMEDIATELY before any rendering - same approach as Nginx
+    // This prevents flash of wrong theme
     (function() {
+      // Check if there's a saved preference
       const savedTheme = localStorage.getItem('apache-directory-theme');
-      if (savedTheme === 'dark' || savedTheme === 'light') {
-        // Wait a tick for stylesheets to be in DOM
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', applyThemeNow);
-        } else {
-          setTimeout(applyThemeNow, 0);
-        }
+      
+      if (savedTheme === 'dark-theme') {
+        // Apply dark theme immediately
+        document.documentElement.classList.remove('light-theme', 'dark-theme');
+        document.documentElement.classList.add('dark-theme');
+      } else if (savedTheme === 'light-theme' || savedTheme === 'light') {
+        // Apply light theme immediately (support both old 'light' and new 'light-theme')
+        document.documentElement.classList.remove('light-theme', 'dark-theme');
+        document.documentElement.classList.add('light-theme');
+      } else if (savedTheme === 'dark') {
+        // Support old 'dark' value, migrate to 'dark-theme'
+        document.documentElement.classList.remove('light-theme', 'dark-theme');
+        document.documentElement.classList.add('dark-theme');
+        localStorage.setItem('apache-directory-theme', 'dark-theme');
+      } else {
+        // Apply theme according to system preference
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.remove('light-theme', 'dark-theme');
         
-        function applyThemeNow() {
-          const links = document.querySelectorAll('link[rel="stylesheet"]');
-          const targetCSS = savedTheme === 'dark' ? 'table-darkmode.css' : 'table.css';
-          
-          for (let link of links) {
-            const href = link.getAttribute('href') || '';
-            if (href.includes('table.css') || href.includes('table-darkmode.css')) {
-              // Extract base path
-              const lastSlash = href.lastIndexOf('/');
-              const basePath = lastSlash !== -1 ? href.substring(0, lastSlash + 1) : '';
-              
-              // Replace with saved theme
-              if (!href.includes(targetCSS)) {
-                link.href = basePath + targetCSS;
-              }
-              break;
-            }
-          }
+        if (prefersDarkScheme) {
+          document.documentElement.classList.add('dark-theme');
+          localStorage.setItem('apache-directory-theme', 'dark-theme');
+        } else {
+          document.documentElement.classList.add('light-theme');
+          localStorage.setItem('apache-directory-theme', 'light-theme');
         }
       }
     })();
