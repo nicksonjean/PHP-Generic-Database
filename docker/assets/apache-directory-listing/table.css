@@ -40,13 +40,6 @@ table tr.indexhead th {
   transition: background-color 0.2s ease;
 }
 
-.sort-arrow {
-  margin-left: 5px;
-  font-size: 13px;
-  top: -2px;
-  position: relative;  
-}
-
 /* Add sorting arrows to headers - similar to Nginx */
 /* Space for arrows after text */
 table tr.indexhead th.indexcolname,

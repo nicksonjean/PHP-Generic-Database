@@ -156,6 +156,13 @@ address {
   background-color: var(--hover-color);
 }
 
+.sort-arrow {
+  margin-left: 5px;
+  font-size: 13px;
+  top: -2px;
+  position: relative;  
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   html {

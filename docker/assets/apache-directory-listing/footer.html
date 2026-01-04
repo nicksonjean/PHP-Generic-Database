@@ -82,5 +82,53 @@
     setTimeout(addSortingArrows, 100);
   </script>
   
+  <script>
+    // Format file sizes to match Nginx style
+    // Convert: "4.4K" → "4.4KiB", "21" → "21B", "500" → "500B"
+    function formatFileSizes() {
+      const sizeCells = document.querySelectorAll('table tr:not(.indexhead) .indexcolsize');
+      sizeCells.forEach(function(cell) {
+        const text = cell.textContent.trim();
+        
+        // Skip if it's a directory (hyphen)
+        if (text === '-') {
+          return;
+        }
+        
+        let formatted = text;
+        
+        // Replace K, M, G, T with KiB, MiB, GiB, TiB (with space before unit)
+        formatted = formatted
+          .replace(/(\d+\.?\d*)\s*K\b/gi, '$1 KiB')
+          .replace(/(\d+\.?\d*)\s*M\b/gi, '$1 MiB')
+          .replace(/(\d+\.?\d*)\s*G\b/gi, '$1 GiB')
+          .replace(/(\d+\.?\d*)\s*T\b/gi, '$1 TiB');
+        
+        // If it's just a number without any unit, add " B" (with space)
+        if (/^\d+\.?\d*$/.test(formatted.trim())) {
+          formatted = formatted.trim() + ' B';
+        }
+        
+        // Update the cell content (preserve links if they exist)
+        const link = cell.querySelector('a');
+        if (link) {
+          link.textContent = formatted;
+        } else {
+          cell.textContent = formatted;
+        }
+      });
+    }
+    
+    // Run when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', formatFileSizes);
+    } else {
+      formatFileSizes();
+    }
+    
+    // Also try after a short delay to catch dynamically generated content
+    setTimeout(formatFileSizes, 100);
+  </script>
+  
   <!-- Theme toggle script -->
   <script src="/docker/assets/apache-directory-listing/theme-toggle.js"></script>
