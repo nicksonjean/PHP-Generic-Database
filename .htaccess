@@ -9,7 +9,7 @@ Options +Indexes
   IndexOptions +AddAltClass +Charset=UTF-8 +FancyIndexing +FoldersFirst +HTMLTable
   IndexOptions +IgnoreCase +NameWidth=* +SuppressRules +SuppressDescription +IconsAreLinks
 
-  IndexHeadInsert "<meta name='viewport' content='width=device-width, initial-scale=1'><meta http-equiv='X-UA-Compatible' content='IE=edge'>"
+  IndexHeadInsert "<meta name='viewport' content='width=device-width, initial-scale=1'><meta http-equiv='X-UA-Compatible' content='IE=edge'><link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📁</text></svg>'>"
 
   HeaderName "/docker/assets/apache-directory-listing/header.html"
   ReadmeName "/docker/assets/apache-directory-listing/footer.html"
