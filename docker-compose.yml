@@ -377,11 +377,10 @@ services:
     ports:
       - "${PGSQL_PORT:-5432}:${PGSQL_PORT:-5432}"
     volumes:
-      - /var/lib/postgresql/data
+      - ./resources/database/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${PGSQL_USER:-postgres}
       POSTGRES_PASSWORD: ${PGSQL_PASSWORD:-masterkey}
-      POSTGRES_HOST_AUTH_METHOD: trust
     networks:
       - internal
 

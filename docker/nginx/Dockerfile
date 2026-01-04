@@ -38,6 +38,10 @@ RUN rm -f /etc/nginx/conf.d/default.conf 2>/dev/null || true && \
 COPY ./docker/nginx/my-site.conf /etc/nginx/http.d/default.conf
 COPY ./docker/nginx/default-ssl.conf /etc/nginx/http.d/default-ssl.conf
 
+# Copiar tema FancyIndex para o container (fallback caso volume não seja montado)
+# Quando volume é montado, os arquivos estarão em /var/www/html/docker/assets/nginx-directory-listing
+COPY ./docker/assets/nginx-directory-listing /var/www/html/docker/assets/nginx-directory-listing
+
 # Criar diretórios necessários e ajustar permissões
 RUN mkdir -p /var/log/nginx && \
     mkdir -p /var/cache/nginx && \

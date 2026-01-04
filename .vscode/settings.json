@@ -1,7 +1,7 @@
 {
   "php.stubs": ["*", "pgsql", "oci8", "yaml", "dbase", "interbase", "sqlsrv", "pdo"],
   "files.exclude": {
-    "**/assets/**": true,
+    "**/assets/**": false,
     "**/config/**": false,
     "**/docker/**": false,
     "**/docs/**": false,
@@ -32,7 +32,7 @@
     "**/.devtools/**": true,
     "**/.qodo/**": true,
     "**/.idea/**": true,
-    "**/.vscode/**": true,
+    "**/.vscode/**": false,
     "**/.phpunit.cache/**": true,
     "**/.phpunit.result.cache/**": true,
     "**/*.stub.php/**": true,
@@ -45,7 +45,7 @@
     "**/.gitlab/**": true,
     "**/*.mmd/**": true,
     "**/*.ico/**": true,
-    "**/*.htaccess/**": true,
+    "**/*.htaccess/**": false,
     "**/*.editorconfig/**": true
   }
 }

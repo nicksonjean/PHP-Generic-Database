@@ -516,6 +516,11 @@ COPY \
 COPY \
   ./docker/apache/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 
+# Copy Apache directory listing themes
+# Copiar para o caminho que será usado quando volume for montado
+COPY \
+  ./docker/assets/apache-directory-listing /var/www/html/docker/assets/apache-directory-listing
+
 # Download and Install Composer
 RUN \
   curl -sS https://getcomposer.org/installer | php --  --install-dir=/usr/bin --filename=composer

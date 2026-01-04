@@ -1,0 +1,59 @@
+@import 'common.css';
+
+table tr {
+  padding: 0 0.25rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.075);
+}
+
+table tr.indexhead {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+table tr .indexcolname {
+  width: 100%;
+}
+
+table tr.indexhead,
+table tr.indexhead:hover {
+  background-color: transparent;
+}
+
+table tr.indexhead a {
+  font-weight: normal;
+  font-size: 0.875rem;
+}
+
+table tr .indexcolname a,
+table tr .indexcollastmod a,
+table tr .indexcolsize a {
+  border-bottom: 1px solid transparent;
+}
+
+table tr .indexcolname a:hover,
+table tr .indexcollastmod a:hover,
+table tr .indexcolsize a:hover {
+  border-bottom: 1px solid currentColor;
+}
+
+table tr.even-parentdir a {
+  font-weight: 500;
+}
+
+table tr .indexcollastmod,
+table tr .indexcolsize {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.875rem;
+}
+
+table th,
+table td {
+  padding: 0.375rem;
+}
+
+table tr .indexcolsize {
+  text-align: right;
+}
+
+table tr .indexcolicon img {
+  width: 2rem;
+}
