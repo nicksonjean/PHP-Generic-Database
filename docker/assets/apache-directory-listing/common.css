@@ -1,41 +1,86 @@
-*, *::before, *::after {
-  box-sizing: border-box;
+/*------------------------------------*\
+    Apache Directory Listing - Common Styles
+    Based on Nginxy theme styling
+\*------------------------------------*/
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+
+/* Light Theme Variables (default) */
+:root {
+    color-scheme: light dark;
+    --primary-color: #4a6cf7;
+    --secondary-color: #6c757d;
+    --hover-color: #dc8867;
+    --background-color: #ffffff;
+    --text-color: #333333;
+    --border-color: #e9ecef;
+    --header-color: #343a40;
+    --footer-color: #f8f9fa;
+    --icon-size: 24px;
+    --table-header-bg: #4a6cf7;
+    --table-header-color: #ffffff;
+    --table-shadow: rgba(0, 0, 0, 0.05);
+    --icon-opacity: 1;
 }
 
-html,
+/* Ensure light theme text is black/dark */
 body {
+    --table-content-text-color: #333333;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
-  color: #212121;
+  padding: 0;
+}
+
+html {
   font-size: 16px;
-  font-family: system-ui, sans-serif;
+  font-family: "Poppins", 'Roboto', 'Andada Pro', 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.5;
 }
 
 body {
+  margin: 0;
   min-height: 100vh;
-  border-top: 0.5rem solid #90a4ae;
-  border-bottom: 0.5rem solid #90a4ae;
+  background: var(--background-color);
+  color: var(--text-color);
+  font-family: "Poppins", 'Roboto', 'Andada Pro', 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a {
-  color: #6200ea;
+  color: var(--primary-color);
   display: inline-block;
   text-decoration: none;
-  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease;
+  border-bottom: none;
 }
 
 a:hover {
-  border-bottom: 1px solid currentColor;
+  color: var(--primary-color);
+  opacity: 0.8;
+  border-bottom: none;
 }
 
 table {
   text-align: left;
   white-space: nowrap;
   border-collapse: collapse;
+  width: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px var(--table-shadow);
+  margin-bottom: 1rem;
+}
+
+table tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
 }
 
 table tr:hover {
-  background-color: #eee;
+  background-color: var(--hover-color);
 }
 
 table tr .indexcolicon a {
@@ -44,29 +89,44 @@ table tr .indexcolicon a {
 
 main {
   margin: 0 auto;
-  padding: 2rem 1rem;
-  /*max-width: 56rem;*/
+  padding: 0.2rem 1rem;
   max-width: 100%;
 }
 
-.title {
-  font-size: 1.25rem;
+.title,
+h1.title {
+  font-size: 1.8rem;
   font-weight: 500;
-  margin: 2rem 0;
+  text-align: left !important;
+  padding: 1rem 0 !important;
+  color: var(--header-color);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start !important;
+  gap: 10px;
+  font-family: "Poppins", 'Roboto', sans-serif;
 }
 
-.title .js-path a {
+.title .js-path a,
+h1.title .js-path a {
   padding: 0 0.25rem 0;
   text-decoration: none;
+  color: var(--header-color);
 }
 
 footer,
 address {
-  padding: 2rem 1rem;
+  padding: 1rem 0;
   text-align: center;
   font-size: 0.875rem;
-  opacity: 0.875;
+  color: var(--secondary-color);
+  border-top: 1px solid var(--border-color);
+  background-color: var(--footer-color);
   position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: "Poppins", 'Roboto', sans-serif;
 }
 
 /* Theme toggle button */
@@ -77,7 +137,7 @@ address {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #6200ea;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   font-size: 20px;
@@ -93,15 +153,46 @@ address {
 .theme-toggle-btn:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background-color: var(--hover-color);
 }
 
-/* Ajustar para telas pequenas */
+/* Responsive Styles */
 @media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    padding: 0.75rem 0;
+    text-align: left;
+  }
+  
+  table {
+    font-size: 0.9rem;
+  }
+  
   .theme-toggle-btn {
     bottom: 10px;
     right: 10px;
     width: 35px;
     height: 35px;
     font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+  
+  body {
+    padding: 0 0.5rem;
+  }
+  
+  .title {
+    font-size: 1.3rem;
+    padding: 0.75rem 0;
+    text-align: left;
   }
 }
