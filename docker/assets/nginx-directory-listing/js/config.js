@@ -7,11 +7,11 @@
     Theme author: @lfelipe1501
 \*------------------------------------*/
 // Configure .nginxy here:
-const websiteName = 'File Server';
-const websiteURL = 'https://www.lfsystems.com.co';
+const websiteName = 'Index of';
+const websiteURL = '';
 
 // Pagination configuration
-const filesPerPage = 10; // Maximum files per page
+const filesPerPage = 10000; // Maximum files per page
 let currentPage = 1;
 let currentSortField = 'name'; // Default sorting field
 let currentSortOrder = 'asc'; // Default order
@@ -628,34 +628,139 @@ document.addEventListener('DOMContentLoaded', function() {
         footer.appendChild(themeToggleBtn);
     }
     
+    // Function to remove any duplicate path elements that Nginx might add
+    // Nginx sometimes adds <pre>, <p>, or text nodes with the path after the h1
+    function removeDuplicatePathElements() {
+        const h1 = document.querySelector("h1");
+        const table = document.querySelector("table");
+        
+        if (!h1 || !table) return;
+        
+        // Get current path from location for comparison
+        const currentPath = location.pathname;
+        
+        // Check all nodes between h1 and table
+        let node = h1.nextSibling;
+        const toRemove = [];
+        
+        while (node && node !== table) {
+            const nextNode = node.nextSibling;
+            
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                const text = (node.textContent || '').trim();
+                // Check if it's a path-like element (contains the current path or matches path pattern)
+                if (text && (text === currentPath || text === currentPath + '/' || text.match(/^\/.*\/?$/))) {
+                    toRemove.push(node);
+                }
+            } else if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.textContent.trim();
+                // Check if it's a path-like text node
+                if (text && (text === currentPath || text === currentPath + '/' || text.match(/^\/.*\/?$/))) {
+                    toRemove.push(node);
+                }
+            }
+            
+            node = nextNode;
+        }
+        
+        // Remove all identified duplicate path elements
+        toRemove.forEach(el => el.remove());
+    }
+    
     // Working on nginx HTML and applying settings.
     const h1Element = document.querySelector("h1");
-    const text = h1Element.textContent;
-    const array = text.split('/');
-    const last = array[array.length-2];
-    const firstLink = document.getElementsByTagName('a')[0];
-    const dirStructure = firstLink ? firstLink.href : '';
-    const dir = text.substring(10);
-    let currentDir = last ? last.charAt(0).toUpperCase() + last.slice(1) : '';
-
-    // Truncate long folder names.
-    if (currentDir.length > 19) {
-        currentDir = currentDir.substring(0, 18) + '...';
+    
+    // Clean h1 element - remove any extra content that Nginx might have added
+    // Keep only "Index of" text and the js-path span (same structure as Apache)
+    if (h1Element) {
+        // Add "title" class like Apache
+        h1Element.classList.add('title');
+        
+        // Check if js-path exists, if not create it
+        let pathSpan = h1Element.querySelector('.js-path');
+        if (!pathSpan) {
+            pathSpan = document.createElement('span');
+            pathSpan.className = 'js-path';
+        }
+        
+        // Rebuild h1 content to match Apache structure: "Index of <span class="js-path"></span>"
+        // Remove all child nodes first
+        while (h1Element.firstChild) {
+            h1Element.removeChild(h1Element.firstChild);
+        }
+        
+        // Add "Index of " text
+        const indexOfText = document.createTextNode('Index of ');
+        h1Element.appendChild(indexOfText);
+        
+        // Add the js-path span
+        h1Element.appendChild(pathSpan);
     }
-
-    // Updating page title.
-    document.title = currentDir + ' – ' + websiteName;
+    
+    // Remove duplicate path elements immediately
+    removeDuplicatePathElements();
+    
+    // Generate breadcrumb path like Apache
+    function generateBreadcrumb() {
+        function joinUntil(array, index, separator) {
+            var result = [];
+            for (var i = 0; i <= index; i++) {
+                result.push(array[i]);
+            }
+            return result.join(separator);
+        }
+        
+        var path = document.querySelector('.js-path');
+        if (!path) return;
+        
+        var pathParts = location.pathname.split('/');
+        
+        // Removing empty strings
+        for (var i = 0; i < pathParts.length;) {
+            if (pathParts[i]) {
+                i++;
+            } else {
+                pathParts.splice(i, 1);
+            }
+        }
+        
+        var pathContents = ['<a href="/">/</a>'];
+        Array.prototype.forEach.call(pathParts, function(part, index) {
+            pathContents.push('<a href="/' + joinUntil(pathParts, index, '/') + '">' + decodeURI(part) + '</a>');
+        });
+        
+        path.innerHTML = pathContents.join('&rsaquo;');
+        
+        // Update page title to match the breadcrumb exactly
+        // Build breadcrumb text for title (without HTML tags)
+        var breadcrumbTextParts = ['/'];
+        Array.prototype.forEach.call(pathParts, function(part) {
+            breadcrumbTextParts.push(decodeURI(part));
+        });
+        var breadcrumbText = breadcrumbTextParts.join(' › ');
+        
+        // Set title to match breadcrumb: "Index of / › samples"
+        document.title = 'Index of ' + breadcrumbText.replace(/\/ › /g, '/').replace(/ › /g,'/');
+    }
+    
+    // Generate breadcrumb
+    generateBreadcrumb();
+    
+    // Remove duplicate path elements - run after a short delay to catch Nginx-generated content
+    setTimeout(function() {
+        removeDuplicatePathElements();
+    }, 100);
+    
+    // Also check after a longer delay to ensure all Nginx content is loaded
+    setTimeout(function() {
+        removeDuplicatePathElements();
+    }, 500);
 
     // Updating page footer.
     const footerURL = document.getElementById("footerURL");
     if (footerURL) {
         footerURL.textContent = websiteName;
         footerURL.setAttribute('href', websiteURL);
-    }
-
-    // Update header with current directory name
-    if (h1Element) {
-        h1Element.textContent = currentDir;
     }
 
     // Establish supported formats.

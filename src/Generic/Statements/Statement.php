@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Helpers;
+namespace GenericDatabase\Generic\Statements;
 
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Parsers\SQL;

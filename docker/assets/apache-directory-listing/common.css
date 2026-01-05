@@ -133,13 +133,17 @@ table tr:hover {
   background-color: var(--hover-color);
 }
 
+table tr .indexcolname {
+  padding: 0.75rem 0.75rem 0.75rem 0.5rem;
+}
+
 table tr .indexcolicon a {
   border: none;
 }
 
 main {
   margin: 0 auto;
-  padding: 0.2rem 1rem;
+  padding: 0 1rem;
   max-width: 100%;
 }
 

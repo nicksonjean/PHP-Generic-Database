@@ -385,7 +385,7 @@ services:
       - internal
 
   sqlsrv:
-    image: mcr.microsoft.com/mssql/server:latest
+    image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: sqlsrv
     env_file:
       - .env
