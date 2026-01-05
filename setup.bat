@@ -9,6 +9,7 @@ set "RUNCOMMAND=false"
 set "RUNVALUE="
 set "PHP_VERSION="
 set "PHP_PORT="
+set "SSL_PORT="
 set "WEB_SERVER=nginx"
 
 rem Definir arquivos de origem e destino
@@ -44,6 +45,7 @@ for %%A in (%*) do (
                     rem Salva os valores das envs em variáveis específicas
                     if "!KEY!"=="PHP_VERSION" set "PHP_VERSION=!VALUE!"
                     if "!KEY!"=="PHP_PORT" set "PHP_PORT=!VALUE!"
+                    if "!KEY!"=="SSL_PORT" set "SSL_PORT=!VALUE!"
                     if "!KEY!"=="WEB_SERVER" set "WEB_SERVER=!VALUE!"
                 )
             )
@@ -67,10 +69,36 @@ if defined PHP_VERSION (
     )
 )
 
+rem Calcula PHP_PORT e SSL_PORT automaticamente se não foram fornecidos
+rem Padrão: PHP 8.0 -> 8000/8043, 8.1 -> 8100/8143, 8.2 -> 8200/8243, 8.3 -> 8300/8343, etc.
+if defined PHP_VERSION (
+    if not defined PHP_PORT (
+        rem Remove o ponto da versão (8.3 -> 83) e multiplica por 100 (8300)
+        set "VERSION_NUM=!PHP_VERSION:.=!"
+        set /a "PHP_PORT=!VERSION_NUM! * 100"
+        echo PHP_PORT=!PHP_PORT!
+    )
+    if not defined SSL_PORT (
+        rem Calcula porta SSL: PHP_PORT + 43 (8300 + 43 = 8343)
+        if defined PHP_PORT (
+            set /a "SSL_PORT=!PHP_PORT! + 43"
+            echo SSL_PORT=!SSL_PORT!
+        ) else (
+            rem Se PHP_PORT não foi calculado ainda, calcula diretamente
+            set "VERSION_NUM=!PHP_VERSION:.=!"
+            set /a "TEMP_PORT=!VERSION_NUM! * 100"
+            set /a "SSL_PORT=!TEMP_PORT! + 43"
+            echo SSL_PORT=!SSL_PORT!
+        )
+    )
+)
+
 rem Cria um arquivo temporário para o novo conteúdo do env.docker
 set "TEMPFILE=%SOURCE%.tmp"
 
 rem Verifica e atualiza as variáveis no arquivo env.docker
+set "PHP_PORT_EXIST=false"
+set "SSL_PORT_EXIST=false"
 (for /f "tokens=1,2 delims==" %%B in ('type "%SOURCE%"') do (
     set "LINE=%%B=%%C"
     if "%%B"=="PHP_VERSION" (
@@ -86,6 +114,13 @@ rem Verifica e atualiza as variáveis no arquivo env.docker
             set "LINE=PHP_PORT=%PHP_PORT%"
         )
         set "PHP_PORT_EXIST=true"
+    )
+    if "%%B"=="SSL_PORT" (
+        if not "%%C"=="%SSL_PORT%" (
+            ::echo Atualizando SSL_PORT de %%C para %SSL_PORT%
+            set "LINE=SSL_PORT=%SSL_PORT%"
+        )
+        set "SSL_PORT_EXIST=true"
     )
     if "%%B"=="PHP_BASE_TAG" (
         if "!PHP_BASE_TAG!"=="" (
@@ -113,9 +148,14 @@ if not defined PHP_VERSION_EXIST if defined PHP_VERSION (
     echo PHP_VERSION=%PHP_VERSION%>>"%TEMPFILE%"
 )
 
-if not defined PHP_PORT_EXIST if defined PHP_PORT (
+if "!PHP_PORT_EXIST!"=="false" if defined PHP_PORT (
     ::echo Adicionando PHP_PORT=%PHP_PORT%
     echo PHP_PORT=%PHP_PORT%>>"%TEMPFILE%"
+)
+
+if "!SSL_PORT_EXIST!"=="false" if defined SSL_PORT (
+    ::echo Adicionando SSL_PORT=%SSL_PORT%
+    echo SSL_PORT=%SSL_PORT%>>"%TEMPFILE%"
 )
 
 if not defined PHP_BASE_TAG_EXIST if defined PHP_VERSION (
@@ -135,6 +175,32 @@ rem Executa o comando --run após pegar todos os argumentos, se presente
 if !RUNCOMMAND! == true (
     rem Remove as aspas do comando (caso tenha sido passado)
     set "RUNVALUE=!RUNVALUE:"=!"
+    
+    rem Substituir serviços genéricos por específicos baseado na versão PHP
+    rem Isso evita conflitos quando executar múltiplas versões simultaneamente
+    if defined PHP_VERSION (
+        rem Processar palavra por palavra para fazer substituições
+        set "NEWVALUE="
+        for %%I in (!RUNVALUE!) do (
+            set "TOKEN=%%I"
+            if "!TOKEN!"=="apache" (
+                set "NEWVALUE=!NEWVALUE! php-!PHP_VERSION!-apache"
+            ) else (
+                if "!TOKEN!"=="app" (
+                    set "NEWVALUE=!NEWVALUE! php-!PHP_VERSION!-fpm"
+                ) else (
+                    if "!TOKEN!"=="nginx" (
+                        set "NEWVALUE=!NEWVALUE! nginx-!PHP_VERSION!"
+                    ) else (
+                        rem Outros serviços não são substituídos
+                        set "NEWVALUE=!NEWVALUE! !TOKEN!"
+                    )
+                )
+            )
+        )
+        set "RUNVALUE=!NEWVALUE:~1!"
+    )
+    
     echo Executando: !RUNVALUE!
     call !RUNVALUE!
 )

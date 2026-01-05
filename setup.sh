@@ -6,6 +6,7 @@ RUNCOMMAND=false
 RUNVALUE=""
 PHP_VERSION=""
 PHP_PORT=""
+SSL_PORT=""
 WEB_SERVER="nginx"
 
 # Define arquivos de origem e destino
@@ -37,6 +38,8 @@ for ARG in "$@"; do
                 PHP_VERSION="$VALUE"
             elif [ "$KEY" = "PHP_PORT" ]; then
                 PHP_PORT="$VALUE"
+            elif [ "$KEY" = "SSL_PORT" ]; then
+                SSL_PORT="$VALUE"
             elif [ "$KEY" = "WEB_SERVER" ]; then
                 WEB_SERVER="$VALUE"
             fi
@@ -58,12 +61,37 @@ if [ -n "$PHP_VERSION" ]; then
     esac
 fi
 
+# Calcula PHP_PORT e SSL_PORT automaticamente se não foram fornecidos
+# Padrão: PHP 8.0 -> 8000/8043, 8.1 -> 8100/8143, 8.2 -> 8200/8243, 8.3 -> 8300/8343, etc.
+if [ -n "$PHP_VERSION" ]; then
+    if [ -z "$PHP_PORT" ]; then
+        # Remove o ponto da versão (8.3 -> 83) e multiplica por 100 (8300)
+        VERSION_NUM=$(echo "$PHP_VERSION" | tr -d '.')
+        PHP_PORT=$((VERSION_NUM * 100))
+        echo "PHP_PORT=$PHP_PORT"
+    fi
+    if [ -z "$SSL_PORT" ]; then
+        # Calcula porta SSL: PHP_PORT + 43 (8300 + 43 = 8343)
+        if [ -n "$PHP_PORT" ]; then
+            SSL_PORT=$((PHP_PORT + 43))
+            echo "SSL_PORT=$SSL_PORT"
+        else
+            # Se PHP_PORT não foi calculado ainda, calcula diretamente
+            VERSION_NUM=$(echo "$PHP_VERSION" | tr -d '.')
+            TEMP_PORT=$((VERSION_NUM * 100))
+            SSL_PORT=$((TEMP_PORT + 43))
+            echo "SSL_PORT=$SSL_PORT"
+        fi
+    fi
+fi
+
 # Cria um arquivo temporário para o novo conteúdo do env.docker
 TEMPFILE=$(mktemp)
 
 # Verifica e atualiza as variáveis no arquivo env.docker
 PHP_VERSION_EXIST=false
 PHP_PORT_EXIST=false
+SSL_PORT_EXIST=false
 PHP_BASE_TAG_EXIST=false
 while IFS='=' read -r KEY VALUE; do
     LINE="$KEY=$VALUE"
@@ -79,6 +107,12 @@ while IFS='=' read -r KEY VALUE; do
             LINE="PHP_PORT=$PHP_PORT"
         fi
         PHP_PORT_EXIST=true
+    elif [ "$KEY" = "SSL_PORT" ]; then
+        if [ "$VALUE" != "$SSL_PORT" ]; then
+            # echo "Atualizando SSL_PORT de $VALUE para $SSL_PORT"
+            LINE="SSL_PORT=$SSL_PORT"
+        fi
+        SSL_PORT_EXIST=true
     elif [ "$KEY" = "PHP_BASE_TAG" ]; then
         if [ -z "$PHP_BASE_TAG" ]; then
             # Para PHP 8.0, remove PHP_BASE_TAG do .env (não escreve a linha)
@@ -103,6 +137,11 @@ if ! $PHP_PORT_EXIST && [ -n "$PHP_PORT" ]; then
     echo "PHP_PORT=$PHP_PORT" >> "$TEMPFILE"
 fi
 
+if ! $SSL_PORT_EXIST && [ -n "$SSL_PORT" ]; then
+    # echo "Adicionando SSL_PORT=$SSL_PORT"
+    echo "SSL_PORT=$SSL_PORT" >> "$TEMPFILE"
+fi
+
 if ! $PHP_BASE_TAG_EXIST && [ -n "$PHP_VERSION" ] && [ -n "$PHP_BASE_TAG" ]; then
     # echo "Adicionando PHP_BASE_TAG calculado baseado na versão (apenas se não for vazio)"
     echo "PHP_BASE_TAG=$PHP_BASE_TAG" >> "$TEMPFILE"
@@ -118,6 +157,22 @@ cp "$SOURCE" "$TARGET"
 if $RUNCOMMAND; then
     # Remove as aspas do comando (caso tenha sido passado)
     RUNVALUE=${RUNVALUE//\"/}
+    
+    # Substituir serviços genéricos por específicos baseado na versão PHP
+    # Isso evita conflitos quando executar múltiplas versões simultaneamente
+    if [ -n "$PHP_VERSION" ]; then
+        # Substituir " apache" (com espaço antes) por " php-{versao}-apache"
+        RUNVALUE=$(echo "$RUNVALUE" | sed "s/ apache/ php-${PHP_VERSION}-apache/g")
+        # Substituir "app " (com espaço depois) ou " app " (com espaços) ou " app" (com espaço antes) por "php-{versao}-fpm"
+        RUNVALUE=$(echo "$RUNVALUE" | sed "s/app /php-${PHP_VERSION}-fpm /g")
+        RUNVALUE=$(echo "$RUNVALUE" | sed "s/ app / php-${PHP_VERSION}-fpm /g")
+        RUNVALUE=$(echo "$RUNVALUE" | sed "s/ app/ php-${PHP_VERSION}-fpm/g")
+        # Substituir " nginx" (com espaço antes) por " nginx-{versao}"
+        RUNVALUE=$(echo "$RUNVALUE" | sed "s/ nginx/ nginx-${PHP_VERSION}/g")
+        # Limpar espaços duplos
+        RUNVALUE=$(echo "$RUNVALUE" | sed 's/  */ /g')
+    fi
+    
     echo "Executando: $RUNVALUE"
     eval $RUNVALUE
 fi

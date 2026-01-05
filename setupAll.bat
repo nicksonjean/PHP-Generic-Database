@@ -21,75 +21,37 @@ echo Setup All PHP Versions - !WEB_SERVER!
 echo ========================================
 echo.
 
-echo [1/6] Setting up PHP 8.0 on port 8000/8043...
 if "!WEB_SERVER!"=="apache" (
-    call setup.bat --build-arg PHP_VERSION=8.0 --build-arg PHP_PORT=8000 --run "docker compose up -d apache80"
+    echo Building and starting all Apache services...
+    docker compose build php-8.0-apache php-8.1-apache php-8.2-apache php-8.3-apache php-8.4-apache php-8.5-apache
+    if errorlevel 1 (
+        echo ERROR: Failed to build Apache services
+        exit /b 1
+    )
+    docker compose up -d php-8.0-apache php-8.1-apache php-8.2-apache php-8.3-apache php-8.4-apache php-8.5-apache
+    if errorlevel 1 (
+        echo ERROR: Failed to start Apache services
+        exit /b 1
+    )
 ) else (
-    call setup.bat --build-arg PHP_VERSION=8.0 --build-arg PHP_PORT=8000 --run "docker compose up -d app80 nginx80"
-)
-if errorlevel 1 (
-    echo ERROR: Failed to setup PHP 8.0
-    exit /b 1
-)
-echo.
-
-echo [2/6] Setting up PHP 8.1 on port 8100/8143...
-if "!WEB_SERVER!"=="apache" (
-    call setup.bat --build-arg PHP_VERSION=8.1 --build-arg PHP_PORT=8100 --run "docker compose up -d apache81"
-) else (
-    call setup.bat --build-arg PHP_VERSION=8.1 --build-arg PHP_PORT=8100 --run "docker compose up -d app81 nginx81"
-)
-if errorlevel 1 (
-    echo ERROR: Failed to setup PHP 8.1
-    exit /b 1
-)
-echo.
-
-echo [3/6] Setting up PHP 8.2 on port 8200/8243...
-if "!WEB_SERVER!"=="apache" (
-    call setup.bat --build-arg PHP_VERSION=8.2 --build-arg PHP_PORT=8200 --run "docker compose up -d apache82"
-) else (
-    call setup.bat --build-arg PHP_VERSION=8.2 --build-arg PHP_PORT=8200 --run "docker compose up -d app82 nginx82"
-)
-if errorlevel 1 (
-    echo ERROR: Failed to setup PHP 8.2
-    exit /b 1
-)
-echo.
-
-echo [4/6] Setting up PHP 8.3 on port 8300/8343...
-if "!WEB_SERVER!"=="apache" (
-    call setup.bat --build-arg PHP_VERSION=8.3 --build-arg PHP_PORT=8300 --run "docker compose up -d apache83"
-) else (
-    call setup.bat --build-arg PHP_VERSION=8.3 --build-arg PHP_PORT=8300 --run "docker compose up -d app83 nginx83"
-)
-if errorlevel 1 (
-    echo ERROR: Failed to setup PHP 8.3
-    exit /b 1
-)
-echo.
-
-echo [5/6] Setting up PHP 8.4 on port 8400/8443...
-if "!WEB_SERVER!"=="apache" (
-    call setup.bat --build-arg PHP_VERSION=8.4 --build-arg PHP_PORT=8400 --run "docker compose up -d apache84"
-) else (
-    call setup.bat --build-arg PHP_VERSION=8.4 --build-arg PHP_PORT=8400 --run "docker compose up -d app84 nginx84"
-)
-if errorlevel 1 (
-    echo ERROR: Failed to setup PHP 8.4
-    exit /b 1
-)
-echo.
-
-echo [6/6] Setting up PHP 8.5 on port 8500/8543...
-if "!WEB_SERVER!"=="apache" (
-    call setup.bat --build-arg PHP_VERSION=8.5 --build-arg PHP_PORT=8500 --run "docker compose up -d apache85"
-) else (
-    call setup.bat --build-arg PHP_VERSION=8.5 --build-arg PHP_PORT=8500 --run "docker compose up -d app85 nginx85"
-)
-if errorlevel 1 (
-    echo ERROR: Failed to setup PHP 8.5
-    exit /b 1
+    echo Building all PHP-FPM services...
+    docker compose build php-8.0-fpm php-8.1-fpm php-8.2-fpm php-8.3-fpm php-8.4-fpm php-8.5-fpm
+    if errorlevel 1 (
+        echo ERROR: Failed to build PHP-FPM services
+        exit /b 1
+    )
+    echo Building Nginx unified service...
+    docker compose build nginx-unified
+    if errorlevel 1 (
+        echo ERROR: Failed to build Nginx unified service
+        exit /b 1
+    )
+    echo Starting all PHP-FPM and Nginx unified services...
+    docker compose up -d php-8.0-fpm php-8.1-fpm php-8.2-fpm php-8.3-fpm php-8.4-fpm php-8.5-fpm nginx-unified
+    if errorlevel 1 (
+        echo ERROR: Failed to start services
+        exit /b 1
+    )
 )
 echo.
 
