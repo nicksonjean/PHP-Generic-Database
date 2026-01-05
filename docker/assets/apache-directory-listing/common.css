@@ -181,6 +181,7 @@ address {
   position: relative;
   transition: background-color 0.3s ease, color 0.3s ease;
   font-family: "Poppins", 'Roboto', sans-serif;
+  margin: 0 16px 0 16px;
 }
 
 /* Theme toggle button */
