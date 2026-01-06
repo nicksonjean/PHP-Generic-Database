@@ -266,7 +266,7 @@ docker images | grep nginx-alpine
 docker compose build php-8.3-fpm
 
 # Ou diretamente com docker build
-docker build -f docker/php-fpm/Dockerfile \
+docker build -f docker/stack-nginx/php-fpm/Dockerfile \
   --build-arg PHP_VERSION=8.3 \
   --build-arg PHP_PORT=8300 \
   --build-arg PHP_BASE_TAG=-bookworm \
@@ -283,7 +283,7 @@ docker compose build php-8.3-apache
 docker compose build php-8.1-apache
 
 # Ou diretamente com docker build
-docker build -f docker/php/Dockerfile \
+docker build -f docker/stack-apache/php-apache/Dockerfile \
   --build-arg PHP_VERSION=8.3 \
   --build-arg PHP_PORT=8300 \
   --build-arg PHP_BASE_TAG=-bookworm \
@@ -297,7 +297,7 @@ docker build -f docker/php/Dockerfile \
 docker compose build nginx-unified
 
 # Ou diretamente com docker build
-docker build -f docker/nginx/Dockerfile \
+docker build -f docker/stack-nginx/nginx/Dockerfile \
   -t nginx-alpine:latest \
   .
 ```

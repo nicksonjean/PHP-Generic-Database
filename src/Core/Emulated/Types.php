@@ -155,4 +155,14 @@ final class Types extends EmulatedStringEnum
      * PDO ODBC driver
      */
     public const PDO_ODBC = 'odbc';
+
+    /**
+     * PgSql link
+     */
+    public const NAT_PGSQL_LINK = 'pgsql link';
+
+    /**
+     * PgSql link persistent
+     */
+    public const NAT_PGSQL_LINK_PERSISTENT = 'pgsql link persistent';
 }

@@ -156,4 +156,14 @@ enum Types: string
      * PDO ODBC driver
      */
     case PDO_ODBC = 'odbc';
+
+    /**
+     * PgSql link
+     */
+    case NAT_PGSQL_LINK = 'pgsql link';
+
+    /**
+     * PgSql link persistent
+     */
+    case NAT_PGSQL_LINK_PERSISTENT = 'pgsql link persistent';
 }

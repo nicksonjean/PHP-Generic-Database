@@ -99,8 +99,10 @@ class Compare
             is_resource($cnx) && get_resource_type($cnx) === $getClassName(An::NAT_SYBASE) => 'sybase',
             is_resource($cnx) && get_resource_type($cnx) === $getClassName(An::NAT_FIREBIRD) => 'firebird',
             is_resource($cnx) && get_resource_type($cnx) === $getClassName(An::NAT_INTERBASE) => 'ibase',
-            is_resource($cnx) && get_resource_type($cnx) === $getClassName(An::NAT_FIREBIRD_PERSISTENT) || $getClassName(An::NAT_INTERBASE_PERSISTENT) => 'firebird/ibase',
-            is_resource($cnx) && get_resource_type($cnx) === $getClassName(An::NAT_FIREBIRD_INTERBASE) || $getClassName(An::NAT_FIREBIRD_INTERBASE_PERSISTENT) => 'firebird/ibase',
+            is_resource($cnx) && (get_resource_type($cnx) === $getClassName(An::NAT_FIREBIRD_PERSISTENT) || get_resource_type($cnx) === $getClassName(An::NAT_INTERBASE_PERSISTENT)) => 'firebird/ibase',
+            is_resource($cnx) && (get_resource_type($cnx) === $getClassName(An::NAT_FIREBIRD_INTERBASE) || get_resource_type($cnx) === $getClassName(An::NAT_FIREBIRD_INTERBASE_PERSISTENT)) => 'firebird/ibase',
+            is_resource($cnx) && get_resource_type($cnx) === $getClassName(An::NAT_PGSQL_LINK) => 'pgsql',
+            is_resource($cnx) && get_resource_type($cnx) === $getClassName(An::NAT_PGSQL_LINK_PERSISTENT) => 'pgsql',
             default => 'Unidentified or invalid connection type, instance or resource.',
         };
     }
