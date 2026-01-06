@@ -40,6 +40,7 @@
     "**/.cursor/**": true,
     "**/.cursorignore/**": true,
     "**/.gitignore/**": true,
+    "**/.gitattributes/**": true,
     "**/.git/**": true,
     "**/.github/**": true,
     "**/.gitlab/**": true,
