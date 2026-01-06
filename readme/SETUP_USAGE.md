@@ -11,20 +11,20 @@ O `docker-compose.yml` possui dois tipos de serviços PHP:
    - Image names: `php-{PHP_VERSION}-fpm` (FPM) ou `php-{PHP_VERSION}-apache` (Apache)
    - Tags: `php:{PHP_VERSION}-fpm` (FPM) ou `php:{PHP_VERSION}-apache` (Apache)
 
-2. **Serviços Nginx específicos** (nginx-8.0 até nginx-8.5):
+2. **Serviços Nginx específicos** (nginx-php-8.0 até nginx-php-8.5):
    - Valores hardcoded no docker-compose.yml
    - Usados pelo `setup.bat` para configurar versões individuais
-   - Container names: `nginx-{PHP_VERSION}` (ex: `nginx-8.3`)
-   - Image name: `nginx-alpine`
-   - Tag: `nginx-alpine:latest`
-   - O `setup.bat` automaticamente converte `nginx` para serviços específicos (`nginx-{PHP_VERSION}`)
+   - Container names: `nginx-php-{PHP_VERSION}` (ex: `nginx-php-8.3`)
+   - Image name: Construída a partir do Dockerfile personalizado (com entrypoint customizado)
+   - Tag: Imagem customizada local
+   - O `setup.bat` automaticamente converte `nginx` para serviços específicos (`nginx-php-{PHP_VERSION}`)
    - Cada versão PHP tem seu próprio container Nginx independente, permitindo múltiplas versões simultaneamente
 
 3. **Serviço Nginx Unificado**:
    - **nginx-unified**: Servidor Nginx unificado servindo todas as versões PHP (8.0-8.5)
      - Container name: `nginx-unified`
-     - Image name: `nginx-alpine`
-     - Tag: `nginx-alpine:latest`
+     - Image name: Construída a partir do Dockerfile personalizado (com entrypoint customizado)
+     - Tag: Imagem customizada local
      - Usado pelo `setupAll.bat` para configurar todas as versões de uma vez
 
 ## Nomenclatura dos Containers e Imagens
@@ -36,7 +36,7 @@ O `docker-compose.yml` possui dois tipos de serviços PHP:
 
 ### Nginx (Servidor)
 - **Container unificado**: `nginx-unified` (para uso com `setupAll.bat`)
-- **Container específico**: `nginx-{PHP_VERSION}` (ex: `nginx-8.3`, para uso com `setup.bat`)
+- **Container específico**: `nginx-php-{PHP_VERSION}` (ex: `nginx-php-8.3`, para uso com `setup.bat`)
 - **Imagem**: `nginx-alpine`
 - **Tag**: `nginx-alpine:latest`
 
@@ -59,7 +59,7 @@ O `docker-compose.yml` possui dois tipos de serviços PHP:
 
 **IMPORTANTE**: Note que o comando usa `app` e `nginx` - o `setup.bat` converte ambos para serviços específicos:
 - `app` → `php-{PHP_VERSION}-fpm` (ex: `php-8.3-fpm`)
-- `nginx` → `nginx-{PHP_VERSION}` (ex: `nginx-8.3`)
+- `nginx` → `nginx-php-{PHP_VERSION}` (ex: `nginx-php-8.3`)
 
 ## Como funciona
 
@@ -67,7 +67,7 @@ O `docker-compose.yml` possui dois tipos de serviços PHP:
 2. O `setup.bat` **automaticamente converte** `apache`, `app` e `nginx` para serviços específicos no comando `--run`:
    - `apache` → `php-{PHP_VERSION}-apache`
    - `app` → `php-{PHP_VERSION}-fpm`
-   - `nginx` → `nginx-{PHP_VERSION}`
+   - `nginx` → `nginx-php-{PHP_VERSION}`
 3. O Docker Compose usa os serviços específicos convertidos para construir e iniciar os containers
 4. Cada versão PHP cria seu próprio container independente (PHP-FPM, Apache e Nginx), permitindo múltiplas versões simultaneamente sem conflitos
 
@@ -75,7 +75,7 @@ O `docker-compose.yml` possui dois tipos de serviços PHP:
 - O `setup.bat` **automaticamente converte** serviços genéricos `apache`, `app` e `nginx` para serviços específicos baseado na versão PHP informada
 - Isso permite usar múltiplas versões simultaneamente sem conflitos - cada versão tem seus próprios containers independentes
 - Exemplo: `.\setup.bat ... --run "docker compose up -d apache"` é convertido para `docker compose up -d php-8.0-apache`
-- Exemplo: `.\setup.bat ... --run "docker compose up -d app nginx"` é convertido para `docker compose up -d php-8.3-fpm nginx-8.3`
+- Exemplo: `.\setup.bat ... --run "docker compose up -d app nginx"` é convertido para `docker compose up -d php-8.3-fpm nginx-php-8.3`
 - Cada versão PHP cria seu próprio container independente (PHP-FPM, Apache e Nginx)
 
 ## Exemplos de uso individual
@@ -234,16 +234,16 @@ docker exec -it nginx-unified nginx -t
 docker exec -it nginx-unified nginx -s reload
 
 # Nginx específico (para uso individual)
-docker inspect nginx-8.3
+docker inspect nginx-php-8.3
 
 # Ver logs
-docker logs nginx-8.3
+docker logs nginx-php-8.3
 
 # Testar configuração
-docker exec -it nginx-8.3 nginx -t
+docker exec -it nginx-php-8.3 nginx -t
 
 # Recarregar configuração
-docker exec -it nginx-8.3 nginx -s reload
+docker exec -it nginx-php-8.3 nginx -s reload
 ```
 
 ### Listar imagens
@@ -375,7 +375,7 @@ docker images | grep php-.*-apache | awk '{print $3}' | xargs docker rmi
 | **Uso** | Uma versão por vez | Todas as versões de uma vez |
 | **Porta** | Definida via argumento | Fixa por serviço (8000, 8100, etc.) |
 | **Container name** | `php-{PHP_VERSION}-fpm` ou `php-{PHP_VERSION}-apache` | `php-{PHP_VERSION}-fpm` ou `php-{PHP_VERSION}-apache` |
-| **Nginx container** | `nginx-{PHP_VERSION}` (específico por versão) | `nginx-unified` (unificado) |
+| **Nginx container** | `nginx-php-{PHP_VERSION}` (específico por versão) | `nginx-unified` (unificado) |
 
 ## Verificação
 
@@ -414,9 +414,9 @@ Após executar o `setup.bat` individual, você pode verificar:
 - O `setup.bat` e `setup.sh` **automaticamente convertem** serviços genéricos `apache`, `app` e `nginx` para específicos no comando `--run`
 - Exemplos de conversão:
   - `docker compose up -d apache` → `docker compose up -d php-8.0-apache` (se PHP_VERSION=8.0)
-  - `docker compose up -d app nginx` → `docker compose up -d php-8.1-fpm nginx-8.1` (se PHP_VERSION=8.1)
+  - `docker compose up -d app nginx` → `docker compose up -d php-8.1-fpm nginx-php-8.1` (se PHP_VERSION=8.1)
   - `docker compose up -d app` → `docker compose up -d php-8.3-fpm` (se PHP_VERSION=8.3)
-  - `docker compose up -d nginx` → `docker compose up -d nginx-8.3` (se PHP_VERSION=8.3)
+  - `docker compose up -d nginx` → `docker compose up -d nginx-php-8.3` (se PHP_VERSION=8.3)
 
 **Vantagens:**
 - Permite usar múltiplas versões simultaneamente sem conflitos
@@ -435,7 +435,7 @@ Após executar o `setup.bat` individual, você pode verificar:
 - Isso permite usar múltiplas versões simultaneamente sem conflitos - cada versão cria seus próprios containers independentes (PHP-FPM, Apache e Nginx)
 - Para usar múltiplas versões de uma vez, você pode executar `setup.bat` várias vezes com diferentes versões, ou usar `setupAll.bat`
 - Os serviços genéricos `app`, `apache` e `nginx` foram removidos do docker-compose.yml para evitar conflitos com serviços específicos
-- Para uso direto via `docker compose`, use os serviços específicos: `docker compose up -d php-8.3-apache` ou `docker compose up -d php-8.3-fpm nginx-8.3`
+- Para uso direto via `docker compose`, use os serviços específicos: `docker compose up -d php-8.3-apache` ou `docker compose up -d php-8.3-fpm nginx-php-8.3`
 - O servidor Nginx unificado (`nginx-unified`) serve todas as versões PHP através de portas diferentes (8000-8500 HTTP, 8043-8543 HTTPS)
 - Cada porta do Nginx unificado roteia para o serviço PHP-FPM correspondente (php-8.0-fpm, php-8.1-fpm, etc.)
 - **IMPORTANTE**: Com as mudanças, agora cada versão PHP tem seu próprio container Nginx quando usando `setup.bat`, permitindo múltiplas versões simultâneas sem conflitos de portas

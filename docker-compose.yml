@@ -151,7 +151,6 @@ services:
   # Usado pelo setupAll.bat/setupAll.sh
   nginx-unified:
     <<: *nginx-service
-    image: nginx-alpine:latest
     container_name: nginx-unified
     ports:
       # HTTP - PHP 8.0 a 8.5
@@ -177,12 +176,11 @@ services:
       - php-8.5-fpm
 
   # Serviços Nginx específicos para cada versão do PHP (para uso com setup.bat/setup.sh individual)
-  # NOTA: O setup.bat converte automaticamente 'nginx' para serviços específicos (nginx-8.0, nginx-8.1, etc.)
+  # NOTA: O setup.bat converte automaticamente 'nginx' para serviços específicos (nginx-php-8.0, nginx-php-8.1, etc.)
   # Serviço Nginx para PHP 8.0
-  nginx-8.0:
+  nginx-php-8.0:
     <<: *nginx-service
-    image: nginx-alpine:latest
-    container_name: nginx-8.0
+    container_name: nginx-php-8.0
     ports:
       - "8000:80"
       - "8043:443"
@@ -193,10 +191,9 @@ services:
       - SSL_PORT=8043
 
   # Serviço Nginx para PHP 8.1
-  nginx-8.1:
+  nginx-php-8.1:
     <<: *nginx-service
-    image: nginx-alpine:latest
-    container_name: nginx-8.1
+    container_name: nginx-php-8.1
     ports:
       - "8100:80"
       - "8143:443"
@@ -207,10 +204,9 @@ services:
       - SSL_PORT=8143
 
   # Serviço Nginx para PHP 8.2
-  nginx-8.2:
+  nginx-php-8.2:
     <<: *nginx-service
-    image: nginx-alpine:latest
-    container_name: nginx-8.2
+    container_name: nginx-php-8.2
     ports:
       - "8200:80"
       - "8243:443"
@@ -221,10 +217,9 @@ services:
       - SSL_PORT=8243
 
   # Serviço Nginx para PHP 8.3
-  nginx-8.3:
+  nginx-php-8.3:
     <<: *nginx-service
-    image: nginx-alpine:latest
-    container_name: nginx-8.3
+    container_name: nginx-php-8.3
     ports:
       - "8300:80"
       - "8343:443"
@@ -235,10 +230,9 @@ services:
       - SSL_PORT=8343
 
   # Serviço Nginx para PHP 8.4
-  nginx-8.4:
+  nginx-php-8.4:
     <<: *nginx-service
-    image: nginx-alpine:latest
-    container_name: nginx-8.4
+    container_name: nginx-php-8.4
     ports:
       - "8400:80"
       - "8443:443"
@@ -249,10 +243,9 @@ services:
       - SSL_PORT=8443
 
   # Serviço Nginx para PHP 8.5
-  nginx-8.5:
+  nginx-php-8.5:
     <<: *nginx-service
-    image: nginx-alpine:latest
-    container_name: nginx-8.5
+    container_name: nginx-php-8.5
     ports:
       - "8500:80"
       - "8543:443"

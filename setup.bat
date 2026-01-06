@@ -190,7 +190,7 @@ if !RUNCOMMAND! == true (
                     set "NEWVALUE=!NEWVALUE! php-!PHP_VERSION!-fpm"
                 ) else (
                     if "!TOKEN!"=="nginx" (
-                        set "NEWVALUE=!NEWVALUE! nginx-!PHP_VERSION!"
+                        set "NEWVALUE=!NEWVALUE! nginx-php-!PHP_VERSION!"
                     ) else (
                         rem Outros serviços não são substituídos
                         set "NEWVALUE=!NEWVALUE! !TOKEN!"
