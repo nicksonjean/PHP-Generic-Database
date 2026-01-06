@@ -516,6 +516,13 @@ COPY \
 COPY \
   ./docker/apache/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 
+# Copy Apache entrypoint script
+COPY \
+  ./docker/apache/docker-entrypoint.sh /docker-entrypoint.sh
+# Converter quebras de linha CRLF (Windows) para LF (Unix) e dar permissão de execução
+RUN \
+  sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
+
 # Copy Apache directory listing themes
 # Copiar para o caminho que será usado quando volume for montado
 COPY \
@@ -596,3 +603,9 @@ RUN \
   service apache2 stop && \
   service apache2 start && \
   composer install -n --ignore-platform-reqs --no-dev || composer install -n --ignore-platform-reqs || true
+
+# Set entrypoint to use custom docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+# Comando padrão do Apache
+CMD ["apache2-foreground"]
