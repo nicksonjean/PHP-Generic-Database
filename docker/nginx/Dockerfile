@@ -45,11 +45,12 @@ RUN rm -f /etc/nginx/conf.d/default.conf 2>/dev/null || true && \
 # Copiar configurações do Nginx
 # No Alpine, blocos server devem estar em http.d, não em conf.d
 # my-site.conf e default-ssl.conf são para o nginx-unified (configuração unificada)
-# default.conf e default-ssl-simple.conf são para o nginx genérico (usa variável PHP_SERVICE)
+# default.conf e default-ssl.conf (unificado) são para o nginx genérico (usa variável PHP_SERVICE)
+# Nota: default-ssl.conf foi unificado e agora contém tanto o bloco da porta 443 (com variável)
+# quanto os blocos das portas 8043-8543 (hardcoded) para suportar ambos os modos de operação
 COPY ./docker/nginx/my-site.conf /etc/nginx/http.d/my-site.conf
 COPY ./docker/nginx/default-ssl.conf /etc/nginx/http.d/default-ssl.conf
 COPY ./docker/nginx/default.conf /etc/nginx/http.d/default-simple.conf
-COPY ./docker/nginx/default-ssl-simple.conf /etc/nginx/http.d/default-ssl-simple.conf
 
 # Copiar tema FancyIndex para o container (fallback caso volume não seja montado)
 # Quando volume é montado, os arquivos estarão em /var/www/html/docker/assets/nginx-directory-listing

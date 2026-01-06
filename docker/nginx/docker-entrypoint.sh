@@ -21,10 +21,8 @@ if [ -n "$PHP_SERVICE" ]; then
         echo "[docker-entrypoint] Restaurando default-simple.conf do backup..."
         cp /etc/nginx/http.d/default-simple.conf.bak /etc/nginx/http.d/default-simple.conf 2>/dev/null || true
     fi
-    if [ ! -f /etc/nginx/http.d/default-ssl-simple.conf ] && [ -f /etc/nginx/http.d/default-ssl-simple.conf.bak ]; then
-        echo "[docker-entrypoint] Restaurando default-ssl-simple.conf do backup..."
-        cp /etc/nginx/http.d/default-ssl-simple.conf.bak /etc/nginx/http.d/default-ssl-simple.conf 2>/dev/null || true
-    fi
+    # Nota: default-ssl-simple.conf foi unificado em default-ssl.conf
+    # Não é mais necessário restaurar default-ssl-simple.conf
     
     # Verificar se o arquivo default-simple.conf existe
     if [ ! -f /etc/nginx/http.d/default-simple.conf ]; then
@@ -34,6 +32,23 @@ if [ -n "$PHP_SERVICE" ]; then
         echo "[docker-entrypoint] Arquivos disponíveis em /etc/nginx/http.d/:"
         ls -la /etc/nginx/http.d/ 2>/dev/null || true
         exit 1
+    fi
+    
+    # Verificar se o arquivo default-ssl.conf existe (deve ter sido copiado pelo Dockerfile)
+    if [ ! -f /etc/nginx/http.d/default-ssl.conf ]; then
+        echo "[docker-entrypoint] AVISO: /etc/nginx/http.d/default-ssl.conf não encontrado!"
+        echo "[docker-entrypoint] Tentando restaurar do backup..."
+        if [ -f /etc/nginx/http.d/default-ssl.conf.bak ]; then
+            cp /etc/nginx/http.d/default-ssl.conf.bak /etc/nginx/http.d/default-ssl.conf 2>/dev/null || true
+            echo "[docker-entrypoint] default-ssl.conf restaurado do backup"
+        else
+            echo "[docker-entrypoint] ERRO: default-ssl.conf não encontrado e sem backup!"
+            echo "[docker-entrypoint] Isso geralmente significa que a imagem precisa ser reconstruída."
+            echo "[docker-entrypoint] Execute: docker compose build nginx-php-8.0"
+            echo "[docker-entrypoint] Arquivos disponíveis em /etc/nginx/http.d/:"
+            ls -la /etc/nginx/http.d/ 2>/dev/null || true
+            exit 1
+        fi
     fi
     # Verificar se default.conf já existe e é válido (de um restart anterior)
     # Se existir e for válido, não precisamos recriar
@@ -66,10 +81,28 @@ if [ -n "$PHP_SERVICE" ]; then
     # Se my-site.conf estiver presente, causará conflitos
     rm -f /etc/nginx/http.d/my-site.conf 2>/dev/null || true
     
-    # Remover default.conf e default-ssl.conf apenas se vamos gerar novos
+    # Remover default.conf apenas se vamos gerar novos
+    # IMPORTANTE: NÃO remover default-ssl.conf aqui, pois ele foi copiado pelo Dockerfile
+    # e precisamos dele para processar. Se foi removido anteriormente, restaurar do backup
     if [ "$SKIP_GENERATION" != "true" ]; then
-        rm -f /etc/nginx/http.d/default-ssl.conf 2>/dev/null || true
         rm -f /etc/nginx/http.d/default.conf 2>/dev/null || true
+        
+        # Verificar se default-ssl.conf existe (deve ter sido copiado pelo Dockerfile)
+        if [ ! -f /etc/nginx/http.d/default-ssl.conf ]; then
+            echo "[docker-entrypoint] default-ssl.conf não encontrado, tentando restaurar..."
+            if [ -f /etc/nginx/http.d/default-ssl.conf.bak ]; then
+                echo "[docker-entrypoint] Restaurando default-ssl.conf do backup..."
+                cp /etc/nginx/http.d/default-ssl.conf.bak /etc/nginx/http.d/default-ssl.conf 2>/dev/null || true
+            else
+                echo "[docker-entrypoint] ERRO: default-ssl.conf não encontrado e sem backup!"
+                echo "[docker-entrypoint] O arquivo deveria ter sido copiado pelo Dockerfile."
+                echo "[docker-entrypoint] Arquivos disponíveis em /etc/nginx/http.d/:"
+                ls -la /etc/nginx/http.d/ 2>/dev/null || true
+                echo "[docker-entrypoint] Isso geralmente significa que a imagem precisa ser reconstruída."
+                echo "[docker-entrypoint] Execute: docker compose build nginx-php-8.0"
+                exit 1
+            fi
+        fi
     fi
     
     # Substituir ${PHP_SERVICE} no default-simple.conf e usar como default.conf (HTTP)
@@ -85,42 +118,78 @@ if [ -n "$PHP_SERVICE" ]; then
             sed "s/\${PHP_SERVICE}/${PHP_SERVICE}/g" | \
             sed "s/\$PHP_SERVICE/${PHP_SERVICE}/g" > /etc/nginx/http.d/default.conf
         
-        # Substituir ${PHP_SERVICE} no default-ssl-simple.conf e usar como default-ssl.conf (HTTPS)
+        # Substituir ${PHP_SERVICE} no default-ssl.conf (HTTPS)
         # NOTA: O nginx escuta na porta 443 dentro do container (porta padrão SSL)
         # O Docker Compose mapeia a porta externa (SSL_PORT do .env) para a porta 443 do container
-        if [ -f /etc/nginx/http.d/default-ssl-simple.conf ]; then
-            echo "[docker-entrypoint] Substituindo variáveis no default-ssl.conf (HTTPS)..."
+        # O arquivo default-ssl.conf agora é unificado e contém o bloco da porta 443 com ${PHP_SERVICE}
+        # IMPORTANTE: O arquivo deve existir (copiado pelo Dockerfile ou restaurado do backup)
+        if [ -f /etc/nginx/http.d/default-ssl.conf ]; then
+            # Criar backup ANTES de processar o arquivo
+            if [ ! -f /etc/nginx/http.d/default-ssl.conf.bak ]; then
+                cp /etc/nginx/http.d/default-ssl.conf /etc/nginx/http.d/default-ssl.conf.bak 2>/dev/null || true
+            fi
+            
+            echo "[docker-entrypoint] Processando default-ssl.conf (HTTPS) para modo genérico..."
             echo "[docker-entrypoint] Variáveis de ambiente disponíveis:"
             echo "[docker-entrypoint]   PHP_SERVICE=${PHP_SERVICE}"
             echo "[docker-entrypoint]   SSL_PORT=${SSL_PORT:-NÃO DEFINIDO} (porta externa mapeada para 443 no container)"
             
-            echo "[docker-entrypoint] Conteúdo original do default-ssl-simple.conf (primeiras linhas):"
-            head -5 /etc/nginx/http.d/default-ssl-simple.conf || true
-            
-            # Fazer substituição apenas do PHP_SERVICE
-            # A porta SSL já está configurada como 443 no arquivo (porta padrão SSL dentro do container)
-            cat /etc/nginx/http.d/default-ssl-simple.conf | \
-                sed "s/\${PHP_SERVICE}/${PHP_SERVICE}/g" | \
-                sed "s/\$PHP_SERVICE/${PHP_SERVICE}/g" > /etc/nginx/http.d/default-ssl.conf
-            
-            echo "[docker-entrypoint] Conteúdo gerado do default-ssl.conf (primeiras linhas):"
+            echo "[docker-entrypoint] Conteúdo original do default-ssl.conf (primeiras linhas):"
             head -5 /etc/nginx/http.d/default-ssl.conf || true
             
-            # Verificar se a substituição SSL funcionou
-            if grep -q '\${PHP_SERVICE}' /etc/nginx/http.d/default-ssl.conf; then
-                echo "[docker-entrypoint] ERRO: Variável \${PHP_SERVICE} não foi substituída no default-ssl.conf!"
+            # IMPORTANTE: No modo genérico, precisamos remover os blocos das portas 8043-8543
+            # para evitar conflitos, pois esses serviços PHP-FPM podem não existir
+            # Primeiro, remover os blocos das portas 8043-8543 (modo unificado)
+            echo "[docker-entrypoint] Removendo blocos das portas 8043-8543 (modo unificado) do default-ssl.conf..."
+            echo "[docker-entrypoint] Mantendo apenas o bloco da porta 443 (modo genérico)..."
+            
+            # Remover desde o comentário "# Modo Unificado" até o final do arquivo
+            awk '
+                BEGIN { skip=0 }
+                /^# Modo Unificado - Múltiplas versões PHP/ { skip=1; next }
+                skip { next }
+                !skip { print }
+            ' /etc/nginx/http.d/default-ssl.conf > /etc/nginx/http.d/default-ssl.conf.tmp
+            
+            # Agora substituir a variável PHP_SERVICE no bloco restante (porta 443)
+            cat /etc/nginx/http.d/default-ssl.conf.tmp | \
+                sed "s/\${PHP_SERVICE}/${PHP_SERVICE}/g" | \
+                sed "s/\$PHP_SERVICE/${PHP_SERVICE}/g" > /etc/nginx/http.d/default-ssl.conf && \
+                rm -f /etc/nginx/http.d/default-ssl.conf.tmp
+            
+            echo "[docker-entrypoint] Blocos das portas 8043-8543 removidos, apenas porta 443 mantida"
+            
+            echo "[docker-entrypoint] Conteúdo gerado do default-ssl.conf (primeiras linhas):"
+            head -10 /etc/nginx/http.d/default-ssl.conf || true
+            
+            # Verificar se a substituição SSL funcionou (apenas no bloco da porta 443)
+            if grep -A 20 "listen 443 ssl" /etc/nginx/http.d/default-ssl.conf | grep -q '\${PHP_SERVICE}'; then
+                echo "[docker-entrypoint] ERRO: Variável \${PHP_SERVICE} não foi substituída no bloco SSL da porta 443!"
                 exit 1
             fi
-            if grep -q '\$PHP_SERVICE' /etc/nginx/http.d/default-ssl.conf; then
-                echo "[docker-entrypoint] ERRO: Variável \$PHP_SERVICE não foi substituída no default-ssl.conf!"
+            if grep -A 20 "listen 443 ssl" /etc/nginx/http.d/default-ssl.conf | grep -q '\$PHP_SERVICE'; then
+                echo "[docker-entrypoint] ERRO: Variável \$PHP_SERVICE não foi substituída no bloco SSL da porta 443!"
                 exit 1
+            fi
+            
+            # Verificar se os blocos das portas 8043-8543 foram removidos
+            if grep -q "listen 8043\|listen 8143\|listen 8243\|listen 8343\|listen 8443\|listen 8543" /etc/nginx/http.d/default-ssl.conf; then
+                echo "[docker-entrypoint] AVISO: Ainda existem blocos das portas 8043-8543 no arquivo!"
+                echo "[docker-entrypoint] Isso pode causar conflitos no modo genérico."
             fi
             
             echo "[docker-entrypoint] Configuração SSL gerada com sucesso:"
-            echo "[docker-entrypoint] Porta SSL configurada:"
-            grep "listen.*ssl" /etc/nginx/http.d/default-ssl.conf || true
-            echo "[docker-entrypoint] FastCGI configurado:"
-            grep "fastcgi_pass" /etc/nginx/http.d/default-ssl.conf || true
+            echo "[docker-entrypoint] Porta SSL configurada (porta 443):"
+            grep -A 2 "listen 443 ssl" /etc/nginx/http.d/default-ssl.conf || true
+            echo "[docker-entrypoint] FastCGI configurado (porta 443):"
+            grep -A 5 "listen 443 ssl" /etc/nginx/http.d/default-ssl.conf | grep "fastcgi_pass" || true
+        else
+            echo "[docker-entrypoint] ERRO: default-ssl.conf não encontrado após tentativas de restauração!"
+            echo "[docker-entrypoint] Arquivos disponíveis em /etc/nginx/http.d/:"
+            ls -la /etc/nginx/http.d/ 2>/dev/null || true
+            echo "[docker-entrypoint] Isso geralmente significa que a imagem precisa ser reconstruída."
+            echo "[docker-entrypoint] Execute: docker compose build nginx-php-8.0"
+            exit 1
         fi
         
         # IMPORTANTE: Criar backup dos templates antes de removê-los para restaurar em futuros restarts
@@ -128,13 +197,11 @@ if [ -n "$PHP_SERVICE" ]; then
         if [ -f /etc/nginx/http.d/default-simple.conf ]; then
             cp /etc/nginx/http.d/default-simple.conf /etc/nginx/http.d/default-simple.conf.bak 2>/dev/null || true
         fi
-        if [ -f /etc/nginx/http.d/default-ssl-simple.conf ]; then
-            cp /etc/nginx/http.d/default-ssl-simple.conf /etc/nginx/http.d/default-ssl-simple.conf.bak 2>/dev/null || true
-        fi
+        # Nota: default-ssl-simple.conf foi unificado em default-ssl.conf
+        # O backup do default-ssl.conf já foi criado acima, antes de processar o arquivo
         
         # Remover os arquivos template para evitar que o nginx tente carregá-los
         # Mas manteremos os backups para restaurar em futuros restarts
-        rm -f /etc/nginx/http.d/default-ssl-simple.conf 2>/dev/null || true
         rm -f /etc/nginx/http.d/default-simple.conf 2>/dev/null || true
         
         # Verificar se a substituição funcionou (apenas se geramos novos arquivos)
@@ -161,7 +228,6 @@ if [ -n "$PHP_SERVICE" ]; then
     else
         echo "[docker-entrypoint] Reutilizando configurações existentes (válidas)"
         # Remover templates se existirem (para evitar conflitos, mesmo quando reutilizamos)
-        rm -f /etc/nginx/http.d/default-ssl-simple.conf 2>/dev/null || true
         rm -f /etc/nginx/http.d/default-simple.conf 2>/dev/null || true
     fi
     echo "[docker-entrypoint] Verificando se há outros arquivos .conf no diretório http.d:"
@@ -184,7 +250,6 @@ else
     # Para nginx-unified, usar as configurações unificadas
     # IMPORTANTE: Remover arquivos de template que usam variáveis dinâmicas para evitar conflitos
     rm -f /etc/nginx/http.d/default-simple.conf 2>/dev/null || true
-    rm -f /etc/nginx/http.d/default-ssl-simple.conf 2>/dev/null || true
     
     # Restaurar my-site.conf do backup se ele não existir mas o backup existir
     # Isso acontece quando o container é reiniciado (não recriado) após uma execução anterior
@@ -237,6 +302,51 @@ else
     fi
     
     # default-ssl.conf já está no diretório (copiado pelo Dockerfile) e será carregado automaticamente
+    # O arquivo é unificado e contém todos os blocos server (porta 443 com variável + portas 8043-8543 hardcoded)
+    # Como PHP_SERVICE não está definido, precisamos remover o bloco da porta 443 para evitar erros
+    # (o nginx não consegue processar variáveis não substituídas)
+    if [ -f /etc/nginx/http.d/default-ssl.conf ]; then
+        echo "[docker-entrypoint] Removendo bloco da porta 443 (modo genérico) do default-ssl.conf..."
+        echo "[docker-entrypoint] Mantendo apenas os blocos das portas 8043-8543 (modo unificado)..."
+        
+        # Método mais simples e seguro: copiar apenas a partir da linha "# Modo Unificado"
+        # Isso garante que mantemos todos os blocos das portas 8043-8543 intactos
+        sed -n '/^# Modo Unificado - Múltiplas versões PHP/,$p' /etc/nginx/http.d/default-ssl.conf > /etc/nginx/http.d/default-ssl.conf.tmp
+        
+        # Verificar se o arquivo foi processado corretamente
+        if [ ! -s /etc/nginx/http.d/default-ssl.conf.tmp ]; then
+            echo "[docker-entrypoint] ERRO: Arquivo processado está vazio!"
+            rm -f /etc/nginx/http.d/default-ssl.conf.tmp
+            exit 1
+        fi
+        
+        # Verificar se o bloco do PHP 8.0 está presente
+        if ! grep -q "listen 8043 ssl" /etc/nginx/http.d/default-ssl.conf.tmp; then
+            echo "[docker-entrypoint] ERRO: Bloco do PHP 8.0 (porta 8043) não encontrado após processamento!"
+            rm -f /etc/nginx/http.d/default-ssl.conf.tmp
+            exit 1
+        fi
+        
+        # Verificar se o bloco da porta 443 foi removido
+        if grep -q "listen 443 ssl" /etc/nginx/http.d/default-ssl.conf.tmp; then
+            echo "[docker-entrypoint] AVISO: Bloco da porta 443 ainda está presente!"
+            echo "[docker-entrypoint] Isso não deveria acontecer. Verificando arquivo original..."
+            exit 1
+        fi
+        
+        mv /etc/nginx/http.d/default-ssl.conf.tmp /etc/nginx/http.d/default-ssl.conf
+        echo "[docker-entrypoint] Bloco da porta 443 removido com sucesso"
+        
+        # Validação final: verificar se todos os blocos esperados estão presentes
+        echo "[docker-entrypoint] Validando blocos SSL restantes..."
+        for port in 8043 8143 8243 8343 8443 8543; do
+            if ! grep -q "listen $port ssl" /etc/nginx/http.d/default-ssl.conf; then
+                echo "[docker-entrypoint] AVISO: Bloco da porta $port não encontrado!"
+            else
+                echo "[docker-entrypoint] OK: Bloco da porta $port encontrado"
+            fi
+        done
+    fi
     
     echo "[docker-entrypoint] Arquivos de configuração para nginx-unified:"
     ls -la /etc/nginx/http.d/*.conf 2>/dev/null || echo "Nenhum arquivo .conf encontrado"
