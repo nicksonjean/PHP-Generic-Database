@@ -167,8 +167,8 @@ if $RUNCOMMAND; then
         RUNVALUE=$(echo "$RUNVALUE" | sed "s/app /php-${PHP_VERSION}-fpm /g")
         RUNVALUE=$(echo "$RUNVALUE" | sed "s/ app / php-${PHP_VERSION}-fpm /g")
         RUNVALUE=$(echo "$RUNVALUE" | sed "s/ app/ php-${PHP_VERSION}-fpm/g")
-        # Substituir " nginx" (com espaço antes) por " nginx-{versao}"
-        RUNVALUE=$(echo "$RUNVALUE" | sed "s/ nginx/ nginx-${PHP_VERSION}/g")
+        # Substituir " nginx" (com espaço antes) por " nginx-php-{versao}"
+        RUNVALUE=$(echo "$RUNVALUE" | sed "s/ nginx/ nginx-php-${PHP_VERSION}/g")
         # Limpar espaços duplos
         RUNVALUE=$(echo "$RUNVALUE" | sed 's/  */ /g')
     fi
