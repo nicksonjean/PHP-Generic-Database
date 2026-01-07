@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <item>
+    <id>1</id>
+    <nome>Acre</nome>
+    <sigla>AC</sigla>
+  </item>
+  <item>
+    <id>2</id>
+    <nome>Alagoas</nome>
+    <sigla>AL</sigla>
+  </item>
+  <item>
+    <id>3</id>
+    <nome>Amazonas</nome>
+    <sigla>AM</sigla>
+  </item>
+  <item>
+    <id>4</id>
+    <nome>Amapá</nome>
+    <sigla>AP</sigla>
+  </item>
+  <item>
+    <id>5</id>
+    <nome>Bahia</nome>
+    <sigla>BA</sigla>
+  </item>
+  <item>
+    <id>6</id>
+    <nome>Ceará</nome>
+    <sigla>CE</sigla>
+  </item>
+  <item>
+    <id>7</id>
+    <nome>Distrito Federal</nome>
+    <sigla>DF</sigla>
+  </item>
+  <item>
+    <id>8</id>
+    <nome>Espírito Santo</nome>
+    <sigla>ES</sigla>
+  </item>
+  <item>
+    <id>9</id>
+    <nome>Goiás</nome>
+    <sigla>GO</sigla>
+  </item>
+  <item>
+    <id>10</id>
+    <nome>Maranhão</nome>
+    <sigla>MA</sigla>
+  </item>
+  <item>
+    <id>11</id>
+    <nome>Minas Gerais</nome>
+    <sigla>MG</sigla>
+  </item>
+  <item>
+    <id>12</id>
+    <nome>Mato Grosso do Sul</nome>
+    <sigla>MS</sigla>
+  </item>
+  <item>
+    <id>13</id>
+    <nome>Mato Grosso</nome>
+    <sigla>MT</sigla>
+  </item>
+  <item>
+    <id>14</id>
+    <nome>Pará</nome>
+    <sigla>PA</sigla>
+  </item>
+  <item>
+    <id>15</id>
+    <nome>Paraíba</nome>
+    <sigla>PB</sigla>
+  </item>
+  <item>
+    <id>16</id>
+    <nome>Pernambuco</nome>
+    <sigla>PE</sigla>
+  </item>
+  <item>
+    <id>17</id>
+    <nome>Piauí</nome>
+    <sigla>PI</sigla>
+  </item>
+  <item>
+    <id>18</id>
+    <nome>Paraná</nome>
+    <sigla>PR</sigla>
+  </item>
+  <item>
+    <id>19</id>
+    <nome>Rio de Janeiro</nome>
+    <sigla>RJ</sigla>
+  </item>
+  <item>
+    <id>20</id>
+    <nome>Rio Grande do Norte</nome>
+    <sigla>RN</sigla>
+  </item>
+  <item>
+    <id>21</id>
+    <nome>Rondônia</nome>
+    <sigla>RO</sigla>
+  </item>
+  <item>
+    <id>22</id>
+    <nome>Roraima</nome>
+    <sigla>RR</sigla>
+  </item>
+  <item>
+    <id>23</id>
+    <nome>Rio Grande do Sul</nome>
+    <sigla>RS</sigla>
+  </item>
+  <item>
+    <id>24</id>
+    <nome>Santa Catarina</nome>
+    <sigla>SC</sigla>
+  </item>
+  <item>
+    <id>25</id>
+    <nome>Sergipe</nome>
+    <sigla>SE</sigla>
+  </item>
+  <item>
+    <id>26</id>
+    <nome>São Paulo</nome>
+    <sigla>SP</sigla>
+  </item>
+  <item>
+    <id>27</id>
+    <nome>Tocantins</nome>
+    <sigla>TO</sigla>
+  </item>
+</root>
