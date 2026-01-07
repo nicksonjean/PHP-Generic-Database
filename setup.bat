@@ -179,6 +179,13 @@ if !RUNCOMMAND! == true (
     rem Substituir serviços genéricos por específicos baseado na versão PHP
     rem Isso evita conflitos quando executar múltiplas versões simultaneamente
     if defined PHP_VERSION (
+        rem Verificar se a versão PHP é suportada pelo FrankenPHP (apenas 8.2+)
+        set "FRANKENPHP_SUPPORTED=false"
+        if "!PHP_VERSION!"=="8.2" set "FRANKENPHP_SUPPORTED=true"
+        if "!PHP_VERSION!"=="8.3" set "FRANKENPHP_SUPPORTED=true"
+        if "!PHP_VERSION!"=="8.4" set "FRANKENPHP_SUPPORTED=true"
+        if "!PHP_VERSION!"=="8.5" set "FRANKENPHP_SUPPORTED=true"
+        
         rem Processar palavra por palavra para fazer substituições
         set "NEWVALUE="
         for %%I in (!RUNVALUE!) do (
@@ -186,14 +193,23 @@ if !RUNCOMMAND! == true (
             if "!TOKEN!"=="apache" (
                 set "NEWVALUE=!NEWVALUE! php-!PHP_VERSION!-apache"
             ) else (
-                if "!TOKEN!"=="app" (
+                if "!TOKEN!"=="fpm" (
                     set "NEWVALUE=!NEWVALUE! php-!PHP_VERSION!-fpm"
                 ) else (
                     if "!TOKEN!"=="nginx" (
                         set "NEWVALUE=!NEWVALUE! nginx-php-!PHP_VERSION!"
                     ) else (
-                        rem Outros serviços não são substituídos
-                        set "NEWVALUE=!NEWVALUE! !TOKEN!"
+                        if "!TOKEN!"=="frankenphp" (
+                            if "!FRANKENPHP_SUPPORTED!"=="true" (
+                                set "NEWVALUE=!NEWVALUE! php-!PHP_VERSION!-frankenphp"
+                            ) else (
+                                echo ERROR: FrankenPHP suporta apenas PHP 8.2, 8.3, 8.4 e 8.5. Versao fornecida: !PHP_VERSION!
+                                exit /b 1
+                            )
+                        ) else (
+                            rem Outros serviços não são substituídos
+                            set "NEWVALUE=!NEWVALUE! !TOKEN!"
+                        )
                     )
                 )
             )

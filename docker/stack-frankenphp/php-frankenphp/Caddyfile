@@ -1,0 +1,171 @@
+{
+    # Configurações globais do Caddy
+    auto_https off
+    admin localhost:2019
+}
+
+:80 {
+    # Servidor HTTP na porta 80
+    root * /var/www/html
+    encode zstd gzip
+    
+    # Tentar servir index files primeiro (index.php, index.html, index.htm)
+    # Se não encontrar, fazer directory listing
+    try_files {path} {path}/index.php {path}/index.html {path}/index.htm
+    
+    # PHP handler via FrankenPHP (processa arquivos .php)
+    # O php_server tenta servir index.php automaticamente em diretórios
+    @php {
+        path *.php
+    }
+    handle @php {
+        php_server
+    }
+    
+    # Servir arquivos estáticos e diretórios com listing habilitado
+    # Ocultar arquivos específicos (mantém apenas .php e diretórios visíveis)
+    handle {
+        file_server browse {
+            # Ocultar arquivos de configuração e build
+            hide composer.json
+            hide composer.lock
+            hide phpcs.xml
+            hide phpunit.xml
+            hide phpmd.xml
+            hide phpstan.neon
+            hide grumphp.yml
+            hide doctum.php
+            hide docker-compose.yml
+            hide favicon.ico
+            # Ocultar arquivos por extensão
+            hide *.stub.php
+            hide *.md
+            hide *.sh
+            hide *.bat
+            hide *.mmd
+            hide .htaccess
+            # Ocultar arquivos que começam com ponto
+            hide .*
+            # Ocultar diretórios específicos que não devem aparecer
+            hide vendor
+            hide cache
+            hide assets
+            hide resources
+            hide bin
+            hide docker
+            hide adminer
+            hide patches
+            hide .devcontainer
+            hide .stub
+            hide .git
+            hide .env
+            hide .env.*
+            hide .env.docker
+            hide trash
+            hide .cursor
+            hide .idea
+            hide .phpunit.cache
+            hide .qodo
+            hide .stubs
+            hide .vscode
+        }
+    }
+    
+    # Logs
+    log {
+        output stdout
+        format console
+    }
+    
+    # Headers de segurança
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        X-XSS-Protection "1; mode=block"
+    }
+}
+
+:443 {
+    # Servidor HTTPS na porta 443
+    root * /var/www/html
+    encode zstd gzip
+    
+    # Tentar servir index files primeiro (index.php, index.html, index.htm)
+    # Se não encontrar, fazer directory listing
+    try_files {path} {path}/index.php {path}/index.html {path}/index.htm
+    
+    # PHP handler via FrankenPHP (processa arquivos .php)
+    # O php_server tenta servir index.php automaticamente em diretórios
+    @php {
+        path *.php
+    }
+    handle @php {
+        php_server
+    }
+    
+    # Servir arquivos estáticos e diretórios com listing habilitado
+    # Ocultar arquivos específicos (mantém apenas .php e diretórios visíveis)
+    handle {
+        file_server browse {
+            # Ocultar arquivos de configuração e build
+            hide composer.json
+            hide composer.lock
+            hide phpcs.xml
+            hide phpunit.xml
+            hide phpmd.xml
+            hide phpstan.neon
+            hide grumphp.yml
+            hide doctum.php
+            hide docker-compose.yml
+            hide favicon.ico
+            # Ocultar arquivos por extensão
+            hide *.stub.php
+            hide *.md
+            hide *.sh
+            hide *.bat
+            hide *.mmd
+            hide .htaccess
+            # Ocultar arquivos que começam com ponto
+            hide .*
+            # Ocultar diretórios específicos que não devem aparecer
+            hide vendor
+            hide cache
+            hide assets
+            hide resources
+            hide bin
+            hide docker
+            hide adminer
+            hide patches
+            hide .devcontainer
+            hide .stub
+            hide .git
+            hide .env
+            hide .env.*
+            hide .env.docker
+            hide trash
+            hide .cursor
+            hide .idea
+            hide .phpunit.cache
+            hide .qodo
+            hide .stubs
+            hide .vscode
+        }
+    }
+    
+    # TLS (auto HTTPS desabilitado, usar certificados próprios se necessário)
+    tls internal
+    
+    # Logs
+    log {
+        output stdout
+        format console
+    }
+    
+    # Headers de segurança
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        X-XSS-Protection "1; mode=block"
+        Strict-Transport-Security "max-age=31536000;"
+    }
+}

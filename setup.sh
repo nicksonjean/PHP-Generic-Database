@@ -161,14 +161,31 @@ if $RUNCOMMAND; then
     # Substituir serviços genéricos por específicos baseado na versão PHP
     # Isso evita conflitos quando executar múltiplas versões simultaneamente
     if [ -n "$PHP_VERSION" ]; then
+        # Verificar se a versão PHP é suportada pelo FrankenPHP (apenas 8.2+)
+        FRANKENPHP_SUPPORTED=false
+        case "$PHP_VERSION" in
+            8.2|8.3|8.4|8.5)
+                FRANKENPHP_SUPPORTED=true
+                ;;
+        esac
+        
         # Substituir " apache" (com espaço antes) por " php-{versao}-apache"
         RUNVALUE=$(echo "$RUNVALUE" | sed "s/ apache/ php-${PHP_VERSION}-apache/g")
-        # Substituir "app " (com espaço depois) ou " app " (com espaços) ou " app" (com espaço antes) por "php-{versao}-fpm"
-        RUNVALUE=$(echo "$RUNVALUE" | sed "s/app /php-${PHP_VERSION}-fpm /g")
-        RUNVALUE=$(echo "$RUNVALUE" | sed "s/ app / php-${PHP_VERSION}-fpm /g")
-        RUNVALUE=$(echo "$RUNVALUE" | sed "s/ app/ php-${PHP_VERSION}-fpm/g")
+        # Substituir "fpm " (com espaço depois) ou " fpm " (com espaços) ou " fpm" (com espaço antes) por "php-{versao}-fpm"
+        RUNVALUE=$(echo "$RUNVALUE" | sed "s/fpm /php-${PHP_VERSION}-fpm /g")
+        RUNVALUE=$(echo "$RUNVALUE" | sed "s/ fpm / php-${PHP_VERSION}-fpm /g")
+        RUNVALUE=$(echo "$RUNVALUE" | sed "s/ fpm/ php-${PHP_VERSION}-fpm/g")
         # Substituir " nginx" (com espaço antes) por " nginx-php-{versao}"
         RUNVALUE=$(echo "$RUNVALUE" | sed "s/ nginx/ nginx-php-${PHP_VERSION}/g")
+        # Substituir " frankenphp" (com espaço antes) por " php-{versao}-frankenphp"
+        if [ "$FRANKENPHP_SUPPORTED" = "true" ]; then
+            RUNVALUE=$(echo "$RUNVALUE" | sed "s/ frankenphp/ php-${PHP_VERSION}-frankenphp/g")
+        else
+            if echo "$RUNVALUE" | grep -q " frankenphp"; then
+                echo "ERROR: FrankenPHP suporta apenas PHP 8.2, 8.3, 8.4 e 8.5. Versão fornecida: $PHP_VERSION"
+                exit 1
+            fi
+        fi
         # Limpar espaços duplos
         RUNVALUE=$(echo "$RUNVALUE" | sed 's/  */ /g')
     fi
