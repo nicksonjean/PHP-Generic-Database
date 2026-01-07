@@ -9,12 +9,18 @@
     root * /var/www/html
     encode zstd gzip
     
+    # Bloquear acesso direto a arquivos e diretórios que não devem ser exibidos
+    @blocked {
+        path_regexp ^/(\.|vendor|cache|assets|resources|bin|docker|adminer|patches|trash|\.devcontainer|\.stub|\.git|\.env|\.cursor|\.idea|\.phpunit\.cache|\.qodo|\.stubs|\.vscode)/|^/(composer\.(json|lock)|phpcs\.xml|phpunit\.xml|phpmd\.xml|phpstan\.neon|grumphp\.yml|doctum\.php|docker-compose\.yml|favicon\.ico|\.htaccess|.*\.(stub\.php|md|sh|bat|mmd))$|^/\.
+    }
+    handle @blocked {
+        respond "Not Found" 404
+    }
+    
     # Tentar servir index files primeiro (index.php, index.html, index.htm)
-    # Se não encontrar, fazer directory listing
     try_files {path} {path}/index.php {path}/index.html {path}/index.htm
     
     # PHP handler via FrankenPHP (processa arquivos .php)
-    # O php_server tenta servir index.php automaticamente em diretórios
     @php {
         path *.php
     }
@@ -23,10 +29,30 @@
     }
     
     # Servir arquivos estáticos e diretórios com listing habilitado
-    # Ocultar arquivos específicos (mantém apenas .php e diretórios visíveis)
     handle {
         file_server browse {
-            # Ocultar arquivos de configuração e build
+            # Ocultar TODOS os diretórios EXCETO build, connections, docs, readme, samples
+            hide vendor
+            hide cache
+            hide assets
+            hide resources
+            hide bin
+            hide docker
+            hide adminer
+            hide patches
+            hide trash
+            hide .devcontainer
+            hide .stub
+            hide .git
+            hide .env
+            hide .cursor
+            hide .idea
+            hide .phpunit.cache
+            hide .qodo
+            hide .stubs
+            hide .vscode
+            
+            # Ocultar TODOS os arquivos de configuração
             hide composer.json
             hide composer.lock
             hide phpcs.xml
@@ -37,37 +63,28 @@
             hide doctum.php
             hide docker-compose.yml
             hide favicon.ico
-            # Ocultar arquivos por extensão
+            hide .htaccess
+            hide .env.*
+            hide .env.docker
+            
+            # Ocultar por extensão (EXCETO .php que não está listado)
             hide *.stub.php
             hide *.md
             hide *.sh
             hide *.bat
             hide *.mmd
-            hide .htaccess
+            hide *.txt
+            hide *.json
+            hide *.xml
+            hide *.yml
+            hide *.yaml
+            hide *.lock
+            hide *.log
+            hide *.ini
+            hide *.conf
+            
             # Ocultar arquivos que começam com ponto
             hide .*
-            # Ocultar diretórios específicos que não devem aparecer
-            hide vendor
-            hide cache
-            hide assets
-            hide resources
-            hide bin
-            hide docker
-            hide adminer
-            hide patches
-            hide .devcontainer
-            hide .stub
-            hide .git
-            hide .env
-            hide .env.*
-            hide .env.docker
-            hide trash
-            hide .cursor
-            hide .idea
-            hide .phpunit.cache
-            hide .qodo
-            hide .stubs
-            hide .vscode
         }
     }
     
@@ -85,17 +102,23 @@
     }
 }
 
-:443 {
-    # Servidor HTTPS na porta 443
+localhost:443 {
+    # Servidor HTTPS na porta 443 com hostname localhost
     root * /var/www/html
     encode zstd gzip
     
+    # Bloquear acesso direto a arquivos e diretórios que não devem ser exibidos
+    @blocked {
+        path_regexp ^/(\.|vendor|cache|assets|resources|bin|docker|adminer|patches|trash|\.devcontainer|\.stub|\.git|\.env|\.cursor|\.idea|\.phpunit\.cache|\.qodo|\.stubs|\.vscode)/|^/(composer\.(json|lock)|phpcs\.xml|phpunit\.xml|phpmd\.xml|phpstan\.neon|grumphp\.yml|doctum\.php|docker-compose\.yml|favicon\.ico|\.htaccess|.*\.(stub\.php|md|sh|bat|mmd))$|^/\.
+    }
+    handle @blocked {
+        respond "Not Found" 404
+    }
+    
     # Tentar servir index files primeiro (index.php, index.html, index.htm)
-    # Se não encontrar, fazer directory listing
     try_files {path} {path}/index.php {path}/index.html {path}/index.htm
     
     # PHP handler via FrankenPHP (processa arquivos .php)
-    # O php_server tenta servir index.php automaticamente em diretórios
     @php {
         path *.php
     }
@@ -104,10 +127,30 @@
     }
     
     # Servir arquivos estáticos e diretórios com listing habilitado
-    # Ocultar arquivos específicos (mantém apenas .php e diretórios visíveis)
     handle {
         file_server browse {
-            # Ocultar arquivos de configuração e build
+            # Ocultar TODOS os diretórios EXCETO build, connections, docs, readme, samples
+            hide vendor
+            hide cache
+            hide assets
+            hide resources
+            hide bin
+            hide docker
+            hide adminer
+            hide patches
+            hide trash
+            hide .devcontainer
+            hide .stub
+            hide .git
+            hide .env
+            hide .cursor
+            hide .idea
+            hide .phpunit.cache
+            hide .qodo
+            hide .stubs
+            hide .vscode
+            
+            # Ocultar TODOS os arquivos de configuração
             hide composer.json
             hide composer.lock
             hide phpcs.xml
@@ -118,41 +161,32 @@
             hide doctum.php
             hide docker-compose.yml
             hide favicon.ico
-            # Ocultar arquivos por extensão
+            hide .htaccess
+            hide .env.*
+            hide .env.docker
+            
+            # Ocultar por extensão (EXCETO .php que não está listado)
             hide *.stub.php
             hide *.md
             hide *.sh
             hide *.bat
             hide *.mmd
-            hide .htaccess
+            hide *.txt
+            hide *.json
+            hide *.xml
+            hide *.yml
+            hide *.yaml
+            hide *.lock
+            hide *.log
+            hide *.ini
+            hide *.conf
+            
             # Ocultar arquivos que começam com ponto
             hide .*
-            # Ocultar diretórios específicos que não devem aparecer
-            hide vendor
-            hide cache
-            hide assets
-            hide resources
-            hide bin
-            hide docker
-            hide adminer
-            hide patches
-            hide .devcontainer
-            hide .stub
-            hide .git
-            hide .env
-            hide .env.*
-            hide .env.docker
-            hide trash
-            hide .cursor
-            hide .idea
-            hide .phpunit.cache
-            hide .qodo
-            hide .stubs
-            hide .vscode
         }
     }
     
-    # TLS (auto HTTPS desabilitado, usar certificados próprios se necessário)
+    # TLS - usar internal para desenvolvimento local (certificado auto-assinado)
     tls internal
     
     # Logs
