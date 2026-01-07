@@ -515,6 +515,7 @@ security3.fdb
 resources/database/firebird/system/security3.fdb
 resources/database/firebird/data/DB.FDB
 resources/database/sqlite/data/DB.SQLITE
+resources/database/postgresql/*
 resources/migrations/oracle/oracle.fcpx
 resources/migrations/postgresql/postgresql.fcpx
 resources/migrations/sqlsrv/sqlsrv.fcpx
