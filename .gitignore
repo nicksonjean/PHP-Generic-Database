@@ -512,10 +512,9 @@ security3.fdb
 .qodo
 
 ### Resources
-resources/database/firebird/system/security3.fdb
-resources/database/firebird/data/DB.FDB
-resources/database/sqlite/data/DB.SQLITE
-resources/database/postgresql/*
+resources/database/firebird/
+resources/database/postgres/
+resources/database/sqlite/
 resources/migrations/oracle/oracle.fcpx
 resources/migrations/postgresql/postgresql.fcpx
 resources/migrations/sqlsrv/sqlsrv.fcpx
