@@ -9,11 +9,22 @@
     root * /var/www/html
     encode zstd gzip
     
-    # Bloquear acesso direto a arquivos e diretórios que não devem ser exibidos
-    @blocked {
-        path_regexp ^/(\.|vendor|cache|assets|resources|bin|docker|adminer|patches|trash|\.devcontainer|\.stub|\.git|\.env|\.cursor|\.idea|\.phpunit\.cache|\.qodo|\.stubs|\.vscode)/|^/(composer\.(json|lock)|phpcs\.xml|phpunit\.xml|phpmd\.xml|phpstan\.neon|grumphp\.yml|doctum\.php|docker-compose\.yml|favicon\.ico|\.htaccess|.*\.(stub\.php|md|sh|bat|mmd))$|^/\.
+    # Permitir acesso aos arquivos estáticos do template (CSS/JS)
+    @template_assets {
+        path /docker/assets/frankenphp-directory-listing/*
     }
-    handle @blocked {
+    handle @template_assets {
+        file_server
+    }
+    
+    # Bloquear acesso direto a arquivos e diretórios que não devem ser exibidos
+    # IMPORTANTE: Apenas bloquear na raiz, não dentro das pastas permitidas
+    @blocked_root {
+        path_regexp ^/(\.|vendor|cache|assets|resources|bin|docker|adminer|patches|trash|scripts|src|tests|\.devcontainer|\.stub|\.git|\.env|\.cursor|\.idea|\.phpunit\.cache|\.qodo|\.stubs|\.vscode)/|^/(composer\.(json|lock)|phpcs\.xml|phpunit\.xml|phpmd\.xml|phpstan\.neon|grumphp\.yml|doctum\.php|docker-compose\.yml|favicon\.ico|\.htaccess|README\.md|class-diagram\.mmd|flowchart\.mmd|.*\.(stub\.php|md|sh|bat|mmd|txt|json|xml|yml|yaml|lock|log|ini|conf|css|js|html|png|jpg|jpeg|gif|svg|ico|zip))$|^/\.
+        not path /docker/assets/frankenphp-directory-listing/*
+        not path_regexp ^/(build|connections|docs|readme|samples)/
+    }
+    handle @blocked_root {
         respond "Not Found" 404
     }
     
@@ -23,68 +34,17 @@
     # PHP handler via FrankenPHP (processa arquivos .php)
     @php {
         path *.php
+        not path *.stub.php
     }
     handle @php {
         php_server
     }
     
     # Servir arquivos estáticos e diretórios com listing habilitado
+    # Usar template customizado para filtrar o que é exibido
     handle {
-        file_server browse {
-            # Ocultar TODOS os diretórios EXCETO build, connections, docs, readme, samples
-            hide vendor
-            hide cache
-            hide assets
-            hide resources
-            hide bin
-            hide docker
-            hide adminer
-            hide patches
-            hide trash
-            hide .devcontainer
-            hide .stub
-            hide .git
-            hide .env
-            hide .cursor
-            hide .idea
-            hide .phpunit.cache
-            hide .qodo
-            hide .stubs
-            hide .vscode
-            
-            # Ocultar TODOS os arquivos de configuração
-            hide composer.json
-            hide composer.lock
-            hide phpcs.xml
-            hide phpunit.xml
-            hide phpmd.xml
-            hide phpstan.neon
-            hide grumphp.yml
-            hide doctum.php
-            hide docker-compose.yml
-            hide favicon.ico
-            hide .htaccess
-            hide .env.*
-            hide .env.docker
-            
-            # Ocultar por extensão (EXCETO .php que não está listado)
-            hide *.stub.php
-            hide *.md
-            hide *.sh
-            hide *.bat
-            hide *.mmd
-            hide *.txt
-            hide *.json
-            hide *.xml
-            hide *.yml
-            hide *.yaml
-            hide *.lock
-            hide *.log
-            hide *.ini
-            hide *.conf
-            
-            # Ocultar arquivos que começam com ponto
-            hide .*
+        file_server {
+            browse /var/www/html/docker/assets/frankenphp-directory-listing/browse-template.html
         }
     }
     
@@ -107,11 +67,22 @@ localhost:443 {
     root * /var/www/html
     encode zstd gzip
     
-    # Bloquear acesso direto a arquivos e diretórios que não devem ser exibidos
-    @blocked {
-        path_regexp ^/(\.|vendor|cache|assets|resources|bin|docker|adminer|patches|trash|\.devcontainer|\.stub|\.git|\.env|\.cursor|\.idea|\.phpunit\.cache|\.qodo|\.stubs|\.vscode)/|^/(composer\.(json|lock)|phpcs\.xml|phpunit\.xml|phpmd\.xml|phpstan\.neon|grumphp\.yml|doctum\.php|docker-compose\.yml|favicon\.ico|\.htaccess|.*\.(stub\.php|md|sh|bat|mmd))$|^/\.
+    # Permitir acesso aos arquivos estáticos do template (CSS/JS)
+    @template_assets {
+        path /docker/assets/frankenphp-directory-listing/*
     }
-    handle @blocked {
+    handle @template_assets {
+        file_server
+    }
+    
+    # Bloquear acesso direto a arquivos e diretórios que não devem ser exibidos
+    # IMPORTANTE: Apenas bloquear na raiz, não dentro das pastas permitidas
+    @blocked_root {
+        path_regexp ^/(\.|vendor|cache|assets|resources|bin|docker|adminer|patches|trash|scripts|src|tests|\.devcontainer|\.stub|\.git|\.env|\.cursor|\.idea|\.phpunit\.cache|\.qodo|\.stubs|\.vscode)/|^/(composer\.(json|lock)|phpcs\.xml|phpunit\.xml|phpmd\.xml|phpstan\.neon|grumphp\.yml|doctum\.php|docker-compose\.yml|favicon\.ico|\.htaccess|README\.md|class-diagram\.mmd|flowchart\.mmd|.*\.(stub\.php|md|sh|bat|mmd|txt|json|xml|yml|yaml|lock|log|ini|conf|css|js|html|png|jpg|jpeg|gif|svg|ico|zip))$|^/\.
+        not path /docker/assets/frankenphp-directory-listing/*
+        not path_regexp ^/(build|connections|docs|readme|samples)/
+    }
+    handle @blocked_root {
         respond "Not Found" 404
     }
     
@@ -121,68 +92,17 @@ localhost:443 {
     # PHP handler via FrankenPHP (processa arquivos .php)
     @php {
         path *.php
+        not path *.stub.php
     }
     handle @php {
         php_server
     }
     
     # Servir arquivos estáticos e diretórios com listing habilitado
+    # Usar template customizado para filtrar o que é exibido
     handle {
-        file_server browse {
-            # Ocultar TODOS os diretórios EXCETO build, connections, docs, readme, samples
-            hide vendor
-            hide cache
-            hide assets
-            hide resources
-            hide bin
-            hide docker
-            hide adminer
-            hide patches
-            hide trash
-            hide .devcontainer
-            hide .stub
-            hide .git
-            hide .env
-            hide .cursor
-            hide .idea
-            hide .phpunit.cache
-            hide .qodo
-            hide .stubs
-            hide .vscode
-            
-            # Ocultar TODOS os arquivos de configuração
-            hide composer.json
-            hide composer.lock
-            hide phpcs.xml
-            hide phpunit.xml
-            hide phpmd.xml
-            hide phpstan.neon
-            hide grumphp.yml
-            hide doctum.php
-            hide docker-compose.yml
-            hide favicon.ico
-            hide .htaccess
-            hide .env.*
-            hide .env.docker
-            
-            # Ocultar por extensão (EXCETO .php que não está listado)
-            hide *.stub.php
-            hide *.md
-            hide *.sh
-            hide *.bat
-            hide *.mmd
-            hide *.txt
-            hide *.json
-            hide *.xml
-            hide *.yml
-            hide *.yaml
-            hide *.lock
-            hide *.log
-            hide *.ini
-            hide *.conf
-            
-            # Ocultar arquivos que começam com ponto
-            hide .*
+        file_server {
+            browse /var/www/html/docker/assets/frankenphp-directory-listing/browse-template.html
         }
     }
     

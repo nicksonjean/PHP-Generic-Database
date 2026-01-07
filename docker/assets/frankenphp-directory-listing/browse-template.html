@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Files Directory Listing">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#282523">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📁</text></svg>">
+    <link rel="stylesheet" href="/docker/assets/frankenphp-directory-listing/css/style.css">
+    <title>Index of {{.Path}}</title>
+    <script>
+        // Apply theme IMMEDIATELY before any rendering
+        (function() {
+            const savedTheme = localStorage.getItem('frankenphp-directory-theme');
+            
+            if (savedTheme === 'dark-theme') {
+                document.documentElement.classList.remove('light-theme', 'dark-theme');
+                document.documentElement.classList.add('dark-theme');
+            } else if (savedTheme === 'light-theme' || savedTheme === 'light') {
+                document.documentElement.classList.remove('light-theme', 'dark-theme');
+                document.documentElement.classList.add('light-theme');
+            } else {
+                const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.classList.remove('light-theme', 'dark-theme');
+                
+                if (prefersDarkScheme) {
+                    document.documentElement.classList.add('dark-theme');
+                    localStorage.setItem('frankenphp-directory-theme', 'dark-theme');
+                } else {
+                    document.documentElement.classList.add('light-theme');
+                    localStorage.setItem('frankenphp-directory-theme', 'light-theme');
+                }
+            }
+        })();
+    </script>
+</head>
+<body>
+    <h1 class="title">Index of<span class="js-path"></span></h1>
+    {{/* Definir se estamos na raiz antes do loop - raiz é apenas "/" ou "" */}}
+    {{$isRoot := or (eq .Path "/") (eq .Path "")}}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Modified</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{if .CanGoUp}}
+            <tr class="parent">
+                <td>
+                    <a href=".." class="dir">
+                        <span class="icon">📁</span>
+                        <span class="name">↑ Parent Directory</span>
+                    </a>
+                </td>
+                <td class="size">-</td>
+                <td class="date">-</td>
+            </tr>
+            {{end}}
+            {{range .Items}}
+                {{if .IsDir}}
+                    {{if $isRoot}}
+                        {{/* Na raiz, mostrar apenas as 5 pastas específicas */}}
+                        {{if or (eq .Name "build") (eq .Name "build/") (eq .Name "connections") (eq .Name "connections/") (eq .Name "docs") (eq .Name "docs/") (eq .Name "readme") (eq .Name "readme/") (eq .Name "samples") (eq .Name "samples/")}}
+                            <tr>
+                                <td>
+                                    <a href="{{.URL}}" class="dir">
+                                        <span class="icon">📁</span>
+                                        <span class="name">{{.Name}}</span>
+                                    </a>
+                                </td>
+                                <td class="size">-</td>
+                                <td class="date">{{.HumanModTime "02/01/2006 15:04:05"}}</td>
+                            </tr>
+                        {{end}}
+                    {{else}}
+                        {{/* Em subdiretórios, mostrar TODAS as pastas */}}
+                        <tr>
+                            <td>
+                                <a href="{{.URL}}" class="dir">
+                                    <span class="icon">📁</span>
+                                    <span class="name">{{.Name}}</span>
+                                </a>
+                            </td>
+                            <td class="size">-</td>
+                            <td class="date">{{.HumanModTime "02/01/2006 15:04:05"}}</td>
+                        </tr>
+                    {{end}}
+                {{else}}
+                    {{if $isRoot}}
+                        {{/* Na raiz, mostrar apenas phpinfo.php */}}
+                        {{if eq .Name "phpinfo.php"}}
+                            <tr>
+                                <td>
+                                    <a href="{{.URL}}" class="file">
+                                        <span class="icon">📄</span>
+                                        <span class="name">{{.Name}}</span>
+                                    </a>
+                                </td>
+                                <td class="size">{{.HumanSize}}</td>
+                                <td class="date">{{.HumanModTime "02/01/2006 15:04:05"}}</td>
+                            </tr>
+                        {{end}}
+                    {{else}}
+                        {{/* Em subdiretórios, mostrar TODOS os arquivos (exceto .stub.php) */}}
+                        {{$parts := splitList "." .Name}}
+                        {{$numParts := len $parts}}
+                        {{$isStub := false}}
+                        {{if ge $numParts 3}}
+                            {{$lastPart := index $parts (sub $numParts 1)}}
+                            {{$secondLast := index $parts (sub $numParts 2)}}
+                            {{if and (eq $lastPart "php") (eq $secondLast "stub")}}
+                                {{$isStub = true}}
+                            {{end}}
+                        {{end}}
+                        {{if not $isStub}}
+                            <tr>
+                                <td>
+                                    <a href="{{.URL}}" class="file">
+                                        <span class="icon">📄</span>
+                                        <span class="name">{{.Name}}</span>
+                                    </a>
+                                </td>
+                                <td class="size">{{.HumanSize}}</td>
+                                <td class="date">{{.HumanModTime "02/01/2006 15:04:05"}}</td>
+                            </tr>
+                        {{end}}
+                    {{end}}
+                {{end}}
+            {{end}}
+        </tbody>
+    </table>
+    
+    <footer id="footer">
+    </footer>
+    
+    <script src="/docker/assets/frankenphp-directory-listing/js/config.js"></script>
+</body>
+</html>
