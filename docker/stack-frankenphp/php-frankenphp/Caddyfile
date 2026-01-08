@@ -1,10 +1,11 @@
 {
     # Configurações globais do Caddy
-    auto_https off
+    # Não usar auto_https off - permite que HTTP e HTTPS funcionem simultaneamente
+    # ao especificar explicitamente http://:80 e https://:443
     admin localhost:2019
 }
 
-:80 {
+http://:80 {
     # Servidor HTTP na porta 80
     root * /var/www/html
     encode zstd gzip
@@ -62,8 +63,14 @@
     }
 }
 
-localhost:443 {
-    # Servidor HTTPS na porta 443 com hostname localhost
+https://:443 {
+    # Servidor HTTPS na porta 443
+    # TLS - usar internal para desenvolvimento local (certificado auto-assinado)
+    # O certificado será gerado para localhost, mas aceita qualquer hostname na porta 443
+    tls internal {
+        on_demand
+    }
+    
     root * /var/www/html
     encode zstd gzip
     
@@ -105,9 +112,6 @@ localhost:443 {
             browse /var/www/html/docker/assets/frankenphp-directory-listing/browse-template.html
         }
     }
-    
-    # TLS - usar internal para desenvolvimento local (certificado auto-assinado)
-    tls internal
     
     # Logs
     log {
