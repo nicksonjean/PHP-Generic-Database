@@ -32,12 +32,40 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
 
     private function settings(): array
     {
-        $serverInfo = sqlsrv_server_info($this->getInstance()->getConnection());
-        $clientVersion = sqlsrv_client_info($this->getInstance()->getConnection());
+        $connection = $this->getInstance()->getConnection();
+        if ($connection === false || $connection === null) {
+            throw new Exceptions("Invalid SQL Server connection: connection resource is not available");
+        }
+        $serverInfo = sqlsrv_server_info($connection);
+        $clientVersion = sqlsrv_client_info($connection);
+        if ($serverInfo === false) {
+            $errors = sqlsrv_errors(SQLSRV_ERR_ALL);
+            $errorMsg = "Failed to retrieve server info";
+            if ($errors !== null) {
+                $errorMessages = [];
+                foreach ($errors as $error) {
+                    $errorMessages[] = "[" . $error['code'] . "] " . $error['message'];
+                }
+                $errorMsg .= ": " . implode("; ", $errorMessages);
+            }
+            throw new Exceptions($errorMsg);
+        }
+        if ($clientVersion === false) {
+            $errors = sqlsrv_errors(SQLSRV_ERR_ALL);
+            $errorMsg = "Failed to retrieve client info";
+            if ($errors !== null) {
+                $errorMessages = [];
+                foreach ($errors as $error) {
+                    $errorMessages[] = "[" . $error['code'] . "] " . $error['message'];
+                }
+                $errorMsg .= ": " . implode("; ", $errorMessages);
+            }
+            throw new Exceptions($errorMsg);
+        }
         return [
             'server_info' => $serverInfo,
             'client_version' => $clientVersion,
-            'server_version' => $serverInfo['SQLServerVersion']
+            'server_version' => $serverInfo['SQLServerVersion'] ?? 'Unknown'
         ];
     }
 

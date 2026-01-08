@@ -74,7 +74,7 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * Instance of the connection with database
      * @var mixed $connection
      */
-    private static mixed $connection;
+    private static mixed $connection = null;
 
     private static IFetch $fetchHandler;
 
@@ -227,7 +227,31 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
                 if ($this->getOptionsHandler()->getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT)) {
                     $connectionInfo['LoginTimeout'] = $this->getOptionsHandler()->getOptions(SQLSrv::ATTR_CONNECT_TIMEOUT);
                 }
-                $this->setConnection(sqlsrv_connect($serverName, $connectionInfo));
+                // Configure SSL/TLS options for ODBC Driver 18+ (defaults to trusting server certificate for self-signed certs)
+                $trustServerCert = $this->getOptionsHandler()->getOptions(SQLSrv::ATTR_TRUST_SERVER_CERTIFICATE);
+                if ($trustServerCert === null) {
+                    // Default to true for self-signed certificates compatibility
+                    $trustServerCert = true;
+                }
+                $connectionInfo['TrustServerCertificate'] = $trustServerCert ? 'Yes' : 'No';
+                $encrypt = $this->getOptionsHandler()->getOptions(SQLSrv::ATTR_ENCRYPT);
+                if ($encrypt !== null) {
+                    $connectionInfo['Encrypt'] = $encrypt ? 'Yes' : 'No';
+                }
+                $connection = sqlsrv_connect($serverName, $connectionInfo);
+                if ($connection === false) {
+                    $errors = sqlsrv_errors(SQLSRV_ERR_ALL);
+                    $errorMsg = "Failed to connect to SQL Server";
+                    if ($errors !== null) {
+                        $errorMessages = [];
+                        foreach ($errors as $error) {
+                            $errorMessages[] = "[" . $error['code'] . "] " . $error['message'];
+                        }
+                        $errorMsg .= ": " . implode("; ", $errorMessages);
+                    }
+                    throw new Exceptions($errorMsg);
+                }
+                $this->setConnection($connection);
             } else {
                 $errors = $validator->getErrors();
                 if (!empty($errors)) {
@@ -302,11 +326,12 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     public function disconnect(): void
     {
-        if ($this->isConnected()) {
+        $connection = $this->getConnection();
+        if ($connection !== null && $this->isConnected()) {
             static::setConnected(false);
             if (!$this->getOptionsHandler()->getOptions(SQLSrv::ATTR_PERSISTENT)) {
-                if (Compare::connection($this->getConnection()) === 'sqlsrv') {
-                    sqlsrv_close($this->getConnection());
+                if (Compare::connection($connection) === 'sqlsrv') {
+                    sqlsrv_close($connection);
                 }
                 $this->setConnection(null);
             }
@@ -320,7 +345,15 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     public function isConnected(): bool
     {
-        return (Compare::connection($this->getConnection()) === 'sqlsrv') && $this->getInstance()->getConnected();
+        $connection = $this->getConnection();
+        if ($connection === null) {
+            return false;
+        }
+        try {
+            return (Compare::connection($connection) === 'sqlsrv') && $this->getInstance()->getConnected();
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     /**
@@ -340,7 +373,7 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      */
     public function getConnection(): mixed
     {
-        return self::$connection;
+        return self::$connection ?? null;
     }
 
     /**

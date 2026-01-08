@@ -6,8 +6,10 @@ ARG PHP_BASE_TAG=-bookworm
 
 # Usa a imagem oficial do FrankenPHP
 # FrankenPHP suporta apenas PHP 8.2, 8.3, 8.4 e 8.5
-# Imagem base: dunglas/frankenphp:latest (Debian-based, recomendado)
-FROM dunglas/frankenphp:latest
+# Imagem base: dunglas/frankenphp:{version}-php{VERSION}-bookworm (Debian-based, recomendado)
+# Usa a versão específica do PHP ao invés de latest para garantir a versão correta
+# Formato da tag: 1-php8.2-bookworm, 1-php8.3-bookworm, etc.
+FROM dunglas/frankenphp:1-php${PHP_VERSION}-bookworm
 
 # Redeclara os argumentos enviados pelo docker-compose.yml
 ARG PHP_VERSION
@@ -44,7 +46,7 @@ ENV \
   FRANKENPHP_CONFIG="worker ./public/index.php"
 
 # Atualizar o sistema e instalar dependências
-# Nota: Debian Trixie (usado pelo FrankenPHP) tem nomes de pacotes diferentes
+# Nota: Debian Bookworm (usado pelo FrankenPHP) usa nomes de pacotes específicos
 RUN \
   apt-get update && apt-get install -y \
   libpq-dev \
@@ -67,7 +69,7 @@ RUN \
   unzip \
   libxml2-dev \
   libxslt-dev \
-  libaio1t64 \
+  libaio1 \
   libaio-dev \
   ssl-cert \
   git \
@@ -80,8 +82,10 @@ RUN \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
   (rm -f /var/log/lastlog /var/log/faillog || true) && \
   # Criar link simbólico para compatibilidade com aplicações que esperam libaio.so.1
-  (test -f /usr/lib/x86_64-linux-gnu/libaio.so.1t64 && \
-   ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/libaio.so.1 || true)
+  (test -f /usr/lib/x86_64-linux-gnu/libaio.so.1.0.1 && \
+   ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1.0.1 /usr/lib/libaio.so.1 || \
+   test -f /usr/lib/x86_64-linux-gnu/libaio.so.1 && \
+   echo "libaio.so.1 already exists" || true)
 
 # Install PHP extensions using install-php-extensions (suporta ZTS)
 # FrankenPHP requer extensões compiladas com ZTS (Zend Thread Safety)
@@ -202,20 +206,17 @@ RUN \
   fi
 
 # Download and Install sqlsrv and pdo_sqlsrv
-# Nota: Pode requerer compilação manual com ZTS se install-php-extensions não suportar
+# Usa install-php-extensions (mlocati) que suporta ZTS necessário para FrankenPHP
 RUN \
-  if [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ]; then \
-    echo "Installing sqlsrv and pdo_sqlsrv via PECL for PHP ${PHP_VERSION}..." && \
-    pecl install sqlsrv pdo_sqlsrv && \
-    docker-php-ext-enable sqlsrv pdo_sqlsrv || \
-    (echo "Warning: sqlsrv/pdo_sqlsrv may require manual ZTS compilation" && exit 0); \
-  elif [ "$PHP_VERSION" = "8.4" ]; then \
-    echo "Installing sqlsrv and pdo_sqlsrv via mlocati for PHP 8.4..." && \
+  if [ "$PHP_VERSION" = "8.2" ] || [ "$PHP_VERSION" = "8.3" ] || [ "$PHP_VERSION" = "8.4" ]; then \
+    echo "Installing sqlsrv and pdo_sqlsrv via mlocati for PHP ${PHP_VERSION}..." && \
     curl -sSLf --connect-timeout 30 --max-time 300 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /tmp/install-php-extensions && \
     chmod +x /tmp/install-php-extensions && \
-    /tmp/install-php-extensions sqlsrv pdo_sqlsrv || \
-    (echo "Warning: sqlsrv/pdo_sqlsrv may require manual ZTS compilation" && exit 0); \
-    rm -f /tmp/install-php-extensions; \
+    /tmp/install-php-extensions sqlsrv pdo_sqlsrv && \
+    rm -f /tmp/install-php-extensions && \
+    php -r "if (!extension_loaded('sqlsrv')) { echo 'ERROR: sqlsrv extension not loaded'; exit(1); }" && \
+    php -r "if (!extension_loaded('pdo_sqlsrv')) { echo 'ERROR: pdo_sqlsrv extension not loaded'; exit(1); }" && \
+    echo "sqlsrv and pdo_sqlsrv installed and verified successfully for PHP ${PHP_VERSION}"; \
   elif [ "$PHP_VERSION" = "8.5" ]; then \
     echo "Compiling sqlsrv/pdo_sqlsrv from source for PHP 8.5..." && \
     apt-get update && apt-get install -y git g++ make autoconf libc-dev pkg-config unixodbc-dev && \
@@ -247,7 +248,11 @@ RUN \
 RUN \
   apt-get update && \
   apt-get install -y gnupg2 ca-certificates curl lsb-release && \
-  curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg && \
+  mkdir -p /usr/share/keyrings && \
+  curl -sSL https://packages.microsoft.com/keys/microsoft.asc > /tmp/microsoft.asc && \
+  gpg --batch --no-tty --dearmor < /tmp/microsoft.asc > /usr/share/keyrings/microsoft-prod.gpg 2>/dev/null || \
+  (gpg --dearmor < /tmp/microsoft.asc > /usr/share/keyrings/microsoft-prod.gpg 2>/dev/null) && \
+  rm -f /tmp/microsoft.asc && \
   echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" > /etc/apt/sources.list.d/mssql-release.list && \
   apt-get update && \
   (apt-get -y --no-install-recommends install msodbcsql18 odbc-mdbtools || \

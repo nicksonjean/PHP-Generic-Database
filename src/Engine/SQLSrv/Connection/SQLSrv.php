@@ -33,6 +33,16 @@ class SQLSrv
     public const ATTR_REPORT = 1110;
 
     /**
+     * Connection attribute to trust server certificate (for self-signed certificates).
+     */
+    public const ATTR_TRUST_SERVER_CERTIFICATE = 1111;
+
+    /**
+     * Connection attribute to enable/disable encryption.
+     */
+    public const ATTR_ENCRYPT = 1112;
+
+    /**
      * Turns reporting off
      */
     public const REPORT_OFF = 0;
