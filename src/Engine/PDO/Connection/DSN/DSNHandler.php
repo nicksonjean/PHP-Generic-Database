@@ -162,7 +162,7 @@ class DSNHandler implements IDSN
     private function handleSqlsrv(): string
     {
         $result = vsprintf(
-            "%s:server=%s,%s;database=%s",
+            "%s:server=%s,%s;database=%s;TrustServerCertificate=yes;Encrypt=yes",
             [
                 $this->get('driver'),
                 $this->get('host'),

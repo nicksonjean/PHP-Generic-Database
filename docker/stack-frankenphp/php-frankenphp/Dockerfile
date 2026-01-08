@@ -224,14 +224,71 @@ RUN \
     git clone --depth 1 --branch master https://github.com/microsoft/msphpsql.git msphpsql || \
     git clone --depth 1 https://github.com/microsoft/msphpsql.git msphpsql && \
     cd msphpsql/source && \
+    echo "Checking sqlsrv config.m4..." && \
+    if [ -f "sqlsrv/config.m4" ]; then \
+      echo "Found config.m4, checking for SQLSRV headers check..." && \
+      grep -n "SQLSRV headers" sqlsrv/config.m4 || echo "No 'SQLSRV headers' check found"; \
+    fi && \
+    echo "Compiling sqlsrv..." && \
     cd sqlsrv && \
+    if [ -f "../shared/core_sqlsrv.h" ]; then \
+      echo "Found shared headers at ../shared/"; \
+    else \
+      echo "Warning: shared headers not found at ../shared/core_sqlsrv.h"; \
+      ls -la ../shared/ 2>/dev/null || echo "Shared directory does not exist"; \
+    fi && \
     phpize && \
+    if [ -f "configure" ]; then \
+      echo "Patching configure script to fix sqlsrv_inc_path when headers are in ../shared/..." && \
+      perl -i -0pe 's/(elif\s+test\s+-f\s+\$srcdir\/shared\/core_sqlsrv\.h;\s+then\s+sqlsrv_inc_path=\$srcdir\/shared\/)/$1\n    elif test -f ..\/shared\/core_sqlsrv.h; then\n      sqlsrv_inc_path="..\/shared\/"/g' configure 2>/dev/null || \
+      sed -i '/test -f \$srcdir\/shared\/core_sqlsrv\.h/a\    elif test -f ..\/shared\/core_sqlsrv.h; then\n      sqlsrv_inc_path="..\/shared\/"' configure 2>/dev/null || \
+      echo "Patch attempt completed"; \
+    fi && \
     ./configure && \
+    if [ -f "Makefile" ]; then \
+      echo "Fixing Makefile paths for shared directory..." && \
+      SHARED_DIR=$(cd .. && pwd)/shared && \
+      sed -i "s|/tmp/msphpsql/source/sqlsrv/shared|${SHARED_DIR}|g" Makefile && \
+      sed -i "s|\$srcdir/shared|${SHARED_DIR}|g" Makefile && \
+      sed -i "s|sqlsrv/shared|shared|g" Makefile && \
+      echo "Makefile paths fixed to use ${SHARED_DIR}"; \
+    fi && \
     make -j$(nproc) && \
     make install && \
     cd .. && \
+    echo "Compiling pdo_sqlsrv..." && \
     cd pdo_sqlsrv && \
-    phpize && ./configure && \
+    if [ -f "../shared/core_sqlsrv.h" ]; then \
+      echo "Found shared headers at ../shared/"; \
+    else \
+      echo "Warning: shared headers not found at ../shared/core_sqlsrv.h"; \
+    fi && \
+    echo "Patching pdo_sqlsrv source code for PHP 8.5 compatibility..." && \
+    if [ -f "php_pdo_sqlsrv_int.h" ]; then \
+      sed -i 's/query_stmt_zval/query_stmt_obj/g' php_pdo_sqlsrv_int.h && \
+      perl -i -pe 's/^\s*zval_ptr_dtor\( &dbh->query_stmt_obj \);\s*$/\/\* PHP 8.5: query_stmt_obj is zend_object**, GC manages cleanup \*\//g' php_pdo_sqlsrv_int.h && \
+      echo "Patched query_stmt_zval -> query_stmt_obj and removed zval_ptr_dtor call in php_pdo_sqlsrv_int.h"; \
+    fi && \
+    if [ -f "pdo_dbh.cpp" ]; then \
+      sed -i 's/prev_err_mode = dbh->error_mode;/prev_err_mode = (pdo_error_mode)dbh->error_mode;/g' pdo_dbh.cpp && \
+      echo "Patched error_mode type conversion in pdo_dbh.cpp"; \
+    fi && \
+    phpize && \
+    if [ -f "configure" ]; then \
+      echo "Patching configure script to fix pdo_sqlsrv_inc_path when headers are in ../shared/..." && \
+      perl -i -0pe 's/(elif\s+test\s+-f\s+\$srcdir\/shared\/core_sqlsrv\.h;\s+then\s+pdo_sqlsrv_inc_path=\$srcdir\/shared\/)/$1\n    elif test -f ..\/shared\/core_sqlsrv.h; then\n      pdo_sqlsrv_inc_path="..\/shared\/"/g' configure 2>/dev/null || \
+      sed -i '/test -f \$srcdir\/shared\/core_sqlsrv\.h/a\    elif test -f ..\/shared\/core_sqlsrv.h; then\n      pdo_sqlsrv_inc_path="..\/shared\/"' configure 2>/dev/null || \
+      echo "Patch attempt completed"; \
+    fi && \
+    ./configure && \
+    if [ -f "Makefile" ]; then \
+      echo "Fixing Makefile paths for shared directory..." && \
+      SHARED_DIR=$(cd .. && pwd)/shared && \
+      sed -i "s|pdo_sqlsrv/shared|shared|g" Makefile && \
+      sed -i "s|\$srcdir/shared|${SHARED_DIR}|g" Makefile 2>/dev/null || \
+      sed -i "s|\.\./shared|${SHARED_DIR}|g" Makefile 2>/dev/null || \
+      echo "Makefile path fix attempt completed"; \
+    fi && \
     make -j$(nproc) && \
     make install && \
     cd ../.. && \
@@ -241,6 +298,9 @@ RUN \
     apt-get purge -y git g++ make autoconf libc-dev pkg-config && \
     apt-get autoremove -y && apt-get clean && \
     echo "sqlsrv/pdo_sqlsrv compiled and enabled successfully for PHP 8.5"; \
+  else \
+    echo "Unsupported PHP version: ${PHP_VERSION}"; \
+    exit 1; \
   fi
 
 # Download and Install MSSQL Connector for ODBC and MDBTools for Access
