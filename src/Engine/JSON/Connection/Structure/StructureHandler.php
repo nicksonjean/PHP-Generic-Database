@@ -245,23 +245,24 @@ class StructureHandler implements IStructure
      * @return array|Exceptions The structure.
      */
     public function mount(): array|Structure|Exceptions
-    {       
+    {
         $tables = $this->scanTables();
-        
+
         $structureData = [
             'tables' => $tables
         ];
 
-        if (Schema::exists($this->get('database'))) {
-            $schemaPath = Schema::getPath($this->get('database'));
+        $database = $this->get('database');
+        if ($database !== null && $database !== '' && Schema::exists($database)) {
+            $schemaPath = Schema::getPath($database);
             $schemaData = Schema::load($schemaPath);
-            
+
             $structureData['schema'] = Structure::bind([
                 'file' => $schemaPath,
                 'data' => $schemaData
             ]);
         }
-        
+
         self::$schema = Structure::bind($structureData);
         return self::$schema;
     }

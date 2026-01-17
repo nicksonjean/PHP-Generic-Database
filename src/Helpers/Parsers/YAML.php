@@ -46,7 +46,19 @@ class YAML
         if (!is_string($yaml)) {
             return false;
         }
-        return str_ends_with($yaml, 'yaml') && (yaml_parse_file($yaml));
+
+        // Must be a .yaml or .yml file
+        if (!str_ends_with($yaml, '.yaml') && !str_ends_with($yaml, '.yml')) {
+            return false;
+        }
+
+        // File must exist
+        if (!file_exists($yaml)) {
+            return false;
+        }
+
+        $result = @yaml_parse_file($yaml);
+        return $result !== false;
     }
 
     /**

@@ -3,12 +3,10 @@
     <database>../../resources/database/json</database>
     <charset>utf8</charset>
     <options>
-        <option>
-            <JSON::ATTR_PERSISTENT>true</JSON::ATTR_PERSISTENT>
-            <JSON::ATTR_AUTOCOMMIT>true</JSON::ATTR_AUTOCOMMIT>
-            <JSON::ATTR_CONNECT_TIMEOUT>28800</JSON::ATTR_CONNECT_TIMEOUT>
-            <JSON::ATTR_DEFAULT_FETCH_MODE>JSON::FETCH_OBJ</JSON::ATTR_DEFAULT_FETCH_MODE>
-        </option>
-    </options>
+        <option name="JSON::ATTR_PERSISTENT">true</option>
+        <option name="JSON::ATTR_AUTOCOMMIT">true</option>
+        <option name="JSON::ATTR_CONNECT_TIMEOUT">28800</option>
+        <option name="JSON::ATTR_DEFAULT_FETCH_MODE">JSON::FETCH_OBJ</option>
+    </options>    
     <exception>true</exception>
 </config>

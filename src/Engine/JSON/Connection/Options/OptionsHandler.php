@@ -19,6 +19,9 @@ class OptionsHandler extends AbstractOptions implements IOptions
      */
     public function setOptions(?array $options = null): void
     {
+        if ($options === null) {
+            return;
+        }
         $class = JSON::class;
         foreach (Reflections::getClassConstants($class) as $key => $value) {
             $index = in_array($value, array_keys($options));

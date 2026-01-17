@@ -8,6 +8,7 @@ use GenericDatabase\Helpers\Parsers\XML;
 use GenericDatabase\Helpers\Parsers\JSON;
 use GenericDatabase\Helpers\Parsers\YAML;
 use GenericDatabase\Helpers\Parsers\NEON;
+use GenericDatabase\Helpers\Parsers\CSV;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Interfaces\Connection\IOptions;
@@ -146,12 +147,13 @@ abstract class AbstractArguments implements IArgumentsAbstract
             'xml' => XML::parseXML(...$arguments),
             'yaml' => YAML::parseYAML(...$arguments),
             'neon' => NEON::parseNEON(...$arguments),
+            'csv' => CSV::parseCSV(...$arguments),
             default => null,
         };
         if ($data) {
             foreach ($data as $key => $value) {
                 if (mb_strtolower($key) === 'options') {
-                    self::getInstance()->$key = self::$argumentsStrategy->setConstant(($format === 'json' || $format === 'yaml') ? $value : [$value]);
+                    self::getInstance()->$key = self::$argumentsStrategy->setConstant(($format === 'json' || $format === 'yaml' || $format === 'csv') ? $value : [$value]);
                 } else {
                     self::getInstance()->$key = self::setType($value);
                 }
@@ -220,9 +222,10 @@ abstract class AbstractArguments implements IArgumentsAbstract
         return match ($name) {
             'new' => match (true) {
                 JSON::isValidJSON(...$argumentsFile) => self::callArgumentsByFormat('json', $argumentsFile),
-                YAML::isValidYAML(...$argumentsFile) => self::callArgumentsByFormat('yaml', $argumentsFile),
+                CSV::isValidCSV(...$argumentsFile) => self::callArgumentsByFormat('csv', $argumentsFile),
                 INI::isValidINI(...$argumentsFile) => self::callArgumentsByFormat('ini', $argumentsFile),
                 XML::isValidXML(...$argumentsFile) => self::callArgumentsByFormat('xml', $argumentsFile),
+                YAML::isValidYAML(...$argumentsFile) => self::callArgumentsByFormat('yaml', $argumentsFile),
                 NEON::isValidNEON(...$argumentsFile) => self::callArgumentsByFormat('neon', $argumentsFile),
                 default => Arrays::isAssoc(...$argumentsFile)
                     ? self::callWithByStaticArray(...$arguments)
