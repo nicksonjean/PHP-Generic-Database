@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "database": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Endereço do Banco de Dados"
+    },
+    "flags": {
+      "type": "number",
+      "nullable": true,
+      "description": "Flags para a conexão de Banco de Dados"
+    }
+  },
+  "required": ["database"],
+  "errorMessages": {
+    "database.minLength": "O database é obrigatório"
+  }
+}

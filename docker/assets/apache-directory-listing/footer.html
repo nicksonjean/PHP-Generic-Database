@@ -1,0 +1,383 @@
+  </main>
+
+  <footer>
+    <!--
+      Add any other listing related copyright content here
+      <a href="https://github.com/ramlmn/Apache-Directory-Listing"><em>Apache Directory Listing</em></a>
+    -->
+  </footer>
+  
+  <script>
+    function joinUntil(array, index, separator) {
+      var result = [];
+
+      for (var i = 0; i <= index; i++) {
+        result.push(array[i]);
+      }
+
+      return result.join(separator);
+    }
+
+    // Make all the icon links unfocusable with tab
+    var iconLinks = document.querySelectorAll('.indexcolicon a');
+    Array.prototype.forEach.call(iconLinks, function(link) {
+      link.setAttribute('tabindex', '-1');
+    });
+
+    var path = document.querySelector('.js-path');
+    var pathParts = location.pathname.split('/');
+
+    // Removing empty strings
+    for (var i = 0; i < pathParts.length;) {
+      if (pathParts[i]) {
+        i++;
+      } else {
+        pathParts.splice(i, 1);
+      }
+    }
+
+    var pathContents = ['<a href="/">/</a>'];
+    Array.prototype.forEach.call(pathParts, function(part, index) {
+      pathContents.push('<a href="/' + joinUntil(pathParts, index, '/') + '">' + decodeURI(part) + '</a>');
+    });
+
+    path.innerHTML = pathContents.join('&rsaquo;');
+  </script>
+  
+  <script>
+    // Add sorting arrows (↓) inside header text - similar to Nginx
+    // The ↓ arrow should be inserted into the text content itself
+    function addSortingArrows() {
+      const headers = document.querySelectorAll('table tr.indexhead th');
+      headers.forEach(function(header) {
+        // Check if arrow already added to text
+        const headerLink = header.querySelector('a');
+        if (!headerLink) return;
+        
+        // Check if arrow already in text
+        if (headerLink.textContent.includes('↓')) {
+          return;
+        }
+        
+        // Only add to Name, Last modified, and Size columns
+        if (header.classList.contains('indexcolname') || 
+            header.classList.contains('indexcollastmod') || 
+            header.classList.contains('indexcolsize')) {
+          
+          // Insert ↓ arrow into the text content (after the text)
+          const originalText = headerLink.textContent.trim();
+          headerLink.innerHTML = originalText + ' <span class="sort-arrow">↓</span>';
+        }
+      });
+    }
+    
+    // Run when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', addSortingArrows);
+    } else {
+      addSortingArrows();
+    }
+    
+    // Also try after a short delay to catch dynamically generated headers
+    setTimeout(addSortingArrows, 100);
+  </script>
+  
+  <script>
+    // Format file sizes to match Nginx style
+    // Convert: "4.4K" → "4.4KiB", "21" → "21B", "500" → "500B"
+    function formatFileSizes() {
+      const sizeCells = document.querySelectorAll('table tr:not(.indexhead) .indexcolsize');
+      sizeCells.forEach(function(cell) {
+        const text = cell.textContent.trim();
+        
+        // Skip if it's a directory (hyphen)
+        if (text === '-') {
+          return;
+        }
+        
+        let formatted = text;
+        
+        // Replace K, M, G, T with KiB, MiB, GiB, TiB (with space before unit)
+        formatted = formatted
+          .replace(/(\d+\.?\d*)\s*K\b/gi, '$1 KiB')
+          .replace(/(\d+\.?\d*)\s*M\b/gi, '$1 MiB')
+          .replace(/(\d+\.?\d*)\s*G\b/gi, '$1 GiB')
+          .replace(/(\d+\.?\d*)\s*T\b/gi, '$1 TiB');
+        
+        // If it's just a number without any unit, add " B" (with space)
+        if (/^\d+\.?\d*$/.test(formatted.trim())) {
+          formatted = formatted.trim() + ' B';
+        }
+        
+        // Update the cell content (preserve links if they exist)
+        const link = cell.querySelector('a');
+        if (link) {
+          link.textContent = formatted;
+        } else {
+          cell.textContent = formatted;
+        }
+      });
+    }
+    
+    // Run when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', formatFileSizes);
+    } else {
+      formatFileSizes();
+    }
+    
+    // Also try after a short delay to catch dynamically generated content
+    setTimeout(formatFileSizes, 100);
+  </script>
+  
+  <script>
+    // Fix header hover: prevent icon/name headers from highlighting when hovering lastmod/size
+    function fixHeaderHover() {
+      const iconHeader = document.querySelector('table tr.indexhead th.indexcolicon');
+      const nameHeader = document.querySelector('table tr.indexhead th.indexcolname');
+      const lastModHeader = document.querySelector('table tr.indexhead th.indexcollastmod');
+      const sizeHeader = document.querySelector('table tr.indexhead th.indexcolsize');
+      
+      if (!iconHeader || !nameHeader) {
+        // Retry if headers aren't ready yet
+        setTimeout(fixHeaderHover, 50);
+        return;
+      }
+      
+      // Helper function to get computed background color
+      function getHeaderBgColor() {
+        const style = getComputedStyle(document.documentElement);
+        return style.getPropertyValue('--table-header-bg').trim() || '#2d2d2d';
+      }
+      
+      const normalBgColor = getHeaderBgColor();
+      
+      // When hovering lastmod, force icon/name to stay normal
+      if (lastModHeader) {
+        lastModHeader.addEventListener('mouseenter', function() {
+          iconHeader.classList.add('no-hover');
+          nameHeader.classList.add('no-hover');
+          // Force style directly to override CSS (background only, preserve text color)
+          iconHeader.style.setProperty('background-color', normalBgColor, 'important');
+          nameHeader.style.setProperty('background-color', normalBgColor, 'important');
+          // Don't touch color - let CSS handle text color
+          iconHeader.style.removeProperty('color');
+          nameHeader.style.removeProperty('color');
+          const iconLinks = iconHeader.querySelectorAll('a');
+          const nameLinks = nameHeader.querySelectorAll('a');
+          iconLinks.forEach(function(link) {
+            link.style.removeProperty('color');
+          });
+          nameLinks.forEach(function(link) {
+            link.style.removeProperty('color');
+          });
+        });
+        
+        lastModHeader.addEventListener('mouseleave', function() {
+          iconHeader.classList.remove('no-hover');
+          nameHeader.classList.remove('no-hover');
+          iconHeader.style.removeProperty('background-color');
+          nameHeader.style.removeProperty('background-color');
+          iconHeader.style.removeProperty('color');
+          nameHeader.style.removeProperty('color');
+          const iconLinks = iconHeader.querySelectorAll('a');
+          const nameLinks = nameHeader.querySelectorAll('a');
+          iconLinks.forEach(function(link) {
+            link.style.removeProperty('color');
+          });
+          nameLinks.forEach(function(link) {
+            link.style.removeProperty('color');
+          });
+        });
+      }
+      
+      // When hovering size, force icon/name to stay normal
+      if (sizeHeader) {
+        sizeHeader.addEventListener('mouseenter', function() {
+          iconHeader.classList.add('no-hover');
+          nameHeader.classList.add('no-hover');
+          // Force style directly to override CSS (background only, preserve text color)
+          iconHeader.style.setProperty('background-color', normalBgColor, 'important');
+          nameHeader.style.setProperty('background-color', normalBgColor, 'important');
+          // Don't touch color - let CSS handle text color
+          iconHeader.style.removeProperty('color');
+          nameHeader.style.removeProperty('color');
+          const iconLinks = iconHeader.querySelectorAll('a');
+          const nameLinks = nameHeader.querySelectorAll('a');
+          iconLinks.forEach(function(link) {
+            link.style.removeProperty('color');
+          });
+          nameLinks.forEach(function(link) {
+            link.style.removeProperty('color');
+          });
+        });
+        
+        sizeHeader.addEventListener('mouseleave', function() {
+          iconHeader.classList.remove('no-hover');
+          nameHeader.classList.remove('no-hover');
+          iconHeader.style.removeProperty('background-color');
+          nameHeader.style.removeProperty('background-color');
+          iconHeader.style.removeProperty('color');
+          nameHeader.style.removeProperty('color');
+          const iconLinks = iconHeader.querySelectorAll('a');
+          const nameLinks = nameHeader.querySelectorAll('a');
+          iconLinks.forEach(function(link) {
+            link.style.removeProperty('color');
+          });
+          nameLinks.forEach(function(link) {
+            link.style.removeProperty('color');
+          });
+        });
+      }
+      
+      // Helper function to get hover color
+      function getHoverColor() {
+        const style = getComputedStyle(document.documentElement);
+        return style.getPropertyValue('--hover-color').trim() || '#dc8867';
+      }
+      
+      const hoverColor = getHoverColor();
+      
+      // Function to apply hover to both icon and name
+      function applyHoverToBoth() {
+        iconHeader.classList.remove('no-hover');
+        nameHeader.classList.remove('no-hover');
+        // Apply hover color to both (background only, don't touch text color)
+        iconHeader.style.setProperty('background-color', hoverColor, 'important');
+        nameHeader.style.setProperty('background-color', hoverColor, 'important');
+        // IMPORTANT: Don't set color property - let CSS handle text color
+        // Remove any color style that might have been set previously
+        iconHeader.style.removeProperty('color');
+        nameHeader.style.removeProperty('color');
+        // Also ensure links inside headers keep their color
+        const iconLinks = iconHeader.querySelectorAll('a');
+        const nameLinks = nameHeader.querySelectorAll('a');
+        iconLinks.forEach(function(link) {
+          link.style.removeProperty('color');
+        });
+        nameLinks.forEach(function(link) {
+          link.style.removeProperty('color');
+        });
+      }
+      
+      // Function to remove hover from both
+      function removeHoverFromBoth() {
+        // Only remove if mouse is not over either header
+        setTimeout(function() {
+          if (!iconHeader.matches(':hover') && !nameHeader.matches(':hover')) {
+            iconHeader.style.removeProperty('background-color');
+            nameHeader.style.removeProperty('background-color');
+            // Don't touch color - let CSS handle it
+            iconHeader.style.removeProperty('color');
+            nameHeader.style.removeProperty('color');
+            const iconLinks = iconHeader.querySelectorAll('a');
+            const nameLinks = nameHeader.querySelectorAll('a');
+            iconLinks.forEach(function(link) {
+              link.style.removeProperty('color');
+            });
+            nameLinks.forEach(function(link) {
+              link.style.removeProperty('color');
+            });
+          }
+        }, 50);
+      }
+      
+      // When hovering icon directly, apply hover to both
+      iconHeader.addEventListener('mouseenter', function() {
+        applyHoverToBoth();
+      });
+      
+      iconHeader.addEventListener('mouseleave', function() {
+        removeHoverFromBoth();
+      });
+      
+      // When hovering name directly, apply hover to both (same behavior as icon)
+      nameHeader.addEventListener('mouseenter', function() {
+        applyHoverToBoth();
+      });
+      
+      nameHeader.addEventListener('mouseleave', function() {
+        removeHoverFromBoth();
+      });
+    }
+    
+    // Run when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fixHeaderHover);
+    } else {
+      fixHeaderHover();
+    }
+    
+    // Also try after delays to catch dynamically generated headers
+    setTimeout(fixHeaderHover, 100);
+    setTimeout(fixHeaderHover, 300);
+    setTimeout(fixHeaderHover, 500);
+  </script>
+  
+  <!-- Theme toggle script -->
+  <script src="/docker/assets/apache-directory-listing/theme-toggle.js"></script>
+  
+  <script>
+    // Make icon and name columns clickable - both should redirect to the name link
+    function makeIconAndNameClickable() {
+      // Get all data rows (exclude header row)
+      const dataRows = document.querySelectorAll('table tr:not(.indexhead)');
+      
+      dataRows.forEach(function(row) {
+        // Find the name link in this row
+        const nameLink = row.querySelector('.indexcolname a');
+        
+        if (!nameLink) {
+          return; // Skip if no name link found
+        }
+        
+        // Store the href for later use
+        const targetUrl = nameLink.getAttribute('href');
+        
+        if (!targetUrl) {
+          return; // Skip if no href
+        }
+        
+        // Get icon and name columns
+        const iconCell = row.querySelector('.indexcolicon');
+        const nameCell = row.querySelector('.indexcolname');
+        
+        // Make icon column clickable (if it exists)
+        if (iconCell) {
+          iconCell.addEventListener('click', function(e) {
+            // Don't navigate if user clicked directly on a link (let default behavior work)
+            if (e.target.tagName === 'A' || e.target.closest('a')) {
+              return;
+            }
+            
+            // Navigate to the name link's URL
+            window.location.href = targetUrl;
+          });
+        }
+        
+        // Make name column clickable (if clicked outside the link itself)
+        if (nameCell) {
+          nameCell.addEventListener('click', function(e) {
+            // Don't navigate if user clicked directly on a link (let default behavior work)
+            if (e.target.tagName === 'A' || e.target.closest('a')) {
+              return;
+            }
+            
+            // Navigate to the name link's URL
+            window.location.href = targetUrl;
+          });
+        }
+      });
+    }
+    
+    // Run when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', makeIconAndNameClickable);
+    } else {
+      makeIconAndNameClickable();
+    }
+    
+    // Also try after a short delay to catch dynamically generated content
+    setTimeout(makeIconAndNameClickable, 100);
+    setTimeout(makeIconAndNameClickable, 300);
+  </script>

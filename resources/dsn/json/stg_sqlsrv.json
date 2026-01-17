@@ -1,0 +1,17 @@
+{
+  "engine": "sqlsrv",
+  "host": "sqlsrv",
+  "port": 1433,
+  "database": "demodev",
+  "user": "sa",
+  "password": "Masterkey@1",
+  "charset": "utf8",
+  "options": [
+    {
+      "SQLSrv::ATTR_PERSISTENT": true,
+      "SQLSrv::ATTR_CONNECT_TIMEOUT": 28800,
+      "SQLSrv::ATTR_DEFAULT_FETCH_MODE": "SQLSrv::FETCH_OBJ"
+    }
+  ],
+  "exception": true
+}

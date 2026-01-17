@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Helpers\Types\Specials\Datetimes | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../../../fonts/doctum-font.css">
+        <script src="../../../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../../../doctum.js"></script>
+        <script async defer src="../../../../js/bootstrap.min.js"></script>
+        <script async defer src="../../../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Helpers_Types_Specials_Datetimes" data-root-path="../../../../" data-search-index-url="../../../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../../../classes.html">Classes</a></li>
+                    <li><a href="../../../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../../../traits.html">Traits</a></li>
+                    <li><a href="../../../../doc-index.html">Index</a></li>
+                    <li><a href="../../../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../../../GenericDatabase/Helpers.html">Helpers</a></li><li class="backslash">\</li><li><a href="../../../../GenericDatabase/Helpers/Types.html">Types</a></li><li class="backslash">\</li><li><a href="../../../../GenericDatabase/Helpers/Types/Specials.html">Specials</a></li><li class="backslash">\</li><li>Datetimes</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>Datetimes    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>Datetimes</strong>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Specials/Datetimes.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>The <code>GenericDatabase\Helpers\Types\Specials\Datetimes</code> class provides regular expression
+patterns for parsing and validating date and time strings. It also includes
+methods for retrieving the regular expression patterns and extracting information from the input string.</p></p>            <p><p>Example Usage:</p>
+<pre><code>//Parser a date em time on format: YYYY-DD-MM HH:mm:SS
+$parse = Datetimes::getPattern("2023-28-02 10:45:30");
+
+//Parser a date em time on format: YYYY-MM-DD HH:mm
+$parse = Datetimes::getPattern("2024-02-29 10:45");
+
+//Parser a date em time on format: MM-DD-YYYY HH:mm:SS zzz
+$parse = Datetimes::getPattern("02-28-2023 10:45:30 +02:00");
+
+//Parser a date em time on format: DD-MM-YYYY HH:mm:SS tt
+$parse = Datetimes::getPattern("29-02-2024 10:45:30 PM");
+
+//Parser a date em time on format: HH:MM:SS
+$parse = Datetimes::getPattern("13:45:30");</code></pre>
+<p>Main functionalities:</p>
+<ul>
+<li>Provides regular expression patterns for various date and time formats</li>
+<li>Parses and validates date and time strings using the regular expression patterns</li>
+<li>Retrieves the regular expression patterns and extracted information from the input string</li>
+</ul>
+<p>Methods:</p>
+<ul>
+<li><code>getPattern(string $input):</code> Parses and validates the input string using the regular expression patterns and returns the extracted information.</li>
+</ul>
+<p>Fields</p>
+<ul>
+<li><code>TIME_SEPARATOR</code>: Regular expression pattern for matching time separators (e.g., ':', '.').</li>
+<li><code>TIMEZONE_HOURS_SEPARATOR</code>: Regular expression pattern for matching timezone hours separators.</li>
+<li><code>TIMEZONE_MINUTES_SEPARATOR</code>: Regular expression pattern for matching timezone minutes separators.</li>
+<li><code>TIMEZONE_SEPARATOR</code>: Regular expression pattern for matching timezone separators.</li>
+<li><code>MERIDIEM_HOURS_SEPARATOR</code>: Regular expression pattern for matching meridiem hours separators.</li>
+<li><code>MERIDIEM_MINUTES_SEPARATOR</code>: Regular expression pattern for matching meridiem minutes separators.</li>
+<li><code>MERIDIEM_SEPARATOR</code>: Regular expression pattern for matching meridiem separators.</li>
+<li><code>DIGITS</code>: Regular expression pattern for matching digits (0-9).</li>
+<li><code>HOURS</code>: Regular expression pattern for matching hours (00-23).</li>
+<li><code>MINUTES</code>: Regular expression pattern for matching minutes (00-59).</li>
+<li><code>MERIDIEM_HOURS_12</code>: Regular expression pattern for matching 12-hour format meridiem hours (01-12).</li>
+<li><code>TIMEZONE_HOURS_24</code>: Regular expression pattern for matching 24-hour format timezone hours (00-23).</li>
+<li><code>MERIDIEM_MINUTES_12</code>: Regular expression pattern for matching meridiem minutes (00-59).</li>
+<li><code>TIMEZONE_MINUTES_24</code>: Regular expression pattern for matching timezone minutes (00-59).</li>
+<li><code>MERIDIEM_SECONDS_12</code>: Regular expression pattern for matching meridiem seconds (00-59).</li>
+<li><code>TIMEZONE_SECONDS_24</code>: Regular expression pattern for matching timezone seconds (00-59).</li>
+<li><code>MERIDIEM</code>: Regular expression pattern for matching meridiem (AM/PM).</li>
+<li><code>TIMEZONE</code>: Regular expression pattern for matching timezone (Z or +/-HH:MM).</li>
+<li><code>DATE_SEPARATOR</code>: Regular expression pattern for matching date separators (e.g., '/', '-', '|').</li>
+<li><code>DATE_TIME_SEPARATOR</code>: Regular expression pattern for matching date-time separators (e.g., 'T', '/', '-', '|').</li>
+<li><code>DAYS_28_SEPARATOR</code>: Regular expression pattern for matching 28 days separator.</li>
+<li><code>DAYS_30_SEPARATOR</code>: Regular expression pattern for matching 30 days separator.</li>
+<li><code>DAYS_31_SEPARATOR</code>: Regular expression pattern for matching 31 days separator.</li>
+<li><code>MONTHS_28_SEPARATOR</code>: Regular expression pattern for matching 28 months separator.</li>
+<li><code>MONTHS_30_SEPARATOR</code>: Regular expression pattern for matching 30 months separator.</li>
+<li><code>MONTHS_31_SEPARATOR</code>: Regular expression pattern for matching 31 months separator.</li>
+<li><code>LEAP_DAY_SEPARATOR</code>: Regular expression pattern for matching leap day separator.</li>
+<li><code>LEAP_MONTH_SEPARATOR</code>: Regular expression pattern for matching leap month separator.</li>
+<li><code>LEAP_YEAR_SEPARATOR</code>: Regular expression pattern for matching leap year separator.</li>
+<li><code>YEAR_SEPARATOR</code>: Regular expression pattern for matching year separator.</li>
+<li><code>DAYS_28</code>: Regular expression pattern for matching 28 days (01-28).</li>
+<li><code>DAYS_30</code>: Regular expression pattern for matching 30 days (01-30).</li>
+<li><code>DAYS_31</code>: Regular expression pattern for matching 31 days (01-31).</li>
+<li><code>MONTHS_28</code>: Regular expression pattern for matching 28 months (02).</li>
+<li><code>MONTHS_30</code>: Regular expression pattern for matching 30 months (01-12 except 02).</li>
+<li><code>MONTHS_31</code>: Regular expression pattern for matching 31 months (01-12 except 02).</li>
+<li><code>LEAP_DAY</code>: Regular expression pattern for matching leap day (29).</li>
+<li><code>LEAP_MONTH</code>: Regular expression pattern for matching leap month (02).</li>
+<li><code>LEAP_YEAR</code>: Regular expression pattern for matching leap year.</li>
+<li><code>YEAR</code>: Regular expression pattern for matching year (YYYY or YY).</li>
+</ul></p>        </div>
+            
+        
+            <h2>Constants</h2>    <table class="table table-condensed">
+                    <tr>
+                <td>
+                                                            private
+                                                                                TIME_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                TIMEZONE_HOURS_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                TIMEZONE_MINUTES_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                TIMEZONE_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MERIDIEM_HOURS_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MERIDIEM_MINUTES_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MERIDIEM_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                DIGITS
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                HOURS
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MINUTES
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MERIDIEM_HOURS_12
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                TIMEZONE_HOURS_24
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MERIDIEM_MINUTES_12
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                TIMEZONE_MINUTES_24
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MERIDIEM_SECONDS_12
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                TIMEZONE_SECONDS_24
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MERIDIEM
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                TIMEZONE
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                DATE_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                DATE_TIME_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                DAYS_28_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                DAYS_30_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                DAYS_31_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MONTHS_28_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MONTHS_30_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MONTHS_31_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                LEAP_DAY_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                LEAP_MONTH_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                LEAP_YEAR_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                YEAR_SEPARATOR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                DAYS_28
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                DAYS_30
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                DAYS_31
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MONTHS_28
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MONTHS_30
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                MONTHS_31
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                LEAP_DAY
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                LEAP_MONTH
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                LEAP_YEAR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                            private
+                                                                                YEAR
+                                    </td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+            </table>
+
+    
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getPattern">getPattern</a>(string $input)
+        
+                                            <p><p>Gets the pattern based on the input.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method_getPattern">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Specials/Datetimes.php#L828">at line 828</a></div>
+        <code>        static            array
+    <strong>getPattern</strong>(string $input)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Gets the pattern based on the input.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$input</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

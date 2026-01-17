@@ -1,0 +1,157 @@
+{
+  "name": "nicksonjean/php-generic-database",
+  "version": "1.0.0",
+  "type": "library",
+  "description": "Generic Database Connection Class and Query Builder",
+  "keywords": [
+    "dbal",
+    "pdo",
+    "odbc",
+    "sqlsrv",
+    "oci",
+    "oracle",
+    "firebird",
+    "interbase",
+    "mysql",
+    "mysqli",
+    "sqlite",
+    "sqlite3",
+    "query",
+    "prepare",
+    "builder",
+    "database",
+    "connection",
+    "generic"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Nickson Jeanmerson",
+      "email": "nickson.jeanmrson@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "GenericDatabase\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^8.0",
+    "ext-libxml": "*",
+    "ext-mysqli": "*",
+    "ext-simplexml": "*",
+    "ext-sqlite3": "*",
+    "ext-xmlreader": "*",
+    "ext-yaml": "*",
+    "dave-arg/zod-php": "dev-master",
+    "marc-mabe/enum-cl": "dev-main",
+    "nette/neon": "^3.5@dev",
+    "senadir/zod-php-to-schema": "dev-main",
+    "symfony/polyfill-php82": "1.x-dev",
+    "symfony/polyfill-php83": "1.x-dev",
+    "vlucas/phpdotenv": "^5.5@dev"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "GenericDatabase\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "php": "^8.0",
+    "amphp/parallel-functions": "1.x-dev",
+    "code-lts/doctum": "^5.5",
+    "composer/semver": "^3.3",
+    "cweagans/composer-patches": "dev-main",
+    "pcov/clobber": "^2.0",
+    "php-parallel-lint/php-parallel-lint": "dev-develop",
+    "phpmd/phpmd": "dev-master",
+    "phpro/grumphp": "v1.x-dev",
+    "phpstan/phpstan": "^1.10.25",
+    "phpunit/php-code-coverage": "9.2.x-dev",
+    "phpunit/phpunit": "9.6.x-dev",
+    "squizlabs/php_codesniffer": "4.0.x-dev",
+    "tasuku43/mermaid-class-diagram": "^0.2.1"
+  },
+  "config": {
+    "process-timeout": 0,
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "phpro/grumphp": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "cweagans/composer-patches": true
+    }
+  },
+  "extra": {
+    "patches": {
+      "amphp/parallel-functions": {
+        "Fix PHP 8.4 nullable types deprecation": "patches/amphp-parallel-functions-php84-nullable-types.patch"
+      }
+    }
+  },
+  "scripts": {
+    "docs": [
+      "@clear:docs",
+      "@clear:cache",
+      "@run:docs"
+    ],
+    "lint": [
+      "@phpcbf",
+      "@phpcs",
+      "@phpmd",
+      "@phpstan",
+      "@phplint"
+    ],
+    "test": "@run:test",
+    "test:coverage": [
+      "@clear:test:coverage",
+      "@run:test:coverage"
+    ],
+    "clear": [
+      "composer clearcache",
+      "composer dump-autoload -o",
+      "@clear:env",
+      "@clear:lock",
+      "@clear:vendor",
+      "@clear:build",
+      "@clear:git"
+    ],
+    "setup": [
+      "@clear",
+      "composer install"
+    ],
+    "phpcs:config": [
+      "php vendor/bin/phpcs --config-set show_progress 1",
+      "php vendor/bin/phpcs --config-set colors 1",
+      "php vendor/bin/phpcs --config-set report_width auto"
+    ],
+    "mermaid:class-diagram": "php ./vendor/bin/mermaid-class-diagram generate --path src > class-diagram.mmd 2>&1",
+    "mermaid:flowchart": "php ./scripts/mermaid-flowchart-generate.php",
+    "grumphp": "php ./vendor/bin/grumphp -n run",
+    "phpstan": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
+    "phpmd": "php vendor/bin/phpmd src/,samples/ ansi phpmd.xml",
+    "phpcs": "php vendor/bin/phpcs --extensions=php --ignore-annotations --standard=./phpcs.xml src/ tests/",
+    "phpcbf": "php vendor/bin/phpcbf --extensions=php --ignore-annotations --standard=./phpcs.xml src/ tests/",
+    "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude connections --exclude pdo.stub.php --exclude pgsql.stub.php --exclude vendor .",
+    "run:docs": "php vendor/bin/doctum.php update ./doctum.php --ignore-parse-errors -vvv",
+    "run:docs:phar": "php -d memory_limit=-1 ../.devtools/doctum.phar update ./doctum.php",
+    "run:test": "php vendor/bin/phpunit --colors=always --exclude-group=ignore-test-cases --do-not-cache-result --display-notices --display-warnings --display-deprecations --testdox tests/",
+    "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
+    "run:test:coverage": "php -d pcov.directory=src vendor/bin/phpunit tests --colors=always --configuration phpunit.xml --do-not-cache-result --coverage-html build/coverage --coverage-clover build/logs/clover.xml",
+    "run:env": "php -r \"if(!file_exists('.env')&&file_exists('.env.example')){@copy('.env.example','.env');}\"",
+    "clear:cache": "php scripts/developer/secure_eraser_cli.php --dest=./cache/",
+    "clear:docs": "php scripts/developer/secure_eraser_cli.php --dest=./docs/",
+    "clear:test:coverage": "php scripts/developer/secure_eraser_cli.php --dest=./build/coverage/",
+    "clear:vendor": "php scripts/developer/secure_eraser_cli.php --dest=./vendor/",
+    "clear:build": "php scripts/developer/secure_eraser_cli.php --dest=./build/",
+    "clear:lock": "php scripts/developer/secure_eraser_cli.php --dest=./composer.lock",
+    "clear:env": "php scripts/developer/secure_eraser_cli.php --dest=./.env",
+    "clear:git": [
+      "php scripts/developer/secure_eraser_cli.php --dest=./.git/hooks/commit-msg",
+      "php scripts/developer/secure_eraser_cli.php --dest=./.git/hooks/pre-commit"
+    ],
+    "post-install-cmd": "@phpcs:config",
+    "post-update-cmd": "@run:env"
+  }
+}

@@ -1,0 +1,502 @@
+@import 'common.css';
+
+/*------------------------------------*\
+    Table Styles - Light Theme
+\*------------------------------------*/
+
+/* Table headers - Light theme: blue background */
+table tr.indexhead {
+  background-color: var(--table-header-bg) !important;
+  color: var(--table-header-color) !important;
+}
+
+/* Ensure header has blue background in light theme - no !important to avoid dark theme conflicts */
+:root:not([data-theme="dark"]) table tr.indexhead,
+body:not(.dark-theme) table tr.indexhead {
+  background-color: #4a6cf7;
+  color: #ffffff;
+}
+
+:root:not([data-theme="dark"]) table tr.indexhead th,
+body:not(.dark-theme) table tr.indexhead th {
+  background-color: #4a6cf7;
+  color: #ffffff;
+}
+
+:root:not([data-theme="dark"]) table tr.indexhead a,
+body:not(.dark-theme) table tr.indexhead a {
+  color: #ffffff;
+}
+
+table tr.indexhead th {
+  background-color: var(--table-header-bg) !important;
+  color: var(--table-header-color) !important;
+  text-align: left;
+  font-weight: 500;
+  font-family: "Poppins", 'Roboto', sans-serif;
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Add sorting arrows to headers - similar to Nginx */
+/* Space for arrows after text */
+table tr.indexhead th.indexcolname,
+table tr.indexhead th.indexcollastmod,
+table tr.indexhead th.indexcolsize {
+  padding-right: 25px;
+  position: relative;
+}
+
+/* ⇕ arrow via ::after (positioned to the right) */
+table tr.indexhead th.indexcolname::after,
+table tr.indexhead th.indexcollastmod::after,
+table tr.indexhead th.indexcolsize::after {
+  content: "⇕";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  font-size: 0.9rem;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+/* The ↓ arrow will be inserted into the header text via JavaScript */
+
+/* Default hover for headers - applies to all headers */
+/* BUT: no-hover class will override this via JavaScript */
+table tr.indexhead th:hover {
+  background-color: var(--hover-color) !important;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover effect on arrows */
+table tr.indexhead th:hover::after {
+  opacity: 1;
+}
+
+table tr.indexhead a {
+  color: var(--table-header-color) !important;
+  font-weight: 500;
+  text-decoration: none;
+  font-family: "Poppins", 'Roboto', sans-serif;
+}
+
+table tr.indexhead a:hover {
+  color: var(--table-header-color) !important;
+  opacity: 0.9;
+}
+
+/* Light theme: header hover text stays white */
+:root:not([data-theme="dark"]) table tr.indexhead th:hover,
+body:not(.dark-theme) table tr.indexhead th:hover,
+:root:not([data-theme="dark"]) table tr.indexhead th:hover a,
+body:not(.dark-theme) table tr.indexhead th:hover a {
+  color: #ffffff !important;
+}
+
+/* Light theme: Ensure ALL headers always have white text, even when not hovered */
+/* This prevents text from disappearing when JavaScript applies inline styles */
+.light-theme table tr.indexhead th,
+:root:not([data-theme="dark"]) table tr.indexhead th,
+body:not(.dark-theme) table tr.indexhead th {
+  color: #ffffff !important;
+}
+
+.light-theme table tr.indexhead th a,
+:root:not([data-theme="dark"]) table tr.indexhead th a,
+body:not(.dark-theme) table tr.indexhead th a {
+  color: #ffffff !important;
+}
+
+/* Table rows */
+table tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+/* Row hover - only background changes, NOT link colors */
+table tr:hover {
+  background-color: var(--hover-color);
+}
+
+/* Links only change color when directly hovered, NOT when row is hovered */
+
+/* Table cells */
+table th,
+table td {
+  padding: 0.75rem;
+  vertical-align: middle;
+  font-family: "Poppins", 'Roboto', sans-serif;
+  min-height: 1px; /* Ensure minimum height to fix 1px issue */
+  box-sizing: border-box;
+}
+
+/* Column widths */
+table tr .indexcolname {
+  width: 60%;
+}
+
+/* Name column should also show pointer cursor on the cell */
+table tr:not(.indexhead) .indexcolname {
+  cursor: pointer !important; /* Show hand cursor on name column - it's clickable */
+}
+
+/* Move first column content 25px to the left */
+table .indexhead .indexcolname a {
+  position: relative;
+  left: -25px;
+}
+
+table tr .indexcollastmod {
+  width: 25%;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+table tr .indexcollastmod a {
+  font-size: 1rem;
+}
+
+table tr .indexcolsize {
+  width: 15%;
+  text-align: right !important;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+table tr .indexcolsize a {
+  font-size: 1rem;
+}
+
+/* Links in cells - Light theme: black text, Dark theme: white text */
+/* Icon and name links should have pointer cursor - both are clickable */
+table tr:not(.indexhead) .indexcolname a,
+table tr:not(.indexhead) .indexcolicon a {
+  color: var(--table-content-text-color, var(--text-color));
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 0.2s ease;
+  display: inline-block;
+  cursor: pointer !important; /* Show hand cursor on icon and name links - indicates clickable area */
+}
+
+/* Other links (lastmod, size) - no pointer cursor, they're not meant to be clicked */
+table tr:not(.indexhead) .indexcollastmod a,
+table tr:not(.indexhead) .indexcolsize a,
+table tr:not(.indexhead) td a:not(.indexcolname a) {
+  color: var(--table-content-text-color, var(--text-color));
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 0.2s ease;
+  display: inline-block;
+  cursor: default; /* Default cursor for non-clickable links */
+}
+
+/* Links hover - change to primary color when directly hovering the link */
+table tr:not(.indexhead) .indexcolname a:hover,
+table tr:not(.indexhead) .indexcollastmod a:hover,
+table tr:not(.indexhead) .indexcolsize a:hover {
+  color: var(--primary-color);
+  cursor: pointer; /* Hand cursor on hover */
+}
+
+/* When hovering icon column, change the name link color (in next sibling cell) */
+table tr:not(.indexhead) .indexcolicon:hover ~ .indexcolname a {
+  color: var(--primary-color) !important;
+}
+
+/* When hovering name column cell, change the name link color (inside the cell) */
+table tr:not(.indexhead) .indexcolname:hover a {
+  color: var(--primary-color) !important;
+}
+
+/* Light theme: force black text for content - no !important to avoid conflicts */
+:root:not([data-theme="dark"]) table tr:not(.indexhead) .indexcolname a,
+:root:not([data-theme="dark"]) table tr:not(.indexhead) .indexcollastmod a,
+:root:not([data-theme="dark"]) table tr:not(.indexhead) .indexcolsize a,
+body:not(.dark-theme) table tr:not(.indexhead) .indexcolname a,
+body:not(.dark-theme) table tr:not(.indexhead) .indexcollastmod a,
+body:not(.dark-theme) table tr:not(.indexhead) .indexcolsize a {
+  color: #333333;
+}
+
+/* Light theme: hover must override black text and show blue */
+/* When directly hovering the link OR when hovering icon/name column */
+.light-theme table tr:not(.indexhead) .indexcolname a:hover,
+.light-theme table tr:not(.indexhead) .indexcollastmod a:hover,
+.light-theme table tr:not(.indexhead) .indexcolsize a:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Light theme: when hovering icon or name column, change name link color */
+.light-theme table tr:not(.indexhead) .indexcolicon:hover ~ .indexcolname a,
+.light-theme table tr:not(.indexhead) .indexcolname:hover a {
+  color: var(--primary-color) !important;
+}
+
+/* Text in cells (non-links) */
+table tr:not(.indexhead) .indexcolname,
+table tr:not(.indexhead) .indexcollastmod,
+table tr:not(.indexhead) .indexcolsize {
+  color: var(--table-content-text-color, var(--text-color));
+}
+
+/* Light theme: force black text for non-link content - no !important to avoid conflicts */
+:root:not([data-theme="dark"]) table tr:not(.indexhead) .indexcolname,
+:root:not([data-theme="dark"]) table tr:not(.indexhead) .indexcollastmod,
+:root:not([data-theme="dark"]) table tr:not(.indexhead) .indexcolsize,
+body:not(.dark-theme) table tr:not(.indexhead) .indexcolname,
+body:not(.dark-theme) table tr:not(.indexhead) .indexcollastmod,
+body:not(.dark-theme) table tr:not(.indexhead) .indexcolsize {
+  color: #333333;
+}
+
+/* Non-link text in cells */
+table tr:not(.indexhead) td {
+  color: var(--table-content-text-color, var(--text-color));
+}
+
+/* Light theme: force black text in all td - no !important to avoid conflicts */
+:root:not([data-theme="dark"]) table tr:not(.indexhead) td,
+body:not(.dark-theme) table tr:not(.indexhead) td {
+  color: #333333;
+}
+
+/* Hover effects - Light theme: links change to primary color (blue) */
+table tr .indexcolname a:hover,
+table tr .indexcollastmod a:hover,
+table tr .indexcolsize a:hover {
+  color: var(--primary-color);
+  border-bottom: none;
+}
+
+/* Light theme: hover on individual links ONLY when directly hovering the link */
+.light-theme table tr .indexcolname a:hover,
+.light-theme table tr .indexcollastmod a:hover,
+.light-theme table tr .indexcolsize a:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Parent directory links */
+table tr.even-parentdir a,
+table tr.parent a {
+  color: var(--secondary-color);
+  font-weight: 500;
+  cursor: pointer !important; /* Show hand cursor on parent directory links - these are clickable */
+}
+
+table tr.even-parentdir a:hover,
+table tr.parent a:hover {
+  color: var(--primary-color);
+  opacity: 0.8;
+}
+
+/* Merge icon column header with Name column header - visual merge only */
+/* Remove border between icon and name headers */
+table tr.indexhead th.indexcolicon {
+  border-right: none !important;
+  padding-right: 0 !important;
+  padding-left: 0.75rem !important;
+  background-color: var(--table-header-bg) !important;
+  width: auto;
+}
+
+table tr.indexhead th.indexcolname {
+  border-left: none !important;
+  padding-left: 0 !important;
+  background-color: var(--table-header-bg) !important;
+}
+
+/* Merge icon column header with Name column header - visual merge only */
+/* IMPORTANT: Only apply hover when directly hovering icon or name, not when hovering other columns */
+/* When hovering icon header, also highlight name header (next sibling) */
+table tr.indexhead th.indexcolicon:hover,
+table tr.indexhead th.indexcolicon:hover + th.indexcolname {
+  background-color: var(--hover-color) !important;
+}
+
+/* When hovering name header, highlight it */
+table tr.indexhead th.indexcolname:hover {
+  background-color: var(--hover-color) !important;
+}
+
+/* Individual hover for lastmod and size - ONLY they should highlight */
+table tr.indexhead th.indexcollastmod:hover {
+  background-color: var(--hover-color) !important;
+}
+
+table tr.indexhead th.indexcolsize:hover {
+  background-color: var(--hover-color) !important;
+}
+
+/* CRITICAL FIX: When JavaScript adds no-hover class, prevent hover from applying */
+/* This ensures icon/name don't highlight when hovering other columns */
+table tr.indexhead th.indexcolicon.no-hover,
+table tr.indexhead th.indexcolname.no-hover {
+  background-color: var(--table-header-bg) !important;
+}
+
+/* Override ALL hover states when no-hover class is present */
+table tr.indexhead th.indexcolicon.no-hover:hover,
+table tr.indexhead th.indexcolname.no-hover:hover,
+table tr.indexhead th.indexcolicon.no-hover:hover + th.indexcolname,
+table tr.indexhead th.indexcolname.no-hover:hover + th.indexcolicon {
+  background-color: var(--table-header-bg) !important;
+}
+
+/* Ensure text color is always visible in light theme, even when JavaScript applies inline styles */
+/* Light theme: force white text on headers that have no-hover class */
+.light-theme table tr.indexhead th.indexcolicon.no-hover,
+.light-theme table tr.indexhead th.indexcolname.no-hover,
+:root:not([data-theme="dark"]) table tr.indexhead th.indexcolicon.no-hover,
+:root:not([data-theme="dark"]) table tr.indexhead th.indexcolname.no-hover,
+body:not(.dark-theme) table tr.indexhead th.indexcolicon.no-hover,
+body:not(.dark-theme) table tr.indexhead th.indexcolname.no-hover {
+  color: #ffffff !important;
+}
+
+.light-theme table tr.indexhead th.indexcolicon.no-hover a,
+.light-theme table tr.indexhead th.indexcolname.no-hover a,
+:root:not([data-theme="dark"]) table tr.indexhead th.indexcolicon.no-hover a,
+:root:not([data-theme="dark"]) table tr.indexhead th.indexcolname.no-hover a,
+body:not(.dark-theme) table tr.indexhead th.indexcolicon.no-hover a,
+body:not(.dark-theme) table tr.indexhead th.indexcolname.no-hover a {
+  color: #ffffff !important;
+}
+
+/* Icon column - data rows keep normal padding */
+/* Icon column should be clickable - same as name column */
+table tr:not(.indexhead) .indexcolicon {
+  padding: 0.75rem 0 0.75rem 0.75rem;
+  cursor: pointer; /* Show hand cursor on icon column - it's clickable */
+}
+
+table tr:not(.indexhead) .indexcolicon a {
+  border: none;
+  display: inline-block;
+  cursor: pointer !important; /* Show hand cursor on icon links - they're clickable */
+}
+
+/* Icon column cell - make entire cell clickable via JavaScript */
+table tr:not(.indexhead) .indexcolicon {
+  cursor: pointer !important;
+}
+
+table tr .indexcolicon img {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  opacity: var(--icon-opacity);
+  transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+table tr:hover .indexcolicon img {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/*------------------------------------*\
+    Dark Theme Specific Styles
+\*------------------------------------*/
+
+.dark-theme table tr {
+  border-bottom: 1px solid #2d2d2d;
+}
+
+/* Dark theme header hover - text color should be light blue like Nginx when hovered */
+.dark-theme table tr.indexhead th:hover,
+.dark-theme table tr.indexhead th:hover a {
+  color: #789dca !important;
+}
+
+/* Ensure header text stays white when not hovered in dark theme */
+.dark-theme table tr.indexhead th:not(:hover),
+.dark-theme table tr.indexhead th:not(:hover) a {
+  color: #e0e0e0 !important;
+}
+
+/* Dark theme table cells - bright white text */
+.dark-theme table tr:not(.indexhead) td,
+.dark-theme table tr:not(.indexhead) td *,
+.dark-theme table tr:not(.indexhead) .indexcolname,
+.dark-theme table tr:not(.indexhead) .indexcolname *,
+.dark-theme table tr:not(.indexhead) .indexcollastmod,
+.dark-theme table tr:not(.indexhead) .indexcollastmod *,
+.dark-theme table tr:not(.indexhead) .indexcolsize,
+.dark-theme table tr:not(.indexhead) .indexcolsize * {
+  color: #e0e0e0 !important;
+}
+
+/* Dark theme: icon and name columns should be clickable */
+.dark-theme table tr:not(.indexhead) .indexcolicon {
+  cursor: pointer !important;
+}
+
+.dark-theme table tr:not(.indexhead) .indexcolname {
+  cursor: pointer !important;
+}
+
+.dark-theme table tr:not(.indexhead) .indexcolicon a {
+  cursor: pointer !important;
+}
+
+.dark-theme table tr:not(.indexhead) .indexcolname a {
+  color: #e0e0e0 !important;
+  cursor: pointer !important; /* Show hand cursor on name link in dark theme */
+}
+
+.dark-theme table tr:not(.indexhead) td a:not(.indexcolname a),
+.dark-theme table tr:not(.indexhead) .indexcollastmod a,
+.dark-theme table tr:not(.indexhead) .indexcolsize a {
+  color: #e0e0e0 !important;
+  cursor: default !important; /* Default cursor for non-clickable links in dark theme */
+}
+
+/* Dark theme hover effects - when directly hovering the link OR hovering icon/name column */
+.dark-theme table tr:not(.indexhead) .indexcolname a:hover,
+.dark-theme table tr:not(.indexhead) .indexcollastmod a:hover,
+.dark-theme table tr:not(.indexhead) .indexcolsize a:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Dark theme: when hovering icon or name column, change name link color */
+.dark-theme table tr:not(.indexhead) .indexcolicon:hover ~ .indexcolname a,
+.dark-theme table tr:not(.indexhead) .indexcolname:hover a {
+  color: var(--primary-color) !important;
+}
+
+/* Dark theme parent directory links */
+.dark-theme table tr:not(.indexhead).even-parentdir td,
+.dark-theme table tr:not(.indexhead).parent td,
+.dark-theme table tr:not(.indexhead).even-parentdir a,
+.dark-theme table tr:not(.indexhead).parent a {
+  color: #adb5bd !important;
+}
+
+/* Dark theme icons */
+.dark-theme table tr .indexcolicon img {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)) brightness(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  table th,
+  table td {
+    padding: 0.5rem;
+  }
+  
+  table tr .indexcollastmod {
+    display: none;
+  }
+  
+  table tr .indexcolsize {
+    display: none;
+  }
+  
+  table tr .indexcolname {
+    width: 100%;
+  }
+}

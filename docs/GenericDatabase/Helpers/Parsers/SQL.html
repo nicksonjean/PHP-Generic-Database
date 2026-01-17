@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Helpers\Parsers\SQL | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../../fonts/doctum-font.css">
+        <script src="../../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../../doctum.js"></script>
+        <script async defer src="../../../js/bootstrap.min.js"></script>
+        <script async defer src="../../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Helpers_Parsers_SQL" data-root-path="../../../" data-search-index-url="../../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../../classes.html">Classes</a></li>
+                    <li><a href="../../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../../traits.html">Traits</a></li>
+                    <li><a href="../../../doc-index.html">Index</a></li>
+                    <li><a href="../../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../../GenericDatabase/Helpers.html">Helpers</a></li><li class="backslash">\</li><li><a href="../../../GenericDatabase/Helpers/Parsers.html">Parsers</a></li><li class="backslash">\</li><li>SQL</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>SQL    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>SQL</strong>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/SQL.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>The <code>GenericDatabase\Helpers\Parsers\SQL</code> class is responsible for
+escaping SQL strings and replacing parameters and binds in the SQL queries.</p></p>            <p><p>It provides methods to escape SQL strings based on different SQL dialects,
+extract SQL arguments, and replace SQL binds with different bind types.</p>
+<p>Example Usage:</p>
+<pre><code>//Escape an SQL query using the default dialect
+$escapedQuery = SQL::escape("SELECT * FROM users WHERE id = :id");
+
+//Escape an SQL query using a specific dialect
+$escapedQuery = SQL::escape("SELECT * FROM users WHERE id = :id", SQL::SQL_DIALECT_DOUBLE_QUOTE);
+
+//Extract parameters from an SQL query
+$parameters = SQL::arguments("SELECT * FROM users WHERE id = :id");
+
+//Bind parameters in an SQL query with question marks
+$boundQuery = SQL::binding("SELECT * FROM users WHERE id = :id");
+
+//Bind parameters in an SQL query with dollar signs
+$boundQuery = SQL::binding("SELECT * FROM users WHERE id = :id", SQL::BIND_QUESTION_MARK);</code></pre>
+<p>Main functionalities:</p>
+<ul>
+<li>Escaping SQL strings by replacing certain characters with their escaped versions.</li>
+<li>Extracting SQL arguments from an SQL string.</li>
+<li>Replacing SQL binds with the specified bind type.</li>
+<li>Processing words based on certain conditions, such as whether they are inside quotes or a function.</li>
+<li>Loading reserved words from a JSON file and using them to escape the input string.</li>
+</ul>
+<p>Methods:</p>
+<ul>
+<li><code>loadReservedWords():</code> Loads reserved words from a JSON file and returns them as an array.</li>
+<li><code>escapeType(string $input, string $quote):</code> Escapes the input string by replacing certain characters with their escaped versions.</li>
+<li><code>replaceParameters(string $input, string $quote, array $resWords):</code> Replaces parameters in a given input string and returns the modified string.</li>
+<li><code>processWord(string $word, array $resWords, string $quote, bool &amp;$inFunction, bool $inSingleQt, bool $inDoubleQt):</code> Processes a word based on certain conditions and returns the processed word.</li>
+<li><code>processCondition(stdClass $object, string $processedWord, bool $processedCondition):</code> Processes a condition based on certain conditions and returns the processed condition.</li>
+<li><code>encloseWord(string $word, string $quote):</code> Encloses a word with quotes or backticks, depending on the SQL dialect.</li>
+<li><code>escape(string $input, int $dialect = self::SQL_DIALECT_NONE):</code> Escapes the SQL string by replacing parameters with their quoted versions.</li>
+<li><code>arguments(string $input, array $values = null):</code> Extracts the SQL arguments from the input string.</li>
+<li><code>binding(string $input, int $bindType = self::BIND_QUESTION_MARK):</code> Replaces the SQL binds with the specified bind type.</li>
+<li><code>bindWithQuestionMark(string $input, string $bindType):</code> Replaces the SQL binds with question marks.</li>
+<li><code>bindWithDollarSign(string $input, string $bindType):</code> Replaces the SQL binds with dollar signs.</li>
+</ul>
+<p>Fields:</p>
+<ul>
+<li><code>SQL_DIALECT_BACKTICK</code>: Constant representing the SQL dialect using backticks.</li>
+<li><code>SQL_DIALECT_DOUBLE_QUOTE</code>: Constant representing the SQL dialect using double quotes.</li>
+<li><code>SQL_DIALECT_SINGLE_QUOTE</code>: Constant representing the SQL dialect using single quotes.</li>
+<li><code>SQL_DIALECT_NONE</code>: Constant representing no SQL dialect.</li>
+<li><code>BIND_QUESTION_MARK</code>: Constant representing the bind type using question marks.</li>
+<li><code>BIND_DOLLAR_SIGN</code>: Constant representing the bind type using dollar signs.</li>
+<li><code>$patternMap</code>: An array mapping regex patterns used in the class.</li>
+<li><code>$quoteMap</code>: An array mapping SQL dialects to their corresponding quote characters.</li>
+<li><code>$bindingMap</code>: An array mapping bind types to their corresponding bind characters.</li>
+<li><code>$resWords</code>: An instance of the reserved word dictionary, loaded from a JSON file.</li>
+</ul></p>        </div>
+            
+        
+            <h2>Constants</h2>    <table class="table table-condensed">
+                    <tr>
+                <td>
+                                                                                                                        SQL_DIALECT_BACKTICK
+                                    </td>
+                <td class="last">
+                    <p><em><p>SQL Dialect used by MySQL, MariaDB, Percona and Other Forks,
+also as Drizzle, Derby H2, HSQLDB and SQLite</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        SQL_DIALECT_DOUBLE_QUOTE
+                                    </td>
+                <td class="last">
+                    <p><em><p>SQL Dialect used by IBM DB2, Firebird, PostgreSQL, Oracle,
+also as Microsoft SQL Server and Sybase</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        SQL_DIALECT_SINGLE_QUOTE
+                                    </td>
+                <td class="last">
+                    <p><em><p>SQL Dialect used by Cassandra, MongoDB and other Hybrid, Databases.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        SQL_DIALECT_NONE
+                                    </td>
+                <td class="last">
+                    <p><em><p>For none SQL Dialect and bypass character escape.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        BIND_QUESTION_MARK
+                                    </td>
+                <td class="last">
+                    <p><em><p>For the dialects that need question marks notation</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        BIND_DOLLAR_SIGN
+                                    </td>
+                <td class="last">
+                    <p><em><p>For the dialects that need dollar sign notation</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+            </table>
+
+    
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;string
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_escape">escape</a>(string $input, int $dialect = self::SQL_DIALECT_NONE, int|null $quoteSkip = null)
+        
+                                            <p><p>Escapes the SQL string by replacing parameters with their quoted versions.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_arguments">arguments</a>(string $input, array|null $values = null)
+        
+                                            <p><p>Extracts the SQL arguments from the input string.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;string
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_binding">binding</a>(string $input, int $bindType = self::BIND_QUESTION_MARK)
+        
+                                            <p><p>Replaces the SQL binds with the specified bind type.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method_escape">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/SQL.php#L351">at line 351</a></div>
+        <code>        static            string
+    <strong>escape</strong>(string $input, int $dialect = self::SQL_DIALECT_NONE, int|null $quoteSkip = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Escapes the SQL string by replacing parameters with their quoted versions.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$input</td>
+                <td><p>The SQL string to be escaped.</p></td>
+            </tr>
+                    <tr>
+                <td>int</td>
+                <td>$dialect</td>
+                <td><p>The SQL dialect to be used for escaping. Defaults to <code>SQL::SQL_DIALECT_NONE</code>.</p></td>
+            </tr>
+                    <tr>
+                <td>int|null</td>
+                <td>$quoteSkip</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>string</td>
+            <td><p>The escaped SQL string.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_arguments">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/SQL.php#L369">at line 369</a></div>
+        <code>        static            array
+    <strong>arguments</strong>(string $input, array|null $values = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Extracts the SQL arguments from the input string.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$input</td>
+                <td><p>The SQL string to extract arguments from.</p></td>
+            </tr>
+                    <tr>
+                <td>array|null</td>
+                <td>$values</td>
+                <td><p>The values to be used for replacing the SQL arguments. Defaults to <code>null</code>.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>The extracted SQL arguments.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_binding">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/SQL.php#L416">at line 416</a></div>
+        <code>        static            string
+    <strong>binding</strong>(string $input, int $bindType = self::BIND_QUESTION_MARK)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Replaces the SQL binds with the specified bind type.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$input</td>
+                <td><p>The SQL string to replace the binds in.</p></td>
+            </tr>
+                    <tr>
+                <td>int</td>
+                <td>$bindType</td>
+                <td><p>The type of binding to be used. Defaults to <code>SQL::BIND_QUESTION_MARK</code>.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>string</td>
+            <td><p>The SQL string with the binds replaced.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

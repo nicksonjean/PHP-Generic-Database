@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+	<driver>firebird</driver>
+	<host>firebird</host>
+	<port>3050</port>
+	<database>/firebird/data/DB.FDB</database>
+	<user>sysdba</user>
+	<password>masterkey</password>
+	<charset>utf8</charset>
+	<options>
+		<option name="ODBC::ATTR_PERSISTENT">true</option>
+		<option name="ODBC::ATTR_CONNECT_TIMEOUT">28800</option>
+		<option name="ODBC::ATTR_DEFAULT_FETCH_MODE">ODBC::FETCH_OBJ</option>
+	</options>
+	<exception>true</exception>
+</root>

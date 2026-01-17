@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Engine\OCI\Connection\Arguments\ArgumentsHandler | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../../../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../../../../fonts/doctum-font.css">
+        <script src="../../../../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../../../../doctum.js"></script>
+        <script async defer src="../../../../../js/bootstrap.min.js"></script>
+        <script async defer src="../../../../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Engine_OCI_Connection_Arguments_ArgumentsHandler" data-root-path="../../../../../" data-search-index-url="../../../../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../../../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../../../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../../../../classes.html">Classes</a></li>
+                    <li><a href="../../../../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../../../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../../../../traits.html">Traits</a></li>
+                    <li><a href="../../../../../doc-index.html">Index</a></li>
+                    <li><a href="../../../../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../../../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../../../../GenericDatabase/Engine.html">Engine</a></li><li class="backslash">\</li><li><a href="../../../../../GenericDatabase/Engine/OCI.html">OCI</a></li><li class="backslash">\</li><li><a href="../../../../../GenericDatabase/Engine/OCI/Connection.html">Connection</a></li><li class="backslash">\</li><li><a href="../../../../../GenericDatabase/Engine/OCI/Connection/Arguments.html">Arguments</a></li><li class="backslash">\</li><li>ArgumentsHandler</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>ArgumentsHandler    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>ArgumentsHandler</strong>        extends <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html"><abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a>        implements        <a href="../../../../../GenericDatabase/Interfaces/Connection/IArguments.html"><abbr title="GenericDatabase\Interfaces\Connection\IArguments">IArguments</abbr></a>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/OCI/Connection/Arguments/ArgumentsHandler.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            
+        
+    
+            <h2>Properties</h2>
+
+            <table class="table table-condensed">
+                    <tr>
+                <td class="type" id="property_instance">
+                    static                    protected                                        <a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+                                                                                
+                                    </td>
+                <td>$instance</td>
+                <td class="last"></td>
+                <td><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#property_instance">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_optionsHandler">
+                    static                    protected                                        <a href="../../../../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a>
+                                                                                
+                                    </td>
+                <td>$optionsHandler</td>
+                <td class="last"></td>
+                <td><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#property_optionsHandler">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_argumentsStrategy">
+                    static                    protected                                        <a href="../../../../../GenericDatabase/Interfaces/Connection/IArgumentsStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IArgumentsStrategy">IArgumentsStrategy</abbr></a>
+                                                                                
+                                    </td>
+                <td>$argumentsStrategy</td>
+                <td class="last"></td>
+                <td><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#property_argumentsStrategy">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></td>
+            </tr>
+            </table>
+
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___construct">__construct</a>(<a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $instance, <a href="../../../../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a> $optionsHandler, <a href="../../../../../GenericDatabase/Interfaces/Connection/IArgumentsStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IArgumentsStrategy">IArgumentsStrategy</abbr></a> $argumentsStrategy)
+        
+                                            <p><p>Constructor for AbstractArguments.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method___construct">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getInstance">getInstance</a>()
+        
+                                            <p><p>Get the connection instance.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_getInstance">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../../../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getOptionsHandler">getOptionsHandler</a>()
+        
+                                            <p><p>Get the options handler instance.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_getOptionsHandler">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../../../../GenericDatabase/Interfaces/Connection/IArgumentsStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IArgumentsStrategy">IArgumentsStrategy</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getArgumentsStrategy">getArgumentsStrategy</a>()
+        
+                                            <p><p>Get the arguments strategy instance.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_getArgumentsStrategy">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Interfaces\Connection\string|int|bool">string|int|bool</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setType">setType</a>(mixed $value)
+        
+                                            <p><p>Determines the type that will receive treatment</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_setType">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setConstant">setConstant</a>(array $value)
+        
+                                            <p><p>Transform variables in constants</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_setConstant">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_callArgumentsByFormat">callArgumentsByFormat</a>(string $format, mixed $arguments)
+        
+                                            <p><p>Determines arguments type by calling to format type</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_callArgumentsByFormat">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_callWithByStaticArgs">callWithByStaticArgs</a>(array $arguments)
+        
+                                            <p><p>This method is used when all parameters are used in the static arguments format</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_callWithByStaticArgs">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_call">call</a>(string $name, array $arguments)
+        
+                                            <p><p>Triggered when invoking inaccessible methods in an object context</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_call">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_callStatic">callStatic</a>(string $name, array $arguments)
+        
+                                            <p><p>This method works like a factory and is responsible for identifying
+the way in which the class is instantiated, as well as its arguments.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_callStatic">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___call">__call</a>(string $name, array $arguments)
+        
+                                            <p><p>Triggered when invoking inaccessible methods in an object context</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___callStatic">__callStatic</a>(string $name, array $arguments)
+        
+                                            <p><p>This method works like a factory and is responsible for identifying
+the way in which the class is instantiated, as well as its arguments.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method___construct">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method___construct">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L75">at line 75</a></div>
+        <code>                    
+    <strong>__construct</strong>(<a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $instance, <a href="../../../../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a> $optionsHandler, <a href="../../../../../GenericDatabase/Interfaces/Connection/IArgumentsStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IArgumentsStrategy">IArgumentsStrategy</abbr></a> $argumentsStrategy)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Constructor for AbstractArguments.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+                <td>$instance</td>
+                <td><p>The connection instance to use</p></td>
+            </tr>
+                    <tr>
+                <td><a href="../../../../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a></td>
+                <td>$optionsHandler</td>
+                <td><p>The options handler instance to use</p></td>
+            </tr>
+                    <tr>
+                <td><a href="../../../../../GenericDatabase/Interfaces/Connection/IArgumentsStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IArgumentsStrategy">IArgumentsStrategy</abbr></a></td>
+                <td>$argumentsStrategy</td>
+                <td><p>The arguments strategy instance to use</p></td>
+            </tr>
+            </table>
+
+            
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getInstance">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_getInstance">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L87">at line 87</a></div>
+        <code>        static            <a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+    <strong>getInstance</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the connection instance.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+            <td><p>The connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getOptionsHandler">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_getOptionsHandler">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L97">at line 97</a></div>
+        <code>        static            <a href="../../../../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a>
+    <strong>getOptionsHandler</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the options handler instance.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../../../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a></td>
+            <td><p>The option's handler.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getArgumentsStrategy">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_getArgumentsStrategy">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L107">at line 107</a></div>
+        <code>        static            <a href="../../../../../GenericDatabase/Interfaces/Connection/IArgumentsStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IArgumentsStrategy">IArgumentsStrategy</abbr></a>
+    <strong>getArgumentsStrategy</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the arguments strategy instance.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../../../../GenericDatabase/Interfaces/Connection/IArgumentsStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IArgumentsStrategy">IArgumentsStrategy</abbr></a></td>
+            <td><p>The argument's strategy.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setType">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_setType">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L118">at line 118</a></div>
+        <code>        static            <abbr title="GenericDatabase\Interfaces\Connection\string|int|bool">string|int|bool</abbr>
+    <strong>setType</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Determines the type that will receive treatment</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td><p>The value to set the argument type to.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\string|int|bool">string|int|bool</abbr></td>
+            <td><p>The set argument type.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setConstant">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_setConstant">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L129">at line 129</a></div>
+        <code>        static            array
+    <strong>setConstant</strong>(array $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Transform variables in constants</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_callArgumentsByFormat">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_callArgumentsByFormat">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L141">at line 141</a></div>
+        <code>        static            <a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+    <strong>callArgumentsByFormat</strong>(string $format, mixed $arguments)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Determines arguments type by calling to format type</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$format</td>
+                <td><p>The format to call the arguments by.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$arguments</td>
+                <td><p>The arguments to call.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+            <td><p>The connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_callWithByStaticArgs">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_callWithByStaticArgs">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L185">at line 185</a></div>
+        <code>        static            <a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+    <strong>callWithByStaticArgs</strong>(array $arguments)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This method is used when all parameters are used in the static arguments format</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$arguments</td>
+                <td><p>The arguments to call with.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+            <td><p>The connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_call">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_call">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L197">at line 197</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+    <strong>call</strong>(string $name, array $arguments)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Triggered when invoking inaccessible methods in an object context</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>The name to call with.</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$arguments</td>
+                <td><p>The arguments to call with.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr></td>
+            <td><p>The result of the call.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_callStatic">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractArguments.html#method_callStatic">
+<abbr title="GenericDatabase\Abstract\AbstractArguments">AbstractArguments</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractArguments.php#L217">at line 217</a></div>
+        <code>        static            <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+    <strong>callStatic</strong>(string $name, array $arguments)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This method works like a factory and is responsible for identifying
+the way in which the class is instantiated, as well as its arguments.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>The name to call statically with.</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$arguments</td>
+                <td><p>The arguments to call statically with.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr></td>
+            <td><p>The result of the static call.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___call">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/OCI/Connection/Arguments/ArgumentsHandler.php#L18">at line 18</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+    <strong>__call</strong>(string $name, array $arguments)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Triggered when invoking inaccessible methods in an object context</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>Name of the method</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$arguments</td>
+                <td><p>Array of arguments</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___callStatic">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/OCI/Connection/Arguments/ArgumentsHandler.php#L31">at line 31</a></div>
+        <code>        static            <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+    <strong>__callStatic</strong>(string $name, array $arguments)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This method works like a factory and is responsible for identifying
+the way in which the class is instantiated, as well as its arguments.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>Name of the static method</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$arguments</td>
+                <td><p>Array of arguments</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

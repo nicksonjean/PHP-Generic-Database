@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "cep": null,
+        "logradouro_id": 4,
+        "endereco": "Alberto Maranhão",
+        "bairro": "Centro",
+        "complemento": null,
+        "numero": null,
+        "cidade_id": 3769,
+        "ponto_referencia": null,
+        "coordenadas": null,
+        "created_at": "2016-09-12 22:45:15",
+        "updated_at": "2016-09-12 22:45:15",
+        "deleted_at": null
+    }
+]

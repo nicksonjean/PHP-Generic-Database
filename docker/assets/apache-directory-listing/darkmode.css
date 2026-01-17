@@ -1,0 +1,101 @@
+/*------------------------------------*\
+    Dark Theme Variables
+    Matching Nginx dark theme exactly
+\*------------------------------------*/
+html {
+  color-scheme: dark;
+}
+
+:root {
+  --primary-color: #6d8eff;
+  --secondary-color: #adb5bd;
+  --hover-color: #dc8867;
+  --background-color: #282523;
+  --text-color: #e0e0e0;
+  --border-color: #2d2d2d;
+  --header-color: #e0e0e0;
+  --footer-color: #4e423b0a;
+  --table-header-bg: #2d2d2d;
+  --table-header-color: #e0e0e0;
+  --table-shadow: rgba(0, 0, 0, 0.2);
+  --icon-opacity: 0.9;
+  --table-content-text-color: #e0e0e0;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: var(--primary-color);
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--primary-color);
+  opacity: 0.8;
+}
+
+table tr:hover {
+  background-color: var(--hover-color);
+  transition: background-color 0.2s ease;
+}
+
+table tr.indexhead {
+  background-color: var(--table-header-bg);
+  color: var(--table-header-color);
+}
+
+table tr.indexhead a {
+  color: var(--table-header-color);
+}
+
+table tr.indexhead th:hover {
+  background-color: var(--hover-color);
+}
+
+table tr:not(.indexhead) .indexcolname a,
+table tr:not(.indexhead) .indexcollastmod a,
+table tr:not(.indexhead) .indexcolsize a {
+  color: #e0e0e0 !important;
+}
+
+table tr:not(.indexhead) .indexcolname a:hover,
+table tr:not(.indexhead) .indexcollastmod a:hover,
+table tr:not(.indexhead) .indexcolsize a:hover {
+  color: var(--primary-color) !important;
+  border-bottom: none !important;
+}
+
+table tr:not(.indexhead).even-parentdir a,
+table tr:not(.indexhead).parent a {
+  color: var(--secondary-color) !important;
+}
+
+table tr:not(.indexhead).even-parentdir a:hover,
+table tr:not(.indexhead).parent a:hover {
+  color: var(--primary-color) !important;
+  opacity: 0.8;
+}
+
+/* Force bright white text for all table content in dark theme */
+table tr:not(.indexhead) td {
+  color: #e0e0e0 !important;
+}
+
+table tr:not(.indexhead) td a {
+  color: #e0e0e0 !important;
+}
+
+table tr:not(.indexhead) .indexcolname,
+table tr:not(.indexhead) .indexcollastmod,
+table tr:not(.indexhead) .indexcolsize {
+  color: #e0e0e0 !important;
+}
+
+/* All text content in cells */
+table tr:not(.indexhead) td * {
+  color: #e0e0e0 !important;
+}

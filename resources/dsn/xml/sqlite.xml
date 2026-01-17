@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+  <database>../../resources/database/sqlite/data/DB.SQLITE</database>
+  <charset>utf8</charset>
+  <options>
+		<option name="SQLite::ATTR_OPEN_READONLY">false</option>
+		<option name="SQLite::ATTR_OPEN_READWRITE">true</option>
+		<option name="SQLite::ATTR_OPEN_CREATE">true</option>
+    <option name="SQLite::ATTR_CONNECT_TIMEOUT">28800</option>
+    <option name="SQLite::ATTR_PERSISTENT">true</option>
+    <option name="SQLite::ATTR_AUTOCOMMIT">true</option>
+    <option name="SQLite::ATTR_DEFAULT_FETCH_MODE">SQLite::FETCH_OBJ</option>
+  </options>
+  <exception>true</exception>
+</root>

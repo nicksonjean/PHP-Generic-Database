@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Helpers\Errors | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../fonts/doctum-font.css">
+        <script src="../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../doctum.js"></script>
+        <script async defer src="../../js/bootstrap.min.js"></script>
+        <script async defer src="../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Helpers_Errors" data-root-path="../../" data-search-index-url="../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../classes.html">Classes</a></li>
+                    <li><a href="../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../traits.html">Traits</a></li>
+                    <li><a href="../../doc-index.html">Index</a></li>
+                    <li><a href="../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../GenericDatabase/Helpers.html">Helpers</a></li><li class="backslash">\</li><li>Errors</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>Errors    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>Errors</strong>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Errors.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>The <code>GenericDatabase\Helpers\Errors</code> class provides static methods for manipulating error display settings
+and throwing exceptions with error messages and locations.</p></p>            <p><p>Example Usage:</p>
+<pre><code>// Turn off error display
+Errors::turnOff();
+
+// Turn on error display
+Errors::turnOn();
+
+// Throw an exception and display the error message and location
+Errors::throw(new Exception('An error occurred'));
+
+// Throw a custom exception with a custom error message and display the error message and location
+Errors::newThrow(new Exception('An error occurred'), 'Custom error message');</code></pre>
+<p>Main functionalities:</p>
+<ul>
+<li>Manipulating error display settings</li>
+<li>Throwing exceptions with error messages and locations</li>
+</ul>
+<p>Methods:</p>
+<ul>
+<li><code>setError(mixed $value): mixed</code>: Sets the error display setting to the specified value and returns the previous value.</li>
+<li><code>turnOff(): mixed</code>: Turns off error display by setting the error display setting to 0 and returns the previous value.</li>
+<li><code>turnOn(): mixed</code>: Turns on error display by setting the error display setting to 1 and returns the previous value.</li>
+<li><code>throw(object $exception): never</code>: Throws the specified exception and displays the error message and location.</li>
+<li><code>newThrow(object $exception, object $message): never</code>: Throws a custom exception with the specified error message and displays the error message and location.</li>
+</ul>
+<p>Fields:</p>
+<ul>
+<li><code>error</code>: Stores the previous error display setting.</li>
+</ul></p>        </div>
+            
+        
+    
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_turnOff">turnOff</a>()
+        
+                                            <p><p>Turn off error display by setting the error display setting to 0.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_turnOn">turnOn</a>()
+        
+                                            <p><p>Turn on error display by setting the error display setting to 1.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Helpers\string|false">string|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_throw">throw</a>(object $exception, string|null $message = null)
+        
+                                            <p><p>Throw a custom exception with the specified error message and display the error message and location.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method_turnOff">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Errors.php#L67">at line 67</a></div>
+        <code>        static            mixed
+    <strong>turnOff</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Turn off error display by setting the error display setting to 0.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>The previous error display setting.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_turnOn">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Errors.php#L77">at line 77</a></div>
+        <code>        static            mixed
+    <strong>turnOn</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Turn on error display by setting the error display setting to 1.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>The previous error display setting.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_throw">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Errors.php#L89">at line 89</a></div>
+        <code>        static            <abbr title="GenericDatabase\Helpers\string|false">string|false</abbr>
+    <strong>throw</strong>(object $exception, string|null $message = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Throw a custom exception with the specified error message and display the error message and location.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>object</td>
+                <td>$exception</td>
+                <td><p>The exception to throw.</p></td>
+            </tr>
+                    <tr>
+                <td>string|null</td>
+                <td>$message</td>
+                <td><p>= null The custom error message.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Helpers\string|false">string|false</abbr></td>
+            <td><p>This method always throws an exception and does not return.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

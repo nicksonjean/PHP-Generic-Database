@@ -1,0 +1,129 @@
+{
+    # Configurações globais do Caddy
+    # Não usar auto_https off - permite que HTTP e HTTPS funcionem simultaneamente
+    # ao especificar explicitamente http://:80 e https://:443
+    admin localhost:2019
+}
+
+http://:80 {
+    # Servidor HTTP na porta 80
+    root * /var/www/html
+    encode zstd gzip
+    
+    # Permitir acesso aos arquivos estáticos do template (CSS/JS)
+    @template_assets {
+        path /docker/assets/frankenphp-directory-listing/*
+    }
+    handle @template_assets {
+        file_server
+    }
+    
+    # Bloquear acesso direto a arquivos e diretórios que não devem ser exibidos
+    # IMPORTANTE: Apenas bloquear na raiz, não dentro das pastas permitidas
+    @blocked_root {
+        path_regexp ^/(\.|vendor|cache|assets|resources|bin|docker|adminer|patches|trash|scripts|src|tests|\.devcontainer|\.stub|\.git|\.env|\.cursor|\.idea|\.phpunit\.cache|\.qodo|\.stubs|\.vscode)/|^/(composer\.(json|lock)|phpcs\.xml|phpunit\.xml|phpmd\.xml|phpstan\.neon|grumphp\.yml|doctum\.php|docker-compose\.yml|favicon\.ico|\.htaccess|README\.md|class-diagram\.mmd|flowchart\.mmd|.*\.(stub\.php|md|sh|bat|mmd|txt|json|xml|yml|yaml|lock|log|ini|conf|css|js|html|png|jpg|jpeg|gif|svg|ico|zip))$|^/\.
+        not path /docker/assets/frankenphp-directory-listing/*
+        not path_regexp ^/(build|connections|docs|readme|samples)/
+    }
+    handle @blocked_root {
+        respond "Not Found" 404
+    }
+    
+    # Tentar servir index files primeiro (index.php, index.html, index.htm)
+    try_files {path} {path}/index.php {path}/index.html {path}/index.htm
+    
+    # PHP handler via FrankenPHP (processa arquivos .php)
+    @php {
+        path *.php
+        not path *.stub.php
+    }
+    handle @php {
+        php_server
+    }
+    
+    # Servir arquivos estáticos e diretórios com listing habilitado
+    # Usar template customizado para filtrar o que é exibido
+    handle {
+        file_server {
+            browse /var/www/html/docker/assets/frankenphp-directory-listing/browse-template.html
+        }
+    }
+    
+    # Logs
+    log {
+        output stdout
+        format console
+    }
+    
+    # Headers de segurança
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        X-XSS-Protection "1; mode=block"
+    }
+}
+
+https://:443 {
+    # Servidor HTTPS na porta 443
+    # TLS - usar internal para desenvolvimento local (certificado auto-assinado)
+    # O certificado será gerado para localhost, mas aceita qualquer hostname na porta 443
+    tls internal {
+        on_demand
+    }
+    
+    root * /var/www/html
+    encode zstd gzip
+    
+    # Permitir acesso aos arquivos estáticos do template (CSS/JS)
+    @template_assets {
+        path /docker/assets/frankenphp-directory-listing/*
+    }
+    handle @template_assets {
+        file_server
+    }
+    
+    # Bloquear acesso direto a arquivos e diretórios que não devem ser exibidos
+    # IMPORTANTE: Apenas bloquear na raiz, não dentro das pastas permitidas
+    @blocked_root {
+        path_regexp ^/(\.|vendor|cache|assets|resources|bin|docker|adminer|patches|trash|scripts|src|tests|\.devcontainer|\.stub|\.git|\.env|\.cursor|\.idea|\.phpunit\.cache|\.qodo|\.stubs|\.vscode)/|^/(composer\.(json|lock)|phpcs\.xml|phpunit\.xml|phpmd\.xml|phpstan\.neon|grumphp\.yml|doctum\.php|docker-compose\.yml|favicon\.ico|\.htaccess|README\.md|class-diagram\.mmd|flowchart\.mmd|.*\.(stub\.php|md|sh|bat|mmd|txt|json|xml|yml|yaml|lock|log|ini|conf|css|js|html|png|jpg|jpeg|gif|svg|ico|zip))$|^/\.
+        not path /docker/assets/frankenphp-directory-listing/*
+        not path_regexp ^/(build|connections|docs|readme|samples)/
+    }
+    handle @blocked_root {
+        respond "Not Found" 404
+    }
+    
+    # Tentar servir index files primeiro (index.php, index.html, index.htm)
+    try_files {path} {path}/index.php {path}/index.html {path}/index.htm
+    
+    # PHP handler via FrankenPHP (processa arquivos .php)
+    @php {
+        path *.php
+        not path *.stub.php
+    }
+    handle @php {
+        php_server
+    }
+    
+    # Servir arquivos estáticos e diretórios com listing habilitado
+    # Usar template customizado para filtrar o que é exibido
+    handle {
+        file_server {
+            browse /var/www/html/docker/assets/frankenphp-directory-listing/browse-template.html
+        }
+    }
+    
+    # Logs
+    log {
+        output stdout
+        format console
+    }
+    
+    # Headers de segurança
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        X-XSS-Protection "1; mode=block"
+        Strict-Transport-Security "max-age=31536000;"
+    }
+}

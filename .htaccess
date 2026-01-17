@@ -1,0 +1,65 @@
+Options +Indexes
+
+<IfModule mod_autoindex.c>
+
+  # Ignore listing of the listing directory
+  IndexIgnore "apache-directory-listing" "docker"
+
+  # Indexing options
+  IndexOptions +AddAltClass +Charset=UTF-8 +FancyIndexing +FoldersFirst +HTMLTable
+  IndexOptions +IgnoreCase +NameWidth=* +SuppressRules +SuppressDescription +IconsAreLinks
+
+  IndexHeadInsert "<meta name='viewport' content='width=device-width, initial-scale=1'><meta http-equiv='X-UA-Compatible' content='IE=edge'><link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📁</text></svg>'>"
+
+  HeaderName "/docker/assets/apache-directory-listing/header.html"
+  ReadmeName "/docker/assets/apache-directory-listing/footer.html"
+  # Estilos disponíveis: table-automode.css, grid-automode.css, table.css, grid.css, table-darkmode.css, grid-darkmode.css
+  IndexStyleSheet "/docker/assets/apache-directory-listing/table.css"
+
+  # Registering icons
+  # Default icon
+  DefaultIcon "/docker/assets/apache-directory-listing/icons/unknown.svg"
+
+  # Some generic icons
+  AddIcon "/docker/assets/apache-directory-listing/icons/blank.svg" ^^BLANKICON^^
+  AddIcon "/docker/assets/apache-directory-listing/icons/folder.svg" ^^DIRECTORY^^
+  AddIcon "/docker/assets/apache-directory-listing/icons/folder-home.svg" ..
+
+  # Extension specific icons
+  AddIcon "/docker/assets/apache-directory-listing/icons/archive.svg" .zip .7z .bz2 .cab .gz .tar .rar
+  AddIcon "/docker/assets/apache-directory-listing/icons/audio.svg" .aac .aif .aifc .aiff .ape .au .flac .iff .m4a .mid .mp3 .mpa .ra .wav .wma .f4a .f4b .oga .ogg .xm .it .s3m .mod
+  AddIcon "/docker/assets/apache-directory-listing/icons/bin.svg" .bin .hex
+  AddIcon "/docker/assets/apache-directory-listing/icons/code.svg" .xml
+  AddIcon "/docker/assets/apache-directory-listing/icons/doc.svg" .doc .docx .docm .dot .dotx .dotm .log .msg .odt .pages .rtf .tex .wpd .wps
+  AddIcon "/docker/assets/apache-directory-listing/icons/img.svg" .bmp .png .tiff .tif .gif .jpg .jpeg .jpe .psd .ai .ico .webp
+  AddIcon "/docker/assets/apache-directory-listing/icons/spreadsheet.svg" .xlsx .xlsm .xltx .xltm .xlam .xlr .xls .csv
+  AddIcon "/docker/assets/apache-directory-listing/icons/presentation.svg" .ppt .pptx .pot .potx .pptm .potm .xps
+  AddIcon "/docker/assets/apache-directory-listing/icons/c++.svg" .cpp
+  AddIcon "/docker/assets/apache-directory-listing/icons/c.svg" .c
+  AddIcon "/docker/assets/apache-directory-listing/icons/css3.svg" .css .sass .scss .less
+  AddIcon "/docker/assets/apache-directory-listing/icons/font.svg" .ttf .TTF .woff .WOFF .woff2 .WOFF2 .otf .OTF
+  AddIcon "/docker/assets/apache-directory-listing/icons/h.svg" .h
+  AddIcon "/docker/assets/apache-directory-listing/icons/html5.svg" .html .xhtml .shtml .htm .URL .url
+  AddIcon "/docker/assets/apache-directory-listing/icons/info.svg" .nfo .info
+  AddIcon "/docker/assets/apache-directory-listing/icons/iso.svg" .iso .img
+  AddIcon "/docker/assets/apache-directory-listing/icons/java.svg" .jar .java
+  AddIcon "/docker/assets/apache-directory-listing/icons/js.svg" .js .json
+  AddIcon "/docker/assets/apache-directory-listing/icons/markdown.svg" .md
+  AddIcon "/docker/assets/apache-directory-listing/icons/package.svg" .pkg .dmg .rpm .deb
+  AddIcon "/docker/assets/apache-directory-listing/icons/pdf.svg" .pdf
+  AddIcon "/docker/assets/apache-directory-listing/icons/php.svg" .php .phtml
+  AddIcon "/docker/assets/apache-directory-listing/icons/py.svg" .py
+  AddIcon "/docker/assets/apache-directory-listing/icons/rb.svg" .rb
+  AddIcon "/docker/assets/apache-directory-listing/icons/script.svg" .bat .BAT .cmd .sh .ps .exe .EXE .msi .MSI
+  AddIcon "/docker/assets/apache-directory-listing/icons/sql.svg" .sql
+  AddIcon "/docker/assets/apache-directory-listing/icons/text.svg" .txt .cnf .conf .map .yaml
+  AddIcon "/docker/assets/apache-directory-listing/icons/vector.svg" .svg .svgz
+  AddIcon "/docker/assets/apache-directory-listing/icons/video.svg" .asf .asx .avi .flv .mkv .mov .mp4 .mpg .rm .srt .swf .vob .wmv .m4v .f4v .f4p .ogv .webm
+
+  # Icons based on their type
+  AddIconByType (TXT,/docker/assets/apache-directory-listing/icons/text.svg) text/*
+  AddIconByType (IMG,/docker/assets/apache-directory-listing/icons/img.svg) image/*
+  AddIconByType (SND,/docker/assets/apache-directory-listing/icons/audio.svg) audio/*
+  AddIconByType (VID,/docker/assets/apache-directory-listing/icons/video.svg) video/*
+
+</IfModule>

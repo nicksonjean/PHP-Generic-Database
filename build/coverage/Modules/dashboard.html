@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/html/src/Modules</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/html/src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Modules</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Fluent.php.html#26">GenericDatabase\Modules\Fluent</a></td><td class="text-right">88%</td></tr>
+       <tr><td><a href="Chainable.php.html#25">GenericDatabase\Modules\Chainable</a></td><td class="text-right">89%</td></tr>
+       <tr><td><a href="StaticArgs.php.html#26">GenericDatabase\Modules\StaticArgs</a></td><td class="text-right">89%</td></tr>
+       <tr><td><a href="StaticArray.php.html#26">GenericDatabase\Modules\StaticArray</a></td><td class="text-right">89%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Fluent.php.html#26">GenericDatabase\Modules\Fluent</a></td><td class="text-right">79</td></tr>
+       <tr><td><a href="StaticArgs.php.html#26">GenericDatabase\Modules\StaticArgs</a></td><td class="text-right">78</td></tr>
+       <tr><td><a href="StaticArray.php.html#26">GenericDatabase\Modules\StaticArray</a></td><td class="text-right">78</td></tr>
+       <tr><td><a href="Chainable.php.html#25">GenericDatabase\Modules\Chainable</a></td><td class="text-right">50</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Chainable.php.html#698"><abbr title="GenericDatabase\Modules\Chainable::odbcAccess">odbcAccess</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chainable.php.html#730"><abbr title="GenericDatabase\Modules\Chainable::odbcExcel">odbcExcel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chainable.php.html#760"><abbr title="GenericDatabase\Modules\Chainable::odbcText">odbcText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Fluent.php.html#693"><abbr title="GenericDatabase\Modules\Fluent::odbcAccess">odbcAccess</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Fluent.php.html#725"><abbr title="GenericDatabase\Modules\Fluent::odbcExcel">odbcExcel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Fluent.php.html#755"><abbr title="GenericDatabase\Modules\Fluent::odbcText">odbcText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StaticArgs.php.html#720"><abbr title="GenericDatabase\Modules\StaticArgs::odbcAccess">odbcAccess</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StaticArgs.php.html#753"><abbr title="GenericDatabase\Modules\StaticArgs::odbcExcel">odbcExcel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StaticArgs.php.html#784"><abbr title="GenericDatabase\Modules\StaticArgs::odbcText">odbcText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StaticArray.php.html#720"><abbr title="GenericDatabase\Modules\StaticArray::odbcAccess">odbcAccess</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StaticArray.php.html#753"><abbr title="GenericDatabase\Modules\StaticArray::odbcExcel">odbcExcel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="StaticArray.php.html#784"><abbr title="GenericDatabase\Modules\StaticArray::odbcText">odbcText</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Fluent.php.html#693"><abbr title="GenericDatabase\Modules\Fluent::odbcAccess">odbcAccess</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Fluent.php.html#725"><abbr title="GenericDatabase\Modules\Fluent::odbcExcel">odbcExcel</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Fluent.php.html#755"><abbr title="GenericDatabase\Modules\Fluent::odbcText">odbcText</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="StaticArgs.php.html#720"><abbr title="GenericDatabase\Modules\StaticArgs::odbcAccess">odbcAccess</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="StaticArgs.php.html#753"><abbr title="GenericDatabase\Modules\StaticArgs::odbcExcel">odbcExcel</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="StaticArgs.php.html#784"><abbr title="GenericDatabase\Modules\StaticArgs::odbcText">odbcText</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="StaticArray.php.html#720"><abbr title="GenericDatabase\Modules\StaticArray::odbcAccess">odbcAccess</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="StaticArray.php.html#753"><abbr title="GenericDatabase\Modules\StaticArray::odbcExcel">odbcExcel</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="StaticArray.php.html#784"><abbr title="GenericDatabase\Modules\StaticArray::odbcText">odbcText</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Chainable.php.html#698"><abbr title="GenericDatabase\Modules\Chainable::odbcAccess">odbcAccess</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Chainable.php.html#730"><abbr title="GenericDatabase\Modules\Chainable::odbcExcel">odbcExcel</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Chainable.php.html#760"><abbr title="GenericDatabase\Modules\Chainable::odbcText">odbcText</abbr></a></td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.5</a> using <a href="https://www.php.net/" target="_top">PHP 8.3.16</a> and <a href="https://phpunit.de/">PHPUnit 10.4-dev</a> at Sun Jan 19 15:21:55 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=10.1.5" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=10.1.5" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=10.1.5" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([0,0,0,0,0,0,0,0,0,4,0,0], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([12,0,0,0,0,0,0,0,0,0,0,84], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[89.13580246913581,48,"<a href=\"Chainable.php.html#25\">GenericDatabase\\Modules\\Chainable<\/a>"],[88.94472361809045,72,"<a href=\"Fluent.php.html#26\">GenericDatabase\\Modules\\Fluent<\/a>"],[89.16256157635468,72,"<a href=\"StaticArgs.php.html#26\">GenericDatabase\\Modules\\StaticArgs<\/a>"],[89.16256157635468,72,"<a href=\"StaticArray.php.html#26\">GenericDatabase\\Modules\\StaticArray<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[100,2,"<a href=\"Chainable.php.html#33\">GenericDatabase\\Modules\\Chainable::nativeMySQLi<\/a>"],[100,2,"<a href=\"Chainable.php.html#72\">GenericDatabase\\Modules\\Chainable::nativePgSQL<\/a>"],[100,2,"<a href=\"Chainable.php.html#107\">GenericDatabase\\Modules\\Chainable::nativeSQLSrv<\/a>"],[100,2,"<a href=\"Chainable.php.html#140\">GenericDatabase\\Modules\\Chainable::nativeOCI<\/a>"],[100,2,"<a href=\"Chainable.php.html#173\">GenericDatabase\\Modules\\Chainable::nativeFirebird<\/a>"],[100,2,"<a href=\"Chainable.php.html#206\">GenericDatabase\\Modules\\Chainable::nativeSQLite<\/a>"],[100,2,"<a href=\"Chainable.php.html#239\">GenericDatabase\\Modules\\Chainable::nativeMemory<\/a>"],[100,2,"<a href=\"Chainable.php.html#272\">GenericDatabase\\Modules\\Chainable::pdoMySQL<\/a>"],[100,2,"<a href=\"Chainable.php.html#306\">GenericDatabase\\Modules\\Chainable::pdoPgSQL<\/a>"],[100,2,"<a href=\"Chainable.php.html#339\">GenericDatabase\\Modules\\Chainable::pdoSQLSrv<\/a>"],[100,2,"<a href=\"Chainable.php.html#371\">GenericDatabase\\Modules\\Chainable::pdoOCI<\/a>"],[100,2,"<a href=\"Chainable.php.html#405\">GenericDatabase\\Modules\\Chainable::pdoFirebird<\/a>"],[100,2,"<a href=\"Chainable.php.html#439\">GenericDatabase\\Modules\\Chainable::pdoSQLite<\/a>"],[100,2,"<a href=\"Chainable.php.html#469\">GenericDatabase\\Modules\\Chainable::pdoMemory<\/a>"],[100,2,"<a href=\"Chainable.php.html#499\">GenericDatabase\\Modules\\Chainable::odbcMySQL<\/a>"],[100,2,"<a href=\"Chainable.php.html#532\">GenericDatabase\\Modules\\Chainable::odbcPgSQL<\/a>"],[100,2,"<a href=\"Chainable.php.html#566\">GenericDatabase\\Modules\\Chainable::odbcSQLSrv<\/a>"],[100,2,"<a href=\"Chainable.php.html#600\">GenericDatabase\\Modules\\Chainable::odbcOCI<\/a>"],[100,2,"<a href=\"Chainable.php.html#634\">GenericDatabase\\Modules\\Chainable::odbcFirebird<\/a>"],[100,2,"<a href=\"Chainable.php.html#668\">GenericDatabase\\Modules\\Chainable::odbcSQLite<\/a>"],[0,2,"<a href=\"Chainable.php.html#698\">GenericDatabase\\Modules\\Chainable::odbcAccess<\/a>"],[0,2,"<a href=\"Chainable.php.html#730\">GenericDatabase\\Modules\\Chainable::odbcExcel<\/a>"],[0,2,"<a href=\"Chainable.php.html#760\">GenericDatabase\\Modules\\Chainable::odbcText<\/a>"],[100,2,"<a href=\"Chainable.php.html#790\">GenericDatabase\\Modules\\Chainable::odbcMemory<\/a>"],[100,3,"<a href=\"Fluent.php.html#34\">GenericDatabase\\Modules\\Fluent::nativeMySQLi<\/a>"],[100,3,"<a href=\"Fluent.php.html#72\">GenericDatabase\\Modules\\Fluent::nativePgSQL<\/a>"],[100,3,"<a href=\"Fluent.php.html#106\">GenericDatabase\\Modules\\Fluent::nativeSQLSrv<\/a>"],[100,3,"<a href=\"Fluent.php.html#139\">GenericDatabase\\Modules\\Fluent::nativeOCI<\/a>"],[100,3,"<a href=\"Fluent.php.html#171\">GenericDatabase\\Modules\\Fluent::nativeFirebird<\/a>"],[100,3,"<a href=\"Fluent.php.html#203\">GenericDatabase\\Modules\\Fluent::nativeSQLite<\/a>"],[100,3,"<a href=\"Fluent.php.html#235\">GenericDatabase\\Modules\\Fluent::nativeMemory<\/a>"],[100,3,"<a href=\"Fluent.php.html#267\">GenericDatabase\\Modules\\Fluent::pdoMySQL<\/a>"],[100,3,"<a href=\"Fluent.php.html#300\">GenericDatabase\\Modules\\Fluent::pdoPgSQL<\/a>"],[100,3,"<a href=\"Fluent.php.html#333\">GenericDatabase\\Modules\\Fluent::pdoSQLSrv<\/a>"],[100,3,"<a href=\"Fluent.php.html#365\">GenericDatabase\\Modules\\Fluent::pdoOCI<\/a>"],[100,3,"<a href=\"Fluent.php.html#399\">GenericDatabase\\Modules\\Fluent::pdoFirebird<\/a>"],[100,3,"<a href=\"Fluent.php.html#433\">GenericDatabase\\Modules\\Fluent::pdoSQLite<\/a>"],[100,3,"<a href=\"Fluent.php.html#463\">GenericDatabase\\Modules\\Fluent::pdoMemory<\/a>"],[100,3,"<a href=\"Fluent.php.html#493\">GenericDatabase\\Modules\\Fluent::odbcMySQL<\/a>"],[100,3,"<a href=\"Fluent.php.html#527\">GenericDatabase\\Modules\\Fluent::odbcPgSQL<\/a>"],[100,3,"<a href=\"Fluent.php.html#561\">GenericDatabase\\Modules\\Fluent::odbcSQLSrv<\/a>"],[100,3,"<a href=\"Fluent.php.html#595\">GenericDatabase\\Modules\\Fluent::odbcOCI<\/a>"],[100,3,"<a href=\"Fluent.php.html#629\">GenericDatabase\\Modules\\Fluent::odbcFirebird<\/a>"],[100,3,"<a href=\"Fluent.php.html#663\">GenericDatabase\\Modules\\Fluent::odbcSQLite<\/a>"],[0,3,"<a href=\"Fluent.php.html#693\">GenericDatabase\\Modules\\Fluent::odbcAccess<\/a>"],[0,3,"<a href=\"Fluent.php.html#725\">GenericDatabase\\Modules\\Fluent::odbcExcel<\/a>"],[0,3,"<a href=\"Fluent.php.html#755\">GenericDatabase\\Modules\\Fluent::odbcText<\/a>"],[100,3,"<a href=\"Fluent.php.html#785\">GenericDatabase\\Modules\\Fluent::odbcMemory<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#34\">GenericDatabase\\Modules\\StaticArgs::nativeMySQLi<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#74\">GenericDatabase\\Modules\\StaticArgs::nativePgSQL<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#110\">GenericDatabase\\Modules\\StaticArgs::nativeSQLSrv<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#144\">GenericDatabase\\Modules\\StaticArgs::nativeOCI<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#178\">GenericDatabase\\Modules\\StaticArgs::nativeFirebird<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#212\">GenericDatabase\\Modules\\StaticArgs::nativeSQLite<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#246\">GenericDatabase\\Modules\\StaticArgs::nativeMemory<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#280\">GenericDatabase\\Modules\\StaticArgs::pdoMySQL<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#315\">GenericDatabase\\Modules\\StaticArgs::pdoPgSQL<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#349\">GenericDatabase\\Modules\\StaticArgs::pdoSQLSrv<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#382\">GenericDatabase\\Modules\\StaticArgs::pdoOCI<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#417\">GenericDatabase\\Modules\\StaticArgs::pdoFirebird<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#452\">GenericDatabase\\Modules\\StaticArgs::pdoSQLite<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#483\">GenericDatabase\\Modules\\StaticArgs::pdoMemory<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#514\">GenericDatabase\\Modules\\StaticArgs::odbcMySQL<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#549\">GenericDatabase\\Modules\\StaticArgs::odbcPgSQL<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#584\">GenericDatabase\\Modules\\StaticArgs::odbcSQLSrv<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#619\">GenericDatabase\\Modules\\StaticArgs::odbcOCI<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#654\">GenericDatabase\\Modules\\StaticArgs::odbcFirebird<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#689\">GenericDatabase\\Modules\\StaticArgs::odbcSQLite<\/a>"],[0,3,"<a href=\"StaticArgs.php.html#720\">GenericDatabase\\Modules\\StaticArgs::odbcAccess<\/a>"],[0,3,"<a href=\"StaticArgs.php.html#753\">GenericDatabase\\Modules\\StaticArgs::odbcExcel<\/a>"],[0,3,"<a href=\"StaticArgs.php.html#784\">GenericDatabase\\Modules\\StaticArgs::odbcText<\/a>"],[100,3,"<a href=\"StaticArgs.php.html#815\">GenericDatabase\\Modules\\StaticArgs::odbcMemory<\/a>"],[100,3,"<a href=\"StaticArray.php.html#34\">GenericDatabase\\Modules\\StaticArray::nativeMySQLi<\/a>"],[100,3,"<a href=\"StaticArray.php.html#74\">GenericDatabase\\Modules\\StaticArray::nativePgSQL<\/a>"],[100,3,"<a href=\"StaticArray.php.html#110\">GenericDatabase\\Modules\\StaticArray::nativeSQLSrv<\/a>"],[100,3,"<a href=\"StaticArray.php.html#144\">GenericDatabase\\Modules\\StaticArray::nativeOCI<\/a>"],[100,3,"<a href=\"StaticArray.php.html#178\">GenericDatabase\\Modules\\StaticArray::nativeFirebird<\/a>"],[100,3,"<a href=\"StaticArray.php.html#212\">GenericDatabase\\Modules\\StaticArray::nativeSQLite<\/a>"],[100,3,"<a href=\"StaticArray.php.html#246\">GenericDatabase\\Modules\\StaticArray::nativeMemory<\/a>"],[100,3,"<a href=\"StaticArray.php.html#280\">GenericDatabase\\Modules\\StaticArray::pdoMySQL<\/a>"],[100,3,"<a href=\"StaticArray.php.html#315\">GenericDatabase\\Modules\\StaticArray::pdoPgSQL<\/a>"],[100,3,"<a href=\"StaticArray.php.html#349\">GenericDatabase\\Modules\\StaticArray::pdoSQLSrv<\/a>"],[100,3,"<a href=\"StaticArray.php.html#382\">GenericDatabase\\Modules\\StaticArray::pdoOCI<\/a>"],[100,3,"<a href=\"StaticArray.php.html#417\">GenericDatabase\\Modules\\StaticArray::pdoFirebird<\/a>"],[100,3,"<a href=\"StaticArray.php.html#452\">GenericDatabase\\Modules\\StaticArray::pdoSQLite<\/a>"],[100,3,"<a href=\"StaticArray.php.html#483\">GenericDatabase\\Modules\\StaticArray::pdoMemory<\/a>"],[100,3,"<a href=\"StaticArray.php.html#514\">GenericDatabase\\Modules\\StaticArray::odbcMySQL<\/a>"],[100,3,"<a href=\"StaticArray.php.html#549\">GenericDatabase\\Modules\\StaticArray::odbcPgSQL<\/a>"],[100,3,"<a href=\"StaticArray.php.html#584\">GenericDatabase\\Modules\\StaticArray::odbcSQLSrv<\/a>"],[100,3,"<a href=\"StaticArray.php.html#619\">GenericDatabase\\Modules\\StaticArray::odbcOCI<\/a>"],[100,3,"<a href=\"StaticArray.php.html#654\">GenericDatabase\\Modules\\StaticArray::odbcFirebird<\/a>"],[100,3,"<a href=\"StaticArray.php.html#689\">GenericDatabase\\Modules\\StaticArray::odbcSQLite<\/a>"],[0,3,"<a href=\"StaticArray.php.html#720\">GenericDatabase\\Modules\\StaticArray::odbcAccess<\/a>"],[0,3,"<a href=\"StaticArray.php.html#753\">GenericDatabase\\Modules\\StaticArray::odbcExcel<\/a>"],[0,3,"<a href=\"StaticArray.php.html#784\">GenericDatabase\\Modules\\StaticArray::odbcText<\/a>"],[100,3,"<a href=\"StaticArray.php.html#815\">GenericDatabase\\Modules\\StaticArray::odbcMemory<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

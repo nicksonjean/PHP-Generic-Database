@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+	<host>firebird</host>
+	<port>3050</port>
+	<database>/firebird/data/DB.FDB</database>
+	<user>sysdba</user>
+	<password>masterkey</password>
+	<charset>utf8</charset>
+	<options>
+		<option name="Firebird::ATTR_PERSISTENT">true</option>
+		<option name="Firebird::ATTR_CONNECT_TIMEOUT">28800</option>
+    <option name="Firebird::ATTR_DEFAULT_FETCH_MODE">Firebird::FETCH_OBJ</option>
+	</options>
+	<exception>true</exception>
+</root>

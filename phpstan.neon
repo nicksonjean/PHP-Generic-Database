@@ -1,0 +1,18 @@
+parameters:
+	phpVersion: 80120 # PHP 8.1
+	level: 4
+	treatPhpDocTypesAsCertain: false
+	paths:
+		- src/
+	excludePaths:
+		- tests/
+		- samples/
+		- scripts/
+		- src/Core/Emulated/
+		- src/Modules/StaticArgs.php
+		- src/Helpers/Schemas.php
+	ignoreErrors:
+		- '#^Unsafe usage of new static#'
+		- '#^Function ibase_prepare invoked with 2 parameters, 3 required#'
+		- '#Call to an undefined static method GenericDatabase\\Core#'
+		- '#Strict comparison using === between resource and false will always evaluate to false#'

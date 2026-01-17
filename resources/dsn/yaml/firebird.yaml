@@ -1,0 +1,11 @@
+host: firebird
+port: 3050
+database: /firebird/data/DB.FDB
+user: sysdba
+password: masterkey
+charset: utf8
+options:
+  - "Firebird::ATTR_PERSISTENT": true
+    "Firebird::ATTR_CONNECT_TIMEOUT": 28800
+    "Firebird::ATTR_DEFAULT_FETCH_MODE": "Firebird::FETCH_OBJ"
+exception: true

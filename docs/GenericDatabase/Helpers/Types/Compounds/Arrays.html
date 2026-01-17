@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Helpers\Types\Compounds\Arrays | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../../../fonts/doctum-font.css">
+        <script src="../../../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../../../doctum.js"></script>
+        <script async defer src="../../../../js/bootstrap.min.js"></script>
+        <script async defer src="../../../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Helpers_Types_Compounds_Arrays" data-root-path="../../../../" data-search-index-url="../../../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../../../classes.html">Classes</a></li>
+                    <li><a href="../../../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../../../traits.html">Traits</a></li>
+                    <li><a href="../../../../doc-index.html">Index</a></li>
+                    <li><a href="../../../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../../../GenericDatabase/Helpers.html">Helpers</a></li><li class="backslash">\</li><li><a href="../../../../GenericDatabase/Helpers/Types.html">Types</a></li><li class="backslash">\</li><li><a href="../../../../GenericDatabase/Helpers/Types/Compounds.html">Compounds</a></li><li class="backslash">\</li><li>Arrays</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>Arrays    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>Arrays</strong>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>The <code>GenericDatabase\Helpers\Types\Compounds\Arrays</code> class provides a collection of static methods for manipulating arrays in PHP.</p></p>            <p><p>It includes functions for finding elements in an array, combining array indices and values, determining the type
+of array, and more.</p>
+<p>Example Usage:</p>
+<pre><code>//Find elements in array except by keys
+$array = ['a' =&gt; 1, 'b' =&gt; 2, 'c' =&gt; 3];
+$keys = ['a', 'c'];
+$result = Arrays::exceptByKeys($array, $keys);</code></pre>
+<p><code>Output: ['b' =&gt; 2]</code></p>
+<pre><code>//Find elements in array except by values
+$array = ['a', 'b', 'c'];
+$values = ['b', 'c'];
+$result = Arrays::exceptByValues($array, $values);</code></pre>
+<p><code>Output: ['a']</code></p>
+<pre><code>//Find the first element that matches between two arrays
+$list = ['apple', 'banana', 'cherry'];
+$array = ['a' =&gt; 'apple', 'b' =&gt; 'banana', 'c' =&gt; 'cherry'];
+$result = Arrays::matchValues($list, $array);</code></pre>
+<p><code>Output: 'apple'</code></p>
+<pre><code>//Iterate the array by combining the indices and values into a new array
+$array = ['a' =&gt; 1, 'b' =&gt; 2, 'c' =&gt; 3];
+$result = Arrays::recombine($array);</code></pre>
+<p><code>Output: ['a' =&gt; 1, 'b' =&gt; 2, 'c' =&gt; 3]</code></p>
+<pre><code>//Iterate through the array combining the values by substituting the indices
+//into sequential numbers starting at zero into a new array
+$array = ['a', 'b', 'c'];
+$result = Arrays::assocToIndex($array);</code></pre>
+<p><code>Output: [0 =&gt; 'a', 1 =&gt; 'b', 2 =&gt; 'c']</code></p>
+<pre><code>//Determine if array is indexed or associative
+$array = ['a', 'b', 'c'];
+$result = Arrays::isAssoc($array);</code></pre>
+<p><code>Output: false</code></p>
+<pre><code>//Determine if array is multidimensional
+$array = [['a' =&gt; 1], ['b' =&gt; 2]];
+$result = Arrays::isMultidimensional($array);</code></pre>
+<p><code>Output: true</code></p>
+<pre><code>//Get array values recursively
+$array = ['a' =&gt; [1, 2], 'b' =&gt; [3, 4]];
+$result = Arrays::arrayValuesRecursive($array);</code></pre>
+<p><code>Output: [[1, 2], [3, 4]]</code></p>
+<pre><code>//Create an index or list array to an associative array
+$array1 = ['a', 'b', 'c'];
+$array2 = ['x' =&gt; 1, 'y' =&gt; 2, 'z' =&gt; 3];
+$result = Arrays::assocToIndexCombine($array1, $array2);</code></pre>
+<p><code>Output: [0 =&gt; 'a', 'a' =&gt; 'a', 1 =&gt; 'b', 'b' =&gt; 'b', 2 =&gt; 'c', 'c' =&gt; 'c', 'x' =&gt; 1, 'y' =&gt; 2, 'z' =&gt; 3]</code></p>
+<p>Main functionalities:</p>
+<ul>
+<li>Finding elements in an array except by keys or values</li>
+<li>Finding the first element that matches between two arrays</li>
+<li>Combining array indices and values into a new array</li>
+<li>Determining if an array is indexed or associative</li>
+<li>Determining if an array is multidimensional</li>
+<li>Getting array values recursively</li>
+<li>Creating an index or list array to an associative array</li>
+</ul>
+<p>Methods:</p>
+<ul>
+<li><code>exceptByKeys(array $array, array $keys): array</code>: Finds elements in an array except by keys.</li>
+<li><code>exceptByValues(array $array, array $values): array</code>: Finds elements in an array except by values.</li>
+<li><code>matchValues(array $list, array $array, ?string $apply = 'mb_strtolower'): string</code>: Finds the first element that matches between two arrays.</li>
+<li><code>recombine(array $array): array</code>: Combines the indices and values of an array into a new array.</li>
+<li><code>assocToIndex(array $array): array</code>: Combines the values of an array by substituting the indices into sequential numbers starting at zero into a new array.</li>
+<li><code>isAssoc(mixed $array): bool</code>: Determines if an array is indexed or associative.</li>
+<li><code>isMultidimensional(array $array): bool</code>: Determines if an array is multidimensional.</li>
+<li><code>arrayValuesRecursive(array $array): array</code>: Gets the array values recursively.</li>
+<li><code>assocToIndexCombine(array ...$arrays): array</code>: Creates an index or list array to</li>
+</ul></p>        </div>
+            
+        
+    
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_exceptByKeys">exceptByKeys</a>(array $array, array $keys)
+        
+                                            <p><p>Find elements in array except by keys</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_exceptByValues">exceptByValues</a>(array $array, array $values)
+        
+                                            <p><p>Find elements in array except by values</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;string
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_matchValues">matchValues</a>(array $list, array $array, string|null $apply = &#039;mb_strtolower&#039;)
+        
+                                            <p><p>Find the first element that matches between two arrays</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_recombine">recombine</a>(array $array)
+        
+                                            <p><p>Iterate the array by combining the indices and values into a new array</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_assocToIndex">assocToIndex</a>(array $array)
+        
+                                            <p><p>Iterates through the array combining the values by substituting
+the indices into sequential numbers starting at zero into a new array</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_isAssoc">isAssoc</a>(mixed $array)
+        
+                                            <p><p>Determine if array is indexed or associative</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_isMultidimensional">isMultidimensional</a>(<abbr title="GenericDatabase\Helpers\Types\Compounds\array|string">array|string</abbr> $array)
+        
+                                            <p><p>Determine if array is an array multidimensional</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;int
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_isDepthArray">isDepthArray</a>(array $array)
+        
+                                            <p><p>Determine the depth of a multidimensional array recursively.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_arrayValuesRecursive">arrayValuesRecursive</a>(array $array)
+        
+                                            <p><p>Determine if array is an array multidimensional</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_assocToIndexCombine">assocToIndexCombine</a>(array ...$arrays)
+        
+                                            <p><p>Create a numeric and incremental array, from an associative array,
+simulating the FETCH_BOTH flag of the fetch or fetchAll method,
+combining the associative array with the numeric array into a single array.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_arrayFlatten">arrayFlatten</a>(array $array)
+        
+                                            <p><p>Flatten a array</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_arrayGroupBy">arrayGroupBy</a>(array $arr, <abbr title="GenericDatabase\Helpers\Types\Compounds\string|callable">string|callable</abbr> $criteria)
+        
+                                            <p><p>Group items from an array together by some criteria or value.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_arraySafe">arraySafe</a>(array $array)
+        
+                                            <p><p>A function that filters out null values from the input array.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method_exceptByKeys">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L111">at line 111</a></div>
+        <code>        static            array
+    <strong>exceptByKeys</strong>(array $array, array $keys)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Find elements in array except by keys</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$array</td>
+                <td><p>Array to find</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$keys</td>
+                <td><p>Keys from array</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_exceptByValues">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L123">at line 123</a></div>
+        <code>        static            array
+    <strong>exceptByValues</strong>(array $array, array $values)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Find elements in array except by values</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$array</td>
+                <td><p>Array to find</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$values</td>
+                <td><p>Values from array</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_matchValues">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L137">at line 137</a></div>
+        <code>        static            string
+    <strong>matchValues</strong>(array $list, array $array, string|null $apply = &#039;mb_strtolower&#039;)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Find the first element that matches between two arrays</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$list</td>
+                <td><p>A string list array</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$array</td>
+                <td><p>An associative array</p></td>
+            </tr>
+                    <tr>
+                <td>string|null</td>
+                <td>$apply</td>
+                <td><p>Filter to be applied</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>string</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_recombine">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L155">at line 155</a></div>
+        <code>        static            array
+    <strong>recombine</strong>(array $array)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Iterate the array by combining the indices and values into a new array</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$array</td>
+                <td><p>The array to combine</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_assocToIndex">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L167">at line 167</a></div>
+        <code>        static            array
+    <strong>assocToIndex</strong>(array $array)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Iterates through the array combining the values by substituting
+the indices into sequential numbers starting at zero into a new array</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$array</td>
+                <td><p>The array to combine</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_isAssoc">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L178">at line 178</a></div>
+        <code>        static            bool
+    <strong>isAssoc</strong>(mixed $array)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Determine if array is indexed or associative</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$array</td>
+                <td><p>The array</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_isMultidimensional">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L195">at line 195</a></div>
+        <code>        static            bool
+    <strong>isMultidimensional</strong>(<abbr title="GenericDatabase\Helpers\Types\Compounds\array|string">array|string</abbr> $array)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Determine if array is an array multidimensional</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Helpers\Types\Compounds\array|string">array|string</abbr></td>
+                <td>$array</td>
+                <td><p>$array The array</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_isDepthArray">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L209">at line 209</a></div>
+        <code>        static            int
+    <strong>isDepthArray</strong>(array $array)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Determine the depth of a multidimensional array recursively.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$array</td>
+                <td><p>The array to calculate the depth for.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>int</td>
+            <td><p>The depth of the multidimensional array.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_arrayValuesRecursive">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L226">at line 226</a></div>
+        <code>        static            array
+    <strong>arrayValuesRecursive</strong>(array $array)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Determine if array is an array multidimensional</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$array</td>
+                <td><p>The array</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_assocToIndexCombine">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L245">at line 245</a></div>
+        <code>        static            array
+    <strong>assocToIndexCombine</strong>(array ...$arrays)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Create a numeric and incremental array, from an associative array,
+simulating the FETCH_BOTH flag of the fetch or fetchAll method,
+combining the associative array with the numeric array into a single array.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>...$arrays</td>
+                <td><p>The array</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_arrayFlatten">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L265">at line 265</a></div>
+        <code>        static            array
+    <strong>arrayFlatten</strong>(array $array)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Flatten a array</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$array</td>
+                <td><p>array The array to flatten items from</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_arrayGroupBy">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L283">at line 283</a></div>
+        <code>        static            array
+    <strong>arrayGroupBy</strong>(array $arr, <abbr title="GenericDatabase\Helpers\Types\Compounds\string|callable">string|callable</abbr> $criteria)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Group items from an array together by some criteria or value.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$arr</td>
+                <td><p>array The array to group items from</p></td>
+            </tr>
+                    <tr>
+                <td><abbr title="GenericDatabase\Helpers\Types\Compounds\string|callable">string|callable</abbr></td>
+                <td>$criteria</td>
+                <td><p>string|callable The key to group by or a function the returns a key to group by.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_arraySafe">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Types/Compounds/Arrays.php#L301">at line 301</a></div>
+        <code>        static            array
+    <strong>arraySafe</strong>(array $array)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>A function that filters out null values from the input array.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$array</td>
+                <td><p>The array to filter</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>The filtered array with non-null values</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

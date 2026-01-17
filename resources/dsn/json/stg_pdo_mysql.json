@@ -1,0 +1,18 @@
+{
+  "engine": "pdo",
+  "driver": "mysql",
+  "host": "mysql",
+  "port": 3306,
+  "database": "demodev",
+  "user": "root",
+  "password": "masterkey",
+  "charset": "utf8",
+  "options": [
+    {
+      "PDO::ATTR_PERSISTENT": true,
+      "PDO::ATTR_EMULATE_PREPARES": true,
+      "PDO::ATTR_DEFAULT_FETCH_MODE": "PDO::FETCH_OBJ"
+    }
+  ],
+  "exception": true
+}

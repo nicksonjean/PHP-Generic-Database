@@ -1,0 +1,22 @@
+{
+    "name": "John",
+    "age": 30,
+    "city": "New York",
+    "address": "123 Main St",
+    "phone": "555-1234",
+    "email": "john@example.com",
+    "company": "ABC Inc",
+    "position": "Manager",
+    "salary": 50000,
+    "department": "Sales",
+    "projects": ["Project A", "Project B", "Project C"],
+    "colleagues": [
+        {"name": "Jane", "age": 28, "position": "Assistant"},
+        {"name": "Mike", "age": 32, "position": "Developer"},
+        {"name": "Lisa", "age": 35, "position": "Designer"}
+    ],
+    "metadata": {
+        "created_at": "2022-01-01",
+        "updated_at": "2022-01-10"
+    }
+}

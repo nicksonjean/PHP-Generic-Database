@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/html/src/Engine/SQLSrv</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../_css/bootstrap.min.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../../_css/nv.d3.min.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../../_css/style.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../../index.html">/var/www/html/src</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Engine</a></li>
+         <li class="breadcrumb-item"><a href="index.html">SQLSrv</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Connection/Dump.php.html#5">GenericDatabase\Engine\SQLSrv\Connection\Dump</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#7">GenericDatabase\Engine\SQLSrv\Connection\Transaction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#18">GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#15">GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#17">GenericDatabase\Engine\SQLSrv\QueryBuilder\Internal</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#5">GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Context.php.html#8">GenericDatabase\Engine\SQLSrv\QueryBuilder\Context</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/SQLSrv.php.html#8">GenericDatabase\Engine\SQLSrv\Connection\SQLSrv</a></td><td class="text-right">27%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#8">GenericDatabase\Engine\SQLSrv\Connection\Statements</a></td><td class="text-right">31%</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#14">GenericDatabase\Engine\SQLSrv\Connection\Arguments</a></td><td class="text-right">58%</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#9">GenericDatabase\Engine\SQLSrv\Connection\DSN</a></td><td class="text-right">71%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="QueryBuilder/Builder.php.html#18">GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder</a></td><td class="text-right">9702</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#17">GenericDatabase\Engine\SQLSrv\QueryBuilder\Internal</a></td><td class="text-right">6480</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#15">GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria</a></td><td class="text-right">1722</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#8">GenericDatabase\Engine\SQLSrv\Connection\Statements</a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#7">GenericDatabase\Engine\SQLSrv\Connection\Transaction</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#14">GenericDatabase\Engine\SQLSrv\Connection\Arguments</a></td><td class="text-right">24</td></tr>
+       <tr><td><a href="Connection/SQLSrv.php.html#8">GenericDatabase\Engine\SQLSrv\Connection\SQLSrv</a></td><td class="text-right">19</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#9">GenericDatabase\Engine\SQLSrv\Connection\DSN</a></td><td class="text-right">3</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Connection/Arguments.php.html#56"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Arguments::callArgumentsByFormat">callArgumentsByFormat</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Dump.php.html#7"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Dump::loadFromFile">loadFromFile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/SQLSrv.php.html#89"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\SQLSrv::getAttribute">getAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#26"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchBoth">internalFetchBoth</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#36"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchNum">internalFetchNum</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#41"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchColumn">internalFetchColumn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#52"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchAllAssoc">internalFetchAllAssoc</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#62"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchAllNum">internalFetchAllNum</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#72"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchAllBoth">internalFetchAllBoth</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#82"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchAllColumn">internalFetchAllColumn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#13"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Transaction::beginTransaction">beginTransaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#23"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Transaction::commit">commit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#33"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Transaction::inTransaction">inTransaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#38"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Transaction::rollback">rollback</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#22"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#30"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildSelect">buildSelect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#59"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildFrom">buildFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#84"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildJoin">buildJoin</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#113"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildOn">buildOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#134"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildWhere">buildWhere</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#168"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildHaving">buildHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#202"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildGroup">buildGroup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#224"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildOrder">buildOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#251"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildLimit">buildLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#268"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildQuery">buildQuery</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#301"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::setPlaceholders">setPlaceholders</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#319"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::formatValue">formatValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#330"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::parse">parse</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#341"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::build">build</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#349"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildRaw">buildRaw</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#359"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::getValues">getValues</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#17"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getSelect">getSelect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#39"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getFrom">getFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#55"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getJoin">getJoin</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#83"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getOn">getOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#106"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getWhereHaving">getWhereHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#166"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getGroup">getGroup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#191"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getOrder">getOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#219"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getLimit">getLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#21"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::select">select</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#47"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::from">from</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#71"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::join">join</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#104"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::on">on</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#130"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::makeWhere">makeWhere</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#151"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::where">where</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#164"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::makeHaving">makeHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#185"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::having">having</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#198"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::group">group</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#217"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::order">order</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#244"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::limit">limit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#37"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::getRegex">getRegex</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#42"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::regexLimit">regexLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#47"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::getLimit">getLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#52"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::regexFunctionWithoutAlias">regexFunctionWithoutAlias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#57"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::regexMetadataWithoutAlias">regexMetadataWithoutAlias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#62"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::getGroupOrder">getGroupOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#68"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::regexFunction">regexFunction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#74"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::regexMetadata">regexMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#80"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::getSelect">getSelect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#86"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::regexFrom">regexFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#91"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::getFrom">getFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#96"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::regexOn">regexOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#103"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::getOn">getOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#108"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::regexWhereHaving">regexWhereHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#120"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Regex::getWhereHaving">getWhereHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Context.php.html#18"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Context::setContext">setContext</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Context.php.html#28"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Context::getContext">getContext</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/SQLSrv.php.html#111"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\SQLSrv::setAttribute">setAttribute</abbr></a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="Connection/Options.php.html#65"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Options::define">define</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#15"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\DSN::parse">parse</abbr></a></td><td class="text-right">71%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="QueryBuilder/Builder.php.html#359"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::getValues">getValues</abbr></a></td><td class="text-right">240</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#134"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildWhere">buildWhere</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#168"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildHaving">buildHaving</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#268"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildQuery">buildQuery</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#71"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::join">join</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#104"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::on">on</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#30"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildSelect">buildSelect</abbr></a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#47"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::from">from</abbr></a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#55"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getJoin">getJoin</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#21"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::select">select</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#130"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::makeWhere">makeWhere</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#164"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::makeHaving">makeHaving</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#217"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::order">order</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#113"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildOn">buildOn</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#198"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::group">group</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#56"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Arguments::callArgumentsByFormat">callArgumentsByFormat</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#59"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildFrom">buildFrom</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#202"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildGroup">buildGroup</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#224"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildOrder">buildOrder</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#106"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getWhereHaving">getWhereHaving</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#244"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::limit">limit</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#39"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getFrom">getFrom</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#191"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getOrder">getOrder</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#219"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getLimit">getLimit</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#84"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildJoin">buildJoin</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#17"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getSelect">getSelect</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#83"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getOn">getOn</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#166"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Criteria::getGroup">getGroup</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Connection/SQLSrv.php.html#89"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\SQLSrv::getAttribute">getAttribute</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#251"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildLimit">buildLimit</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#301"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::setPlaceholders">setPlaceholders</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#151"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::where">where</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#185"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Clause::having">having</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#41"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchColumn">internalFetchColumn</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#52"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchAllAssoc">internalFetchAllAssoc</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#62"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchAllNum">internalFetchAllNum</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#72"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchAllBoth">internalFetchAllBoth</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#82"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Statements::internalFetchAllColumn">internalFetchAllColumn</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#13"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Transaction::beginTransaction">beginTransaction</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#23"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Transaction::commit">commit</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#38"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Transaction::rollback">rollback</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#319"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::formatValue">formatValue</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#349"><abbr title="GenericDatabase\Engine\SQLSrv\QueryBuilder\Builder::buildRaw">buildRaw</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Options.php.html#65"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\Options::define">define</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Connection/SQLSrv.php.html#111"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\SQLSrv::setAttribute">setAttribute</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#15"><abbr title="GenericDatabase\Engine\SQLSrv\Connection\DSN::parse">parse</abbr></a></td><td class="text-right">3</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.5</a> using <a href="https://www.php.net/" target="_top">PHP 8.3.16</a> and <a href="https://phpunit.de/">PHPUnit 10.4-dev</a> at Sun Jan 19 15:21:55 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../../_js/jquery.min.js?v=10.1.5" type="text/javascript"></script>
+  <script src="../../_js/d3.min.js?v=10.1.5" type="text/javascript"></script>
+  <script src="../../_js/nv.d3.min.js?v=10.1.5" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([7,0,0,1,1,0,1,0,1,0,1,2], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([67,0,0,0,0,0,0,2,1,0,0,13], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[58.69565217391305,13,"<a href=\"Connection\/Arguments.php.html#14\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Arguments<\/a>"],[100,7,"<a href=\"Connection\/Attributes.php.html#10\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Attributes<\/a>"],[71.42857142857143,3,"<a href=\"Connection\/DSN.php.html#9\">GenericDatabase\\Engine\\SQLSrv\\Connection\\DSN<\/a>"],[0,1,"<a href=\"Connection\/Dump.php.html#5\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Dump<\/a>"],[95.23809523809523,16,"<a href=\"Connection\/Options.php.html#9\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Options<\/a>"],[27.27272727272727,6,"<a href=\"Connection\/SQLSrv.php.html#8\">GenericDatabase\\Engine\\SQLSrv\\Connection\\SQLSrv<\/a>"],[31.428571428571427,17,"<a href=\"Connection\/Statements.php.html#8\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements<\/a>"],[0,7,"<a href=\"Connection\/Transaction.php.html#7\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Transaction<\/a>"],[0,98,"<a href=\"QueryBuilder\/Builder.php.html#18\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder<\/a>"],[0,41,"<a href=\"QueryBuilder\/Criteria.php.html#15\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Criteria<\/a>"],[0,80,"<a href=\"QueryBuilder\/Clause.php.html#17\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Internal<\/a>"],[0,15,"<a href=\"QueryBuilder\/Regex.php.html#5\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex<\/a>"],[0,2,"<a href=\"QueryBuilder\/Context.php.html#8\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Context<\/a>"],[100,0,"<a href=\"QueryBuilder\/Query.php.html#5\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Query<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[100,1,"<a href=\"Connection\/Arguments.php.html#23\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Arguments::setConstant<\/a>"],[100,1,"<a href=\"Connection\/Arguments.php.html#42\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Arguments::setType<\/a>"],[0,6,"<a href=\"Connection\/Arguments.php.html#56\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Arguments::callArgumentsByFormat<\/a>"],[100,2,"<a href=\"Connection\/Arguments.php.html#89\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Arguments::callWithByStaticArray<\/a>"],[100,1,"<a href=\"Connection\/Arguments.php.html#104\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Arguments::callWithByStaticArgs<\/a>"],[100,2,"<a href=\"Connection\/Arguments.php.html#118\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Arguments::call<\/a>"],[100,1,"<a href=\"Connection\/Attributes.php.html#33\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Attributes::settings<\/a>"],[100,2,"<a href=\"Connection\/Attributes.php.html#45\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Attributes::connectionStatus<\/a>"],[100,4,"<a href=\"Connection\/Attributes.php.html#58\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Attributes::define<\/a>"],[71.42857142857143,3,"<a href=\"Connection\/DSN.php.html#15\">GenericDatabase\\Engine\\SQLSrv\\Connection\\DSN::parse<\/a>"],[0,1,"<a href=\"Connection\/Dump.php.html#7\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Dump::loadFromFile<\/a>"],[100,2,"<a href=\"Connection\/Options.php.html#19\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Options::getOptions<\/a>"],[100,10,"<a href=\"Connection\/Options.php.html#36\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Options::setOptions<\/a>"],[66.66666666666666,4,"<a href=\"Connection\/Options.php.html#65\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Options::define<\/a>"],[0,3,"<a href=\"Connection\/SQLSrv.php.html#89\">GenericDatabase\\Engine\\SQLSrv\\Connection\\SQLSrv::getAttribute<\/a>"],[60,3,"<a href=\"Connection\/SQLSrv.php.html#111\">GenericDatabase\\Engine\\SQLSrv\\Connection\\SQLSrv::setAttribute<\/a>"],[100,2,"<a href=\"Connection\/Statements.php.html#13\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements::internalFetchClass<\/a>"],[0,1,"<a href=\"Connection\/Statements.php.html#26\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements::internalFetchBoth<\/a>"],[100,1,"<a href=\"Connection\/Statements.php.html#31\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements::internalFetchAssoc<\/a>"],[0,1,"<a href=\"Connection\/Statements.php.html#36\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements::internalFetchNum<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#41\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements::internalFetchColumn<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#52\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements::internalFetchAllAssoc<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#62\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements::internalFetchAllNum<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#72\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements::internalFetchAllBoth<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#82\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements::internalFetchAllColumn<\/a>"],[100,2,"<a href=\"Connection\/Statements.php.html#96\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Statements::internalFetchAllClass<\/a>"],[0,2,"<a href=\"Connection\/Transaction.php.html#13\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Transaction::beginTransaction<\/a>"],[0,2,"<a href=\"Connection\/Transaction.php.html#23\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Transaction::commit<\/a>"],[0,1,"<a href=\"Connection\/Transaction.php.html#33\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Transaction::inTransaction<\/a>"],[0,2,"<a href=\"Connection\/Transaction.php.html#38\">GenericDatabase\\Engine\\SQLSrv\\Connection\\Transaction::rollback<\/a>"],[0,1,"<a href=\"QueryBuilder\/Builder.php.html#22\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::__construct<\/a>"],[0,9,"<a href=\"QueryBuilder\/Builder.php.html#30\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildSelect<\/a>"],[0,6,"<a href=\"QueryBuilder\/Builder.php.html#59\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildFrom<\/a>"],[0,4,"<a href=\"QueryBuilder\/Builder.php.html#84\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildJoin<\/a>"],[0,7,"<a href=\"QueryBuilder\/Builder.php.html#113\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildOn<\/a>"],[0,11,"<a href=\"QueryBuilder\/Builder.php.html#134\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildWhere<\/a>"],[0,11,"<a href=\"QueryBuilder\/Builder.php.html#168\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildHaving<\/a>"],[0,6,"<a href=\"QueryBuilder\/Builder.php.html#202\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildGroup<\/a>"],[0,6,"<a href=\"QueryBuilder\/Builder.php.html#224\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildOrder<\/a>"],[0,3,"<a href=\"QueryBuilder\/Builder.php.html#251\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildLimit<\/a>"],[0,10,"<a href=\"QueryBuilder\/Builder.php.html#268\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildQuery<\/a>"],[0,3,"<a href=\"QueryBuilder\/Builder.php.html#301\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::setPlaceholders<\/a>"],[0,2,"<a href=\"QueryBuilder\/Builder.php.html#319\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::formatValue<\/a>"],[0,1,"<a href=\"QueryBuilder\/Builder.php.html#330\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::parse<\/a>"],[0,1,"<a href=\"QueryBuilder\/Builder.php.html#341\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::build<\/a>"],[0,2,"<a href=\"QueryBuilder\/Builder.php.html#349\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::buildRaw<\/a>"],[0,15,"<a href=\"QueryBuilder\/Builder.php.html#359\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Builder::getValues<\/a>"],[0,4,"<a href=\"QueryBuilder\/Criteria.php.html#17\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Criteria::getSelect<\/a>"],[0,5,"<a href=\"QueryBuilder\/Criteria.php.html#39\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Criteria::getFrom<\/a>"],[0,8,"<a href=\"QueryBuilder\/Criteria.php.html#55\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Criteria::getJoin<\/a>"],[0,4,"<a href=\"QueryBuilder\/Criteria.php.html#83\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Criteria::getOn<\/a>"],[0,6,"<a href=\"QueryBuilder\/Criteria.php.html#106\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Criteria::getWhereHaving<\/a>"],[0,4,"<a href=\"QueryBuilder\/Criteria.php.html#166\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Criteria::getGroup<\/a>"],[0,5,"<a href=\"QueryBuilder\/Criteria.php.html#191\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Criteria::getOrder<\/a>"],[0,5,"<a href=\"QueryBuilder\/Criteria.php.html#219\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Criteria::getLimit<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#21\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::select<\/a>"],[0,9,"<a href=\"QueryBuilder\/Clause.php.html#47\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::from<\/a>"],[0,10,"<a href=\"QueryBuilder\/Clause.php.html#71\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::join<\/a>"],[0,10,"<a href=\"QueryBuilder\/Clause.php.html#104\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::on<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#130\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::makeWhere<\/a>"],[0,3,"<a href=\"QueryBuilder\/Clause.php.html#151\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::where<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#164\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::makeHaving<\/a>"],[0,3,"<a href=\"QueryBuilder\/Clause.php.html#185\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::having<\/a>"],[0,7,"<a href=\"QueryBuilder\/Clause.php.html#198\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::group<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#217\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::order<\/a>"],[0,6,"<a href=\"QueryBuilder\/Clause.php.html#244\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Clause::limit<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#37\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::getRegex<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#42\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::regexLimit<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#47\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::getLimit<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#52\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::regexFunctionWithoutAlias<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#57\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::regexMetadataWithoutAlias<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#62\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::getGroupOrder<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#68\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::regexFunction<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#74\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::regexMetadata<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#80\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::getSelect<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#86\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::regexFrom<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#91\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::getFrom<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#96\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::regexOn<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#103\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::getOn<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#108\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::regexWhereHaving<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#120\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Regex::getWhereHaving<\/a>"],[0,1,"<a href=\"QueryBuilder\/Context.php.html#18\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Context::setContext<\/a>"],[0,1,"<a href=\"QueryBuilder\/Context.php.html#28\">GenericDatabase\\Engine\\SQLSrv\\QueryBuilder\\Context::getContext<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

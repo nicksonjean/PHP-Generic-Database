@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "database": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Endereço do Banco de Dados"
+    },
+    "charset": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Charset do banco de dados"
+    }
+  },
+  "required": ["database"],
+  "errorMessages": {
+    "database.minLength": "O database é obrigatório"
+  }
+}

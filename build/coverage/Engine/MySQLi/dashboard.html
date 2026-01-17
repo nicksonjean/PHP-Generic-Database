@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/html/src/Engine/MySQLi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../_css/bootstrap.min.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../../_css/nv.d3.min.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../../_css/style.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../../index.html">/var/www/html/src</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Engine</a></li>
+         <li class="breadcrumb-item"><a href="index.html">MySQLi</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Connection/Dump.php.html#5">GenericDatabase\Engine\MySQLi\Connection\Dump</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#7">GenericDatabase\Engine\MySQLi\Connection\Transaction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#18">GenericDatabase\Engine\MySQLi\QueryBuilder\Builder</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#15">GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#17">GenericDatabase\Engine\MySQLi\QueryBuilder\Internal</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#5">GenericDatabase\Engine\MySQLi\QueryBuilder\Regex</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Context.php.html#8">GenericDatabase\Engine\MySQLi\QueryBuilder\Context</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/MySQL.php.html#8">GenericDatabase\Engine\MySQLi\Connection\MySQL</a></td><td class="text-right">27%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#9">GenericDatabase\Engine\MySQLi\Connection\Statements</a></td><td class="text-right">28%</td></tr>
+       <tr><td><a href="Connection/Options.php.html#9">GenericDatabase\Engine\MySQLi\Connection\Options</a></td><td class="text-right">52%</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#14">GenericDatabase\Engine\MySQLi\Connection\Arguments</a></td><td class="text-right">58%</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#9">GenericDatabase\Engine\MySQLi\Connection\DSN</a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#10">GenericDatabase\Engine\MySQLi\Connection\Attributes</a></td><td class="text-right">79%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="QueryBuilder/Builder.php.html#18">GenericDatabase\Engine\MySQLi\QueryBuilder\Builder</a></td><td class="text-right">9702</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#17">GenericDatabase\Engine\MySQLi\QueryBuilder\Internal</a></td><td class="text-right">6480</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#15">GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria</a></td><td class="text-right">1722</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#9">GenericDatabase\Engine\MySQLi\Connection\Statements</a></td><td class="text-right">134</td></tr>
+       <tr><td><a href="Connection/Options.php.html#9">GenericDatabase\Engine\MySQLi\Connection\Options</a></td><td class="text-right">85</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#7">GenericDatabase\Engine\MySQLi\Connection\Transaction</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#10">GenericDatabase\Engine\MySQLi\Connection\Attributes</a></td><td class="text-right">37</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#14">GenericDatabase\Engine\MySQLi\Connection\Arguments</a></td><td class="text-right">24</td></tr>
+       <tr><td><a href="Connection/MySQL.php.html#8">GenericDatabase\Engine\MySQLi\Connection\MySQL</a></td><td class="text-right">19</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#9">GenericDatabase\Engine\MySQLi\Connection\DSN</a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Connection/Arguments.php.html#56"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Arguments::callArgumentsByFormat">callArgumentsByFormat</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Dump.php.html#7"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Dump::loadFromFile">loadFromFile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/MySQL.php.html#119"><abbr title="GenericDatabase\Engine\MySQLi\Connection\MySQL::getAttribute">getAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#27"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchBoth">internalFetchBoth</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#41"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchNum">internalFetchNum</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#46"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchColumn">internalFetchColumn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#57"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchAllAssoc">internalFetchAllAssoc</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#67"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchAllNum">internalFetchAllNum</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#77"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchAllBoth">internalFetchAllBoth</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#87"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchAllColumn">internalFetchAllColumn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#13"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Transaction::beginTransaction">beginTransaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#23"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Transaction::commit">commit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#33"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Transaction::inTransaction">inTransaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#38"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Transaction::rollback">rollback</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#22"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#30"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildSelect">buildSelect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#59"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildFrom">buildFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#84"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildJoin">buildJoin</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#113"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildOn">buildOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#134"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildWhere">buildWhere</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#168"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildHaving">buildHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#202"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildGroup">buildGroup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#224"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildOrder">buildOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#251"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildLimit">buildLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#268"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildQuery">buildQuery</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#301"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::setPlaceholders">setPlaceholders</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#319"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::formatValue">formatValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#330"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::parse">parse</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#341"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::build">build</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#349"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildRaw">buildRaw</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#359"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::getValues">getValues</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#17"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getSelect">getSelect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#39"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getFrom">getFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#55"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getJoin">getJoin</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#83"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getOn">getOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#106"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getWhereHaving">getWhereHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#166"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getGroup">getGroup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#191"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getOrder">getOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#219"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getLimit">getLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#21"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::select">select</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#47"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::from">from</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#69"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::join">join</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#98"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::on">on</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#124"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::makeWhere">makeWhere</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#145"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::where">where</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#158"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::makeHaving">makeHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#179"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::having">having</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#192"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::group">group</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#212"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::order">order</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#239"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::limit">limit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#37"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::getRegex">getRegex</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#42"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::regexLimit">regexLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#47"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::getLimit">getLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#52"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::regexFunctionWithoutAlias">regexFunctionWithoutAlias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#57"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::regexMetadataWithoutAlias">regexMetadataWithoutAlias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#62"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::getGroupOrder">getGroupOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#68"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::regexFunction">regexFunction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#74"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::regexMetadata">regexMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#80"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::getSelect">getSelect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#86"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::regexFrom">regexFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#91"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::getFrom">getFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#96"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::regexOn">regexOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#103"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::getOn">getOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#108"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::regexWhereHaving">regexWhereHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#120"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Regex::getWhereHaving">getWhereHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Context.php.html#18"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Context::setContext">setContext</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Context.php.html#28"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Context::getContext">getContext</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Options.php.html#65"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Options::define">define</abbr></a></td><td class="text-right">30%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#116"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Attributes::setVariables">setVariables</abbr></a></td><td class="text-right">40%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#222"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Attributes::setSettings">setSettings</abbr></a></td><td class="text-right">46%</td></tr>
+       <tr><td><a href="Connection/MySQL.php.html#141"><abbr title="GenericDatabase\Engine\MySQLi\Connection\MySQL::setAttribute">setAttribute</abbr></a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#188"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Attributes::setCollation">setCollation</abbr></a></td><td class="text-right">63%</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#15"><abbr title="GenericDatabase\Engine\MySQLi\Connection\DSN::parse">parse</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#146"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Attributes::setCharacterSet">setCharacterSet</abbr></a></td><td class="text-right">75%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="QueryBuilder/Builder.php.html#359"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::getValues">getValues</abbr></a></td><td class="text-right">240</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#134"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildWhere">buildWhere</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#168"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildHaving">buildHaving</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#268"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildQuery">buildQuery</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#69"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::join">join</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#98"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::on">on</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#30"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildSelect">buildSelect</abbr></a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#47"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::from">from</abbr></a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#55"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getJoin">getJoin</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#21"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::select">select</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#124"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::makeWhere">makeWhere</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#158"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::makeHaving">makeHaving</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#212"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::order">order</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Connection/Options.php.html#65"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Options::define">define</abbr></a></td><td class="text-right">59</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#113"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildOn">buildOn</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#192"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::group">group</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#56"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Arguments::callArgumentsByFormat">callArgumentsByFormat</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#59"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildFrom">buildFrom</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#202"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildGroup">buildGroup</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#224"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildOrder">buildOrder</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#106"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getWhereHaving">getWhereHaving</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#239"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::limit">limit</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#39"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getFrom">getFrom</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#191"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getOrder">getOrder</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#219"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getLimit">getLimit</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#84"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildJoin">buildJoin</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#17"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getSelect">getSelect</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#83"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getOn">getOn</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#166"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Criteria::getGroup">getGroup</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Connection/MySQL.php.html#119"><abbr title="GenericDatabase\Engine\MySQLi\Connection\MySQL::getAttribute">getAttribute</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#251"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildLimit">buildLimit</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#301"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::setPlaceholders">setPlaceholders</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#145"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::where">where</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#179"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Clause::having">having</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#27"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchBoth">internalFetchBoth</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#46"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchColumn">internalFetchColumn</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#57"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchAllAssoc">internalFetchAllAssoc</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#67"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchAllNum">internalFetchAllNum</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#77"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchAllBoth">internalFetchAllBoth</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#87"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Statements::internalFetchAllColumn">internalFetchAllColumn</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#13"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Transaction::beginTransaction">beginTransaction</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#23"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Transaction::commit">commit</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#38"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Transaction::rollback">rollback</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#319"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::formatValue">formatValue</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#349"><abbr title="GenericDatabase\Engine\MySQLi\QueryBuilder\Builder::buildRaw">buildRaw</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#116"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Attributes::setVariables">setVariables</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#222"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Attributes::setSettings">setSettings</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Connection/MySQL.php.html#141"><abbr title="GenericDatabase\Engine\MySQLi\Connection\MySQL::setAttribute">setAttribute</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#188"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Attributes::setCollation">setCollation</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#146"><abbr title="GenericDatabase\Engine\MySQLi\Connection\Attributes::setCharacterSet">setCharacterSet</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#15"><abbr title="GenericDatabase\Engine\MySQLi\Connection\DSN::parse">parse</abbr></a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.5</a> using <a href="https://www.php.net/" target="_top">PHP 8.3.16</a> and <a href="https://phpunit.de/">PHPUnit 10.4-dev</a> at Sun Jan 19 15:21:55 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../../_js/jquery.min.js?v=10.1.5" type="text/javascript"></script>
+  <script src="../../_js/d3.min.js?v=10.1.5" type="text/javascript"></script>
+  <script src="../../_js/nv.d3.min.js?v=10.1.5" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([7,0,0,2,0,0,2,1,1,0,0,1], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([67,0,0,0,1,2,0,3,1,0,0,21], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[58.69565217391305,13,"<a href=\"Connection\/Arguments.php.html#14\">GenericDatabase\\Engine\\MySQLi\\Connection\\Arguments<\/a>"],[79.52755905511812,30,"<a href=\"Connection\/Attributes.php.html#10\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes<\/a>"],[66.66666666666666,2,"<a href=\"Connection\/DSN.php.html#9\">GenericDatabase\\Engine\\MySQLi\\Connection\\DSN<\/a>"],[0,1,"<a href=\"Connection\/Dump.php.html#5\">GenericDatabase\\Engine\\MySQLi\\Connection\\Dump<\/a>"],[27.27272727272727,6,"<a href=\"Connection\/MySQL.php.html#8\">GenericDatabase\\Engine\\MySQLi\\Connection\\MySQL<\/a>"],[52.63157894736842,24,"<a href=\"Connection\/Options.php.html#9\">GenericDatabase\\Engine\\MySQLi\\Connection\\Options<\/a>"],[28.947368421052634,18,"<a href=\"Connection\/Statements.php.html#9\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements<\/a>"],[0,7,"<a href=\"Connection\/Transaction.php.html#7\">GenericDatabase\\Engine\\MySQLi\\Connection\\Transaction<\/a>"],[0,98,"<a href=\"QueryBuilder\/Builder.php.html#18\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder<\/a>"],[0,41,"<a href=\"QueryBuilder\/Criteria.php.html#15\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Criteria<\/a>"],[0,80,"<a href=\"QueryBuilder\/Clause.php.html#17\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Internal<\/a>"],[0,15,"<a href=\"QueryBuilder\/Regex.php.html#5\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex<\/a>"],[0,2,"<a href=\"QueryBuilder\/Context.php.html#8\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Context<\/a>"],[100,0,"<a href=\"QueryBuilder\/Query.php.html#5\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Query<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[100,1,"<a href=\"Connection\/Arguments.php.html#23\">GenericDatabase\\Engine\\MySQLi\\Connection\\Arguments::setConstant<\/a>"],[100,1,"<a href=\"Connection\/Arguments.php.html#42\">GenericDatabase\\Engine\\MySQLi\\Connection\\Arguments::setType<\/a>"],[0,6,"<a href=\"Connection\/Arguments.php.html#56\">GenericDatabase\\Engine\\MySQLi\\Connection\\Arguments::callArgumentsByFormat<\/a>"],[100,2,"<a href=\"Connection\/Arguments.php.html#89\">GenericDatabase\\Engine\\MySQLi\\Connection\\Arguments::callWithByStaticArray<\/a>"],[100,1,"<a href=\"Connection\/Arguments.php.html#104\">GenericDatabase\\Engine\\MySQLi\\Connection\\Arguments::callWithByStaticArgs<\/a>"],[100,2,"<a href=\"Connection\/Arguments.php.html#118\">GenericDatabase\\Engine\\MySQLi\\Connection\\Arguments::call<\/a>"],[100,1,"<a href=\"Connection\/Attributes.php.html#56\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::getCharsetType<\/a>"],[100,1,"<a href=\"Connection\/Attributes.php.html#69\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::getInverseCharsetType<\/a>"],[100,1,"<a href=\"Connection\/Attributes.php.html#82\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::settings<\/a>"],[100,1,"<a href=\"Connection\/Attributes.php.html#99\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::setFetchMode<\/a>"],[100,3,"<a href=\"Connection\/Attributes.php.html#108\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::setErrorMode<\/a>"],[40,3,"<a href=\"Connection\/Attributes.php.html#116\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::setVariables<\/a>"],[100,2,"<a href=\"Connection\/Attributes.php.html#138\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::getVariables<\/a>"],[75,3,"<a href=\"Connection\/Attributes.php.html#146\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::setCharacterSet<\/a>"],[100,1,"<a href=\"Connection\/Attributes.php.html#180\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::getCharacterSet<\/a>"],[63.1578947368421,3,"<a href=\"Connection\/Attributes.php.html#188\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::setCollation<\/a>"],[100,1,"<a href=\"Connection\/Attributes.php.html#217\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::getCollation<\/a>"],[46.15384615384615,3,"<a href=\"Connection\/Attributes.php.html#222\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::setSettings<\/a>"],[100,1,"<a href=\"Connection\/Attributes.php.html#250\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::getSettings<\/a>"],[100,2,"<a href=\"Connection\/Attributes.php.html#256\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::connectionStatus<\/a>"],[100,4,"<a href=\"Connection\/Attributes.php.html#273\">GenericDatabase\\Engine\\MySQLi\\Connection\\Attributes::define<\/a>"],[66.66666666666666,2,"<a href=\"Connection\/DSN.php.html#15\">GenericDatabase\\Engine\\MySQLi\\Connection\\DSN::parse<\/a>"],[0,1,"<a href=\"Connection\/Dump.php.html#7\">GenericDatabase\\Engine\\MySQLi\\Connection\\Dump::loadFromFile<\/a>"],[0,3,"<a href=\"Connection\/MySQL.php.html#119\">GenericDatabase\\Engine\\MySQLi\\Connection\\MySQL::getAttribute<\/a>"],[60,3,"<a href=\"Connection\/MySQL.php.html#141\">GenericDatabase\\Engine\\MySQLi\\Connection\\MySQL::setAttribute<\/a>"],[100,2,"<a href=\"Connection\/Options.php.html#19\">GenericDatabase\\Engine\\MySQLi\\Connection\\Options::getOptions<\/a>"],[100,10,"<a href=\"Connection\/Options.php.html#36\">GenericDatabase\\Engine\\MySQLi\\Connection\\Options::setOptions<\/a>"],[30.76923076923077,12,"<a href=\"Connection\/Options.php.html#65\">GenericDatabase\\Engine\\MySQLi\\Connection\\Options::define<\/a>"],[100,2,"<a href=\"Connection\/Statements.php.html#14\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements::internalFetchClass<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#27\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements::internalFetchBoth<\/a>"],[100,1,"<a href=\"Connection\/Statements.php.html#36\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements::internalFetchAssoc<\/a>"],[0,1,"<a href=\"Connection\/Statements.php.html#41\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements::internalFetchNum<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#46\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements::internalFetchColumn<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#57\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements::internalFetchAllAssoc<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#67\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements::internalFetchAllNum<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#77\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements::internalFetchAllBoth<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#87\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements::internalFetchAllColumn<\/a>"],[100,2,"<a href=\"Connection\/Statements.php.html#101\">GenericDatabase\\Engine\\MySQLi\\Connection\\Statements::internalFetchAllClass<\/a>"],[0,2,"<a href=\"Connection\/Transaction.php.html#13\">GenericDatabase\\Engine\\MySQLi\\Connection\\Transaction::beginTransaction<\/a>"],[0,2,"<a href=\"Connection\/Transaction.php.html#23\">GenericDatabase\\Engine\\MySQLi\\Connection\\Transaction::commit<\/a>"],[0,1,"<a href=\"Connection\/Transaction.php.html#33\">GenericDatabase\\Engine\\MySQLi\\Connection\\Transaction::inTransaction<\/a>"],[0,2,"<a href=\"Connection\/Transaction.php.html#38\">GenericDatabase\\Engine\\MySQLi\\Connection\\Transaction::rollback<\/a>"],[0,1,"<a href=\"QueryBuilder\/Builder.php.html#22\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::__construct<\/a>"],[0,9,"<a href=\"QueryBuilder\/Builder.php.html#30\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildSelect<\/a>"],[0,6,"<a href=\"QueryBuilder\/Builder.php.html#59\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildFrom<\/a>"],[0,4,"<a href=\"QueryBuilder\/Builder.php.html#84\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildJoin<\/a>"],[0,7,"<a href=\"QueryBuilder\/Builder.php.html#113\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildOn<\/a>"],[0,11,"<a href=\"QueryBuilder\/Builder.php.html#134\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildWhere<\/a>"],[0,11,"<a href=\"QueryBuilder\/Builder.php.html#168\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildHaving<\/a>"],[0,6,"<a href=\"QueryBuilder\/Builder.php.html#202\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildGroup<\/a>"],[0,6,"<a href=\"QueryBuilder\/Builder.php.html#224\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildOrder<\/a>"],[0,3,"<a href=\"QueryBuilder\/Builder.php.html#251\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildLimit<\/a>"],[0,10,"<a href=\"QueryBuilder\/Builder.php.html#268\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildQuery<\/a>"],[0,3,"<a href=\"QueryBuilder\/Builder.php.html#301\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::setPlaceholders<\/a>"],[0,2,"<a href=\"QueryBuilder\/Builder.php.html#319\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::formatValue<\/a>"],[0,1,"<a href=\"QueryBuilder\/Builder.php.html#330\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::parse<\/a>"],[0,1,"<a href=\"QueryBuilder\/Builder.php.html#341\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::build<\/a>"],[0,2,"<a href=\"QueryBuilder\/Builder.php.html#349\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::buildRaw<\/a>"],[0,15,"<a href=\"QueryBuilder\/Builder.php.html#359\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Builder::getValues<\/a>"],[0,4,"<a href=\"QueryBuilder\/Criteria.php.html#17\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Criteria::getSelect<\/a>"],[0,5,"<a href=\"QueryBuilder\/Criteria.php.html#39\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Criteria::getFrom<\/a>"],[0,8,"<a href=\"QueryBuilder\/Criteria.php.html#55\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Criteria::getJoin<\/a>"],[0,4,"<a href=\"QueryBuilder\/Criteria.php.html#83\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Criteria::getOn<\/a>"],[0,6,"<a href=\"QueryBuilder\/Criteria.php.html#106\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Criteria::getWhereHaving<\/a>"],[0,4,"<a href=\"QueryBuilder\/Criteria.php.html#166\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Criteria::getGroup<\/a>"],[0,5,"<a href=\"QueryBuilder\/Criteria.php.html#191\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Criteria::getOrder<\/a>"],[0,5,"<a href=\"QueryBuilder\/Criteria.php.html#219\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Criteria::getLimit<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#21\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::select<\/a>"],[0,9,"<a href=\"QueryBuilder\/Clause.php.html#47\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::from<\/a>"],[0,10,"<a href=\"QueryBuilder\/Clause.php.html#69\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::join<\/a>"],[0,10,"<a href=\"QueryBuilder\/Clause.php.html#98\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::on<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#124\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::makeWhere<\/a>"],[0,3,"<a href=\"QueryBuilder\/Clause.php.html#145\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::where<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#158\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::makeHaving<\/a>"],[0,3,"<a href=\"QueryBuilder\/Clause.php.html#179\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::having<\/a>"],[0,7,"<a href=\"QueryBuilder\/Clause.php.html#192\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::group<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#212\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::order<\/a>"],[0,6,"<a href=\"QueryBuilder\/Clause.php.html#239\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Clause::limit<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#37\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::getRegex<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#42\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::regexLimit<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#47\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::getLimit<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#52\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::regexFunctionWithoutAlias<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#57\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::regexMetadataWithoutAlias<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#62\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::getGroupOrder<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#68\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::regexFunction<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#74\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::regexMetadata<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#80\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::getSelect<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#86\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::regexFrom<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#91\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::getFrom<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#96\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::regexOn<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#103\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::getOn<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#108\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::regexWhereHaving<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#120\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Regex::getWhereHaving<\/a>"],[0,1,"<a href=\"QueryBuilder\/Context.php.html#18\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Context::setContext<\/a>"],[0,1,"<a href=\"QueryBuilder\/Context.php.html#28\">GenericDatabase\\Engine\\MySQLi\\QueryBuilder\\Context::getContext<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

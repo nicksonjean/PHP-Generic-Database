@@ -1,0 +1,8 @@
+---
+- id: 1
+  nome: Administrador
+  permissoes: a:1:{s:8:"Carregar";s:4:"Tudo";}
+  created_at: "2016-09-12 22:45:15"
+  updated_at: "2016-09-12 22:45:15"
+  deleted_at: ~
+...

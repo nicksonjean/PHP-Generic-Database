@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "dsn": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Endereço do servidor de Banco de Dados"
+    },
+    "user": {
+      "type": "string",
+      "nullable": true,
+      "description": "Nome do usuário para conexão"
+    },
+    "password": {
+      "type": "string",
+      "nullable": true,
+      "description": "Senha do usuário para conexão"
+    }
+  },
+  "required": ["dsn"],
+  "errorMessages": {
+    "dsn.minLength": "O dsn é obrigatório"
+  }
+}

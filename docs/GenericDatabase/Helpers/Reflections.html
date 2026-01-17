@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Helpers\Reflections | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../fonts/doctum-font.css">
+        <script src="../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../doctum.js"></script>
+        <script async defer src="../../js/bootstrap.min.js"></script>
+        <script async defer src="../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Helpers_Reflections" data-root-path="../../" data-search-index-url="../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../classes.html">Classes</a></li>
+                    <li><a href="../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../traits.html">Traits</a></li>
+                    <li><a href="../../doc-index.html">Index</a></li>
+                    <li><a href="../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../GenericDatabase/Helpers.html">Helpers</a></li><li class="backslash">\</li><li>Reflections</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>Reflections    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>Reflections</strong>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>The <code>GenericDatabase\Helpers\Reflections</code> class provides various reflection-based
+methods to interact with classes and objects in PHP.</p></p>            <p><p>It allows you to perform tasks such as getting class instances, retrieving constants and properties,
+creating objects, and setting properties in a case-insensitive manner.</p>
+<p>Example Usage:</p>
+<pre><code>// Get a singleton instance of a class
+$instance = Reflections::getSingletonInstance(MyClass::class);
+
+// Check if a method exists in a class
+$exists = Reflections::isSingletonMethodExists(MyClass::class);
+
+// Get a class instance
+$classInstance = Reflections::getClassInstance(MyClass::class);
+
+// Get all constants of a class
+$constants = Reflections::getClassConstants(MyClass::class);
+
+// Get the name of a constant by its value
+$constantName = Reflections::getClassConstantName(MyClass::class, $constantValue);
+
+// Get the value of a class property by its name
+$propertyValue = Reflections::getClassPropertyName(MyClass::class, 'propertyName');
+
+// Create an object and set properties in a case-insensitive manner
+$object = Reflections::createObjectAndSetPropertiesCaseInsensitive(MyClass::class, $constructorArgs, $propertyList);
+
+// Convert multiple arguments into an associative array
+$argsArray = Reflections::argsToArray($arg1, $arg2, $arg3);</code></pre>
+<p>Main functionalities:</p>
+<ul>
+<li>Get the singleton instance of a class by calling a static method</li>
+<li>Check if a method exists and is static in a class</li>
+<li>Get a ReflectionClass instance for a class</li>
+<li>Get all constants defined in a class</li>
+<li>Get the name of a constant by its value</li>
+<li>Get the value of a class property by its name</li>
+<li>Create objects and set properties in a case-insensitive manner</li>
+<li>Convert multiple arguments into an associative array</li>
+</ul>
+<p>Methods:</p>
+<ul>
+<li><code>getSingletonInstance($class)</code>: Retrieves the singleton instance of a class by calling a static method. Throws an exception if the method does not exist.</li>
+<li><code>isSingletonMethodExists($class)</code>: Checks if a method exists and is static in a class. Throws an exception if the method does not exist or is not static.</li>
+<li><code>getClassInstance($class)</code>: Returns a <code>ReflectionClass</code> instance for the given class.</li>
+<li><code>getClassConstants($class)</code>: Returns an array of all constants defined in the class.</li>
+<li><code>getClassConstantName($class, $field)</code>: Returns the name of a constant by its value.</li>
+<li><code>getClassPropertyName($class, $prop)</code>: Returns the value of a class property by its name.</li>
+<li><code>createObjectAndSetPropertiesCaseInsensitive($classOrObject, $constructorArgArray, $propertyList)</code>: Creates an object and sets its properties in a case-insensitive manner.</li>
+<li><code>argsToArray(...$args)</code>: Converts multiple arguments into an associative array.</li>
+</ul>
+<p>Fields:</p>
+<ul>
+<li><code>defaultMethod</code>: A static field that stores the default method name (<code>getInstance</code>) used for getting singleton instances.</li>
+</ul></p>        </div>
+            
+        
+    
+            <h2>Properties</h2>
+
+            <table class="table table-condensed">
+                    <tr>
+                <td class="type" id="property_defaultMethod">
+                    static                                                            string
+                                                                                
+                                    </td>
+                <td>$defaultMethod</td>
+                <td class="last"><p>Set default method</p></td>
+                <td></td>
+            </tr>
+            </table>
+
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Helpers\object|false">object|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getSingletonInstance">getSingletonInstance</a>(mixed $class)
+        
+                                            <p><p>Get singleton instance</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_isSingletonMethodExists">isSingletonMethodExists</a>(mixed $class)
+        
+                                            <p><p>Detect if method exists in class</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a target="_blank" rel="noopener" href="https://www.php.net/ReflectionClass">ReflectionClass</a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getClassInstance">getClassInstance</a>(mixed $class)
+        
+                                            <p><p>Get class instance</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getClassConstants">getClassConstants</a>(mixed $class)
+        
+                                            <p><p>Get all constants of the class</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Helpers\string|int|bool">string|int|bool</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getClassConstantName">getClassConstantName</a>(mixed $class, mixed $field)
+        
+                                            <p><p>Get the name of a constant by its value</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getClassPropertyName">getClassPropertyName</a>(mixed $class, mixed $prop)
+        
+                                            <p><p>Get the value of a class property by its name</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_createObjectAndSetPropertiesCaseInsensitive">createObjectAndSetPropertiesCaseInsensitive</a>(mixed $classOrObject, array $constructorArgArray, array $propertyList)
+        
+                                            <p><p>Creates an object and sets its properties in a case-insensitive manner.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_argsToArray">argsToArray</a>(mixed ...$args)
+        
+                                            <p><p>Converts multiple arguments into an associative array.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method_getSingletonInstance">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L84">at line 84</a></div>
+        <code>        static            <abbr title="GenericDatabase\Helpers\object|false">object|false</abbr>
+    <strong>getSingletonInstance</strong>(mixed $class)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get singleton instance</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$class</td>
+                <td><p>The class object or instance</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Helpers\object|false">object|false</abbr></td>
+            <td><p>The singleton instance of the class</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Helpers/Exceptions.html"><abbr title="GenericDatabase\Helpers\Exceptions">Exceptions</abbr></a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_isSingletonMethodExists">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L99">at line 99</a></div>
+        <code>        static            bool
+    <strong>isSingletonMethodExists</strong>(mixed $class)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Detect if method exists in class</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$class</td>
+                <td><p>The class object or instance</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td><p>A boolean indicating if the method exists and is static</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getClassInstance">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L111">at line 111</a></div>
+        <code>        static            <a target="_blank" rel="noopener" href="https://www.php.net/ReflectionClass">ReflectionClass</a>
+    <strong>getClassInstance</strong>(mixed $class)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get class instance</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$class</td>
+                <td><p>The class object or instance</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionClass">ReflectionClass</a></td>
+            <td><p>A ReflectionClass instance for the given class</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getClassConstants">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L123">at line 123</a></div>
+        <code>        static            array
+    <strong>getClassConstants</strong>(mixed $class)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get all constants of the class</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$class</td>
+                <td><p>The class object or instance</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>An array of all constants defined in the class</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getClassConstantName">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L136">at line 136</a></div>
+        <code>        static            <abbr title="GenericDatabase\Helpers\string|int|bool">string|int|bool</abbr>
+    <strong>getClassConstantName</strong>(mixed $class, mixed $field)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the name of a constant by its value</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$class</td>
+                <td><p>The class object or instance</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$field</td>
+                <td><p>The constant name or value</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Helpers\string|int|bool">string|int|bool</abbr></td>
+            <td><p>The name of a constant by its value</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getClassPropertyName">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L149">at line 149</a></div>
+        <code>        static            mixed
+    <strong>getClassPropertyName</strong>(mixed $class, mixed $prop)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the value of a class property by its name</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$class</td>
+                <td><p>The class object or instance</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$prop</td>
+                <td><p>The property name</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>The value of a class property by its name</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_createObjectAndSetPropertiesCaseInsensitive">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L163">at line 163</a></div>
+        <code>        static            mixed
+    <strong>createObjectAndSetPropertiesCaseInsensitive</strong>(mixed $classOrObject, array $constructorArgArray, array $propertyList)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates an object and sets its properties in a case-insensitive manner.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$classOrObject</td>
+                <td><p>The class object or instance, or the class name as a string.</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$constructorArgArray</td>
+                <td><p>An array of constructor arguments.</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$propertyList</td>
+                <td><p>An array of properties to be set on the object.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>The created object with the properties set in a case-insensitive manner.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_argsToArray">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Reflections.php#L247">at line 247</a></div>
+        <code>        static            array
+    <strong>argsToArray</strong>(mixed ...$args)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Converts multiple arguments into an associative array.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>...$args</td>
+                <td><p>The arguments to convert.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>The converted associative array.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

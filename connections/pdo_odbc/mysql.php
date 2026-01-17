@@ -1,0 +1,63 @@
+<div class="tab-pane fade show active" id="pdo-odbc-mysql">
+    <?php
+
+    $var = Autoloader::getLoadedVariables();
+
+    $extensions = $var['extensions'] ?? '';
+    $env = $var['env'] ?? '';
+    $label = $var['label'] ?? '';
+    $method = $var['method'] ?? '';
+    $lang = $var['lang'] ?? '';
+
+    if (extension_loaded($extensions[0]) && extension_loaded($extensions[1])) {
+
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($method) {
+            if (stripos($errstr, $method) !== false) {
+                return true;
+            }
+            return false;
+        });
+
+        try {
+
+            $instance = new PDO(
+                vsprintf(
+                    "odbc:Driver={MySQL ODBC 9.1 ANSI Driver};Server=%s;Port=%s;Database=%s;User=%s;Password=%s;Charset=%s;Option=3;",
+                    [
+                        $_ENV["{$env}_HOST"],
+                        $_ENV["{$env}_PORT"],
+                        $_ENV["{$env}_DATABASE"],
+                        $_ENV["{$env}_USERNAME"],
+                        $_ENV["{$env}_PASSWORD"],
+                        $_ENV["{$env}_CHARSET"],
+                    ]
+                ),
+                $_ENV["{$env}_USERNAME"],
+                $_ENV["{$env}_PASSWORD"]
+            );
+
+            if (!$instance instanceof PDO) {
+                throw new Exception($lang->getLabel('connection_fail'));
+            }
+
+            echo set_message('success', $lang->getLabelVars('connections_success', ['label' => $label, 'pdo' => strtoupper($extensions[0]), 'odbc' => strtoupper($extensions[1])]));
+            if (filter_input(INPUT_GET, 'debug', FILTER_VALIDATE_BOOLEAN)) {
+                var_dump($instance);
+            }
+
+        } catch (Exception $e) {
+
+            echo set_message('warning', $lang->getLabelVars('connections_error', ['label' => $label, 'pdo' => strtoupper($extensions[0]), 'odbc' => strtoupper($extensions[1])]));
+            if (filter_input(INPUT_GET, 'debug', FILTER_VALIDATE_BOOLEAN)) {
+                var_dump($e->getMessage());
+            }
+
+            restore_error_handler();
+
+        }
+
+    } else {
+        echo set_message('danger', $lang->getLabelVars('extensions', ['pdo' => strtoupper($extensions[0]), 'odbc' => strtoupper($extensions[1])]));
+    }
+    ?>
+</div>

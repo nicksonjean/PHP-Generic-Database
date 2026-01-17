@@ -1,0 +1,135 @@
+[
+    {
+        "driver": "text",
+        "type": "x86",
+        "alias": "\/Microsoft Text Driver \\(\\*\\.txt, \\*\\.csv\\)\/"
+    },
+    {
+        "driver": "text",
+        "type": "x64",
+        "default": true,
+        "alias": "\/Microsoft Access Text Driver \\(\\*\\.txt, \\*\\.csv\\)\/"
+    },
+    {
+        "driver": "excel",
+        "type": "xls",
+        "alias": "\/Microsoft Excel Driver \\(\\*\\.xls\\)\/"
+    },
+    {
+        "driver": "excel",
+        "type": "xlsx",
+        "default": true,
+        "alias": "\/Microsoft Excel Driver \\(\\*\\.xls, \\*\\.xlsx, \\*\\.xlsm, \\*\\.xlsb\\)\/"
+    },
+    {
+        "driver": "access",
+        "type": "mdb",
+        "alias": "\/Microsoft Access Driver \\(\\*\\.mdb\\)\/"
+    },
+    {
+        "driver": "access",
+        "type": "accdb",
+        "default": true,
+        "alias": "\/Microsoft Access Driver \\(\\*\\.mdb, \\*\\.accdb\\)\/"
+    },
+    {
+        "driver": "access",
+        "type": "mdbtools",
+        "alias": "\/MDBTools\/"
+    },
+    {
+        "driver": "interbase",
+        "type": "odbc",
+        "alias": "\/Firebird\\\/InterBase\\(r\\) driver\/"
+    },
+    {
+        "driver": "firebird",
+        "type": "odbc",
+        "alias": "\/Firebird ODBC Driver\/"
+    },    
+    {
+        "driver": "sqlite",
+        "type": "odbc",
+        "default": true,
+        "alias": "\/SQLite\\d{0,1} ODBC Driver\/"
+    },
+    {
+      "driver": "sqlite",
+      "type": "odbc",
+      "alias": "\/SQLite\\d{0,1}\/"
+    },
+    {
+        "driver": "sqlsrv",
+        "type": "odbc",
+        "default": true,
+        "alias": "\/ODBC Driver \\d{2} for SQL Server\/"
+    },
+    {
+        "driver": "sqlsrv",
+        "type": "native",
+        "alias": "\/SQL Server\/"
+    },
+    {
+        "driver": "sqlsrv",
+        "type": "nativeclient",
+        "alias": "\/SQL Server Native Client \\d{1,2}\\.\\d{0,1}\/"
+    },
+    {
+        "driver": "oci",
+        "type": "instantclient",
+        "default": true,
+        "alias": "\/Oracle in|em instantclient_.*\\\/\/"
+    },
+    {
+        "driver": "oci",
+        "type": "home",
+        "alias": "\/Oracle in|em OraDB\\d{2}Home\\d{0,1}.*\\\/\/"
+    },
+    {
+      "driver": "oci",
+      "type": "native",
+      "alias": "\/Oracle \\d{2} ODBC driver\/"
+    },
+    {
+        "driver": "oci",
+        "type": "native",
+        "alias": "\/Microsoft ODBC for Oracle\/"
+    },
+    {
+        "driver": "pgsql",
+        "type": "ansi",
+        "alias": "\/PostgreSQL ANSI\/"
+    },
+    {
+        "driver": "pgsql",
+        "type": "unicode",
+        "alias": "\/PostgreSQL Unicode\/"
+    },
+    {
+      "driver": "pgsql",
+      "type": "ansi",
+      "default": true,
+      "alias": "\/PostgreSQL ANSI\\(x\\d{2}\\)?\/"
+    },
+    {
+        "driver": "pgsql",
+        "type": "unicode",
+        "alias": "\/PostgreSQL Unicode\\(x\\d{2}\\)?\/"
+    },
+    {
+        "driver": "mysql",
+        "type": "ansi",
+        "default": true,
+        "alias": "\/MySQL ODBC \\d{1}\\.\\d{1} ANSI Driver\/"
+    },
+    {
+        "driver": "mysql",
+        "type": "unicode",
+        "alias": "\/MySQL ODBC \\d{1}\\.\\d{1} Unicode Driver\/"
+    },
+    {
+        "driver": "mariadb",
+        "type": "unicode",
+        "alias": "\/MariaDB Unicode\/"
+    }
+]

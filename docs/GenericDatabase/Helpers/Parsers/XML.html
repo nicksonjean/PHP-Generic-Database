@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Helpers\Parsers\XML | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../../fonts/doctum-font.css">
+        <script src="../../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../../doctum.js"></script>
+        <script async defer src="../../../js/bootstrap.min.js"></script>
+        <script async defer src="../../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Helpers_Parsers_XML" data-root-path="../../../" data-search-index-url="../../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../../classes.html">Classes</a></li>
+                    <li><a href="../../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../../traits.html">Traits</a></li>
+                    <li><a href="../../../doc-index.html">Index</a></li>
+                    <li><a href="../../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../../GenericDatabase/Helpers.html">Helpers</a></li><li class="backslash">\</li><li><a href="../../../GenericDatabase/Helpers/Parsers.html">Parsers</a></li><li class="backslash">\</li><li>XML</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>XML    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>XML</strong>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/XML.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>The <code>GenericDatabase\Helpers\Parsers\XML</code> class provides a set of static methods for working with XML data.</p></p>            <p><p>It includes functionalities to check if an XML string is valid, convert data to appropriate types,
+decode a SimpleXMLElement object into an array or a string, and parse XML data into an array.</p>
+<p>Example Usage:</p>
+<pre><code>// Check if an XML string is valid
+$xmlString = "&lt;root&gt;&lt;element&gt;data&lt;/element&gt;&lt;/root&gt;";
+$isValid = XML::isValidXML($xmlString);</code></pre>
+<p><code>Output: true</code></p>
+<pre><code>// Convert data to appropriate types
+$data = "123";
+$convertedData = XML::convertData($data);</code></pre>
+<p><code>Output: 123 (integer)</code></p>
+<pre><code>// Decode a SimpleXMLElement object into an array or a string
+$xml = simplexml_load_string("&lt;root&gt;&lt;element&gt;data&lt;/element&gt;&lt;/root&gt;");
+$decodedData = XML::decodeXML($xml);</code></pre>
+<p><code>Output: ['element' =&gt; 'data']</code></p>
+<pre><code>// Parse XML data into an array
+$xmlData = "&lt;root&gt;&lt;options&gt;&lt;option name='option1'&gt;value1&lt;/option&gt;&lt;/options&gt;&lt;/root&gt;";
+$parsedData = XML::parseXML($xmlData);</code></pre>
+<p><code>Output: ['options' =&gt; ['option1' =&gt; 'value1']]</code></p>
+<p>Main functionalities:</p>
+<ul>
+<li>Check if an XML string is valid</li>
+<li>Convert data to appropriate types</li>
+<li>Decode a SimpleXMLElement object into an array or a string</li>
+<li>Parse XML data into an array</li>
+</ul>
+<p>Methods:</p>
+<ul>
+<li><code>isValidXML($xml)</code>: Checks if an XML string is valid by loading it as a <code>SimpleXMLElement</code> object and using <code>XMLReader</code> to validate it.</li>
+<li><code>convertData($data)</code>: Converts data to appropriate types, such as integers, floats, booleans, or leaves it as a string.</li>
+<li><code>decodeXML($xml, $attributesKey, $reduce, $alwaysArray, $valueKeys)</code>: Decodes a <code>SimpleXMLElement</code> object into an array or a string. It extracts attributes, values, and children elements recursively.</li>
+<li><code>extractAttributes($xml, $attributesKey, &amp;$arr)</code>: Extracts attributes from a <code>SimpleXMLElement</code> object and adds them to an array.</li>
+<li><code>extractValue($xml, &amp;$arr, $valueKeys)</code>: Extracts the value from a <code>SimpleXMLElement</code> object and adds it to an array.</li>
+<li><code>processChildren($xml, &amp;$arr, $attributesKey, $reduce, $alwaysArray, $valueKeys)</code>: Processes the children of a <code>SimpleXMLElement</code> object and adds them to an array.</li>
+<li><code>parseXML($xml)</code>: Parses XML data into an array. It uses decodeXML to decode the XML and extract options as a separate array.</li>
+</ul></p>        </div>
+            
+        
+    
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_isValidXML">isValidXML</a>(mixed $xml)
+        
+                                            <p><p>Check if xml string is valid</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Helpers\Parsers\string|array">string|array</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_parseXML">parseXML</a>(string $xml)
+        
+                                            <p><p>Parse XML data and convert it into an array.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method_isValidXML">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/XML.php#L68">at line 68</a></div>
+        <code>        static            bool
+    <strong>isValidXML</strong>(mixed $xml)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Check if xml string is valid</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$xml</td>
+                <td><p>Argument to be tested</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_parseXML">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Helpers/Parsers/XML.php#L123">at line 123</a></div>
+        <code>        static            <abbr title="GenericDatabase\Helpers\Parsers\string|array">string|array</abbr>
+    <strong>parseXML</strong>(string $xml)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Parse XML data and convert it into an array.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$xml</td>
+                <td><p>The XML data to parse.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Helpers\Parsers\string|array">string|array</abbr></td>
+            <td><p>The parsed XML data as an array or a string.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

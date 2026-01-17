@@ -1,0 +1,2420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Engine\MySQLiQueryBuilder | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../fonts/doctum-font.css">
+        <script src="../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../doctum.js"></script>
+        <script async defer src="../../js/bootstrap.min.js"></script>
+        <script async defer src="../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Engine_MySQLiQueryBuilder" data-root-path="../../" data-search-index-url="../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../classes.html">Classes</a></li>
+                    <li><a href="../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../traits.html">Traits</a></li>
+                    <li><a href="../../doc-index.html">Index</a></li>
+                    <li><a href="../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../GenericDatabase/Engine.html">Engine</a></li><li class="backslash">\</li><li>MySQLiQueryBuilder</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>MySQLiQueryBuilder    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>MySQLiQueryBuilder</strong>        implements        <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>The <code>MySQLiQueryBuilder</code> class implements the <code>IQueryBuilder</code> interfaces to provide a flexible query building mechanism using various database engines.</p></p>            <p><p>Utilizes the Singleton pattern to ensure a single instance. The class allows setting and retrieving query strategies based on the database engine, and provides methods for
+constructing SQL queries with various clauses such as SELECT, JOIN, WHERE, and ORDER. It also supports fetching results and metadata.
+It uses the Singleton pattern to ensure a single instance and provides a flexible query building mechanism using various database engines.</p>
+<p>Methods:</p>
+<ul>
+<li><code>__construct(IConnection $context = null)</code>: Initializes the query builder with a database connection context.</li>
+<li><code>with(IConnection $context)</code>: Static initializer that sets the database connection context and returns the query builder instance.</li>
+<li><code>setContext(IQueryBuilder $context)</code>: Sets the query context instance.</li>
+<li><code>getContext()</code>: Returns the query context instance.</li>
+</ul>
+<p>Query Building Methods:</p>
+<ul>
+<li><code>select(array|string ...$data)</code>: Adds a SELECT clause to the query.</li>
+<li><code>distinct(array|string ...$data)</code>: Adds a DISTINCT clause to the query.</li>
+<li><code>from(array|string ...$data)</code>: Adds a FROM clause to the query.</li>
+<li><code>join(array|string ...$data)</code>: Adds a JOIN clause to the query.</li>
+<li><code>selfJoin(array|string ...$data)</code>: Adds a SELF JOIN clause to the query.</li>
+<li><code>leftJoin(array|string ...$data)</code>: Adds a LEFT JOIN clause to the query.</li>
+<li><code>rightJoin(array|string ...$data)</code>: Adds a RIGHT JOIN clause to the query.</li>
+<li><code>innerJoin(array|string ...$data)</code>: Adds an INNER JOIN clause to the query.</li>
+<li><code>outerJoin(array|string ...$data)</code>: Adds an OUTER JOIN clause to the query.</li>
+<li><code>crossJoin(array|string ...$data)</code>: Adds a CROSS JOIN clause to the query.</li>
+<li><code>on(array|string ...$data)</code>: Adds an ON clause to the query.</li>
+<li><code>andOn(array|string ...$data)</code>: Adds an AND ON clause to the query.</li>
+<li><code>orOn(array|string ...$data)</code>: Adds an OR ON clause to the query.</li>
+<li><code>where(array|string ...$data)</code>: Adds a WHERE clause to the query.</li>
+<li><code>andWhere(array|string ...$data)</code>: Adds an AND WHERE clause to the query.</li>
+<li><code>orWhere(array|string ...$data)</code>: Adds an OR WHERE clause to the query.</li>
+<li><code>having(array|string ...$data)</code>: Adds a HAVING clause to the query.</li>
+<li><code>andHaving(array|string ...$data)</code>: Adds an AND HAVING clause to the query.</li>
+<li><code>orHaving(array|string ...$data)</code>: Adds an OR HAVING clause to the query.</li>
+<li><code>group(array|string ...$data)</code>: Adds a GROUP BY clause to the query.</li>
+<li><code>order(array|string ...$data)</code>: Adds an ORDER BY clause to the query.</li>
+<li><code>orderAsc(array|string ...$data)</code>: Adds an ORDER BY ASC clause to the query.</li>
+<li><code>orderDesc(array|string ...$data)</code>: Adds an ORDER BY DESC clause to the query.</li>
+<li><code>limit(array|string ...$data)</code>: Adds a LIMIT clause to the query.</li>
+</ul>
+<p>Query Execution Methods:</p>
+<ul>
+<li><code>build()</code>: Builds the query string.</li>
+<li><code>buildRaw()</code>: Builds the raw query string.</li>
+<li><code>getValues()</code>: Returns the query values.</li>
+<li><code>getAllMetadata()</code>: Returns the query metadata.</li>
+<li><code>fetch(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)</code>: Fetches a single row from the query result.</li>
+<li><code>fetchAll(int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)</code>: Fetches all rows from the query result.</li>
+</ul>
+<p>Properties:</p>
+<ul>
+<li><code>$context</code>: The database connection context.</li>
+<li><code>$self</code>: The singleton instance of the QueryBuilder.</li>
+<li><code>$lastQuery</code>: The last query executed.</li>
+<li><code>$cursorExhausted</code>: The current query cursor exhausted status.</li>
+</ul></p>        </div>
+            
+                <h2>Traits</h2>
+
+        
+    <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-6">
+                    <a href="../../GenericDatabase/Generic/QueryBuilder/Query.html"><abbr title="GenericDatabase\Generic\QueryBuilder\Query">Query</abbr></a>    </div>
+                <div class="col-md-6"><p>This trait is part of the Generic QueryBuilder module and is used to encapsulate
+reusable query-building logic for database operations.</p></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-6">
+                    <a href="../../GenericDatabase/Generic/QueryBuilder/Context.html"><abbr title="GenericDatabase\Generic\QueryBuilder\Context">Context</abbr></a>    </div>
+                <div class="col-md-6"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-6">
+                    <a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>    </div>
+                <div class="col-md-6"><p>This trait provides methods to manage a single instance of a class or multiple
+instances identified by a unique hash. It includes methods to get, create, set,
+and clear instances.</p></div>
+            </div>
+            </div>
+    
+    
+            <h2>Properties</h2>
+
+            <table class="table table-condensed">
+                    <tr>
+                <td class="type" id="property_query">
+                                                                                <a href="../../GenericDatabase/Generic/QueryBuilder/QueryObject.html"><abbr title="GenericDatabase\Generic\QueryBuilder\QueryObject">QueryObject</abbr></a>
+                                                                                
+                                    </td>
+                <td>$query</td>
+                <td class="last"></td>
+                <td><small>from&nbsp;<a href="../../GenericDatabase/Generic/QueryBuilder/Query.html#property_query">
+<abbr title="GenericDatabase\Generic\QueryBuilder\Query">Query</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_context">
+                    static                    protected                                        <a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+                                                                                
+                                    </td>
+                <td>$context</td>
+                <td class="last"><p>Property to store settings</p></td>
+                <td><small>from&nbsp;<a href="../../GenericDatabase/Generic/QueryBuilder/Context.html#property_context">
+<abbr title="GenericDatabase\Generic\QueryBuilder\Context">Context</abbr></a></small></td>
+            </tr>
+            </table>
+
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_initQuery">initQuery</a>()
+        
+                                            <p><p>Initializes the query object, this method is used to lazily set the query object if it has not been set.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Generic/QueryBuilder/Query.html#method_initQuery">
+<abbr title="GenericDatabase\Generic\QueryBuilder\Query">Query</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setContext">setContext</a>(<a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $context)
+        
+                                            <p><p>Set default context for all instances</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Generic/QueryBuilder/Context.html#method_setContext">
+<abbr title="GenericDatabase\Generic\QueryBuilder\Context">Context</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getContext">getContext</a>()
+        
+                                            <p><p>Get context for current instance</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Generic/QueryBuilder/Context.html#method_getContext">
+<abbr title="GenericDatabase\Generic\QueryBuilder\Context">Context</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getInstance">getInstance</a>(string|null $hash = null)
+        
+                                            <p><p>Create or obtain an instance
+If no hash is provided, works as classic singleton
+If hash is provided, creates/returns instance for that hash</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html#method_getInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_newInstance">newInstance</a>(string|null $hash = null)
+        
+                                            <p><p>Create a new instance of the class and set it as the instance</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html#method_newInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setInstance">setInstance</a>(<a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> $instance, string|null $hash = null)
+        
+                                            <p><p>Set a specific instance</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html#method_setInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_clearInstance">clearInstance</a>(string|null $hash = null)
+        
+                                            <p><p>Clear instance(s)</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html#method_clearInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_clearAllInstances">clearAllInstances</a>()
+        
+                                            <p><p>Clear all instances including the classic singleton instance</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html#method_clearAllInstances">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___construct">__construct</a>(<abbr title="GenericDatabase\Engine\GenericDatabase\Interfaces\IConnection">IConnection</abbr>|null $context = null)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Engine/MySQLiQueryBuilder.html"><abbr title="GenericDatabase\Engine\MySQLiQueryBuilder">MySQLiQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_with">with</a>(<a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $context)
+        
+                                            <p><p>Static initializer with context</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_select">select</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_distinct">distinct</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_from">from</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_join">join</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_selfJoin">selfJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_leftJoin">leftJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_rightJoin">rightJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_innerJoin">innerJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_outerJoin">outerJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_crossJoin">crossJoin</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_on">on</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_andOn">andOn</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_orOn">orOn</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_where">where</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_andWhere">andWhere</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_orWhere">orWhere</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_having">having</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_andHaving">andHaving</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_orHaving">orHaving</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_group">group</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_order">order</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_orderAsc">orderAsc</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_orderDesc">orderDesc</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_limit">limit</a>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_reset">reset</a>()
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    string
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_build">build</a>()
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    string
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_buildRaw">buildRaw</a>()
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getValues">getValues</a>()
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    object
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getAllMetadata">getAllMetadata</a>()
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_fetch">fetch</a>(int|null $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\array|bool">array|bool</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_fetchAll">fetchAll</a>(int|null $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
+        
+                                            <p class="no-description">No description</p>
+                                    </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method_initQuery">
+        <div class="location">in <a href="../../GenericDatabase/Generic/QueryBuilder/Query.html#method_initQuery">
+<abbr title="GenericDatabase\Generic\QueryBuilder\Query">Query</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/QueryBuilder/Query.php#L23">at line 23</a></div>
+        <code>                    void
+    <strong>initQuery</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Initializes the query object, this method is used to lazily set the query object if it has not been set.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setContext">
+        <div class="location">in <a href="../../GenericDatabase/Generic/QueryBuilder/Context.html#method_setContext">
+<abbr title="GenericDatabase\Generic\QueryBuilder\Context">Context</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/QueryBuilder/Context.php#L21">at line 21</a></div>
+        <code>        static    protected        void
+    <strong>setContext</strong>(<a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $context)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set default context for all instances</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+                <td>$context</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getContext">
+        <div class="location">in <a href="../../GenericDatabase/Generic/QueryBuilder/Context.html#method_getContext">
+<abbr title="GenericDatabase\Generic\QueryBuilder\Context">Context</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/QueryBuilder/Context.php#L31">at line 31</a></div>
+        <code>            protected        <a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+    <strong>getContext</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get context for current instance</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getInstance">
+        <div class="location">in <a href="../../GenericDatabase/Shared/Singleton.html#method_getInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L41">at line 41</a></div>
+        <code>        static            <a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
+    <strong>getInstance</strong>(string|null $hash = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Create or obtain an instance
+If no hash is provided, works as classic singleton
+If hash is provided, creates/returns instance for that hash</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string|null</td>
+                <td>$hash</td>
+                <td><p>Optional unique identifier for multiple instances</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_newInstance">
+        <div class="location">in <a href="../../GenericDatabase/Shared/Singleton.html#method_newInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L62">at line 62</a></div>
+        <code>        static            <a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
+    <strong>newInstance</strong>(string|null $hash = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Create a new instance of the class and set it as the instance</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string|null</td>
+                <td>$hash</td>
+                <td><p>Optional unique identifier for multiple instances</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></td>
+            <td><p>The newly created instance</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setInstance">
+        <div class="location">in <a href="../../GenericDatabase/Shared/Singleton.html#method_setInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L80">at line 80</a></div>
+        <code>        static            void
+    <strong>setInstance</strong>(<a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> $instance, string|null $hash = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set a specific instance</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></td>
+                <td>$instance</td>
+                <td><p>The instance to set</p></td>
+            </tr>
+                    <tr>
+                <td>string|null</td>
+                <td>$hash</td>
+                <td><p>Optional unique identifier for multiple instances</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_clearInstance">
+        <div class="location">in <a href="../../GenericDatabase/Shared/Singleton.html#method_clearInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L96">at line 96</a></div>
+        <code>        static            void
+    <strong>clearInstance</strong>(string|null $hash = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Clear instance(s)</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string|null</td>
+                <td>$hash</td>
+                <td><p>Optional unique identifier for multiple instances</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_clearAllInstances">
+        <div class="location">in <a href="../../GenericDatabase/Shared/Singleton.html#method_clearAllInstances">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L111">at line 111</a></div>
+        <code>        static            void
+    <strong>clearAllInstances</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Clear all instances including the classic singleton instance</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___construct">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L88">at line 88</a></div>
+        <code>                    
+    <strong>__construct</strong>(<abbr title="GenericDatabase\Engine\GenericDatabase\Interfaces\IConnection">IConnection</abbr>|null $context = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Engine\GenericDatabase\Interfaces\IConnection">IConnection</abbr>|null</td>
+                <td>$context</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_with">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L101">at line 101</a></div>
+        <code>        static            <a href="../../GenericDatabase/Engine/MySQLiQueryBuilder.html"><abbr title="GenericDatabase\Engine\MySQLiQueryBuilder">MySQLiQueryBuilder</abbr></a>
+    <strong>with</strong>(<a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $context)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Static initializer with context</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+                <td>$context</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Engine/MySQLiQueryBuilder.html"><abbr title="GenericDatabase\Engine\MySQLiQueryBuilder">MySQLiQueryBuilder</abbr></a></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_select">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L112">at line 112</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>select</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The columns to select.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_distinct">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L122">at line 122</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>distinct</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The columns to select distinctly.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_from">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L132">at line 132</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>from</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The table(s) to select from.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_join">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L142">at line 142</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>join</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The join clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_selfJoin">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L154">at line 154</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>selfJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The self join clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_leftJoin">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L166">at line 166</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>leftJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The left join clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_rightJoin">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L178">at line 178</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>rightJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The right join clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_innerJoin">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L190">at line 190</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>innerJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The inner join clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_outerJoin">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L202">at line 202</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>outerJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The outer join clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_crossJoin">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L214">at line 214</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>crossJoin</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The cross join clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_on">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L226">at line 226</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>on</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The ON clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_andOn">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L236">at line 236</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>andOn</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The AND ON clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_orOn">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L246">at line 246</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>orOn</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The OR ON clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_where">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L256">at line 256</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>where</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The WHERE clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_andWhere">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L291">at line 291</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>andWhere</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The AND WHERE clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_orWhere">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L326">at line 326</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>orWhere</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The OR WHERE clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_having">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L361">at line 361</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>having</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The HAVING clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_andHaving">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L396">at line 396</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>andHaving</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The AND HAVING clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_orHaving">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L425">at line 425</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>orHaving</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The OR HAVING clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_group">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L454">at line 454</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>group</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The GROUP BY clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_order">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L464">at line 464</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>order</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The ORDER BY clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_orderAsc">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L474">at line 474</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>orderAsc</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The ORDER BY clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_orderDesc">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L484">at line 484</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>orderDesc</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The ORDER BY clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_limit">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L494">at line 494</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a>
+    <strong>limit</strong>(<abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr> ...$data)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\array|string">array|string</abbr></td>
+                <td>...$data</td>
+                <td><p>The LIMIT clause parameters.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IQueryBuilder.html"><abbr title="GenericDatabase\Interfaces\IQueryBuilder">IQueryBuilder</abbr></a></td>
+            <td><p>The query builder instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_reset">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L517">at line 517</a></div>
+        <code>                    void
+    <strong>reset</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_build">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L542">at line 542</a></div>
+        <code>                    string
+    <strong>build</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>string</td>
+            <td><p>The SQL query string.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Helpers/Exceptions.html"><abbr title="GenericDatabase\Helpers\Exceptions">Exceptions</abbr></a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_buildRaw">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L551">at line 551</a></div>
+        <code>                    string
+    <strong>buildRaw</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>string</td>
+            <td><p>The raw SQL query string.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Helpers/Exceptions.html"><abbr title="GenericDatabase\Helpers\Exceptions">Exceptions</abbr></a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getValues">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L559">at line 559</a></div>
+        <code>                    array
+    <strong>getValues</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>The bound values.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getAllMetadata">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L568">at line 568</a></div>
+        <code>                    object
+    <strong>getAllMetadata</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>object</td>
+            <td><p>The query metadata.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Helpers/Exceptions.html"><abbr title="GenericDatabase\Helpers\Exceptions">Exceptions</abbr></a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_fetch">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L581">at line 581</a></div>
+        <code>                    mixed
+    <strong>fetch</strong>(int|null $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int|null</td>
+                <td>$fetchStyle</td>
+                <td><p>The fetch style to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$fetchArgument</td>
+                <td><p>The fetch argument to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$optArgs</td>
+                <td><p>Additional options for the fetch operation.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>The query result.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Helpers/Exceptions.html"><abbr title="GenericDatabase\Helpers\Exceptions">Exceptions</abbr></a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_fetchAll">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLiQueryBuilder.php#L600">at line 600</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\array|bool">array|bool</abbr>
+    <strong>fetchAll</strong>(int|null $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p class="no-description">No description</p>
+                    
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int|null</td>
+                <td>$fetchStyle</td>
+                <td><p>The fetch style to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$fetchArgument</td>
+                <td><p>The fetch argument to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$optArgs</td>
+                <td><p>Additional options for the fetch operation.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\array|bool">array|bool</abbr></td>
+            <td><p>The query results or false on failure.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Helpers/Exceptions.html"><abbr title="GenericDatabase\Helpers\Exceptions">Exceptions</abbr></a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

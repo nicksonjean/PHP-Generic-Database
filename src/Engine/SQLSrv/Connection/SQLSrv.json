@@ -1,0 +1,44 @@
+{
+  "type": "object",
+  "properties": {
+    "host": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Endereço do servidor de Banco de Dados"
+    },
+    "user": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Nome do usuário para conexão"
+    },
+    "password": {
+      "type": "string",
+      "description": "Senha do usuário para conexão"
+    },
+    "database": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Nome do banco de dados"
+    },
+    "port": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 65535,
+      "default": 1433,
+      "description": "Porta do servidor Banco de Dados"
+    },
+    "charset": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Charset do banco de dados"
+    }
+  },
+  "required": ["host", "user", "password", "database"],
+  "errorMessages": {
+    "host.minLength": "O host é obrigatório",
+    "user.minLength": "O usuário é obrigatório",
+    "database.minLength": "O nome do banco de dados é obrigatório",
+    "port.minimum": "A porta deve ser maior que 0",
+    "port.maximum": "A porta deve ser menor que 65536"
+  }
+}

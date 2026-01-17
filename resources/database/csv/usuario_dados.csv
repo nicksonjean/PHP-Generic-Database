@@ -1,0 +1,2 @@
+id;nome;cpf;rg;emails;telefones;data_nascimento;estado_civil;profissao;genero;naturalidade_id;filiacao;observacao;endereco_id;created_at;updated_at;deleted_at
+1;Administrador;012.345.678-90;;admin@gmail.com;;;Casado(a);"Analista de Sistemas";Masculino;3769;;N/A|NIHIL;1;"2016-09-12 22:45:15";"2016-09-12 22:45:15";

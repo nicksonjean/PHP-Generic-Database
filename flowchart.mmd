@@ -1,0 +1,716 @@
+flowchart TB
+    Root["PHP Generic Database"]
+    Root --- Connection["Connection.php"]
+    Root --- QueryBuilder["QueryBuilder.php"]
+    Root --- Abstract["Abstract/"]
+    Root --- Core["Core/"]
+    Root --- Engine["Engine/"]
+    Root --- Generic["Generic/"]
+    Root --- Helpers["Helpers/"]
+    Root --- Interfaces["Interfaces/"]
+    Root --- Modules["Modules/"]
+    Root --- Shared["Shared/"]
+
+    Abstract --- AbstractFiles["
+        AbstractArguments.php
+        AbstractAttributes.php
+        AbstractFetch.php
+        AbstractOptions.php
+        AbstractStatements.php
+    "]
+    Core --- CoreFiles["
+        Build.php
+        Column.php
+        Condition.php
+        Entity.php
+        Grouping.php
+        Having.php
+        Insert.php
+        Join.php
+        Junction.php
+        Limit.php
+        Query.php
+        Select.php
+        Sorting.php
+        Table.php
+        Types.php
+        Where.php
+    "]
+    Core --- CoreDir["
+        Emulated/
+        Native/
+    "]
+
+    CoreDir --- CoreEmulated["Emulated:
+        Build.php
+        Column.php
+        Condition.php
+        Entity.php
+        Grouping.php
+        Having.php
+        Insert.php
+        Join.php
+        Junction.php
+        Limit.php
+        Query.php
+        Select.php
+        Sorting.php
+        Table.php
+        Types.php
+        Where.php
+    "]
+
+    CoreDir --- CoreNative["Native:
+        Build.php
+        Column.php
+        Condition.php
+        Entity.php
+        Grouping.php
+        Having.php
+        Insert.php
+        Join.php
+        Junction.php
+        Limit.php
+        Query.php
+        Select.php
+        Sorting.php
+        Table.php
+        Types.php
+        Where.php
+    "]
+    Engine --- EngineFiles["
+        FirebirdConnection.php
+        FirebirdQueryBuilder.php
+        MySQLiConnection.php
+        MySQLiQueryBuilder.php
+        OCIConnection.php
+        OCIQueryBuilder.php
+        ODBCConnection.php
+        ODBCQueryBuilder.php
+        PDOConnection.php
+        PDOQueryBuilder.php
+        PgSQLConnection.php
+        PgSQLQueryBuilder.php
+        SQLSrvConnection.php
+        SQLSrvQueryBuilder.php
+        SQLiteConnection.php
+        SQLiteQueryBuilder.php
+    "]
+    Engine --- EngineDir["
+        Firebird/
+        MySQLi/
+        OCI/
+        ODBC/
+        PDO/
+        PgSQL/
+        SQLSrv/
+        SQLite/
+    "]
+
+    EngineDir --- EngineFirebird["Firebird:
+        Connection/
+        QueryBuilder/
+    "]
+
+    EngineFirebird --- EngineFirebird_Connection["Connection:
+        Firebird.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineFirebird_Connection --- EngineFirebird_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineFirebird --- EngineFirebird_QueryBuilder["QueryBuilder:
+        Builder.php
+        Clause.php
+        Criteria.php
+        Regex.php
+    "]
+
+    EngineDir --- EngineMySQLi["MySQLi:
+        Connection/
+        QueryBuilder/
+    "]
+
+    EngineMySQLi --- EngineMySQLi_Connection["Connection:
+        MySQL.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineMySQLi_Connection --- EngineMySQLi_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineMySQLi --- EngineMySQLi_QueryBuilder["QueryBuilder:
+        Builder.php
+        Clause.php
+        Criteria.php
+        Regex.php
+    "]
+
+    EngineDir --- EngineOCI["OCI:
+        Connection/
+        QueryBuilder/
+    "]
+
+    EngineOCI --- EngineOCI_Connection["Connection:
+        OCI.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineOCI_Connection --- EngineOCI_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineOCI --- EngineOCI_QueryBuilder["QueryBuilder:
+        Builder.php
+        Clause.php
+        Criteria.php
+        Regex.php
+    "]
+
+    EngineDir --- EngineODBC["ODBC:
+        Connection/
+        QueryBuilder/
+    "]
+
+    EngineODBC --- EngineODBC_Connection["Connection:
+        ODBC.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_DSN["DSN:
+        DSN.json
+        DSNHandler.php
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineODBC_Connection --- EngineODBC_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineODBC --- EngineODBC_QueryBuilder["QueryBuilder:
+        Builder.php
+        Clause.php
+        Criteria.php
+        Regex.php
+    "]
+
+    EngineDir --- EnginePDO["PDO:
+        Connection/
+        QueryBuilder/
+    "]
+
+    EnginePDO --- EnginePDO_Connection["Connection:
+        XPDO.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EnginePDO_Connection --- EnginePDO_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EnginePDO --- EnginePDO_QueryBuilder["QueryBuilder:
+        Builder.php
+        Clause.php
+        Criteria.php
+        Regex.php
+    "]
+
+    EngineDir --- EnginePgSQL["PgSQL:
+        Connection/
+        QueryBuilder/
+    "]
+
+    EnginePgSQL --- EnginePgSQL_Connection["Connection:
+        PgSQL.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EnginePgSQL_Connection --- EnginePgSQL_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EnginePgSQL --- EnginePgSQL_QueryBuilder["QueryBuilder:
+        Builder.php
+        Clause.php
+        Criteria.php
+        Regex.php
+    "]
+
+    EngineDir --- EngineSQLSrv["SQLSrv:
+        Connection/
+        QueryBuilder/
+    "]
+
+    EngineSQLSrv --- EngineSQLSrv_Connection["Connection:
+        SQLSrv.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineSQLSrv_Connection --- EngineSQLSrv_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineSQLSrv --- EngineSQLSrv_QueryBuilder["QueryBuilder:
+        Builder.php
+        Clause.php
+        Criteria.php
+        Regex.php
+    "]
+
+    EngineDir --- EngineSQLite["SQLite:
+        Connection/
+        QueryBuilder/
+    "]
+
+    EngineSQLite --- EngineSQLite_Connection["Connection:
+        SQLite.php
+        Arguments/
+        Attributes/
+        DSN/
+        Fetch/
+        Options/
+        Report/
+        Statements/
+        Transactions/
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Arguments["Arguments:
+        ArgumentsHandler.php
+        Strategy/
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Attributes["Attributes:
+        AttributesHandler.php
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_DSN["DSN:
+        DSNHandler.php
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Fetch["Fetch:
+        FetchHandler.php
+        Strategy/
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Options["Options:
+        OptionsHandler.php
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Report["Report:
+        ReportHandler.php
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Statements["Statements:
+        StatementsHandler.php
+    "]
+
+    EngineSQLite_Connection --- EngineSQLite_Connection_Transactions["Transactions:
+        TransactionsHandler.php
+    "]
+
+    EngineSQLite --- EngineSQLite_QueryBuilder["QueryBuilder:
+        Builder.php
+        Clause.php
+        Criteria.php
+        Regex.php
+    "]
+    Generic --- GenericDir["
+        Connection/
+        Fetch/
+        QueryBuilder/
+        Statements/
+    "]
+
+    GenericDir --- GenericConnection["Connection:
+        Methods.php
+        Settings.php
+    "]
+
+    GenericDir --- GenericFetch["Fetch:
+        FetchCache.php
+    "]
+
+    GenericDir --- GenericQueryBuilder["QueryBuilder:
+        Context.php
+        Query.php
+    "]
+
+    GenericDir --- GenericStatements["Statements:
+        Metadata.php
+        QueryMetadata.php
+        RowsMetadata.php
+    "]
+    Helpers --- HelpersFiles["
+        Compare.php
+        Errors.php
+        Exceptions.php
+        Generators.php
+        Hash.php
+        Path.php
+        Reflections.php
+        Schemas.php
+        Validations.php
+    "]
+    Helpers --- HelpersDir["
+        Parsers/
+        Types/
+    "]
+
+    HelpersDir --- HelpersParsers["Parsers:
+        INI.php
+        JSON.php
+        NEON.php
+        SQL.php
+        TXT.php
+        XML.php
+        YAML.php
+        SQL/
+    "]
+
+    HelpersParsers --- HelpersParsers_SQL["SQL:
+        SQL.json
+    "]
+
+    HelpersDir --- HelpersTypes["Types:
+        Compounds/
+        Scalars/
+        Specials/
+    "]
+
+    HelpersTypes --- HelpersTypes_Compounds["Compounds:
+        Arrays.php
+    "]
+
+    HelpersTypes --- HelpersTypes_Scalars["Scalars:
+        Strings.php
+    "]
+
+    HelpersTypes --- HelpersTypes_Specials["Specials:
+        Datetimes.php
+        Resources.php
+        Datetimes/
+    "]
+
+    HelpersTypes_Specials --- HelpersTypes_Specials_Datetimes["Datetimes:
+        DMY.json
+        HMS.json
+        MDY.json
+        YDM.json
+        YMD.json
+    "]
+    Interfaces --- InterfacesFiles["
+        IConnection.php
+        IQueryBuilder.php
+    "]
+    Interfaces --- InterfacesDir["
+        Connection/
+        QueryBuilder/
+        Strategy/
+    "]
+
+    InterfacesDir --- InterfacesConnection["Connection:
+        IArguments.php
+        IArgumentsAbstract.php
+        IArgumentsStrategy.php
+        IAttributes.php
+        IAttributesAbstract.php
+        IConstants.php
+        IDSN.php
+        IFetch.php
+        IFetchAbstract.php
+        IFetchStrategy.php
+        IOptions.php
+        IOptionsAbstract.php
+        IReport.php
+        IStatements.php
+        IStatementsAbstract.php
+        ITransactions.php
+    "]
+
+    InterfacesDir --- InterfacesQueryBuilder["QueryBuilder:
+        IBuilder.php
+        IClause.php
+        ICriteria.php
+        IRegex.php
+    "]
+
+    InterfacesDir --- InterfacesStrategy["Strategy:
+        IConnectionStrategy.php
+        IQueryBuilderStrategy.php
+    "]
+    Modules --- ModulesFiles["
+        Chainable.php
+        Fluent.php
+        StaticArgs.php
+        StaticArray.php
+    "]
+    Shared --- SharedFiles["
+        Caller.php
+        Cleaner.php
+        Enumerator.php
+        Getter.php
+        Objectable.php
+        Property.php
+        Registry.php
+        Run.php
+        Setter.php
+        Singleton.php
+        Transporter.php
+    "]

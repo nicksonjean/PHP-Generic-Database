@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Engine\Firebird\Connection\Fetch\FetchHandler | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../../../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../../../../fonts/doctum-font.css">
+        <script src="../../../../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../../../../doctum.js"></script>
+        <script async defer src="../../../../../js/bootstrap.min.js"></script>
+        <script async defer src="../../../../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Engine_Firebird_Connection_Fetch_FetchHandler" data-root-path="../../../../../" data-search-index-url="../../../../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../../../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../../../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../../../../classes.html">Classes</a></li>
+                    <li><a href="../../../../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../../../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../../../../traits.html">Traits</a></li>
+                    <li><a href="../../../../../doc-index.html">Index</a></li>
+                    <li><a href="../../../../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../../../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../../../../GenericDatabase/Engine.html">Engine</a></li><li class="backslash">\</li><li><a href="../../../../../GenericDatabase/Engine/Firebird.html">Firebird</a></li><li class="backslash">\</li><li><a href="../../../../../GenericDatabase/Engine/Firebird/Connection.html">Connection</a></li><li class="backslash">\</li><li><a href="../../../../../GenericDatabase/Engine/Firebird/Connection/Fetch.html">Fetch</a></li><li class="backslash">\</li><li>FetchHandler</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>FetchHandler    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>FetchHandler</strong>        extends <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html"><abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a>        implements        <a href="../../../../../GenericDatabase/Interfaces/Connection/IFetch.html"><abbr title="GenericDatabase\Interfaces\Connection\IFetch">IFetch</abbr></a>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/Firebird/Connection/Fetch/FetchHandler.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>Concrete implementation for Firebird database</p></p>                    </div>
+            
+        
+    
+            <h2>Properties</h2>
+
+            <table class="table table-condensed">
+                    <tr>
+                <td class="type" id="property_instance">
+                    static                    protected                                        <a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+                                                                                
+                                    </td>
+                <td>$instance</td>
+                <td class="last"></td>
+                <td><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#property_instance">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_fetchStrategy">
+                    static                    protected                                        <a href="../../../../../GenericDatabase/Interfaces/Connection/IFetchStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IFetchStrategy">IFetchStrategy</abbr></a>
+                                                                                
+                                    </td>
+                <td>$fetchStrategy</td>
+                <td class="last"></td>
+                <td><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#property_fetchStrategy">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></td>
+            </tr>
+            </table>
+
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___construct">__construct</a>(<a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $instance, <a href="../../../../../GenericDatabase/Interfaces/Connection/IFetchStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IFetchStrategy">IFetchStrategy</abbr></a> $fetchStrategy)
+        
+                                            <p><p>Initialize fetch abstraction with connection and strategy</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method___construct">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <a href="../../../../../GenericDatabase/Interfaces/Connection/IFetchStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IFetchStrategy">IFetchStrategy</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getStrategy">getStrategy</a>()
+        
+                                            <p><p>Get the current fetch strategy</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_getStrategy">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getInstance">getInstance</a>()
+        
+                                            <p><p>Get the database connection instance</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_getInstance">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\object|false">object|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_internalFetchClass">internalFetchClass</a>(array|null $constructorArguments = null, string|null $aClassOrObject = &#039;\\stdClass&#039;)
+        
+                                            <p><p>Fetches a single row from the result set as an object</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchClass">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\bool|array">bool|array</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_internalFetchBoth">internalFetchBoth</a>()
+        
+                                            <p><p>Fetches the current row as both an associative and a numeric array.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchBoth">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\array|null|false">array|null|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_internalFetchAssoc">internalFetchAssoc</a>()
+        
+                                            <p><p>Fetches a single row from the result set as a numerically indexed array,
+converting all values to strings, or returns false if there are no more rows.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAssoc">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\array|false|null">array|false|null</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_internalFetchNum">internalFetchNum</a>()
+        
+                                            <p><p>Fetches the current row as a numeric array.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchNum">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\false|string">false|string</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_internalFetchColumn">internalFetchColumn</a>(int $columnIndex = 0)
+        
+                                            <p><p>Fetches a single value from the result set, or false if there are no more rows.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchColumn">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_internalFetchAllAssoc">internalFetchAllAssoc</a>()
+        
+                                            <p><p>Fetches all rows from the result set as an associative array, or an empty array if there are no more rows.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAllAssoc">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_internalFetchAllNum">internalFetchAllNum</a>()
+        
+                                            <p><p>Fetches all rows from the result set as a numerically indexed array of arrays,
+converting all values to strings, or an empty array if there are no more rows.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAllNum">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_internalFetchAllBoth">internalFetchAllBoth</a>()
+        
+                                            <p><p>Fetches all rows from the result set as an array of arrays, where each row is both numerically and associatively indexed.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAllBoth">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_internalFetchAllColumn">internalFetchAllColumn</a>(int $columnIndex = 0)
+        
+                                            <p><p>Fetches all values of a single column from the result set as an array of strings.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAllColumn">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_internalFetchAllClass">internalFetchAllClass</a>(array|null $constructorArguments = [], string|null $aClassOrObject = &#039;\\stdClass&#039;)
+        
+                                            <p><p>Fetches all rows from the result set as an array of objects, each one being an instance of the provided class.</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAllClass">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_fetch">fetch</a>(int|null $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
+        
+                                            <p><p>Fetches the next row from a result set</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_fetchAll">fetchAll</a>(int|null $fetchStyle = null, mixed $fetchArgument = 0, mixed $optArgs = null)
+        
+                                            <p><p>Fetches all rows from a result set</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method___construct">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method___construct">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L63">at line 63</a></div>
+        <code>                    
+    <strong>__construct</strong>(<a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $instance, <a href="../../../../../GenericDatabase/Interfaces/Connection/IFetchStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IFetchStrategy">IFetchStrategy</abbr></a> $fetchStrategy)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Initialize fetch abstraction with connection and strategy</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+                <td>$instance</td>
+                <td><p>Database connection instance</p></td>
+            </tr>
+                    <tr>
+                <td><a href="../../../../../GenericDatabase/Interfaces/Connection/IFetchStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IFetchStrategy">IFetchStrategy</abbr></a></td>
+                <td>$fetchStrategy</td>
+                <td><p>Strategy for fetching results</p></td>
+            </tr>
+            </table>
+
+            
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getStrategy">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_getStrategy">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L74">at line 74</a></div>
+        <code>                    <a href="../../../../../GenericDatabase/Interfaces/Connection/IFetchStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IFetchStrategy">IFetchStrategy</abbr></a>
+    <strong>getStrategy</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the current fetch strategy</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../../../../GenericDatabase/Interfaces/Connection/IFetchStrategy.html"><abbr title="GenericDatabase\Interfaces\Connection\IFetchStrategy">IFetchStrategy</abbr></a></td>
+            <td><p>Current fetch strategy instance</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getInstance">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_getInstance">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L84">at line 84</a></div>
+        <code>                    <a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+    <strong>getInstance</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the database connection instance</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../../../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+            <td><p>Current database connection instance</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_internalFetchClass">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchClass">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L97">at line 97</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\object|false">object|false</abbr>
+    <strong>internalFetchClass</strong>(array|null $constructorArguments = null, string|null $aClassOrObject = &#039;\\stdClass&#039;)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches a single row from the result set as an object</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array|null</td>
+                <td>$constructorArguments</td>
+                <td><p>Arguments to pass to the class constructor.</p></td>
+            </tr>
+                    <tr>
+                <td>string|null</td>
+                <td>$aClassOrObject</td>
+                <td><p>Class name or object to hydrate.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\object|false">object|false</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_internalFetchBoth">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchBoth">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L123">at line 123</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\bool|array">bool|array</abbr>
+    <strong>internalFetchBoth</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches the current row as both an associative and a numeric array.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\bool|array">bool|array</abbr></td>
+            <td><p>Returns an associative and numeric array if successful, false on failure.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_internalFetchAssoc">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAssoc">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L153">at line 153</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\array|null|false">array|null|false</abbr>
+    <strong>internalFetchAssoc</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches a single row from the result set as a numerically indexed array,
+converting all values to strings, or returns false if there are no more rows.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\array|null|false">array|null|false</abbr></td>
+            <td><p>A numerically indexed array of the row values as strings, false if no more rows, or null on error.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_internalFetchNum">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchNum">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L174">at line 174</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\array|false|null">array|false|null</abbr>
+    <strong>internalFetchNum</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches the current row as a numeric array.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\array|false|null">array|false|null</abbr></td>
+            <td><p>Returns a numeric array if successful, null if no row was found, or false on failure.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_internalFetchColumn">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchColumn">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L197">at line 197</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\false|string">false|string</abbr>
+    <strong>internalFetchColumn</strong>(int $columnIndex = 0)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches a single value from the result set, or false if there are no more rows.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int</td>
+                <td>$columnIndex</td>
+                <td><p>Index of the value to fetch. If not provided, fetches the first column.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\false|string">false|string</abbr></td>
+            <td><p>The value of the row at the specified index, false if no more rows, or null on error.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_internalFetchAllAssoc">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAllAssoc">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L222">at line 222</a></div>
+        <code>                    array
+    <strong>internalFetchAllAssoc</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches all rows from the result set as an associative array, or an empty array if there are no more rows.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>An associative array of the row values as strings, or an empty array if no more rows, or null on error.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_internalFetchAllNum">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAllNum">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L238">at line 238</a></div>
+        <code>                    array
+    <strong>internalFetchAllNum</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches all rows from the result set as a numerically indexed array of arrays,
+converting all values to strings, or an empty array if there are no more rows.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>A numerically indexed array of the row values as strings, or an empty array if no more rows, or null on error.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_internalFetchAllBoth">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAllBoth">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L259">at line 259</a></div>
+        <code>                    array
+    <strong>internalFetchAllBoth</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches all rows from the result set as an array of arrays, where each row is both numerically and associatively indexed.</p></p>                <p><p>All values are converted to strings. If there are no more rows, an empty array is returned.</p></p>        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>An array of the row values as strings, with both numerical and associative indexes, or an empty array if no more rows, or null on error.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_internalFetchAllColumn">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAllColumn">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L287">at line 287</a></div>
+        <code>                    array
+    <strong>internalFetchAllColumn</strong>(int $columnIndex = 0)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches all values of a single column from the result set as an array of strings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int</td>
+                <td>$columnIndex</td>
+                <td><p>Index of the value to fetch. If not provided, fetches the first column.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>An array of the column values as strings, or an empty array if no more rows, or null on error.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_internalFetchAllClass">
+        <div class="location">in <a href="../../../../../GenericDatabase/Abstract/AbstractFetch.html#method_internalFetchAllClass">
+<abbr title="GenericDatabase\Abstract\AbstractFetch">AbstractFetch</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractFetch.php#L315">at line 315</a></div>
+        <code>                    array
+    <strong>internalFetchAllClass</strong>(array|null $constructorArguments = [], string|null $aClassOrObject = &#039;\\stdClass&#039;)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches all rows from the result set as an array of objects, each one being an instance of the provided class.</p></p>                <p><p>The class is created with the provided constructor arguments and properties are set with the values from the row.
+If there are no more rows, an empty array is returned.</p></p>        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array|null</td>
+                <td>$constructorArguments</td>
+                <td><p>Arguments to pass to the class constructor.</p></td>
+            </tr>
+                    <tr>
+                <td>string|null</td>
+                <td>$aClassOrObject</td>
+                <td><p>Class name or object to hydrate.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>An array of the row values as objects, or an empty array if no more rows, or null on error.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_fetch">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/Firebird/Connection/Fetch/FetchHandler.php#L19">at line 19</a></div>
+        <code>                    mixed
+    <strong>fetch</strong>(int|null $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches the next row from a result set</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int|null</td>
+                <td>$fetchStyle</td>
+                <td><p>The fetch style to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$fetchArgument</td>
+                <td><p>The fetch argument to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$optArgs</td>
+                <td><p>Additional options for the fetch operation.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>The query result.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_fetchAll">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/Firebird/Connection/Fetch/FetchHandler.php#L38">at line 38</a></div>
+        <code>                    mixed
+    <strong>fetchAll</strong>(int|null $fetchStyle = null, mixed $fetchArgument = 0, mixed $optArgs = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches all rows from a result set</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int|null</td>
+                <td>$fetchStyle</td>
+                <td><p>The fetch style to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$fetchArgument</td>
+                <td><p>The fetch argument to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$optArgs</td>
+                <td><p>Additional options for the fetch operation.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>The query result.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

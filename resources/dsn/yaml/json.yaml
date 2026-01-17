@@ -1,0 +1,8 @@
+database: ../../resources/database/json
+charset: utf8
+options:
+  - JSON::ATTR_PERSISTENT: true
+    JSON::ATTR_AUTOCOMMIT: true
+    JSON::ATTR_CONNECT_TIMEOUT: 28800
+    JSON::ATTR_DEFAULT_FETCH_MODE: JSON::FETCH_OBJ
+exception: true

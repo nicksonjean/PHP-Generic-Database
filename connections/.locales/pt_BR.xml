@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n>
+  <label>
+		<name>title</name>
+		<value>Testes de conexão do motor/driver de banco de dados</value>
+	</label>
+  <label>
+		<name>native</name>
+		<value>Nativo</value>
+	</label>
+  <label>
+		<name>translate</name>
+		<value>Traduzir para Português</value>
+	</label>
+    <label>
+		<name>debug</name>
+		<value>Modo Depuração</value>
+	</label>
+  <label>
+		<name>env_not_found</name>
+		<value>Falha ao carregar o arquivo .env.</value>
+	</label>
+	<label>
+		<name>file_not_found</name>
+		<value>Arquivo não foi encontrado em {{database}}</value>
+	</label>
+	<label>
+		<name>connection_fail</name>
+		<value>Conexão falhou!</value>
+	</label>
+	<label>
+		<name>connection_success</name>
+		<value>{{label}} conectado com {{method}}</value>
+	</label>
+	<label>
+		<name>connection_error</name>
+		<value>{{label}} não conectado com {{method}}</value>
+	</label>
+	<label>
+		<name>extension</name>
+		<value>A extensão {{extension}} não foi carregada!</value>
+	</label>
+  <label>
+		<name>connections_success</name>
+		<value>{{label}} conectado com {{pdo}} e {{odbc}}</value>
+	</label>
+  <label>
+		<name>connections_error</name>
+		<value>{{label}} não conectado com {{pdo}} e {{odbc}}</value>
+	</label>
+  <label>
+		<name>extensions</name>
+		<value>As extensões {{pdo}} e {{odbc}} não foram carregadas!</value>
+	</label>
+ </i18n>

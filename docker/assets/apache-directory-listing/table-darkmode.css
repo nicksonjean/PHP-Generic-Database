@@ -1,0 +1,190 @@
+@import 'table.css';
+@import 'darkmode.css';
+
+/*------------------------------------*\
+    Table Styles - Dark Theme
+\*------------------------------------*/
+
+/* Table rows with dark theme borders */
+table tr {
+  border-bottom: 1px solid #2d2d2d;
+  transition: background-color 0.2s ease;
+}
+
+table tr:hover {
+  background-color: var(--hover-color);
+}
+
+/* Table header with dark theme styling - Exact Nginx colors */
+table tr.indexhead {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+}
+
+table tr.indexhead th {
+  color: #e0e0e0 !important;
+  background-color: #2d2d2d !important;
+}
+
+/* Merge icon and name headers in dark theme */
+table tr.indexhead th.indexcolicon {
+  border-right: none !important;
+  padding-right: 0 !important;
+  padding-left: 0.75rem !important;
+  background-color: #2d2d2d !important;
+  width: auto;
+}
+
+table tr.indexhead th.indexcolname {
+  border-left: none !important;
+  padding-left: 0 !important;
+  background-color: #2d2d2d !important;
+}
+
+/* Merged header hover in dark theme - both highlight together */
+table tr.indexhead:hover th.indexcolicon,
+table tr.indexhead:hover th.indexcolname {
+  background-color: var(--hover-color) !important;
+}
+
+/* Individual hover */
+table tr.indexhead th.indexcolicon:hover,
+table tr.indexhead th.indexcolname:hover {
+  background-color: var(--hover-color) !important;
+}
+
+/* When hovering either, highlight both */
+table tr.indexhead th.indexcolicon:hover ~ th.indexcolname,
+table tr.indexhead th.indexcolname:hover ~ th.indexcolicon {
+  background-color: var(--hover-color) !important;
+}
+
+table tr.indexhead a {
+  color: #e0e0e0 !important;
+}
+
+table tr.indexhead th:hover {
+  background-color: var(--hover-color) !important;
+}
+
+/* Header hover - text color should be light blue like Nginx when hovered */
+table tr.indexhead th:hover,
+table tr.indexhead th:hover a {
+  color: #789dca !important;
+}
+
+/* Ensure header text stays white when not hovered in dark theme */
+table tr.indexhead th:not(:hover),
+table tr.indexhead th:not(:hover) a {
+  color: #e0e0e0 !important;
+}
+
+/* Table cells with dark theme colors - Bright white text matching Nginx */
+/* These rules MUST override light theme rules - loaded after table.css */
+/* Override all light theme text colors with bright white */
+table tr:not(.indexhead) td {
+  color: #e0e0e0 !important;
+}
+
+table tr:not(.indexhead) td a,
+table tr:not(.indexhead) td a:hover,
+table tr:not(.indexhead) td a:visited,
+table tr:not(.indexhead) td a:link {
+  color: #e0e0e0 !important;
+  border-bottom: none !important;
+  text-decoration: none !important;
+}
+
+table tr:not(.indexhead) .indexcolname a,
+table tr:not(.indexhead) .indexcolname a:hover,
+table tr:not(.indexhead) .indexcollastmod a,
+table tr:not(.indexhead) .indexcollastmod a:hover,
+table tr:not(.indexhead) .indexcolsize a,
+table tr:not(.indexhead) .indexcolsize a:hover {
+  color: #e0e0e0 !important;
+  border-bottom: none !important;
+  text-decoration: none !important;
+}
+
+table tr:not(.indexhead) .indexcolname,
+table tr:not(.indexhead) .indexcollastmod,
+table tr:not(.indexhead) .indexcolsize {
+  color: #e0e0e0 !important;
+}
+
+/* All text content in table cells - force bright white */
+table tr:not(.indexhead) td *,
+table tr:not(.indexhead) td * * {
+  color: #e0e0e0 !important;
+}
+
+/* Hover effects for dark theme */
+table tr:hover td a,
+table tr:hover .indexcolname a,
+table tr:hover .indexcollastmod a,
+table tr:hover .indexcolsize a {
+  color: var(--primary-color) !important;
+  border-bottom: none !important;
+  text-decoration: none !important;
+}
+
+/* Ensure all text in table cells is bright white in dark theme - override all light theme rules */
+table tr:not(.indexhead) td,
+table tr:not(.indexhead) td *,
+table tr:not(.indexhead) .indexcolname,
+table tr:not(.indexhead) .indexcolname *,
+table tr:not(.indexhead) .indexcollastmod,
+table tr:not(.indexhead) .indexcollastmod *,
+table tr:not(.indexhead) .indexcolsize,
+table tr:not(.indexhead) .indexcolsize * {
+  color: #e0e0e0 !important;
+  border-bottom: none !important;
+  text-decoration: none !important;
+}
+
+/* Force override any light theme rules with :root:not() selectors */
+:root table tr:not(.indexhead) .indexcolname a,
+:root table tr:not(.indexhead) .indexcollastmod a,
+:root table tr:not(.indexhead) .indexcolsize a,
+:root table tr:not(.indexhead) .indexcolname,
+:root table tr:not(.indexhead) .indexcollastmod,
+:root table tr:not(.indexhead) .indexcolsize,
+:root table tr:not(.indexhead) td {
+  color: #e0e0e0 !important;
+}
+
+/* Parent directory links should also be bright in dark theme */
+table tr:not(.indexhead).even-parentdir td,
+table tr:not(.indexhead).parent td,
+table tr:not(.indexhead).even-parentdir a,
+table tr:not(.indexhead).parent a {
+  color: #adb5bd !important;
+}
+
+/* Icons with dark theme opacity */
+table tr .indexcolicon img {
+  opacity: var(--icon-opacity);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)) brightness(1.1);
+}
+
+table tr:hover .indexcolicon img {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* Ensure font sizes match for dark theme columns */
+table tr:not(.indexhead) .indexcollastmod {
+  font-size: 1rem !important;
+}
+
+table tr:not(.indexhead) .indexcollastmod a {
+  font-size: 1rem !important;
+}
+
+table tr:not(.indexhead) .indexcolsize {
+  font-size: 1rem !important;
+}
+
+table tr:not(.indexhead) .indexcolsize a {
+  font-size: 1rem !important;
+}

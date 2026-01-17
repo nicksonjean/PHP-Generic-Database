@@ -1,0 +1,17 @@
+{
+  "driver": "oci",
+  "host": "oracle",
+  "port": 1521,
+  "database": "freepdb1",
+  "user": "hr",
+  "password": "masterkey",
+  "charset": "utf8",
+  "options": [
+    {
+      "ODBC::ATTR_PERSISTENT": true,
+      "ODBC::ATTR_CONNECT_TIMEOUT": 28800,
+      "ODBC::ATTR_DEFAULT_FETCH_MODE": "ODBC::FETCH_OBJ"
+    }
+  ],
+  "exception": true
+}

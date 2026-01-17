@@ -1,0 +1,30 @@
+[
+    [
+        "m~DSP~d~DSP~Y~DTSP~H~TSP~i~TSP~s~MSP~A",
+        "MM~DSP~dd~DSP~yyyy~DTSP~HH~TSP~mm~TSP~ss~MSP~tt"
+    ],
+    [
+        "m~DSP~d~DSP~Y~DTSP~H~TSP~i~TSP~s~TZSP~P",
+        "MM~DSP~dd~DSP~yyyy~DTSP~HH~TSP~mm~TSP~ss~TZSP~zzz"
+    ],
+    [
+        "m~DSP~d~DSP~Y~DTSP~H~TSP~i~TSP~s",
+        "MM~DSP~dd~DSP~yyyy~DTSP~HH~TSP~mm~TSP~ss"
+    ],
+    [
+        "m~DSP~d~DSP~Y~DTSP~H~TSP~i~MSP~A",
+        "MM~DSP~dd~DSP~yyyy~DTSP~HH~TSP~mm~MSP~tt"
+    ],
+    [
+        "m~DSP~d~DSP~Y~DTSP~H~TSP~i~TZSP~P",
+        "MM~DSP~dd~DSP~yyyy~DTSP~HH~TSP~mm~TZSP~zzz"
+    ],
+    [
+        "m~DSP~d~DSP~Y~DTSP~H~TSP~i",
+        "MM~DSP~dd~DSP~yyyy~DTSP~HH~TSP~mm"
+    ],
+    [
+        "m~DSP~d~DSP~Y",
+        "MM~DSP~dd~DSP~yyyy"
+    ]
+]

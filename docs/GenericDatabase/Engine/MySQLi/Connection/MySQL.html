@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Engine\MySQLi\Connection\MySQL | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../../../fonts/doctum-font.css">
+        <script src="../../../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../../../doctum.js"></script>
+        <script async defer src="../../../../js/bootstrap.min.js"></script>
+        <script async defer src="../../../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Engine_MySQLi_Connection_MySQL" data-root-path="../../../../" data-search-index-url="../../../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../../../classes.html">Classes</a></li>
+                    <li><a href="../../../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../../../traits.html">Traits</a></li>
+                    <li><a href="../../../../doc-index.html">Index</a></li>
+                    <li><a href="../../../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../../../GenericDatabase/Engine.html">Engine</a></li><li class="backslash">\</li><li><a href="../../../../GenericDatabase/Engine/MySQLi.html">MySQLi</a></li><li class="backslash">\</li><li><a href="../../../../GenericDatabase/Engine/MySQLi/Connection.html">Connection</a></li><li class="backslash">\</li><li>MySQL</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>MySQL    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>MySQL</strong>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLi/Connection/MySQL.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            
+        
+            <h2>Constants</h2>    <table class="table table-condensed">
+                    <tr>
+                <td>
+                                                                                                                        ATTR_OPT_CONNECT_TIMEOUT
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to set the connection timeout.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_OPT_READ_TIMEOUT
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to set the read timeout.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_PERSISTENT
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to set persistence of the connection.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_AUTOCOMMIT
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to set the auto-commit mode.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_INIT_COMMAND
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to set the initial command.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_SET_CHARSET_NAME
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to set the character set.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_READ_DEFAULT_GROUP
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to set the read default group.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_OPT_INT_AND_FLOAT_NATIVE
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to set integer and float values as native types.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_OPT_SSL_VERIFY_SERVER_CERT
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to verify the server certificate in SSL.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_OPT_LOCAL_INFILE
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to verify the server certificate in SSL.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_DEFAULT_FETCH_MODE
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to set the default fetch mode.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        ATTR_REPORT
+                                    </td>
+                <td class="last">
+                    <p><em><p>Connection attribute to set the default report mode.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        REPORT_OFF
+                                    </td>
+                <td class="last">
+                    <p><em><p>Turns reporting off alias for MYSQLI_REPORT_OFF</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        REPORT_ERROR
+                                    </td>
+                <td class="last">
+                    <p><em><p>Report errors from mysqli function calls alias for MYSQLI_REPORT_ERROR</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        REPORT_STRICT
+                                    </td>
+                <td class="last">
+                    <p><em><p>Throw exception for errors instead of warnings alias for MYSQLI_REPORT_STRICT</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        REPORT_INDEX
+                                    </td>
+                <td class="last">
+                    <p><em><p>Report if no index or bad index was used in a query alias for MYSQLI_REPORT_INDEX</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        REPORT_ALL
+                                    </td>
+                <td class="last">
+                    <p><em><p>Report all errors alias for MYSQLI_REPORT_ALL</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        FETCH_LAZY
+                                    </td>
+                <td class="last">
+                    <p><em><p>Fetch mode that starts fetching rows only when they are requested.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        FETCH_ASSOC
+                                    </td>
+                <td class="last">
+                    <p><em><p>Constant for the fetch mode representing fetching as an associative array</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        FETCH_NUM
+                                    </td>
+                <td class="last">
+                    <p><em><p>Constant for the fetch mode representing fetching as a numeric array</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        FETCH_BOTH
+                                    </td>
+                <td class="last">
+                    <p><em><p>Constant for the fetch mode representing fetching as both a numeric and associative array</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        FETCH_OBJ
+                                    </td>
+                <td class="last">
+                    <p><em><p>Constant for the fetch mode representing fetching as an object</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        FETCH_BOUND
+                                    </td>
+                <td class="last">
+                    <p><em><p>Fetch mode that requires explicit binding of PHP variables to fetch values.</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        FETCH_COLUMN
+                                    </td>
+                <td class="last">
+                    <p><em><p>Constant for the fetch mode representing fetching a single column</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        FETCH_CLASS
+                                    </td>
+                <td class="last">
+                    <p><em><p>Constant for the fetch mode representing fetching into a new instance of a specified class</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+                    <tr>
+                <td>
+                                                                                                                        FETCH_INTO
+                                    </td>
+                <td class="last">
+                    <p><em><p>Constant for the fetch mode representing fetching into an existing object</p></em></p>
+                    <p></p>
+                </td>
+            </tr>
+            </table>
+
+    
+            <h2>Properties</h2>
+
+            <table class="table table-condensed">
+                    <tr>
+                <td class="type" id="property_dataAttribute">
+                    static                    protected                                        array
+                                                                                
+                                    </td>
+                <td>$dataAttribute</td>
+                <td class="last"><p>Array of data attributes.</p></td>
+                <td></td>
+            </tr>
+            </table>
+
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getAttribute">getAttribute</a>(mixed $name)
+        
+                                            <p><p>Retrieves the value of a specific attribute by name or constant.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setAttribute">setAttribute</a>(mixed $name, mixed $value)
+        
+                                            <p><p>Sets the value of a specific attribute by name or constant.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method_getAttribute">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLi/Connection/MySQL.php#L154">at line 154</a></div>
+        <code>        static            mixed
+    <strong>getAttribute</strong>(mixed $name)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves the value of a specific attribute by name or constant.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$name</td>
+                <td><p>The name of the attribute or the constant associated with it.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>The value of the attribute if found; null otherwise.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setAttribute">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/MySQLi/Connection/MySQL.php#L176">at line 176</a></div>
+        <code>        static            void
+    <strong>setAttribute</strong>(mixed $name, mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets the value of a specific attribute by name or constant.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$name</td>
+                <td><p>The name of the attribute or the constant associated with it. If null, the value is appended.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td><p>The value to set for the specified attribute.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

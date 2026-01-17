@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n>
+  <label>
+		<name>title</name>
+		<value>Database engine/driver connection tests</value>
+	</label>
+  <label>
+		<name>native</name>
+		<value>Native</value>
+	</label>
+  <label>
+		<name>translate</name>
+		<value>Translate to English</value>
+	</label>
+    <label>
+		<name>debug</name>
+		<value>Debug Mode</value>
+	</label>
+  <label>
+		<name>env_not_found</name>
+		<value>Failed to load .env file.</value>
+	</label>
+	<label>
+		<name>file_not_found</name>
+		<value>File is not exists in {{database}}</value>
+	</label>
+	<label>
+		<name>connection_fail</name>
+		<value>Connection failed!</value>
+	</label>
+	<label>
+		<name>connection_success</name>
+		<value>{{label}} connected with {{method}}</value>
+	</label>
+	<label>
+		<name>connection_error</name>
+		<value>{{label}} not connected with {{method}}</value>
+	</label>
+	<label>
+		<name>extension</name>
+		<value>The extension {{extension}} not was loaded!</value>
+	</label>
+  <label>
+		<name>connections_success</name>
+		<value>{{label}} connected with {{pdo}} and {{odbc}}</value>
+	</label>
+  <label>
+		<name>connections_error</name>
+		<value>{{label}} not connected with {{pdo}} and {{odbc}}</value>
+	</label>
+  <label>
+		<name>extensions</name>
+		<value>The extensions {{pdo}} and {{odbc}} are not loaded!</value>
+	</label>
+ </i18n>

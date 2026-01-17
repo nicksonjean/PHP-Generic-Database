@@ -1,0 +1,41 @@
+  <script>
+    // Apply theme IMMEDIATELY before any rendering - same approach as Nginx
+    // This prevents flash of wrong theme
+    (function() {
+      // Check if there's a saved preference
+      const savedTheme = localStorage.getItem('apache-directory-theme');
+      
+      if (savedTheme === 'dark-theme') {
+        // Apply dark theme immediately
+        document.documentElement.classList.remove('light-theme', 'dark-theme');
+        document.documentElement.classList.add('dark-theme');
+      } else if (savedTheme === 'light-theme' || savedTheme === 'light') {
+        // Apply light theme immediately (support both old 'light' and new 'light-theme')
+        document.documentElement.classList.remove('light-theme', 'dark-theme');
+        document.documentElement.classList.add('light-theme');
+      } else if (savedTheme === 'dark') {
+        // Support old 'dark' value, migrate to 'dark-theme'
+        document.documentElement.classList.remove('light-theme', 'dark-theme');
+        document.documentElement.classList.add('dark-theme');
+        localStorage.setItem('apache-directory-theme', 'dark-theme');
+      } else {
+        // Apply theme according to system preference
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.remove('light-theme', 'dark-theme');
+        
+        if (prefersDarkScheme) {
+          document.documentElement.classList.add('dark-theme');
+          localStorage.setItem('apache-directory-theme', 'dark-theme');
+        } else {
+          document.documentElement.classList.add('light-theme');
+          localStorage.setItem('apache-directory-theme', 'light-theme');
+        }
+      }
+    })();
+  </script>
+  <main>
+    <!--
+      Add any static information or notices here
+    -->
+
+    <h1 class="title">Index of<span class="js-path"></span></h1>

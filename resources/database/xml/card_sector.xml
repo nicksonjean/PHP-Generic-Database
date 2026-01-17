@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <item>
+    <id>1</id>
+    <nome>Back-end</nome>
+    <icone>eye-close</icone>
+    <created_at>2016-09-12 22:45:15</created_at>
+    <updated_at>2016-09-12 22:45:15</updated_at>
+    <deleted_at></deleted_at>
+  </item>
+  <item>
+    <id>2</id>
+    <nome>Front-end</nome>
+    <icone>eye-open</icone>
+    <created_at>2016-09-12 22:45:15</created_at>
+    <updated_at>2016-09-12 22:45:15</updated_at>
+    <deleted_at></deleted_at>
+  </item>
+  <item>
+    <id>3</id>
+    <nome>Design</nome>
+    <icone>picture</icone>
+    <created_at>2016-09-12 22:45:15</created_at>
+    <updated_at>2016-09-12 22:45:15</updated_at>
+    <deleted_at></deleted_at>
+  </item>
+  <item>
+    <id>4</id>
+    <nome>Documentação</nome>
+    <icone>book</icone>
+    <created_at>2016-09-12 22:45:15</created_at>
+    <updated_at>2016-09-12 22:45:15</updated_at>
+    <deleted_at></deleted_at>
+  </item>
+</root>

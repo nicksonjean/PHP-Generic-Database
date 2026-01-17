@@ -1,0 +1,3959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Engine\PgSQLConnection | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../fonts/doctum-font.css">
+        <script src="../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../doctum.js"></script>
+        <script async defer src="../../js/bootstrap.min.js"></script>
+        <script async defer src="../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Engine_PgSQLConnection" data-root-path="../../" data-search-index-url="../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../classes.html">Classes</a></li>
+                    <li><a href="../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../traits.html">Traits</a></li>
+                    <li><a href="../../doc-index.html">Index</a></li>
+                    <li><a href="../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../GenericDatabase/Engine.html">Engine</a></li><li class="backslash">\</li><li>PgSQLConnection</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>PgSQLConnection    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>PgSQLConnection</strong>        implements        <a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>, <a href="../../GenericDatabase/Interfaces/Connection/IFetch.html"><abbr title="GenericDatabase\Interfaces\Connection\IFetch">IFetch</abbr></a>, <a href="../../GenericDatabase/Interfaces/Connection/IStatements.html"><abbr title="GenericDatabase\Interfaces\Connection\IStatements">IStatements</abbr></a>, <a href="../../GenericDatabase/Interfaces/Connection/IDSN.html"><abbr title="GenericDatabase\Interfaces\Connection\IDSN">IDSN</abbr></a>, <a href="../../GenericDatabase/Interfaces/Connection/IArguments.html"><abbr title="GenericDatabase\Interfaces\Connection\IArguments">IArguments</abbr></a>, <a href="../../GenericDatabase/Interfaces/Connection/ITransactions.html"><abbr title="GenericDatabase\Interfaces\Connection\ITransactions">ITransactions</abbr></a>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>Dynamic and Static container class for PgSQLConnection connections.</p></p>                    </div>
+            
+                <h2>Traits</h2>
+
+        
+    <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-6">
+                    <a href="../../GenericDatabase/Generic/Connection/Methods.html"><abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a>    </div>
+                <div class="col-md-6"><p>This trait provides magic methods for dynamic property access and manipulation
+and also includes methods for getting, setting, checking existence, and unsetting
+properties dynamically. It also handles serialization and deserialization of the
+property using the <code>__sleep</code> and <code>__wakeup</code> magic methods.</p></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-6">
+                    <a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>    </div>
+                <div class="col-md-6"><p>This trait provides methods to manage a single instance of a class or multiple
+instances identified by a unique hash. It includes methods to get, create, set,
+and clear instances.</p></div>
+            </div>
+            </div>
+    
+    
+            <h2>Properties</h2>
+
+            <table class="table table-condensed">
+                    <tr>
+                <td class="type" id="property_property">
+                                                                                <a href="../../GenericDatabase/Generic/Connection/Settings.html"><abbr title="GenericDatabase\Generic\Connection\Settings">Settings</abbr></a>|null
+                                                                                
+                                    </td>
+                <td>$property</td>
+                <td class="last"><p>Property to store settings</p></td>
+                <td><small>from&nbsp;<a href="../../GenericDatabase/Generic/Connection/Methods.html#property_property">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a></small></td>
+            </tr>
+            </table>
+
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___construct">__construct</a>()
+        
+                                            <p><p>Empty constructor since initialization is handled by traits and interface methods</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___get">__get</a>(string $name)
+        
+                                            <p><p>Magic method to access dynamic properties</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Generic/Connection/Methods.html#method___get">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___set">__set</a>(string $name, mixed $value)
+        
+                                            <p><p>Magic method to set dynamic properties</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Generic/Connection/Methods.html#method___set">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___isset">__isset</a>(string $name)
+        
+                                            <p><p>Magic method to check if a property exists</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Generic/Connection/Methods.html#method___isset">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___unset">__unset</a>(string $name)
+        
+                                            <p><p>Magic method to remove a property</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Generic/Connection/Methods.html#method___unset">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___sleep">__sleep</a>()
+        
+                                            <p><p>Magic method for serialization</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Generic/Connection/Methods.html#method___sleep">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___wakeup">__wakeup</a>()
+        
+                                            <p><p>Magic method for deserialization</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Generic/Connection/Methods.html#method___wakeup">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getInstance">getInstance</a>(string|null $hash = null)
+        
+                                            <p><p>Create or obtain an instance
+If no hash is provided, works as classic singleton
+If hash is provided, creates/returns instance for that hash</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html#method_getInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_newInstance">newInstance</a>(string|null $hash = null)
+        
+                                            <p><p>Create a new instance of the class and set it as the instance</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html#method_newInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setInstance">setInstance</a>(<a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> $instance, string|null $hash = null)
+        
+                                            <p><p>Set a specific instance</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html#method_setInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_clearInstance">clearInstance</a>(string|null $hash = null)
+        
+                                            <p><p>Clear instance(s)</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html#method_clearInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_clearAllInstances">clearAllInstances</a>()
+        
+                                            <p><p>Clear all instances including the classic singleton instance</p></p>                </div>
+                <div class="col-md-2"><small>from&nbsp;<a href="../../GenericDatabase/Shared/Singleton.html#method_clearAllInstances">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></small></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___call">__call</a>(string $name, array $arguments)
+        
+                                            <p><p>Triggered when invoking inaccessible methods in an object context</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___callStatic">__callStatic</a>(string $name, array $arguments)
+        
+                                            <p><p>Triggered when invoking inaccessible methods in a static context</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_connect">connect</a>()
+        
+                                            <p><p>This method is used to establish a database connection and set the connection instance</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_ping">ping</a>()
+        
+                                            <p><p>Pings a server connection, or tries to reconnect if the connection has gone down</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_disconnect">disconnect</a>()
+        
+                                            <p><p>Disconnects from a database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_isConnected">isConnected</a>()
+        
+                                            <p><p>Returns true when connection was established.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getConnection">getConnection</a>()
+        
+                                            <p><p>This method is used to get the database connection instance</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setConnection">setConnection</a>(mixed $connection)
+        
+                                            <p><p>This method is used to assign the database connection instance</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_beginTransaction">beginTransaction</a>()
+        
+                                            <p><p>This function creates a new transaction, in order to be able to commit or rollback changes made to the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_commit">commit</a>()
+        
+                                            <p><p>This function commits any changes made to the database during this transaction.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_rollback">rollback</a>()
+        
+                                            <p><p>This function rolls back any changes made to the database during
+this transaction and restores the data to its original state.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    bool
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_inTransaction">inTransaction</a>()
+        
+                                            <p><p>This function returns the last ID generated by an auto-increment column,
+either the last one inserted during the current transaction, or by passing in the optional name parameter.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\string|int|false">string|int|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_lastInsertId">lastInsertId</a>(string|null $name = null)
+        
+                                            <p><p>This function returns the last ID generated by an auto-increment column.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_quote">quote</a>(mixed ...$params)
+        
+                                            <p><p>This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setAllMetadata">setAllMetadata</a>()
+        
+                                            <p><p>Reset query metadata</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    object
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getAllMetadata">getAllMetadata</a>()
+        
+                                            <p><p>Returns an object containing the number of queried rows and the number of affected rows.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    string
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getQueryString">getQueryString</a>()
+        
+                                            <p><p>Returns the query string.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setQueryString">setQueryString</a>(string $params)
+        
+                                            <p><p>Sets the query string for the Connection instance.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array|null
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getQueryParameters">getQueryParameters</a>()
+        
+                                            <p><p>Returns the parameters associated with this instance.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setQueryParameters">setQueryParameters</a>(array|null $params)
+        
+                                            <p><p>Sets the query parameters for the Connection instance.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getQueryRows">getQueryRows</a>()
+        
+                                            <p><p>Returns the number of rows affected by an operation.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setQueryRows">setQueryRows</a>(<abbr title="GenericDatabase\Interfaces\callable|int|false">callable|int|false</abbr> $params)
+        
+                                            <p><p>Sets the number of query rows for the Connection instance.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getQueryColumns">getQueryColumns</a>()
+        
+                                            <p><p>Returns the number of columns in a statement result.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setQueryColumns">setQueryColumns</a>(<abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr> $params)
+        
+                                            <p><p>Sets the number of columns in the query result.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getAffectedRows">getAffectedRows</a>()
+        
+                                            <p><p>Returns the number of rows affected by an operation.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setAffectedRows">setAffectedRows</a>(<abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr> $params)
+        
+                                            <p><p>Sets the number of affected rows for the Connection instance.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getStatement">getStatement</a>()
+        
+                                            <p><p>Returns the statement for the function.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setStatement">setStatement</a>(mixed $statement)
+        
+                                            <p><p>Set the statement for the function.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_bindParam">bindParam</a>(object $params)
+        
+                                            <p><p>Binds a parameter to a variable in the SQL statement.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    string
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_parse">parse</a>(mixed ...$params)
+        
+                                            <p><p>Parses an SQL statement and returns an statement.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_query">query</a>(mixed ...$params)
+        
+                                            <p><p>This function executes an SQL statement and returns the result set as a statement object.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_prepare">prepare</a>(mixed ...$params)
+        
+                                            <p><p>This function binds the parameters to a prepared query.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_exec">exec</a>(mixed ...$params)
+        
+                                            <p><p>This function runs an SQL statement and returns the number of affected rows.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_fetch">fetch</a>(int|null $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
+        
+                                            <p><p>Fetches the next row from the statement and returns it as an array.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_fetchAll">fetchAll</a>(int|null $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
+        
+                                            <p><p>Fetches all rows from the statement and returns them as an array.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getAttribute">getAttribute</a>(mixed $name)
+        
+                                            <p><p>This function retrieves an attribute from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setAttribute">setAttribute</a>(mixed $name, mixed $value)
+        
+                                            <p><p>This function returns an array containing error information about the last operation performed by the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\int|string|array|bool|null">int|string|array|bool|null</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_errorCode">errorCode</a>(mixed $inst = null)
+        
+                                            <p><p>This function returns an SQLSTATE code for the last operation executed by the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\string|array|bool|null">string|array|bool|null</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_errorInfo">errorInfo</a>(mixed $inst = null)
+        
+                                            <p><p>This function returns an array containing error information about the last operation performed by the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setDriver">setDriver</a>(mixed $value)
+        
+                                            <p><p>Sets a driver from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getDriver">getDriver</a>(mixed $value)
+        
+                                            <p><p>Retrieves a driver from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setHost">setHost</a>(mixed $value)
+        
+                                            <p><p>Sets a host from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getHost">getHost</a>(mixed $value)
+        
+                                            <p><p>Retrieves a host from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setPort">setPort</a>(mixed $value)
+        
+                                            <p><p>Sets a port from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|int">PgSQLConnection|int</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getPort">getPort</a>(mixed $value)
+        
+                                            <p><p>Retrieves a port from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setUser">setUser</a>(mixed $value)
+        
+                                            <p><p>Sets a user from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getUser">getUser</a>(mixed $value)
+        
+                                            <p><p>Retrieves a user from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setPassword">setPassword</a>(mixed $value)
+        
+                                            <p><p>Sets a password from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getPassword">getPassword</a>(mixed $value)
+        
+                                            <p><p>Retrieves a password from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setDatabase">setDatabase</a>(mixed $value)
+        
+                                            <p><p>Sets a database name from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getDatabase">getDatabase</a>(mixed $value)
+        
+                                            <p><p>Retrieves a database name from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setOptions">setOptions</a>(mixed $value)
+        
+                                            <p><p>Sets an options from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|array|null">PgSQLConnection|array|null</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getOptions">getOptions</a>(mixed $value)
+        
+                                            <p><p>Retrieves an options from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|static">PgSQLConnection|static</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setConnected">setConnected</a>(mixed $value)
+        
+                                            <p><p>Sets a connected status from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getConnected">getConnected</a>(mixed $value)
+        
+                                            <p><p>Retrieves a connected status from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setDsn">setDsn</a>(mixed $value)
+        
+                                            <p><p>Sets a dsn string from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getDsn">getDsn</a>(mixed $value)
+        
+                                            <p><p>Retrieves a dsn string from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setAttributes">setAttributes</a>(mixed $value)
+        
+                                            <p><p>Sets an attributes from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getAttributes">getAttributes</a>(mixed $value)
+        
+                                            <p><p>Retrieves an attributes from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setCharset">setCharset</a>(mixed $value)
+        
+                                            <p><p>Sets a charset from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getCharset">getCharset</a>(mixed $value)
+        
+                                            <p><p>Retrieves a charset from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setException">setException</a>(mixed $value)
+        
+                                            <p><p>Sets an exception from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getException">getException</a>(mixed $value)
+        
+                                            <p><p>Retrieves an exception from the database.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method___construct">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L96">at line 96</a></div>
+        <code>                    
+    <strong>__construct</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Empty constructor since initialization is handled by traits and interface methods</p></p>                        
+        </div>
+        <div class="tags">
+            
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___get">
+        <div class="location">in <a href="../../GenericDatabase/Generic/Connection/Methods.html#method___get">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Connection/Methods.php#L42">at line 42</a></div>
+        <code>                    mixed
+    <strong>__get</strong>(string $name)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Magic method to access dynamic properties</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>Property name</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___set">
+        <div class="location">in <a href="../../GenericDatabase/Generic/Connection/Methods.html#method___set">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Connection/Methods.php#L54">at line 54</a></div>
+        <code>                    void
+    <strong>__set</strong>(string $name, mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Magic method to set dynamic properties</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>Property name</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td><p>Value to be assigned</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___isset">
+        <div class="location">in <a href="../../GenericDatabase/Generic/Connection/Methods.html#method___isset">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Connection/Methods.php#L69">at line 69</a></div>
+        <code>                    bool
+    <strong>__isset</strong>(string $name)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Magic method to check if a property exists</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>Property name</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___unset">
+        <div class="location">in <a href="../../GenericDatabase/Generic/Connection/Methods.html#method___unset">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Connection/Methods.php#L80">at line 80</a></div>
+        <code>                    void
+    <strong>__unset</strong>(string $name)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Magic method to remove a property</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>Property name</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___sleep">
+        <div class="location">in <a href="../../GenericDatabase/Generic/Connection/Methods.html#method___sleep">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Connection/Methods.php#L90">at line 90</a></div>
+        <code>                    array
+    <strong>__sleep</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Magic method for serialization</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___wakeup">
+        <div class="location">in <a href="../../GenericDatabase/Generic/Connection/Methods.html#method___wakeup">
+<abbr title="GenericDatabase\Generic\Connection\Methods">Methods</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Generic/Connection/Methods.php#L100">at line 100</a></div>
+        <code>                    void
+    <strong>__wakeup</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Magic method for deserialization</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getInstance">
+        <div class="location">in <a href="../../GenericDatabase/Shared/Singleton.html#method_getInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L41">at line 41</a></div>
+        <code>        static            <a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
+    <strong>getInstance</strong>(string|null $hash = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Create or obtain an instance
+If no hash is provided, works as classic singleton
+If hash is provided, creates/returns instance for that hash</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string|null</td>
+                <td>$hash</td>
+                <td><p>Optional unique identifier for multiple instances</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_newInstance">
+        <div class="location">in <a href="../../GenericDatabase/Shared/Singleton.html#method_newInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L62">at line 62</a></div>
+        <code>        static            <a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a>
+    <strong>newInstance</strong>(string|null $hash = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Create a new instance of the class and set it as the instance</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string|null</td>
+                <td>$hash</td>
+                <td><p>Optional unique identifier for multiple instances</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></td>
+            <td><p>The newly created instance</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setInstance">
+        <div class="location">in <a href="../../GenericDatabase/Shared/Singleton.html#method_setInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L80">at line 80</a></div>
+        <code>        static            void
+    <strong>setInstance</strong>(<a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> $instance, string|null $hash = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set a specific instance</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Shared/Singleton.html"><abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a></td>
+                <td>$instance</td>
+                <td><p>The instance to set</p></td>
+            </tr>
+                    <tr>
+                <td>string|null</td>
+                <td>$hash</td>
+                <td><p>Optional unique identifier for multiple instances</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_clearInstance">
+        <div class="location">in <a href="../../GenericDatabase/Shared/Singleton.html#method_clearInstance">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L96">at line 96</a></div>
+        <code>        static            void
+    <strong>clearInstance</strong>(string|null $hash = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Clear instance(s)</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string|null</td>
+                <td>$hash</td>
+                <td><p>Optional unique identifier for multiple instances</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_clearAllInstances">
+        <div class="location">in <a href="../../GenericDatabase/Shared/Singleton.html#method_clearAllInstances">
+<abbr title="GenericDatabase\Shared\Singleton">Singleton</abbr></a> <a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Shared/Singleton.php#L111">at line 111</a></div>
+        <code>        static            void
+    <strong>clearAllInstances</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Clear all instances including the classic singleton instance</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___call">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L150">at line 150</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+    <strong>__call</strong>(string $name, array $arguments)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Triggered when invoking inaccessible methods in an object context</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>Name of the method</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$arguments</td>
+                <td><p>Array of arguments</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method___callStatic">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L163">at line 163</a></div>
+        <code>        static            <abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr>
+    <strong>__callStatic</strong>(string $name, array $arguments)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Triggered when invoking inaccessible methods in a static context</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>Name of the static method</p></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$arguments</td>
+                <td><p>Array of arguments</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\GenericDatabase\Interfaces\IConnection|string|int|bool|array|null">IConnection|string|int|bool|array|null</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_connect">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L272">at line 272</a></div>
+        <code>                    mixed
+    <strong>connect</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This method is used to establish a database connection and set the connection instance</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/Exception">Exception</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_ping">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L305">at line 305</a></div>
+        <code>                    bool
+    <strong>ping</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Pings a server connection, or tries to reconnect if the connection has gone down</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_disconnect">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L315">at line 315</a></div>
+        <code>                    void
+    <strong>disconnect</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Disconnects from a database.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_isConnected">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L333">at line 333</a></div>
+        <code>                    bool
+    <strong>isConnected</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Returns true when connection was established.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getConnection">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L353">at line 353</a></div>
+        <code>                    mixed
+    <strong>getConnection</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This method is used to get the database connection instance</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setConnection">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L364">at line 364</a></div>
+        <code>                    mixed
+    <strong>setConnection</strong>(mixed $connection)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This method is used to assign the database connection instance</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$connection</td>
+                <td><p>Sets an instance of the connection with the database</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_beginTransaction">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L375">at line 375</a></div>
+        <code>                    bool
+    <strong>beginTransaction</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function creates a new transaction, in order to be able to commit or rollback changes made to the database.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_commit">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L385">at line 385</a></div>
+        <code>                    bool
+    <strong>commit</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function commits any changes made to the database during this transaction.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_rollback">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L396">at line 396</a></div>
+        <code>                    bool
+    <strong>rollback</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function rolls back any changes made to the database during
+this transaction and restores the data to its original state.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_inTransaction">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L407">at line 407</a></div>
+        <code>                    bool
+    <strong>inTransaction</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function returns the last ID generated by an auto-increment column,
+either the last one inserted during the current transaction, or by passing in the optional name parameter.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_lastInsertId">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L418">at line 418</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\string|int|false">string|int|false</abbr>
+    <strong>lastInsertId</strong>(string|null $name = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function returns the last ID generated by an auto-increment column.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string|null</td>
+                <td>$name</td>
+                <td><p>= null Resource name, table or view</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\string|int|false">string|int|false</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_quote">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L429">at line 429</a></div>
+        <code>                    mixed
+    <strong>quote</strong>(mixed ...$params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function quotes a string for use in an SQL statement and escapes special characters (such as quotes).</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>...$params</td>
+                <td><p>Content to be quoted</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setAllMetadata">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L439">at line 439</a></div>
+        <code>                    void
+    <strong>setAllMetadata</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Reset query metadata</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getAllMetadata">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L449">at line 449</a></div>
+        <code>                    object
+    <strong>getAllMetadata</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Returns an object containing the number of queried rows and the number of affected rows.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>object</td>
+            <td><p>An associative object with keys 'queryRows' and 'affectedRows'.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getQueryString">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L459">at line 459</a></div>
+        <code>                    string
+    <strong>getQueryString</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Returns the query string.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>string</td>
+            <td><p>The query string associated with this instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setQueryString">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L469">at line 469</a></div>
+        <code>                    void
+    <strong>setQueryString</strong>(string $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets the query string for the Connection instance.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$params</td>
+                <td><p>The query string to set.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getQueryParameters">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L479">at line 479</a></div>
+        <code>                    array|null
+    <strong>getQueryParameters</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Returns the parameters associated with this instance.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array|null</td>
+            <td><p>The parameters associated with this instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setQueryParameters">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L489">at line 489</a></div>
+        <code>                    void
+    <strong>setQueryParameters</strong>(array|null $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets the query parameters for the Connection instance.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array|null</td>
+                <td>$params</td>
+                <td><p>The query parameters to set.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getQueryRows">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L499">at line 499</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr>
+    <strong>getQueryRows</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Returns the number of rows affected by an operation.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr></td>
+            <td><p>The number of affected rows</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setQueryRows">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L510">at line 510</a></div>
+        <code>                    void
+    <strong>setQueryRows</strong>(<abbr title="GenericDatabase\Interfaces\callable|int|false">callable|int|false</abbr> $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets the number of query rows for the Connection instance.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\callable|int|false">callable|int|false</abbr></td>
+                <td>$params</td>
+                <td><p>The number of query rows to set.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getQueryColumns">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L520">at line 520</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr>
+    <strong>getQueryColumns</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Returns the number of columns in a statement result.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr></td>
+            <td><p>The number of columns in the result or false in case of an error.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setQueryColumns">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L531">at line 531</a></div>
+        <code>                    void
+    <strong>setQueryColumns</strong>(<abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr> $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets the number of columns in the query result.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr></td>
+                <td>$params</td>
+                <td><p>The number of columns or false if there are no columns.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getAffectedRows">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L541">at line 541</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr>
+    <strong>getAffectedRows</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Returns the number of rows affected by an operation.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr></td>
+            <td><p>The number of affected rows</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setAffectedRows">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L552">at line 552</a></div>
+        <code>                    void
+    <strong>setAffectedRows</strong>(<abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr> $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets the number of affected rows for the Connection instance.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\int|false">int|false</abbr></td>
+                <td>$params</td>
+                <td><p>The number of affected rows to set.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getStatement">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L562">at line 562</a></div>
+        <code>                    mixed
+    <strong>getStatement</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Returns the statement for the function.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setStatement">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L572">at line 572</a></div>
+        <code>                    void
+    <strong>setStatement</strong>(mixed $statement)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set the statement for the function.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$statement</td>
+                <td><p>The statement to be set.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_bindParam">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L583">at line 583</a></div>
+        <code>                    void
+    <strong>bindParam</strong>(object $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Binds a parameter to a variable in the SQL statement.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>object</td>
+                <td>$params</td>
+                <td><p>The name of the parameter or an array of parameters and values.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_parse">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L594">at line 594</a></div>
+        <code>                    string
+    <strong>parse</strong>(mixed ...$params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Parses an SQL statement and returns an statement.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>...$params</td>
+                <td><p>The parameters for the query function.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>string</td>
+            <td><p>The statement resulting from the SQL statement.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_query">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L605">at line 605</a></div>
+        <code>                    mixed
+    <strong>query</strong>(mixed ...$params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function executes an SQL statement and returns the result set as a statement object.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>...$params</td>
+                <td><p>Statement to be queried</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_prepare">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L616">at line 616</a></div>
+        <code>                    mixed
+    <strong>prepare</strong>(mixed ...$params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function binds the parameters to a prepared query.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>...$params</td>
+                <td><p>Statement to be prepared</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_exec">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L627">at line 627</a></div>
+        <code>                    mixed
+    <strong>exec</strong>(mixed ...$params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function runs an SQL statement and returns the number of affected rows.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>...$params</td>
+                <td><p>Statement to be executed</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_fetch">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L640">at line 640</a></div>
+        <code>                    mixed
+    <strong>fetch</strong>(int|null $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches the next row from the statement and returns it as an array.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int|null</td>
+                <td>$fetchStyle</td>
+                <td><p>The fetch style to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$fetchArgument</td>
+                <td><p>The fetch argument to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$optArgs</td>
+                <td><p>Additional options for the fetch operation.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>The query result.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_fetchAll">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L653">at line 653</a></div>
+        <code>                    mixed
+    <strong>fetchAll</strong>(int|null $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Fetches all rows from the statement and returns them as an array.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int|null</td>
+                <td>$fetchStyle</td>
+                <td><p>The fetch style to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$fetchArgument</td>
+                <td><p>The fetch argument to use.</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$optArgs</td>
+                <td><p>Additional options for the fetch operation.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>The query result.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getAttribute">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L665">at line 665</a></div>
+        <code>                    mixed
+    <strong>getAttribute</strong>(mixed $name)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function retrieves an attribute from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$name</td>
+                <td><p>The attribute name</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setAttribute">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L678">at line 678</a></div>
+        <code>                    void
+    <strong>setAttribute</strong>(mixed $name, mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function returns an array containing error information about the last operation performed by the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$name</td>
+                <td><p>The attribute name</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td><p>The attribute value</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a target="_blank" rel="noopener" href="https://www.php.net/ReflectionException">ReflectionException</a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_errorCode">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L690">at line 690</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\int|string|array|bool|null">int|string|array|bool|null</abbr>
+    <strong>errorCode</strong>(mixed $inst = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function returns an SQLSTATE code for the last operation executed by the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$inst</td>
+                <td><p>= null Resource name, table or view</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\int|string|array|bool|null">int|string|array|bool|null</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_errorInfo">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L702">at line 702</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\string|array|bool|null">string|array|bool|null</abbr>
+    <strong>errorInfo</strong>(mixed $inst = null)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>This function returns an array containing error information about the last operation performed by the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$inst</td>
+                <td><p>= null Resource name, table or view</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\string|array|bool|null">string|array|bool|null</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setDriver">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setDriver</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets a driver from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getDriver">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+    <strong>getDriver</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves a driver from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setHost">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setHost</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets a host from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getHost">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+    <strong>getHost</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves a host from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setPort">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setPort</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets a port from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getPort">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|int">PgSQLConnection|int</abbr>
+    <strong>getPort</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves a port from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|int">PgSQLConnection|int</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setUser">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setUser</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets a user from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getUser">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+    <strong>getUser</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves a user from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setPassword">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setPassword</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets a password from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getPassword">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+    <strong>getPassword</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves a password from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setDatabase">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setDatabase</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets a database name from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getDatabase">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+    <strong>getDatabase</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves a database name from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setOptions">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setOptions</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets an options from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getOptions">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|array|null">PgSQLConnection|array|null</abbr>
+    <strong>getOptions</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves an options from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|array|null">PgSQLConnection|array|null</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setConnected">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|static">PgSQLConnection|static</abbr>
+    <strong>setConnected</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets a connected status from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|static">PgSQLConnection|static</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getConnected">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr>
+    <strong>getConnected</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves a connected status from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setDsn">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setDsn</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets a dsn string from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getDsn">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr>
+    <strong>getDsn</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves a dsn string from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setAttributes">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setAttributes</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets an attributes from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getAttributes">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr>
+    <strong>getAttributes</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves an attributes from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setCharset">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setCharset</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets a charset from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getCharset">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr>
+    <strong>getCharset</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves a charset from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|string">PgSQLConnection|string</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setException">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr>
+    <strong>setException</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Sets an exception from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|void">PgSQLConnection|void</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getException">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Engine/PgSQLConnection.php#L67">at line 67</a></div>
+        <code>        static            <abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr>
+    <strong>getException</strong>(mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Retrieves an exception from the database.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Engine\PgSQLConnection|mixed">PgSQLConnection|mixed</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

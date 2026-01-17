@@ -1,0 +1,567 @@
+# Templates para serviços PHP e Nginx
+x-php-base: &php-base
+  build:
+    context: .
+  env_file:
+    - .env
+  restart: unless-stopped
+  depends_on:
+    - mysql
+    - postgres
+    - sqlsrv
+    - oracle
+    - firebird
+  working_dir: /var/www/html
+  volumes:
+    - .:/var/www/html
+  networks:
+    - internal
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "5"
+      max-size: "10m"
+
+# Template para serviços Nginx individuais
+x-nginx-service: &nginx-service
+  build:
+    context: .
+    dockerfile: ./docker/stack-nginx/nginx/Dockerfile
+  env_file:
+    - .env
+  restart: unless-stopped
+  volumes:
+    - .:/var/www/html:ro
+  networks:
+    - internal
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "5"
+      max-size: "10m"
+
+# Template para serviços Apache individuais
+x-apache-service: &apache-service
+  <<: *php-base
+  build:
+    context: .
+    dockerfile: ./docker/stack-apache/php-apache/Dockerfile
+  restart: unless-stopped
+  volumes:
+    - .:/var/www/html
+  networks:
+    - internal
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "5"
+      max-size: "10m"
+
+# Template para serviços PHP individuais (PHP-FPM para Nginx)
+x-php-service: &php-service
+  <<: *php-base
+
+# Template para serviços FrankenPHP individuais
+x-frankenphp-service: &frankenphp-service
+  <<: *php-base
+  build:
+    context: .
+    dockerfile: ./docker/stack-frankenphp/php-frankenphp/Dockerfile
+  restart: unless-stopped
+  volumes:
+    - .:/var/www/html
+    - ./docker/stack-frankenphp/php-frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
+  networks:
+    - internal
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "5"
+      max-size: "10m"
+
+services:
+  # Serviço PHP-FPM 8.0
+  php-8.0-fpm:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-nginx/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.0"
+        PHP_PORT: "8000"
+        PHP_BASE_TAG: ""
+    image: php-8.0-fpm
+    container_name: php-8.0-fpm
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço PHP-FPM 8.1
+  php-8.1-fpm:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-nginx/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.1"
+        PHP_PORT: "8100"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-8.1-fpm
+    container_name: php-8.1-fpm
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço PHP-FPM 8.2
+  php-8.2-fpm:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-nginx/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.2"
+        PHP_PORT: "8200"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-8.2-fpm
+    container_name: php-8.2-fpm
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço PHP-FPM 8.3
+  php-8.3-fpm:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-nginx/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.3"
+        PHP_PORT: "8300"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-8.3-fpm
+    container_name: php-8.3-fpm
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço PHP-FPM 8.4
+  php-8.4-fpm:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-nginx/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.4"
+        PHP_PORT: "8400"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-8.4-fpm
+    container_name: php-8.4-fpm
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço PHP-FPM 8.5
+  php-8.5-fpm:
+    <<: *php-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-nginx/php-fpm/Dockerfile
+      args:
+        PHP_VERSION: "8.5"
+        PHP_PORT: "8500"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-8.5-fpm
+    container_name: php-8.5-fpm
+    # PHP-FPM não expõe porta HTTP, apenas a porta 9000 para FastCGI (usada internamente pelo Nginx)
+
+  # Serviço Nginx Unificado - Servindo todas as versões PHP (8.0 a 8.5)
+  # Cada porta HTTP/HTTPS roteia para o serviço PHP-FPM correspondente
+  # Usado pelo setupAll.bat/setupAll.sh
+  nginx-unified:
+    <<: *nginx-service
+    image: nginx-unified
+    container_name: nginx-unified
+    ports:
+      # HTTP - PHP 8.0 a 8.5
+      - "8000:8000"
+      - "8100:8100"
+      - "8200:8200"
+      - "8300:8300"
+      - "8400:8400"
+      - "8500:8500"
+      # HTTPS - PHP 8.0 a 8.5
+      - "8043:8043"
+      - "8143:8143"
+      - "8243:8243"
+      - "8343:8343"
+      - "8443:8443"
+      - "8543:8543"
+    depends_on:
+      - php-8.0-fpm
+      - php-8.1-fpm
+      - php-8.2-fpm
+      - php-8.3-fpm
+      - php-8.4-fpm
+      - php-8.5-fpm
+
+  # Serviços Nginx específicos para cada versão do PHP (para uso com setup.bat/setup.sh individual)
+  # NOTA: O setup.bat converte automaticamente 'nginx' para serviços específicos (nginx-php-8.0, nginx-php-8.1, etc.)
+  # Serviço Nginx para PHP 8.0
+  nginx-php-8.0:
+    <<: *nginx-service
+    image: nginx-php-8.0
+    container_name: nginx-php-8.0
+    ports:
+      - "8000:80"
+      - "8043:443"
+    depends_on:
+      - php-8.0-fpm
+    environment:
+      - PHP_SERVICE=php-8.0-fpm
+      - SSL_PORT=8043
+
+  # Serviço Nginx para PHP 8.1
+  nginx-php-8.1:
+    <<: *nginx-service
+    image: nginx-php-8.1
+    container_name: nginx-php-8.1
+    ports:
+      - "8100:80"
+      - "8143:443"
+    depends_on:
+      - php-8.1-fpm
+    environment:
+      - PHP_SERVICE=php-8.1-fpm
+      - SSL_PORT=8143
+
+  # Serviço Nginx para PHP 8.2
+  nginx-php-8.2:
+    <<: *nginx-service
+    image: nginx-php-8.2
+    container_name: nginx-php-8.2
+    ports:
+      - "8200:80"
+      - "8243:443"
+    depends_on:
+      - php-8.2-fpm
+    environment:
+      - PHP_SERVICE=php-8.2-fpm
+      - SSL_PORT=8243
+
+  # Serviço Nginx para PHP 8.3
+  nginx-php-8.3:
+    <<: *nginx-service
+    image: nginx-php-8.3
+    container_name: nginx-php-8.3
+    ports:
+      - "8300:80"
+      - "8343:443"
+    depends_on:
+      - php-8.3-fpm
+    environment:
+      - PHP_SERVICE=php-8.3-fpm
+      - SSL_PORT=8343
+
+  # Serviço Nginx para PHP 8.4
+  nginx-php-8.4:
+    <<: *nginx-service
+    image: nginx-php-8.4
+    container_name: nginx-php-8.4
+    ports:
+      - "8400:80"
+      - "8443:443"
+    depends_on:
+      - php-8.4-fpm
+    environment:
+      - PHP_SERVICE=php-8.4-fpm
+      - SSL_PORT=8443
+
+  # Serviço Nginx para PHP 8.5
+  nginx-php-8.5:
+    <<: *nginx-service
+    image: nginx-php-8.5
+    container_name: nginx-php-8.5
+    ports:
+      - "8500:80"
+      - "8543:443"
+    depends_on:
+      - php-8.5-fpm
+    environment:
+      - PHP_SERVICE=php-8.5-fpm
+      - SSL_PORT=8543
+
+  # Serviços Apache para cada versão do PHP (retrocompatibilidade)
+  # Serviço Apache para PHP 8.0
+  php-8.0-apache:
+    <<: *apache-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-apache/php-apache/Dockerfile
+      args:
+        PHP_VERSION: "8.0"
+        PHP_PORT: "8000"
+        PHP_BASE_TAG: ""
+    image: php-8.0-apache
+    container_name: php-8.0-apache
+    ports:
+      - "8000:80"
+      - "8043:443"
+
+  # Serviço Apache para PHP 8.1
+  php-8.1-apache:
+    <<: *apache-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-apache/php-apache/Dockerfile
+      args:
+        PHP_VERSION: "8.1"
+        PHP_PORT: "8100"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-8.1-apache
+    container_name: php-8.1-apache
+    ports:
+      - "8100:80"
+      - "8143:443"
+
+  # Serviço Apache para PHP 8.2
+  php-8.2-apache:
+    <<: *apache-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-apache/php-apache/Dockerfile
+      args:
+        PHP_VERSION: "8.2"
+        PHP_PORT: "8200"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-8.2-apache
+    container_name: php-8.2-apache
+    ports:
+      - "8200:80"
+      - "8243:443"
+
+  # Serviço Apache para PHP 8.3
+  php-8.3-apache:
+    <<: *apache-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-apache/php-apache/Dockerfile
+      args:
+        PHP_VERSION: "8.3"
+        PHP_PORT: "8300"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-8.3-apache
+    container_name: php-8.3-apache
+    ports:
+      - "8300:80"
+      - "8343:443"
+
+  # Serviço Apache para PHP 8.4
+  php-8.4-apache:
+    <<: *apache-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-apache/php-apache/Dockerfile
+      args:
+        PHP_VERSION: "8.4"
+        PHP_PORT: "8400"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-8.4-apache
+    container_name: php-8.4-apache
+    ports:
+      - "8400:80"
+      - "8443:443"
+
+  # Serviço Apache para PHP 8.5
+  php-8.5-apache:
+    <<: *apache-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-apache/php-apache/Dockerfile
+      args:
+        PHP_VERSION: "8.5"
+        PHP_PORT: "8500"
+        PHP_BASE_TAG: "-bookworm"
+    image: php-8.5-apache
+    container_name: php-8.5-apache
+    ports:
+      - "8500:80"
+      - "8543:443"
+
+  # Serviços FrankenPHP para cada versão do PHP (apenas 8.2+)
+  # NOTA: FrankenPHP suporta apenas PHP 8.2, 8.3, 8.4 e 8.5
+  # Serviço FrankenPHP para PHP 8.2
+  php-8.2-frankenphp:
+    <<: *frankenphp-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-frankenphp/php-frankenphp/Dockerfile
+      args:
+        PHP_VERSION: "8.2"
+        PHP_PORT: "8200"
+        PHP_BASE_TAG: "-bookworm"
+        MYSQL_ODBC_DRIVER: "mariadb"
+    image: php-8.2-frankenphp
+    container_name: php-8.2-frankenphp
+    ports:
+      - "8200:80"
+      - "8243:443"
+
+  # Serviço FrankenPHP para PHP 8.3
+  php-8.3-frankenphp:
+    <<: *frankenphp-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-frankenphp/php-frankenphp/Dockerfile
+      args:
+        PHP_VERSION: "8.3"
+        PHP_PORT: "8300"
+        PHP_BASE_TAG: "-bookworm"
+        MYSQL_ODBC_DRIVER: "mariadb"
+    image: php-8.3-frankenphp
+    container_name: php-8.3-frankenphp
+    ports:
+      - "8300:80"
+      - "8343:443"
+
+  # Serviço FrankenPHP para PHP 8.4
+  php-8.4-frankenphp:
+    <<: *frankenphp-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-frankenphp/php-frankenphp/Dockerfile
+      args:
+        PHP_VERSION: "8.4"
+        PHP_PORT: "8400"
+        PHP_BASE_TAG: "-bookworm"
+        MYSQL_ODBC_DRIVER: "mariadb"
+    image: php-8.4-frankenphp
+    container_name: php-8.4-frankenphp
+    ports:
+      - "8400:80"
+      - "8443:443"
+
+  # Serviço FrankenPHP para PHP 8.5
+  php-8.5-frankenphp:
+    <<: *frankenphp-service
+    build:
+      context: .
+      dockerfile: ./docker/stack-frankenphp/php-frankenphp/Dockerfile
+      args:
+        PHP_VERSION: "8.5"
+        PHP_PORT: "8500"
+        PHP_BASE_TAG: "-bookworm"
+        MYSQL_ODBC_DRIVER: "mariadb"
+    image: php-8.5-frankenphp
+    container_name: php-8.5-frankenphp
+    ports:
+      - "8500:80"
+      - "8543:443"
+
+  mysql:
+    image: mysql:9.5
+    container_name: mysql
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - "${MYSQL_PORT:-3306}:${MYSQL_PORT:-3306}"
+    volumes:
+      - /var/lib/mysql
+    environment:
+      MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-masterkey}
+    networks:
+      - internal
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - "${PGSQL_PORT:-5432}:${PGSQL_PORT:-5432}"
+    volumes:
+      - ./resources/database/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${PGSQL_USER:-postgres}
+      POSTGRES_PASSWORD: ${PGSQL_PASSWORD:-masterkey}
+    networks:
+      - internal
+
+  sqlsrv:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    container_name: sqlsrv
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - "${SQLSERVER_PORT:-1433}:${SQLSERVER_PORT:-1433}"
+    volumes:
+      - /var/opt/mssql/
+      - /var/opt/sqlserver/data
+      - /var/opt/sqlserver/log
+      - /var/opt/sqlserver/backup
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_USER: ${SQLSERVER_USER:-sa}
+      SA_PASSWORD: ${SQLSERVER_PASSWORD:-Masterkey@1}
+      MSSQL_PID: Express
+    networks:
+      - internal
+
+  oracle:
+    image: gvenzl/oracle-free:23.26.0
+    container_name: oracle
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - "${OCI_PORT:-1521}:${OCI_PORT:-1521}"
+    volumes:
+      - /opt/oracle/oradata
+      - /opt/oracle/backup
+    environment:
+      ORACLE_ALLOW_REMOTE: true
+      ORACLE_RANDOM_PASSWORD: true
+      APP_USER: ${OCI_USER:-hr}
+      APP_USER_PASSWORD: ${OCI_PASSWORD:-masterkey}
+    networks:
+      - internal
+
+  firebird:
+    image: jacobalberty/firebird:3.0.7
+    container_name: firebird
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - ${FBIRD_PORT:-3050}:${FBIRD_PORT:-3050}
+    volumes:
+      - ./resources/database/firebird:/firebird:rw
+      - ./resources/database/firebird/config/firebird.conf:/firebird/etc/firebird.conf:ro
+    environment:
+      FIREBIRD_USER: ${FBIRD_USER:-sysdba}
+      FIREBIRD_PASSWORD: ${FBIRD_PASSWORD:-masterkey}
+      FIREBIRD_ROOT_PASSWORD: ${FBIRD_PASSWORD:-masterkey}
+      ISC_USER: ${FBIRD_USER:-sysdba}
+      ISC_PASSWORD: "${FBIRD_PASSWORD:-masterkey}"
+      EnableLegacyClientAuth: true
+    entrypoint: [ "/usr/local/firebird/bin/fbguard" ]
+    networks:
+      - internal
+
+  # adminer:
+  #   image: adminer:latest
+  #   container_name: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - internal
+
+  # whodb:
+  #   image: clidey/whodb:latest
+  #   container_name: whodb
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - internal
+
+networks:
+  internal:
+    name: internal
+    external: false
+    driver: bridge

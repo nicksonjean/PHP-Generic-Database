@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Modules\StaticArray | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../fonts/doctum-font.css">
+        <script src="../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../doctum.js"></script>
+        <script async defer src="../../js/bootstrap.min.js"></script>
+        <script async defer src="../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Modules_StaticArray" data-root-path="../../" data-search-index-url="../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../classes.html">Classes</a></li>
+                    <li><a href="../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../traits.html">Traits</a></li>
+                    <li><a href="../../doc-index.html">Index</a></li>
+                    <li><a href="../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../GenericDatabase/Modules.html">Modules</a></li><li class="backslash">\</li><li>StaticArray</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>StaticArray    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>StaticArray</strong>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>Class StaticArray
+Provides methods to create database connections for various database engines.</p></p>            <p><p>Methods:</p>
+<ul>
+<li><code>nativeMySQLi(array $env, bool $persistent = false, bool $strategy = false): Connection|MySQLiConnection</code>: Creates a native MySQLi connection.</li>
+<li><code>nativePgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PgSQLConnection</code>: Creates a native PostgreSQL connection.</li>
+<li><code>nativeSQLSrv(array $env, bool $persistent = false, bool $strategy = false): Connection|SQLSrvConnection</code>: Creates a native SQL Server connection.</li>
+<li><code>nativeOCI(array $env, bool $persistent = false, bool $strategy = false): Connection|OCIConnection</code>: Creates a native Oracle OCI connection.</li>
+<li><code>nativeFirebird(array $env, bool $persistent = false, bool $strategy = false): Connection|FirebirdConnection</code>: Creates a native Firebird connection.</li>
+<li><code>nativeSQLite(array $env, bool $persistent = false, bool $strategy = false): Connection|SQLiteConnection</code>: Creates a native SQLite connection.</li>
+<li><code>nativeMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|SQLiteConnection</code>: Creates a native SQLite in-memory connection.</li>
+<li><code>pdoMySQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection</code>: Creates a PDO MySQL connection.</li>
+<li><code>pdoPgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection</code>: Creates a PDO PostgreSQL connection.</li>
+<li><code>pdoSQLSrv(array $env, bool $strategy = false): Connection|PDOConnection</code>: Creates a PDO SQL Server connection.</li>
+<li><code>pdoOCI(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection</code>: Creates a PDO Oracle OCI connection.</li>
+<li><code>pdoFirebird(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection</code>: Creates a PDO Firebird connection.</li>
+<li><code>pdoSQLite(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection</code>: Creates a PDO SQLite connection.</li>
+<li><code>pdoMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|PDOConnection</code>:Creates a PDO SQLite in-memory connection.</li>
+<li><code>odbcMySQL(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection</code>:Creates an ODBC MySQL connection.</li>
+<li><code>odbcPgSQL(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection</code>:Creates an ODBC PostgreSQL connection.</li>
+<li><code>odbcSQLSrv(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection</code>:Creates an ODBC SQL Server connection.</li>
+<li><code>odbcOCI(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection</code>:Creates an ODBC Oracle OCI connection.</li>
+<li><code>odbcFirebird(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection</code>: Creates an ODBC Firebird connection.</li>
+<li><code>odbcSQLite(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection</code>: Creates an ODBC SQLite connection.</li>
+<li><code>odbcAccess(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection</code>: Creates an ODBC Microsoft Access connection.</li>
+<li><code>odbcExcel(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection</code>: Creates an ODBC Microsoft Excel connection.</li>
+<li><code>odbcText(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection</code>: Creates an ODBC Text connection.</li>
+<li><code>odbcMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection</code>: Creates an ODBC SQLite in-memory connection.</li>
+</ul></p>        </div>
+            
+        
+    
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\MySQLiConnection">MySQLiConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_nativeMySQLi">nativeMySQLi</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a native MySQLi connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PgSQLConnection">PgSQLConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_nativePgSQL">nativePgSQL</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a native PgSQL connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\SQLSrvConnection">SQLSrvConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_nativeSQLSrv">nativeSQLSrv</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a native SQLSrv connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\OCIConnection">OCIConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_nativeOCI">nativeOCI</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a native OCI connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\FirebirdConnection">FirebirdConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_nativeFirebird">nativeFirebird</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a native Firebird connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\SQLiteConnection">SQLiteConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_nativeSQLite">nativeSQLite</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a native SQLite connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\SQLiteConnection">SQLiteConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_nativeMemory">nativeMemory</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a native SQLite in-memory connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_pdoMySQL">pdoMySQL</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a PDO MySQL connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_pdoPgSQL">pdoPgSQL</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a PDO PgSQL connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_pdoSQLSrv">pdoSQLSrv</a>(array $env, bool $strategy = false)
+        
+                                            <p><p>Creates a PDO SQLSrv connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_pdoOCI">pdoOCI</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a PDO OCI connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_pdoFirebird">pdoFirebird</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a PDO Firebird connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_pdoSQLite">pdoSQLite</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a PDO SQLite connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_pdoMemory">pdoMemory</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a PDO SQLite in-memory connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_odbcMySQL">odbcMySQL</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a ODBC MySQL connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_odbcPgSQL">odbcPgSQL</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a ODBC PgSQL connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_odbcSQLSrv">odbcSQLSrv</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a ODBC SQLSrv connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_odbcOCI">odbcOCI</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a ODBC OCI connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_odbcFirebird">odbcFirebird</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a ODBC Firebird connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_odbcSQLite">odbcSQLite</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a ODBC SQLite connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_odbcAccess">odbcAccess</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a ODBC Access connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_odbcExcel">odbcExcel</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a ODBC Excel connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_odbcText">odbcText</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a ODBC Text connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_odbcMemory">odbcMemory</a>(array $env, bool $persistent = false, bool $strategy = false)
+        
+                                            <p><p>Creates a ODBC Memory connection using the provided environment settings.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method_nativeMySQLi">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L66">at line 66</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\MySQLiConnection">MySQLiConnection</abbr>
+    <strong>nativeMySQLi</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a native MySQLi connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing MySQL connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\MySQLiConnection">MySQLiConnection</abbr></td>
+            <td><p>Returns a MySQLi connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_nativePgSQL">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L112">at line 112</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PgSQLConnection">PgSQLConnection</abbr>
+    <strong>nativePgSQL</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a native PgSQL connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing PgSQL connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PgSQLConnection">PgSQLConnection</abbr></td>
+            <td><p>Returns a PgSQL connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_nativeSQLSrv">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L154">at line 154</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\SQLSrvConnection">SQLSrvConnection</abbr>
+    <strong>nativeSQLSrv</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a native SQLSrv connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing SQLSrv connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\SQLSrvConnection">SQLSrvConnection</abbr></td>
+            <td><p>Returns a SQLSrv connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_nativeOCI">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L194">at line 194</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\OCIConnection">OCIConnection</abbr>
+    <strong>nativeOCI</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a native OCI connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing OCI connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\OCIConnection">OCIConnection</abbr></td>
+            <td><p>Returns a OCI connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_nativeFirebird">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L234">at line 234</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\FirebirdConnection">FirebirdConnection</abbr>
+    <strong>nativeFirebird</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a native Firebird connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing Firebird connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\FirebirdConnection">FirebirdConnection</abbr></td>
+            <td><p>Returns a Firebird connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_nativeSQLite">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L274">at line 274</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\SQLiteConnection">SQLiteConnection</abbr>
+    <strong>nativeSQLite</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a native SQLite connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing SQLite connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\SQLiteConnection">SQLiteConnection</abbr></td>
+            <td><p>Returns a SQLite connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_nativeMemory">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L314">at line 314</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\SQLiteConnection">SQLiteConnection</abbr>
+    <strong>nativeMemory</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a native SQLite in-memory connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing SQLite connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\SQLiteConnection">SQLiteConnection</abbr></td>
+            <td><p>Returns a SQLite connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_pdoMySQL">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L354">at line 354</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+    <strong>pdoMySQL</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a PDO MySQL connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing MySQL connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr></td>
+            <td><p>Returns a MySQL connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_pdoPgSQL">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L394">at line 394</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+    <strong>pdoPgSQL</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a PDO PgSQL connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing PgSQL connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr></td>
+            <td><p>Returns a PgSQL connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_pdoSQLSrv">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L433">at line 433</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+    <strong>pdoSQLSrv</strong>(array $env, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a PDO SQLSrv connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing SQLSrv connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr></td>
+            <td><p>Returns a SQLSrv connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_pdoOCI">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L471">at line 471</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+    <strong>pdoOCI</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a PDO OCI connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing OCI connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr></td>
+            <td><p>Returns a OCI connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_pdoFirebird">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L511">at line 511</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+    <strong>pdoFirebird</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a PDO Firebird connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing Firebird connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr></td>
+            <td><p>Returns a Firebird connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_pdoSQLite">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L551">at line 551</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+    <strong>pdoSQLite</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a PDO SQLite connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing SQLite connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr></td>
+            <td><p>Returns a SQLite connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_pdoMemory">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L587">at line 587</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr>
+    <strong>pdoMemory</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a PDO SQLite in-memory connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing SQLite connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\PDOConnection">PDOConnection</abbr></td>
+            <td><p>Returns a SQLite connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_odbcMySQL">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L623">at line 623</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+    <strong>odbcMySQL</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a ODBC MySQL connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing MySQL connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr></td>
+            <td><p>Returns a MySQL connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_odbcPgSQL">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L665">at line 665</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+    <strong>odbcPgSQL</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a ODBC PgSQL connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing PgSQL connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr></td>
+            <td><p>Returns a PgSQL connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_odbcSQLSrv">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L707">at line 707</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+    <strong>odbcSQLSrv</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a ODBC SQLSrv connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing SQLSrv connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr></td>
+            <td><p>Returns a SQLSrv connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_odbcOCI">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L749">at line 749</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+    <strong>odbcOCI</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a ODBC OCI connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing OCI connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr></td>
+            <td><p>Returns a OCI connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_odbcFirebird">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L791">at line 791</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+    <strong>odbcFirebird</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a ODBC Firebird connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing Firebird connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr></td>
+            <td><p>Returns a Firebird connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_odbcSQLite">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L833">at line 833</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+    <strong>odbcSQLite</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a ODBC SQLite connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing SQLite connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr></td>
+            <td><p>Returns a SQLite connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_odbcAccess">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L871">at line 871</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+    <strong>odbcAccess</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a ODBC Access connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing Access connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr></td>
+            <td><p>Returns a Access connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_odbcExcel">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L911">at line 911</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+    <strong>odbcExcel</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a ODBC Excel connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing Excel connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr></td>
+            <td><p>Returns a Excel connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_odbcText">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L949">at line 949</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+    <strong>odbcText</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a ODBC Text connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing Text connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr></td>
+            <td><p>Returns a Text connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_odbcMemory">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Modules/StaticArray.php#L987">at line 987</a></div>
+        <code>        static            <abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr>
+    <strong>odbcMemory</strong>(array $env, bool $persistent = false, bool $strategy = false)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Creates a ODBC Memory connection using the provided environment settings.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array</td>
+                <td>$env</td>
+                <td><p>An associative array containing ODBC Memory connection parameters.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$persistent</td>
+                <td><p>Optional. Whether to use a persistent connection. Default is false.</p></td>
+            </tr>
+                    <tr>
+                <td>bool</td>
+                <td>$strategy</td>
+                <td><p>Optional. Whether to use a generic connection strategy. Default is false.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Connection|GenericDatabase\Engine\ODBCConnection">ODBCConnection</abbr></td>
+            <td><p>Returns a ODBC Memory connection instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

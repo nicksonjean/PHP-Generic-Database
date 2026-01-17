@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/html/src/Engine/Firebird</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../_css/bootstrap.min.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../../_css/nv.d3.min.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../../_css/style.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../../index.html">/var/www/html/src</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Engine</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Firebird</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Connection/Attributes.php.html#10">GenericDatabase\Engine\Firebird\Connection\Attributes</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#10">GenericDatabase\Engine\Firebird\Connection\DSN</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Dump.php.html#5">GenericDatabase\Engine\Firebird\Connection\Dump</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Firebird.php.html#8">GenericDatabase\Engine\Firebird\Connection\Firebird</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Options.php.html#9">GenericDatabase\Engine\Firebird\Connection\Options</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#9">GenericDatabase\Engine\Firebird\Connection\Statements</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#7">GenericDatabase\Engine\Firebird\Connection\Transaction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#18">GenericDatabase\Engine\Firebird\QueryBuilder\Builder</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#15">GenericDatabase\Engine\Firebird\QueryBuilder\Criteria</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#17">GenericDatabase\Engine\Firebird\QueryBuilder\Internal</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#5">GenericDatabase\Engine\Firebird\QueryBuilder\Regex</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Context.php.html#8">GenericDatabase\Engine\Firebird\QueryBuilder\Context</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#14">GenericDatabase\Engine\Firebird\Connection\Arguments</a></td><td class="text-right">37%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="QueryBuilder/Builder.php.html#18">GenericDatabase\Engine\Firebird\QueryBuilder\Builder</a></td><td class="text-right">9702</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#17">GenericDatabase\Engine\Firebird\QueryBuilder\Internal</a></td><td class="text-right">6480</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#15">GenericDatabase\Engine\Firebird\QueryBuilder\Criteria</a></td><td class="text-right">1980</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#9">GenericDatabase\Engine\Firebird\Connection\Statements</a></td><td class="text-right">342</td></tr>
+       <tr><td><a href="Connection/Options.php.html#9">GenericDatabase\Engine\Firebird\Connection\Options</a></td><td class="text-right">272</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#10">GenericDatabase\Engine\Firebird\Connection\Attributes</a></td><td class="text-right">240</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#7">GenericDatabase\Engine\Firebird\Connection\Transaction</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#14">GenericDatabase\Engine\Firebird\Connection\Arguments</a></td><td class="text-right">53</td></tr>
+       <tr><td><a href="Connection/Firebird.php.html#8">GenericDatabase\Engine\Firebird\Connection\Firebird</a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#10">GenericDatabase\Engine\Firebird\Connection\DSN</a></td><td class="text-right">12</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Connection/Arguments.php.html#23"><abbr title="GenericDatabase\Engine\Firebird\Connection\Arguments::setConstant">setConstant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#42"><abbr title="GenericDatabase\Engine\Firebird\Connection\Arguments::setType">setType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#56"><abbr title="GenericDatabase\Engine\Firebird\Connection\Arguments::callArgumentsByFormat">callArgumentsByFormat</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#33"><abbr title="GenericDatabase\Engine\Firebird\Connection\Attributes::settings">settings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#48"><abbr title="GenericDatabase\Engine\Firebird\Connection\Attributes::attachService">attachService</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#61"><abbr title="GenericDatabase\Engine\Firebird\Connection\Attributes::getDatabaseInfo">getDatabaseInfo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#82"><abbr title="GenericDatabase\Engine\Firebird\Connection\Attributes::getServerInfo">getServerInfo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#110"><abbr title="GenericDatabase\Engine\Firebird\Connection\Attributes::connectionStatus">connectionStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#123"><abbr title="GenericDatabase\Engine\Firebird\Connection\Attributes::define">define</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#16"><abbr title="GenericDatabase\Engine\Firebird\Connection\DSN::parse">parse</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Dump.php.html#7"><abbr title="GenericDatabase\Engine\Firebird\Connection\Dump::loadFromFile">loadFromFile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Firebird.php.html#99"><abbr title="GenericDatabase\Engine\Firebird\Connection\Firebird::getAttribute">getAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Firebird.php.html#121"><abbr title="GenericDatabase\Engine\Firebird\Connection\Firebird::setAttribute">setAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Options.php.html#19"><abbr title="GenericDatabase\Engine\Firebird\Connection\Options::getOptions">getOptions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Options.php.html#36"><abbr title="GenericDatabase\Engine\Firebird\Connection\Options::setOptions">setOptions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Options.php.html#65"><abbr title="GenericDatabase\Engine\Firebird\Connection\Options::define">define</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#14"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchClass">internalFetchClass</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#27"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchBoth">internalFetchBoth</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#36"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAssoc">internalFetchAssoc</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#41"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchNum">internalFetchNum</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#46"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchColumn">internalFetchColumn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#56"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAllAssoc">internalFetchAllAssoc</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#66"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAllNum">internalFetchAllNum</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#76"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAllBoth">internalFetchAllBoth</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#86"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAllColumn">internalFetchAllColumn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#100"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAllClass">internalFetchAllClass</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#13"><abbr title="GenericDatabase\Engine\Firebird\Connection\Transaction::beginTransaction">beginTransaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#23"><abbr title="GenericDatabase\Engine\Firebird\Connection\Transaction::commit">commit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#33"><abbr title="GenericDatabase\Engine\Firebird\Connection\Transaction::inTransaction">inTransaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#38"><abbr title="GenericDatabase\Engine\Firebird\Connection\Transaction::rollback">rollback</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#22"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#30"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildSelect">buildSelect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#59"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildFrom">buildFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#84"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildJoin">buildJoin</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#113"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildOn">buildOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#134"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildWhere">buildWhere</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#168"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildHaving">buildHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#202"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildGroup">buildGroup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#224"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildOrder">buildOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#251"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildLimit">buildLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#268"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildQuery">buildQuery</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#301"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::setPlaceholders">setPlaceholders</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#319"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::formatValue">formatValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#330"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::parse">parse</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#341"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::build">build</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#349"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildRaw">buildRaw</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#359"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::getValues">getValues</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#17"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getSelect">getSelect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#39"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getFrom">getFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#55"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getJoin">getJoin</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#83"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getOn">getOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#106"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getWhereHaving">getWhereHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#166"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getGroup">getGroup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#191"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getOrder">getOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#219"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getLimit">getLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#21"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::select">select</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#47"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::from">from</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#71"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::join">join</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#104"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::on">on</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#130"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::makeWhere">makeWhere</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#151"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::where">where</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#164"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::makeHaving">makeHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#185"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::having">having</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#198"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::group">group</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#217"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::order">order</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#244"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::limit">limit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#37"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::getRegex">getRegex</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#42"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::regexLimit">regexLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#47"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::getLimit">getLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#52"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::regexFunctionWithoutAlias">regexFunctionWithoutAlias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#57"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::regexMetadataWithoutAlias">regexMetadataWithoutAlias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#62"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::getGroupOrder">getGroupOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#68"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::regexFunction">regexFunction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#74"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::regexMetadata">regexMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#80"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::getSelect">getSelect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#86"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::regexFrom">regexFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#91"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::getFrom">getFrom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#96"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::regexOn">regexOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#103"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::getOn">getOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#108"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::regexWhereHaving">regexWhereHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Regex.php.html#120"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Regex::getWhereHaving">getWhereHaving</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Context.php.html#18"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Context::setContext">setContext</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QueryBuilder/Context.php.html#28"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Context::getContext">getContext</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="QueryBuilder/Builder.php.html#359"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::getValues">getValues</abbr></a></td><td class="text-right">240</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#134"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildWhere">buildWhere</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#168"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildHaving">buildHaving</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Connection/Options.php.html#36"><abbr title="GenericDatabase\Engine\Firebird\Connection\Options::setOptions">setOptions</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#268"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildQuery">buildQuery</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#71"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::join">join</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#104"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::on">on</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#30"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildSelect">buildSelect</abbr></a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#47"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::from">from</abbr></a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#55"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getJoin">getJoin</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#219"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getLimit">getLimit</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#21"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::select">select</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#130"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::makeWhere">makeWhere</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#164"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::makeHaving">makeHaving</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#217"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::order">order</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#113"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildOn">buildOn</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#198"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::group">group</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Connection/Arguments.php.html#56"><abbr title="GenericDatabase\Engine\Firebird\Connection\Arguments::callArgumentsByFormat">callArgumentsByFormat</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#59"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildFrom">buildFrom</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#202"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildGroup">buildGroup</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#224"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildOrder">buildOrder</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#106"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getWhereHaving">getWhereHaving</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#244"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::limit">limit</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#61"><abbr title="GenericDatabase\Engine\Firebird\Connection\Attributes::getDatabaseInfo">getDatabaseInfo</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#39"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getFrom">getFrom</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#191"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getOrder">getOrder</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#123"><abbr title="GenericDatabase\Engine\Firebird\Connection\Attributes::define">define</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Connection/Options.php.html#65"><abbr title="GenericDatabase\Engine\Firebird\Connection\Options::define">define</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#84"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildJoin">buildJoin</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#17"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getSelect">getSelect</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#83"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getOn">getOn</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QueryBuilder/Criteria.php.html#166"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Criteria::getGroup">getGroup</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Connection/DSN.php.html#16"><abbr title="GenericDatabase\Engine\Firebird\Connection\DSN::parse">parse</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Connection/Firebird.php.html#99"><abbr title="GenericDatabase\Engine\Firebird\Connection\Firebird::getAttribute">getAttribute</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Connection/Firebird.php.html#121"><abbr title="GenericDatabase\Engine\Firebird\Connection\Firebird::setAttribute">setAttribute</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#251"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildLimit">buildLimit</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#301"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::setPlaceholders">setPlaceholders</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#151"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::where">where</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="QueryBuilder/Clause.php.html#185"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Clause::having">having</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#33"><abbr title="GenericDatabase\Engine\Firebird\Connection\Attributes::settings">settings</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Attributes.php.html#110"><abbr title="GenericDatabase\Engine\Firebird\Connection\Attributes::connectionStatus">connectionStatus</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Options.php.html#19"><abbr title="GenericDatabase\Engine\Firebird\Connection\Options::getOptions">getOptions</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#14"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchClass">internalFetchClass</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#27"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchBoth">internalFetchBoth</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#46"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchColumn">internalFetchColumn</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#56"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAllAssoc">internalFetchAllAssoc</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#66"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAllNum">internalFetchAllNum</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#76"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAllBoth">internalFetchAllBoth</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#86"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAllColumn">internalFetchAllColumn</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Statements.php.html#100"><abbr title="GenericDatabase\Engine\Firebird\Connection\Statements::internalFetchAllClass">internalFetchAllClass</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#13"><abbr title="GenericDatabase\Engine\Firebird\Connection\Transaction::beginTransaction">beginTransaction</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#23"><abbr title="GenericDatabase\Engine\Firebird\Connection\Transaction::commit">commit</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Connection/Transaction.php.html#38"><abbr title="GenericDatabase\Engine\Firebird\Connection\Transaction::rollback">rollback</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#319"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::formatValue">formatValue</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="QueryBuilder/Builder.php.html#349"><abbr title="GenericDatabase\Engine\Firebird\QueryBuilder\Builder::buildRaw">buildRaw</abbr></a></td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.5</a> using <a href="https://www.php.net/" target="_top">PHP 8.3.16</a> and <a href="https://phpunit.de/">PHPUnit 10.4-dev</a> at Sun Jan 19 15:21:55 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../../_js/jquery.min.js?v=10.1.5" type="text/javascript"></script>
+  <script src="../../_js/d3.min.js?v=10.1.5" type="text/javascript"></script>
+  <script src="../../_js/nv.d3.min.js?v=10.1.5" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([12,0,0,0,1,0,0,0,0,0,0,1], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([83,0,0,0,0,0,0,0,0,0,0,3], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[37.77777777777778,13,"<a href=\"Connection\/Arguments.php.html#14\">GenericDatabase\\Engine\\Firebird\\Connection\\Arguments<\/a>"],[0,15,"<a href=\"Connection\/Attributes.php.html#10\">GenericDatabase\\Engine\\Firebird\\Connection\\Attributes<\/a>"],[0,3,"<a href=\"Connection\/DSN.php.html#10\">GenericDatabase\\Engine\\Firebird\\Connection\\DSN<\/a>"],[0,1,"<a href=\"Connection\/Dump.php.html#5\">GenericDatabase\\Engine\\Firebird\\Connection\\Dump<\/a>"],[0,6,"<a href=\"Connection\/Firebird.php.html#8\">GenericDatabase\\Engine\\Firebird\\Connection\\Firebird<\/a>"],[0,16,"<a href=\"Connection\/Options.php.html#9\">GenericDatabase\\Engine\\Firebird\\Connection\\Options<\/a>"],[0,18,"<a href=\"Connection\/Statements.php.html#9\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements<\/a>"],[0,7,"<a href=\"Connection\/Transaction.php.html#7\">GenericDatabase\\Engine\\Firebird\\Connection\\Transaction<\/a>"],[0,98,"<a href=\"QueryBuilder\/Builder.php.html#18\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder<\/a>"],[0,44,"<a href=\"QueryBuilder\/Criteria.php.html#15\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Criteria<\/a>"],[0,80,"<a href=\"QueryBuilder\/Clause.php.html#17\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Internal<\/a>"],[0,15,"<a href=\"QueryBuilder\/Regex.php.html#5\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex<\/a>"],[0,2,"<a href=\"QueryBuilder\/Context.php.html#8\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Context<\/a>"],[100,0,"<a href=\"QueryBuilder\/Query.php.html#5\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Query<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,1,"<a href=\"Connection\/Arguments.php.html#23\">GenericDatabase\\Engine\\Firebird\\Connection\\Arguments::setConstant<\/a>"],[0,1,"<a href=\"Connection\/Arguments.php.html#42\">GenericDatabase\\Engine\\Firebird\\Connection\\Arguments::setType<\/a>"],[0,6,"<a href=\"Connection\/Arguments.php.html#56\">GenericDatabase\\Engine\\Firebird\\Connection\\Arguments::callArgumentsByFormat<\/a>"],[100,2,"<a href=\"Connection\/Arguments.php.html#88\">GenericDatabase\\Engine\\Firebird\\Connection\\Arguments::callWithByStaticArray<\/a>"],[100,1,"<a href=\"Connection\/Arguments.php.html#103\">GenericDatabase\\Engine\\Firebird\\Connection\\Arguments::callWithByStaticArgs<\/a>"],[100,2,"<a href=\"Connection\/Arguments.php.html#117\">GenericDatabase\\Engine\\Firebird\\Connection\\Arguments::call<\/a>"],[0,2,"<a href=\"Connection\/Attributes.php.html#33\">GenericDatabase\\Engine\\Firebird\\Connection\\Attributes::settings<\/a>"],[0,1,"<a href=\"Connection\/Attributes.php.html#48\">GenericDatabase\\Engine\\Firebird\\Connection\\Attributes::attachService<\/a>"],[0,5,"<a href=\"Connection\/Attributes.php.html#61\">GenericDatabase\\Engine\\Firebird\\Connection\\Attributes::getDatabaseInfo<\/a>"],[0,1,"<a href=\"Connection\/Attributes.php.html#82\">GenericDatabase\\Engine\\Firebird\\Connection\\Attributes::getServerInfo<\/a>"],[0,2,"<a href=\"Connection\/Attributes.php.html#110\">GenericDatabase\\Engine\\Firebird\\Connection\\Attributes::connectionStatus<\/a>"],[0,4,"<a href=\"Connection\/Attributes.php.html#123\">GenericDatabase\\Engine\\Firebird\\Connection\\Attributes::define<\/a>"],[0,3,"<a href=\"Connection\/DSN.php.html#16\">GenericDatabase\\Engine\\Firebird\\Connection\\DSN::parse<\/a>"],[0,1,"<a href=\"Connection\/Dump.php.html#7\">GenericDatabase\\Engine\\Firebird\\Connection\\Dump::loadFromFile<\/a>"],[0,3,"<a href=\"Connection\/Firebird.php.html#99\">GenericDatabase\\Engine\\Firebird\\Connection\\Firebird::getAttribute<\/a>"],[0,3,"<a href=\"Connection\/Firebird.php.html#121\">GenericDatabase\\Engine\\Firebird\\Connection\\Firebird::setAttribute<\/a>"],[0,2,"<a href=\"Connection\/Options.php.html#19\">GenericDatabase\\Engine\\Firebird\\Connection\\Options::getOptions<\/a>"],[0,10,"<a href=\"Connection\/Options.php.html#36\">GenericDatabase\\Engine\\Firebird\\Connection\\Options::setOptions<\/a>"],[0,4,"<a href=\"Connection\/Options.php.html#65\">GenericDatabase\\Engine\\Firebird\\Connection\\Options::define<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#14\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements::internalFetchClass<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#27\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements::internalFetchBoth<\/a>"],[0,1,"<a href=\"Connection\/Statements.php.html#36\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements::internalFetchAssoc<\/a>"],[0,1,"<a href=\"Connection\/Statements.php.html#41\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements::internalFetchNum<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#46\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements::internalFetchColumn<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#56\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements::internalFetchAllAssoc<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#66\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements::internalFetchAllNum<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#76\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements::internalFetchAllBoth<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#86\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements::internalFetchAllColumn<\/a>"],[0,2,"<a href=\"Connection\/Statements.php.html#100\">GenericDatabase\\Engine\\Firebird\\Connection\\Statements::internalFetchAllClass<\/a>"],[0,2,"<a href=\"Connection\/Transaction.php.html#13\">GenericDatabase\\Engine\\Firebird\\Connection\\Transaction::beginTransaction<\/a>"],[0,2,"<a href=\"Connection\/Transaction.php.html#23\">GenericDatabase\\Engine\\Firebird\\Connection\\Transaction::commit<\/a>"],[0,1,"<a href=\"Connection\/Transaction.php.html#33\">GenericDatabase\\Engine\\Firebird\\Connection\\Transaction::inTransaction<\/a>"],[0,2,"<a href=\"Connection\/Transaction.php.html#38\">GenericDatabase\\Engine\\Firebird\\Connection\\Transaction::rollback<\/a>"],[0,1,"<a href=\"QueryBuilder\/Builder.php.html#22\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::__construct<\/a>"],[0,9,"<a href=\"QueryBuilder\/Builder.php.html#30\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildSelect<\/a>"],[0,6,"<a href=\"QueryBuilder\/Builder.php.html#59\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildFrom<\/a>"],[0,4,"<a href=\"QueryBuilder\/Builder.php.html#84\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildJoin<\/a>"],[0,7,"<a href=\"QueryBuilder\/Builder.php.html#113\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildOn<\/a>"],[0,11,"<a href=\"QueryBuilder\/Builder.php.html#134\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildWhere<\/a>"],[0,11,"<a href=\"QueryBuilder\/Builder.php.html#168\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildHaving<\/a>"],[0,6,"<a href=\"QueryBuilder\/Builder.php.html#202\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildGroup<\/a>"],[0,6,"<a href=\"QueryBuilder\/Builder.php.html#224\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildOrder<\/a>"],[0,3,"<a href=\"QueryBuilder\/Builder.php.html#251\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildLimit<\/a>"],[0,10,"<a href=\"QueryBuilder\/Builder.php.html#268\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildQuery<\/a>"],[0,3,"<a href=\"QueryBuilder\/Builder.php.html#301\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::setPlaceholders<\/a>"],[0,2,"<a href=\"QueryBuilder\/Builder.php.html#319\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::formatValue<\/a>"],[0,1,"<a href=\"QueryBuilder\/Builder.php.html#330\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::parse<\/a>"],[0,1,"<a href=\"QueryBuilder\/Builder.php.html#341\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::build<\/a>"],[0,2,"<a href=\"QueryBuilder\/Builder.php.html#349\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::buildRaw<\/a>"],[0,15,"<a href=\"QueryBuilder\/Builder.php.html#359\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Builder::getValues<\/a>"],[0,4,"<a href=\"QueryBuilder\/Criteria.php.html#17\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Criteria::getSelect<\/a>"],[0,5,"<a href=\"QueryBuilder\/Criteria.php.html#39\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Criteria::getFrom<\/a>"],[0,8,"<a href=\"QueryBuilder\/Criteria.php.html#55\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Criteria::getJoin<\/a>"],[0,4,"<a href=\"QueryBuilder\/Criteria.php.html#83\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Criteria::getOn<\/a>"],[0,6,"<a href=\"QueryBuilder\/Criteria.php.html#106\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Criteria::getWhereHaving<\/a>"],[0,4,"<a href=\"QueryBuilder\/Criteria.php.html#166\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Criteria::getGroup<\/a>"],[0,5,"<a href=\"QueryBuilder\/Criteria.php.html#191\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Criteria::getOrder<\/a>"],[0,8,"<a href=\"QueryBuilder\/Criteria.php.html#219\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Criteria::getLimit<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#21\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::select<\/a>"],[0,9,"<a href=\"QueryBuilder\/Clause.php.html#47\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::from<\/a>"],[0,10,"<a href=\"QueryBuilder\/Clause.php.html#71\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::join<\/a>"],[0,10,"<a href=\"QueryBuilder\/Clause.php.html#104\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::on<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#130\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::makeWhere<\/a>"],[0,3,"<a href=\"QueryBuilder\/Clause.php.html#151\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::where<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#164\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::makeHaving<\/a>"],[0,3,"<a href=\"QueryBuilder\/Clause.php.html#185\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::having<\/a>"],[0,7,"<a href=\"QueryBuilder\/Clause.php.html#198\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::group<\/a>"],[0,8,"<a href=\"QueryBuilder\/Clause.php.html#217\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::order<\/a>"],[0,6,"<a href=\"QueryBuilder\/Clause.php.html#244\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Clause::limit<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#37\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::getRegex<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#42\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::regexLimit<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#47\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::getLimit<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#52\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::regexFunctionWithoutAlias<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#57\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::regexMetadataWithoutAlias<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#62\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::getGroupOrder<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#68\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::regexFunction<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#74\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::regexMetadata<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#80\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::getSelect<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#86\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::regexFrom<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#91\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::getFrom<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#96\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::regexOn<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#103\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::getOn<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#108\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::regexWhereHaving<\/a>"],[0,1,"<a href=\"QueryBuilder\/Regex.php.html#120\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Regex::getWhereHaving<\/a>"],[0,1,"<a href=\"QueryBuilder\/Context.php.html#18\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Context::setContext<\/a>"],[0,1,"<a href=\"QueryBuilder\/Context.php.html#28\">GenericDatabase\\Engine\\Firebird\\QueryBuilder\\Context::getContext<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

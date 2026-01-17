@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <item>
+    <id>1</id>
+    <nome>Administrador</nome>
+    <cpf>012.345.678-90</cpf>
+    <rg></rg>
+    <emails>admin@gmail.com</emails>
+    <telefones></telefones>
+    <data_nascimento></data_nascimento>
+    <estado_civil>Casado(a)</estado_civil>
+    <profissao>Analista de Sistemas</profissao>
+    <genero>Masculino</genero>
+    <naturalidade_id>3769</naturalidade_id>
+    <filiacao></filiacao>
+    <observacao>N/A|NIHIL</observacao>
+    <endereco_id>1</endereco_id>
+    <created_at>2016-09-12 22:45:15</created_at>
+    <updated_at>2016-09-12 22:45:15</updated_at>
+    <deleted_at></deleted_at>
+  </item>
+</root>

@@ -1,0 +1,703 @@
+<?php
+
+declare(strict_types=1);
+
+namespace GenericDatabase\Engine;
+
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\IQueryBuilder;
+use GenericDatabase\Core\Where;
+use GenericDatabase\Core\Having;
+use GenericDatabase\Core\Select;
+use GenericDatabase\Core\Sorting;
+use GenericDatabase\Core\Grouping;
+use GenericDatabase\Core\Junction;
+use GenericDatabase\Core\Condition;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
+use GenericDatabase\Shared\Singleton;
+use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Generic\QueryBuilder\Query;
+use GenericDatabase\Generic\QueryBuilder\Context;
+use GenericDatabase\Engine\JSON\QueryBuilder\Builder;
+use GenericDatabase\Engine\JSON\QueryBuilder\Clause;
+
+/**
+ * The `JSONQueryBuilder` class implements the `IQueryBuilder` interface to provide a flexible
+ * query building mechanism for JSON flat file databases.
+ *
+ * Example Usage:
+ * <code>
+ * $connection = new JSONConnection();
+ * $connection->setFilePath('/path/to/data.json');
+ * $connection->connect();
+ *
+ * $builder = JSONQueryBuilder::with($connection);
+ * $results = $builder
+ *     ->select('name', 'age')
+ *     ->from('users')
+ *     ->where('age > 18')
+ *     ->orderBy('name')
+ *     ->fetchAll();
+ * </code>
+ *
+ * @package GenericDatabase\Engine
+ */
+class JSONQueryBuilder implements IQueryBuilder
+{
+    use Query;
+    use Context;
+    use Singleton;
+
+    /**
+     * @var JSONQueryBuilder The singleton instance.
+     */
+    private static JSONQueryBuilder $self;
+
+    /**
+     * @var string|null The last executed query.
+     */
+    private static ?string $lastQuery = null;
+
+    /**
+     * @var bool Whether the cursor is exhausted.
+     */
+    private static bool $cursorExhausted = false;
+
+    /**
+     * @var array|null Cached result set.
+     */
+    private static ?array $cachedResult = null;
+
+    /**
+     * Constructor.
+     *
+     * @param IConnection|null $context The connection context.
+     */
+    public function __construct(?IConnection $context = null)
+    {
+        $this->initQuery();
+        self::$context = $context;
+        self::$self = $this;
+    }
+
+    /**
+     * Static initializer with context.
+     *
+     * @param IConnection $context The connection.
+     * @return self
+     */
+    public static function with(IConnection $context): self
+    {
+        self::$context = $context;
+        self::$self = new static($context);
+        return self::$self;
+    }
+
+    /**
+     * Add SELECT clause.
+     *
+     * @param array|string ...$data The columns to select.
+     * @return static
+     */
+    public static function select(array|string ...$data): static
+    {
+        /** @var static */
+        return Clause::select(['type' => Select::DEFAULT(), 'data' => $data, 'self' => self::$self]);
+    }
+
+    /**
+     * Add DISTINCT clause.
+     *
+     * @param array|string ...$data The columns to select distinctly.
+     * @return static
+     */
+    public static function distinct(array|string ...$data): static
+    {
+        /** @var static */
+        return Clause::select(['type' => Select::DISTINCT(), 'data' => $data, 'self' => self::$self]);
+    }
+
+    /**
+     * Add FROM clause.
+     *
+     * @param array|string ...$data The tables/files to select from.
+     * @return static
+     */
+    public static function from(array|string ...$data): static
+    {
+        /** @var static */
+        return Clause::from(['data' => $data, 'self' => self::$self]);
+    }
+
+    /**
+     * Add JOIN clause (not supported for flat files).
+     *
+     * @param array|string ...$data The join parameters.
+     * @return static
+     */
+    public static function join(array|string ...$data): static
+    {
+        return self::$self;
+    }
+
+    /**
+     * Add SELF JOIN clause (not supported for flat files).
+     *
+     * @param array|string ...$data The join parameters.
+     * @return static
+     */
+    public static function selfJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+
+    /**
+     * Add LEFT JOIN clause (not supported for flat files).
+     *
+     * @param array|string ...$data The join parameters.
+     * @return static
+     */
+    public static function leftJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+
+    /**
+     * Add RIGHT JOIN clause (not supported for flat files).
+     *
+     * @param array|string ...$data The join parameters.
+     * @return static
+     */
+    public static function rightJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+
+    /**
+     * Add INNER JOIN clause (not supported for flat files).
+     *
+     * @param array|string ...$data The join parameters.
+     * @return static
+     */
+    public static function innerJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+
+    /**
+     * Add OUTER JOIN clause (not supported for flat files).
+     *
+     * @param array|string ...$data The join parameters.
+     * @return static
+     */
+    public static function outerJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+
+    /**
+     * Add CROSS JOIN clause (not supported for flat files).
+     *
+     * @param array|string ...$data The join parameters.
+     * @return static
+     */
+    public static function crossJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+
+    /**
+     * Add ON clause (not supported for flat files).
+     *
+     * @param array|string ...$data The on parameters.
+     * @return static
+     */
+    public static function on(array|string ...$data): static
+    {
+        return self::$self;
+    }
+
+    /**
+     * Add AND ON clause (not supported for flat files).
+     *
+     * @param array|string ...$data The on parameters.
+     * @return static
+     */
+    public static function andOn(array|string ...$data): static
+    {
+        return self::$self;
+    }
+
+    /**
+     * Add OR ON clause (not supported for flat files).
+     *
+     * @param array|string ...$data The on parameters.
+     * @return static
+     */
+    public static function orOn(array|string ...$data): static
+    {
+        return self::$self;
+    }
+
+    /**
+     * Add WHERE clause.
+     *
+     * @param array|string ...$data The where conditions.
+     * @return static
+     */
+    public static function where(array|string ...$data): static
+    {
+        if (Arrays::isDepthArray($data) > 2) {
+            $result = [];
+            foreach (reset($data) as $value) {
+                $condition = Condition::NONE();
+                $keys = array_keys($value)[0];
+                $values = array_values($value);
+                if (is_string($keys)) {
+                    $condition = $keys === 'AND' ? Condition::CONJUNCTION() : Condition::DISJUNCTION();
+                }
+                $result[] = [
+                    'enum' => Where::class,
+                    'condition' => $condition,
+                    'data' => [$values],
+                    'self' => self::$self
+                ];
+            }
+            /** @var static */
+            return Clause::where($result);
+        } else {
+            /** @var static */
+            return Clause::where([
+                'enum' => Where::class,
+                'condition' => Condition::NONE(),
+                'data' => $data,
+                'self' => self::$self
+            ]);
+        }
+    }
+
+    /**
+     * Add AND WHERE clause.
+     *
+     * @param array|string ...$data The where conditions.
+     * @return static
+     */
+    public static function andWhere(array|string ...$data): static
+    {
+        if (Arrays::isDepthArray($data) > 2) {
+            $result = [];
+            foreach (reset($data) as $value) {
+                $condition = Condition::CONJUNCTION();
+                $keys = array_keys($value)[0];
+                $values = array_values($value);
+                if (is_string($keys)) {
+                    $condition = $keys === 'AND' ? Condition::CONJUNCTION() : Condition::DISJUNCTION();
+                }
+                $result[] = [
+                    'enum' => Where::class,
+                    'condition' => $condition,
+                    'data' => [$values],
+                    'self' => self::$self
+                ];
+            }
+            /** @var static */
+            return Clause::where($result);
+        } else {
+            /** @var static */
+            return Clause::where([
+                'enum' => Where::class,
+                'condition' => Condition::CONJUNCTION(),
+                'data' => $data,
+                'self' => self::$self
+            ]);
+        }
+    }
+
+    /**
+     * Add OR WHERE clause.
+     *
+     * @param array|string ...$data The where conditions.
+     * @return static
+     */
+    public static function orWhere(array|string ...$data): static
+    {
+        if (Arrays::isDepthArray($data) > 2) {
+            $result = [];
+            foreach (reset($data) as $value) {
+                $condition = Condition::DISJUNCTION();
+                $keys = array_keys($value)[0];
+                $values = array_values($value);
+                if (is_string($keys)) {
+                    $condition = $keys === 'AND' ? Condition::CONJUNCTION() : Condition::DISJUNCTION();
+                }
+                $result[] = [
+                    'enum' => Where::class,
+                    'condition' => $condition,
+                    'data' => [$values],
+                    'self' => self::$self
+                ];
+            }
+            /** @var static */
+            return Clause::where($result);
+        } else {
+            /** @var static */
+            return Clause::where([
+                'enum' => Where::class,
+                'condition' => Condition::DISJUNCTION(),
+                'data' => $data,
+                'self' => self::$self
+            ]);
+        }
+    }
+
+    /**
+     * Add HAVING clause.
+     *
+     * @param array|string ...$data The having conditions.
+     * @return static
+     */
+    public static function having(array|string ...$data): static
+    {
+        if (Arrays::isDepthArray($data) > 2) {
+            $result = [];
+            foreach (reset($data) as $value) {
+                $condition = Condition::NONE();
+                $keys = array_keys($value)[0];
+                $values = array_values($value);
+                if (is_string($keys)) {
+                    $condition = $keys === 'AND' ? Condition::CONJUNCTION() : Condition::DISJUNCTION();
+                }
+                $result[] = [
+                    'enum' => Having::class,
+                    'condition' => $condition,
+                    'data' => [$values],
+                    'self' => self::$self
+                ];
+            }
+            /** @var static */
+            return Clause::having($result);
+        } else {
+            /** @var static */
+            return Clause::having([
+                'enum' => Having::class,
+                'condition' => Condition::NONE(),
+                'data' => $data,
+                'self' => self::$self
+            ]);
+        }
+    }
+
+    /**
+     * Add AND HAVING clause.
+     *
+     * @param array|string ...$data The having conditions.
+     * @return static
+     */
+    public static function andHaving(array|string ...$data): static
+    {
+        if (Arrays::isDepthArray($data) > 2) {
+            $result = [];
+            foreach (reset($data) as $value) {
+                $result[] = [
+                    'enum' => Having::class,
+                    'condition' => Condition::CONJUNCTION(),
+                    'data' => [$value],
+                    'self' => self::$self
+                ];
+            }
+            /** @var static */
+            return Clause::having($result);
+        } else {
+            /** @var static */
+            return Clause::having([
+                'enum' => Having::class,
+                'condition' => Condition::CONJUNCTION(),
+                'data' => $data,
+                'self' => self::$self
+            ]);
+        }
+    }
+
+    /**
+     * Add OR HAVING clause.
+     *
+     * @param array|string ...$data The having conditions.
+     * @return static
+     */
+    public static function orHaving(array|string ...$data): static
+    {
+        if (Arrays::isDepthArray($data) > 2) {
+            $result = [];
+            foreach (reset($data) as $value) {
+                $result[] = [
+                    'enum' => Having::class,
+                    'condition' => Condition::DISJUNCTION(),
+                    'data' => [$value],
+                    'self' => self::$self
+                ];
+            }
+            /** @var static */
+            return Clause::having($result);
+        } else {
+            /** @var static */
+            return Clause::having([
+                'enum' => Having::class,
+                'condition' => Condition::DISJUNCTION(),
+                'data' => $data,
+                'self' => self::$self
+            ]);
+        }
+    }
+
+    /**
+     * Add GROUP BY clause.
+     *
+     * @param array|string ...$data The columns to group by.
+     * @return static
+     */
+    public static function group(array|string ...$data): static
+    {
+        /** @var static */
+        return Clause::group(['sorting' => Grouping::DEFAULT(), 'data' => $data, 'self' => self::$self]);
+    }
+
+    /**
+     * Add ORDER BY clause.
+     *
+     * @param array|string ...$data The columns to order by.
+     * @return static
+     */
+    public static function order(array|string ...$data): static
+    {
+        /** @var static */
+        return Clause::order(['sorting' => Sorting::NONE(), 'data' => $data, 'self' => self::$self]);
+    }
+
+    /**
+     * Add ORDER BY ASC clause.
+     *
+     * @param array|string ...$data The columns to order by.
+     * @return static
+     */
+    public static function orderAsc(array|string ...$data): static
+    {
+        /** @var static */
+        return Clause::order(['sorting' => Sorting::ASCENDING(), 'data' => $data, 'self' => self::$self]);
+    }
+
+    /**
+     * Add ORDER BY DESC clause.
+     *
+     * @param array|string ...$data The columns to order by.
+     * @return static
+     */
+    public static function orderDesc(array|string ...$data): static
+    {
+        /** @var static */
+        return Clause::order(['sorting' => Sorting::DESCENDING(), 'data' => $data, 'self' => self::$self]);
+    }
+
+    /**
+     * Add LIMIT clause.
+     *
+     * @param array|string ...$data The limit parameters.
+     * @return static
+     */
+    public static function limit(array|string ...$data): static
+    {
+        /** @var static */
+        return Clause::limit(['data' => $data, 'self' => self::$self]);
+    }
+
+    /**
+     * Extract the table name from the FROM clause.
+     *
+     * @return string|null The table name without alias, or null if no FROM clause.
+     */
+    private function getTableNameFromQuery(): ?string
+    {
+        if (empty($this->query->from)) {
+            return null;
+        }
+
+        $from = reset($this->query->from);
+        if (is_array($from)) {
+            // Extract table name, removing alias if present
+            $tableName = $from['table'] ?? null;
+        } else {
+            $tableName = $from;
+        }
+
+        return $tableName !== null ? trim($tableName) : null;
+    }
+
+    /**
+     * Execute the query and cache results.
+     *
+     * @return void
+     * @throws Exceptions
+     */
+    private function runOnce(): void
+    {
+        $currentQuery = $this->buildRaw();
+
+        if (self::$lastQuery !== $currentQuery || self::$cursorExhausted) {
+            // Extract table name and load data from JSON file
+            $tableName = $this->getTableNameFromQuery();
+            if ($tableName !== null && $this->getContext() !== null && method_exists($this->getContext(), 'load')) {
+                $this->getContext()->load($tableName);
+            }
+
+            // Execute query on data
+            $builder = new Builder($this->query);
+            $data = method_exists($this->getContext(), 'getData') ? $this->getContext()->getData() : [];
+            self::$cachedResult = $builder->execute($data);
+
+            self::$lastQuery = $currentQuery;
+            self::$cursorExhausted = false;
+        }
+    }
+
+    /**
+     * Reset the query state.
+     *
+     * @return void
+     */
+    public function reset(): void
+    {
+        self::$lastQuery = null;
+        self::$cursorExhausted = true;
+        self::$cachedResult = null;
+    }
+
+    /**
+     * Build the query string.
+     *
+     * @return string
+     * @throws Exceptions
+     */
+    public function build(): string
+    {
+        return (new Builder($this->query))->build();
+    }
+
+    /**
+     * Build the raw query string with values.
+     *
+     * @return string
+     * @throws Exceptions
+     */
+    public function buildRaw(): string
+    {
+        return (new Builder($this->query))->buildRaw();
+    }
+
+    /**
+     * Get the query values.
+     *
+     * @return array
+     */
+    public function getValues(): array
+    {
+        return (new Builder($this->query))->getValues();
+    }
+
+    /**
+     * Get all metadata.
+     *
+     * @return object
+     * @throws Exceptions
+     */
+    public function getAllMetadata(): object
+    {
+        $this->runOnce();
+        return (object) [
+            'queryRows' => count(self::$cachedResult ?? []),
+            'affectedRows' => 0
+        ];
+    }
+
+    /**
+     * Fetch a single row.
+     *
+     * @param int|null $fetchStyle The fetch style.
+     * @param mixed|null $fetchArgument The fetch argument.
+     * @param mixed|null $optArgs Additional options.
+     * @return mixed
+     * @throws Exceptions
+     */
+    public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    {
+        $this->runOnce();
+
+        if (self::$cachedResult === null || empty(self::$cachedResult)) {
+            self::$cursorExhausted = true;
+            return false;
+        }
+
+        $result = array_shift(self::$cachedResult);
+
+        if ($result === null) {
+            self::$cursorExhausted = true;
+            return false;
+        }
+
+        // Format the result using FetchHandler if fetch style is specified
+        if ($fetchStyle !== null && $this->getContext() !== null) {
+            try {
+                $reflection = new \ReflectionClass($this->getContext());
+                $method = $reflection->getMethod('getFetchHandler');
+                $method->setAccessible(true);
+                $fetchHandler = $method->invoke($this->getContext());
+
+                if ($fetchHandler !== null && method_exists($fetchHandler, 'formatRow')) {
+                    return $fetchHandler->formatRow($result, $fetchStyle, $fetchArgument, $optArgs);
+                }
+            } catch (\Exception $e) {
+                // Fall through to return raw result
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Fetch all rows.
+     *
+     * @param int|null $fetchStyle The fetch style.
+     * @param mixed|null $fetchArgument The fetch argument.
+     * @param mixed|null $optArgs Additional options.
+     * @return array|bool
+     * @throws Exceptions
+     */
+    public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
+    {
+        $this->runOnce();
+
+        $result = self::$cachedResult ?? [];
+        self::$cursorExhausted = true;
+        self::$cachedResult = null;
+
+        // Format all results if fetch style is specified
+        if ($fetchStyle !== null && !empty($result) && $this->getContext() !== null) {
+            try {
+                $reflection = new \ReflectionClass($this->getContext());
+                $method = $reflection->getMethod('getFetchHandler');
+                $method->setAccessible(true);
+                $fetchHandler = $method->invoke($this->getContext());
+
+                if ($fetchHandler !== null && method_exists($fetchHandler, 'formatRow')) {
+                    $formatted = [];
+                    foreach ($result as $row) {
+                        $formatted[] = $fetchHandler->formatRow($row, $fetchStyle, $fetchArgument, $optArgs);
+                    }
+                    return $formatted;
+                }
+            } catch (\Exception $e) {
+                // Fall through to return raw result
+            }
+        }
+
+        return $result;
+    }
+}

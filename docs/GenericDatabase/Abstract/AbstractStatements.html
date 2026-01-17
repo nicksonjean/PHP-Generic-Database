@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>GenericDatabase\Abstract\AbstractStatements | PHP Generic Database Documentation</title>
+
+            <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../fonts/doctum-font.css">
+        <script src="../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../doctum.js"></script>
+        <script async defer src="../../js/bootstrap.min.js"></script>
+        <script async defer src="../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nicksonjean/PHP-Generic-Database/refs/heads/main/favicon.ico" />
+        <link rel="search"
+          type="application/opensearchdescription+xml"
+          href="https://github.com/nicksonjean/PHP-Generic-Database/opensearch.xml"
+          title="PHP Generic Database Documentation (main)" />
+    </head>
+
+    <body id="class" data-name="class:GenericDatabase_Abstract_AbstractStatements" data-root-path="../../" data-search-index-url="../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../index.html">PHP Generic Database Documentation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../classes.html">Classes</a></li>
+                    <li><a href="../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../traits.html">Traits</a></li>
+                    <li><a href="../../doc-index.html">Index</a></li>
+                    <li><a href="../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../GenericDatabase.html">GenericDatabase</a></li><li class="backslash">\</li><li><a href="../../GenericDatabase/Abstract.html">Abstract</a></li><li class="backslash">\</li><li>AbstractStatements</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>AbstractStatements    
+            </h1>
+    </div>
+
+    
+    <p>    abstract     class
+    <strong>AbstractStatements</strong>        implements        <a href="../../GenericDatabase/Interfaces/Connection/IStatementsAbstract.html"><abbr title="GenericDatabase\Interfaces\Connection\IStatementsAbstract">IStatementsAbstract</abbr></a>        (<a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php">View source</a>)
+</p>
+
+        
+    
+        
+
+            <div class="description">
+            <p><p>The <code>GenericDatabase\Abstract\AbstractStatements</code> that handles database statements.</p></p>            <p><p>It implements the <code>IStatements</code> interface and provides a set of methods for managing database connections, options, reports, and metadata.</p>
+<p>Main functionalities:</p>
+<ul>
+<li>Provides a base class for managing database statements.</li>
+<li>Allows dynamic setting and getting of options using a connection instance and an options array.</li>
+<li>Provides a common interface for all options classes.</li>
+</ul>
+<p>Methods:</p>
+<ul>
+<li><code>getInstance</code>: Returns the current database connection instance.</li>
+<li><code>set</code>: Sets a value using a dynamic method call on the database connection instance.</li>
+<li><code>get</code>: Gets a value using a dynamic method call on the database connection instance.</li>
+<li><code>getOptionsHandler</code>: Returns the current options handler instance.</li>
+<li><code>getReportHandler</code>: Returns the current report handler instance.</li>
+<li><code>setAllMetadata</code>: Resets all metadata to default values.</li>
+<li><code>getAllMetadata</code>: Returns the current metadata instance.</li>
+<li><code>getQueryString</code>: Returns the current query string.</li>
+<li><code>setQueryString</code>: Sets the query string.</li>
+<li><code>getQueryParameters</code>: Returns the current query parameters.</li>
+<li><code>setQueryParameters</code>: Sets the query parameters.</li>
+<li><code>getQueryRows</code>: Returns the number of rows fetched.</li>
+<li><code>setQueryRows</code>: Sets the number of rows fetched.</li>
+<li><code>getQueryColumns</code>: Returns the number of columns in the result.</li>
+<li><code>setQueryColumns</code>: Sets the number of columns in the result.</li>
+<li><code>getAffectedRows</code>: Returns the number of affected rows.</li>
+<li><code>setAffectedRows</code>: Sets the number of affected rows.</li>
+<li><code>getStatement</code>: Returns the current statement object.</li>
+<li><code>setStatement</code>: Sets the statement object.</li>
+</ul>
+<p>Fields:</p>
+<ul>
+<li><code>$instance</code>: The connection instance used for dynamic operations.</li>
+<li><code>$optionsHandler</code>: The options handler for managing configuration.</li>
+<li><code>$reportHandler</code>: The report handler for managing configuration.</li>
+<li><code>$metadata</code>: The metadata handler for managing configuration.</li>
+<li><code>$statement</code>: The statement handler for managing configuration.</li>
+</ul>
+<p>Note that some of these methods are used to manage metadata, which is an instance of the <code>Metadata</code> class. The metadata is used to store information about the query,  such as the query string, parameters, rows fetched, and columns.</p></p>        </div>
+            
+        
+    
+            <h2>Properties</h2>
+
+            <table class="table table-condensed">
+                    <tr>
+                <td class="type" id="property_instance">
+                    static                    protected                                        <a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+                                                                                
+                                    </td>
+                <td>$instance</td>
+                <td class="last"></td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_optionsHandler">
+                    static                    protected                                        <a href="../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a>
+                                                                                
+                                    </td>
+                <td>$optionsHandler</td>
+                <td class="last"></td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_reportHandler">
+                    static                    protected                                        <a href="../../GenericDatabase/Interfaces/Connection/IReport.html"><abbr title="GenericDatabase\Interfaces\Connection\IReport">IReport</abbr></a>
+                                                                                
+                                    </td>
+                <td>$reportHandler</td>
+                <td class="last"></td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_metadata">
+                                        protected                                        <a href="../../GenericDatabase/Generic/Statements/Metadata.html"><abbr title="GenericDatabase\Generic\Statements\Metadata">Metadata</abbr></a>
+                                                                                
+                                    </td>
+                <td>$metadata</td>
+                <td class="last"></td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type" id="property_statement">
+                                        protected                                        mixed|null
+                                                                                
+                                    </td>
+                <td>$statement</td>
+                <td class="last"></td>
+                <td></td>
+            </tr>
+            </table>
+
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___construct">__construct</a>(<a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $instance, <a href="../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a> $optionsHandler, <a href="../../GenericDatabase/Interfaces/Connection/IReport.html"><abbr title="GenericDatabase\Interfaces\Connection\IReport">IReport</abbr></a> $reportHandler)
+        
+                                            <p><p>Initialize statements with required handlers</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    static&nbsp;<a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getInstance">getInstance</a>()
+        
+                                            <p><p>Get the database connection instance</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_set">set</a>(string $name, mixed $value)
+        
+                                            <p><p>Set a value using dynamic method call</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_get">get</a>(string $name)
+        
+                                            <p><p>Get a value using dynamic method call</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <a href="../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getOptionsHandler">getOptionsHandler</a>()
+        
+                                            <p><p>Get the options handler instance</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <a href="../../GenericDatabase/Interfaces/Connection/IReport.html"><abbr title="GenericDatabase\Interfaces\Connection\IReport">IReport</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getReportHandler">getReportHandler</a>()
+        
+                                            <p><p>Get the report handler instance</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setAllMetadata">setAllMetadata</a>()
+        
+                                            <p><p>Reset all metadata to default values</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    object
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getAllMetadata">getAllMetadata</a>()
+        
+                                            <p><p>Get all metadata</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    string
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getQueryString">getQueryString</a>()
+        
+                                            <p><p>Get the current query string</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setQueryString">setQueryString</a>(string $params)
+        
+                                            <p><p>Set the query string</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array|null
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getQueryParameters">getQueryParameters</a>()
+        
+                                            <p><p>Get the current query parameters</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setQueryParameters">setQueryParameters</a>(array|null $params)
+        
+                                            <p><p>Set the query parameters</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getQueryRows">getQueryRows</a>()
+        
+                                            <p><p>Get number of rows fetched</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setQueryRows">setQueryRows</a>(<abbr title="GenericDatabase\Interfaces\Connection\callable|int|false">callable|int|false</abbr> $params)
+        
+                                            <p><p>Set number of rows fetched</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getQueryColumns">getQueryColumns</a>()
+        
+                                            <p><p>Get number of columns in result</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setQueryColumns">setQueryColumns</a>(<abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr> $params)
+        
+                                            <p><p>Set number of columns in result</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getAffectedRows">getAffectedRows</a>()
+        
+                                            <p><p>Get number of affected rows</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setAffectedRows">setAffectedRows</a>(<abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr> $params)
+        
+                                            <p><p>Set number of affected rows</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    mixed
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getStatement">getStatement</a>()
+        
+                                            <p><p>Get current statement object</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    void
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setStatement">setStatement</a>(mixed $statement)
+        
+                                            <p><p>Set statement object</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method___construct">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L81">at line 81</a></div>
+        <code>                    
+    <strong>__construct</strong>(<a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a> $instance, <a href="../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a> $optionsHandler, <a href="../../GenericDatabase/Interfaces/Connection/IReport.html"><abbr title="GenericDatabase\Interfaces\Connection\IReport">IReport</abbr></a> $reportHandler)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Initialize statements with required handlers</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+                <td>$instance</td>
+                <td><p>Database connection instance</p></td>
+            </tr>
+                    <tr>
+                <td><a href="../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a></td>
+                <td>$optionsHandler</td>
+                <td><p>Options handler instance</p></td>
+            </tr>
+                    <tr>
+                <td><a href="../../GenericDatabase/Interfaces/Connection/IReport.html"><abbr title="GenericDatabase\Interfaces\Connection\IReport">IReport</abbr></a></td>
+                <td>$reportHandler</td>
+                <td><p>Report handler instance</p></td>
+            </tr>
+            </table>
+
+            
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getInstance">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L94">at line 94</a></div>
+        <code>        static            <a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a>
+    <strong>getInstance</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the database connection instance</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/IConnection.html"><abbr title="GenericDatabase\Interfaces\IConnection">IConnection</abbr></a></td>
+            <td><p>Current connection instance</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_set">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L105">at line 105</a></div>
+        <code>                    void
+    <strong>set</strong>(string $name, mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set a value using dynamic method call</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>Name of property to set</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td><p>Value to set</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_get">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L116">at line 116</a></div>
+        <code>                    mixed
+    <strong>get</strong>(string $name)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get a value using dynamic method call</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$name</td>
+                <td><p>Name of property to get</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td><p>Retrieved value</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getOptionsHandler">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L126">at line 126</a></div>
+        <code>                    <a href="../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a>
+    <strong>getOptionsHandler</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the options handler instance</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/Connection/IOptions.html"><abbr title="GenericDatabase\Interfaces\Connection\IOptions">IOptions</abbr></a></td>
+            <td><p>Current options handler</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getReportHandler">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L136">at line 136</a></div>
+        <code>                    <a href="../../GenericDatabase/Interfaces/Connection/IReport.html"><abbr title="GenericDatabase\Interfaces\Connection\IReport">IReport</abbr></a>
+    <strong>getReportHandler</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the report handler instance</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../GenericDatabase/Interfaces/Connection/IReport.html"><abbr title="GenericDatabase\Interfaces\Connection\IReport">IReport</abbr></a></td>
+            <td><p>Current report handler</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setAllMetadata">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L144">at line 144</a></div>
+        <code>                    void
+    <strong>setAllMetadata</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Reset all metadata to default values</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getAllMetadata">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L160">at line 160</a></div>
+        <code>                    object
+    <strong>getAllMetadata</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get all metadata</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>object</td>
+            <td><p>An associative object with keys 'queryRows' and 'affectedRows'.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getQueryString">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L170">at line 170</a></div>
+        <code>                    string
+    <strong>getQueryString</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the current query string</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>string</td>
+            <td><p>The query string associated with this instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setQueryString">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L180">at line 180</a></div>
+        <code>                    void
+    <strong>setQueryString</strong>(string $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set the query string</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$params</td>
+                <td><p>The query string to set.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getQueryParameters">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L190">at line 190</a></div>
+        <code>                    array|null
+    <strong>getQueryParameters</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get the current query parameters</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array|null</td>
+            <td><p>The parameters associated with this instance.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setQueryParameters">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L200">at line 200</a></div>
+        <code>                    void
+    <strong>setQueryParameters</strong>(array|null $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set the query parameters</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>array|null</td>
+                <td>$params</td>
+                <td><p>The query parameters to set.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getQueryRows">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L210">at line 210</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr>
+    <strong>getQueryRows</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get number of rows fetched</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr></td>
+            <td><p>The number of affected rows</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setQueryRows">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L220">at line 220</a></div>
+        <code>                    void
+    <strong>setQueryRows</strong>(<abbr title="GenericDatabase\Interfaces\Connection\callable|int|false">callable|int|false</abbr> $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set number of rows fetched</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\Connection\callable|int|false">callable|int|false</abbr></td>
+                <td>$params</td>
+                <td><p>The number of query rows to set.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getQueryColumns">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L232">at line 232</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr>
+    <strong>getQueryColumns</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get number of columns in result</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr></td>
+            <td><p>The number of columns in the result or false in case of an error.</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setQueryColumns">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L242">at line 242</a></div>
+        <code>                    void
+    <strong>setQueryColumns</strong>(<abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr> $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set number of columns in result</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr></td>
+                <td>$params</td>
+                <td><p>The number of columns or false if there are no columns.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getAffectedRows">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L254">at line 254</a></div>
+        <code>                    <abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr>
+    <strong>getAffectedRows</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get number of affected rows</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr></td>
+            <td><p>The number of affected rows</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setAffectedRows">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L264">at line 264</a></div>
+        <code>                    void
+    <strong>setAffectedRows</strong>(<abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr> $params)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set number of affected rows</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="GenericDatabase\Interfaces\Connection\int|false">int|false</abbr></td>
+                <td>$params</td>
+                <td><p>The number of affected rows to set.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getStatement">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L276">at line 276</a></div>
+        <code>                    mixed
+    <strong>getStatement</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Get current statement object</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setStatement">
+        <div class="location"><a href="https://github.com/nicksonjean/PHP-Generic-Database/blob/main/src/Abstract/AbstractStatements.php#L286">at line 286</a></div>
+        <code>                    void
+    <strong>setStatement</strong>(mixed $statement)
+        </code>
+    </h3>
+    <div class="details">    
+    
+            
+
+        <div class="method-description">
+                            <p><p>Set statement object</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>mixed</td>
+                <td>$statement</td>
+                <td><p>The statement to be set.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.            <br/>Learn more about the <a href="https://github.com/nicksonjean/PHP-Generic-Database" rel="noreferrer noopener" target="_blank">PHP Generic Database</a> if you like!</div></div>
+    </div>
+    </body>
+
+</html>

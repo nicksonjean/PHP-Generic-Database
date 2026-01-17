@@ -1,0 +1,633 @@
+classDiagram
+    class AbstractArguments {
+        <<abstract>>
+    }
+    class AbstractAttributes {
+        <<abstract>>
+    }
+    class AbstractFetch {
+        <<abstract>>
+    }
+    class AbstractOptions {
+        <<abstract>>
+    }
+    class AbstractStatements {
+        <<abstract>>
+    }
+    class ArgumentsHandler {
+    }
+    class ArgumentsStrategy {
+    }
+    class Arrays {
+    }
+    class AttributesHandler {
+    }
+    class Build {
+    }
+    class Builder {
+    }
+    class Chainable {
+    }
+    class Clause {
+    }
+    class Column {
+    }
+    class Compare {
+    }
+    class Condition {
+    }
+    class Connection {
+    }
+    class Criteria {
+    }
+    class DSNHandler {
+    }
+    class Datetimes {
+    }
+    class Entity {
+    }
+    class Errors {
+    }
+    class Exceptions {
+    }
+    class FetchHandler {
+    }
+    class FetchStrategy {
+    }
+    class Firebird {
+    }
+    class FirebirdConnection {
+    }
+    class FirebirdQueryBuilder {
+    }
+    class Fluent {
+    }
+    class Generators {
+    }
+    class Grouping {
+    }
+    class Hash {
+    }
+    class Having {
+    }
+    class IArguments {
+        <<interface>>
+    }
+    class IArgumentsAbstract {
+        <<interface>>
+    }
+    class IArgumentsStrategy {
+        <<interface>>
+    }
+    class IAttributes {
+        <<interface>>
+    }
+    class IAttributesAbstract {
+        <<interface>>
+    }
+    class IBuilder {
+        <<interface>>
+    }
+    class IClause {
+        <<interface>>
+    }
+    class IConnection {
+        <<interface>>
+    }
+    class IConnectionStrategy {
+        <<interface>>
+    }
+    class IConstants {
+        <<interface>>
+    }
+    class ICriteria {
+        <<interface>>
+    }
+    class IDSN {
+        <<interface>>
+    }
+    class IFetch {
+        <<interface>>
+    }
+    class IFetchAbstract {
+        <<interface>>
+    }
+    class IFetchStrategy {
+        <<interface>>
+    }
+    class INI {
+    }
+    class IOptions {
+        <<interface>>
+    }
+    class IOptionsAbstract {
+        <<interface>>
+    }
+    class IQueryBuilder {
+        <<interface>>
+    }
+    class IQueryBuilderStrategy {
+        <<interface>>
+    }
+    class IRegex {
+        <<interface>>
+    }
+    class IReport {
+        <<interface>>
+    }
+    class IStatements {
+        <<interface>>
+    }
+    class IStatementsAbstract {
+        <<interface>>
+    }
+    class ITransactions {
+        <<interface>>
+    }
+    class Insert {
+    }
+    class JSON {
+    }
+    class Join {
+    }
+    class Junction {
+    }
+    class Limit {
+    }
+    class Metadata {
+    }
+    class MySQL {
+    }
+    class MySQLiConnection {
+    }
+    class MySQLiQueryBuilder {
+    }
+    class NEON {
+    }
+    class OCI {
+    }
+    class OCIConnection {
+    }
+    class OCIQueryBuilder {
+    }
+    class ODBC {
+    }
+    class ODBCConnection {
+    }
+    class ODBCQueryBuilder {
+    }
+    class OptionsHandler {
+    }
+    class PDOConnection {
+    }
+    class PDOQueryBuilder {
+    }
+    class Path {
+    }
+    class PgSQL {
+    }
+    class PgSQLConnection {
+    }
+    class PgSQLQueryBuilder {
+    }
+    class Query {
+    }
+    class QueryBuilder {
+    }
+    class QueryMetadata {
+    }
+    class Reflections {
+    }
+    class Regex {
+    }
+    class ReportHandler {
+    }
+    class RowsMetadata {
+    }
+    class Run {
+    }
+    class SQL {
+    }
+    class SQLSrv {
+    }
+    class SQLSrvConnection {
+    }
+    class SQLSrvQueryBuilder {
+    }
+    class SQLite {
+    }
+    class SQLiteConnection {
+    }
+    class SQLiteQueryBuilder {
+    }
+    class Schemas {
+    }
+    class Select {
+    }
+    class Settings {
+    }
+    class Sorting {
+    }
+    class StatementsHandler {
+    }
+    class StaticArgs {
+    }
+    class StaticArray {
+    }
+    class Strings {
+    }
+    class TXT {
+    }
+    class Table {
+    }
+    class TransactionsHandler {
+    }
+    class Types {
+    }
+    class Validations {
+    }
+    class Where {
+    }
+    class XML {
+    }
+    class XPDO {
+    }
+    class YAML {
+    }
+
+    IArgumentsAbstract <|.. AbstractArguments: realization
+    AbstractArguments *-- IArgumentsStrategy: composition
+    AbstractArguments *-- IConnection: composition
+    AbstractArguments *-- IOptions: composition
+    IAttributesAbstract <|.. AbstractAttributes: realization
+    AbstractAttributes *-- IConnection: composition
+    AbstractAttributes *-- IOptions: composition
+    AbstractFetch *-- IConnection: composition
+    IFetchAbstract <|.. AbstractFetch: realization
+    AbstractFetch *-- IFetchStrategy: composition
+    AbstractOptions *-- IConnection: composition
+    IOptionsAbstract <|.. AbstractOptions: realization
+    AbstractStatements *-- IConnection: composition
+    AbstractStatements *-- IOptions: composition
+    AbstractStatements *-- IReport: composition
+    IStatementsAbstract <|.. AbstractStatements: realization
+    AbstractStatements *-- Metadata: composition
+    AbstractArguments <|-- ArgumentsHandler: inheritance
+    IArguments <|.. ArgumentsHandler: realization
+    IArgumentsStrategy <|.. ArgumentsStrategy: realization
+    IConnection <.. ArgumentsStrategy: dependency
+    IOptions <.. ArgumentsStrategy: dependency
+    AbstractAttributes <|-- AttributesHandler: inheritance
+    Exceptions <.. AttributesHandler: dependency
+    IAttributes <|.. AttributesHandler: realization
+    EmulatedIntEnum <|-- Build: inheritance
+    Exceptions <.. Builder: dependency
+    IBuilder <|.. Builder: realization
+    Connection <.. Chainable: dependency
+    FirebirdConnection <.. Chainable: dependency
+    MySQLiConnection <.. Chainable: dependency
+    OCIConnection <.. Chainable: dependency
+    ODBCConnection <.. Chainable: dependency
+    PDOConnection <.. Chainable: dependency
+    PgSQLConnection <.. Chainable: dependency
+    SQLSrvConnection <.. Chainable: dependency
+    SQLiteConnection <.. Chainable: dependency
+    FirebirdQueryBuilder <.. Clause: dependency
+    IClause <|.. Clause: realization
+    IQueryBuilder <.. Clause: dependency
+    MySQLiQueryBuilder <.. Clause: dependency
+    OCIQueryBuilder <.. Clause: dependency
+    ODBCQueryBuilder <.. Clause: dependency
+    PDOQueryBuilder <.. Clause: dependency
+    PgSQLQueryBuilder <.. Clause: dependency
+    SQLSrvQueryBuilder <.. Clause: dependency
+    SQLiteQueryBuilder <.. Clause: dependency
+    EmulatedStringEnum <|-- Column: inheritance
+    EmulatedStringEnum <|-- Condition: inheritance
+    FirebirdConnection <.. Connection: dependency
+    IConnection <|.. Connection: realization
+    Connection *-- IConnection: composition
+    IConnectionStrategy <|.. Connection: realization
+    MySQLiConnection <.. Connection: dependency
+    OCIConnection <.. Connection: dependency
+    ODBCConnection <.. Connection: dependency
+    PDOConnection <.. Connection: dependency
+    PgSQLConnection <.. Connection: dependency
+    SQLSrvConnection <.. Connection: dependency
+    SQLiteConnection <.. Connection: dependency
+    Exceptions <.. DSNHandler: dependency
+    DSNHandler *-- IConnection: composition
+    IDSN <|.. DSNHandler: realization
+    DSNHandler *-- IOptions: composition
+    EmulatedStringEnum <|-- Entity: inheritance
+    Exception <|-- Exceptions: inheritance
+    Throwable <.. Exceptions: dependency
+    AbstractFetch <|-- FetchHandler: inheritance
+    IFetch <|.. FetchHandler: realization
+    IFetchStrategy <|.. FetchStrategy: realization
+    ArgumentsHandler <.. FirebirdConnection: dependency
+    ArgumentsStrategy <.. FirebirdConnection: dependency
+    AttributesHandler <.. FirebirdConnection: dependency
+    DSNHandler <.. FirebirdConnection: dependency
+    Exceptions <.. FirebirdConnection: dependency
+    FetchHandler <.. FirebirdConnection: dependency
+    FetchStrategy <.. FirebirdConnection: dependency
+    IArguments <|.. FirebirdConnection: realization
+    FirebirdConnection *-- IArguments: composition
+    FirebirdConnection *-- IAttributes: composition
+    IConnection <|.. FirebirdConnection: realization
+    IDSN <|.. FirebirdConnection: realization
+    FirebirdConnection *-- IDSN: composition
+    IFetch <|.. FirebirdConnection: realization
+    FirebirdConnection *-- IFetch: composition
+    FirebirdConnection *-- IOptions: composition
+    IStatements <|.. FirebirdConnection: realization
+    FirebirdConnection *-- IStatements: composition
+    ITransactions <|.. FirebirdConnection: realization
+    FirebirdConnection *-- ITransactions: composition
+    OptionsHandler <.. FirebirdConnection: dependency
+    ReportHandler <.. FirebirdConnection: dependency
+    StatementsHandler <.. FirebirdConnection: dependency
+    TransactionsHandler <.. FirebirdConnection: dependency
+    Builder <.. FirebirdQueryBuilder: dependency
+    FirebirdQueryBuilder *-- FirebirdQueryBuilder: composition
+    IConnection <.. FirebirdQueryBuilder: dependency
+    IQueryBuilder <|.. FirebirdQueryBuilder: realization
+    static <.. FirebirdQueryBuilder: dependency
+    stdClass <.. FirebirdQueryBuilder: dependency
+    EmulatedStringEnum <|-- Grouping: inheritance
+    EmulatedStringEnum <|-- Having: inheritance
+    IArgumentsStrategy <.. IArgumentsAbstract: dependency
+    IConnection <.. IArgumentsAbstract: dependency
+    IOptions <.. IArgumentsAbstract: dependency
+    IConnection <.. IAttributesAbstract: dependency
+    IOptions <.. IAttributesAbstract: dependency
+    IQueryBuilder <.. IClause: dependency
+    IConnection <.. IConnectionStrategy: dependency
+    IConnection <.. IOptionsAbstract: dependency
+    IQueryBuilder <.. IQueryBuilderStrategy: dependency
+    EmulatedStringEnum <|-- Insert: inheritance
+    EmulatedStringEnum <|-- Join: inheritance
+    EmulatedStringEnum <|-- Junction: inheritance
+    EmulatedStringEnum <|-- Limit: inheritance
+    Metadata *-- QueryMetadata: composition
+    ArgumentsHandler <.. MySQLiConnection: dependency
+    ArgumentsStrategy <.. MySQLiConnection: dependency
+    AttributesHandler <.. MySQLiConnection: dependency
+    DSNHandler <.. MySQLiConnection: dependency
+    Exceptions <.. MySQLiConnection: dependency
+    FetchHandler <.. MySQLiConnection: dependency
+    FetchStrategy <.. MySQLiConnection: dependency
+    IArguments <|.. MySQLiConnection: realization
+    MySQLiConnection *-- IArguments: composition
+    MySQLiConnection *-- IAttributes: composition
+    IConnection <|.. MySQLiConnection: realization
+    IDSN <|.. MySQLiConnection: realization
+    MySQLiConnection *-- IDSN: composition
+    IFetch <|.. MySQLiConnection: realization
+    MySQLiConnection *-- IFetch: composition
+    MySQLiConnection *-- IOptions: composition
+    IStatements <|.. MySQLiConnection: realization
+    MySQLiConnection *-- IStatements: composition
+    ITransactions <|.. MySQLiConnection: realization
+    MySQLiConnection *-- ITransactions: composition
+    OptionsHandler <.. MySQLiConnection: dependency
+    ReportHandler <.. MySQLiConnection: dependency
+    StatementsHandler <.. MySQLiConnection: dependency
+    TransactionsHandler <.. MySQLiConnection: dependency
+    Builder <.. MySQLiQueryBuilder: dependency
+    IConnection <.. MySQLiQueryBuilder: dependency
+    IQueryBuilder <|.. MySQLiQueryBuilder: realization
+    MySQLiQueryBuilder *-- MySQLiQueryBuilder: composition
+    static <.. MySQLiQueryBuilder: dependency
+    stdClass <.. MySQLiQueryBuilder: dependency
+    ArgumentsHandler <.. OCIConnection: dependency
+    ArgumentsStrategy <.. OCIConnection: dependency
+    AttributesHandler <.. OCIConnection: dependency
+    DSNHandler <.. OCIConnection: dependency
+    Exceptions <.. OCIConnection: dependency
+    FetchHandler <.. OCIConnection: dependency
+    FetchStrategy <.. OCIConnection: dependency
+    IArguments <|.. OCIConnection: realization
+    OCIConnection *-- IArguments: composition
+    OCIConnection *-- IAttributes: composition
+    IConnection <|.. OCIConnection: realization
+    IDSN <|.. OCIConnection: realization
+    OCIConnection *-- IDSN: composition
+    IFetch <|.. OCIConnection: realization
+    OCIConnection *-- IFetch: composition
+    OCIConnection *-- IOptions: composition
+    IStatements <|.. OCIConnection: realization
+    OCIConnection *-- IStatements: composition
+    ITransactions <|.. OCIConnection: realization
+    OCIConnection *-- ITransactions: composition
+    OptionsHandler <.. OCIConnection: dependency
+    ReportHandler <.. OCIConnection: dependency
+    StatementsHandler <.. OCIConnection: dependency
+    TransactionsHandler <.. OCIConnection: dependency
+    Builder <.. OCIQueryBuilder: dependency
+    IConnection <.. OCIQueryBuilder: dependency
+    IQueryBuilder <|.. OCIQueryBuilder: realization
+    OCIQueryBuilder *-- OCIQueryBuilder: composition
+    static <.. OCIQueryBuilder: dependency
+    stdClass <.. OCIQueryBuilder: dependency
+    ArgumentsHandler <.. ODBCConnection: dependency
+    ArgumentsStrategy <.. ODBCConnection: dependency
+    AttributesHandler <.. ODBCConnection: dependency
+    DSNHandler <.. ODBCConnection: dependency
+    Exceptions <.. ODBCConnection: dependency
+    FetchHandler <.. ODBCConnection: dependency
+    FetchStrategy <.. ODBCConnection: dependency
+    IArguments <|.. ODBCConnection: realization
+    ODBCConnection *-- IArguments: composition
+    ODBCConnection *-- IAttributes: composition
+    IConnection <|.. ODBCConnection: realization
+    IDSN <|.. ODBCConnection: realization
+    ODBCConnection *-- IDSN: composition
+    IFetch <|.. ODBCConnection: realization
+    ODBCConnection *-- IFetch: composition
+    ODBCConnection *-- IOptions: composition
+    IStatements <|.. ODBCConnection: realization
+    ODBCConnection *-- IStatements: composition
+    ITransactions <|.. ODBCConnection: realization
+    ODBCConnection *-- ITransactions: composition
+    OptionsHandler <.. ODBCConnection: dependency
+    ReportHandler <.. ODBCConnection: dependency
+    StatementsHandler <.. ODBCConnection: dependency
+    TransactionsHandler <.. ODBCConnection: dependency
+    Builder <.. ODBCQueryBuilder: dependency
+    IConnection <.. ODBCQueryBuilder: dependency
+    IQueryBuilder <|.. ODBCQueryBuilder: realization
+    ODBCQueryBuilder *-- ODBCQueryBuilder: composition
+    static <.. ODBCQueryBuilder: dependency
+    stdClass <.. ODBCQueryBuilder: dependency
+    AbstractOptions <|-- OptionsHandler: inheritance
+    Exceptions <.. OptionsHandler: dependency
+    IOptions <|.. OptionsHandler: realization
+    ArgumentsHandler <.. PDOConnection: dependency
+    ArgumentsStrategy <.. PDOConnection: dependency
+    AttributesHandler <.. PDOConnection: dependency
+    DSNHandler <.. PDOConnection: dependency
+    Exceptions <.. PDOConnection: dependency
+    FetchHandler <.. PDOConnection: dependency
+    FetchStrategy <.. PDOConnection: dependency
+    IArguments <|.. PDOConnection: realization
+    PDOConnection *-- IArguments: composition
+    PDOConnection *-- IAttributes: composition
+    IConnection <|.. PDOConnection: realization
+    IDSN <|.. PDOConnection: realization
+    PDOConnection *-- IDSN: composition
+    IFetch <|.. PDOConnection: realization
+    PDOConnection *-- IFetch: composition
+    PDOConnection *-- IOptions: composition
+    IStatements <|.. PDOConnection: realization
+    PDOConnection *-- IStatements: composition
+    ITransactions <|.. PDOConnection: realization
+    PDOConnection *-- ITransactions: composition
+    OptionsHandler <.. PDOConnection: dependency
+    PDO <.. PDOConnection: dependency
+    ReportHandler <.. PDOConnection: dependency
+    StatementsHandler <.. PDOConnection: dependency
+    TransactionsHandler <.. PDOConnection: dependency
+    Builder <.. PDOQueryBuilder: dependency
+    IConnection <.. PDOQueryBuilder: dependency
+    IQueryBuilder <|.. PDOQueryBuilder: realization
+    PDOQueryBuilder *-- PDOQueryBuilder: composition
+    static <.. PDOQueryBuilder: dependency
+    stdClass <.. PDOQueryBuilder: dependency
+    Exceptions <.. Path: dependency
+    ArgumentsHandler <.. PgSQLConnection: dependency
+    ArgumentsStrategy <.. PgSQLConnection: dependency
+    AttributesHandler <.. PgSQLConnection: dependency
+    DSNHandler <.. PgSQLConnection: dependency
+    Exceptions <.. PgSQLConnection: dependency
+    FetchHandler <.. PgSQLConnection: dependency
+    FetchStrategy <.. PgSQLConnection: dependency
+    IArguments <|.. PgSQLConnection: realization
+    PgSQLConnection *-- IArguments: composition
+    PgSQLConnection *-- IAttributes: composition
+    IConnection <|.. PgSQLConnection: realization
+    IDSN <|.. PgSQLConnection: realization
+    PgSQLConnection *-- IDSN: composition
+    IFetch <|.. PgSQLConnection: realization
+    PgSQLConnection *-- IFetch: composition
+    PgSQLConnection *-- IOptions: composition
+    IStatements <|.. PgSQLConnection: realization
+    PgSQLConnection *-- IStatements: composition
+    ITransactions <|.. PgSQLConnection: realization
+    PgSQLConnection *-- ITransactions: composition
+    OptionsHandler <.. PgSQLConnection: dependency
+    ReportHandler <.. PgSQLConnection: dependency
+    StatementsHandler <.. PgSQLConnection: dependency
+    TransactionsHandler <.. PgSQLConnection: dependency
+    Builder <.. PgSQLQueryBuilder: dependency
+    IConnection <.. PgSQLQueryBuilder: dependency
+    IQueryBuilder <|.. PgSQLQueryBuilder: realization
+    PgSQLQueryBuilder *-- PgSQLQueryBuilder: composition
+    static <.. PgSQLQueryBuilder: dependency
+    stdClass <.. PgSQLQueryBuilder: dependency
+    EmulatedIntEnum <|-- Query: inheritance
+    Exception <.. QueryBuilder: dependency
+    FirebirdQueryBuilder <.. QueryBuilder: dependency
+    QueryBuilder *-- IConnection: composition
+    IQueryBuilder <|.. QueryBuilder: realization
+    QueryBuilder *-- IQueryBuilder: composition
+    IQueryBuilderStrategy <|.. QueryBuilder: realization
+    MySQLiQueryBuilder <.. QueryBuilder: dependency
+    OCIQueryBuilder <.. QueryBuilder: dependency
+    ODBCQueryBuilder <.. QueryBuilder: dependency
+    PDOQueryBuilder <.. QueryBuilder: dependency
+    PgSQLQueryBuilder <.. QueryBuilder: dependency
+    QueryBuilder *-- QueryBuilder: composition
+    SQLSrvQueryBuilder <.. QueryBuilder: dependency
+    SQLiteQueryBuilder <.. QueryBuilder: dependency
+    static <.. QueryBuilder: dependency
+    QueryMetadata *-- RowsMetadata: composition
+    ReflectionClass <.. Reflections: dependency
+    ReflectionMethod <.. Reflections: dependency
+    ReflectionObject <.. Reflections: dependency
+    Exception <.. ReportHandler: dependency
+    IConnection <.. ReportHandler: dependency
+    IReport <|.. ReportHandler: realization
+    PDOException <.. ReportHandler: dependency
+    mysqli_sql_exception <.. ReportHandler: dependency
+    stdClass <.. SQL: dependency
+    ArgumentsHandler <.. SQLSrvConnection: dependency
+    ArgumentsStrategy <.. SQLSrvConnection: dependency
+    AttributesHandler <.. SQLSrvConnection: dependency
+    DSNHandler <.. SQLSrvConnection: dependency
+    Exceptions <.. SQLSrvConnection: dependency
+    FetchHandler <.. SQLSrvConnection: dependency
+    FetchStrategy <.. SQLSrvConnection: dependency
+    IArguments <|.. SQLSrvConnection: realization
+    SQLSrvConnection *-- IArguments: composition
+    SQLSrvConnection *-- IAttributes: composition
+    IConnection <|.. SQLSrvConnection: realization
+    IDSN <|.. SQLSrvConnection: realization
+    SQLSrvConnection *-- IDSN: composition
+    IFetch <|.. SQLSrvConnection: realization
+    SQLSrvConnection *-- IFetch: composition
+    SQLSrvConnection *-- IOptions: composition
+    IStatements <|.. SQLSrvConnection: realization
+    SQLSrvConnection *-- IStatements: composition
+    ITransactions <|.. SQLSrvConnection: realization
+    SQLSrvConnection *-- ITransactions: composition
+    OptionsHandler <.. SQLSrvConnection: dependency
+    ReportHandler <.. SQLSrvConnection: dependency
+    StatementsHandler <.. SQLSrvConnection: dependency
+    TransactionsHandler <.. SQLSrvConnection: dependency
+    Builder <.. SQLSrvQueryBuilder: dependency
+    IConnection <.. SQLSrvQueryBuilder: dependency
+    IQueryBuilder <|.. SQLSrvQueryBuilder: realization
+    SQLSrvQueryBuilder *-- SQLSrvQueryBuilder: composition
+    static <.. SQLSrvQueryBuilder: dependency
+    stdClass <.. SQLSrvQueryBuilder: dependency
+    ArgumentsHandler <.. SQLiteConnection: dependency
+    ArgumentsStrategy <.. SQLiteConnection: dependency
+    AttributesHandler <.. SQLiteConnection: dependency
+    DSNHandler <.. SQLiteConnection: dependency
+    Exceptions <.. SQLiteConnection: dependency
+    FetchHandler <.. SQLiteConnection: dependency
+    FetchStrategy <.. SQLiteConnection: dependency
+    IArguments <|.. SQLiteConnection: realization
+    SQLiteConnection *-- IArguments: composition
+    SQLiteConnection *-- IAttributes: composition
+    IConnection <|.. SQLiteConnection: realization
+    IDSN <|.. SQLiteConnection: realization
+    SQLiteConnection *-- IDSN: composition
+    IFetch <|.. SQLiteConnection: realization
+    SQLiteConnection *-- IFetch: composition
+    SQLiteConnection *-- IOptions: composition
+    IStatements <|.. SQLiteConnection: realization
+    SQLiteConnection *-- IStatements: composition
+    ITransactions <|.. SQLiteConnection: realization
+    SQLiteConnection *-- ITransactions: composition
+    OptionsHandler <.. SQLiteConnection: dependency
+    ReportHandler <.. SQLiteConnection: dependency
+    SQLite3 <.. SQLiteConnection: dependency
+    StatementsHandler <.. SQLiteConnection: dependency
+    TransactionsHandler <.. SQLiteConnection: dependency
+    Builder <.. SQLiteQueryBuilder: dependency
+    IConnection <.. SQLiteQueryBuilder: dependency
+    IQueryBuilder <|.. SQLiteQueryBuilder: realization
+    SQLiteQueryBuilder *-- SQLiteQueryBuilder: composition
+    static <.. SQLiteQueryBuilder: dependency
+    stdClass <.. SQLiteQueryBuilder: dependency
+    self <.. Schemas: dependency
+    EmulatedStringEnum <|-- Select: inheritance
+    EmulatedStringEnum <|-- Sorting: inheritance
+    AbstractStatements <|-- StatementsHandler: inheritance
+    Exception <.. StatementsHandler: dependency
+    IConnection <.. StatementsHandler: dependency
+    IStatements <|.. StatementsHandler: realization
+    PDOStatement <.. StatementsHandler: dependency
+    mysqli_stmt <.. StatementsHandler: dependency
+    EmulatedStringEnum <|-- Table: inheritance
+    ErrorException <.. TransactionsHandler: dependency
+    TransactionsHandler *-- IConnection: composition
+    ITransactions <|.. TransactionsHandler: realization
+    EmulatedStringEnum <|-- Types: inheritance
+    EmulatedStringEnum <|-- Where: inheritance
+    SimpleXMLElement <.. XML: dependency
+    XMLReader <.. XML: dependency
+    PDO <|-- XPDO: inheritance

@@ -1,0 +1,13 @@
+{
+  "driver": "access",
+  "database": "../../resources/database/access/DB.ACCDB",
+  "charset": "utf8",
+  "options": [
+    {
+      "ODBC::ATTR_PERSISTENT": true,
+      "ODBC::ATTR_CONNECT_TIMEOUT": 28800,
+      "ODBC::ATTR_DEFAULT_FETCH_MODE": "ODBC::FETCH_OBJ"
+    }
+  ],
+  "exception": true
+}

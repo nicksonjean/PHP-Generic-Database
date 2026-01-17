@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/html/src/Helpers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=10.1.5" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/html/src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Helpers</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Schema.php.html#7">GenericDatabase\Helpers\Schema</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Generators.php.html#48">GenericDatabase\Helpers\Generators</a></td><td class="text-right">65%</td></tr>
+       <tr><td><a href="Translate.php.html#76">GenericDatabase\Helpers\Translate</a></td><td class="text-right">82%</td></tr>
+       <tr><td><a href="Arrays.php.html#112">GenericDatabase\Helpers\Arrays</a></td><td class="text-right">86%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Schema.php.html#7">GenericDatabase\Helpers\Schema</a></td><td class="text-right">930</td></tr>
+       <tr><td><a href="Translate.php.html#76">GenericDatabase\Helpers\Translate</a></td><td class="text-right">44</td></tr>
+       <tr><td><a href="Arrays.php.html#112">GenericDatabase\Helpers\Arrays</a></td><td class="text-right">40</td></tr>
+       <tr><td><a href="Generators.php.html#48">GenericDatabase\Helpers\Generators</a></td><td class="text-right">29</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Arrays.php.html#219"><abbr title="GenericDatabase\Helpers\Arrays::isDepthArray">isDepthArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Arrays.php.html#311"><abbr title="GenericDatabase\Helpers\Arrays::arraySafe">arraySafe</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Generators.php.html#153"><abbr title="GenericDatabase\Helpers\Generators::generateHash">generateHash</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schema.php.html#12"><abbr title="GenericDatabase\Helpers\Schema::allColumnsNull">allColumnsNull</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schema.php.html#24"><abbr title="GenericDatabase\Helpers\Schema::parse">parse</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schema.php.html#48"><abbr title="GenericDatabase\Helpers\Schema::analyze">analyze</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schema.php.html#76"><abbr title="GenericDatabase\Helpers\Schema::structure">structure</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schema.php.html#95"><abbr title="GenericDatabase\Helpers\Schema::write">write</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Translate.php.html#222"><abbr title="GenericDatabase\Helpers\Translate::applyQuotes">applyQuotes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Translate.php.html#277"><abbr title="GenericDatabase\Helpers\Translate::applyQuotesFunction">applyQuotesFunction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Translate.php.html#256"><abbr title="GenericDatabase\Helpers\Translate::applyWildCard">applyWildCard</abbr></a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Arrays.php.html#205"><abbr title="GenericDatabase\Helpers\Arrays::isMultidimensional">isMultidimensional</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Translate.php.html#267"><abbr title="GenericDatabase\Helpers\Translate::isFunction">isFunction</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Translate.php.html#239"><abbr title="GenericDatabase\Helpers\Translate::encloseWord">encloseWord</abbr></a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="Translate.php.html#360"><abbr title="GenericDatabase\Helpers\Translate::escape">escape</abbr></a></td><td class="text-right">80%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Schema.php.html#48"><abbr title="GenericDatabase\Helpers\Schema::analyze">analyze</abbr></a></td><td class="text-right">156</td></tr>
+       <tr><td><a href="Schema.php.html#24"><abbr title="GenericDatabase\Helpers\Schema::parse">parse</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Schema.php.html#95"><abbr title="GenericDatabase\Helpers\Schema::write">write</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Arrays.php.html#311"><abbr title="GenericDatabase\Helpers\Arrays::arraySafe">arraySafe</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Schema.php.html#12"><abbr title="GenericDatabase\Helpers\Schema::allColumnsNull">allColumnsNull</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Arrays.php.html#219"><abbr title="GenericDatabase\Helpers\Arrays::isDepthArray">isDepthArray</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Generators.php.html#153"><abbr title="GenericDatabase\Helpers\Generators::generateHash">generateHash</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Schema.php.html#76"><abbr title="GenericDatabase\Helpers\Schema::structure">structure</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Translate.php.html#277"><abbr title="GenericDatabase\Helpers\Translate::applyQuotesFunction">applyQuotesFunction</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Translate.php.html#222"><abbr title="GenericDatabase\Helpers\Translate::applyQuotes">applyQuotes</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Translate.php.html#360"><abbr title="GenericDatabase\Helpers\Translate::escape">escape</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Translate.php.html#256"><abbr title="GenericDatabase\Helpers\Translate::applyWildCard">applyWildCard</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Arrays.php.html#205"><abbr title="GenericDatabase\Helpers\Arrays::isMultidimensional">isMultidimensional</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Translate.php.html#267"><abbr title="GenericDatabase\Helpers\Translate::isFunction">isFunction</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Translate.php.html#239"><abbr title="GenericDatabase\Helpers\Translate::encloseWord">encloseWord</abbr></a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.5</a> using <a href="https://www.php.net/" target="_top">PHP 8.3.16</a> and <a href="https://phpunit.de/">PHPUnit 10.4-dev</a> at Sun Jan 19 15:21:55 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=10.1.5" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=10.1.5" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=10.1.5" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([1,0,0,0,0,0,0,1,0,2,1,11], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([10,0,0,0,0,0,1,1,1,2,1,101], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[86.66666666666667,37,"<a href=\"Arrays.php.html#112\">GenericDatabase\\Helpers\\Arrays<\/a>"],[100,48,"<a href=\"Compare.php.html#60\">GenericDatabase\\Helpers\\Compare<\/a>"],[100,1,"<a href=\"CustomException.php.html#26\">GenericDatabase\\Helpers\\CustomException<\/a>"],[100,5,"<a href=\"Errors.php.html#45\">GenericDatabase\\Helpers\\Errors<\/a>"],[65.11627906976744,17,"<a href=\"Generators.php.html#48\">GenericDatabase\\Helpers\\Generators<\/a>"],[100,11,"<a href=\"INI.php.html#35\">GenericDatabase\\Helpers\\INI<\/a>"],[100,4,"<a href=\"JSON.php.html#37\">GenericDatabase\\Helpers\\JSON<\/a>"],[96.29629629629629,9,"<a href=\"Path.php.html#41\">GenericDatabase\\Helpers\\Path<\/a>"],[100,22,"<a href=\"Reflections.php.html#77\">GenericDatabase\\Helpers\\Reflections<\/a>"],[100,85,"<a href=\"RegexDateTime.php.html#102\">GenericDatabase\\Helpers\\RegexDateTime<\/a>"],[0,30,"<a href=\"Schema.php.html#7\">GenericDatabase\\Helpers\\Schema<\/a>"],[100,1,"<a href=\"Strings.php.html#5\">GenericDatabase\\Helpers\\Strings<\/a>"],[82.10526315789474,37,"<a href=\"Translate.php.html#76\">GenericDatabase\\Helpers\\Translate<\/a>"],[100,16,"<a href=\"Validations.php.html#60\">GenericDatabase\\Helpers\\Validations<\/a>"],[100,11,"<a href=\"XML.php.html#66\">GenericDatabase\\Helpers\\XML<\/a>"],[100,4,"<a href=\"YAML.php.html#37\">GenericDatabase\\Helpers\\YAML<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[100,1,"<a href=\"Arrays.php.html#121\">GenericDatabase\\Helpers\\Arrays::exceptByKeys<\/a>"],[100,1,"<a href=\"Arrays.php.html#133\">GenericDatabase\\Helpers\\Arrays::exceptByValues<\/a>"],[100,1,"<a href=\"Arrays.php.html#147\">GenericDatabase\\Helpers\\Arrays::matchValues<\/a>"],[100,1,"<a href=\"Arrays.php.html#165\">GenericDatabase\\Helpers\\Arrays::recombine<\/a>"],[100,1,"<a href=\"Arrays.php.html#177\">GenericDatabase\\Helpers\\Arrays::assocToIndex<\/a>"],[100,5,"<a href=\"Arrays.php.html#188\">GenericDatabase\\Helpers\\Arrays::isAssoc<\/a>"],[66.66666666666666,2,"<a href=\"Arrays.php.html#205\">GenericDatabase\\Helpers\\Arrays::isMultidimensional<\/a>"],[0,3,"<a href=\"Arrays.php.html#219\">GenericDatabase\\Helpers\\Arrays::isDepthArray<\/a>"],[100,3,"<a href=\"Arrays.php.html#236\">GenericDatabase\\Helpers\\Arrays::arrayValuesRecursive<\/a>"],[100,3,"<a href=\"Arrays.php.html#255\">GenericDatabase\\Helpers\\Arrays::assocToIndexCombine<\/a>"],[100,3,"<a href=\"Arrays.php.html#275\">GenericDatabase\\Helpers\\Arrays::arrayFlatten<\/a>"],[100,3,"<a href=\"Arrays.php.html#293\">GenericDatabase\\Helpers\\Arrays::arrayGroupBy<\/a>"],[0,4,"<a href=\"Arrays.php.html#311\">GenericDatabase\\Helpers\\Arrays::arraySafe<\/a>"],[100,6,"<a href=\"Arrays.php.html#328\">GenericDatabase\\Helpers\\Arrays::makeArgs<\/a>"],[100,7,"<a href=\"Compare.php.html#68\">GenericDatabase\\Helpers\\Compare::connection<\/a>"],[100,15,"<a href=\"Compare.php.html#91\">GenericDatabase\\Helpers\\Compare::getResourceConnectionType<\/a>"],[100,26,"<a href=\"Compare.php.html#119\">GenericDatabase\\Helpers\\Compare::getObjectConnectionType<\/a>"],[100,1,"<a href=\"CustomException.php.html#35\">GenericDatabase\\Helpers\\CustomException::__construct<\/a>"],[100,1,"<a href=\"Errors.php.html#60\">GenericDatabase\\Helpers\\Errors::setError<\/a>"],[100,1,"<a href=\"Errors.php.html#71\">GenericDatabase\\Helpers\\Errors::turnOff<\/a>"],[100,1,"<a href=\"Errors.php.html#81\">GenericDatabase\\Helpers\\Errors::turnOn<\/a>"],[100,2,"<a href=\"Errors.php.html#93\">GenericDatabase\\Helpers\\Errors::throw<\/a>"],[100,4,"<a href=\"Generators.php.html#61\">GenericDatabase\\Helpers\\Generators::setConstant<\/a>"],[100,7,"<a href=\"Generators.php.html#93\">GenericDatabase\\Helpers\\Generators::setType<\/a>"],[100,2,"<a href=\"Generators.php.html#116\">GenericDatabase\\Helpers\\Generators::generateKeyName<\/a>"],[100,1,"<a href=\"Generators.php.html#135\">GenericDatabase\\Helpers\\Generators::generateOptionKey<\/a>"],[0,3,"<a href=\"Generators.php.html#153\">GenericDatabase\\Helpers\\Generators::generateHash<\/a>"],[100,3,"<a href=\"INI.php.html#43\">GenericDatabase\\Helpers\\INI::isValidINI<\/a>"],[100,1,"<a href=\"INI.php.html#58\">GenericDatabase\\Helpers\\INI::parseINI<\/a>"],[100,7,"<a href=\"INI.php.html#69\">GenericDatabase\\Helpers\\INI::parseIniFile<\/a>"],[100,3,"<a href=\"JSON.php.html#45\">GenericDatabase\\Helpers\\JSON::isValidJSON<\/a>"],[100,1,"<a href=\"JSON.php.html#66\">GenericDatabase\\Helpers\\JSON::parseJSON<\/a>"],[93.75,6,"<a href=\"Path.php.html#49\">GenericDatabase\\Helpers\\Path::toAbsolute<\/a>"],[100,3,"<a href=\"Path.php.html#81\">GenericDatabase\\Helpers\\Path::isAbsolute<\/a>"],[100,2,"<a href=\"Reflections.php.html#92\">GenericDatabase\\Helpers\\Reflections::getSingletonInstance<\/a>"],[100,1,"<a href=\"Reflections.php.html#107\">GenericDatabase\\Helpers\\Reflections::isSingletonMethodExists<\/a>"],[100,1,"<a href=\"Reflections.php.html#119\">GenericDatabase\\Helpers\\Reflections::getClassInstance<\/a>"],[100,1,"<a href=\"Reflections.php.html#131\">GenericDatabase\\Helpers\\Reflections::getClassConstants<\/a>"],[100,1,"<a href=\"Reflections.php.html#144\">GenericDatabase\\Helpers\\Reflections::getClassConstantName<\/a>"],[100,1,"<a href=\"Reflections.php.html#157\">GenericDatabase\\Helpers\\Reflections::getClassPropertyName<\/a>"],[100,1,"<a href=\"Reflections.php.html#171\">GenericDatabase\\Helpers\\Reflections::createObjectAndSetPropertiesCaseInsensitive<\/a>"],[100,1,"<a href=\"Reflections.php.html#188\">GenericDatabase\\Helpers\\Reflections::createReflectionObject<\/a>"],[100,5,"<a href=\"Reflections.php.html#201\">GenericDatabase\\Helpers\\Reflections::createObject<\/a>"],[100,5,"<a href=\"Reflections.php.html#226\">GenericDatabase\\Helpers\\Reflections::setPropertiesCaseInsensitive<\/a>"],[100,3,"<a href=\"Reflections.php.html#255\">GenericDatabase\\Helpers\\Reflections::argsToArray<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#185\">GenericDatabase\\Helpers\\RegexDateTime::getRegex<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#195\">GenericDatabase\\Helpers\\RegexDateTime::regexHMSM<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#207\">GenericDatabase\\Helpers\\RegexDateTime::regexHMSZ<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#219\">GenericDatabase\\Helpers\\RegexDateTime::regexHMS<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#229\">GenericDatabase\\Helpers\\RegexDateTime::regexYDM<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#243\">GenericDatabase\\Helpers\\RegexDateTime::regexYMD<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#257\">GenericDatabase\\Helpers\\RegexDateTime::regexMDY<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#271\">GenericDatabase\\Helpers\\RegexDateTime::regexDMY<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#287\">GenericDatabase\\Helpers\\RegexDateTime::regexYDMHMS<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#303\">GenericDatabase\\Helpers\\RegexDateTime::regexYMDHMS<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#319\">GenericDatabase\\Helpers\\RegexDateTime::regexMDYHMS<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#335\">GenericDatabase\\Helpers\\RegexDateTime::regexDMYHMS<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#349\">GenericDatabase\\Helpers\\RegexDateTime::getRegexp<\/a>"],[100,3,"<a href=\"RegexDateTime.php.html#364\">GenericDatabase\\Helpers\\RegexDateTime::getSeparators<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#380\">GenericDatabase\\Helpers\\RegexDateTime::setSeparators<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#400\">GenericDatabase\\Helpers\\RegexDateTime::setMask<\/a>"],[100,40,"<a href=\"RegexDateTime.php.html#426\">GenericDatabase\\Helpers\\RegexDateTime::buildMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#498\">GenericDatabase\\Helpers\\RegexDateTime::buildTimeMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#514\">GenericDatabase\\Helpers\\RegexDateTime::buildTimeWithMeridiemMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#530\">GenericDatabase\\Helpers\\RegexDateTime::buildTimeWithTimespanMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#545\">GenericDatabase\\Helpers\\RegexDateTime::buildTimeWithSecondsMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#561\">GenericDatabase\\Helpers\\RegexDateTime::buildTimeWithSecondsAndMeridiemMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#577\">GenericDatabase\\Helpers\\RegexDateTime::buildTimeWithSecondsAndTimespanMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#592\">GenericDatabase\\Helpers\\RegexDateTime::buildDateMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#612\">GenericDatabase\\Helpers\\RegexDateTime::buildDateTimeMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#634\">GenericDatabase\\Helpers\\RegexDateTime::buildDateTimeWithMeridiemMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#661\">GenericDatabase\\Helpers\\RegexDateTime::buildDateTimeWithSecondsAndMeridiemMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#687\">GenericDatabase\\Helpers\\RegexDateTime::buildDateTimeWithSecondsMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#709\">GenericDatabase\\Helpers\\RegexDateTime::buildDateTimeWithTimespanMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#736\">GenericDatabase\\Helpers\\RegexDateTime::buildDateTimeWithSecondsAndTimespanMask<\/a>"],[100,1,"<a href=\"RegexDateTime.php.html#758\">GenericDatabase\\Helpers\\RegexDateTime::loadMaskFile<\/a>"],[100,4,"<a href=\"RegexDateTime.php.html#790\">GenericDatabase\\Helpers\\RegexDateTime::getMask<\/a>"],[100,3,"<a href=\"RegexDateTime.php.html#821\">GenericDatabase\\Helpers\\RegexDateTime::fetchSeparators<\/a>"],[100,6,"<a href=\"RegexDateTime.php.html#839\">GenericDatabase\\Helpers\\RegexDateTime::getPattern<\/a>"],[0,4,"<a href=\"Schema.php.html#12\">GenericDatabase\\Helpers\\Schema::allColumnsNull<\/a>"],[0,6,"<a href=\"Schema.php.html#24\">GenericDatabase\\Helpers\\Schema::parse<\/a>"],[0,12,"<a href=\"Schema.php.html#48\">GenericDatabase\\Helpers\\Schema::analyze<\/a>"],[0,3,"<a href=\"Schema.php.html#76\">GenericDatabase\\Helpers\\Schema::structure<\/a>"],[0,5,"<a href=\"Schema.php.html#95\">GenericDatabase\\Helpers\\Schema::write<\/a>"],[100,1,"<a href=\"Strings.php.html#7\">GenericDatabase\\Helpers\\Strings::toCamelize<\/a>"],[100,2,"<a href=\"Translate.php.html#151\">GenericDatabase\\Helpers\\Translate::loadReservedWords<\/a>"],[100,1,"<a href=\"Translate.php.html#176\">GenericDatabase\\Helpers\\Translate::escapeType<\/a>"],[100,3,"<a href=\"Translate.php.html#200\">GenericDatabase\\Helpers\\Translate::replaceParameters<\/a>"],[0,2,"<a href=\"Translate.php.html#222\">GenericDatabase\\Helpers\\Translate::applyQuotes<\/a>"],[80,2,"<a href=\"Translate.php.html#239\">GenericDatabase\\Helpers\\Translate::encloseWord<\/a>"],[50,2,"<a href=\"Translate.php.html#256\">GenericDatabase\\Helpers\\Translate::applyWildCard<\/a>"],[75,2,"<a href=\"Translate.php.html#267\">GenericDatabase\\Helpers\\Translate::isFunction<\/a>"],[0,3,"<a href=\"Translate.php.html#277\">GenericDatabase\\Helpers\\Translate::applyQuotesFunction<\/a>"],[100,9,"<a href=\"Translate.php.html#300\">GenericDatabase\\Helpers\\Translate::processWord<\/a>"],[100,1,"<a href=\"Translate.php.html#347\">GenericDatabase\\Helpers\\Translate::processCondition<\/a>"],[80,4,"<a href=\"Translate.php.html#360\">GenericDatabase\\Helpers\\Translate::escape<\/a>"],[100,2,"<a href=\"Translate.php.html#378\">GenericDatabase\\Helpers\\Translate::arguments<\/a>"],[100,2,"<a href=\"Translate.php.html#394\">GenericDatabase\\Helpers\\Translate::binding<\/a>"],[100,1,"<a href=\"Translate.php.html#409\">GenericDatabase\\Helpers\\Translate::bindWithQuestionMark<\/a>"],[100,1,"<a href=\"Translate.php.html#421\">GenericDatabase\\Helpers\\Translate::bindWithDollarSign<\/a>"],[100,1,"<a href=\"Validations.php.html#68\">GenericDatabase\\Helpers\\Validations::isNumber<\/a>"],[100,2,"<a href=\"Validations.php.html#81\">GenericDatabase\\Helpers\\Validations::isBoolean<\/a>"],[100,2,"<a href=\"Validations.php.html#95\">GenericDatabase\\Helpers\\Validations::randomString<\/a>"],[100,1,"<a href=\"Validations.php.html#112\">GenericDatabase\\Helpers\\Validations::detectQueryType<\/a>"],[100,1,"<a href=\"Validations.php.html#131\">GenericDatabase\\Helpers\\Validations::isSelect<\/a>"],[100,1,"<a href=\"Validations.php.html#143\">GenericDatabase\\Helpers\\Validations::isInsert<\/a>"],[100,1,"<a href=\"Validations.php.html#155\">GenericDatabase\\Helpers\\Validations::isUpdate<\/a>"],[100,1,"<a href=\"Validations.php.html#167\">GenericDatabase\\Helpers\\Validations::isDelete<\/a>"],[100,1,"<a href=\"Validations.php.html#179\">GenericDatabase\\Helpers\\Validations::isReplace<\/a>"],[100,1,"<a href=\"Validations.php.html#191\">GenericDatabase\\Helpers\\Validations::isMerge<\/a>"],[100,4,"<a href=\"Validations.php.html#200\">GenericDatabase\\Helpers\\Validations::detectTypes<\/a>"],[100,3,"<a href=\"XML.php.html#74\">GenericDatabase\\Helpers\\XML::isValidXML<\/a>"],[100,5,"<a href=\"XML.php.html#99\">GenericDatabase\\Helpers\\XML::convertData<\/a>"],[100,1,"<a href=\"XML.php.html#118\">GenericDatabase\\Helpers\\XML::decodeXML<\/a>"],[100,2,"<a href=\"XML.php.html#129\">GenericDatabase\\Helpers\\XML::parseXML<\/a>"],[100,3,"<a href=\"YAML.php.html#45\">GenericDatabase\\Helpers\\YAML::isValidYAML<\/a>"],[100,1,"<a href=\"YAML.php.html#59\">GenericDatabase\\Helpers\\YAML::parseYAML<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>
