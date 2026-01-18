@@ -6,7 +6,6 @@ namespace GenericDatabase\Engine\JSON\Connection\Statements;
 
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Engine\FlatFile\DataProcessor;
 use GenericDatabase\Helpers\Exceptions;
 
 /**

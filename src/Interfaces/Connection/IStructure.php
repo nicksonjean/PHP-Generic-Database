@@ -64,5 +64,5 @@ interface IStructure
      * @param Structure $structure The structure.
      * @return void
      */
-    public function setStructure(Structure $structure): void;
+    public function setStructure(array|Structure|Exceptions $structure): void;
 }

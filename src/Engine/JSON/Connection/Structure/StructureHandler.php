@@ -9,6 +9,7 @@ use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Parsers\Schema;
 use GenericDatabase\Interfaces\Connection\IStructure;
 use GenericDatabase\Generic\Connection\Structure;
+use GenericDatabase\Engine\JSON\Connection\JSON;
 
 #[AllowDynamicProperties]
 class StructureHandler implements IStructure
@@ -33,6 +34,17 @@ class StructureHandler implements IStructure
      */
     private static ?Structure $schema = null;
 
+    /**
+     * Current active table
+     * @var string|null $currentTable
+     */
+    private static ?string $currentTable = null;
+
+    /**
+     * Current data from the JSON file
+     * @var array $data
+     */
+    private static array $data = [];
 
     /**
      * Constructor for the StructureHandler.
@@ -173,7 +185,6 @@ class StructureHandler implements IStructure
      * Get the structure.
      *
      * @return Structure|array|null $structure The structure.
-     * @return void
      */
     public function getStructure(): ?Structure
     {
@@ -186,7 +197,7 @@ class StructureHandler implements IStructure
      * @param Structure $structure The structure.
      * @return void
      */
-    public function setStructure(Structure $structure): void
+    public function setStructure(array|Structure|Exceptions $structure): void
     {
         self::$schema = $structure;
     }
@@ -195,7 +206,6 @@ class StructureHandler implements IStructure
      * Get the file.
      *
      * @return string|null $file The file.
-     * @return void
      */
     public function getFile(): ?string
     {
@@ -203,14 +213,150 @@ class StructureHandler implements IStructure
     }
 
     /**
-     * Get the data.
+     * Get the current active table.
      *
-     * @return array|null $data The data.
+     * @return string|null
+     */
+    public function getCurrentTable(): ?string
+    {
+        return self::$currentTable;
+    }
+
+    /**
+     * Set the current active table.
+     *
+     * @param string|null $table The table name.
      * @return void
      */
-    public function getData(): ?array
+    public function setCurrentTable(?string $table): void
     {
-        return self::$schema?->getData();
+        self::$currentTable = $table;
+    }
+
+    /**
+     * Get the current data.
+     *
+     * @return array
+     */
+    public function getData(): array
+    {
+        return self::$data;
+    }
+
+    /**
+     * Set the data.
+     *
+     * @param array $data The data.
+     * @return void
+     */
+    public function setData(array $data): void
+    {
+        self::$data = $data;
+    }
+
+    /**
+     * Load data from a JSON table file.
+     *
+     * @param string|null $table The table name (JSON file without extension).
+     * @return array
+     * @throws Exceptions
+     */
+    public function load(?string $table = null): array
+    {
+        if ($table !== null) {
+            self::$currentTable = $table;
+        }
+
+        if (empty(self::$currentTable)) {
+            return [];
+        }
+
+        $database = $this->get('database');
+
+        // For in-memory database, data is stored in memory only
+        if ($database === 'memory') {
+            return self::$data;
+        }
+
+        $filePath = $this->getTablePath(self::$currentTable);
+
+        if (!file_exists($filePath)) {
+            // Create empty file
+            file_put_contents($filePath, '[]');
+            return [];
+        }
+
+        $content = file_get_contents($filePath);
+        $data = json_decode($content, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exceptions('Invalid JSON file: ' . json_last_error_msg());
+        }
+
+        if (!is_array($data)) {
+            throw new Exceptions('JSON file must contain an array of objects');
+        }
+
+        // Apply schema if available for this table (supports TableName mapping)
+        if ($database !== '' && Schema::exists($database)) {
+            $schema = Schema::getSchemaForFile($database, self::$currentTable);
+            if ($schema !== null) {
+                $data = Schema::applySchema($data, $schema);
+            }
+        }
+
+        self::$data = $data;
+
+        return $data;
+    }
+
+    /**
+     * Save data to a JSON table file.
+     *
+     * @param array $data The data to save.
+     * @param string|null $table The table name (optional).
+     * @return bool
+     */
+    public function save(array $data, ?string $table = null): bool
+    {
+        if ($table !== null) {
+            self::$currentTable = $table;
+        }
+
+        if (empty(self::$currentTable)) {
+            return false;
+        }
+
+        $database = $this->get('database');
+
+        // For in-memory database, just update the data array
+        if ($database === 'memory') {
+            self::$data = $data;
+            return true;
+        }
+
+        $filePath = $this->getTablePath(self::$currentTable);
+        $flags = JSON::getDefaultEncodingFlags();
+        $content = json_encode($data, $flags);
+
+        if ($content === false) {
+            return false;
+        }
+
+        $result = file_put_contents($filePath, $content);
+
+        return $result !== false;
+    }
+
+    /**
+     * Reset the data state.
+     *
+     * @return void
+     */
+    public function reset(): void
+    {
+        self::$data = [];
+        self::$currentTable = null;
     }
 
     /**
@@ -267,4 +413,3 @@ class StructureHandler implements IStructure
         return self::$schema;
     }
 }
-

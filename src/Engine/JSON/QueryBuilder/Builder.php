@@ -15,7 +15,7 @@ use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Interfaces\QueryBuilder\IBuilder;
 use GenericDatabase\Engine\JSON\Connection\JSON;
-use GenericDatabase\Engine\FlatFile\DataProcessor;
+use GenericDatabase\Generic\FlatFiles\DataProcessor;
 
 /**
  * Builder class for JSON QueryBuilder.
@@ -454,5 +454,3 @@ class Builder implements IBuilder
         return $values;
     }
 }
-
-

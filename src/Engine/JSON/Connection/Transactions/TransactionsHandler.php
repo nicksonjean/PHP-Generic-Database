@@ -1,68 +1,155 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GenericDatabase\Engine\JSON\Connection\Transactions;
 
-use ErrorException;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\ITransactions;
 
+/**
+ * Handles transaction operations for JSON connections.
+ * Implements backup/restore mechanism for flat file transactions.
+ *
+ * @package GenericDatabase\Engine\JSON\Connection\Transactions
+ */
 class TransactionsHandler implements ITransactions
 {
+    /**
+     * Transaction counter for nested transactions
+     * @var int
+     */
     protected static int $transactionCounter = 0;
 
+    /**
+     * Transaction state flag
+     * @var bool
+     */
     protected static bool $inTransaction = false;
 
+    /**
+     * Backup data for transaction rollback
+     * @var array|null
+     */
+    protected static ?array $transactionBackup = null;
+
+    /**
+     * Connection instance
+     * @var IConnection
+     */
     protected static IConnection $instance;
 
+    /**
+     * Constructor.
+     *
+     * @param IConnection $instance The connection instance.
+     */
     public function __construct(IConnection $instance)
     {
         self::$instance = $instance;
     }
 
+    /**
+     * Get the connection instance.
+     *
+     * @return IConnection
+     */
     public function getInstance(): IConnection
     {
         return self::$instance;
     }
 
+    /**
+     * Begin a transaction.
+     * For JSON files, this creates a backup of the current data.
+     *
+     * @return bool
+     */
     public function beginTransaction(): bool
     {
-        set_error_handler(function ($severity, $message, $file, $line) {
-            throw new ErrorException($message, 0, $severity, $file, $line);
-        });
-        if (!self::$transactionCounter++) {
-            self::$inTransaction = true;
-            return $this->getInstance()->getConnection()->exec('BEGIN TRANSACTION');
+        if (self::$inTransaction) {
+            self::$transactionCounter++;
+            return true;
         }
-        $this->getInstance()->getConnection()->exec('SAVEPOINT trans' . (self::$transactionCounter));
-        return self::$transactionCounter >= 0;
+
+        // Backup current data for potential rollback
+        if (method_exists($this->getInstance(), 'getData')) {
+            self::$transactionBackup = $this->getInstance()->getData();
+        }
+
+        self::$inTransaction = true;
+        self::$transactionCounter = 1;
+        return true;
     }
 
+    /**
+     * Commit the transaction.
+     * For JSON files, this saves the current data to file.
+     *
+     * @return bool
+     */
     public function commit(): bool
     {
-        restore_error_handler();
-        if (!--self::$transactionCounter) {
-            self::$inTransaction = false;
-            return $this->getInstance()->getConnection()->exec('COMMIT');
-        } else {
-            return self::$transactionCounter >= 0;
+        if (!self::$inTransaction) {
+            return false;
         }
+
+        self::$transactionCounter--;
+
+        if (self::$transactionCounter > 0) {
+            return true;
+        }
+
+        // Save data to file
+        $result = true;
+        if (method_exists($this->getInstance(), 'save') && method_exists($this->getInstance(), 'getData')) {
+            $result = $this->getInstance()->save($this->getInstance()->getData());
+        }
+
+        self::$inTransaction = false;
+        self::$transactionBackup = null;
+        self::$transactionCounter = 0;
+
+        return $result;
     }
 
+    /**
+     * Rollback the transaction.
+     * For JSON files, this restores the backup data.
+     *
+     * @return bool
+     */
+    public function rollback(): bool
+    {
+        if (!self::$inTransaction) {
+            return false;
+        }
+
+        self::$transactionCounter--;
+
+        if (self::$transactionCounter > 0) {
+            return true;
+        }
+
+        // Restore backup data
+        if (self::$transactionBackup !== null && method_exists($this->getInstance(), 'setData')) {
+            $this->getInstance()->setData(self::$transactionBackup);
+        }
+
+        self::$inTransaction = false;
+        self::$transactionBackup = null;
+        self::$transactionCounter = 0;
+
+        return true;
+    }
+
+    /**
+     * Check if currently in a transaction.
+     *
+     * @return bool
+     */
     public function inTransaction(): bool
     {
         return self::$inTransaction;
     }
-
-    public function rollback(): bool
-    {
-        if (--self::$transactionCounter) {
-            $this->getInstance()->getConnection()->exec(
-                'ROLLBACK TO trans' . (self::$transactionCounter + 1)
-            );
-            self::$inTransaction = false;
-            return true;
-        }
-        return $this->getInstance()->getConnection()->exec('ROLLBACK');
-    }
 }
-

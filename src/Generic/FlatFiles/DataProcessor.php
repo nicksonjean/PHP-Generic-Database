@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GenericDatabase\Engine\FlatFile;
+namespace GenericDatabase\Generic\FlatFiles;
 
 use GenericDatabase\Helpers\Parsers\Schema;
 
@@ -10,10 +10,20 @@ use GenericDatabase\Helpers\Parsers\Schema;
  * Data processor for flat file operations.
  * Handles filtering, sorting, and data manipulation for all flat file types.
  *
- * @package GenericDatabase\Engine\FlatFile
+ * @package GenericDatabase\Generic\DataProcessor
  */
 class DataProcessor
 {
+    /**
+     * Ascending sort order
+     */
+    public const ASC = 1;
+
+    /**
+     * Descending sort order
+     */
+    public const DESC = 0;
+
     /**
      * @var array The data to process.
      */
@@ -307,10 +317,10 @@ class DataProcessor
      * Order data by columns.
      *
      * @param string $column The column to order by.
-     * @param int $direction The sort direction (FlatFile::ASC or FlatFile::DESC).
+     * @param int $direction The sort direction (self::ASC or self::DESC).
      * @return self
      */
-    public function orderBy(string $column, int $direction = FlatFile::ASC): self
+    public function orderBy(string $column, int $direction = self::ASC): self
     {
         usort($this->data, function ($a, $b) use ($column, $direction) {
             $a = (array) $a;
@@ -323,7 +333,7 @@ class DataProcessor
                 return 0;
             }
 
-            if ($direction === FlatFile::ASC) {
+            if ($direction === self::ASC) {
                 return $aVal < $bVal ? -1 : 1;
             }
 
@@ -494,4 +504,3 @@ class DataProcessor
         };
     }
 }
-

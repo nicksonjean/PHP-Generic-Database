@@ -20,6 +20,7 @@ use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Generic\QueryBuilder\Context;
 use GenericDatabase\Engine\JSON\QueryBuilder\Builder;
 use GenericDatabase\Engine\JSON\QueryBuilder\Clause;
+use GenericDatabase\Engine\JSON\Connection\JSON;
 
 /**
  * The `JSONQueryBuilder` class implements the `IQueryBuilder` interface to provide a flexible
@@ -612,9 +613,100 @@ class JSONQueryBuilder implements IQueryBuilder
     {
         $this->runOnce();
         return (object) [
-            'queryRows' => count(self::$cachedResult ?? []),
+            'queryRows' => \count(self::$cachedResult ?? []),
             'affectedRows' => 0
         ];
+    }
+
+    /**
+     * Format a row based on the fetch style.
+     *
+     * @param mixed $row The row to format.
+     * @param int $fetchStyle The fetch style.
+     * @param mixed|null $fetchArgument The fetch argument.
+     * @param mixed|null $optArgs Additional options.
+     * @return mixed The formatted row.
+     */
+    private function formatRow(mixed $row, int $fetchStyle, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    {
+        $row = (array) $row;
+
+        return match ($fetchStyle) {
+            JSON::FETCH_NUM => array_values($row),
+            JSON::FETCH_BOTH => $this->formatBothMode($row),
+            JSON::FETCH_OBJ => (object) $row,
+            JSON::FETCH_COLUMN => $fetchArgument !== null
+                ? ($row[$fetchArgument] ?? array_values($row)[0] ?? null)
+                : (array_values($row)[0] ?? null),
+            JSON::FETCH_CLASS => $this->fetchClass($row, $fetchArgument, $optArgs),
+            JSON::FETCH_INTO => $this->fetchInto($row, $fetchArgument),
+            default => $row, // FETCH_ASSOC
+        };
+    }
+
+    /**
+     * Format row for FETCH_BOTH mode with alternating indices.
+     *
+     * @param array $row The row data.
+     * @return array The formatted row with alternating numeric and associative indices.
+     */
+    private function formatBothMode(array $row): array
+    {
+        $result = [];
+        $index = 0;
+
+        foreach ($row as $key => $value) {
+            $result[$index] = $value;
+            $result[$key] = $value;
+            $index++;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Fetch row into a class instance.
+     *
+     * @param array $row The row data.
+     * @param string|null $className The class name.
+     * @param mixed $ctorArgs Constructor arguments.
+     * @return object The class instance.
+     */
+    private function fetchClass(array $row, ?string $className, mixed $ctorArgs): object
+    {
+        if ($className === null) {
+            return (object) $row;
+        }
+
+        $instance = $ctorArgs !== null
+            ? new $className(...(array) $ctorArgs)
+            : new $className();
+
+        foreach ($row as $key => $value) {
+            $instance->$key = $value;
+        }
+
+        return $instance;
+    }
+
+    /**
+     * Fetch row into an existing object.
+     *
+     * @param array $row The row data.
+     * @param object|null $object The object to populate.
+     * @return object The populated object.
+     */
+    private function fetchInto(array $row, ?object $object): object
+    {
+        if ($object === null) {
+            return (object) $row;
+        }
+
+        foreach ($row as $key => $value) {
+            $object->$key = $value;
+        }
+
+        return $object;
     }
 
     /**
@@ -642,20 +734,9 @@ class JSONQueryBuilder implements IQueryBuilder
             return false;
         }
 
-        // Format the result using FetchHandler if fetch style is specified
-        if ($fetchStyle !== null && $this->getContext() !== null) {
-            try {
-                $reflection = new \ReflectionClass($this->getContext());
-                $method = $reflection->getMethod('getFetchHandler');
-                $method->setAccessible(true);
-                $fetchHandler = $method->invoke($this->getContext());
-
-                if ($fetchHandler !== null && method_exists($fetchHandler, 'formatRow')) {
-                    return $fetchHandler->formatRow($result, $fetchStyle, $fetchArgument, $optArgs);
-                }
-            } catch (\Exception $e) {
-                // Fall through to return raw result
-            }
+        // Format the result using internal formatRow method
+        if ($fetchStyle !== null) {
+            return $this->formatRow($result, $fetchStyle, $fetchArgument, $optArgs);
         }
 
         return $result;
@@ -679,27 +760,14 @@ class JSONQueryBuilder implements IQueryBuilder
         self::$cachedResult = null;
 
         // Format all results if fetch style is specified
-        if ($fetchStyle !== null && !empty($result) && $this->getContext() !== null) {
-            try {
-                $reflection = new \ReflectionClass($this->getContext());
-                $method = $reflection->getMethod('getFetchHandler');
-                $method->setAccessible(true);
-                $fetchHandler = $method->invoke($this->getContext());
-
-                if ($fetchHandler !== null && method_exists($fetchHandler, 'formatRow')) {
-                    $formatted = [];
-                    foreach ($result as $row) {
-                        $formatted[] = $fetchHandler->formatRow($row, $fetchStyle, $fetchArgument, $optArgs);
-                    }
-                    return $formatted;
-                }
-            } catch (\Exception $e) {
-                // Fall through to return raw result
+        if ($fetchStyle !== null && !empty($result)) {
+            $formatted = [];
+            foreach ($result as $row) {
+                $formatted[] = $this->formatRow($row, $fetchStyle, $fetchArgument, $optArgs);
             }
+            return $formatted;
         }
 
         return $result;
     }
 }
-
-

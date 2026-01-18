@@ -52,7 +52,7 @@ class FetchHandler implements IFetch
      *
      * @return IConnection
      */
-    public function getConnection(): IConnection
+    private function getConnection(): IConnection
     {
         return $this->connection;
     }
@@ -63,7 +63,7 @@ class FetchHandler implements IFetch
      * @param array $resultSet The result set.
      * @return void
      */
-    public function setResultSet(array $resultSet): void
+    private function setResultSet(array $resultSet): void
     {
         $this->resultSet = $resultSet;
         $this->cursor = 0;
@@ -74,7 +74,7 @@ class FetchHandler implements IFetch
      *
      * @return void
      */
-    public function reset(): void
+    private function reset(): void
     {
         $this->cursor = 0;
     }
@@ -321,7 +321,7 @@ class FetchHandler implements IFetch
      * @param mixed|null $optArgs Additional options.
      * @return mixed The formatted row.
      */
-    public function formatRow(mixed $row, int $fetchStyle, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    private function formatRow(mixed $row, int $fetchStyle, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
         $row = (array) $row;
 
@@ -403,4 +403,3 @@ class FetchHandler implements IFetch
         return $object;
     }
 }
-

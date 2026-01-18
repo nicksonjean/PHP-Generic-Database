@@ -7,12 +7,8 @@ namespace GenericDatabase\Engine;
 use Exception;
 use ReflectionException;
 use AllowDynamicProperties;
-use GenericDatabase\Helpers\Errors;
-use GenericDatabase\Helpers\Compare;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Helpers\Reflections;
-use GenericDatabase\Helpers\Parsers\Schema;
 use Dotenv\Exception\ValidationException;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Helpers\Zod\SchemaParser;
@@ -28,7 +24,7 @@ use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Interfaces\Connection\IStructure;
-use GenericDatabase\Engine\FlatFile\DataProcessor;
+use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Engine\JSON\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\JSON\Connection\Fetch\FetchHandler;
 use GenericDatabase\Engine\JSON\Connection\Report\ReportHandler;
@@ -97,55 +93,14 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
 
     private static ITransactions $transactionsHandler;
 
-    private static IStructure $structureHandler;
-
-    /**
-     * Database directory path (folder containing JSON files) or 'memory' for in-memory database
-     * @var string $database
-     */
-    private static string $database = '';
-
-    /**
-     * Available tables (JSON files in the database folder)
-     * @var array $tables
-     */
-    private static array $tables = [];
-
-    /**
-     * Current active table
-     * @var string|null $currentTable
-     */
-    private static ?string $currentTable = null;
-
-    /**
-     * Current data from the JSON file
-     * @var array $data
-     */
-    private static array $data = [];
-
-    /**
-     * Schema definition (loaded from Schema.ini if exists)
-     * @var array|null $schema
-     */
-    private static ?array $schema = null;
-
-    /**
-     * Transaction state
-     * @var bool $inTransaction
-     */
-    private static bool $inTransaction = false;
-
-    /**
-     * Backup data for transaction rollback
-     * @var array|null $transactionBackup
-     */
-    private static ?array $transactionBackup = null;
+    private static StructureHandler $structureHandler;
 
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
     public function __construct()
     {
+        self::$structureHandler = new StructureHandler($this);
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$optionsHandler = new OptionsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
@@ -153,7 +108,6 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
         self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
         self::$transactionsHandler = new TransactionsHandler($this);
-        self::$structureHandler = new StructureHandler($this);
     }
 
     private function getFetchHandler(): IFetch
@@ -191,7 +145,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         return self::$transactionsHandler;
     }
 
-    private function getStructureHandler(): IStructure
+    private function getStructureHandler(): StructureHandler
     {
         return self::$structureHandler;
     }
@@ -272,8 +226,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     /**
      * Get the schema.
      *
-     * @return Structure|array|null $schema The schema.
-     * @return void
+     * @return Structure|null The schema.
      */
     public function getSchema(): ?Structure
     {
@@ -283,8 +236,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     /**
      * Get the schema file.
      *
-     * @return string|null $file The file.
-     * @return void
+     * @return string|null The file.
      */
     public function getSchemaFile(): ?string
     {
@@ -294,8 +246,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     /**
      * Get the schema data.
      *
-     * @return array|null $data The data.
-     * @return void
+     * @return array|null The data.
      */
     public function getSchemaData(): ?array
     {
@@ -305,7 +256,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     /**
      * Get the tables.
      *
-     * @return array|null $tables The tables.
+     * @return array|null The tables.
      */
     public function getTables(): ?array
     {
@@ -326,8 +277,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     /**
      * Get the structure.
      *
-     * @return Structure|array|null $structure The structure.
-     * @return void
+     * @return Structure|null The structure.
      */
     public function getStructure(): ?Structure
     {
@@ -340,7 +290,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param Structure $structure The structure.
      * @return void
      */
-    public function setStructure(Structure $structure): void
+    public function setStructure(array|Structure|Exceptions $structure): void
     {
         $this->getStructureHandler()->setStructure($structure);
     }
@@ -375,14 +325,13 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
                         if ($potentialPath !== false && is_dir($potentialPath)) {
                             $resolvedPath = $potentialPath;
                             static::setDatabase($resolvedPath);
-                            self::$database = $resolvedPath;
                         } else {
                             throw new Exceptions("Database path " . $database . " directory does not exists: ");
                         }
                     }
                 }
 
-                self::$connection = self::$data;
+                self::$connection = $this->getStructureHandler()->getData();
             } else {
                 $errors = $validator->getErrors();
                 if (!empty($errors)) {
@@ -450,9 +399,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         if ($this->isConnected()) {
             static::setConnected(false);
             $this->setConnection(null);
-            self::$data = [];
-            self::$tables = [];
-            self::$currentTable = null;
+            $this->getStructureHandler()->reset();
         }
     }
 
@@ -463,10 +410,11 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function isConnected(): bool
     {
-        if (self::$database === 'memory') {
+        $database = static::getDatabase();
+        if ($database === 'memory') {
             return $this->getInstance()->getConnected();
         }
-        return is_dir(self::$database) && $this->getInstance()->getConnected();
+        return is_dir($database) && $this->getInstance()->getConnected();
     }
 
     /**
@@ -510,61 +458,8 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function load(?string $table = null): array
     {
-        if ($table !== null) {
-            self::$currentTable = $table;
-        }
-
-        if (empty(self::$currentTable)) {
-            return [];
-        }
-
-        // For in-memory database, data is stored in memory only
-        if (self::$database === 'memory') {
-            // In-memory: data is already in self::$data
-            // Add to tables list if not present
-            if (!in_array(self::$currentTable, self::$tables)) {
-                self::$tables[] = self::$currentTable;
-                $this->tables = self::$tables;
-            }
-            return self::$data;
-        }
-
-        $filePath = $this->getTablePath(self::$currentTable);
-
-        if (!file_exists($filePath)) {
-            // Create empty file
-            file_put_contents($filePath, '[]');
-            // Add to tables list if not present
-            if (!in_array(self::$currentTable, self::$tables)) {
-                self::$tables[] = self::$currentTable;
-                $this->tables = self::$tables;
-            }
-            return [];
-        }
-
-        $content = file_get_contents($filePath);
-        $data = json_decode($content, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exceptions('Invalid JSON file: ' . json_last_error_msg());
-        }
-
-        if (!is_array($data)) {
-            throw new Exceptions('JSON file must contain an array of objects');
-        }
-
-        // Apply schema if available for this table (supports TableName mapping)
-        $database = (string) $this->get('database');
-        if ($database !== '' && Schema::exists($database)) {
-            $schema = Schema::getSchemaForFile($database, self::$currentTable);
-            if ($schema !== null) {
-                $data = Schema::applySchema($data, $schema);
-            }
-        }
-
-        self::$data = $data;
+        $data = $this->getStructureHandler()->load($table);
         self::$connection = $data;
-
         return $data;
     }
 
@@ -577,43 +472,11 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function save(array $data, ?string $table = null): bool
     {
-        if ($table !== null) {
-            self::$currentTable = $table;
-        }
-
-        if (empty(self::$currentTable)) {
-            return false;
-        }
-
-        // For in-memory database, just update the data array
-        if (self::$database === 'memory') {
-            self::$data = $data;
+        $result = $this->getStructureHandler()->save($data, $table);
+        if ($result) {
             self::$connection = $data;
-            // Add to tables list if not present
-            if (!in_array(self::$currentTable, self::$tables)) {
-                self::$tables[] = self::$currentTable;
-                $this->tables = self::$tables;
-            }
-            return true;
         }
-
-        $filePath = $this->getTablePath(self::$currentTable);
-        $flags = JSON::getDefaultEncodingFlags();
-        $content = json_encode($data, $flags);
-
-        if ($content === false) {
-            return false;
-        }
-
-        $result = file_put_contents($filePath, $content);
-
-        // Add to tables list if not present
-        if ($result !== false && !in_array(self::$currentTable, self::$tables)) {
-            self::$tables[] = self::$currentTable;
-            $this->tables = self::$tables;
-        }
-
-        return $result !== false;
+        return $result;
     }
 
     /**
@@ -623,7 +486,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function getData(): array
     {
-        return self::$data;
+        return $this->getStructureHandler()->getData();
     }
 
     /**
@@ -634,7 +497,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function setData(array $data): void
     {
-        self::$data = $data;
+        $this->getStructureHandler()->setData($data);
         self::$connection = $data;
     }
 
@@ -646,8 +509,8 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function from(string $table): JSONConnection
     {
-        self::$currentTable = str_replace('.json', '', $table);
-        $this->load(self::$currentTable);
+        $this->getStructureHandler()->setCurrentTable(str_replace('.json', '', $table));
+        $this->load($this->getStructureHandler()->getCurrentTable());
         return $this;
     }
 
@@ -658,7 +521,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function getCurrentTable(): ?string
     {
-        return self::$currentTable;
+        return $this->getStructureHandler()->getCurrentTable();
     }
 
     /**
@@ -668,13 +531,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function beginTransaction(): bool
     {
-        if (self::$inTransaction) {
-            return false;
-        }
-
-        self::$transactionBackup = self::$data;
-        self::$inTransaction = true;
-        return true;
+        return $this->getTransactionsHandler()->beginTransaction();
     }
 
     /**
@@ -684,14 +541,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function commit(): bool
     {
-        if (!self::$inTransaction) {
-            return false;
-        }
-
-        $result = $this->save(self::$data);
-        self::$inTransaction = false;
-        self::$transactionBackup = null;
-        return $result;
+        return $this->getTransactionsHandler()->commit();
     }
 
     /**
@@ -701,18 +551,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function rollback(): bool
     {
-        if (!self::$inTransaction) {
-            return false;
-        }
-
-        if (self::$transactionBackup !== null) {
-            self::$data = self::$transactionBackup;
-            self::$connection = self::$data;
-        }
-
-        self::$inTransaction = false;
-        self::$transactionBackup = null;
-        return true;
+        return $this->getTransactionsHandler()->rollback();
     }
 
     /**
@@ -722,7 +561,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function inTransaction(): bool
     {
-        return self::$inTransaction;
+        return $this->getTransactionsHandler()->inTransaction();
     }
 
     /**
@@ -755,22 +594,23 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function insert(array $row): bool
     {
-        $processor = new DataProcessor(self::$data, self::$schema);
+        $data = $this->getData();
+        $processor = new DataProcessor($data);
         $result = $processor->insert($row);
 
         if ($result) {
-            self::$data = $processor->getData();
-            self::$connection = self::$data;
+            $newData = $processor->getData();
+            $this->setData($newData);
 
             // Auto-save if not in transaction and auto-save is enabled
-            if (!self::$inTransaction && JSON::getAttribute(JSON::ATTR_AUTO_SAVE)) {
-                $this->save(self::$data);
+            if (!$this->inTransaction() && JSON::getAttribute(JSON::ATTR_AUTO_SAVE)) {
+                $this->save($newData);
             }
 
             // Update last insert ID using reflection
             $statementsHandler = $this->getStatementsHandler();
             if (method_exists($statementsHandler, 'setLastInsertId')) {
-                $lastId = isset($row['id']) ? (int) $row['id'] : count(self::$data);
+                $lastId = isset($row['id']) ? (int) $row['id'] : count($newData);
                 $statementsHandler->setLastInsertId($lastId);
             }
         }
@@ -787,15 +627,16 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function update(array $data, array $where): int
     {
-        $processor = new DataProcessor(self::$data, self::$schema);
+        $currentData = $this->getData();
+        $processor = new DataProcessor($currentData);
         $affected = $processor->update($data, $where);
 
         if ($affected > 0) {
-            self::$data = $processor->getData();
-            self::$connection = self::$data;
+            $newData = $processor->getData();
+            $this->setData($newData);
 
-            if (!self::$inTransaction && JSON::getAttribute(JSON::ATTR_AUTO_SAVE)) {
-                $this->save(self::$data);
+            if (!$this->inTransaction() && JSON::getAttribute(JSON::ATTR_AUTO_SAVE)) {
+                $this->save($newData);
             }
         }
 
@@ -811,15 +652,16 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function delete(array $where): int
     {
-        $processor = new DataProcessor(self::$data, self::$schema);
+        $currentData = $this->getData();
+        $processor = new DataProcessor($currentData);
         $deleted = $processor->delete($where);
 
         if ($deleted > 0) {
-            self::$data = $processor->getData();
-            self::$connection = self::$data;
+            $newData = $processor->getData();
+            $this->setData($newData);
 
-            if (!self::$inTransaction && JSON::getAttribute(JSON::ATTR_AUTO_SAVE)) {
-                $this->save(self::$data);
+            if (!$this->inTransaction() && JSON::getAttribute(JSON::ATTR_AUTO_SAVE)) {
+                $this->save($newData);
             }
         }
 
@@ -836,7 +678,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function selectWhere(array $columns, array $where): array
     {
-        $processor = new DataProcessor(self::$data, self::$schema);
+        $processor = new DataProcessor($this->getData());
 
         if (!empty($where)) {
             $processor->where($where);
@@ -868,38 +710,6 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function getAllMetadata(): object
     {
-        // Force query execution if there's a pending query but no results yet
-        $queryString = $this->getQueryString();
-        if (!empty($queryString)) {
-            $currentRows = $this->getStatementsHandler()->getQueryRows();
-            // If metadata is empty, trigger query execution by calling fetch method
-            if ($currentRows === 0 || $currentRows === false) {
-                // Use reflection to call the executeStoredQuery method to populate metadata
-                try {
-                    $reflection = new \ReflectionClass($this);
-                    $fetchHandlerMethod = $reflection->getMethod('getFetchHandler');
-                    $fetchHandlerMethod->setAccessible(true);
-                    $fetchHandler = $fetchHandlerMethod->invoke($this);
-
-                    if ($fetchHandler) {
-                        // Call fetch once to trigger query execution without consuming all results
-                        $reflection = new \ReflectionClass($fetchHandler);
-                        if ($reflection->hasMethod('fetch')) {
-                            $fetchMethod = $reflection->getMethod('fetch');
-                            $fetchMethod->invoke($fetchHandler);
-                            // Reset cursor to allow fetchAll to work normally later
-                            if ($reflection->hasMethod('reset')) {
-                                $resetMethod = $reflection->getMethod('reset');
-                                $resetMethod->invoke($fetchHandler);
-                            }
-                        }
-                    }
-                } catch (\Exception $e) {
-                    // Silently fail if reflection doesn't work
-                }
-            }
-        }
-
         return $this->getStatementsHandler()->getAllMetadata();
     }
 
