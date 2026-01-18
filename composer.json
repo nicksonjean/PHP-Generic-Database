@@ -8,11 +8,16 @@
     "pdo",
     "odbc",
     "sqlsrv",
+    "mssql",
+    "dblib",
+    "sybase",
     "oci",
+    "oracle",
     "oracle",
     "firebird",
     "interbase",
     "mysql",
+    "mariadb",
     "mysqli",
     "sqlite",
     "sqlite3",
@@ -31,6 +36,19 @@
     }
   ],
   "minimum-stability": "dev",
+  "config": {
+    "process-timeout": 0,
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "phpro/grumphp": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "cweagans/composer-patches": true
+    },
+    "audit": {
+      "abandoned": "ignore"
+    }
+  },
   "autoload": {
     "files": [
       "src/Core/Build.php",
@@ -56,15 +74,9 @@
   },
   "require": {
     "php": "^8.0",
-    "ext-libxml": "*",
-    "ext-mysqli": "*",
-    "ext-simplexml": "*",
-    "ext-sqlite3": "*",
-    "ext-xmlreader": "*",
-    "ext-yaml": "*",
     "dave-arg/zod-php": "dev-master",
     "marc-mabe/enum-cl": "dev-main",
-    "nette/neon": "^3.5@dev",
+    "nette/neon": "^3.4",
     "senadir/zod-php-to-schema": "dev-main",
     "symfony/polyfill-php80": "1.x-dev",
     "symfony/polyfill-php81": "1.x-dev",
@@ -72,6 +84,7 @@
     "symfony/polyfill-php83": "1.x-dev",
     "symfony/polyfill-php84": "1.x-dev",
     "symfony/polyfill-php85": "1.x-dev",
+    "symfony/yaml": "6.0.x-dev",
     "vlucas/phpdotenv": "^5.5@dev"
   },
   "autoload-dev": {
@@ -94,16 +107,6 @@
     "phpunit/phpunit": "9.6.x-dev",
     "squizlabs/php_codesniffer": "^4.0@dev",
     "tasuku43/mermaid-class-diagram": "^0.2.1"
-  },
-  "config": {
-    "process-timeout": 0,
-    "sort-packages": true,
-    "optimize-autoloader": true,
-    "allow-plugins": {
-      "phpro/grumphp": true,
-      "dealerdirect/phpcodesniffer-composer-installer": true,
-      "cweagans/composer-patches": true
-    }
   },
   "extra": {
     "patches": {
@@ -162,6 +165,11 @@
     "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
     "run:test:coverage": "php -d pcov.directory=src vendor/bin/phpunit tests --colors=always --configuration phpunit.xml --do-not-cache-result --coverage-html build/coverage --coverage-clover build/logs/clover.xml",
     "run:env": "php -r \"if(!file_exists('.env')&&file_exists('.env.example')){@copy('.env.example','.env');}\"",
+    "run:env:refresh": [
+      "php -r \"if(file_exists('.env')){unlink('.env');}\"",
+      "@run:env"
+    ],
+    "run:migrate": "php scripts/developer/migrate-sqlite-to-databases.php",
     "clear:cache": "php scripts/developer/secure_eraser_cli.php --dest=./cache/",
     "clear:docs": "php scripts/developer/secure_eraser_cli.php --dest=./docs/",
     "clear:test:coverage": "php scripts/developer/secure_eraser_cli.php --dest=./build/coverage/",

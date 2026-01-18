@@ -20,6 +20,7 @@ use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Engine\YAML\Connection\YAML;
 use GenericDatabase\Engine\FlatFile\DataProcessor;
+use GenericDatabase\Helpers\Parsers\YAML as YAMLParser;
 
 /**
  * YAML Connection class for flat file database operations.
@@ -148,84 +149,6 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         self::$schema = $schema;
     }
 
-    private function parseYaml(string $content): array
-    {
-        if (extension_loaded('yaml')) {
-            $result = yaml_parse($content);
-            return is_array($result) ? $result : [];
-        }
-
-        if (class_exists('Symfony\Component\Yaml\Yaml')) {
-            return \Symfony\Component\Yaml\Yaml::parse($content) ?? [];
-        }
-
-        return $this->basicYamlParse($content);
-    }
-
-    private function emitYaml(array $data): string
-    {
-        if (extension_loaded('yaml')) {
-            return yaml_emit($data, YAML_UTF8_ENCODING);
-        }
-
-        if (class_exists('Symfony\Component\Yaml\Yaml')) {
-            return \Symfony\Component\Yaml\Yaml::dump($data, self::$inlineLevel, self::$indentation);
-        }
-
-        return $this->basicYamlEmit($data);
-    }
-
-    private function basicYamlParse(string $content): array
-    {
-        $result = [];
-        $lines = explode("\n", $content);
-        $currentItem = [];
-        $inItem = false;
-
-        foreach ($lines as $line) {
-            $line = rtrim($line);
-            if (empty($line) || str_starts_with($line, '#')) continue;
-
-            if (str_starts_with($line, '- ')) {
-                if (!empty($currentItem)) {
-                    $result[] = $currentItem;
-                }
-                $currentItem = [];
-                $inItem = true;
-
-                $rest = trim(substr($line, 2));
-                if (!empty($rest) && str_contains($rest, ':')) {
-                    [$key, $value] = explode(':', $rest, 2);
-                    $currentItem[trim($key)] = trim($value, " \t\"'");
-                }
-            } elseif ($inItem && preg_match('/^\s+(\w+):\s*(.*)$/', $line, $matches)) {
-                $currentItem[trim($matches[1])] = trim($matches[2], " \t\"'");
-            }
-        }
-
-        if (!empty($currentItem)) {
-            $result[] = $currentItem;
-        }
-
-        return $result;
-    }
-
-    private function basicYamlEmit(array $data): string
-    {
-        $output = "";
-        foreach ($data as $row) {
-            $output .= "-\n";
-            foreach ((array) $row as $key => $value) {
-                $val = is_null($value) ? 'null' : (is_bool($value) ? ($value ? 'true' : 'false') : (string) $value);
-                if (is_string($value) && (str_contains($value, ':') || str_contains($value, '#'))) {
-                    $val = '"' . addslashes($value) . '"';
-                }
-                $output .= str_repeat(' ', self::$indentation) . "$key: $val\n";
-            }
-        }
-        return $output;
-    }
-
     /**
      * This method is responsible for creating a new instance of the YAML connection.
      *
@@ -351,7 +274,7 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
             return [];
         }
 
-        $data = $this->parseYaml($content);
+        $data = YAMLParser::parseYaml($content);
 
         if (!is_array($data)) {
             $data = [];
@@ -379,7 +302,7 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         }
 
         $filePath = $this->getTablePath(self::$currentTable);
-        $content = $this->emitYaml($data);
+        $content = YAMLParser::emitYaml($data, self::$inlineLevel, self::$indentation);
         $result = file_put_contents($filePath, $content);
 
         if ($result !== false && !in_array(self::$currentTable, self::$tables)) {
@@ -628,4 +551,3 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return '';
     }
 }
-
