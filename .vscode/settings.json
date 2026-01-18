@@ -1,5 +1,9 @@
 {
   "php.stubs": ["*", "pgsql", "oci8", "yaml", "dbase", "interbase", "sqlsrv", "pdo"],
+  "files.eol": "\n",
+  "files.endOfLine": "lf",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
   "files.exclude": {
     "**/assets/**": false,
     "**/config/**": false,
@@ -9,7 +13,7 @@
     "**/logs/**": false,
     "**/public/**": false,
     "**/storage/**": false,
-    "**/bin/**": false,    
+    "**/bin/**": false,
     "**/build/**": false,
     "**/scripts/**": false,
     "**/cache/**": false,
@@ -26,7 +30,7 @@
     "**/phpcs.xml/**": false,
     "**/phpstan.neon/**": false,
     "**/phpmd.xml/**": false,
-    "**/phpunit.xml/**": false,    
+    "**/phpunit.xml/**": false,
     "**/.claude/**": false,
     "**/.stubs/**": false,
     "**/.devcontainer/**": false,
