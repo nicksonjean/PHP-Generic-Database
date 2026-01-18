@@ -46,6 +46,11 @@ class StatementsHandler implements IStatements
     private int|false $affectedRows = 0;
 
     /**
+     * @var int The number of fetched rows.
+     */
+    private int $fetchedRows = 0;
+
+    /**
      * @var mixed The current statement/result.
      */
     private mixed $statement = null;
@@ -109,6 +114,7 @@ class StatementsHandler implements IStatements
         $this->queryRows = 0;
         $this->queryColumns = 0;
         $this->affectedRows = 0;
+        $this->fetchedRows = 0;
     }
 
     /**
@@ -122,7 +128,7 @@ class StatementsHandler implements IStatements
         $metadata->query->setString($this->queryString);
         $metadata->query->setArguments($this->queryParameters);
         $metadata->query->setColumns($this->queryColumns);
-        $metadata->query->rows->setFetched($this->queryRows);
+        $metadata->query->rows->setFetched($this->fetchedRows > 0 ? $this->fetchedRows : $this->queryRows);
         $metadata->query->rows->setAffected($this->affectedRows);
         return $metadata;
     }
@@ -232,6 +238,26 @@ class StatementsHandler implements IStatements
         $this->affectedRows = $params;
     }
 
+    /**
+     * Get the number of fetched rows.
+     *
+     * @return int
+     */
+    public function getFetchedRows(): int
+    {
+        return $this->fetchedRows;
+    }
+
+    /**
+     * Set the number of fetched rows.
+     *
+     * @param int $params The number of fetched rows.
+     * @return void
+     */
+    public function setFetchedRows(int $params): void
+    {
+        $this->fetchedRows = $params;
+    }
     /**
      * Get the statement.
      *
@@ -403,4 +429,3 @@ class StatementsHandler implements IStatements
         return $this->affectedRows;
     }
 }
-

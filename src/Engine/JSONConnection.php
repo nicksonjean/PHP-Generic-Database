@@ -24,6 +24,7 @@ use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Interfaces\Connection\IStructure;
+use GenericDatabase\Generic\Connection\Structure;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Engine\JSON\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\JSON\Connection\Fetch\FetchHandler;
@@ -36,7 +37,6 @@ use GenericDatabase\Engine\JSON\Connection\Statements\StatementsHandler;
 use GenericDatabase\Engine\JSON\Connection\Transactions\TransactionsHandler;
 use GenericDatabase\Engine\JSON\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
-use GenericDatabase\Generic\Connection\Structure;
 
 /**
  * JSON Connection class for flat file database operations.
@@ -816,6 +816,27 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     public function setAffectedRows(int|false $params): void
     {
         $this->getStatementsHandler()->setAffectedRows($params);
+    }
+
+    /**
+     * Get the number of fetched rows.
+     *
+     * @return int
+     */
+    public function getFetchedRows(): int
+    {
+        return $this->getStatementsHandler()->getFetchedRows();
+    }
+
+    /**
+     * Set the number of fetched rows.
+     *
+     * @param int $params The number of fetched rows.
+     * @return void
+     */
+    public function setFetchedRows(int $params): void
+    {
+        $this->getStatementsHandler()->setFetchedRows($params);
     }
 
     /**
