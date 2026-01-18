@@ -72,7 +72,7 @@ use GenericDatabase\Generic\Connection\Structure;
  * @method static JSONConnection|mixed getException($value = null) Retrieves an exception from the database.
  */
 #[AllowDynamicProperties]
-class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions
+class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions, IStructure
 {
     use Methods;
     use Singleton;
@@ -249,12 +249,22 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     }
 
     /**
+     * Gets the structure of the database.
+     *
+     * @return array|Structure|Exceptions The structure of the database or an exception if getting the structure fails.
+     */
+    public function mount(): array|Structure|Exceptions
+    {
+        return $this->getStructureHandler()->mount();
+    }
+
+    /**
      * Get the full file path for a table.
      *
      * @param string $table The table name.
      * @return string The full file path (or empty string for memory database).
      */
-    private function getTablePath(string $table): string
+    public function getTablePath(string $table): string
     {
         return $this->getStructureHandler()->getTablePath($table);
     }
@@ -296,7 +306,6 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * Get the tables.
      *
      * @return array|null $tables The tables.
-     * @return void
      */
     public function getTables(): ?array
     {
@@ -358,10 +367,8 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
                 $isMemory = $database === 'memory';
 
                 if (!$isMemory) {
-                    // Resolve relative paths to absolute paths
                     $resolvedPath = $database;
                     if (!is_dir($database)) {
-                        // Try to resolve relative to the project root (where composer.json typically is)
                         $projectRoot = defined('PATH_ROOT') ? constant('PATH_ROOT') : getcwd();
                         $potentialPath = realpath($projectRoot . DIRECTORY_SEPARATOR . $database);
 
@@ -1154,4 +1161,3 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         return '';
     }
 }
-

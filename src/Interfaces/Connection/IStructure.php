@@ -41,7 +41,7 @@ interface IStructure
      *
      * @return array The tables list.
      */
-    public function getTables(): array;
+    public function getTables(): ?array;
 
     /**
      * Set the tables list.
@@ -66,4 +66,3 @@ interface IStructure
      */
     public function setStructure(Structure $structure): void;
 }
-
