@@ -34,13 +34,12 @@ $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)-
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id = :id', '27');
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id');
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :idA AND id <= :idB', [':idA' => 5, ':idB' => 10]);
-
-$a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id BETWEEN :idA AND :idB', [':idA' => 15, ':idB' => 20]);
+// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id BETWEEN :idA AND :idB', [':idA' => 15, ':idB' => 20]);
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id NOT BETWEEN :idA AND :idB', [':idA' => 15, ':idB' => 20]);
-// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE "%Rio%"');
-// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome NOT LIKE "%Rio%"');
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id IN(:idA, :idB, :idC)', '25', '26', '27');
-// $a = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id IN(25, 26, 27) ORDER BY id');
+// $a = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id NOT IN(25, 26, 27) ORDER BY id');
+// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE :idA', [':idA' => '%Rio%']);
+$a = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome NOT LIKE "%Rio%"');
 
 // var_dump($a);
 

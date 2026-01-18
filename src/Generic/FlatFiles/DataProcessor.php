@@ -308,9 +308,28 @@ class DataProcessor
 
     private function likeToRegex(string $pattern): string
     {
-        $pattern = preg_quote($pattern, '/');
-        $pattern = str_replace(['\\%', '\\_'], ['.*', '.'], $pattern);
-        return '/^' . $pattern . '$/i';
+        // Convert SQL LIKE pattern to regex
+        // % = any characters (zero or more), _ = single character
+        $regex = '';
+        $len = strlen($pattern);
+        $i = 0;
+
+        while ($i < $len) {
+            $char = $pattern[$i];
+
+            if ($char === '%') {
+                $regex .= '.*';
+            } elseif ($char === '_') {
+                $regex .= '.';
+            } else {
+                // Escape regex special characters
+                $regex .= preg_quote($char, '/');
+            }
+
+            $i++;
+        }
+
+        return '/^' . $regex . '$/i';
     }
 
     /**

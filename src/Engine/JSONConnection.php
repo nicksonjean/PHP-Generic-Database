@@ -705,11 +705,20 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
 
     /**
      * Get all metadata.
+     * Executes the query if not already executed to get accurate metadata.
      *
      * @return object
      */
     public function getAllMetadata(): object
     {
+        // Execute the query to populate metadata if queryRows is still 0
+        // and there's a query string set
+        if ($this->getStatementsHandler()->getQueryRows() === 0 &&
+            !empty($this->getStatementsHandler()->getQueryString())) {
+            // Force execution to populate metadata, cursor is reset for subsequent fetches
+            $this->getFetchHandler()->execute();
+        }
+
         return $this->getStatementsHandler()->getAllMetadata();
     }
 
@@ -890,6 +899,8 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function query(mixed ...$params): static|null
     {
+        // Clear fetch cache for new query
+        $this->getFetchHandler()->clearCache();
         $this->getStatementsHandler()->query(...$params);
         return $this;
     }
@@ -902,6 +913,8 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function prepare(mixed ...$params): static|null
     {
+        // Clear fetch cache for new query
+        $this->getFetchHandler()->clearCache();
         $this->getStatementsHandler()->prepare(...$params);
         return $this;
     }

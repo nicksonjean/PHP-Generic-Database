@@ -36,13 +36,15 @@ class Regex implements IRegex
 
     /**
      * Pattern for simple column = value.
+     * Note: operators must be ordered from longest to shortest to match correctly
      */
-    public const SIMPLE_PATTERN = '/^(\w+)\s*(=|!=|<>|>|<|>=|<=)\s*(.+)$/';
+    public const SIMPLE_PATTERN = '/^(\w+)\s*(>=|<=|!=|<>|=|>|<)\s*(.+)$/';
 
     /**
      * Pattern for LIKE clause.
+     * Matches: column LIKE 'value', column LIKE "value", column NOT LIKE 'value'
      */
-    public const LIKE_PATTERN = '/^(\w+)\s+(NOT\s+)?LIKE\s+[\'"]?([^\'\"]+)[\'"]?$/i';
+    public const LIKE_PATTERN = '/^(\w+)\s+(NOT\s+)?LIKE\s+(?:[\'"]([^\'\"]+)[\'"]|(\S+))$/i';
 
     /**
      * Pattern for IN clause.
@@ -205,10 +207,12 @@ class Regex implements IRegex
         // Try LIKE pattern
         if (preg_match(self::LIKE_PATTERN, $condition, $matches)) {
             $operator = !empty($matches[2]) ? 'NOT LIKE' : 'LIKE';
+            // Value is in group 3 (quoted) or group 4 (unquoted)
+            $value = !empty($matches[3]) ? $matches[3] : ($matches[4] ?? '');
             return [
                 'column' => $matches[1],
                 'operator' => $operator,
-                'value' => $matches[3],
+                'value' => $value,
                 'prefix' => null
             ];
         }
@@ -316,11 +320,28 @@ class Regex implements IRegex
      */
     public static function likeToRegex(string $pattern): string
     {
-        // Escape regex special characters except % and _
-        $pattern = preg_quote($pattern, '/');
-        // Convert SQL wildcards to regex
-        $pattern = str_replace(['\\%', '\\_'], ['.*', '.'], $pattern);
-        return '/^' . $pattern . '$/i';
+        // Convert SQL LIKE pattern to regex
+        // % = any characters (zero or more), _ = single character
+        $regex = '';
+        $len = strlen($pattern);
+        $i = 0;
+
+        while ($i < $len) {
+            $char = $pattern[$i];
+
+            if ($char === '%') {
+                $regex .= '.*';
+            } elseif ($char === '_') {
+                $regex .= '.';
+            } else {
+                // Escape regex special characters
+                $regex .= preg_quote($char, '/');
+            }
+
+            $i++;
+        }
+
+        return '/^' . $regex . '$/i';
     }
 }
 

@@ -7,6 +7,8 @@ namespace GenericDatabase\Engine\JSON\Connection\Fetch;
 use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Engine\JSON\Connection\JSON;
+use GenericDatabase\Engine\JSON\QueryBuilder\Regex;
+use GenericDatabase\Generic\FlatFiles\DataProcessor;
 
 /**
  * Handles fetch operations for JSON connections.
@@ -80,6 +82,17 @@ class FetchHandler implements IFetch
     }
 
     /**
+     * Clear the cached result set (for new queries).
+     *
+     * @return void
+     */
+    public function clearCache(): void
+    {
+        $this->resultSet = null;
+        $this->cursor = 0;
+    }
+
+    /**
      * Execute a stored query and return the result set.
      *
      * @return array The result set.
@@ -103,25 +116,12 @@ class FetchHandler implements IFetch
             return [];
         }
 
-        // Use JSONQueryBuilder to process the SQL query
-        $queryBuilderClass = '\\GenericDatabase\\Engine\\JSONQueryBuilder';
-        if (!class_exists($queryBuilderClass)) {
-            // Fallback to raw data if QueryBuilder not available
-            if (method_exists($this->connection, 'getData')) {
-                return $this->connection->getData();
-            }
-            return [];
-        }
-
         try {
             // Replace parameters in the query string
             $processedQuery = $this->replaceQueryParameters($queryString, $queryParameters);
 
-            // Create a query builder instance and execute the query
-            $builder = $queryBuilderClass::with($this->connection);
-
-            // Parse and execute the query using the builder
-            $result = $this->parseAndExecuteQuery($builder, $processedQuery);
+            // Parse and execute the query
+            $result = $this->parseAndExecuteQuery($processedQuery);
 
             // Update metadata with actual counts
             $rowCount = count($result);
@@ -137,8 +137,6 @@ class FetchHandler implements IFetch
             // Set fetched rows (the actual number of rows returned by the query)
             if (method_exists($this->connection, 'setFetchedRows')) {
                 $this->connection->setFetchedRows($rowCount);
-            } elseif (method_exists($this->connection->getStatementsHandler ?? null, 'setFetchedRows')) {
-                $this->connection->getStatementsHandler()?->setFetchedRows($rowCount);
             }
 
             // Reset affected rows for SELECT queries
@@ -197,80 +195,174 @@ class FetchHandler implements IFetch
     }
 
     /**
-     * Parse and execute a SQL query using the query builder.
+     * Parse and execute a SQL query using the DataProcessor directly.
      *
-     * @param object $builder The query builder instance.
      * @param string $query The SQL query.
      * @return array The result set.
      */
-    private function parseAndExecuteQuery(object $builder, string $query): array
+    private function parseAndExecuteQuery(string $query): array
     {
         // Parse SQL query to extract components
         $query = trim($query);
 
-        // Extract table name from FROM clause
+        // Extract table name from FROM clause and load data
+        $tableName = null;
         if (preg_match('/\bFROM\s+(\w+)/i', $query, $matches)) {
             $tableName = $matches[1];
-            $builder->from($tableName);
-        }
-
-        // Extract SELECT columns with aliases
-        if (preg_match('/^SELECT\s+(.*?)\s+FROM/is', $query, $matches)) {
-            $columns = trim($matches[1]);
-            if ($columns !== '*') {
-                // Parse column list and handle aliases
-                $columnParts = array_map('trim', explode(',', $columns));
-                $selectColumns = [];
-
-                foreach ($columnParts as $column) {
-                    // Check if column has an alias (column AS alias)
-                    if (preg_match('/^(.+?)\s+AS\s+(.+)$/i', $column, $aliasMatch)) {
-                        // Format: "originalColumn AS aliasName"
-                        $selectColumns[] = trim($aliasMatch[1]) . ' AS ' . trim($aliasMatch[2]);
-                    } else {
-                        $selectColumns[] = $column;
-                    }
-                }
-
-                $builder->select(...$selectColumns);
+            if (method_exists($this->connection, 'load')) {
+                $this->connection->load($tableName);
             }
         }
 
-        // Extract WHERE clause
+        // Get data from connection
+        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+
+        // Create DataProcessor instance
+        $processor = new DataProcessor($data);
+
+        // Extract and apply WHERE clause
         if (preg_match('/\bWHERE\s+(.*?)(?:\s+ORDER\s+BY|\s+GROUP\s+BY|\s+LIMIT|$)/is', $query, $matches)) {
             $whereClause = trim($matches[1]);
+            $conditions = $this->parseWhereClause($whereClause);
+            if (!empty($conditions)) {
+                $processor->where($conditions, 'AND');
+            }
+        }
 
-            // Parse WHERE clause to handle multiple conditions with AND
-            $this->applyWhereConditions($builder, $whereClause);
+        // Extract and apply ORDER BY clause
+        if (preg_match('/\bORDER\s+BY\s+(.*?)(?:\s+LIMIT|$)/is', $query, $matches)) {
             $orderClause = trim($matches[1]);
             // Check for ASC/DESC
             if (preg_match('/^(.*?)\s+(ASC|DESC)$/i', $orderClause, $orderMatches)) {
                 $orderColumn = trim($orderMatches[1]);
-                $direction = strtoupper($orderMatches[2]);
-                if ($direction === 'DESC') {
-                    $builder->orderDesc($orderColumn);
-                } else {
-                    $builder->orderAsc($orderColumn);
-                }
+                $direction = strtoupper($orderMatches[2]) === 'DESC' ? DataProcessor::DESC : DataProcessor::ASC;
+                $processor->orderBy($orderColumn, $direction);
             } else {
-                $builder->order($orderClause);
+                $processor->orderBy($orderClause, DataProcessor::ASC);
             }
         }
 
-        // Extract LIMIT clause
+        // Extract and apply LIMIT clause
         if (preg_match('/\bLIMIT\s+(\d+)(?:\s*,\s*(\d+))?/i', $query, $matches)) {
             if (isset($matches[2])) {
-                $builder->limit($matches[1], $matches[2]);
+                $processor->limit((int) $matches[2], (int) $matches[1]);
             } else {
-                $builder->limit($matches[1]);
+                $processor->limit((int) $matches[1]);
             }
         }
 
-        // Execute and return results
-        return $builder->fetchAll(JSON::FETCH_ASSOC);
+        // Get filtered data
+        $result = $processor->getData();
 
-        $this->cursor = count($this->resultSet);
+        // Extract SELECT columns and apply aliases
+        if (preg_match('/^SELECT\s+(.*?)\s+FROM/is', $query, $matches)) {
+            $columns = trim($matches[1]);
+            if ($columns !== '*') {
+                $columnParts = array_map('trim', explode(',', $columns));
+                $result = $this->applySelectColumns($result, $columnParts);
+            }
+        }
+
         return $result;
+    }
+
+    /**
+     * Parse WHERE clause and return conditions array for DataProcessor.
+     *
+     * @param string $whereClause The WHERE clause string.
+     * @return array The conditions array.
+     */
+    private function parseWhereClause(string $whereClause): array
+    {
+        $conditions = [];
+
+        // Split by AND, preserving BETWEEN...AND
+        $parts = $this->splitByTopLevelAndOperator($whereClause);
+
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if (empty($part)) {
+                continue;
+            }
+
+            // Use Regex::parseWhereCondition for parsing
+            $parsed = Regex::parseWhereCondition($part);
+
+            if ($parsed !== null) {
+                $condition = [
+                    'column' => $parsed['column'],
+                    'operator' => $parsed['operator'],
+                ];
+
+                // Handle different operators
+                switch (strtoupper($parsed['operator'])) {
+                    case 'BETWEEN':
+                    case 'NOT BETWEEN':
+                        $condition['value'] = [
+                            'min' => $parsed['value'],
+                            'max' => $parsed['value2'] ?? $parsed['value']
+                        ];
+                        break;
+
+                    case 'IN':
+                    case 'NOT IN':
+                        // Parse IN values - can be comma-separated
+                        $values = array_map(function ($v) {
+                            return trim(trim($v), "'\"");
+                        }, explode(',', $parsed['value']));
+                        $condition['value'] = $values;
+                        break;
+
+                    case 'LIKE':
+                    case 'NOT LIKE':
+                        // Keep the LIKE pattern as is (with % wildcards)
+                        $condition['value'] = $parsed['value'];
+                        break;
+
+                    default:
+                        $condition['value'] = $parsed['value'];
+                        break;
+                }
+
+                $conditions[] = $condition;
+            }
+        }
+
+        return $conditions;
+    }
+
+    /**
+     * Apply SELECT columns with aliases to result set.
+     *
+     * @param array $data The data to transform.
+     * @param array $columns The column specifications.
+     * @return array The transformed data.
+     */
+    private function applySelectColumns(array $data, array $columns): array
+    {
+        return array_map(function ($row) use ($columns) {
+            $result = [];
+            foreach ($columns as $col) {
+                $col = trim($col);
+
+                // Check if column has an alias (column AS alias)
+                if (preg_match('/^(.+?)\s+AS\s+(.+)$/i', $col, $matches)) {
+                    $originalColumn = trim($matches[1], '"\'`');
+                    $alias = trim($matches[2], '"\'`');
+
+                    if (isset($row[$originalColumn])) {
+                        $result[$alias] = $row[$originalColumn];
+                    }
+                } else {
+                    // No alias, use column name as is
+                    $cleanCol = trim($col, '"\'`');
+                    if (isset($row[$cleanCol])) {
+                        $result[$cleanCol] = $row[$cleanCol];
+                    }
+                }
+            }
+            return $result;
+        }, $data);
     }
 
     /**
@@ -347,6 +439,21 @@ class FetchHandler implements IFetch
     }
 
     /**
+     * Execute the query without returning results (for metadata population).
+     * Resets cursor to allow subsequent fetch operations.
+     *
+     * @return void
+     */
+    public function execute(): void
+    {
+        if ($this->resultSet === null) {
+            $this->resultSet = $this->executeStoredQuery();
+        }
+        // Reset cursor for subsequent fetch operations
+        $this->cursor = 0;
+    }
+
+    /**
      * Format row for FETCH_BOTH mode with alternating indices.
      *
      * @param array $row The row data.
@@ -412,99 +519,63 @@ class FetchHandler implements IFetch
     }
 
     /**
-     * Apply WHERE conditions from SQL query to the builder.
-     * Handles AND/OR operators with support for complex conditions.
-     * AND has higher precedence than OR.
-     *
-     * @param object $builder The query builder instance.
-     * @param string $whereClause The WHERE clause string.
-     * @return void
-     */
-    private function applyWhereConditions(object $builder, string $whereClause): void
-    {
-        // Split by OR first (lowest precedence)
-        $orConditions = $this->splitByTopLevelOperator($whereClause, 'OR');
-
-        foreach ($orConditions as $index => $orPart) {
-            $orPart = trim($orPart);
-
-            // Split each OR part by AND
-            $andConditions = $this->splitByTopLevelOperator($orPart, 'AND');
-
-            foreach ($andConditions as $andIndex => $andPart) {
-                $andPart = trim($andPart);
-
-                // Apply the condition
-                if (!empty($andPart)) {
-                    if ($index === 0 && $andIndex === 0) {
-                        // First condition uses where()
-                        $builder->where($andPart);
-                    } elseif ($andIndex === 0) {
-                        // First condition of an OR group uses orWhere()
-                        $builder->orWhere($andPart);
-                    } else {
-                        // Subsequent AND conditions use andWhere()
-                        $builder->andWhere($andPart);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Split a clause by a top-level operator (AND/OR), respecting parentheses.
+     * Split WHERE clause by AND operator, but preserve BETWEEN...AND constructs.
      *
      * @param string $clause The clause to split.
-     * @param string $operator The operator to split by (AND or OR).
      * @return array The split conditions.
      */
-    private function splitByTopLevelOperator(string $clause, string $operator): array
+    private function splitByTopLevelAndOperator(string $clause): array
     {
         $parts = [];
         $current = '';
-        $parenDepth = 0;
         $i = 0;
         $len = strlen($clause);
-        $operator = strtoupper(trim($operator));
-        $operatorLen = strlen($operator);
+        $inBetween = false;
 
         while ($i < $len) {
-            $char = $clause[$i];
+            // Check for BETWEEN keyword (start of BETWEEN...AND construct)
+            if (!$inBetween && preg_match('/\bBETWEEN\b/i', substr($clause, $i, 7))) {
+                $inBetween = true;
+                $current .= substr($clause, $i, 7);
+                $i += 7;
+                continue;
+            }
 
-            if ($char === '(') {
-                $parenDepth++;
-                $current .= $char;
-                $i++;
-            } elseif ($char === ')') {
-                $parenDepth--;
-                $current .= $char;
-                $i++;
-            } elseif ($parenDepth === 0 && substr(strtoupper($clause), $i, $operatorLen) === $operator) {
-                // Check if this is a word boundary (not part of a column/table name)
+            // Check for AND keyword
+            if (strtoupper(substr($clause, $i, 3)) === 'AND') {
+                // Check if this is a word boundary
                 $beforeOk = ($i === 0) || !ctype_alnum($clause[$i - 1]);
-                $afterOk = ($i + $operatorLen >= $len) || !ctype_alnum($clause[$i + $operatorLen]);
+                $afterOk = ($i + 3 >= $len) || !ctype_alnum($clause[$i + 3]);
 
                 if ($beforeOk && $afterOk) {
-                    // Found operator at top level
-                    if (!empty(trim($current))) {
-                        $parts[] = $current;
+                    if ($inBetween) {
+                        // This AND is part of BETWEEN...AND, include it
+                        $current .= 'AND';
+                        $i += 3;
+                        $inBetween = false; // BETWEEN...AND complete
+                        continue;
+                    } else {
+                        // This is a logical AND separator
+                        if (!empty(trim($current))) {
+                            $parts[] = trim($current);
+                        }
+                        $current = '';
+                        $i += 3;
+                        // Skip whitespace after AND
+                        while ($i < $len && ctype_space($clause[$i])) {
+                            $i++;
+                        }
+                        continue;
                     }
-                    $current = '';
-                    $i += $operatorLen;
-                    // Skip whitespace after operator
-                    while ($i < $len && in_array($clause[$i], [' ', "\t", "\n", "\r"])) {
-                        $i++;
-                    }
-                    continue;
                 }
             }
 
-            $current .= $char;
+            $current .= $clause[$i];
             $i++;
         }
 
         if (!empty(trim($current))) {
-            $parts[] = $current;
+            $parts[] = trim($current);
         }
 
         return !empty($parts) ? $parts : [$clause];

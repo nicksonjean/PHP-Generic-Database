@@ -16,6 +16,7 @@ use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Interfaces\QueryBuilder\IBuilder;
 use GenericDatabase\Engine\JSON\Connection\JSON;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
+use GenericDatabase\Engine\JSON\QueryBuilder\Regex;
 
 /**
  * Builder class for JSON QueryBuilder.
