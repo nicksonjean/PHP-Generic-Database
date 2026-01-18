@@ -28,7 +28,7 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 
 $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)->connect();
 
-// var_dump($context);
+var_dump($context);
 
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :id', [':id' => 10]);
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id = :id', '27');
@@ -39,11 +39,13 @@ $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)-
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id IN(:idA, :idB, :idC)', '25', '26', '27');
 // $a = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id NOT IN(25, 26, 27) ORDER BY id');
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE :idA', [':idA' => '%Rio%']);
-$a = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome NOT LIKE "%Rio%"');
+// $a = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome NOT LIKE "%Rio%"');
+
+// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE "%TESTE%"');
 
 // var_dump($a);
 
-var_dump($a->getAllMetadata());
+// var_dump($a->getAllMetadata());
 
 // var_dump([
 //     $a->getQueryString(),
@@ -53,7 +55,7 @@ var_dump($a->getAllMetadata());
 //     $a->getAffectedRows()
 // ]);
 
-var_dump($a->fetchAll(Connection::FETCH_OBJ));
+// var_dump($a->fetchAll(Connection::FETCH_OBJ));
 // var_dump($a->fetchAll(Connection::FETCH_ASSOC));
 // var_dump($a->fetchAll(Connection::FETCH_BOTH));
 // var_dump($a->fetchAll(Connection::FETCH_NUM));
@@ -67,22 +69,24 @@ var_dump($a->fetchAll(Connection::FETCH_OBJ));
 
 // $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [[':nome' => 'TESTE1', ':sigla' => 'T1'], [':nome' => 'TESTE2', ':sigla' => 'T2']]);
 // $b = $context->prepare('INSERT INTO estado (nome, sigla) VALUES (:nome, :sigla)', [':nome' => 'TESTE', ':sigla' => 'TE']);
-// $b = $context->prepare('UPDATE estado SET nome = :nome WHERE id = :id', [':nome' => 'TE', ':id' => '210']);
-// $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'PDC', 'TI', 210);
-// $b = $context->prepare('DELETE FROM estado WHERE id IN (:id)', [[':id' => '271'], [':id' => '272'], [':id' => '273']]);
-// $b = $context->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
-// $b = $context->query('DELETE FROM estado WHERE id IN (285, 286)');
+// $b = $context->prepare('UPDATE estado SET nome = :nome WHERE id = :id', [':nome' => 'TE', ':id' => '30']);
+// $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'TES', 'TI', 30);
+// $b = $context->prepare('DELETE FROM estado WHERE id IN (:id)', [[':id' => '28'], [':id' => '29'], [':id' => '30']]);
+// // $b = $context->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
+// $b = $context->query('DELETE FROM estado WHERE id IN (28, 29)');
 
 // var_dump($b);
 
-// var_dump($b->queryMetadata());
+// var_dump($b->getAllMetadata());
+
+// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE "%TES%"');
 
 // var_dump([
-//     $b->queryString(),
-//     $b->queryParameters(),
-//     $b->queryRows(),
-//     $b->queryColumns(),
-//     $b->affectedRows()
+//     $b->getQueryString(),
+//     $b->getQueryParameters(),
+//     $b->getQueryRows(),
+//     $b->getQueryColumns(),
+//     $b->getAffectedRows()
 // ]);
 
 /*

@@ -164,8 +164,20 @@ class FetchHandler implements IFetch
             return $query;
         }
 
+        // Check if parameters is a multidimensional array (batch operation)
+        // In this case, we can't do simple replacement - return query as-is
+        $firstValue = reset($parameters);
+        if (is_array($firstValue) && !empty($firstValue)) {
+            return $query;
+        }
+
         foreach ($parameters as $key => $value) {
             $placeholder = is_int($key) ? '?' : $key;
+
+            // Skip array values (shouldn't happen for SELECT, but safety check)
+            if (is_array($value)) {
+                continue;
+            }
 
             // Format value based on type
             if (is_null($value)) {

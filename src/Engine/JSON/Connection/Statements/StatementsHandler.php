@@ -7,6 +7,8 @@ namespace GenericDatabase\Engine\JSON\Connection\Statements;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Generic\FlatFiles\DataProcessor;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
 
 /**
  * Handles SQL-like statement operations for JSON connections.
@@ -361,11 +363,337 @@ class StatementsHandler implements IStatements
         $this->setQueryString($query);
         $this->setAllMetadata();
 
-        // The actual execution is handled by the QueryBuilder
-        // This method just stores the query for later execution
+        // Store the query
         $this->statement = $query;
 
+        // Detect query type and execute DML operations for raw queries
+        $queryType = $this->detectQueryType($query);
+
+        if (in_array($queryType, ['INSERT', 'UPDATE', 'DELETE'])) {
+            $this->executeRawDmlQuery($query);
+        }
+
         return $this->connection;
+    }
+
+    /**
+     * Execute a raw DML query (without parameters).
+     *
+     * @param string $query The SQL query.
+     * @return void
+     */
+    private function executeRawDmlQuery(string $query): void
+    {
+        $queryType = $this->detectQueryType($query);
+
+        $affected = match ($queryType) {
+            'INSERT' => $this->executeRawInsert($query),
+            'UPDATE' => $this->executeRawUpdate($query),
+            'DELETE' => $this->executeRawDelete($query),
+            default => 0
+        };
+
+        $this->setAffectedRows($affected);
+    }
+
+    /**
+     * Execute a raw INSERT query (without parameters).
+     *
+     * @param string $query The SQL query.
+     * @return int The number of affected rows.
+     */
+    private function executeRawInsert(string $query): int
+    {
+        // Parse INSERT INTO table (columns) VALUES ('value1', 'value2')
+        if (!preg_match('/INSERT\s+INTO\s+(\w+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/i', $query, $matches)) {
+            return 0;
+        }
+
+        $tableName = $matches[1];
+        $columns = array_map('trim', explode(',', $matches[2]));
+        $rawValues = $matches[3];
+
+        // Parse values (handle quoted strings)
+        $values = $this->parseRawValues($rawValues);
+
+        // Load table data
+        if (method_exists($this->connection, 'load')) {
+            $this->connection->load($tableName);
+        }
+
+        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+
+        // Build the row to insert
+        $row = [];
+        foreach ($columns as $index => $column) {
+            $row[$column] = $values[$index] ?? null;
+        }
+
+        // Generate auto-increment ID if 'id' column exists and not provided
+        if (!isset($row['id']) || $row['id'] === null) {
+            $maxId = 0;
+            foreach ($data as $existingRow) {
+                $existingRow = (array) $existingRow;
+                if (isset($existingRow['id']) && (int) $existingRow['id'] > $maxId) {
+                    $maxId = (int) $existingRow['id'];
+                }
+            }
+            $row['id'] = $maxId + 1;
+        }
+
+        $processor = new DataProcessor($data);
+        $result = $processor->insert($row);
+
+        if ($result) {
+            $newData = $processor->getData();
+            if (method_exists($this->connection, 'setData')) {
+                $this->connection->setData($newData);
+            }
+            if (method_exists($this->connection, 'save')) {
+                $this->connection->save($newData, $tableName);
+            }
+            $this->setLastInsertId((int) $row['id']);
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Execute a raw UPDATE query (without parameters).
+     *
+     * @param string $query The SQL query.
+     * @return int The number of affected rows.
+     */
+    private function executeRawUpdate(string $query): int
+    {
+        // Parse UPDATE table SET column = 'value' WHERE condition
+        if (!preg_match('/UPDATE\s+(\w+)\s+SET\s+(.+?)\s+WHERE\s+(.+)/is', $query, $matches)) {
+            return 0;
+        }
+
+        $tableName = $matches[1];
+        $setClause = $matches[2];
+        $whereClause = $matches[3];
+
+        // Load table data
+        if (method_exists($this->connection, 'load')) {
+            $this->connection->load($tableName);
+        }
+
+        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+
+        // Parse SET clause (raw values)
+        $updateData = $this->parseRawSetClause($setClause);
+
+        // Parse WHERE clause (raw values)
+        $conditions = $this->parseRawWhereClause($whereClause);
+
+        $processor = new DataProcessor($data);
+        $affected = $processor->update($updateData, $conditions, 'AND');
+
+        if ($affected > 0) {
+            $newData = $processor->getData();
+            if (method_exists($this->connection, 'setData')) {
+                $this->connection->setData($newData);
+            }
+            if (method_exists($this->connection, 'save')) {
+                $this->connection->save($newData, $tableName);
+            }
+        }
+
+        return $affected;
+    }
+
+    /**
+     * Execute a raw DELETE query (without parameters).
+     *
+     * @param string $query The SQL query.
+     * @return int The number of deleted rows.
+     */
+    private function executeRawDelete(string $query): int
+    {
+        // Parse DELETE FROM table WHERE condition
+        if (!preg_match('/DELETE\s+FROM\s+(\w+)\s+WHERE\s+(.+)/is', $query, $matches)) {
+            return 0;
+        }
+
+        $tableName = $matches[1];
+        $whereClause = $matches[2];
+
+        // Load table data
+        if (method_exists($this->connection, 'load')) {
+            $this->connection->load($tableName);
+        }
+
+        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+
+        // Parse WHERE clause (raw values)
+        $conditions = $this->parseRawWhereClause($whereClause);
+
+        $processor = new DataProcessor($data);
+        $deleted = $processor->delete($conditions, 'AND');
+
+        if ($deleted > 0) {
+            $newData = $processor->getData();
+            if (method_exists($this->connection, 'setData')) {
+                $this->connection->setData($newData);
+            }
+            if (method_exists($this->connection, 'save')) {
+                $this->connection->save($newData, $tableName);
+            }
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Parse raw values from VALUES clause.
+     *
+     * @param string $rawValues The raw values string.
+     * @return array The parsed values.
+     */
+    private function parseRawValues(string $rawValues): array
+    {
+        $values = [];
+        $current = '';
+        $inQuote = false;
+        $quoteChar = '';
+
+        for ($i = 0; $i < strlen($rawValues); $i++) {
+            $char = $rawValues[$i];
+
+            if (!$inQuote && ($char === "'" || $char === '"')) {
+                $inQuote = true;
+                $quoteChar = $char;
+            } elseif ($inQuote && $char === $quoteChar) {
+                $inQuote = false;
+                $quoteChar = '';
+            } elseif (!$inQuote && $char === ',') {
+                $values[] = trim(trim($current), "'\"");
+                $current = '';
+                continue;
+            } else {
+                $current .= $char;
+            }
+        }
+
+        if ($current !== '') {
+            $values[] = trim(trim($current), "'\"");
+        }
+
+        return $values;
+    }
+
+    /**
+     * Parse raw SET clause.
+     *
+     * @param string $setClause The SET clause string.
+     * @return array The parsed update data.
+     */
+    private function parseRawSetClause(string $setClause): array
+    {
+        $updateData = [];
+
+        // Split by comma but respect quoted values
+        $assignments = $this->splitByCommaRespectingQuotes($setClause);
+
+        foreach ($assignments as $assignment) {
+            if (preg_match('/(\w+)\s*=\s*(.+)/', trim($assignment), $m)) {
+                $column = $m[1];
+                $value = trim($m[2], "'\" \t");
+                $updateData[$column] = $value;
+            }
+        }
+
+        return $updateData;
+    }
+
+    /**
+     * Parse raw WHERE clause.
+     *
+     * @param string $whereClause The WHERE clause string.
+     * @return array The parsed conditions.
+     */
+    private function parseRawWhereClause(string $whereClause): array
+    {
+        $conditions = [];
+
+        // Handle IN clause: WHERE column IN (value1, value2)
+        if (preg_match('/(\w+)\s+IN\s*\(([^)]+)\)/i', $whereClause, $m)) {
+            $column = $m[1];
+            $rawValues = $m[2];
+            $values = array_map(function ($v) {
+                return trim(trim($v), "'\"");
+            }, explode(',', $rawValues));
+
+            $conditions[] = [
+                'column' => $column,
+                'operator' => 'IN',
+                'value' => $values
+            ];
+            return $conditions;
+        }
+
+        // Handle simple conditions
+        $parts = preg_split('/\s+AND\s+/i', $whereClause);
+
+        foreach ($parts as $part) {
+            $part = trim($part);
+
+            if (preg_match('/(\w+)\s*(=|!=|<>|>|<|>=|<=)\s*(.+)/', $part, $m)) {
+                $column = $m[1];
+                $operator = $m[2];
+                $value = trim($m[3], "'\" \t");
+
+                $conditions[] = [
+                    'column' => $column,
+                    'operator' => $operator,
+                    'value' => $value
+                ];
+            }
+        }
+
+        return $conditions;
+    }
+
+    /**
+     * Split string by comma while respecting quoted values.
+     *
+     * @param string $string The string to split.
+     * @return array The split parts.
+     */
+    private function splitByCommaRespectingQuotes(string $string): array
+    {
+        $parts = [];
+        $current = '';
+        $inQuote = false;
+        $quoteChar = '';
+
+        for ($i = 0; $i < strlen($string); $i++) {
+            $char = $string[$i];
+
+            if (!$inQuote && ($char === "'" || $char === '"')) {
+                $inQuote = true;
+                $quoteChar = $char;
+                $current .= $char;
+            } elseif ($inQuote && $char === $quoteChar) {
+                $inQuote = false;
+                $quoteChar = '';
+                $current .= $char;
+            } elseif (!$inQuote && $char === ',') {
+                $parts[] = trim($current);
+                $current = '';
+            } else {
+                $current .= $char;
+            }
+        }
+
+        if ($current !== '') {
+            $parts[] = trim($current);
+        }
+
+        return $parts;
     }
 
     /**
@@ -378,19 +706,22 @@ class StatementsHandler implements IStatements
     {
         $query = $params[0] ?? '';
         $this->setQueryString($query);
+        $this->setAllMetadata();
         $this->statement = $query;
 
         // Process parameters based on input format
         $parameters = [];
+        $isMulti = false;
 
         if (count($params) > 1) {
             // Check if second parameter is an array (named parameters)
             if (is_array($params[1])) {
+                // Check if it's a multidimensional array (batch operation)
+                $isMulti = Arrays::isMultidimensional($params[1]);
                 $parameters = $params[1];
             } else {
                 // Extract positional parameters from remaining arguments
                 // Build a mapping from named placeholders to values
-                $placeholders = [];
                 if (preg_match_all('/:(\w+)/', $query, $matches)) {
                     $placeholderNames = $matches[1];
 
@@ -410,7 +741,322 @@ class StatementsHandler implements IStatements
         }
 
         $this->setQueryParameters($parameters);
+
+        // Detect query type and execute DML operations
+        $queryType = $this->detectQueryType($query);
+
+        if (in_array($queryType, ['INSERT', 'UPDATE', 'DELETE'])) {
+            $this->executeDmlQuery($query, $parameters, $isMulti);
+        }
+
         return $this->connection;
+    }
+
+    /**
+     * Detect the type of SQL query.
+     *
+     * @param string $query The SQL query.
+     * @return string The query type (SELECT, INSERT, UPDATE, DELETE).
+     */
+    private function detectQueryType(string $query): string
+    {
+        $query = trim($query);
+        $firstWord = strtoupper(strtok($query, " \t\n"));
+
+        return match ($firstWord) {
+            'SELECT' => 'SELECT',
+            'INSERT' => 'INSERT',
+            'UPDATE' => 'UPDATE',
+            'DELETE' => 'DELETE',
+            default => 'UNKNOWN'
+        };
+    }
+
+    /**
+     * Execute a DML (INSERT, UPDATE, DELETE) query.
+     *
+     * @param string $query The SQL query.
+     * @param array $parameters The query parameters.
+     * @param bool $isMulti Whether this is a batch operation.
+     * @return void
+     */
+    private function executeDmlQuery(string $query, array $parameters, bool $isMulti): void
+    {
+        if ($isMulti) {
+            // Batch operation - execute for each parameter set
+            $totalAffected = 0;
+            foreach ($parameters as $paramSet) {
+                $affected = $this->executeSingleDmlQuery($query, $paramSet);
+                $totalAffected += $affected;
+            }
+            $this->setAffectedRows($totalAffected);
+        } else {
+            $affected = $this->executeSingleDmlQuery($query, $parameters);
+            $this->setAffectedRows($affected);
+        }
+    }
+
+    /**
+     * Execute a single DML query with parameters.
+     *
+     * @param string $query The SQL query.
+     * @param array $parameters The query parameters.
+     * @return int The number of affected rows.
+     */
+    private function executeSingleDmlQuery(string $query, array $parameters): int
+    {
+        $queryType = $this->detectQueryType($query);
+
+        return match ($queryType) {
+            'INSERT' => $this->executeInsert($query, $parameters),
+            'UPDATE' => $this->executeUpdate($query, $parameters),
+            'DELETE' => $this->executeDelete($query, $parameters),
+            default => 0
+        };
+    }
+
+    /**
+     * Execute an INSERT query.
+     *
+     * @param string $query The SQL query.
+     * @param array $parameters The query parameters.
+     * @return int The number of affected rows (1 on success, 0 on failure).
+     */
+    private function executeInsert(string $query, array $parameters): int
+    {
+        // Parse INSERT INTO table (columns) VALUES (...)
+        if (!preg_match('/INSERT\s+INTO\s+(\w+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/i', $query, $matches)) {
+            return 0;
+        }
+
+        $tableName = $matches[1];
+        $columns = array_map('trim', explode(',', $matches[2]));
+        $valuePlaceholders = array_map('trim', explode(',', $matches[3]));
+
+        // Load table data
+        if (method_exists($this->connection, 'load')) {
+            $this->connection->load($tableName);
+        }
+
+        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+
+        // Build the row to insert
+        $row = [];
+        foreach ($columns as $index => $column) {
+            $placeholder = $valuePlaceholders[$index] ?? null;
+            if ($placeholder && preg_match('/^:(\w+)$/', $placeholder, $m)) {
+                $paramKey = ':' . $m[1];
+                $row[$column] = $parameters[$paramKey] ?? null;
+            }
+        }
+
+        // Generate auto-increment ID if 'id' column exists and not provided
+        if (!isset($row['id']) || $row['id'] === null) {
+            $maxId = 0;
+            foreach ($data as $existingRow) {
+                $existingRow = (array) $existingRow;
+                if (isset($existingRow['id']) && (int) $existingRow['id'] > $maxId) {
+                    $maxId = (int) $existingRow['id'];
+                }
+            }
+            $row['id'] = $maxId + 1;
+        }
+
+        $processor = new DataProcessor($data);
+        $result = $processor->insert($row);
+
+        if ($result) {
+            $newData = $processor->getData();
+            if (method_exists($this->connection, 'setData')) {
+                $this->connection->setData($newData);
+            }
+            if (method_exists($this->connection, 'save')) {
+                $this->connection->save($newData, $tableName);
+            }
+            $this->setLastInsertId((int) $row['id']);
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Execute an UPDATE query.
+     *
+     * @param string $query The SQL query.
+     * @param array $parameters The query parameters.
+     * @return int The number of affected rows.
+     */
+    private function executeUpdate(string $query, array $parameters): int
+    {
+        // Parse UPDATE table SET column = :value WHERE condition
+        if (!preg_match('/UPDATE\s+(\w+)\s+SET\s+(.+?)\s+WHERE\s+(.+)/is', $query, $matches)) {
+            return 0;
+        }
+
+        $tableName = $matches[1];
+        $setClause = $matches[2];
+        $whereClause = $matches[3];
+
+        // Load table data
+        if (method_exists($this->connection, 'load')) {
+            $this->connection->load($tableName);
+        }
+
+        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+
+        // Parse SET clause
+        $updateData = $this->parseSetClause($setClause, $parameters);
+
+        // Parse WHERE clause
+        $conditions = $this->parseWhereClauseSimple($whereClause, $parameters);
+
+        $processor = new DataProcessor($data);
+        $affected = $processor->update($updateData, $conditions, 'AND');
+
+        if ($affected > 0) {
+            $newData = $processor->getData();
+            if (method_exists($this->connection, 'setData')) {
+                $this->connection->setData($newData);
+            }
+            if (method_exists($this->connection, 'save')) {
+                $this->connection->save($newData, $tableName);
+            }
+        }
+
+        return $affected;
+    }
+
+    /**
+     * Execute a DELETE query.
+     *
+     * @param string $query The SQL query.
+     * @param array $parameters The query parameters.
+     * @return int The number of deleted rows.
+     */
+    private function executeDelete(string $query, array $parameters): int
+    {
+        // Parse DELETE FROM table WHERE condition
+        if (!preg_match('/DELETE\s+FROM\s+(\w+)\s+WHERE\s+(.+)/is', $query, $matches)) {
+            return 0;
+        }
+
+        $tableName = $matches[1];
+        $whereClause = $matches[2];
+
+        // Load table data
+        if (method_exists($this->connection, 'load')) {
+            $this->connection->load($tableName);
+        }
+
+        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+
+        // Parse WHERE clause
+        $conditions = $this->parseWhereClauseSimple($whereClause, $parameters);
+
+        $processor = new DataProcessor($data);
+        $deleted = $processor->delete($conditions, 'AND');
+
+        if ($deleted > 0) {
+            $newData = $processor->getData();
+            if (method_exists($this->connection, 'setData')) {
+                $this->connection->setData($newData);
+            }
+            if (method_exists($this->connection, 'save')) {
+                $this->connection->save($newData, $tableName);
+            }
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Parse SET clause for UPDATE queries.
+     *
+     * @param string $setClause The SET clause string.
+     * @param array $parameters The query parameters.
+     * @return array The parsed update data.
+     */
+    private function parseSetClause(string $setClause, array $parameters): array
+    {
+        $updateData = [];
+        $assignments = preg_split('/\s*,\s*/', $setClause);
+
+        foreach ($assignments as $assignment) {
+            if (preg_match('/(\w+)\s*=\s*(:?\w+)/', $assignment, $m)) {
+                $column = $m[1];
+                $value = $m[2];
+
+                if (strpos($value, ':') === 0) {
+                    // Named parameter
+                    $updateData[$column] = $parameters[$value] ?? null;
+                } else {
+                    // Literal value
+                    $updateData[$column] = trim($value, "'\"");
+                }
+            }
+        }
+
+        return $updateData;
+    }
+
+    /**
+     * Parse WHERE clause for simple conditions.
+     *
+     * @param string $whereClause The WHERE clause string.
+     * @param array $parameters The query parameters.
+     * @return array The parsed conditions.
+     */
+    private function parseWhereClauseSimple(string $whereClause, array $parameters): array
+    {
+        $conditions = [];
+
+        // Handle IN clause with parameter: WHERE column IN (:param)
+        if (preg_match('/(\w+)\s+IN\s*\(\s*(:?\w+)\s*\)/i', $whereClause, $m)) {
+            $column = $m[1];
+            $paramKey = $m[2];
+
+            if (strpos($paramKey, ':') === 0 && isset($parameters[$paramKey])) {
+                $value = $parameters[$paramKey];
+                $conditions[] = [
+                    'column' => $column,
+                    'operator' => 'IN',
+                    'value' => is_array($value) ? $value : [$value]
+                ];
+            }
+            return $conditions;
+        }
+
+        // Handle simple conditions: column = :value AND column2 = :value2
+        $parts = preg_split('/\s+AND\s+/i', $whereClause);
+
+        foreach ($parts as $part) {
+            $part = trim($part);
+
+            if (preg_match('/(\w+)\s*(=|!=|<>|>|<|>=|<=)\s*(:?\w+)/', $part, $m)) {
+                $column = $m[1];
+                $operator = $m[2];
+                $value = $m[3];
+
+                if (strpos($value, ':') === 0) {
+                    // Named parameter
+                    $conditions[] = [
+                        'column' => $column,
+                        'operator' => $operator,
+                        'value' => $parameters[$value] ?? null
+                    ];
+                } else {
+                    // Literal value
+                    $conditions[] = [
+                        'column' => $column,
+                        'operator' => $operator,
+                        'value' => trim($value, "'\"")
+                    ];
+                }
+            }
+        }
+
+        return $conditions;
     }
 
     /**

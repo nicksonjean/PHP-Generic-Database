@@ -711,15 +711,30 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     public function getAllMetadata(): object
     {
-        // Execute the query to populate metadata if queryRows is still 0
-        // and there's a query string set
+        $queryString = $this->getStatementsHandler()->getQueryString();
+
+        // Only execute for SELECT queries - DML operations are already executed
         if ($this->getStatementsHandler()->getQueryRows() === 0 &&
-            !empty($this->getStatementsHandler()->getQueryString())) {
+            !empty($queryString) &&
+            $this->isDmlQuery($queryString) === false) {
             // Force execution to populate metadata, cursor is reset for subsequent fetches
             $this->getFetchHandler()->execute();
         }
 
         return $this->getStatementsHandler()->getAllMetadata();
+    }
+
+    /**
+     * Check if the query is a DML operation (INSERT, UPDATE, DELETE).
+     *
+     * @param string $query The SQL query.
+     * @return bool
+     */
+    private function isDmlQuery(string $query): bool
+    {
+        $query = trim($query);
+        $firstWord = strtoupper(strtok($query, " \t\n"));
+        return in_array($firstWord, ['INSERT', 'UPDATE', 'DELETE']);
     }
 
     /**
