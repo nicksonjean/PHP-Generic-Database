@@ -10,4 +10,3 @@ final class Junction extends EmulatedStringEnum
     protected const CONJUNCTION = 'CONJUNCTION';
     protected const DISJUNCTION = 'DISJUNCTION';
 }
-

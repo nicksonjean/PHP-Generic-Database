@@ -255,4 +255,3 @@ class Reflections
         return $result;
     }
 }
-

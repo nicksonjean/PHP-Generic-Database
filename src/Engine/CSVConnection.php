@@ -516,25 +516,84 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
     }
 
     // IStatements implementation - delegated to handler
-    public function setAllMetadata(): void { $this->getStatementsHandler()->setAllMetadata(); }
-    public function getAllMetadata(): object { return $this->getStatementsHandler()->getAllMetadata(); }
-    public function getQueryString(): string { return $this->getStatementsHandler()->getQueryString(); }
-    public function setQueryString(string $params): void { $this->getStatementsHandler()->setQueryString($params); }
-    public function getQueryParameters(): ?array { return $this->getStatementsHandler()->getQueryParameters(); }
-    public function setQueryParameters(?array $params): void { $this->getStatementsHandler()->setQueryParameters($params); }
-    public function getQueryRows(): int|false { return $this->getStatementsHandler()->getQueryRows(); }
-    public function setQueryRows(callable|int|false $params): void { $this->getStatementsHandler()->setQueryRows($params); }
-    public function getQueryColumns(): int|false { return $this->getStatementsHandler()->getQueryColumns(); }
-    public function setQueryColumns(int|false $params): void { $this->getStatementsHandler()->setQueryColumns($params); }
-    public function getAffectedRows(): int|false { return $this->getStatementsHandler()->getAffectedRows(); }
-    public function setAffectedRows(int|false $params): void { $this->getStatementsHandler()->setAffectedRows($params); }
-    public function getStatement(): mixed { return $this->getStatementsHandler()->getStatement(); }
-    public function setStatement(mixed $statement): void { $this->getStatementsHandler()->setStatement($statement); }
-    public function bindParam(object $params): void { $this->getStatementsHandler()->bindParam($params); }
-    public function parse(mixed ...$params): string { return $this->getStatementsHandler()->parse(...$params); }
-    public function query(mixed ...$params): static|null { $this->getStatementsHandler()->query(...$params); return $this; }
-    public function prepare(mixed ...$params): static|null { $this->getStatementsHandler()->prepare(...$params); return $this; }
-    public function exec(mixed ...$params): mixed { return $this->getStatementsHandler()->exec(...$params); }
+    public function setAllMetadata(): void
+    {
+        $this->getStatementsHandler()->setAllMetadata();
+    }
+    public function getAllMetadata(): object
+    {
+        return $this->getStatementsHandler()->getAllMetadata();
+    }
+    public function getQueryString(): string
+    {
+        return $this->getStatementsHandler()->getQueryString();
+    }
+    public function setQueryString(string $params): void
+    {
+        $this->getStatementsHandler()->setQueryString($params);
+    }
+    public function getQueryParameters(): ?array
+    {
+        return $this->getStatementsHandler()->getQueryParameters();
+    }
+    public function setQueryParameters(?array $params): void
+    {
+        $this->getStatementsHandler()->setQueryParameters($params);
+    }
+    public function getQueryRows(): int|false
+    {
+        return $this->getStatementsHandler()->getQueryRows();
+    }
+    public function setQueryRows(callable|int|false $params): void
+    {
+        $this->getStatementsHandler()->setQueryRows($params);
+    }
+    public function getQueryColumns(): int|false
+    {
+        return $this->getStatementsHandler()->getQueryColumns();
+    }
+    public function setQueryColumns(int|false $params): void
+    {
+        $this->getStatementsHandler()->setQueryColumns($params);
+    }
+    public function getAffectedRows(): int|false
+    {
+        return $this->getStatementsHandler()->getAffectedRows();
+    }
+    public function setAffectedRows(int|false $params): void
+    {
+        $this->getStatementsHandler()->setAffectedRows($params);
+    }
+    public function getStatement(): mixed
+    {
+        return $this->getStatementsHandler()->getStatement();
+    }
+    public function setStatement(mixed $statement): void
+    {
+        $this->getStatementsHandler()->setStatement($statement);
+    }
+    public function bindParam(object $params): void
+    {
+        $this->getStatementsHandler()->bindParam($params);
+    }
+    public function parse(mixed ...$params): string
+    {
+        return $this->getStatementsHandler()->parse(...$params);
+    }
+    public function query(mixed ...$params): static|null
+    {
+        $this->getStatementsHandler()->query(...$params);
+        return $this;
+    }
+    public function prepare(mixed ...$params): static|null
+    {
+        $this->getStatementsHandler()->prepare(...$params);
+        return $this;
+    }
+    public function exec(mixed ...$params): mixed
+    {
+        return $this->getStatementsHandler()->exec(...$params);
+    }
 
     // IFetch implementation
     public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
@@ -547,9 +606,20 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return $this->getFetchHandler()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
     }
 
-    public function getAttribute(mixed $name): mixed { return CSV::getAttribute($name); }
-    public function setAttribute(mixed $name, mixed $value): void { CSV::setAttribute($name, $value); }
-    public function errorCode(mixed $inst = null): int|string|bool { return 0; }
-    public function errorInfo(mixed $inst = null): string|bool|array { return ''; }
+    public function getAttribute(mixed $name): mixed
+    {
+        return CSV::getAttribute($name);
+    }
+    public function setAttribute(mixed $name, mixed $value): void
+    {
+        CSV::setAttribute($name, $value);
+    }
+    public function errorCode(mixed $inst = null): int|string|bool
+    {
+        return 0;
+    }
+    public function errorInfo(mixed $inst = null): string|bool|array
+    {
+        return '';
+    }
 }
-

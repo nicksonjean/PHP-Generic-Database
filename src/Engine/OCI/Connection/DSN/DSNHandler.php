@@ -59,4 +59,3 @@ class DSNHandler implements IDSN
         return $sanitize(false);
     }
 }
-

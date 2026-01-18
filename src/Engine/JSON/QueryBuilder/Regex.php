@@ -344,4 +344,3 @@ class Regex implements IRegex
         return '/^' . $regex . '$/i';
     }
 }
-

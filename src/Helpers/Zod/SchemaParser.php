@@ -19,7 +19,7 @@ class SchemaParser
 
     /**
      * Cria um tipo Zod a partir da configuração JSON
-     * 
+     *
      * @param string $propertyName Nome da propriedade
      * @param array $config Configuração da propriedade
      * @param array $errorMessages Mensagens de erro personalizadas
@@ -99,7 +99,7 @@ class SchemaParser
 
     /**
      * Converte um esquema Zod para JSON Schema
-     * 
+     *
      * @param ZodObject $zodSchema O esquema Zod a ser convertido
      * @param string|null $outputPath Caminho para salvar o JSON Schema gerado
      * @return array O JSON Schema gerado
@@ -121,7 +121,7 @@ class SchemaParser
     /**
      * Cria um esquema para validar os parâmetros do método realConnect
      * baseado no arquivo JSON de configuração
-     * 
+     *
      * @return ZodObject
      * @throws \RuntimeException Se o arquivo não for encontrado ou inválido
      */
@@ -168,7 +168,7 @@ class SchemaParser
 
     /**
      * Valida os parâmetros para o método realConnect
-     * 
+     *
      * @param array $params
      * @return array Dados validados
      * @throws \InvalidArgumentException
@@ -187,7 +187,7 @@ class SchemaParser
 
     /**
      * Exporta o esquema de conexão MySQL para JSON Schema
-     * 
+     *
      * @param string $outputPath Caminho do arquivo de saída
      * @return array O JSON Schema gerado
      */
@@ -203,4 +203,3 @@ class SchemaParser
         }
     }
 }
-

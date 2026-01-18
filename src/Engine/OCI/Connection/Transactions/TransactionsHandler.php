@@ -67,4 +67,3 @@ class TransactionsHandler implements ITransactions
         return oci_rollback($this->getInstance()->getConnection());
     }
 }
-

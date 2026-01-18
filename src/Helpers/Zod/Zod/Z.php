@@ -37,4 +37,3 @@ class Z
         return new ZodNull();
     }
 }
-

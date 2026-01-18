@@ -214,7 +214,8 @@ class Schema
                 continue;
             }
 
-            if (strcasecmp($declaredTable, $table) === 0 ||
+            if (
+                strcasecmp($declaredTable, $table) === 0 ||
                 strcasecmp($declaredTable, $basename) === 0 ||
                 strcasecmp($declaredTable, $tableName) === 0
             ) {
@@ -577,4 +578,3 @@ class Schema
         return file_put_contents($path, $content) !== false;
     }
 }
-

@@ -606,5 +606,3 @@ class SQLiteQueryBuilder implements IQueryBuilder
         return $result;
     }
 }
-
-

@@ -114,4 +114,3 @@ trait Singleton
         self::$instances = [];
     }
 }
-

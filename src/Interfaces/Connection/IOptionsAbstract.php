@@ -44,4 +44,3 @@ interface IOptionsAbstract
      */
     public function getOptions(?int $type = null): mixed;
 }
-

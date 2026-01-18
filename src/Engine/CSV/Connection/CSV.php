@@ -334,4 +334,3 @@ class CSV
         self::$dataAttribute['hasHeader'] = $hasHeader;
     }
 }
-

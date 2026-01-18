@@ -93,4 +93,3 @@ class Structure
         $this->structure['data'] = $data;
     }
 }
-

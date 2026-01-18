@@ -74,4 +74,3 @@ final class Entity extends EmulatedStringEnum
      */
     protected const CASE_ARGUMENT_CLASS = 'GenericDatabase\Engine\%s\Connection\Arguments\ArgumentsHandler';
 }
-

@@ -121,4 +121,3 @@ class Validations
         return $data;
     }
 }
-

@@ -129,7 +129,9 @@ class YAML
 
         foreach ($lines as $line) {
             $line = rtrim($line);
-            if (empty($line) || str_starts_with($line, '#')) continue;
+            if (empty($line) || str_starts_with($line, '#')) {
+                continue;
+            }
 
             if (str_starts_with($line, '- ')) {
                 if (!empty($currentItem)) {

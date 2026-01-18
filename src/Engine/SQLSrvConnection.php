@@ -725,4 +725,3 @@ class SQLSrvConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         return sqlsrv_errors($inst);
     }
 }
-

@@ -335,4 +335,3 @@ class DSNHandler implements IDSN
         return $result;
     }
 }
-

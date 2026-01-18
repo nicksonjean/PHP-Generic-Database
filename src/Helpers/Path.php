@@ -92,4 +92,3 @@ class Path
         return false;
     }
 }
-

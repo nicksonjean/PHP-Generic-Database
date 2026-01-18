@@ -18,4 +18,3 @@ final class Where extends EmulatedStringEnum
     protected const ISNULL = 'ISNULL';
     protected const IFNULL = 'IFNULL';
 }
-

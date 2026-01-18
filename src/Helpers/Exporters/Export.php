@@ -7,14 +7,14 @@ use Exception;
 /**
  * Export Class
  * Central class to orchestrate database exports to different formats
- * 
+ *
  * Usage:
  * Export::fromSQLite('path/to/database.db')
  *     ->toCSV('path/to/output')
  *     ->toXML('path/to/output')
  *     ->toJSON('path/to/output')
  *     ->toYAML('path/to/output');
- * 
+ *
  * Export::fromMySQLi($host, $user, $password, $database, $outputPath)
  *     ->toCSV('path/to/output')
  *     ->toJSON('path/to/output');
@@ -203,7 +203,7 @@ class Export
 
         $formatExporter = new CSVExporter($this->engineExporter);
         $formatExporter->setDelimiter($delimiter);
-        
+
         $files = $formatExporter->export();
         $this->exportedPaths['csv'] = $files;
 
@@ -240,7 +240,7 @@ class Export
         $this->setExporterOutputPath($outputPath);
 
         $formatExporter = new XMLExporter($this->engineExporter);
-        
+
         $files = $formatExporter->export();
         $this->exportedPaths['xml'] = $files;
 
@@ -276,7 +276,7 @@ class Export
         $this->setExporterOutputPath($outputPath);
 
         $formatExporter = new JSONExporter($this->engineExporter);
-        
+
         $files = $formatExporter->export();
         $this->exportedPaths['json'] = $files;
 
@@ -312,7 +312,7 @@ class Export
         $this->setExporterOutputPath($outputPath);
 
         $formatExporter = new YAMLExporter($this->engineExporter);
-        
+
         $files = $formatExporter->export();
         $this->exportedPaths['yaml'] = $files;
 
@@ -362,4 +362,3 @@ class Export
         return $this->exportedPaths[$format] ?? [];
     }
 }
-

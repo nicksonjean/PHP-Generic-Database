@@ -208,7 +208,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
         } else {
             $statement = sqlsrv_query($this->getInstance()->getConnection(), $query, $params, $options);
         }
-        
+
         if ($statement === false) {
             $errors = sqlsrv_errors();
             throw new Exception(json_encode($errors));
@@ -314,4 +314,3 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return $this->getStatement();
     }
 }
-

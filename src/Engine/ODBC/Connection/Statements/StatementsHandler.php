@@ -155,12 +155,12 @@ class StatementsHandler extends AbstractStatements implements IStatements
         if (!$name) {
             return false;
         }
-        
+
         $isPhp80 = (PHP_VERSION_ID >= 80000 && PHP_VERSION_ID < 80100);
         if ($isPhp80) {
             return false;
         }
-        
+
         $connection = $this->getInstance()->getConnection();
         if (!$connection) {
             return false;
@@ -172,22 +172,22 @@ class StatementsHandler extends AbstractStatements implements IStatements
             return false;
         }
         @odbc_execute($stmt, [$name]);
-        
+
         if (!@odbc_fetch_row($stmt)) {
             return false;
         }
         $identityColumn = @odbc_result($stmt, 'RDB$GENERATOR_NAME');
-        
+
         if (!$identityColumn) {
             return false;
         }
-        
+
         $query = sprintf('SELECT GEN_ID(%s,0) AS LASTINSERTEDID FROM RDB$DATABASE', $identityColumn);
         $stmt = @odbc_exec($connection, $query);
         if (!$stmt) {
             return false;
         }
-        
+
         if (!@odbc_fetch_row($stmt)) {
             return false;
         }
@@ -392,54 +392,56 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ($connection === null) {
                 return false;
             }
-            
+
             $isValidConnection = is_resource($connection) || (PHP_VERSION_ID >= 80400 && is_object($connection) && get_class($connection) === 'Odbc\Connection');
 
             if (!$isValidConnection) {
                 return false;
             }
-            
+
             $query = reset($params);
             if (!is_string($query) || empty($query)) {
                 return false;
             }
-            
+
             $query = $this->parse($query);
             if (!is_string($query) || empty($query)) {
                 return false;
             }
-            
+
             $hasPlaceholders = str_contains($query, '?');
-            
+
             if (PHP_VERSION_ID >= 80400) {
                 if (strlen($query) > 65535) {
                     return false;
                 }
-                
+
                 if (preg_match('/[\x00-\x08\x0B-\x0C\x0E-\x1F]/', $query)) {
                     return false;
                 }
             }
-            
+
             $statement = false;
-            
+
             if (PHP_VERSION_ID >= 80400) {
                 ob_start();
                 $errorOccurred = false;
-                
-                $errorHandler = set_error_handler(function($severity, $message, $file, $line) use (&$errorOccurred) {
-                    if (str_contains($message, 'Out of memory') || 
+
+                $errorHandler = set_error_handler(function ($severity, $message, $file, $line) use (&$errorOccurred) {
+                    if (
+                        str_contains($message, 'Out of memory') ||
                         str_contains($message, 'memory') ||
-                        str_contains($message, 'tried to allocate')) {
+                        str_contains($message, 'tried to allocate')
+                    ) {
                         $errorOccurred = true;
                         return true;
                     }
                     return false;
                 });
-                
+
                 try {
                     $statement = @odbc_prepare($connection, $query);
-                    
+
                     if ($errorOccurred || $statement === false) {
                         $statement = false;
                     }
@@ -447,7 +449,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                     $statement = false;
                 } finally {
                     ob_end_clean();
-                    
+
                     if ($errorHandler !== null) {
                         set_error_handler($errorHandler);
                     } else {
@@ -457,11 +459,11 @@ class StatementsHandler extends AbstractStatements implements IStatements
             } else {
                 $statement = @odbc_prepare($connection, $query);
             }
-            
+
             if (!$statement && PHP_VERSION_ID >= 80400 && !$hasPlaceholders) {
                 $statement = @odbc_exec($connection, $query);
             }
-            
+
             if ($statement) {
                 $this->setStatement($statement);
             }
@@ -479,9 +481,8 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function query(mixed ...$params): IConnection
     {
         if (!empty($params) && ($statement = $this->prepareStatement(...$params)) && $this->exec($statement)) {
-
             $isValidStatement = is_resource($statement) || (PHP_VERSION_ID >= 80400 && is_object($statement) && get_class($statement) === 'Odbc\Result');
-            
+
             if ($isValidStatement) {
                 $colCount = odbc_num_fields($statement);
                 if ($colCount > 0) {
@@ -517,25 +518,24 @@ class StatementsHandler extends AbstractStatements implements IStatements
         if (empty($params)) {
             return $this->getInstance();
         }
-        
+
         $statement = $this->prepareStatement(...$params);
-        
+
         if ($statement) {
             $bindParams = Statement::bind([$this->getStatement(), ...$params]);
             $this->bindParam($bindParams);
-        }
-        elseif (PHP_VERSION_ID >= 80400 && count($params) > 1) {
+        } elseif (PHP_VERSION_ID >= 80400 && count($params) > 1) {
             $query = reset($params);
             $values = array_slice($params, 1);
-            
+
             if (is_string($query) && !empty($values)) {
                 $processedQuery = $query;
                 foreach ($values as $value) {
-                    $processedValue = is_string($value) ? "'" . str_replace("'", "''", $value) . "'" 
+                    $processedValue = is_string($value) ? "'" . str_replace("'", "''", $value) . "'"
                         : (is_null($value) ? 'NULL' : (is_bool($value) ? ($value ? '1' : '0') : $value));
                     $processedQuery = preg_replace('/\?/', (string)$processedValue, $processedQuery, 1);
                 }
-                
+
                 $connection = $this->getInstance()->getConnection();
                 if ($connection) {
                     $statement = @odbc_exec($connection, $processedQuery);
@@ -546,7 +546,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 }
             }
         }
-        
+
         return $this->getInstance();
     }
 
@@ -567,4 +567,3 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return @call_user_func_array('odbc_execute', [$statement, $processedData]);
     }
 }
-

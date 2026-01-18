@@ -12,4 +12,3 @@ class ZodToSchema
         return $schema->toJsonSchema();
     }
 }
-

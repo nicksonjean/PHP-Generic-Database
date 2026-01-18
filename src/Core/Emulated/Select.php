@@ -9,4 +9,3 @@ final class Select extends EmulatedStringEnum
     protected const DEFAULT = 'DEFAULT';
     protected const DISTINCT = 'DISTINCT';
 }
-

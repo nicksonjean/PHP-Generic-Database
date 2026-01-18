@@ -147,4 +147,3 @@ class SQLiteExporter extends BaseExporter
         }
     }
 }
-

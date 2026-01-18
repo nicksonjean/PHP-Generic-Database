@@ -730,5 +730,3 @@ class Connection implements IConnection, IConnectionStrategy
         return $this->getStrategy()->getConnection()->errorInfo($inst);
     }
 }
-
-

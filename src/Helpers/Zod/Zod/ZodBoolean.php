@@ -49,4 +49,3 @@ class ZodBoolean extends ZodType
         return $schema;
     }
 }
-

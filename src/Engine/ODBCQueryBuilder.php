@@ -626,5 +626,3 @@ class ODBCQueryBuilder implements IQueryBuilder
         return $result;
     }
 }
-
-

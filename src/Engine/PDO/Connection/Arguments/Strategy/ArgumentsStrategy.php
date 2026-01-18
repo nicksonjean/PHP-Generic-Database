@@ -48,4 +48,3 @@ class ArgumentsStrategy implements IArgumentsStrategy
         return $result;
     }
 }
-

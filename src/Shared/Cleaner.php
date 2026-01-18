@@ -40,4 +40,3 @@ trait Cleaner
         unset($this->property[$name]);
     }
 }
-

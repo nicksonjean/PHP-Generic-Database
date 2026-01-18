@@ -252,4 +252,3 @@ interface IQueryBuilder
      */
     public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool;
 }
-

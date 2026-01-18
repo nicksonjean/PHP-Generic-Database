@@ -12,4 +12,3 @@ final class Sorting extends EmulatedStringEnum
     protected const METADATA = 'METADATA';
     protected const FUNCTION = 'FUNCTION';
 }
-

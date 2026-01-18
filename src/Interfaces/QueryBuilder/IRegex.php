@@ -16,4 +16,3 @@ interface IRegex
 
     public static function getWhereHaving(): string;
 }
-

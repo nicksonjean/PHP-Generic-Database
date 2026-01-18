@@ -1,0 +1,17 @@
+{
+    "_hash": "4f5629c2651d9f92bba36d7f78f5298c2587c3adb71450592937f023ae103a79",
+    "patches": {
+        "amphp/parallel-functions": [
+            {
+                "package": "amphp/parallel-functions",
+                "description": "Fix PHP 8.4 nullable types deprecation",
+                "url": "patches/amphp-parallel-functions-php84-nullable-types.patch",
+                "sha256": "213dcb0ea476eb20cee74074d0d55aa62ee18045367f7bcf62f93453d70cebb0",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ]
+    }
+}

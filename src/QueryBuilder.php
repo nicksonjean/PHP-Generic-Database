@@ -532,4 +532,3 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
         return self::$self->getStrategy()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
     }
 }
-

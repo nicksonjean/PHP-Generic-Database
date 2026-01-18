@@ -34,4 +34,3 @@ interface IOptions
      */
     public function define(): void;
 }
-

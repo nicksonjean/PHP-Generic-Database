@@ -236,5 +236,3 @@ class Criteria
         return $result;
     }
 }
-
-

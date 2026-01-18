@@ -1046,5 +1046,3 @@ class Fluent
         return $instance;
     }
 }
-
-

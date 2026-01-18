@@ -104,4 +104,3 @@ abstract class AbstractOptions implements IOptionsAbstract
         return !is_null($type) ? self::$options[$type] ?? null : self::$options;
     }
 }
-

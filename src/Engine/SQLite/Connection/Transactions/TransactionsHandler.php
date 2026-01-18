@@ -65,4 +65,3 @@ class TransactionsHandler implements ITransactions
         return $this->getInstance()->getConnection()->exec('ROLLBACK');
     }
 }
-

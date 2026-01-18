@@ -45,4 +45,3 @@ class ArgumentsStrategy implements IArgumentsStrategy
         return $this->getOptionsHandler()->getOptions();
     }
 }
-

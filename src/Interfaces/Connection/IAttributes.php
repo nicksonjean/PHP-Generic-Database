@@ -18,4 +18,3 @@ interface IAttributes
      */
     public function define(): void;
 }
-

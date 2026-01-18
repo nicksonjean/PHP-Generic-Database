@@ -288,4 +288,3 @@ abstract class AbstractStatements implements IStatementsAbstract
         $this->statement = $statement;
     }
 }
-

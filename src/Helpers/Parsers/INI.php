@@ -99,4 +99,3 @@ class INI
         return $result;
     }
 }
-

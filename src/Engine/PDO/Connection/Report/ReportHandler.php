@@ -52,4 +52,3 @@ class ReportHandler implements IReport
         }
     }
 }
-

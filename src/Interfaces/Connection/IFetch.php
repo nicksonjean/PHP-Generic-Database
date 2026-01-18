@@ -30,4 +30,3 @@ interface IFetch
      */
     public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed;
 }
-

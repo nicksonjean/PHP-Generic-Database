@@ -243,4 +243,3 @@ class XML
         return $c;
     }
 }
-

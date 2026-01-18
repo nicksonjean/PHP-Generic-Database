@@ -704,4 +704,3 @@ class PgSQLConnection implements IConnection, IFetch, IStatements, IDSN, IArgume
         return pg_last_error($this->getConnection()) ?: $inst;
     }
 }
-

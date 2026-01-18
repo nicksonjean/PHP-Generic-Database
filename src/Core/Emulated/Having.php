@@ -18,4 +18,3 @@ final class Having extends EmulatedStringEnum
     protected const ISNULL = 'ISNULL';
     protected const IFNULL = 'IFNULL';
 }
-

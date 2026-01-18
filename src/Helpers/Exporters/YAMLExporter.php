@@ -81,4 +81,3 @@ class YAMLExporter
         return $this->exporter;
     }
 }
-

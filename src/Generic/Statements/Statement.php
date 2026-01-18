@@ -58,4 +58,3 @@ class Statement
         return $result;
     }
 }
-

@@ -121,4 +121,3 @@ trait Registry
         }
     }
 }
-

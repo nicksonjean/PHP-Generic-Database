@@ -89,7 +89,9 @@ trait Objectable
      *
      * @return void
      */
-    public function __wakeup(): void {}
+    public function __wakeup(): void
+    {
+    }
 
     /**
      * Returns the object properties as an associative array
@@ -105,4 +107,3 @@ trait Objectable
         return $result;
     }
 }
-

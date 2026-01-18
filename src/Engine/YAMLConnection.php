@@ -60,7 +60,9 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
     private int $lastInsertId = 0;
     private int $cursor = 0;
 
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public static function getEngine(): string
     {
@@ -336,7 +338,9 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
 
     public function beginTransaction(): bool
     {
-        if (self::$inTransaction) return false;
+        if (self::$inTransaction) {
+            return false;
+        }
         self::$transactionBackup = self::$data;
         self::$inTransaction = true;
         return true;
@@ -344,7 +348,9 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
 
     public function commit(): bool
     {
-        if (!self::$inTransaction) return false;
+        if (!self::$inTransaction) {
+            return false;
+        }
         $result = $this->save(self::$data);
         self::$inTransaction = false;
         self::$transactionBackup = null;
@@ -353,7 +359,9 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
 
     public function rollback(): bool
     {
-        if (!self::$inTransaction) return false;
+        if (!self::$inTransaction) {
+            return false;
+        }
         if (self::$transactionBackup !== null) {
             self::$data = self::$transactionBackup;
             self::$connection = self::$data;
@@ -374,9 +382,15 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
     public function quote(mixed ...$params): string|int
     {
         $value = $params[0] ?? '';
-        if (is_int($value) || is_float($value)) return (string) $value;
-        if (is_bool($value)) return $value ? '1' : '0';
-        if (is_null($value)) return 'NULL';
+        if (is_int($value) || is_float($value)) {
+            return (string) $value;
+        }
+        if (is_bool($value)) {
+            return $value ? '1' : '0';
+        }
+        if (is_null($value)) {
+            return 'NULL';
+        }
         return "'" . addslashes((string) $value) . "'";
     }
 
@@ -388,7 +402,9 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         if ($result) {
             self::$data = $processor->getData();
             self::$connection = self::$data;
-            if (!self::$inTransaction) $this->save(self::$data);
+            if (!self::$inTransaction) {
+                $this->save(self::$data);
+            }
             $this->lastInsertId = count(self::$data);
         }
         return $result;
@@ -402,7 +418,9 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         if ($affected > 0) {
             self::$data = $processor->getData();
             self::$connection = self::$data;
-            if (!self::$inTransaction) $this->save(self::$data);
+            if (!self::$inTransaction) {
+                $this->save(self::$data);
+            }
         }
         $this->affectedRows = $affected;
         return $affected;
@@ -416,7 +434,9 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         if ($deleted > 0) {
             self::$data = $processor->getData();
             self::$connection = self::$data;
-            if (!self::$inTransaction) $this->save(self::$data);
+            if (!self::$inTransaction) {
+                $this->save(self::$data);
+            }
         }
         $this->affectedRows = $deleted;
         return $deleted;
@@ -425,8 +445,12 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
     public function selectWhere(array $columns, array $where): array
     {
         $processor = new DataProcessor(self::$data, self::$schema);
-        if (!empty($where)) $processor->where($where);
-        if (!empty($columns) && !in_array('*', $columns)) $processor->select($columns);
+        if (!empty($where)) {
+            $processor->where($where);
+        }
+        if (!empty($columns) && !in_array('*', $columns)) {
+            $processor->select($columns);
+        }
         return $processor->getData();
     }
 
@@ -489,7 +513,9 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
     {
         $this->statement = $statement;
     }
-    public function bindParam(object $params): void {}
+    public function bindParam(object $params): void
+    {
+    }
     public function parse(mixed ...$params): string
     {
         return $params[0] ?? '';
@@ -514,7 +540,9 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
     // IFetch implementation
     public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
-        if ($this->cursor >= count(self::$data)) return false;
+        if ($this->cursor >= count(self::$data)) {
+            return false;
+        }
         $row = self::$data[$this->cursor++];
         return match ($fetchStyle ?? YAML::FETCH_ASSOC) {
             YAML::FETCH_NUM => array_values((array) $row),
@@ -541,7 +569,9 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
     {
         return null;
     }
-    public function setAttribute(mixed $name, mixed $value): void {}
+    public function setAttribute(mixed $name, mixed $value): void
+    {
+    }
     public function errorCode(mixed $inst = null): int|string|bool
     {
         return 0;

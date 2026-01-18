@@ -308,4 +308,3 @@ class Arrays
         return array_filter($array, fn($value) => !empty($value));
     }
 }
-

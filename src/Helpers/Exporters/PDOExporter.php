@@ -47,7 +47,7 @@ class PDOExporter extends BaseExporter
 
         try {
             $this->dbh = new PDO($dsn, $user, $password, $options);
-            
+
             // Extract database name from DSN for some queries
             $this->database = $this->extractDatabaseName($dsn);
         } catch (\PDOException $e) {
@@ -443,4 +443,3 @@ class PDOExporter extends BaseExporter
         // No explicit cleanup needed
     }
 }
-

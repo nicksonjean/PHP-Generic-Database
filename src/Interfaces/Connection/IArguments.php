@@ -33,4 +33,3 @@ interface IArguments
      */
     public static function __callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null;
 }
-

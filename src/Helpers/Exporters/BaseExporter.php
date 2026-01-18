@@ -203,14 +203,18 @@ abstract class BaseExporter
                 else {
                     foreach ($allTables as $otherTable) {
                         // Check if table name ends with the referenced name
-                        if (str_ends_with($otherTable, '_' . $referencedTableName) ||
-                            str_ends_with($otherTable, $referencedTableName)) {
+                        if (
+                            str_ends_with($otherTable, '_' . $referencedTableName) ||
+                            str_ends_with($otherTable, $referencedTableName)
+                        ) {
                             $matchedTable = $otherTable;
                             break;
                         }
                         // Check if referenced name is part of table name
-                        if (str_contains($otherTable, $referencedTableName) && 
-                            $otherTable !== $table) {
+                        if (
+                            str_contains($otherTable, $referencedTableName) &&
+                            $otherTable !== $table
+                        ) {
                             $matchedTable = $otherTable;
                             break;
                         }
@@ -230,10 +234,12 @@ abstract class BaseExporter
                     // Try plural/singular variations as last resort
                     else {
                         foreach ($allTables as $otherTable) {
-                            if ($otherTable === $referencedTableName . 's' || 
+                            if (
+                                $otherTable === $referencedTableName . 's' ||
                                 $referencedTableName === $otherTable . 's' ||
                                 $otherTable === $referencedTableName . 'es' ||
-                                $referencedTableName === $otherTable . 'es') {
+                                $referencedTableName === $otherTable . 'es'
+                            ) {
                                 $matchedTable = $otherTable;
                                 break;
                             }
@@ -304,4 +310,3 @@ abstract class BaseExporter
         return $this->tableSchemas;
     }
 }
-

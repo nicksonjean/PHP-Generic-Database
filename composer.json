@@ -105,15 +105,8 @@
     "phpstan/phpstan": "^1.10.25",
     "phpunit/php-code-coverage": "9.2.x-dev",
     "phpunit/phpunit": "9.6.x-dev",
-    "squizlabs/php_codesniffer": "^4.0@dev",
+    "squizlabs/php_codesniffer": "4.x-dev",
     "tasuku43/mermaid-class-diagram": "^0.2.1"
-  },
-  "extra": {
-    "patches": {
-      "amphp/parallel-functions": {
-        "Fix PHP 8.4 nullable types deprecation": "patches/amphp-parallel-functions-php84-nullable-types.patch"
-      }
-    }
   },
   "scripts": {
     "docs": [

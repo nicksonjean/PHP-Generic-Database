@@ -346,4 +346,3 @@ abstract class AbstractFetch implements IFetchAbstract
         return $result;
     }
 }
-

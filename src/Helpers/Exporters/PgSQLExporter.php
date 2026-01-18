@@ -111,7 +111,7 @@ class PgSQLExporter extends BaseExporter
                 $pkRow = pg_fetch_assoc($pkResult);
                 $primaryKey = $pkRow['attname'];
                 pg_free_result($pkResult);
-                
+
                 // Update primary key flag in columns
                 foreach ($columns as &$column) {
                     if ($column['name'] === $primaryKey) {
@@ -209,4 +209,3 @@ class PgSQLExporter extends BaseExporter
         }
     }
 }
-

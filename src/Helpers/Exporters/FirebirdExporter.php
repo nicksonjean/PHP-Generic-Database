@@ -61,7 +61,7 @@ class FirebirdExporter extends BaseExporter
     {
         $query = "SELECT RDB\$RELATION_NAME FROM RDB\$RELATIONS WHERE RDB\$SYSTEM_FLAG = 0 AND RDB\$RELATION_TYPE = 0";
         $result = ibase_query($this->dbh, $query);
-        
+
         if ($result !== false) {
             while ($row = ibase_fetch_assoc($result)) {
                 $tableName = trim($row['RDB$RELATION_NAME']);
@@ -98,7 +98,7 @@ class FirebirdExporter extends BaseExporter
                 while ($row = ibase_fetch_assoc($result)) {
                     $columnName = trim($row['COLUMN_NAME']);
                     $isNullable = isset($row['NULLABLE']) && $row['NULLABLE'] != 0;
-                    
+
                     $columns[] = [
                         'name' => $columnName,
                         'type' => $this->normalizeFirebirdType($row['FIELD_TYPE']),
@@ -246,4 +246,3 @@ class FirebirdExporter extends BaseExporter
         }
     }
 }
-

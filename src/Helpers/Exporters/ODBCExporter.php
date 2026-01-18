@@ -75,12 +75,14 @@ class ODBCExporter extends BaseExporter
             while (odbc_fetch_row($result)) {
                 $tableType = odbc_result($result, "TABLE_TYPE");
                 $tableName = odbc_result($result, "TABLE_NAME");
-                
+
                 // Skip system tables
-                if ($tableType !== "SYSTEM TABLE" && 
+                if (
+                    $tableType !== "SYSTEM TABLE" &&
                     $tableType !== "SYSTEM VIEW" &&
                     !str_starts_with($tableName, "MSys") &&
-                    !str_starts_with($tableName, "sqlite_")) {
+                    !str_starts_with($tableName, "sqlite_")
+                ) {
                     $this->tables[] = $tableName;
                 }
             }
@@ -193,7 +195,7 @@ class ODBCExporter extends BaseExporter
                     $fkColumn = odbc_result($result, "FK_COLUMN_NAME");
                     $pkTable = odbc_result($result, "PK_TABLE_NAME");
                     $pkColumn = odbc_result($result, "PK_COLUMN_NAME");
-                    
+
                     if ($fkColumn && $pkTable) {
                         $foreignKeys[] = [
                             'from' => $fkColumn,
@@ -225,4 +227,3 @@ class ODBCExporter extends BaseExporter
         }
     }
 }
-

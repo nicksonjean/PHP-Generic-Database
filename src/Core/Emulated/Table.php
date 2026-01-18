@@ -8,4 +8,3 @@ final class Table extends EmulatedStringEnum
 {
     protected const METADATA = 'METADATA';
 }
-

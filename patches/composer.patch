@@ -1,0 +1,7 @@
+  "extra": {
+    "patches": {
+      "amphp/parallel-functions": {
+        "Fix PHP 8.4 nullable types deprecation": "patches/amphp-parallel-functions-php84-nullable-types.patch"
+      }
+    }
+  },

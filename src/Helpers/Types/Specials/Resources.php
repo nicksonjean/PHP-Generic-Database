@@ -58,10 +58,12 @@ trait Resources
                 $result[$key] = $this->makeArraySerializable($value);
             } elseif (is_object($value)) {
                 $className = get_class($value);
-                if (PHP_VERSION_ID >= 80400 && (
-                    $className === 'Odbc\Result' || 
+                if (
+                    PHP_VERSION_ID >= 80400 && (
+                    $className === 'Odbc\Result' ||
                     $className === 'Odbc\Connection'
-                )) {
+                    )
+                ) {
                     $result[$key] = ['__odbc_object__' => $className, '__hash__' => spl_object_hash($value)];
                 } else {
                     $result[$key] = ['__object__' => $className, '__hash__' => spl_object_hash($value)];
@@ -73,4 +75,3 @@ trait Resources
         return $result;
     }
 }
-

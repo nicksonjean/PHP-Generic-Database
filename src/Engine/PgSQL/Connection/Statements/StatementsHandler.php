@@ -332,5 +332,3 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return call_user_func_array('pg_execute', [$this->getInstance()->getConnection(), $statement, $processedData]);
     }
 }
-
-

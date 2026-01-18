@@ -59,7 +59,7 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
     private function databaseVersion(): string
     {
         $driver = $this->get('driver');
-        
+
         if ($driver === 'pgsql') {
             if (function_exists('shell_exec')) {
                 $version = @shell_exec('pg_config --version');
@@ -86,7 +86,7 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
         }
 
         $isPhp80Firebird = (PHP_VERSION_ID >= 80000 && PHP_VERSION_ID < 80100) &&  in_array($driver, ['firebird', 'ibase']);
-        
+
         if ($isPhp80Firebird) {
             return '';
         }
@@ -111,16 +111,16 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
         }
 
         $version = '';
-       
+
         $isValidResult = is_resource($result) || (PHP_VERSION_ID >= 80400 && is_object($result) && get_class($result) === 'Odbc\Result');
-        
+
         if ($isValidResult && function_exists('odbc_num_fields') && function_exists('odbc_field_name')) {
             $numFields = odbc_num_fields($result);
             if ($numFields > 0) {
                 if (function_exists('odbc_fetch_row')) {
                     @odbc_fetch_row($result);
                 }
-                
+
                 for ($i = 1; $i <= $numFields; $i++) {
                     $resultValue = false;
                     $fieldName = @odbc_field_name($result, $i);
@@ -128,7 +128,7 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
                     if ($resultValue === false || $resultValue === null || $resultValue === '') {
                         $resultValue = @odbc_result($result, $i);
                     }
-                    
+
                     if ($resultValue !== false && $resultValue !== null && $resultValue !== '') {
                         $version = trim((string)$resultValue);
                         break;
@@ -142,7 +142,7 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
                 }
             }
         }
-        
+
         if ($isValidResult && function_exists('odbc_free_result')) {
             @odbc_free_result($result);
         }
@@ -167,8 +167,8 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
                 'AUTOCOMMIT' => (bool)$this->getOptionsHandler()->getOptions(ODBC::ATTR_AUTOCOMMIT),
                 'CASE' => 0,
                 'ERRMODE' => 1,
-                'CLIENT_VERSION', 'SERVER_VERSION' => !empty($settings['DriverODBCVer'] ?? '') 
-                    ? $settings['DriverODBCVer'] 
+                'CLIENT_VERSION', 'SERVER_VERSION' => !empty($settings['DriverODBCVer'] ?? '')
+                    ? $settings['DriverODBCVer']
                     : $this->databaseVersion(),
                 'CONNECTION_STATUS' => $this->connectionStatus(),
                 'PERSISTENT' => (bool)$this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT),
@@ -183,4 +183,3 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
         $this->set('attributes', $result);
     }
 }
-

@@ -66,16 +66,46 @@ class CSVQueryBuilder implements IQueryBuilder
         return Clause::from(['data' => $data, 'self' => self::$self]);
     }
 
-    public static function join(array|string ...$data): static { return self::$self; }
-    public static function selfJoin(array|string ...$data): static { return self::$self; }
-    public static function leftJoin(array|string ...$data): static { return self::$self; }
-    public static function rightJoin(array|string ...$data): static { return self::$self; }
-    public static function innerJoin(array|string ...$data): static { return self::$self; }
-    public static function outerJoin(array|string ...$data): static { return self::$self; }
-    public static function crossJoin(array|string ...$data): static { return self::$self; }
-    public static function on(array|string ...$data): static { return self::$self; }
-    public static function andOn(array|string ...$data): static { return self::$self; }
-    public static function orOn(array|string ...$data): static { return self::$self; }
+    public static function join(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function selfJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function leftJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function rightJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function innerJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function outerJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function crossJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function on(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function andOn(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function orOn(array|string ...$data): static
+    {
+        return self::$self;
+    }
 
     public static function where(array|string ...$data): static
     {
@@ -187,9 +217,18 @@ class CSVQueryBuilder implements IQueryBuilder
         self::$cachedResult = null;
     }
 
-    public function build(): string { return (new Builder($this->query))->build(); }
-    public function buildRaw(): string { return (new Builder($this->query))->buildRaw(); }
-    public function getValues(): array { return (new Builder($this->query))->getValues(); }
+    public function build(): string
+    {
+        return (new Builder($this->query))->build();
+    }
+    public function buildRaw(): string
+    {
+        return (new Builder($this->query))->buildRaw();
+    }
+    public function getValues(): array
+    {
+        return (new Builder($this->query))->getValues();
+    }
 
     public function getAllMetadata(): object
     {
@@ -221,5 +260,3 @@ class CSVQueryBuilder implements IQueryBuilder
         return $result;
     }
 }
-
-

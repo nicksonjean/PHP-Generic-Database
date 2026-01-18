@@ -44,7 +44,7 @@ class SensitiveValue
 
     /**
      * Returns the sensitive value as a string
-     * 
+     *
      * @return array
      */
     public function __debugInfo(): array
@@ -54,7 +54,7 @@ class SensitiveValue
 
     /**
      * Returns the original value
-     * 
+     *
      * @return mixed
      */
     public function getValue(): mixed
@@ -64,7 +64,7 @@ class SensitiveValue
 
     /**
      * Returns the masked value
-     * 
+     *
      * @return mixed
      */
     public function getMaskedValue(): mixed
@@ -106,4 +106,3 @@ class SensitiveValue
         }, $input);
     }
 }
-

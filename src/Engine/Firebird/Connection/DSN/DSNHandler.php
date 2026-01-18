@@ -65,4 +65,3 @@ class DSNHandler implements IDSN
         return vsprintf('%s/%s:%s', [$this->get('host'), $this->get('port'), $this->get('database')]);
     }
 }
-

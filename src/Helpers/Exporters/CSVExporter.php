@@ -95,4 +95,3 @@ class CSVExporter
         return $this->exporter;
     }
 }
-

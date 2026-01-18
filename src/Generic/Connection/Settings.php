@@ -53,4 +53,3 @@ class Settings
         return $this->property;
     }
 }
-

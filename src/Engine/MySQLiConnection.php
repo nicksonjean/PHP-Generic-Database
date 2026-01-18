@@ -682,4 +682,3 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         return $this->getConnection()->error || $inst;
     }
 }
-

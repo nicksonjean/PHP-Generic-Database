@@ -280,4 +280,3 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return call_user_func_array('ibase_execute', $data);
     }
 }
-

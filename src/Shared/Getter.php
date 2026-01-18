@@ -34,4 +34,3 @@ trait Getter
         return null;
     }
 }
-

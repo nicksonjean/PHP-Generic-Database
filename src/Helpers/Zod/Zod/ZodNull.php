@@ -40,4 +40,3 @@ class ZodNull extends ZodType
         return $schema;
     }
 }
-

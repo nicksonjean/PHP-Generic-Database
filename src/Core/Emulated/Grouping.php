@@ -11,4 +11,3 @@ final class Grouping extends EmulatedStringEnum
     protected const METADATA = 'METADATA';
     protected const FUNCTION = 'FUNCTION';
 }
-

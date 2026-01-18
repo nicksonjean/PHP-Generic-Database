@@ -97,4 +97,3 @@ class XMLExporter
         return $this->exporter;
     }
 }
-

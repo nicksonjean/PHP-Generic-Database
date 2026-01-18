@@ -28,4 +28,3 @@ interface IClause
 
     public static function limit(array $arguments): IQueryBuilder;
 }
-

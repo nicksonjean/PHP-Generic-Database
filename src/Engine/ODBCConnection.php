@@ -249,7 +249,7 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
             $validator = new SchemaValidator($schemaJson);
             if ($validator->validate($validJson)) {
                 $cursorMode = $this->cursorMode($options);
-                $isPersistent = $this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT);  
+                $isPersistent = $this->getOptionsHandler()->getOptions(ODBC::ATTR_PERSISTENT);
                 $this->setConnection($isPersistent ?
                     odbc_pconnect($dsn, (string) $user, (string) $password, $cursorMode) :
                     odbc_connect($dsn, (string) $user, (string) $password, $cursorMode));
@@ -724,4 +724,3 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         return $result;
     }
 }
-

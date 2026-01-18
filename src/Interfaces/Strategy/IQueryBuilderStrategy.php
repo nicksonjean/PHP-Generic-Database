@@ -31,4 +31,3 @@ interface IQueryBuilderStrategy
      */
     public function getStrategy(): IQueryBuilder;
 }
-

@@ -15,4 +15,3 @@ use GenericDatabase\Engine\JSON\QueryBuilder\Builder as JSONBuilder;
 class Builder extends JSONBuilder
 {
 }
-

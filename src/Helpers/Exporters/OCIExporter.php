@@ -117,7 +117,7 @@ class OCIExporter extends BaseExporter
             if ($pkStmt && oci_execute($pkStmt)) {
                 if ($pkRow = oci_fetch_assoc($pkStmt)) {
                     $primaryKey = strtolower($pkRow['COLUMN_NAME']);
-                    
+
                     // Update primary key flag in columns
                     foreach ($columns as &$column) {
                         if ($column['name'] === $primaryKey) {
@@ -221,4 +221,3 @@ class OCIExporter extends BaseExporter
         }
     }
 }
-

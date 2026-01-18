@@ -145,7 +145,7 @@ class StaticArray
                 PgSQL::ATTR_CONNECT_TIMEOUT => 28800,
                 PgSQL::ATTR_DEFAULT_FETCH_MODE => PgSQL::FETCH_OBJ,
                 PgSQL::ATTR_REPORT => PgSQL::REPORT_ERROR | PgSQL::REPORT_STRICT
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -185,7 +185,7 @@ class StaticArray
                 SQLSrv::ATTR_CONNECT_TIMEOUT => 28800,
                 SQLSrv::ATTR_DEFAULT_FETCH_MODE => SQLSrv::FETCH_OBJ,
                 SQLSrv::ATTR_REPORT => SQLSrv::REPORT_ERROR | SQLSrv::REPORT_STRICT
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -225,7 +225,7 @@ class StaticArray
                 OCI::ATTR_CONNECT_TIMEOUT => 28800,
                 OCI::ATTR_DEFAULT_FETCH_MODE => OCI::FETCH_OBJ,
                 OCI::ATTR_REPORT => OCI::REPORT_ERROR | OCI::REPORT_STRICT
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -265,7 +265,7 @@ class StaticArray
                 Firebird::ATTR_CONNECT_TIMEOUT => 28800,
                 Firebird::ATTR_DEFAULT_FETCH_MODE => Firebird::FETCH_OBJ,
                 Firebird::ATTR_REPORT => Firebird::REPORT_ERROR | Firebird::REPORT_STRICT
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -345,7 +345,7 @@ class StaticArray
                 SQLite::ATTR_AUTOCOMMIT => true,
                 SQLite::ATTR_DEFAULT_FETCH_MODE => SQLite::FETCH_OBJ,
                 SQLite::ATTR_REPORT => SQLite::REPORT_ERROR | SQLite::REPORT_STRICT
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -385,7 +385,7 @@ class StaticArray
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -425,7 +425,7 @@ class StaticArray
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -462,7 +462,7 @@ class StaticArray
             'options' => [
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -502,7 +502,7 @@ class StaticArray
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -542,7 +542,7 @@ class StaticArray
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -614,7 +614,7 @@ class StaticArray
                 PDO::ATTR_PERSISTENT => $persistent,
                 PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -656,7 +656,7 @@ class StaticArray
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -698,7 +698,7 @@ class StaticArray
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -740,7 +740,7 @@ class StaticArray
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -782,7 +782,7 @@ class StaticArray
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -824,7 +824,7 @@ class StaticArray
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -902,7 +902,7 @@ class StaticArray
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -940,7 +940,7 @@ class StaticArray
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -978,7 +978,7 @@ class StaticArray
                 ODBC::ATTR_DEFAULT_FETCH_MODE => ODBC::FETCH_OBJ,
                 ODBC::ATTR_REPORT => ODBC::REPORT_ERROR | ODBC::REPORT_STRICT,
                 ODBC::ATTR_SQL_CUR_USE => ODBC::SQL_CUR_USE_ODBC
-            ],
+                ],
                 'exception' => true
             ]
         ));
@@ -1037,7 +1037,7 @@ class StaticArray
     ): Connection|JSONConnection {
         /** @var Connection|JSONConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_JSON_ENGINE()->value;
-    
+
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
@@ -1074,7 +1074,7 @@ class StaticArray
     ): Connection|XMLConnection {
         /** @var Connection|XMLConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_XML_ENGINE()->value;
-    
+
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
@@ -1111,7 +1111,7 @@ class StaticArray
     ): Connection|YAMLConnection {
         /** @var Connection|YAMLConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_YAML_ENGINE()->value;
-    
+
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
@@ -1148,11 +1148,11 @@ class StaticArray
     ): Connection|CSVConnection {
         /** @var Connection|CSVConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_CSV_ENGINE()->value;
-    
+
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
-        $args = $strategy ? ['engine' => 'csv'] : [];   
+        $args = $strategy ? ['engine' => 'csv'] : [];
         return $constructor(array_merge(
             $args,
             [
@@ -1170,5 +1170,3 @@ class StaticArray
         ));
     }
 }
-
-

@@ -106,4 +106,3 @@ interface IFlatFileConnection
      */
     public function selectWhere(array $columns, array $where): array;
 }
-

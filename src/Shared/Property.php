@@ -17,4 +17,3 @@ trait Property
      */
     private array $property = [];
 }
-

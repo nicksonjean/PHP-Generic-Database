@@ -96,16 +96,46 @@ class XMLQueryBuilder implements IQueryBuilder
         return self::$self;
     }
 
-    public static function join(array|string ...$data): static { return self::$self; }
-    public static function selfJoin(array|string ...$data): static { return self::$self; }
-    public static function leftJoin(array|string ...$data): static { return self::$self; }
-    public static function rightJoin(array|string ...$data): static { return self::$self; }
-    public static function innerJoin(array|string ...$data): static { return self::$self; }
-    public static function outerJoin(array|string ...$data): static { return self::$self; }
-    public static function crossJoin(array|string ...$data): static { return self::$self; }
-    public static function on(array|string ...$data): static { return self::$self; }
-    public static function andOn(array|string ...$data): static { return self::$self; }
-    public static function orOn(array|string ...$data): static { return self::$self; }
+    public static function join(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function selfJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function leftJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function rightJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function innerJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function outerJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function crossJoin(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function on(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function andOn(array|string ...$data): static
+    {
+        return self::$self;
+    }
+    public static function orOn(array|string ...$data): static
+    {
+        return self::$self;
+    }
 
     private static function buildWhere(array $data, $condition): IQueryBuilder
     {
@@ -117,9 +147,18 @@ class XMLQueryBuilder implements IQueryBuilder
         return self::$self;
     }
 
-    public static function where(array|string ...$data): static { return self::buildWhere($data, Condition::NONE()); }
-    public static function andWhere(array|string ...$data): static { return self::buildWhere($data, Condition::CONJUNCTION()); }
-    public static function orWhere(array|string ...$data): static { return self::buildWhere($data, Condition::DISJUNCTION()); }
+    public static function where(array|string ...$data): static
+    {
+        return self::buildWhere($data, Condition::NONE());
+    }
+    public static function andWhere(array|string ...$data): static
+    {
+        return self::buildWhere($data, Condition::CONJUNCTION());
+    }
+    public static function orWhere(array|string ...$data): static
+    {
+        return self::buildWhere($data, Condition::DISJUNCTION());
+    }
 
     private static function buildHaving(array $data, $condition): IQueryBuilder
     {
@@ -131,9 +170,18 @@ class XMLQueryBuilder implements IQueryBuilder
         return self::$self;
     }
 
-    public static function having(array|string ...$data): static { return self::buildHaving($data, Condition::NONE()); }
-    public static function andHaving(array|string ...$data): static { return self::buildHaving($data, Condition::CONJUNCTION()); }
-    public static function orHaving(array|string ...$data): static { return self::buildHaving($data, Condition::DISJUNCTION()); }
+    public static function having(array|string ...$data): static
+    {
+        return self::buildHaving($data, Condition::NONE());
+    }
+    public static function andHaving(array|string ...$data): static
+    {
+        return self::buildHaving($data, Condition::CONJUNCTION());
+    }
+    public static function orHaving(array|string ...$data): static
+    {
+        return self::buildHaving($data, Condition::DISJUNCTION());
+    }
 
     public static function group(array|string ...$data): static
     {
@@ -167,9 +215,18 @@ class XMLQueryBuilder implements IQueryBuilder
         return self::$self;
     }
 
-    public static function order(array|string ...$data): static { return self::buildOrder($data, Sorting::NONE()); }
-    public static function orderAsc(array|string ...$data): static { return self::buildOrder($data, Sorting::ASCENDING()); }
-    public static function orderDesc(array|string ...$data): static { return self::buildOrder($data, Sorting::DESCENDING()); }
+    public static function order(array|string ...$data): static
+    {
+        return self::buildOrder($data, Sorting::NONE());
+    }
+    public static function orderAsc(array|string ...$data): static
+    {
+        return self::buildOrder($data, Sorting::ASCENDING());
+    }
+    public static function orderDesc(array|string ...$data): static
+    {
+        return self::buildOrder($data, Sorting::DESCENDING());
+    }
 
     public static function limit(array|string ...$data): static
     {
@@ -199,9 +256,18 @@ class XMLQueryBuilder implements IQueryBuilder
         self::$cachedResult = null;
     }
 
-    public function build(): string { return (new Builder($this->query))->build(); }
-    public function buildRaw(): string { return (new Builder($this->query))->buildRaw(); }
-    public function getValues(): array { return (new Builder($this->query))->getValues(); }
+    public function build(): string
+    {
+        return (new Builder($this->query))->build();
+    }
+    public function buildRaw(): string
+    {
+        return (new Builder($this->query))->buildRaw();
+    }
+    public function getValues(): array
+    {
+        return (new Builder($this->query))->getValues();
+    }
 
     public function getAllMetadata(): object
     {
@@ -233,5 +299,3 @@ class XMLQueryBuilder implements IQueryBuilder
         return $result;
     }
 }
-
-

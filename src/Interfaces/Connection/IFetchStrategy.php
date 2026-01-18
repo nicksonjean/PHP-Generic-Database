@@ -37,4 +37,3 @@ interface IFetchStrategy
      */
     public function handleFetchReset(mixed $resource): void;
 }
-

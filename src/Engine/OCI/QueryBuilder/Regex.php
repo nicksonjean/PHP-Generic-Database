@@ -122,4 +122,3 @@ class Regex
         return '/^' . self::getRegex(self::regexWhereHaving(), 2, 2) . '$/i';
     }
 }
-

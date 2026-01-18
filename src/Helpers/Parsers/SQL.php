@@ -369,7 +369,7 @@ class SQL
     public static function arguments(string $input, ?array $values = null): array
     {
         preg_match_all(self::$patternMap['sqlArgs'], $input, $matches);
-        
+
         if (!empty($matches[1])) {
             if (is_null($values)) {
                 return $matches[1];
@@ -383,26 +383,26 @@ class SQL
             }
             return array_combine($matches[1], $values);
         }
-        
+
         preg_match_all('/\?/', $input, $questionMatches);
         $placeholderCount = count($questionMatches[0]);
-        
+
         if ($placeholderCount > 0) {
             if (is_null($values)) {
                 return range(0, $placeholderCount - 1);
             }
-            
+
             if (count($values) !== $placeholderCount) {
                 $values = array_slice(array_pad($values, $placeholderCount, null), 0, $placeholderCount);
             }
-            
+
             return array_combine(range(0, $placeholderCount - 1), $values);
         }
-        
+
         if (is_null($values)) {
             return [];
         }
-        
+
         return array_combine(array_keys($values), array_values($values));
     }
 
@@ -448,4 +448,3 @@ class SQL
         }, $input);
     }
 }
-

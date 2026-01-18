@@ -606,5 +606,3 @@ class MySQLiQueryBuilder implements IQueryBuilder
         return $result;
     }
 }
-
-

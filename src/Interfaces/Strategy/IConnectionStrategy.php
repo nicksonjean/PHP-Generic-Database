@@ -32,4 +32,3 @@ interface IConnectionStrategy
      */
     public function getStrategy(): IConnection;
 }
-

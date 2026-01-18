@@ -82,4 +82,3 @@ class TransactionsHandler implements ITransactions
         return $result;
     }
 }
-

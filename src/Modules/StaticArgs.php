@@ -1390,7 +1390,7 @@ class StaticArgs
     ): Connection|JSONConnection {
         /** @var Connection|JSONConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_JSON_ENGINE()->value;
-    
+
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
@@ -1408,8 +1408,7 @@ class StaticArgs
                 ],
                 exception: true
             );
-        }
-        else {
+        } else {
             return $constructor(
                 database: $env['JSON_DATABASE'],
                 charset: $env['JSON_CHARSET'],
@@ -1432,7 +1431,7 @@ class StaticArgs
     ): Connection|XMLConnection {
         /** @var Connection|XMLConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_XML_ENGINE()->value;
-    
+
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
@@ -1450,8 +1449,7 @@ class StaticArgs
                 ],
                 exception: true
             );
-        }
-        else {
+        } else {
             return $constructor(
                 database: $env['XML_DATABASE'],
                 charset: $env['XML_CHARSET'],
@@ -1474,7 +1472,7 @@ class StaticArgs
     ): Connection|YAMLConnection {
         /** @var Connection|YAMLConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_YAML_ENGINE()->value;
-    
+
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
@@ -1492,8 +1490,7 @@ class StaticArgs
                 ],
                 exception: true
             );
-        }
-        else {
+        } else {
             return $constructor(
                 database: $env['YAML_DATABASE'],
                 charset: $env['YAML_CHARSET'],
@@ -1507,7 +1504,7 @@ class StaticArgs
                 exception: true
             );
         }
-    }   
+    }
 
     public static function nativeCSV(
         array $env,
@@ -1516,7 +1513,7 @@ class StaticArgs
     ): Connection|CSVConnection {
         /** @var Connection|CSVConnection $className */
         $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_CSV_ENGINE()->value;
-    
+
         /** @var callable $constructor */
         $constructor = [$className, 'new'];
 
@@ -1534,8 +1531,7 @@ class StaticArgs
                 ],
                 exception: true
             );
-        }
-        else {
+        } else {
             return $constructor(
                 database: $env['CSV_DATABASE'],
                 charset: $env['CSV_CHARSET'],
@@ -1551,5 +1547,3 @@ class StaticArgs
         }
     }
 }
-
-

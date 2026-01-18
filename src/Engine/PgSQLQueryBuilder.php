@@ -606,4 +606,3 @@ class PgSQLQueryBuilder implements IQueryBuilder
         return $result;
     }
 }
-

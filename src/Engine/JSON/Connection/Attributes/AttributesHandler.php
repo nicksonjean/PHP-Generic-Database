@@ -65,4 +65,3 @@ class AttributesHandler extends AbstractAttributes implements IAttributes
         $this->set('attributes', $result);
     }
 }
-

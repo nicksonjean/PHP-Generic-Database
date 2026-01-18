@@ -166,4 +166,3 @@ final class Types extends EmulatedStringEnum
      */
     public const NAT_PGSQL_LINK_PERSISTENT = 'pgsql link persistent';
 }
-

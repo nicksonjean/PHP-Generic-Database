@@ -14,4 +14,3 @@ interface IBuilder
 
     public function getValues(): array;
 }
-

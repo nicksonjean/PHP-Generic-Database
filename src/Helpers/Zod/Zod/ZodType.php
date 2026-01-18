@@ -40,4 +40,3 @@ abstract class ZodType
      */
     abstract public function toJsonSchema(): array;
 }
-

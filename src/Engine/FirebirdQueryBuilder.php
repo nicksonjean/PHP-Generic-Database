@@ -606,5 +606,3 @@ class FirebirdQueryBuilder implements IQueryBuilder
         return $result;
     }
 }
-
-
