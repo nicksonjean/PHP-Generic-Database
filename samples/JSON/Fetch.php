@@ -10,7 +10,7 @@ require_once PATH_ROOT . '/vendor/autoload.php';
 
 Dotenv::createImmutable(PATH_ROOT)->load();
 
-$context = Chainable::nativeSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)->connect();
 
 $testA = $context->prepare(
     'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :id',

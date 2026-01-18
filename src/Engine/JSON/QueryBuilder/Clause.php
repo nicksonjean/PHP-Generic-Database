@@ -11,7 +11,7 @@ use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Interfaces\IQueryBuilder;
-use GenericDatabase\Engine\SQLiteQueryBuilder;
+use GenericDatabase\Engine\JSONQueryBuilder;
 use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Interfaces\QueryBuilder\IClause;
@@ -282,5 +282,3 @@ class Clause implements IClause
         return $self;
     }
 }
-
-
