@@ -123,3 +123,4 @@ class FetchHandler implements IFetch
         };
     }
 }
+

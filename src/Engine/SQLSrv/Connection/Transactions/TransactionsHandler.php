@@ -66,3 +66,4 @@ class TransactionsHandler implements ITransactions
         return sqlsrv_rollback($this->getInstance()->getConnection());
     }
 }
+

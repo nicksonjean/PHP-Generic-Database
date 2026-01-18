@@ -33,3 +33,4 @@ interface IReport
      */
     public function handleError($message = null): void;
 }
+

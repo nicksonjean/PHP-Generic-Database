@@ -203,7 +203,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
 
         $this->setAllMetadata();
         if (!empty($params)) {
-            $statement = call_user_func_array((reset($params)[1] === Query::RAW) ? 'ibase_query' : 'ibase_prepare', [$this->getInstance()->getConnection(), $this->parse(reset($params)[0])]);
+            $statement = call_user_func_array((reset($params)[1] === Query::RAW()) ? 'ibase_query' : 'ibase_prepare', [$this->getInstance()->getConnection(), $this->parse(reset($params)[0])]);
             if ($statement) {
                 $this->setStatement($statement);
             }
@@ -220,14 +220,14 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function query(mixed ...$params): IConnection
     {
-        if (!empty($params) && ($statement = $this->prepareStatement([...$params, Query::RAW]))) {
+        if (!empty($params) && ($statement = $this->prepareStatement([...$params, Query::RAW()]))) {
             $colCount = is_resource($statement) ? ibase_num_fields($statement) : 0;
             if ($colCount > 0) {
                 $cloneStmt = function () use ($statement, $params): mixed {
                     if (!is_resource($statement)) {
                         return false;
                     }
-                    return $this->prepareStatement([...$params, Query::RAW]);
+                    return $this->prepareStatement([...$params, Query::RAW()]);
                 };
                 $countStmt = $cloneStmt();
                 if ($countStmt) {
@@ -255,7 +255,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function prepare(mixed ...$params): IConnection
     {
-        if (!empty($params) && ($this->prepareStatement([...$params, Query::PREPARED]))) {
+        if (!empty($params) && ($this->prepareStatement([...$params, Query::PREPARED()]))) {
             $bindParams = Statement::bind([$this->getStatement(), ...$params]);
             $this->bindParam($bindParams);
         }
@@ -280,3 +280,4 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return call_user_func_array('ibase_execute', $data);
     }
 }
+

@@ -323,3 +323,4 @@ class Regex implements IRegex
         return '/^' . $pattern . '$/i';
     }
 }
+

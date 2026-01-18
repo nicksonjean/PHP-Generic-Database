@@ -688,3 +688,4 @@ class FirebirdConnection implements IConnection, IFetch, IStatements, IDSN, IArg
         return $result;
     }
 }
+

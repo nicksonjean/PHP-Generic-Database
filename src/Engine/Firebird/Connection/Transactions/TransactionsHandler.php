@@ -94,3 +94,4 @@ class TransactionsHandler implements ITransactions
         return ibase_rollback($this->getInstance()->getConnection());
     }
 }
+

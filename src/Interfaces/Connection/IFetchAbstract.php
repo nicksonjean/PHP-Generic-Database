@@ -97,3 +97,4 @@ interface IFetchAbstract
      */
     public function internalFetchAllClass(?array $constructorArguments = [], ?string $aClassOrObject = '\stdClass'): array;
 }
+

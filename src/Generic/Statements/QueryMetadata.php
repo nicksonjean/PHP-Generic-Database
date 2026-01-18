@@ -128,3 +128,4 @@ class QueryMetadata
         return $this->rows;
     }
 }
+

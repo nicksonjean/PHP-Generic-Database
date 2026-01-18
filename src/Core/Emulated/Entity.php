@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Core;
+namespace GenericDatabase\Core\Emulated;
 
 use Mabe\Enum\Cl\EmulatedStringEnum;
 
@@ -74,3 +74,4 @@ final class Entity extends EmulatedStringEnum
      */
     protected const CASE_ARGUMENT_CLASS = 'GenericDatabase\Engine\%s\Connection\Arguments\ArgumentsHandler';
 }
+

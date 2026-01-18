@@ -78,3 +78,4 @@ interface IArgumentsAbstract
      */
     public static function callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null;
 }
+

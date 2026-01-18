@@ -72,3 +72,4 @@ class RowsMetadata
         return $this;
     }
 }
+

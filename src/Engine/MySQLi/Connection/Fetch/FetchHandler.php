@@ -50,3 +50,4 @@ class FetchHandler extends AbstractFetch implements IFetch
         };
     }
 }
+

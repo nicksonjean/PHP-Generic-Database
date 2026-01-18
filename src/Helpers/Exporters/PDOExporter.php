@@ -443,3 +443,4 @@ class PDOExporter extends BaseExporter
         // No explicit cleanup needed
     }
 }
+

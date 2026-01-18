@@ -255,3 +255,4 @@ class CSV
         return $content !== false ? $content : '';
     }
 }
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Core;
+namespace GenericDatabase\Core\Emulated;
 
 use Mabe\Enum\Cl\EmulatedStringEnum;
 
@@ -14,3 +14,4 @@ final class Join extends EmulatedStringEnum
     protected const OUTER = 'OUTER';
     protected const CROSS = 'CROSS';
 }
+

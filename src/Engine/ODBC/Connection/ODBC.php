@@ -554,3 +554,4 @@ class ODBC
         return reset($matchedAlias);
     }
 }
+

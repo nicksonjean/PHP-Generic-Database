@@ -33,3 +33,4 @@ class ArgumentsHandler extends AbstractArguments implements IArguments
         return self::callStatic($name, $arguments);
     }
 }
+

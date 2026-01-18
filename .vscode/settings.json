@@ -36,7 +36,7 @@
     "**/.vscode/**": true,
     "**/.phpunit.cache/**": true,
     "**/.phpunit.result.cache/**": true,
-    "**/*.stub.php/**": true,
+    "**/*.stub.php/**": false,
     "**/doctum.php/**": true,
     "**/.cursor/**": true,
     "**/.cursorignore/**": true,

@@ -712,3 +712,4 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
         return $this->getConnection()->lastErrorMsg() || $inst;
     }
 }
+

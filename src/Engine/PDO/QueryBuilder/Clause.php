@@ -262,3 +262,5 @@ class Clause implements IClause
         return $self;
     }
 }
+
+

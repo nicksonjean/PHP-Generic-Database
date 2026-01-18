@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Core;
+namespace GenericDatabase\Core\Emulated;
 
 use Mabe\Enum\Cl\EmulatedStringEnum;
 
@@ -166,3 +166,4 @@ final class Types extends EmulatedStringEnum
      */
     public const NAT_PGSQL_LINK_PERSISTENT = 'pgsql link persistent';
 }
+

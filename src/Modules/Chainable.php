@@ -1055,3 +1055,4 @@ class Chainable
         return $instance;
     }
 }
+

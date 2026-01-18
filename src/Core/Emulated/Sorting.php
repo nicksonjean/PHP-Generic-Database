@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Core;
+namespace GenericDatabase\Core\Emulated;
 
 use Mabe\Enum\Cl\EmulatedStringEnum;
 
@@ -12,3 +12,4 @@ final class Sorting extends EmulatedStringEnum
     protected const METADATA = 'METADATA';
     protected const FUNCTION = 'FUNCTION';
 }
+

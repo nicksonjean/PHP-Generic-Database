@@ -1154,3 +1154,4 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         return '';
     }
 }
+

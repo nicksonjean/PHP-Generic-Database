@@ -628,3 +628,4 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return '';
     }
 }
+

@@ -36,3 +36,4 @@ class XPDO extends PDO
      */
     public const REPORT_ALL = 255;
 }
+

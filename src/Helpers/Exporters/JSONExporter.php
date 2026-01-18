@@ -77,3 +77,4 @@ class JSONExporter
         return $this->exporter;
     }
 }
+

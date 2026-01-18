@@ -267,3 +267,4 @@ class StructureHandler implements IStructure
         return self::$schema;
     }
 }
+

@@ -155,7 +155,7 @@ class PgSQLQueryBuilder implements IQueryBuilder
     {
         /** @var static */
         return Clause::join(
-            ['type' => Join::SELF, 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+            ['type' => Join::SELF(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
         );
     }
 
@@ -606,3 +606,4 @@ class PgSQLQueryBuilder implements IQueryBuilder
         return $result;
     }
 }
+

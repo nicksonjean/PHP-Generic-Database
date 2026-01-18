@@ -673,3 +673,4 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
         return $this->getConnection()->errorInfo() || $inst;
     }
 }
+

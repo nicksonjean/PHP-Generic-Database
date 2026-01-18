@@ -724,3 +724,4 @@ class ODBCConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         return $result;
     }
 }
+

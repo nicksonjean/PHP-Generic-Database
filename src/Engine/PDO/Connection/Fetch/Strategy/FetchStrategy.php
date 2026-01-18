@@ -37,3 +37,4 @@ class FetchStrategy implements IFetchStrategy
         return $resourceId;
     }
 }
+

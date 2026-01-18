@@ -9,6 +9,23 @@ set -e
 echo "[docker-entrypoint] Atualizando cache de bibliotecas..."
 ldconfig
 
+# Gerar arquivo env-vars.conf com SetEnv directives das variáveis já carregadas pelo docker-compose
+echo "[docker-entrypoint] Gerando env-vars.conf..."
+cat > /etc/apache2/conf-available/env-vars.conf << 'EOF'
+# Variáveis de ambiente geradas no entrypoint
+EOF
+
+# Extrair variáveis de ambiente do container e converter para SetEnv
+env | while IFS='=' read -r key value; do
+    # Apenas variáveis de database
+    if echo "$key" | grep -E '^(MYSQL|PGSQL|SQLSRV|OCI|FBIRD|SQLITE|ODBC)_' > /dev/null; then
+        echo "SetEnv $key $value" >> /etc/apache2/conf-available/env-vars.conf
+    fi
+done
+
+# Habilitar configuração
+a2enconf env-vars 2>/dev/null || true
+
 # Verificar se os arquivos de configuração existem
 echo "[docker-entrypoint] Verificando arquivos de configuração do Apache..."
 if [ ! -f /etc/apache2/sites-available/default.conf ]; then

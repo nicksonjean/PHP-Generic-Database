@@ -43,3 +43,4 @@ interface IAttributesAbstract
      */
     public function get(string $name): mixed;
 }
+

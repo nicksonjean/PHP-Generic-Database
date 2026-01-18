@@ -403,3 +403,4 @@ class FetchHandler implements IFetch
         return $object;
     }
 }
+

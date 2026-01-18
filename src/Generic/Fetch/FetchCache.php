@@ -95,3 +95,4 @@ trait FetchCache
      */
     abstract protected function cacheResource(mixed $resource): string;
 }
+

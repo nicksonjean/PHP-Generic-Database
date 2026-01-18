@@ -552,3 +552,4 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
     public function errorCode(mixed $inst = null): int|string|bool { return 0; }
     public function errorInfo(mixed $inst = null): string|bool|array { return ''; }
 }
+

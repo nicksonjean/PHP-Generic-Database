@@ -6,6 +6,8 @@ namespace GenericDatabase\Core;
 
 if (PHP_VERSION_ID < 80100) {
     require_once __DIR__ . '/Emulated/Table.php';
+    class_alias('GenericDatabase\Core\Emulated\Table', 'GenericDatabase\Core\Table');
 } else {
     require_once __DIR__ . '/Native/Table.php';
+    class_alias('GenericDatabase\Core\Native\Table', 'GenericDatabase\Core\Table');
 }

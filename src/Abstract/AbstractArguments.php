@@ -235,3 +235,4 @@ abstract class AbstractArguments implements IArgumentsAbstract
         };
     }
 }
+

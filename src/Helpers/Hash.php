@@ -28,3 +28,4 @@ class Hash
         return hash($type, random_bytes($length) . uniqid(mt_rand(), true) . microtime(true));
     }
 }
+

@@ -147,3 +147,4 @@ class XML
         return $result;
     }
 }
+

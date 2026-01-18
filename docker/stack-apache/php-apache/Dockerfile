@@ -42,7 +42,7 @@ ENV \
   LC_ALL=C.UTF-8 \
   LANG=C.UTF-8 \
   TZ='America/Sao_Paulo' \
-  LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/odbc:/tmp/instantclient_21_6:${LD_LIBRARY_PATH}
+  LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/odbc:/tmp/instantclient_21_6
 
 # Atualizar o sistema e instalar dependências
 RUN \
@@ -548,6 +548,18 @@ COPY \
 RUN \
   curl -sS https://getcomposer.org/installer | php --  --install-dir=/usr/bin --filename=composer
 
+# Install project dependencies
+RUN \
+  service apache2 stop && \
+  service apache2 start && \
+  if [ "$COMPOSER_NO_DEV" = "true" ]; then \
+    echo "Installing production dependencies only (--no-dev)..." && \
+    composer install -n --ignore-platform-reqs --no-dev || composer install -n --ignore-platform-reqs --no-dev || true; \
+  else \
+    echo "Installing all dependencies (including dev)..." && \
+    composer install -n --ignore-platform-reqs || true; \
+  fi
+
 # Configuração de timezone
 RUN \
   echo "date.timezone=UTC" > /usr/local/etc/php/conf.d/timezone.ini
@@ -566,47 +578,7 @@ RUN \
 RUN \
   ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load && \
   echo "SetEnv LD_LIBRARY_PATH /usr/lib/x86_64-linux-gnu/odbc:/usr/lib/x86_64-linux-gnu:/tmp/instantclient_21_6:\${LD_LIBRARY_PATH}" >> /etc/apache2/conf-enabled/environment.conf && \
-  echo "export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/odbc:/usr/lib/x86_64-linux-gnu:/tmp/instantclient_21_6:\${LD_LIBRARY_PATH}" >> /etc/apache2/envvars
-
-# Write environment variables
-RUN \
-  echo 'SetEnv MYSQL_HOST ${MYSQL_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv MYSQL_PORT ${MYSQL_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv MYSQL_DATABASE ${MYSQL_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv MYSQL_USERNAME ${MYSQL_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv MYSQL_PASSWORD ${MYSQL_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv MYSQL_CHARSET ${MYSQL_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv MYSQL_ODBC_DRIVER ${MYSQL_ODBC_DRIVER}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv PGSQL_HOST ${PGSQL_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv PGSQL_PORT ${PGSQL_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv PGSQL_DATABASE ${PGSQL_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv PGSQL_USERNAME ${PGSQL_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv PGSQL_PASSWORD ${PGSQL_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv PGSQL_CHARSET ${PGSQL_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv SQLSRV_HOST ${SQLSRV_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv SQLSRV_PORT ${SQLSRV_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv SQLSRV_DATABASE ${SQLSRV_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv SQLSRV_USERNAME ${SQLSRV_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv SQLSRV_PASSWORD ${SQLSRV_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv SQLSRV_CHARSET ${SQLSRV_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv OCI_HOST ${OCI_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv OCI_PORT ${OCI_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv OCI_DATABASE ${OCI_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv OCI_USERNAME ${OCI_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv OCI_PASSWORD ${OCI_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv OCI_CHARSET ${OCI_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv FBIRD_HOST ${FBIRD_HOST}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv FBIRD_PORT ${FBIRD_PORT}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv FBIRD_DATABASE ${FBIRD_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv FBIRD_USERNAME ${FBIRD_USERNAME}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv FBIRD_PASSWORD ${FBIRD_PASSWORD}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv FBIRD_CHARSET ${FBIRD_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv SQLITE_DATABASE ${SQLITE_DATABASE}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv SQLITE_DATABASE_MEMORY ${SQLITE_DATABASE_MEMORY}' >> /etc/apache2/conf-enabled/environment.conf && \
-  echo 'SetEnv SQLITE_CHARSET ${SQLITE_CHARSET}' >> /etc/apache2/conf-enabled/environment.conf
-
-# Run apache and composer install
-RUN \
+  echo "export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/odbc:/usr/lib/x86_64-linux-gnu:/tmp/instantclient_21_6:\${LD_LIBRARY_PATH}" >> /etc/apache2/envvars && \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
   a2enmod headers && \
   a2enmod rewrite && \
@@ -616,15 +588,23 @@ RUN \
   a2ensite default && \
   a2ensite my-site && \
   a2ensite default-ssl && \
-  service apache2 stop && \
-  service apache2 start && \
-  if [ "$COMPOSER_NO_DEV" = "true" ]; then \
-    echo "Installing production dependencies only (--no-dev)..." && \
-    composer install -n --ignore-platform-reqs --no-dev || composer install -n --ignore-platform-reqs --no-dev || true; \
-  else \
-    echo "Installing all dependencies (including dev)..." && \
-    composer install -n --ignore-platform-reqs || true; \
-  fi  
+  touch /etc/apache2/conf-available/env-vars.conf && \
+  ln -s /etc/apache2/conf-available/env-vars.conf /etc/apache2/conf-enabled/env-vars.conf && \
+  apache2ctl configtest || echo "Initial config test completed"
+
+# Mitigar erro 403 do favicon
+RUN \
+  echo '<FilesMatch "^/favicon\.ico$">' > /etc/apache2/conf-available/favicon-robots.conf && \
+  echo '  <IfModule mod_rewrite.c>' >> /etc/apache2/conf-available/favicon-robots.conf && \
+  echo '    RewriteEngine On' >> /etc/apache2/conf-available/favicon-robots.conf && \
+  echo '    RewriteRule ^favicon\.ico$ - [L,R=204]' >> /etc/apache2/conf-available/favicon-robots.conf && \
+  echo '  </IfModule>' >> /etc/apache2/conf-available/favicon-robots.conf && \
+  echo '  Require all granted' >> /etc/apache2/conf-available/favicon-robots.conf && \
+  echo '</FilesMatch>' >> /etc/apache2/conf-available/favicon-robots.conf && \
+  echo '<FilesMatch "^/robots\.txt$">' >> /etc/apache2/conf-available/favicon-robots.conf && \
+  echo '  Require all granted' >> /etc/apache2/conf-available/favicon-robots.conf && \
+  echo '</FilesMatch>' >> /etc/apache2/conf-available/favicon-robots.conf && \
+  a2enconf favicon-robots 2>/dev/null || true
 
 # Set entrypoint to use custom docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]

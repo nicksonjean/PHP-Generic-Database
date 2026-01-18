@@ -288,3 +288,5 @@ class Criteria implements ICriteria
         return $result;
     }
 }
+
+

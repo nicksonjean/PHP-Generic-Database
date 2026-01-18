@@ -77,3 +77,4 @@ class JSON
         return (array) json_decode(file_get_contents($json), true);
     }
 }
+

@@ -606,3 +606,5 @@ class OCIQueryBuilder implements IQueryBuilder
         return $result;
     }
 }
+
+

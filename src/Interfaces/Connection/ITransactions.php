@@ -42,3 +42,4 @@ interface ITransactions
      */
     public function inTransaction(): bool;
 }
+

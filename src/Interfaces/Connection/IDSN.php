@@ -20,3 +20,4 @@ interface IDSN
      */
     public function parse(): string|Exceptions;
 }
+

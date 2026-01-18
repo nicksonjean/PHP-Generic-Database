@@ -66,3 +66,4 @@ class TransactionsHandler implements ITransactions
         return pg_query($this->getInstance()->getConnection(), 'ROLLBACK') !== false;
     }
 }
+

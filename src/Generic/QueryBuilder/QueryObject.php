@@ -126,3 +126,4 @@ class QueryObject
         return $this->property;
     }
 }
+

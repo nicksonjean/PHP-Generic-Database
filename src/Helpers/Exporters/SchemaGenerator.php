@@ -182,3 +182,4 @@ class SchemaGenerator
         return ';';
     }
 }
+

@@ -199,3 +199,4 @@ class StatementsHandler implements IStatements
         return $this->affectedRows;
     }
 }
+

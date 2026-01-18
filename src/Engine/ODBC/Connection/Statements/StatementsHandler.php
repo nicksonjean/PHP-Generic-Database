@@ -567,3 +567,4 @@ class StatementsHandler extends AbstractStatements implements IStatements
         return @call_user_func_array('odbc_execute', [$statement, $processedData]);
     }
 }
+

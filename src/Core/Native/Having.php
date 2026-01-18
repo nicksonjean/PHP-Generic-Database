@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Core;
+namespace GenericDatabase\Core\Native;
 
 use Mabe\Enum\Cl\EnumBc;
 

@@ -58,3 +58,4 @@ class DSNHandler implements IDSN
         return $this->get('dsn');
     }
 }
+

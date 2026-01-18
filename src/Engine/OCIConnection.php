@@ -684,3 +684,4 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
         return @$error['message'];
     }
 }
+

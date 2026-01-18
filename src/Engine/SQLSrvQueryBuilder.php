@@ -606,3 +606,5 @@ class SQLSrvQueryBuilder implements IQueryBuilder
         return $result;
     }
 }
+
+

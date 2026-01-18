@@ -1,6 +1,6 @@
 <?php
 
-namespace GenericDatabase\Core;
+namespace GenericDatabase\Core\Emulated;
 
 use Mabe\Enum\Cl\EmulatedStringEnum;
 
@@ -18,3 +18,4 @@ final class Having extends EmulatedStringEnum
     protected const ISNULL = 'ISNULL';
     protected const IFNULL = 'IFNULL';
 }
+

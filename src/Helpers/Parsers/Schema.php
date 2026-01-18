@@ -577,3 +577,4 @@ class Schema
         return file_put_contents($path, $content) !== false;
     }
 }
+

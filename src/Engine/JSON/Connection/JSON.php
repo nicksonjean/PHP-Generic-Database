@@ -268,3 +268,4 @@ class JSON
         return $flags;
     }
 }
+

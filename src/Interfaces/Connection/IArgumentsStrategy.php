@@ -18,3 +18,4 @@ interface IArgumentsStrategy
      */
     public function setConstant(array $value): array;
 }
+

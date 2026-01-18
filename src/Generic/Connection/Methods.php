@@ -102,3 +102,4 @@ trait Methods
         $this->property = new Settings((array) $this->property);
     }
 }
+

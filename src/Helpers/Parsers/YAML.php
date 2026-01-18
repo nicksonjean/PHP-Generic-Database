@@ -72,3 +72,4 @@ class YAML
         return (array) yaml_parse_file($yaml);
     }
 }
+

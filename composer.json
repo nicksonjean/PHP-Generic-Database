@@ -32,6 +32,24 @@
   ],
   "minimum-stability": "dev",
   "autoload": {
+    "files": [
+      "src/Core/Build.php",
+      "src/Core/Column.php",
+      "src/Core/Condition.php",
+      "src/Core/Entity.php",
+      "src/Core/Grouping.php",
+      "src/Core/Having.php",
+      "src/Core/Insert.php",
+      "src/Core/Join.php",
+      "src/Core/Junction.php",
+      "src/Core/Limit.php",
+      "src/Core/Query.php",
+      "src/Core/Select.php",
+      "src/Core/Sorting.php",
+      "src/Core/Table.php",
+      "src/Core/Types.php",
+      "src/Core/Where.php"
+    ],
     "psr-4": {
       "GenericDatabase\\": "src/"
     }
@@ -48,8 +66,12 @@
     "marc-mabe/enum-cl": "dev-main",
     "nette/neon": "^3.5@dev",
     "senadir/zod-php-to-schema": "dev-main",
+    "symfony/polyfill-php80": "1.x-dev",
+    "symfony/polyfill-php81": "1.x-dev",
     "symfony/polyfill-php82": "1.x-dev",
     "symfony/polyfill-php83": "1.x-dev",
+    "symfony/polyfill-php84": "1.x-dev",
+    "symfony/polyfill-php85": "1.x-dev",
     "vlucas/phpdotenv": "^5.5@dev"
   },
   "autoload-dev": {
@@ -70,7 +92,7 @@
     "phpstan/phpstan": "^1.10.25",
     "phpunit/php-code-coverage": "9.2.x-dev",
     "phpunit/phpunit": "9.6.x-dev",
-    "squizlabs/php_codesniffer": "4.0.x-dev",
+    "squizlabs/php_codesniffer": "^4.0@dev",
     "tasuku43/mermaid-class-diagram": "^0.2.1"
   },
   "config": {

@@ -73,3 +73,4 @@ trait Resources
         return $result;
     }
 }
+

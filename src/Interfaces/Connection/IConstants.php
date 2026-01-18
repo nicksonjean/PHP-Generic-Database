@@ -28,3 +28,4 @@ interface IConstants
      */
     public static function setAttribute(mixed $name, mixed $value): void;
 }
+

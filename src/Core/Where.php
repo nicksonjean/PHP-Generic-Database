@@ -6,6 +6,8 @@ namespace GenericDatabase\Core;
 
 if (PHP_VERSION_ID < 80100) {
     require_once __DIR__ . '/Emulated/Where.php';
+    class_alias('GenericDatabase\Core\Emulated\Where', 'GenericDatabase\Core\Where');
 } else {
     require_once __DIR__ . '/Native/Where.php';
+    class_alias('GenericDatabase\Core\Native\Where', 'GenericDatabase\Core\Where');
 }

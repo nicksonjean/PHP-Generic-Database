@@ -66,3 +66,4 @@ interface IStructure
      */
     public function setStructure(Structure $structure): void;
 }
+

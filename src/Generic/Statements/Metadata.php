@@ -38,3 +38,4 @@ class Metadata
         return $this->query;
     }
 }
+

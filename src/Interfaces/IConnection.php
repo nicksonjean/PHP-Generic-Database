@@ -271,3 +271,4 @@ interface IConnection
      */
     public function errorInfo(mixed $inst = null): string|array|bool|null;
 }
+

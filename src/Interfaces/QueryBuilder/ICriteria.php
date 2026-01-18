@@ -20,3 +20,4 @@ interface ICriteria
 
     public static function getLimit(array $arguments): array;
 }
+

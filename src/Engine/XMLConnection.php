@@ -583,3 +583,4 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return '';
     }
 }
+

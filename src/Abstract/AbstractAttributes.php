@@ -101,3 +101,4 @@ abstract class AbstractAttributes implements IAttributesAbstract
         return Run::call([$this->getInstance(), 'get' . ucfirst($name)]);
     }
 }
+
