@@ -427,7 +427,8 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 ob_start();
                 $errorOccurred = false;
 
-                $errorHandler = set_error_handler(function ($severity, $message, $file, $line) use (&$errorOccurred) {
+                $errorHandler = set_error_handler(function (int $severity, string $message) use (&$errorOccurred): bool {
+                    unset($severity);
                     if (
                         str_contains($message, 'Out of memory') ||
                         str_contains($message, 'memory') ||

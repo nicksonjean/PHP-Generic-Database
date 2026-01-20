@@ -324,10 +324,10 @@ class Regex implements IRegex
         // % = any characters (zero or more), _ = single character
         $regex = '';
         $len = strlen($pattern);
-        $i = 0;
+        $index = 0;
 
-        while ($i < $len) {
-            $char = $pattern[$i];
+        while ($index < $len) {
+            $char = $pattern[$index];
 
             if ($char === '%') {
                 $regex .= '.*';
@@ -338,7 +338,7 @@ class Regex implements IRegex
                 $regex .= preg_quote($char, '/');
             }
 
-            $i++;
+            $index++;
         }
 
         return '/^' . $regex . '$/i';

@@ -154,9 +154,9 @@ class StatementsHandler implements IStatements
         return $this->lastInsertId;
     }
 
-    public function setLastInsertId(int $id): void
+    public function setLastInsertId(int $insertId): void
     {
-        $this->lastInsertId = $id;
+        $this->lastInsertId = $insertId;
     }
 
     public function quote(mixed ...$params): string|int

@@ -194,13 +194,11 @@ abstract class BaseExporter
                 // First, try exact match (most common case)
                 if (in_array($referencedTableName, $allTables)) {
                     $matchedTable = $referencedTableName;
-                }
-                // Try with underscore variations (e.g., "card_sector" matches "sector")
-                elseif (str_ends_with($referencedTableName, '_sector') && in_array('card_sector', $allTables)) {
+                } elseif (str_ends_with($referencedTableName, '_sector') && in_array('card_sector', $allTables)) {
+                    // Try with underscore variations (e.g., "card_sector" matches "sector")
                     $matchedTable = 'card_sector';
-                }
-                // Try reverse: "sector" matches "card_sector" when column is "sector_id"
-                else {
+                } else {
+                    // Try reverse: "sector" matches "card_sector" when column is "sector_id"
                     foreach ($allTables as $otherTable) {
                         // Check if table name ends with the referenced name
                         if (
@@ -226,13 +224,11 @@ abstract class BaseExporter
                     // Handle cases like "usuario_dados_id" -> "usuario_dados"
                     if (in_array($referencedTableName . '_dados', $allTables)) {
                         $matchedTable = $referencedTableName . '_dados';
-                    }
-                    // Handle cases like "card_activity" -> "card"
-                    elseif (str_starts_with($referencedTableName, 'card_') && in_array('card', $allTables)) {
+                    } elseif (str_starts_with($referencedTableName, 'card_') && in_array('card', $allTables)) {
+                        // Handle cases like "card_activity" -> "card"
                         $matchedTable = 'card';
-                    }
-                    // Try plural/singular variations as last resort
-                    else {
+                    } else {
+                        // Try plural/singular variations as last resort
                         foreach ($allTables as $otherTable) {
                             if (
                                 $otherTable === $referencedTableName . 's' ||

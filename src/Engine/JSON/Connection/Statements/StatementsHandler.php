@@ -320,9 +320,9 @@ class StatementsHandler implements IStatements
      * @param int $id The ID.
      * @return void
      */
-    public function setLastInsertId(int $id): void
+    public function setLastInsertId(int $insertId): void
     {
-        $this->lastInsertId = $id;
+        $this->lastInsertId = $insertId;
     }
 
     /**
@@ -599,9 +599,9 @@ class StatementsHandler implements IStatements
         $assignments = $this->splitByCommaRespectingQuotes($setClause);
 
         foreach ($assignments as $assignment) {
-            if (preg_match('/(\w+)\s*=\s*(.+)/', trim($assignment), $m)) {
-                $column = $m[1];
-                $value = trim($m[2], "'\" \t");
+            if (preg_match('/(\w+)\s*=\s*(.+)/', trim($assignment), $matches)) {
+                $column = $matches[1];
+                $value = trim($matches[2], "'\" \t");
                 $updateData[$column] = $value;
             }
         }
@@ -620,11 +620,11 @@ class StatementsHandler implements IStatements
         $conditions = [];
 
         // Handle IN clause: WHERE column IN (value1, value2)
-        if (preg_match('/(\w+)\s+IN\s*\(([^)]+)\)/i', $whereClause, $m)) {
-            $column = $m[1];
-            $rawValues = $m[2];
-            $values = array_map(function ($v) {
-                return trim(trim($v), "'\"");
+        if (preg_match('/(\w+)\s+IN\s*\(([^)]+)\)/i', $whereClause, $matches)) {
+            $column = $matches[1];
+            $rawValues = $matches[2];
+            $values = array_map(function ($val) {
+                return trim(trim($val), "'\"");
             }, explode(',', $rawValues));
 
             $conditions[] = [
@@ -641,10 +641,10 @@ class StatementsHandler implements IStatements
         foreach ($parts as $part) {
             $part = trim($part);
 
-            if (preg_match('/(\w+)\s*(=|!=|<>|>|<|>=|<=)\s*(.+)/', $part, $m)) {
-                $column = $m[1];
-                $operator = $m[2];
-                $value = trim($m[3], "'\" \t");
+            if (preg_match('/(\w+)\s*(=|!=|<>|>|<|>=|<=)\s*(.+)/', $part, $matches)) {
+                $column = $matches[1];
+                $operator = $matches[2];
+                $value = trim($matches[3], "'\" \t");
 
                 $conditions[] = [
                     'column' => $column,
@@ -844,8 +844,8 @@ class StatementsHandler implements IStatements
         $row = [];
         foreach ($columns as $index => $column) {
             $placeholder = $valuePlaceholders[$index] ?? null;
-            if ($placeholder && preg_match('/^:(\w+)$/', $placeholder, $m)) {
-                $paramKey = ':' . $m[1];
+            if ($placeholder && preg_match('/^:(\w+)$/', $placeholder, $matches)) {
+                $paramKey = ':' . $matches[1];
                 $row[$column] = $parameters[$paramKey] ?? null;
             }
         }
@@ -983,9 +983,9 @@ class StatementsHandler implements IStatements
         $assignments = preg_split('/\s*,\s*/', $setClause);
 
         foreach ($assignments as $assignment) {
-            if (preg_match('/(\w+)\s*=\s*(:?\w+)/', $assignment, $m)) {
-                $column = $m[1];
-                $value = $m[2];
+            if (preg_match('/(\w+)\s*=\s*(:?\w+)/', $assignment, $matches)) {
+                $column = $matches[1];
+                $value = $matches[2];
 
                 if (strpos($value, ':') === 0) {
                     // Named parameter
@@ -1012,9 +1012,9 @@ class StatementsHandler implements IStatements
         $conditions = [];
 
         // Handle IN clause with parameter: WHERE column IN (:param)
-        if (preg_match('/(\w+)\s+IN\s*\(\s*(:?\w+)\s*\)/i', $whereClause, $m)) {
-            $column = $m[1];
-            $paramKey = $m[2];
+        if (preg_match('/(\w+)\s+IN\s*\(\s*(:?\w+)\s*\)/i', $whereClause, $matches)) {
+            $column = $matches[1];
+            $paramKey = $matches[2];
 
             if (strpos($paramKey, ':') === 0 && isset($parameters[$paramKey])) {
                 $value = $parameters[$paramKey];
@@ -1033,10 +1033,10 @@ class StatementsHandler implements IStatements
         foreach ($parts as $part) {
             $part = trim($part);
 
-            if (preg_match('/(\w+)\s*(=|!=|<>|>|<|>=|<=)\s*(:?\w+)/', $part, $m)) {
-                $column = $m[1];
-                $operator = $m[2];
-                $value = $m[3];
+            if (preg_match('/(\w+)\s*(=|!=|<>|>|<|>=|<=)\s*(:?\w+)/', $part, $matches)) {
+                $column = $matches[1];
+                $operator = $matches[2];
+                $value = $matches[3];
 
                 if (strpos($value, ':') === 0) {
                     // Named parameter

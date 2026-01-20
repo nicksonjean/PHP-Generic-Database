@@ -284,7 +284,7 @@ class DataProcessor
     private function matchesLike(mixed $value, mixed $pattern): bool
     {
         if (is_object($pattern) && isset($pattern->is_regex) && $pattern->is_regex) {
-            return (bool) preg_match($pattern->value, (string) $value, $_, $pattern->options);
+            return (bool) preg_match($pattern->value, (string) $value, flags: $pattern->options);
         }
 
         $regex = $this->likeToRegex((string) $pattern);
@@ -312,10 +312,10 @@ class DataProcessor
         // % = any characters (zero or more), _ = single character
         $regex = '';
         $len = strlen($pattern);
-        $i = 0;
+        $index = 0;
 
-        while ($i < $len) {
-            $char = $pattern[$i];
+        while ($index < $len) {
+            $char = $pattern[$index];
 
             if ($char === '%') {
                 $regex .= '.*';
@@ -326,7 +326,7 @@ class DataProcessor
                 $regex .= preg_quote($char, '/');
             }
 
-            $i++;
+            $index++;
         }
 
         return '/^' . $regex . '$/i';
@@ -341,12 +341,12 @@ class DataProcessor
      */
     public function orderBy(string $column, int $direction = self::ASC): self
     {
-        usort($this->data, function ($a, $b) use ($column, $direction) {
-            $a = (array) $a;
-            $b = (array) $b;
+        usort($this->data, function ($rowA, $rowB) use ($column, $direction) {
+            $rowA = (array) $rowA;
+            $rowB = (array) $rowB;
 
-            $aVal = $a[$column] ?? null;
-            $bVal = $b[$column] ?? null;
+            $aVal = $rowA[$column] ?? null;
+            $bVal = $rowB[$column] ?? null;
 
             if ($aVal === $bVal) {
                 return 0;
@@ -471,7 +471,7 @@ class DataProcessor
         // Validate against first row schema if exists
         if (!empty($this->data)) {
             $firstRow = (array) $this->data[0];
-            foreach ($firstRow as $column => $value) {
+            foreach (array_keys($firstRow) as $column) {
                 if (!isset($row[$column])) {
                     $row[$column] = null;
                 }
@@ -511,7 +511,7 @@ class DataProcessor
     public function aggregate(string $function, string $column): mixed
     {
         $values = array_column($this->data, $column);
-        $values = array_filter($values, fn($v) => $v !== null);
+        $values = array_filter($values, fn($val) => $val !== null);
 
         return match (strtoupper($function)) {
             'SUM' => array_sum($values),

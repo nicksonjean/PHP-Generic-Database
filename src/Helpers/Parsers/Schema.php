@@ -266,21 +266,21 @@ class Schema
         ];
 
         // Parse additional attributes
-        $i = 2;
-        while ($i < count($parts)) {
-            $attr = strtolower($parts[$i]);
+        $index = 2;
+        while ($index < count($parts)) {
+            $attr = strtolower($parts[$index]);
 
-            if ($attr === 'width' && isset($parts[$i + 1])) {
-                $column['width'] = (int) $parts[$i + 1];
-                $i += 2;
+            if ($attr === 'width' && isset($parts[$index + 1])) {
+                $column['width'] = (int) $parts[$index + 1];
+                $index += 2;
             } elseif ($attr === 'notnull' || $attr === 'required') {
                 $column['nullable'] = false;
-                $i++;
-            } elseif ($attr === 'default' && isset($parts[$i + 1])) {
-                $column['default'] = $parts[$i + 1];
-                $i += 2;
+                $index++;
+            } elseif ($attr === 'default' && isset($parts[$index + 1])) {
+                $column['default'] = $parts[$index + 1];
+                $index += 2;
             } else {
-                $i++;
+                $index++;
             }
         }
 
@@ -435,16 +435,21 @@ class Schema
     public static function inferType(mixed $sampleValue, array $allData, string $columnName): string
     {
         // Collect all values for this column
-        $values = array_filter(array_column($allData, $columnName), fn($v) => $v !== null && $v !== '');
+        $values = array_filter(array_column($allData, $columnName), fn($val) => $val !== null && $val !== '');
 
         if (empty($values)) {
-            return self::TYPE_CHAR . ' Width 255';
+            // Use sample value as fallback if available
+            if ($sampleValue !== null && $sampleValue !== '') {
+                $values = [$sampleValue];
+            } else {
+                return self::TYPE_CHAR . ' Width 255';
+            }
         }
 
         // Check for boolean
         $boolCount = 0;
-        foreach ($values as $v) {
-            if (is_bool($v) || in_array(strtolower((string) $v), ['true', 'false', '0', '1'], true)) {
+        foreach ($values as $value) {
+            if (is_bool($value) || in_array(strtolower((string) $value), ['true', 'false', '0', '1'], true)) {
                 $boolCount++;
             }
         }
@@ -454,8 +459,8 @@ class Schema
 
         // Check for integer
         $intCount = 0;
-        foreach ($values as $v) {
-            if (is_int($v) || (is_string($v) && ctype_digit(ltrim($v, '-')))) {
+        foreach ($values as $value) {
+            if (is_int($value) || (is_string($value) && ctype_digit(ltrim($value, '-')))) {
                 $intCount++;
             }
         }
@@ -465,8 +470,8 @@ class Schema
 
         // Check for float
         $floatCount = 0;
-        foreach ($values as $v) {
-            if (is_float($v) || (is_numeric($v) && str_contains((string) $v, '.'))) {
+        foreach ($values as $value) {
+            if (is_float($value) || (is_numeric($value) && str_contains((string) $value, '.'))) {
                 $floatCount++;
             }
         }
@@ -476,9 +481,9 @@ class Schema
 
         // Check for datetime patterns
         $dateTimeCount = 0;
-        foreach ($values as $v) {
-            if (is_string($v) && strtotime($v) !== false) {
-                if (preg_match('/\d{4}-\d{2}-\d{2}/', $v)) {
+        foreach ($values as $value) {
+            if (is_string($value) && strtotime($value) !== false) {
+                if (preg_match('/\d{4}-\d{2}-\d{2}/', $value)) {
                     $dateTimeCount++;
                 }
             }
@@ -489,8 +494,8 @@ class Schema
 
         // Default to string - calculate max width
         $maxWidth = 0;
-        foreach ($values as $v) {
-            $len = strlen((string) $v);
+        foreach ($values as $value) {
+            $len = strlen((string) $value);
             if ($len > $maxWidth) {
                 $maxWidth = $len;
             }

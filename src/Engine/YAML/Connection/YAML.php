@@ -230,16 +230,16 @@ class YAML
      * Implements regex search pattern.
      *
      * @param string $pattern Regex pattern.
-     * @param int $preg_match_flags Flags for preg_match.
+     * @param int $pregMatchFlags Flags for preg_match.
      * @return object The regex object.
      */
-    public static function regex(string $pattern, int $preg_match_flags = 0): object
+    public static function regex(string $pattern, int $pregMatchFlags = 0): object
     {
-        $c = new \stdClass();
-        $c->is_regex = true;
-        $c->value = $pattern;
-        $c->options = $preg_match_flags;
+        $regexObj = new \stdClass();
+        $regexObj->is_regex = true;
+        $regexObj->value = $pattern;
+        $regexObj->options = $pregMatchFlags;
 
-        return $c;
+        return $regexObj;
     }
 }

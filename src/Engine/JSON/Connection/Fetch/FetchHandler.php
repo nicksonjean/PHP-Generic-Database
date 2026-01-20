@@ -20,7 +20,12 @@ class FetchHandler implements IFetch
     /**
      * @var IConnection The connection instance.
      */
-    private IConnection $connection;
+    protected static IConnection $instance;
+
+    /**
+     * @var mixed The fetch strategy.
+     */
+    private static mixed $strategy;
 
     /**
      * @var int Current cursor position.
@@ -33,52 +38,20 @@ class FetchHandler implements IFetch
     private ?array $resultSet = null;
 
     /**
-     * @var mixed The fetch strategy.
-     */
-    private mixed $strategy;
-
-    /**
      * Constructor.
      *
-     * @param IConnection $connection The connection instance.
+     * @param IConnection $instance The connection instance.
      * @param mixed|null $strategy The fetch strategy (optional).
      */
-    public function __construct(IConnection $connection, mixed $strategy = null)
+    public function __construct(IConnection $instance, mixed $strategy = null)
     {
-        $this->connection = $connection;
-        $this->strategy = $strategy;
+        self::$instance = $instance;
+        self::$strategy = $strategy;
     }
 
-    /**
-     * Get the connection instance.
-     *
-     * @return IConnection
-     */
-    private function getConnection(): IConnection
+    public function getInstance(): IConnection
     {
-        return $this->connection;
-    }
-
-    /**
-     * Set the result set for fetching.
-     *
-     * @param array $resultSet The result set.
-     * @return void
-     */
-    private function setResultSet(array $resultSet): void
-    {
-        $this->resultSet = $resultSet;
-        $this->cursor = 0;
-    }
-
-    /**
-     * Reset the cursor to the beginning.
-     *
-     * @return void
-     */
-    private function reset(): void
-    {
-        $this->cursor = 0;
+        return self::$instance;
     }
 
     /**
@@ -100,18 +73,18 @@ class FetchHandler implements IFetch
     private function executeStoredQuery(): array
     {
         // Get the stored query string and parameters
-        $queryString = method_exists($this->connection, 'getQueryString')
-            ? $this->connection->getQueryString()
+        $queryString = method_exists($this->getInstance(), 'getQueryString')
+            ? $this->getInstance()->getQueryString()
             : '';
 
-        $queryParameters = method_exists($this->connection, 'getQueryParameters')
-            ? $this->connection->getQueryParameters()
+        $queryParameters = method_exists($this->getInstance(), 'getQueryParameters')
+            ? $this->getInstance()->getQueryParameters()
             : null;
 
         // If no query is stored, return raw data
         if (empty($queryString)) {
-            if (method_exists($this->connection, 'getData')) {
-                return $this->connection->getData();
+            if (method_exists($this->getInstance(), 'getData')) {
+                return $this->getInstance()->getData();
             }
             return [];
         }
@@ -127,21 +100,21 @@ class FetchHandler implements IFetch
             $rowCount = count($result);
             $columnCount = !empty($result) ? count((array) reset($result)) : 0;
 
-            if (method_exists($this->connection, 'setQueryRows')) {
-                $this->connection->setQueryRows($rowCount);
+            if (method_exists($this->getInstance(), 'setQueryRows')) {
+                $this->getInstance()->setQueryRows($rowCount);
             }
-            if (method_exists($this->connection, 'setQueryColumns')) {
-                $this->connection->setQueryColumns($columnCount);
+            if (method_exists($this->getInstance(), 'setQueryColumns')) {
+                $this->getInstance()->setQueryColumns($columnCount);
             }
 
             // Set fetched rows (the actual number of rows returned by the query)
-            if (method_exists($this->connection, 'setFetchedRows')) {
-                $this->connection->setFetchedRows($rowCount);
+            if (method_exists($this->getInstance(), 'setFetchedRows')) {
+                $this->getInstance()->setFetchedRows($rowCount);
             }
 
             // Reset affected rows for SELECT queries
-            if (method_exists($this->connection, 'setAffectedRows')) {
-                $this->connection->setAffectedRows(0);
+            if (method_exists($this->getInstance(), 'setAffectedRows')) {
+                $this->getInstance()->setAffectedRows(0);
             }
 
             return $result;
@@ -221,13 +194,13 @@ class FetchHandler implements IFetch
         $tableName = null;
         if (preg_match('/\bFROM\s+(\w+)/i', $query, $matches)) {
             $tableName = $matches[1];
-            if (method_exists($this->connection, 'load')) {
-                $this->connection->load($tableName);
+            if (method_exists($this->getInstance(), 'load')) {
+                $this->getInstance()->load($tableName);
             }
         }
 
         // Get data from connection
-        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+        $data = method_exists($this->getInstance(), 'getData') ? $this->getInstance()->getData() : [];
 
         // Create DataProcessor instance
         $processor = new DataProcessor($data);
@@ -319,8 +292,8 @@ class FetchHandler implements IFetch
                     case 'IN':
                     case 'NOT IN':
                         // Parse IN values - can be comma-separated
-                        $values = array_map(function ($v) {
-                            return trim(trim($v), "'\"");
+                        $values = array_map(function ($val) {
+                            return trim(trim($val), "'\"");
                         }, explode(',', $parsed['value']));
                         $condition['value'] = $values;
                         break;
@@ -540,30 +513,30 @@ class FetchHandler implements IFetch
     {
         $parts = [];
         $current = '';
-        $i = 0;
+        $index = 0;
         $len = strlen($clause);
         $inBetween = false;
 
-        while ($i < $len) {
+        while ($index < $len) {
             // Check for BETWEEN keyword (start of BETWEEN...AND construct)
-            if (!$inBetween && preg_match('/\bBETWEEN\b/i', substr($clause, $i, 7))) {
+            if (!$inBetween && preg_match('/\bBETWEEN\b/i', substr($clause, $index, 7))) {
                 $inBetween = true;
-                $current .= substr($clause, $i, 7);
-                $i += 7;
+                $current .= substr($clause, $index, 7);
+                $index += 7;
                 continue;
             }
 
             // Check for AND keyword
-            if (strtoupper(substr($clause, $i, 3)) === 'AND') {
+            if (strtoupper(substr($clause, $index, 3)) === 'AND') {
                 // Check if this is a word boundary
-                $beforeOk = ($i === 0) || !ctype_alnum($clause[$i - 1]);
-                $afterOk = ($i + 3 >= $len) || !ctype_alnum($clause[$i + 3]);
+                $beforeOk = ($index === 0) || !ctype_alnum($clause[$index - 1]);
+                $afterOk = ($index + 3 >= $len) || !ctype_alnum($clause[$index + 3]);
 
                 if ($beforeOk && $afterOk) {
                     if ($inBetween) {
                         // This AND is part of BETWEEN...AND, include it
                         $current .= 'AND';
-                        $i += 3;
+                        $index += 3;
                         $inBetween = false; // BETWEEN...AND complete
                         continue;
                     } else {
@@ -572,18 +545,18 @@ class FetchHandler implements IFetch
                             $parts[] = trim($current);
                         }
                         $current = '';
-                        $i += 3;
+                        $index += 3;
                         // Skip whitespace after AND
-                        while ($i < $len && ctype_space($clause[$i])) {
-                            $i++;
+                        while ($index < $len && ctype_space($clause[$index])) {
+                            $index++;
                         }
                         continue;
                     }
                 }
             }
 
-            $current .= $clause[$i];
-            $i++;
+            $current .= $clause[$index];
+            $index++;
         }
 
         if (!empty(trim($current))) {

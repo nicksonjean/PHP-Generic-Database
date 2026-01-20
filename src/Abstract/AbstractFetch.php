@@ -103,7 +103,6 @@ abstract class AbstractFetch implements IFetchAbstract
         $cacheData = $this->getStrategy()->cacheResults($statement);
         $results = $cacheData['results'];
         $position = &$cacheData['position'];
-        $exhausted = &$cacheData['exhausted'];
 
         if (isset($results[$position])) {
             $row = $results[$position++];
@@ -114,7 +113,7 @@ abstract class AbstractFetch implements IFetchAbstract
             );
         }
 
-        $exhausted = true;
+        $cacheData['exhausted'] = true;
         return false;
     }
 
@@ -132,7 +131,6 @@ abstract class AbstractFetch implements IFetchAbstract
         $cacheData = $this->getStrategy()->cacheResults($statement);
         $results = $cacheData['results'];
         $position = &$cacheData['position'];
-        $exhausted = &$cacheData['exhausted'];
 
         if (isset($results[$position])) {
             $row = $results[$position++];
@@ -146,7 +144,7 @@ abstract class AbstractFetch implements IFetchAbstract
             return $result;
         }
 
-        $exhausted = true;
+        $cacheData['exhausted'] = true;
         return false;
     }
 
@@ -165,13 +163,12 @@ abstract class AbstractFetch implements IFetchAbstract
         $cacheData = $this->getStrategy()->cacheResults($statement);
         $results = $cacheData['results'];
         $position = &$cacheData['position'];
-        $exhausted = &$cacheData['exhausted'];
 
         if (isset($results[$position])) {
             return $results[$position++];
         }
 
-        $exhausted = true;
+        $cacheData['exhausted'] = true;
         return false;
     }
 
@@ -189,14 +186,13 @@ abstract class AbstractFetch implements IFetchAbstract
         $cacheData = $this->getStrategy()->cacheResults($statement);
         $results = $cacheData['results'];
         $position = &$cacheData['position'];
-        $exhausted = &$cacheData['exhausted'];
 
         if (isset($results[$position])) {
             $row = array_values($results[$position++]);
             return array_map('strval', $row);
         }
 
-        $exhausted = true;
+        $cacheData['exhausted'] = true;
         return false;
     }
 
@@ -217,7 +213,6 @@ abstract class AbstractFetch implements IFetchAbstract
         $cacheData = $this->getStrategy()->cacheResults($statement);
         $results = $cacheData['results'];
         $position = &$cacheData['position'];
-        $exhausted = &$cacheData['exhausted'];
 
         if (isset($results[$position])) {
             $row = $results[$position++];
@@ -225,7 +220,7 @@ abstract class AbstractFetch implements IFetchAbstract
             return isset($values[$columnIndex]) ? (string) $values[$columnIndex] : false;
         }
 
-        $exhausted = true;
+        $cacheData['exhausted'] = true;
         return false;
     }
 

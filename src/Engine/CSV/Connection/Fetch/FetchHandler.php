@@ -18,7 +18,12 @@ class FetchHandler implements IFetch
     /**
      * @var IConnection The connection instance.
      */
-    private IConnection $connection;
+    protected static IConnection $instance;
+
+    /**
+     * @var mixed The fetch strategy.
+     */
+    private static mixed $strategy;
 
     /**
      * @var int Current cursor position.
@@ -33,11 +38,16 @@ class FetchHandler implements IFetch
     /**
      * Constructor.
      *
-     * @param IConnection $connection The connection instance.
+     * @param IConnection $instance The connection instance.
      */
-    public function __construct(IConnection $connection)
+    public function __construct(IConnection $instance)
     {
-        $this->connection = $connection;
+        self::$instance = $instance;
+    }
+
+    public function getInstance(): IConnection
+    {
+        return self::$instance;
     }
 
     /**
@@ -63,7 +73,7 @@ class FetchHandler implements IFetch
     public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
         if ($this->resultSet === null) {
-            $this->resultSet = $this->connection->getData();
+            $this->resultSet = $this->getInstance()->getData();
         }
 
         if ($this->cursor >= count($this->resultSet)) {
@@ -71,7 +81,7 @@ class FetchHandler implements IFetch
         }
 
         $row = $this->resultSet[$this->cursor++];
-        return $this->formatRow($row, $fetchStyle ?? CSV::FETCH_ASSOC, $fetchArgument, $optArgs);
+        return $this->formatRow($row, $fetchStyle ?? CSV::FETCH_ASSOC, $fetchArgument);
     }
 
     /**
@@ -85,14 +95,14 @@ class FetchHandler implements IFetch
     public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
         if ($this->resultSet === null) {
-            $this->resultSet = $this->connection->getData();
+            $this->resultSet = $this->getInstance()->getData();
         }
 
         $result = [];
         $style = $fetchStyle ?? CSV::FETCH_ASSOC;
 
         foreach ($this->resultSet as $row) {
-            $result[] = $this->formatRow($row, $style, $fetchArgument, $optArgs);
+            $result[] = $this->formatRow($row, $style, $fetchArgument);
         }
 
         $this->cursor = count($this->resultSet);
@@ -105,10 +115,9 @@ class FetchHandler implements IFetch
      * @param mixed $row The row to format.
      * @param int $fetchStyle The fetch style.
      * @param mixed|null $fetchArgument The fetch argument.
-     * @param mixed|null $optArgs Additional options.
      * @return mixed The formatted row.
      */
-    private function formatRow(mixed $row, int $fetchStyle, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    private function formatRow(mixed $row, int $fetchStyle, mixed $fetchArgument = null): mixed
     {
         $row = (array) $row;
 
