@@ -15,9 +15,6 @@ use GenericDatabase\Helpers\Zod\SchemaValidator;
 use Dotenv\Exception\ValidationException;
 use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\IFlatFileConnection;
-use GenericDatabase\Interfaces\Connection\IFetch;
-use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Engine\YAML\Connection\YAML;
 use GenericDatabase\Engine\FlatFile\DataProcessor;
 use GenericDatabase\Helpers\Parsers\YAML as YAMLParser;
@@ -32,7 +29,7 @@ use GenericDatabase\Helpers\Parsers\YAML as YAMLParser;
  * @method static YAMLConnection|array getTables($value = null) Retrieves the tables array.
  */
 #[AllowDynamicProperties]
-class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatements
+class YAMLConnection implements IConnection
 {
     use Methods;
     use Singleton;
@@ -64,7 +61,7 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
     {
     }
 
-    public static function getEngine(): string
+    private static function getEngine(): string
     {
         return self::$engine;
     }
@@ -110,11 +107,11 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return self::getInstance()->__call($name, $arguments);
     }
 
-    public function getTables(): array
+    private function getTables(): array
     {
         return self::$tables;
     }
-    public function setTables(array $tables): void
+    private function setTables(array $tables): void
     {
         self::$tables = $tables;
     }
@@ -142,11 +139,11 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return file_exists($ymlPath) && !file_exists($yamlPath) ? $ymlPath : $yamlPath;
     }
 
-    public function getSchema(): ?array
+    private function getSchema(): ?array
     {
         return self::$schema;
     }
-    public function setSchema(?array $schema): void
+    private function setSchema(?array $schema): void
     {
         self::$schema = $schema;
     }
@@ -251,7 +248,7 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return self::$connection;
     }
 
-    public function load(?string $table = null): array
+    private function load(?string $table = null): array
     {
         if ($table !== null) {
             self::$currentTable = $table;
@@ -293,7 +290,7 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return $data;
     }
 
-    public function save(array $data, ?string $table = null): bool
+    private function save(array $data, ?string $table = null): bool
     {
         if ($table !== null) {
             self::$currentTable = $table;
@@ -314,24 +311,24 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return $result !== false;
     }
 
-    public function getData(): array
+    private function getData(): array
     {
         return self::$data;
     }
-    public function setData(array $data): void
+    private function setData(array $data): void
     {
         self::$data = $data;
         self::$connection = $data;
     }
 
-    public function from(string $table): YAMLConnection
+    private function from(string $table): YAMLConnection
     {
         self::$currentTable = preg_replace('/\.(yaml|yml)$/', '', $table);
         $this->load(self::$currentTable);
         return $this;
     }
 
-    public function getCurrentTable(): ?string
+    private function getCurrentTable(): ?string
     {
         return self::$currentTable;
     }
@@ -394,7 +391,7 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return "'" . addslashes((string) $value) . "'";
     }
 
-    public function insert(array $row): bool
+    private function insert(array $row): bool
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         $result = $processor->insert($row);
@@ -410,7 +407,7 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return $result;
     }
 
-    public function update(array $data, array $where): int
+    private function update(array $data, array $where): int
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         $affected = $processor->update($data, $where);
@@ -426,7 +423,7 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return $affected;
     }
 
-    public function delete(array $where): int
+    private function delete(array $where): int
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         $deleted = $processor->delete($where);
@@ -442,7 +439,7 @@ class YAMLConnection implements IConnection, IFlatFileConnection, IFetch, IState
         return $deleted;
     }
 
-    public function selectWhere(array $columns, array $where): array
+    private function selectWhere(array $columns, array $where): array
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         if (!empty($where)) {

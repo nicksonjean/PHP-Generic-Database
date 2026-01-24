@@ -21,6 +21,7 @@ use GenericDatabase\Generic\QueryBuilder\Context;
 use GenericDatabase\Engine\JSON\QueryBuilder\Builder;
 use GenericDatabase\Engine\JSON\QueryBuilder\Clause;
 use GenericDatabase\Engine\JSON\Connection\JSON;
+use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
 
 /**
  * The `JSONQueryBuilder` class implements the `IQueryBuilder` interface to provide a flexible
@@ -543,15 +544,18 @@ class JSONQueryBuilder implements IQueryBuilder
         $currentQuery = $this->buildRaw();
 
         if (self::$lastQuery !== $currentQuery || self::$cursorExhausted) {
+            // Get current structure handler
+            $structureHandler = StructureHandler::current();
+
             // Extract table name and load data from JSON file
             $tableName = $this->getTableNameFromQuery();
-            if ($tableName !== null && $this->getContext() !== null && method_exists($this->getContext(), 'load')) {
-                $this->getContext()->load($tableName);
+            if ($tableName !== null && $structureHandler !== null) {
+                $structureHandler->load($tableName);
             }
 
             // Execute query on data
             $builder = new Builder($this->query);
-            $data = method_exists($this->getContext(), 'getData') ? $this->getContext()->getData() : [];
+            $data = $structureHandler !== null ? $structureHandler->getData() : [];
             self::$cachedResult = $builder->execute($data);
 
             self::$lastQuery = $currentQuery;

@@ -106,6 +106,13 @@ interface IConnection
     public function getAllMetadata(): object;
 
     /**
+     * Returns an object containing the number of queried rows and the number of affected rows.
+     *
+     * @return void
+     */
+    public function setAllMetadata(): void;
+
+    /**
      * Returns the query string.
      *
      * @return string The query string associated with this instance.
@@ -191,6 +198,22 @@ interface IConnection
      * @param mixed $statement The statement to be set.
      */
     public function setStatement(mixed $statement): void;
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param object $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    public function bindParam(object $params): void;
+
+    /**
+     * Parses an SQL statement and returns an statement.
+     *
+     * @param mixed ...$params The parameters for the query function.
+     * @return string The statement resulting from the SQL statement.
+     */
+    public function parse(mixed ...$params): string;
 
     /**
      * This function prepares an SQL statement for execution and returns a statement object.

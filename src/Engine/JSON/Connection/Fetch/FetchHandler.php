@@ -4,87 +4,57 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine\JSON\Connection\Fetch;
 
-use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Connection\IFetchStrategy;
+use GenericDatabase\Interfaces\Connection\IFlatFileFetch;
+use GenericDatabase\Interfaces\Connection\IStructure;
+use GenericDatabase\Abstract\AbstractFlatFileFetch;
 use GenericDatabase\Engine\JSON\Connection\JSON;
 use GenericDatabase\Engine\JSON\QueryBuilder\Regex;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 
 /**
  * Handles fetch operations for JSON connections.
+ * Extends AbstractFlatFileFetch to leverage common flat-file fetch functionality.
  *
  * @package GenericDatabase\Engine\JSON\Connection\Fetch
  */
-class FetchHandler implements IFetch
+class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 {
-    /**
-     * @var IConnection The connection instance.
-     */
-    protected static IConnection $instance;
-
-    /**
-     * @var mixed The fetch strategy.
-     */
-    private static mixed $strategy;
-
-    /**
-     * @var int Current cursor position.
-     */
-    private int $cursor = 0;
-
-    /**
-     * @var array|null Cached result set.
-     */
-    private ?array $resultSet = null;
-
     /**
      * Constructor.
      *
      * @param IConnection $instance The connection instance.
-     * @param mixed|null $strategy The fetch strategy (optional).
+     * @param IFetchStrategy|null $strategy The fetch strategy (optional).
+     * @param IStructure|null $structureHandler Structure handler.
      */
-    public function __construct(IConnection $instance, mixed $strategy = null)
-    {
-        self::$instance = $instance;
-        self::$strategy = $strategy;
-    }
-
-    public function getInstance(): IConnection
-    {
-        return self::$instance;
-    }
-
-    /**
-     * Clear the cached result set (for new queries).
-     *
-     * @return void
-     */
-    public function clearCache(): void
-    {
-        $this->resultSet = null;
-        $this->cursor = 0;
+    public function __construct(
+        IConnection $instance,
+        ?IFetchStrategy $strategy = null,
+        ?IStructure $structureHandler = null
+    ) {
+        // Create a default strategy if none provided
+        $strategy = $strategy ?? new Strategy\FetchStrategy();
+        parent::__construct($instance, $strategy, $structureHandler);
     }
 
     /**
      * Execute a stored query and return the result set.
+     * Implementation of abstract method from AbstractFlatFileFetch.
      *
      * @return array The result set.
      */
-    private function executeStoredQuery(): array
+    protected function executeStoredQuery(): array
     {
         // Get the stored query string and parameters
-        $queryString = method_exists($this->getInstance(), 'getQueryString')
-            ? $this->getInstance()->getQueryString()
-            : '';
+        $queryString = $this->getInstance()->getQueryString();
+        $queryParameters = $this->getInstance()->getQueryParameters();
 
-        $queryParameters = method_exists($this->getInstance(), 'getQueryParameters')
-            ? $this->getInstance()->getQueryParameters()
-            : null;
-
-        // If no query is stored, return raw data
+        // If no query is stored, return raw data from structure handler
         if (empty($queryString)) {
-            if (method_exists($this->getInstance(), 'getData')) {
-                return $this->getInstance()->getData();
+            $structureHandler = $this->getStructureHandler();
+            if ($structureHandler !== null) {
+                return $structureHandler->getData();
             }
             return [];
         }
@@ -100,27 +70,14 @@ class FetchHandler implements IFetch
             $rowCount = count($result);
             $columnCount = !empty($result) ? count((array) reset($result)) : 0;
 
-            if (method_exists($this->getInstance(), 'setQueryRows')) {
-                $this->getInstance()->setQueryRows($rowCount);
-            }
-            if (method_exists($this->getInstance(), 'setQueryColumns')) {
-                $this->getInstance()->setQueryColumns($columnCount);
-            }
-
-            // Set fetched rows (the actual number of rows returned by the query)
-            if (method_exists($this->getInstance(), 'setFetchedRows')) {
-                $this->getInstance()->setFetchedRows($rowCount);
-            }
-
-            // Reset affected rows for SELECT queries
-            if (method_exists($this->getInstance(), 'setAffectedRows')) {
-                $this->getInstance()->setAffectedRows(0);
-            }
+            $this->getInstance()->setQueryRows($rowCount);
+            $this->getInstance()->setQueryColumns($columnCount);
+            $this->getInstance()->setAffectedRows(0);
 
             return $result;
         } catch (\Exception $e) {
-            // On error, return empty array
-            return [];
+            // Re-throw exception to help debugging - don't silently fail
+            throw $e;
         }
     }
 
@@ -190,17 +147,20 @@ class FetchHandler implements IFetch
         // Parse SQL query to extract components
         $query = trim($query);
 
+        // Get data context handler
+        $structureHandler = $this->getStructureHandler();
+
         // Extract table name from FROM clause and load data
         $tableName = null;
         if (preg_match('/\bFROM\s+(\w+)/i', $query, $matches)) {
             $tableName = $matches[1];
-            if (method_exists($this->getInstance(), 'load')) {
-                $this->getInstance()->load($tableName);
+            if ($structureHandler !== null) {
+                $structureHandler->load($tableName);
             }
         }
 
-        // Get data from connection
-        $data = method_exists($this->getInstance(), 'getData') ? $this->getInstance()->getData() : [];
+        // Get data from data context handler
+        $data = $structureHandler !== null ? $structureHandler->getData() : [];
 
         // Create DataProcessor instance
         $processor = new DataProcessor($data);
@@ -351,32 +311,6 @@ class FetchHandler implements IFetch
     }
 
     /**
-     * Format a row based on the fetch style.
-     *
-     * @param mixed $row The row to format.
-     * @param int $fetchStyle The fetch style.
-     * @param mixed|null $fetchArgument The fetch argument.
-     * @param mixed|null $optArgs Additional options.
-     * @return mixed The formatted row.
-     */
-    private function formatRow(mixed $row, int $fetchStyle, mixed $fetchArgument = null, mixed $optArgs = null): mixed
-    {
-        $row = (array) $row;
-
-        return match ($fetchStyle) {
-            JSON::FETCH_NUM => array_values($row),
-            JSON::FETCH_BOTH => $this->formatBothMode($row),
-            JSON::FETCH_OBJ => (object) $row,
-            JSON::FETCH_COLUMN => $fetchArgument !== null
-                ? ($row[$fetchArgument] ?? array_values($row)[0] ?? null)
-                : (array_values($row)[0] ?? null),
-            JSON::FETCH_CLASS => $this->fetchClass($row, $fetchArgument, $optArgs),
-            JSON::FETCH_INTO => $this->fetchInto($row, $fetchArgument),
-            default => $row, // FETCH_ASSOC
-        };
-    }
-
-    /**
      * Fetch the next row from the result set.
      *
      * @param int|null $fetchStyle The fetch style.
@@ -386,16 +320,17 @@ class FetchHandler implements IFetch
      */
     public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
-        if ($this->resultSet === null) {
-            $this->resultSet = $this->executeStoredQuery();
-        }
+        $fetch = $fetchStyle ?? JSON::FETCH_ASSOC;
 
-        if ($this->cursor >= count($this->resultSet)) {
-            return false;
-        }
-
-        $row = $this->resultSet[$this->cursor++];
-        return $this->formatRow($row, $fetchStyle ?? JSON::FETCH_ASSOC, $fetchArgument, $optArgs);
+        return match ($fetch) {
+            JSON::FETCH_OBJ => $this->internalFetchAssoc() !== false ? (object) $this->getResultSet()[$this->cursor - 1] : false,
+            JSON::FETCH_INTO => $this->fetchIntoObject($fetchArgument),
+            JSON::FETCH_CLASS => $this->internalFetchClass($optArgs, $fetchArgument ?? '\stdClass'),
+            JSON::FETCH_COLUMN => $this->internalFetchColumn($fetchArgument ?? 0),
+            JSON::FETCH_ASSOC => $this->internalFetchAssoc(),
+            JSON::FETCH_NUM => $this->internalFetchNum(),
+            default => $this->internalFetchBoth(),
+        };
     }
 
     /**
@@ -408,99 +343,44 @@ class FetchHandler implements IFetch
      */
     public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
-        if ($this->resultSet === null) {
-            $this->resultSet = $this->executeStoredQuery();
-        }
+        $fetch = $fetchStyle ?? JSON::FETCH_ASSOC;
 
-        $fetchStyle = $fetchStyle ?? JSON::FETCH_ASSOC;
-        $result = [];
-
-        foreach ($this->resultSet as $row) {
-            $result[] = $this->formatRow($row, $fetchStyle, $fetchArgument, $optArgs);
-        }
-
-        $this->cursor = count($this->resultSet);
-        return $result;
-    }
-
-    /**
-     * Execute the query without returning results (for metadata population).
-     * Resets cursor to allow subsequent fetch operations.
-     *
-     * @return void
-     */
-    public function execute(): void
-    {
-        if ($this->resultSet === null) {
-            $this->resultSet = $this->executeStoredQuery();
-        }
-        // Reset cursor for subsequent fetch operations
-        $this->cursor = 0;
-    }
-
-    /**
-     * Format row for FETCH_BOTH mode with alternating indices.
-     *
-     * @param array $row The row data.
-     * @return array The formatted row with alternating numeric and associative indices.
-     */
-    private function formatBothMode(array $row): array
-    {
-        $result = [];
-        $index = 0;
-
-        foreach ($row as $key => $value) {
-            $result[$index] = $value;      // Numeric index
-            $result[$key] = $value;         // Associative index
-            $index++;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Fetch row into a class instance.
-     *
-     * @param array $row The row data.
-     * @param string|null $className The class name.
-     * @param mixed $ctorArgs Constructor arguments.
-     * @return object The class instance.
-     */
-    private function fetchClass(array $row, ?string $className, mixed $ctorArgs): object
-    {
-        if ($className === null) {
-            return (object) $row;
-        }
-
-        $instance = $ctorArgs !== null
-            ? new $className(...(array) $ctorArgs)
-            : new $className();
-
-        foreach ($row as $key => $value) {
-            $instance->$key = $value;
-        }
-
-        return $instance;
+        return match ($fetch) {
+            JSON::FETCH_OBJ => array_map(fn($row) => (object) $row, $this->internalFetchAllAssoc()),
+            JSON::FETCH_INTO => $this->fetchAllIntoObjects($fetchArgument),
+            JSON::FETCH_CLASS => $this->internalFetchAllClass($optArgs, $fetchArgument ?? '\stdClass'),
+            JSON::FETCH_COLUMN => $this->internalFetchAllColumn($fetchArgument ?? 0),
+            JSON::FETCH_ASSOC => $this->internalFetchAllAssoc(),
+            JSON::FETCH_NUM => $this->internalFetchAllNum(),
+            default => $this->internalFetchAllBoth(),
+        };
     }
 
     /**
      * Fetch row into an existing object.
      *
-     * @param array $row The row data.
      * @param object|null $object The object to populate.
-     * @return object The populated object.
+     * @return object|false The populated object or false.
      */
-    private function fetchInto(array $row, ?object $object): object
+    private function fetchIntoObject(?object $object): object|false
     {
-        if ($object === null) {
-            return (object) $row;
+        $row = $this->internalFetchAssoc();
+        if ($row === false) {
+            return false;
         }
+        return $this->fetchInto($row, $object);
+    }
 
-        foreach ($row as $key => $value) {
-            $object->$key = $value;
-        }
-
-        return $object;
+    /**
+     * Fetch all rows into objects.
+     *
+     * @param object|null $object The object template.
+     * @return array The populated objects.
+     */
+    private function fetchAllIntoObjects(?object $object): array
+    {
+        $results = $this->internalFetchAllAssoc();
+        return array_map(fn($row) => $this->fetchInto($row, clone $object), $results);
     }
 
     /**

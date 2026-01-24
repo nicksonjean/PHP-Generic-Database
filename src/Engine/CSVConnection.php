@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace GenericDatabase\Engine;
 
 use Exception;
-use ReflectionException;
 use AllowDynamicProperties;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Exceptions;
@@ -16,13 +15,13 @@ use GenericDatabase\Helpers\Zod\SchemaValidator;
 use Dotenv\Exception\ValidationException;
 use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\IFlatFileConnection;
-use GenericDatabase\Interfaces\Connection\IFetch;
-use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Engine\CSV\Connection\CSV;
 use GenericDatabase\Engine\CSV\Connection\Fetch\FetchHandler;
 use GenericDatabase\Engine\CSV\Connection\Statements\StatementsHandler;
 use GenericDatabase\Engine\FlatFile\DataProcessor;
+use GenericDatabase\Interfaces\Connection\IFlatFileFetch;
+use GenericDatabase\Interfaces\Connection\IFlatFileStatements;
+use GenericDatabase\Engine\CSV\Connection\Fetch\Strategy\FetchStrategy;
 
 /**
  * CSV Connection class for flat file database operations.
@@ -36,7 +35,7 @@ use GenericDatabase\Engine\FlatFile\DataProcessor;
  * @method static CSVConnection|string getDelimiter($value = null) Retrieves the CSV delimiter.
  */
 #[AllowDynamicProperties]
-class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatements
+class CSVConnection implements IConnection
 {
     use Methods;
     use Singleton;
@@ -51,27 +50,27 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
     private static bool $inTransaction = false;
     private static ?array $transactionBackup = null;
     private static bool $connected = false;
-    private static IFetch $fetchHandler;
-    private static IStatements $statementsHandler;
+    private static IFlatFileFetch $fetchHandler;
+    private static IFlatFileStatements $statementsHandler;
     private static string $engine = 'csv';
 
     public function __construct()
     {
-        self::$fetchHandler = new FetchHandler($this);
+        self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
         self::$statementsHandler = new StatementsHandler($this);
     }
 
-    public static function getEngine(): string
+    private static function getEngine(): string
     {
         return self::$engine;
     }
 
-    private function getFetchHandler(): IFetch
+    private function getFetchHandler(): IFlatFileFetch
     {
         return self::$fetchHandler;
     }
 
-    private function getStatementsHandler(): IStatements
+    private function getStatementsHandler(): IFlatFileStatements
     {
         return self::$statementsHandler;
     }
@@ -124,12 +123,12 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return self::getInstance()->__call($name, $arguments);
     }
 
-    public function getTables(): array
+    private function getTables(): array
     {
         return self::$tables;
     }
 
-    public function setTables(array $tables): void
+    private function setTables(array $tables): void
     {
         self::$tables = $tables;
     }
@@ -154,12 +153,12 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return self::$database . DIRECTORY_SEPARATOR . $table . '.csv';
     }
 
-    public function getSchema(): ?array
+    private function getSchema(): ?array
     {
         return self::$schema;
     }
 
-    public function setSchema(?array $schema): void
+    private function setSchema(?array $schema): void
     {
         self::$schema = $schema;
     }
@@ -267,7 +266,7 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return self::$connection;
     }
 
-    public function load(?string $table = null): array
+    private function load(?string $table = null): array
     {
         if ($table !== null) {
             self::$currentTable = $table;
@@ -322,14 +321,13 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         self::$data = $data;
         self::$connection = $data;
 
-        if (self::$fetchHandler instanceof FetchHandler) {
-            self::$fetchHandler->setResultSet(self::$data);
-        }
+        // Clear fetch cache so new data is used on next fetch
+        self::$fetchHandler->clearCache();
 
         return $data;
     }
 
-    public function save(array $data, ?string $table = null): bool
+    private function save(array $data, ?string $table = null): bool
     {
         if ($table !== null) {
             self::$currentTable = $table;
@@ -375,25 +373,25 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return true;
     }
 
-    public function getData(): array
+    private function getData(): array
     {
         return self::$data;
     }
 
-    public function setData(array $data): void
+    private function setData(array $data): void
     {
         self::$data = $data;
         self::$connection = $data;
     }
 
-    public function from(string $table): CSVConnection
+    private function from(string $table): CSVConnection
     {
         self::$currentTable = str_replace('.csv', '', $table);
         $this->load(self::$currentTable);
         return $this;
     }
 
-    public function getCurrentTable(): ?string
+    private function getCurrentTable(): ?string
     {
         return self::$currentTable;
     }
@@ -448,7 +446,7 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return $this->getStatementsHandler()->quote(...$params);
     }
 
-    public function insert(array $row): bool
+    private function insert(array $row): bool
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         $result = $processor->insert($row);
@@ -467,7 +465,7 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return $result;
     }
 
-    public function update(array $data, array $where): int
+    private function update(array $data, array $where): int
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         $affected = $processor->update($data, $where);
@@ -485,7 +483,7 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return $affected;
     }
 
-    public function delete(array $where): int
+    private function delete(array $where): int
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         $deleted = $processor->delete($where);
@@ -503,7 +501,7 @@ class CSVConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return $deleted;
     }
 
-    public function selectWhere(array $columns, array $where): array
+    private function selectWhere(array $columns, array $where): array
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         if (!empty($where)) {

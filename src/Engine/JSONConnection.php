@@ -16,14 +16,14 @@ use GenericDatabase\Helpers\Zod\Zod\ZodError;
 use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\Connection\IDSN;
 use GenericDatabase\Helpers\Zod\SchemaValidator;
-use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Engine\JSON\Connection\JSON;
 use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IAttributes;
-use GenericDatabase\Interfaces\Connection\IStatements;
+use GenericDatabase\Interfaces\Connection\IFlatFileFetch;
+use GenericDatabase\Interfaces\Connection\IFlatFileStatements;
+use GenericDatabase\Helpers\Parsers\QueryTypeDetector;
 use GenericDatabase\Interfaces\Connection\ITransactions;
-use GenericDatabase\Interfaces\Connection\IStructure;
 use GenericDatabase\Generic\Connection\Structure;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Engine\JSON\Connection\DSN\DSNHandler;
@@ -36,6 +36,7 @@ use GenericDatabase\Engine\JSON\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\JSON\Connection\Statements\StatementsHandler;
 use GenericDatabase\Engine\JSON\Connection\Transactions\TransactionsHandler;
 use GenericDatabase\Engine\JSON\Connection\Arguments\Strategy\ArgumentsStrategy;
+use GenericDatabase\Interfaces\Connection\IStructure;
 use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
 
 /**
@@ -68,7 +69,7 @@ use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
  * @method static JSONConnection|mixed getException($value = null) Retrieves an exception from the database.
  */
 #[AllowDynamicProperties]
-class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions, IStructure
+class JSONConnection implements IConnection
 {
     use Methods;
     use Singleton;
@@ -79,9 +80,9 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     private static mixed $connection;
 
-    private static IFetch $fetchHandler;
+    private static IFlatFileFetch $fetchHandler;
 
-    private static IStatements $statementsHandler;
+    private static IFlatFileStatements $statementsHandler;
 
     private static IDSN $dsnHandler;
 
@@ -93,7 +94,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
 
     private static ITransactions $transactionsHandler;
 
-    private static StructureHandler $structureHandler;
+    private static IStructure $structureHandler;
 
     /**
      * Empty constructor since initialization is handled by traits and interface methods
@@ -101,7 +102,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     public function __construct()
     {
         self::$structureHandler = new StructureHandler($this);
-        self::$fetchHandler = new FetchHandler($this, new FetchStrategy());
+        self::$fetchHandler = new FetchHandler($this, new FetchStrategy(), self::$structureHandler);
         self::$optionsHandler = new OptionsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
         self::$statementsHandler = new StatementsHandler($this, self::$optionsHandler, new ReportHandler());
@@ -110,12 +111,17 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
         self::$transactionsHandler = new TransactionsHandler($this);
     }
 
-    private function getFetchHandler(): IFetch
+    private function getStructureHandler(): IStructure
+    {
+        return self::$structureHandler;
+    }
+
+    private function getFetchHandler(): IFlatFileFetch
     {
         return self::$fetchHandler;
     }
 
-    private function getStatementsHandler(): IStatements
+    private function getStatementsHandler(): IFlatFileStatements
     {
         return self::$statementsHandler;
     }
@@ -143,11 +149,6 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
     private function getTransactionsHandler(): ITransactions
     {
         return self::$transactionsHandler;
-    }
-
-    private function getStructureHandler(): StructureHandler
-    {
-        return self::$structureHandler;
     }
 
     /**
@@ -207,7 +208,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      *
      * @return array|Structure|Exceptions The structure of the database or an exception if getting the structure fails.
      */
-    public function mount(): array|Structure|Exceptions
+    private function mount(): array|Structure|Exceptions
     {
         return $this->getStructureHandler()->mount();
     }
@@ -218,7 +219,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param string $table The table name.
      * @return string The full file path (or empty string for memory database).
      */
-    public function getTablePath(string $table): string
+    private function getTablePath(string $table): string
     {
         return $this->getStructureHandler()->getTablePath($table);
     }
@@ -228,7 +229,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      *
      * @return Structure|null The schema.
      */
-    public function getSchema(): ?Structure
+    private function getSchema(): ?Structure
     {
         return $this->getStructureHandler()->getSchema()?->getSchema();
     }
@@ -238,7 +239,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      *
      * @return string|null The file.
      */
-    public function getSchemaFile(): ?string
+    private function getSchemaFile(): ?string
     {
         return $this->getStructureHandler()->getSchema()?->getFile();
     }
@@ -248,7 +249,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      *
      * @return array|null The data.
      */
-    public function getSchemaData(): ?array
+    private function getSchemaData(): ?array
     {
         return $this->getStructureHandler()->getSchema()?->getData();
     }
@@ -258,7 +259,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      *
      * @return array|null The tables.
      */
-    public function getTables(): ?array
+    private function getTables(): ?array
     {
         return $this->getStructureHandler()->getTables();
     }
@@ -269,7 +270,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param array $tables The tables.
      * @return void
      */
-    public function setTables(array $tables): void
+    private function setTables(array $tables): void
     {
         $this->getStructureHandler()->setTables($tables);
     }
@@ -279,7 +280,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      *
      * @return Structure|null The structure.
      */
-    public function getStructure(): ?Structure
+    private function getStructure(): ?Structure
     {
         return $this->getStructureHandler()->getStructure();
     }
@@ -290,7 +291,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param Structure $structure The structure.
      * @return void
      */
-    public function setStructure(array|Structure|Exceptions $structure): void
+    private function setStructure(array|Structure|Exceptions $structure): void
     {
         $this->getStructureHandler()->setStructure($structure);
     }
@@ -456,7 +457,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @return array
      * @throws Exceptions
      */
-    public function load(?string $table = null): array
+    private function load(?string $table = null): array
     {
         $data = $this->getStructureHandler()->load($table);
         self::$connection = $data;
@@ -470,7 +471,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param string|null $table The table name (optional).
      * @return bool
      */
-    public function save(array $data, ?string $table = null): bool
+    private function save(array $data, ?string $table = null): bool
     {
         $result = $this->getStructureHandler()->save($data, $table);
         if ($result) {
@@ -484,7 +485,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      *
      * @return array
      */
-    public function getData(): array
+    private function getData(): array
     {
         return $this->getStructureHandler()->getData();
     }
@@ -495,7 +496,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param array $data The data.
      * @return void
      */
-    public function setData(array $data): void
+    private function setData(array $data): void
     {
         $this->getStructureHandler()->setData($data);
         self::$connection = $data;
@@ -507,7 +508,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param string $table The table name.
      * @return JSONConnection
      */
-    public function from(string $table): JSONConnection
+    private function from(string $table): JSONConnection
     {
         $this->getStructureHandler()->setCurrentTable(str_replace('.json', '', $table));
         $this->load($this->getStructureHandler()->getCurrentTable());
@@ -519,7 +520,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      *
      * @return string|null
      */
-    public function getCurrentTable(): ?string
+    private function getCurrentTable(): ?string
     {
         return $this->getStructureHandler()->getCurrentTable();
     }
@@ -592,7 +593,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param array $row The row to insert.
      * @return bool
      */
-    public function insert(array $row): bool
+    private function insert(array $row): bool
     {
         $data = $this->getData();
         $processor = new DataProcessor($data);
@@ -625,7 +626,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param array $where The criteria.
      * @return int
      */
-    public function update(array $data, array $where): int
+    private function update(array $data, array $where): int
     {
         $currentData = $this->getData();
         $processor = new DataProcessor($currentData);
@@ -650,7 +651,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param array $where The criteria.
      * @return int
      */
-    public function delete(array $where): int
+    private function delete(array $where): int
     {
         $currentData = $this->getData();
         $processor = new DataProcessor($currentData);
@@ -676,7 +677,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param array $where The criteria.
      * @return array
      */
-    public function selectWhere(array $columns, array $where): array
+    private function selectWhere(array $columns, array $where): array
     {
         $processor = new DataProcessor($this->getData());
 
@@ -730,9 +731,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      */
     private function isDmlQuery(string $query): bool
     {
-        $query = trim($query);
-        $firstWord = strtoupper(strtok($query, " \t\n"));
-        return in_array($firstWord, ['INSERT', 'UPDATE', 'DELETE']);
+        return QueryTypeDetector::isDmlQuery($query);
     }
 
     /**
@@ -845,7 +844,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      *
      * @return int
      */
-    public function getFetchedRows(): int
+    private function getFetchedRows(): int
     {
         return $this->getStatementsHandler()->getFetchedRows();
     }
@@ -856,7 +855,7 @@ class JSONConnection implements IConnection, IFetch, IStatements, IDSN, IArgumen
      * @param int $params The number of fetched rows.
      * @return void
      */
-    public function setFetchedRows(int $params): void
+    private function setFetchedRows(int $params): void
     {
         $this->getStatementsHandler()->setFetchedRows($params);
     }

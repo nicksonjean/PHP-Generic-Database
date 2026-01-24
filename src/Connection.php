@@ -154,9 +154,11 @@ class Connection implements IConnection, IConnectionStrategy
         'Firebird',
         'SQLite',
         'JSON',
+        'INI',
         'CSV',
         'XML',
-        'YAML'
+        'YAML',
+        'NEON'
     ];
 
     /**
@@ -502,6 +504,16 @@ class Connection implements IConnection, IConnectionStrategy
     }
 
     /**
+     * Reset query metadata
+     *
+     * @return void
+     */
+    public function setAllMetadata(): void
+    {
+        $this->getStrategy()->setAllMetadata();
+    }
+
+    /**
      * Returns the query string.
      *
      * @return string The query string associated with this instance.
@@ -622,6 +634,28 @@ class Connection implements IConnection, IConnectionStrategy
     public function setStatement(mixed $statement): void
     {
         $this->getStrategy()->setStatement($statement);
+    }
+
+    /**
+     * Binds a parameter to a variable in the SQL statement.
+     *
+     * @param object $params The name of the parameter or an array of parameters and values.
+     * @return void
+     */
+    public function bindParam(object $params): void
+    {
+        $this->getStrategy()->bindParam($params);
+    }
+
+    /**
+     * Parses an SQL statement and returns an statement.
+     *
+     * @param mixed ...$params The parameters for the query function.
+     * @return string The statement resulting from the SQL statement.
+     */
+    public function parse(mixed ...$params): string
+    {
+        return $this->getStrategy()->parse(...$params);
     }
 
     /**

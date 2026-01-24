@@ -317,7 +317,7 @@ class MySQLiConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      *
      * @return string|Exceptions
      */
-    public function parseDsn(): string|Exceptions
+    private function parseDsn(): string|Exceptions
     {
         return $this->getDsnHandler()->parse();
     }

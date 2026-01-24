@@ -28,8 +28,8 @@ try {
     // $e = $context->getSchema()?->getFile();
     // var_dump($e);
 
-    $f = $context->getSchema()?->getData();
-    var_dump($f);
+    // $f = $context->getSchema()?->getData();
+    // var_dump($f);
 
     // $g = $context->getStructure()?->getSchema()?->getFile();
     // var_dump($g);
@@ -39,9 +39,6 @@ try {
 
     // $i = $context->getStructure();
     // var_dump($i);
-
-    // $context->from('usuario')->selectWhere(['apelido', 'login'], ['apelido' => 'Administrador'])->fetchAll();
-    // var_dump($context);
 
 } catch (Exception $e) {
     var_dump($e);

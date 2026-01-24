@@ -17,9 +17,6 @@ use GenericDatabase\Helpers\Zod\SchemaValidator;
 use Dotenv\Exception\ValidationException;
 use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Interfaces\IFlatFileConnection;
-use GenericDatabase\Interfaces\Connection\IFetch;
-use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Engine\XML\Connection\XML;
 use GenericDatabase\Engine\FlatFile\DataProcessor;
 
@@ -33,7 +30,7 @@ use GenericDatabase\Engine\FlatFile\DataProcessor;
  * @method static XMLConnection|array getTables($value = null) Retrieves the tables array.
  */
 #[AllowDynamicProperties]
-class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatements
+class XMLConnection implements IConnection
 {
     use Methods;
     use Singleton;
@@ -66,7 +63,7 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
     {
     }
 
-    public static function getEngine(): string
+    private static function getEngine(): string
     {
         return self::$engine;
     }
@@ -114,11 +111,11 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return self::getInstance()->__call($name, $arguments);
     }
 
-    public function getTables(): array
+    private function getTables(): array
     {
         return self::$tables;
     }
-    public function setTables(array $tables): void
+    private function setTables(array $tables): void
     {
         self::$tables = $tables;
     }
@@ -143,11 +140,11 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return self::$database . DIRECTORY_SEPARATOR . $table . '.xml';
     }
 
-    public function getSchema(): ?array
+    private function getSchema(): ?array
     {
         return self::$schema;
     }
-    public function setSchema(?array $schema): void
+    private function setSchema(?array $schema): void
     {
         self::$schema = $schema;
     }
@@ -252,7 +249,7 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return self::$connection;
     }
 
-    public function load(?string $table = null): array
+    private function load(?string $table = null): array
     {
         if ($table !== null) {
             self::$currentTable = $table;
@@ -308,7 +305,7 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         }
     }
 
-    public function save(array $data, ?string $table = null): bool
+    private function save(array $data, ?string $table = null): bool
     {
         if ($table !== null) {
             self::$currentTable = $table;
@@ -346,24 +343,24 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return $result !== false;
     }
 
-    public function getData(): array
+    private function getData(): array
     {
         return self::$data;
     }
-    public function setData(array $data): void
+    private function setData(array $data): void
     {
         self::$data = $data;
         self::$connection = $data;
     }
 
-    public function from(string $table): XMLConnection
+    private function from(string $table): XMLConnection
     {
         self::$currentTable = str_replace('.xml', '', $table);
         $this->load(self::$currentTable);
         return $this;
     }
 
-    public function getCurrentTable(): ?string
+    private function getCurrentTable(): ?string
     {
         return self::$currentTable;
     }
@@ -426,7 +423,7 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return "'" . htmlspecialchars((string) $value, ENT_XML1) . "'";
     }
 
-    public function insert(array $row): bool
+    private function insert(array $row): bool
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         $result = $processor->insert($row);
@@ -442,7 +439,7 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return $result;
     }
 
-    public function update(array $data, array $where): int
+    private function update(array $data, array $where): int
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         $affected = $processor->update($data, $where);
@@ -458,7 +455,7 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return $affected;
     }
 
-    public function delete(array $where): int
+    private function delete(array $where): int
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         $deleted = $processor->delete($where);
@@ -474,7 +471,7 @@ class XMLConnection implements IConnection, IFlatFileConnection, IFetch, IStatem
         return $deleted;
     }
 
-    public function selectWhere(array $columns, array $where): array
+    private function selectWhere(array $columns, array $where): array
     {
         $processor = new DataProcessor(self::$data, self::$schema);
         if (!empty($where)) {

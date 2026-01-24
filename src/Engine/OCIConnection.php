@@ -317,7 +317,7 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
      *
      * @return string|Exceptions
      */
-    public function parseDsn(): string|Exceptions
+    private function parseDsn(): string|Exceptions
     {
         return $this->getDsnHandler()->parse();
     }

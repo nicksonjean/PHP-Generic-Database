@@ -17,6 +17,11 @@ class StructureHandler implements IStructure
     protected static IConnection $instance;
 
     /**
+     * @var self|null Current handler instance.
+     */
+    private static ?self $self = null;
+
+    /**
      * Database directory path (folder containing JSON files) or 'memory' for in-memory database
      * @var string $database
      */
@@ -54,6 +59,17 @@ class StructureHandler implements IStructure
     public function __construct(IConnection $instance)
     {
         self::$instance = $instance;
+        self::$self = $this;
+    }
+
+    /**
+     * Get the current handler instance.
+     *
+     * @return self|null The current handler instance.
+     */
+    public static function current(): ?self
+    {
+        return self::$self;
     }
 
     /**

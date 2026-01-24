@@ -65,4 +65,58 @@ interface IStructure
      * @return void
      */
     public function setStructure(array|Structure|Exceptions $structure): void;
+
+    /**
+     * Load data from a table/file.
+     *
+     * @param string|null $table The table name (file without extension).
+     * @return array The loaded data.
+     */
+    public function load(?string $table = null): array;
+
+    /**
+     * Get the current data.
+     *
+     * @return array The current data.
+     */
+    public function getData(): array;
+
+    /**
+     * Set the data.
+     *
+     * @param array $data The data to set.
+     * @return void
+     */
+    public function setData(array $data): void;
+
+    /**
+     * Get the current active table.
+     *
+     * @return string|null The current table name.
+     */
+    public function getCurrentTable(): ?string;
+
+    /**
+     * Set the current active table.
+     *
+     * @param string|null $table The table name.
+     * @return void
+     */
+    public function setCurrentTable(?string $table): void;
+
+    /**
+     * Save data to a table/file.
+     *
+     * @param array $data The data to save.
+     * @param string|null $table The table name (optional).
+     * @return bool True on success, false on failure.
+     */
+    public function save(array $data, ?string $table = null): bool;
+
+    /**
+     * Reset the data state.
+     *
+     * @return void
+     */
+    public function reset(): void;
 }

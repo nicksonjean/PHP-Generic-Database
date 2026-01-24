@@ -205,7 +205,7 @@ class SQLiteConnection implements IConnection, IFetch, IStatements, IDSN, IArgum
      * @return int The determined flag value for the connection.
      * @throws ReflectionException
      */
-    public function getFlags(): int
+    private function getFlags(): int
     {
         $options = $this->getOptionsHandler()->getOptions();
         $result = [];

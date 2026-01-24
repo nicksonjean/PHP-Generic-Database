@@ -4,62 +4,46 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Engine\CSV\Connection\Fetch;
 
-use GenericDatabase\Interfaces\Connection\IFetch;
 use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Connection\IFetchStrategy;
+use GenericDatabase\Interfaces\Connection\IFlatFileFetch;
+use GenericDatabase\Abstract\AbstractFlatFileFetch;
 use GenericDatabase\Engine\CSV\Connection\CSV;
 
 /**
  * Handles fetch operations for CSV connections.
+ * Extends AbstractFlatFileFetch to leverage common flat-file fetch functionality.
  *
  * @package GenericDatabase\Engine\CSV\Connection\Fetch
  */
-class FetchHandler implements IFetch
+class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 {
-    /**
-     * @var IConnection The connection instance.
-     */
-    protected static IConnection $instance;
-
-    /**
-     * @var mixed The fetch strategy.
-     */
-    private static mixed $strategy;
-
-    /**
-     * @var int Current cursor position.
-     */
-    private int $cursor = 0;
-
-    /**
-     * @var array|null Cached result set.
-     */
-    private ?array $resultSet = null;
-
     /**
      * Constructor.
      *
      * @param IConnection $instance The connection instance.
+     * @param IFetchStrategy|null $strategy The fetch strategy (optional).
      */
-    public function __construct(IConnection $instance)
+    public function __construct(IConnection $instance, ?IFetchStrategy $strategy = null)
     {
-        self::$instance = $instance;
-    }
-
-    public function getInstance(): IConnection
-    {
-        return self::$instance;
+        // Create a default strategy if none provided
+        $strategy = $strategy ?? new Strategy\FetchStrategy();
+        parent::__construct($instance, $strategy);
     }
 
     /**
-     * Set the result set for fetching.
+     * Execute a stored query and return the result set.
+     * Implementation of abstract method from AbstractFlatFileFetch.
      *
-     * @param array $resultSet The result set.
-     * @return void
+     * @return array The result set.
      */
-    public function setResultSet(array $resultSet): void
+    protected function executeStoredQuery(): array
     {
-        $this->resultSet = $resultSet;
-        $this->cursor = 0;
+        // Get data from connection
+        if (method_exists($this->getInstance(), 'getData')) {
+            return $this->getInstance()->getData();
+        }
+        return [];
     }
 
     /**
@@ -72,16 +56,19 @@ class FetchHandler implements IFetch
      */
     public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
-        if ($this->resultSet === null) {
-            $this->resultSet = $this->getInstance()->getData();
-        }
+        $fetch = $fetchStyle ?? CSV::FETCH_ASSOC;
 
-        if ($this->cursor >= count($this->resultSet)) {
-            return false;
-        }
-
-        $row = $this->resultSet[$this->cursor++];
-        return $this->formatRow($row, $fetchStyle ?? CSV::FETCH_ASSOC, $fetchArgument);
+        return match ($fetch) {
+            CSV::FETCH_OBJ => $this->internalFetchAssoc() !== false
+                ? (object) $this->getResultSet()[$this->cursor - 1]
+                : false,
+            CSV::FETCH_INTO => $this->fetchIntoObject($fetchArgument),
+            CSV::FETCH_CLASS => $this->internalFetchClass($optArgs, $fetchArgument ?? '\\stdClass'),
+            CSV::FETCH_COLUMN => $this->internalFetchColumn($fetchArgument ?? 0),
+            CSV::FETCH_ASSOC => $this->internalFetchAssoc(),
+            CSV::FETCH_NUM => $this->internalFetchNum(),
+            default => $this->internalFetchBoth(),
+        };
     }
 
     /**
@@ -94,41 +81,43 @@ class FetchHandler implements IFetch
      */
     public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
-        if ($this->resultSet === null) {
-            $this->resultSet = $this->getInstance()->getData();
-        }
+        $fetch = $fetchStyle ?? CSV::FETCH_ASSOC;
 
-        $result = [];
-        $style = $fetchStyle ?? CSV::FETCH_ASSOC;
-
-        foreach ($this->resultSet as $row) {
-            $result[] = $this->formatRow($row, $style, $fetchArgument);
-        }
-
-        $this->cursor = count($this->resultSet);
-        return $result;
+        return match ($fetch) {
+            CSV::FETCH_OBJ => array_map(fn($row) => (object) $row, $this->internalFetchAllAssoc()),
+            CSV::FETCH_INTO => $this->fetchAllIntoObjects($fetchArgument),
+            CSV::FETCH_CLASS => $this->internalFetchAllClass($optArgs, $fetchArgument ?? '\\stdClass'),
+            CSV::FETCH_COLUMN => $this->internalFetchAllColumn($fetchArgument ?? 0),
+            CSV::FETCH_ASSOC => $this->internalFetchAllAssoc(),
+            CSV::FETCH_NUM => $this->internalFetchAllNum(),
+            default => $this->internalFetchAllBoth(),
+        };
     }
 
     /**
-     * Format a row based on the fetch style.
+     * Fetch row into an existing object.
      *
-     * @param mixed $row The row to format.
-     * @param int $fetchStyle The fetch style.
-     * @param mixed|null $fetchArgument The fetch argument.
-     * @return mixed The formatted row.
+     * @param object|null $object The object to populate.
+     * @return object|false The populated object or false.
      */
-    private function formatRow(mixed $row, int $fetchStyle, mixed $fetchArgument = null): mixed
+    private function fetchIntoObject(?object $object): object|false
     {
-        $row = (array) $row;
+        $row = $this->internalFetchAssoc();
+        if ($row === false) {
+            return false;
+        }
+        return $this->fetchInto($row, $object);
+    }
 
-        return match ($fetchStyle) {
-            CSV::FETCH_NUM => array_values($row),
-            CSV::FETCH_BOTH => array_merge($row, array_values($row)),
-            CSV::FETCH_OBJ => (object) $row,
-            CSV::FETCH_COLUMN => $fetchArgument !== null
-                ? ($row[$fetchArgument] ?? array_values($row)[0] ?? null)
-                : (array_values($row)[0] ?? null),
-            default => $row,
-        };
+    /**
+     * Fetch all rows into objects.
+     *
+     * @param object|null $object The object template.
+     * @return array The populated objects.
+     */
+    private function fetchAllIntoObjects(?object $object): array
+    {
+        $results = $this->internalFetchAllAssoc();
+        return array_map(fn($row) => $this->fetchInto($row, clone $object), $results);
     }
 }
