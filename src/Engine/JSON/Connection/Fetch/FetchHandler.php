@@ -12,6 +12,7 @@ use GenericDatabase\Abstract\AbstractFlatFileFetch;
 use GenericDatabase\Engine\JSON\Connection\JSON;
 use GenericDatabase\Engine\JSON\QueryBuilder\Regex;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
+use GenericDatabase\Helpers\Parsers\Schema;
 
 /**
  * Handles fetch operations for JSON connections.
@@ -206,87 +207,539 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
     /**
      * Parse and execute a SQL query using the DataProcessor directly.
+     * Supports JOIN, GROUP BY, HAVING, aggregate functions (COUNT, SUM, AVG), DISTINCT,
+     * ORDER BY, LIMIT, and result type casting to match SQLite (int/float).
      *
      * @param string $query The SQL query.
      * @return array The result set.
      */
     private function parseAndExecuteQuery(string $query): array
     {
-        // Parse SQL query to extract components
         $query = trim($query);
-
-        // Get data context handler
         $structureHandler = $this->getStructureHandler();
-
-        // Remove quotes from identifiers for parsing (but keep original query for display)
         $queryForParsing = $this->unquoteIdentifiers($query);
 
-        // Extract table name from FROM clause and load data
-        $tableName = null;
-        // Updated regex to handle both quoted and unquoted table names
-        if (preg_match('/\bFROM\s+(?:"?(\w+)"?)(?:\s+(?:"?(\w+)"?))?/i', $queryForParsing, $matches)) {
-            // First match is table name, second is alias (if present)
-            $tableName = $matches[1];
-            if ($structureHandler !== null) {
-                $structureHandler->load($tableName);
-            }
+        $database = $this->getDatabasePath();
+        $parsed = $this->parseQueryComponents($queryForParsing);
+        $selectSpecs = $parsed['select'];
+        $isDistinct = $parsed['distinct'];
+        $fromTable = $parsed['from'];
+        $fromAlias = $parsed['from_alias'];
+        $joinTable = $parsed['join_table'];
+        $joinAlias = $parsed['join_alias'];
+        $onCondition = $parsed['on_condition'];
+        $whereClause = $parsed['where'];
+        $groupByCols = $parsed['group_by'];
+        $havingClause = $parsed['having'];
+        $orderByCol = $parsed['order_by_col'];
+        $orderDir = $parsed['order_by_dir'];
+        $limit = $parsed['limit'];
+        $offset = $parsed['offset'];
+
+        $data = $this->loadTableData($structureHandler, $fromTable, $fromAlias);
+        if ($joinTable !== null) {
+            $rightData = $this->loadTableData($structureHandler, $joinTable, $joinAlias);
+            $data = $this->executeJoin($data, $rightData, $fromAlias, $joinAlias, $onCondition);
         }
 
-        // Get data from data context handler
-        $data = $structureHandler !== null ? $structureHandler->getData() : [];
-
-        // Create DataProcessor instance
         $processor = new DataProcessor($data);
 
-        // Extract and apply WHERE clause
-        if (preg_match('/\bWHERE\s+(.*?)(?:\s+ORDER\s+BY|\s+GROUP\s+BY|\s+LIMIT|$)/is', $queryForParsing, $matches)) {
-            $whereClause = trim($matches[1]);
+        if ($whereClause !== null && $whereClause !== '') {
             $conditions = $this->parseWhereClause($whereClause);
             if (!empty($conditions)) {
                 $processor->where($conditions, 'AND');
             }
         }
 
-        // Extract and apply ORDER BY clause
-        if (preg_match('/\bORDER\s+BY\s+(.*?)(?:\s+LIMIT|$)/is', $queryForParsing, $matches)) {
-            $orderClause = trim($matches[1]);
-            // Check for ASC/DESC
-            if (preg_match('/^(.*?)\s+(ASC|DESC)$/i', $orderClause, $orderMatches)) {
-                $orderColumn = trim($orderMatches[1]);
-                $direction = strtoupper($orderMatches[2]) === 'DESC' ? DataProcessor::DESC : DataProcessor::ASC;
-                $processor->orderBy($orderColumn, $direction);
-            } else {
-                $processor->orderBy($orderClause, DataProcessor::ASC);
+        $data = $processor->getData();
+
+        if (!empty($groupByCols)) {
+            $result = $this->executeGroupByAggregate(
+                $data,
+                $groupByCols,
+                $selectSpecs,
+                $havingClause,
+                $fromAlias,
+                $joinAlias
+            );
+        } else {
+            $processor->setData($data);
+            if ($orderByCol !== null) {
+                $processor->orderBy($orderByCol, $orderDir === 'DESC' ? DataProcessor::DESC : DataProcessor::ASC);
+            }
+            if ($limit !== null) {
+                $processor->limit((int) $limit, (int) ($offset ?? 0));
+            }
+            $result = $processor->getData();
+            $skipSelect = count($selectSpecs) === 1 && ($selectSpecs[0]['expr'] ?? '') === '*';
+            if (!$skipSelect) {
+                $result = $this->applySelectColumns($result, $selectSpecs, $fromAlias, $joinAlias);
+            }
+            if ($isDistinct) {
+                $result = $this->applyDistinct($result);
             }
         }
 
-        // Extract and apply LIMIT clause
-        if (preg_match('/\bLIMIT\s+(\d+)(?:\s*,\s*(\d+))?/i', $queryForParsing, $matches)) {
-            if (isset($matches[2])) {
-                $processor->limit((int) $matches[2], (int) $matches[1]);
-            } else {
-                $processor->limit((int) $matches[1]);
+        if (!empty($groupByCols)) {
+            if ($orderByCol !== null) {
+                $result = $this->applyOrderBy($result, $orderByCol, $orderDir === 'DESC');
+            }
+            if ($limit !== null) {
+                $result = array_slice($result, (int) ($offset ?? 0), (int) $limit);
             }
         }
 
-        // Get filtered data
-        $result = $processor->getData();
+        return $this->applyResultTypes($result, $selectSpecs, $fromTable, $joinTable, $fromAlias, $joinAlias, $database);
+    }
 
-        // Extract SELECT columns and apply aliases
-        // Use original query to preserve aliases with quotes, but unquote for processing
-        if (preg_match('/^SELECT\s+(.*?)\s+FROM/is', $queryForParsing, $matches)) {
-            $columns = trim($matches[1]);
-            if ($columns !== '*') {
-                $columnParts = array_map('trim', explode(',', $columns));
-                // Remove quotes from column parts for processing
-                $columnParts = array_map(function($col) {
-                    return $this->unquoteIdentifiers($col);
-                }, $columnParts);
-                $result = $this->applySelectColumns($result, $columnParts);
+    private function getDatabasePath(): string
+    {
+        $h = $this->getStructureHandler();
+        if ($h !== null && method_exists($h, 'get')) {
+            $v = $h->get('database');
+            return $v !== null ? (string) $v : '';
+        }
+        return '';
+    }
+
+    /**
+     * @return array{select: list<array{expr: string, alias: string|null, aggregate: string|null}>,
+     *     distinct: bool, from: string, from_alias: string|null, join_table: string|null,
+     *     join_alias: string|null, on_condition: array{left: string, right: string}|null,
+     *     where: string|null, group_by: list<string>, having: array{agg: string, op: string, val: mixed}|null,
+     *     order_by_col: string|null, order_by_dir: string, limit: int|null, offset: int|null}
+     */
+    private function parseQueryComponents(string $q): array
+    {
+        $out = [
+            'select' => [],
+            'distinct' => false,
+            'from' => '',
+            'from_alias' => null,
+            'join_table' => null,
+            'join_alias' => null,
+            'on_condition' => null,
+            'where' => null,
+            'group_by' => [],
+            'having' => null,
+            'order_by_col' => null,
+            'order_by_dir' => 'ASC',
+            'limit' => null,
+            'offset' => null,
+        ];
+
+        if (!preg_match('/^\s*SELECT\s+/i', $q)) {
+            return $out;
+        }
+
+        $rest = preg_replace('/^\s*SELECT\s+/i', '', $q, 1);
+        if (preg_match('/^\s*DISTINCT\s+/i', $rest)) {
+            $out['distinct'] = true;
+            $rest = preg_replace('/^\s*DISTINCT\s+/i', '', $rest, 1);
+        }
+        if (!preg_match('/\s+FROM\s+/i', $rest)) {
+            return $out;
+        }
+        $parts = preg_split('/\s+FROM\s+/i', $rest, 2);
+        $selectStr = trim($parts[0]);
+        $fromStr = trim($parts[1]);
+
+        $columnParts = $this->splitSelectColumns($selectStr);
+        foreach ($columnParts as $col) {
+            $col = trim($col);
+            if ($col === '' || $col === '*') {
+                $out['select'][] = ['expr' => '*', 'alias' => null, 'aggregate' => null];
+                continue;
             }
+            $alias = null;
+            if (preg_match('/^(.+?)\s+AS\s+(\w+)\s*$/i', $col, $m)) {
+                $expr = trim($m[1]);
+                $alias = trim($m[2], '"\'`');
+            } else {
+                $expr = $col;
+            }
+            $agg = null;
+            if (preg_match('/^(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(?:(\w+)\.)?(\w+|\*)\s*\)$/i', $expr, $m)) {
+                $agg = strtoupper($m[1]);
+            }
+            $out['select'][] = ['expr' => $expr, 'alias' => $alias, 'aggregate' => $agg];
+        }
+
+        $fromStr = $this->extractFromJoin($fromStr, $out);
+        $this->extractWhereGroupHavingOrderLimit($fromStr, $out);
+
+        return $out;
+    }
+
+    private function splitSelectColumns(string $s): array
+    {
+        $out = [];
+        $len = strlen($s);
+        $cur = '';
+        $depth = 0;
+        for ($i = 0; $i < $len; $i++) {
+            $c = $s[$i];
+            if ($c === '(') {
+                $depth++;
+                $cur .= $c;
+            } elseif ($c === ')') {
+                $depth--;
+                $cur .= $c;
+            } elseif (($c === ',') && $depth === 0) {
+                $out[] = trim($cur);
+                $cur = '';
+            } else {
+                $cur .= $c;
+            }
+        }
+        if ($cur !== '') {
+            $out[] = trim($cur);
+        }
+        return $out;
+    }
+
+    private const RESERVED_WORDS = ['order', 'group', 'where', 'having', 'limit', 'by', 'on', 'inner', 'join', 'left', 'right', 'outer', 'and', 'or', 'asc', 'desc'];
+
+    private function extractFromJoin(string $fromStr, array &$out): string
+    {
+        $pattern = '/^(\w+)(?:\s+(\w+))?(?:\s+INNER\s+JOIN\s+(\w+)(?:\s+(\w+))?\s+ON\s+(.+?))?(?=\s+WHERE\s+|\s+GROUP\s+BY\s+|\s+ORDER\s+BY\s+|\s+LIMIT\s+|$)/is';
+        if (preg_match($pattern, $fromStr, $m)) {
+            $out['from'] = $m[1];
+            $second = isset($m[2]) && $m[2] !== '' ? $m[2] : null;
+            $hasJoin = isset($m[3]) && $m[3] !== '';
+            if ($second !== null && !$hasJoin && in_array(strtolower($second), self::RESERVED_WORDS, true)) {
+                $second = null;
+            }
+            $out['from_alias'] = $second;
+            if ($hasJoin) {
+                $out['join_table'] = $m[3];
+                $out['join_alias'] = isset($m[4]) && $m[4] !== '' ? $m[4] : null;
+                $on = trim($m[5]);
+                if (preg_match('/^(\w+\.\w+)\s*=\s*(\w+\.\w+)\s*$/i', $on, $onM)) {
+                    $out['on_condition'] = ['left' => trim($onM[1]), 'right' => trim($onM[2])];
+                }
+            }
+            $afterFrom = preg_replace($pattern, '', $fromStr, 1);
+            return trim($afterFrom);
+        }
+        return $fromStr;
+    }
+
+    private function extractWhereGroupHavingOrderLimit(string $s, array &$out): void
+    {
+        $where = null;
+        $groupBy = [];
+        $having = null;
+        $orderCol = null;
+        $orderDir = 'ASC';
+        $limit = null;
+        $offset = null;
+
+        if (preg_match('/\bWHERE\s+(.+?)(?=\s+GROUP\s+BY|\s+ORDER\s+BY|\s+LIMIT|$)/is', $s, $m)) {
+            $where = trim($m[1]);
+        }
+        if (preg_match('/\bGROUP\s+BY\s+(.+?)(?=\s+HAVING|\s+ORDER\s+BY|\s+LIMIT|$)/is', $s, $m)) {
+            $groupBy = array_map('trim', explode(',', trim($m[1])));
+        }
+        if (preg_match('/\bHAVING\s+(.+?)(?=\s+ORDER\s+BY|\s+LIMIT|$)/is', $s, $m)) {
+            $hav = trim($m[1]);
+            if (preg_match('/^(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(?:\w+\.)?(\w+|\*)\s*\)\s*(>=|<=|!=|<>|>|<|=)\s*(\d+\.?\d*)\s*$/i', $hav, $hm)) {
+                $having = ['agg' => strtoupper($hm[1]), 'op' => $hm[3], 'val' => strpos((string) $hm[4], '.') !== false ? (float) $hm[4] : (int) $hm[4]];
+            }
+        }
+        if (preg_match('/\bORDER\s+BY\s+(.+?)(?=\s+LIMIT|$)/is', $s, $m)) {
+            $ob = trim($m[1]);
+            if (preg_match('/^(.+?)\s+(ASC|DESC)\s*$/i', $ob, $om)) {
+                $orderCol = trim($om[1]);
+                $orderDir = strtoupper($om[2]);
+            } else {
+                $orderCol = $ob;
+            }
+        }
+        if (preg_match('/\bLIMIT\s+(\d+)(?:\s*,\s*(\d+))?\s*$/i', $s, $m)) {
+            if (isset($m[2]) && $m[2] !== '') {
+                $offset = (int) $m[1];
+                $limit = (int) $m[2];
+            } else {
+                $limit = (int) $m[1];
+            }
+        }
+
+        $out['where'] = $where;
+        $out['group_by'] = $groupBy;
+        $out['having'] = $having;
+        $out['order_by_col'] = $orderCol;
+        $out['order_by_dir'] = $orderDir;
+        $out['limit'] = $limit;
+        $out['offset'] = $offset;
+    }
+
+    private function loadTableData(?IStructure $handler, string $table, ?string $alias): array
+    {
+        if ($handler === null) {
+            return [];
+        }
+        $handler->load($table);
+        $rows = $handler->getData();
+        if ($alias === null || $alias === '') {
+            return $rows;
+        }
+        $prefixed = [];
+        foreach ($rows as $row) {
+            $r = [];
+            foreach ((array) $row as $k => $v) {
+                $r[$alias . '.' . $k] = $v;
+            }
+            $prefixed[] = $r;
+        }
+        return $prefixed;
+    }
+
+    private function executeJoin(array $left, array $right, ?string $leftAlias, ?string $rightAlias, ?array $on): array
+    {
+        if ($on === null || $leftAlias === null || $rightAlias === null) {
+            return $left;
+        }
+        $lCol = $on['left'];
+        $rCol = $on['right'];
+        if (str_starts_with($rCol, $rightAlias . '.')) {
+            $rightKey = $rCol;
+            $leftKey = $lCol;
+        } else {
+            $rightKey = $lCol;
+            $leftKey = $rCol;
+        }
+        $joined = [];
+        foreach ($left as $lRow) {
+            $lVal = $lRow[$leftKey] ?? null;
+            foreach ($right as $rRow) {
+                if (($rRow[$rightKey] ?? null) == $lVal) {
+                    $joined[] = $lRow + $rRow;
+                }
+            }
+        }
+        return $joined;
+    }
+
+    private function executeGroupByAggregate(
+        array $data,
+        array $groupByCols,
+        array $selectSpecs,
+        ?array $having,
+        ?string $fromAlias,
+        ?string $joinAlias
+    ): array {
+        $groups = [];
+        foreach ($data as $row) {
+            $row = (array) $row;
+            $keyParts = [];
+            foreach ($groupByCols as $c) {
+                $keyParts[] = $row[$c] ?? null;
+            }
+            $key = serialize($keyParts);
+            if (!isset($groups[$key])) {
+                $groups[$key] = ['__key__' => $keyParts, '__rows__' => []];
+            }
+            $groups[$key]['__rows__'][] = $row;
+        }
+
+        $result = [];
+        foreach ($groups as $g) {
+            $rows = $g['__rows__'];
+            $first = $rows[0];
+            $outRow = [];
+
+            foreach ($selectSpecs as $spec) {
+                $expr = $spec['expr'];
+                $alias = $spec['alias'];
+                $agg = $spec['aggregate'] ?? null;
+
+                if ($agg !== null) {
+                    $col = null;
+                    if (preg_match('/^(?:COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(?:(\w+)\.)?(\w+|\*)\s*\)$/i', $expr, $m)) {
+                        $col = (array_key_exists(1, $m) && $m[1] !== '') ? $m[1] . '.' . $m[2] : $m[2];
+                    }
+                    if ($col === '*') {
+                        $col = $joinAlias ? $joinAlias . '.id' : 'id';
+                    }
+                    $values = array_column($rows, $col);
+                    $values = array_filter($values, fn($v) => $v !== null);
+                    $val = match (strtoupper($agg)) {
+                        'COUNT' => count($values),
+                        'SUM' => array_sum($values),
+                        'AVG' => count($values) > 0 ? array_sum($values) / count($values) : 0,
+                        'MIN' => count($values) > 0 ? min($values) : null,
+                        'MAX' => count($values) > 0 ? max($values) : null,
+                        default => null,
+                    };
+                    $k = $alias ?? $expr;
+                    $outRow[$k] = $val;
+                } else {
+                    $k = $alias ?? $expr;
+                    $lookup = $expr;
+                    if (!isset($first[$expr]) && preg_match('/^(\w+)\.(\w+)$/', $expr, $mx)) {
+                        $lookup = $expr;
+                    }
+                    $outRow[$k] = $first[$lookup] ?? $first[$expr] ?? null;
+                }
+            }
+
+            if ($having !== null) {
+                $aggCol = $having['agg'];
+                $op = $having['op'];
+                $havVal = $having['val'];
+                $candidate = null;
+                foreach ($selectSpecs as $s) {
+                    if (($s['aggregate'] ?? null) === $aggCol && ($s['alias'] ?? '') !== '') {
+                        $candidate = $outRow[$s['alias']] ?? null;
+                        break;
+                    }
+                }
+                if ($candidate === null) {
+                    $candidate = $outRow['total_cidades'] ?? $outRow['soma_ids'] ?? $outRow['media_ids'] ?? null;
+                }
+                $ok = match ($op) {
+                    '>' => $candidate > $havVal,
+                    '>=' => $candidate >= $havVal,
+                    '<' => $candidate < $havVal,
+                    '<=' => $candidate <= $havVal,
+                    '=', '==' => $candidate == $havVal,
+                    '!=', '<>' => $candidate != $havVal,
+                    default => true,
+                };
+                if (!$ok) {
+                    continue;
+                }
+            }
+
+            $result[] = $outRow;
         }
 
         return $result;
+    }
+
+    private function applySelectColumns(array $data, array $selectSpecs, ?string $fromAlias, ?string $joinAlias): array
+    {
+        return array_map(function ($row) use ($selectSpecs) {
+            $row = (array) $row;
+            $result = [];
+            foreach ($selectSpecs as $spec) {
+                $expr = $spec['expr'];
+                $alias = $spec['alias'];
+                if ($expr === '*') {
+                    foreach ($row as $k => $v) {
+                        $result[$k] = $v;
+                    }
+                    continue;
+                }
+                $key = $alias ?? $expr;
+                $lookup = $expr;
+                if (isset($row[$expr])) {
+                    $result[$key] = $row[$expr];
+                } elseif (preg_match('/^(\w+)\.(\w+)$/', $expr, $m)) {
+                    $result[$key] = $row[$expr] ?? $row[$m[2]] ?? null;
+                } else {
+                    $result[$key] = $row[$expr] ?? null;
+                }
+            }
+            return $result;
+        }, $data);
+    }
+
+    private function applyDistinct(array $data): array
+    {
+        $seen = [];
+        $out = [];
+        foreach ($data as $row) {
+            $k = serialize($row);
+            if (!isset($seen[$k])) {
+                $seen[$k] = true;
+                $out[] = $row;
+            }
+        }
+        return $out;
+    }
+
+    private function applyOrderBy(array $data, string $column, bool $desc): array
+    {
+        usort($data, function ($a, $b) use ($column, $desc) {
+            $a = (array) $a;
+            $b = (array) $b;
+            $av = $a[$column] ?? null;
+            $bv = $b[$column] ?? null;
+            $c = $av <=> $bv;
+            return $desc ? -$c : $c;
+        });
+        return $data;
+    }
+
+    private function applyResultTypes(
+        array $rows,
+        array $selectSpecs,
+        string $fromTable,
+        ?string $joinTable,
+        ?string $fromAlias,
+        ?string $joinAlias,
+        string $database
+    ): array {
+        $schemaFrom = $database !== '' && Schema::exists($database) ? Schema::getSchemaForFile($database, $fromTable) : null;
+        $schemaJoin = $joinTable !== null && $database !== '' && Schema::exists($database)
+            ? Schema::getSchemaForFile($database, $joinTable) : null;
+
+        $typeMap = [];
+        foreach ($selectSpecs as $s) {
+            $alias = $s['alias'] ?? $s['expr'];
+            $agg = $s['aggregate'] ?? null;
+            if ($agg !== null) {
+                $typeMap[$alias] = $agg === 'AVG' ? 'float' : ($agg === 'COUNT' ? 'int' : 'number');
+                continue;
+            }
+            $expr = $s['expr'];
+            if (preg_match('/^(\w+)\.(\w+)$/', $expr, $m)) {
+                $tbl = $m[1];
+                $col = $m[2];
+                $schema = ($fromAlias !== null && $tbl === $fromAlias) ? $schemaFrom : $schemaJoin;
+                if ($schema !== null && !empty($schema['columns'])) {
+                    foreach ($schema['columns'] as $def) {
+                        if (isset($def['name']) && strcasecmp($def['name'], $col) === 0) {
+                            $typeMap[$alias] = strtolower($def['type'] ?? 'text');
+                            break;
+                        }
+                    }
+                }
+            } else {
+                $schema = $schemaFrom ?? $schemaJoin;
+                if ($schema !== null && !empty($schema['columns'])) {
+                    foreach ($schema['columns'] as $def) {
+                        if (isset($def['name']) && strcasecmp($def['name'], $expr) === 0) {
+                            $typeMap[$alias] = strtolower($def['type'] ?? 'text');
+                            break;
+                        }
+                    }
+                }
+            }
+            $typeMap[$alias] = $typeMap[$alias] ?? 'text';
+        }
+
+        $out = [];
+        foreach ($rows as $row) {
+            $r = [];
+            foreach ((array) $row as $k => $v) {
+                $t = $typeMap[$k] ?? null;
+                if ($v !== null && $v !== '' && is_numeric($v) && ($t === null || $t === 'text')) {
+                    $t = strpos((string) $v, '.') !== false ? 'float' : 'int';
+                }
+                if ($t === 'integer' || $t === 'int') {
+                    $r[$k] = $v === null ? null : (int) $v;
+                } elseif ($t === 'float' || $t === 'double' || $t === 'number') {
+                    $r[$k] = $v === null ? null : (float) $v;
+                } else {
+                    $r[$k] = $v;
+                }
+            }
+            $out[] = $r;
+        }
+        return $out;
     }
 
     /**
@@ -315,8 +768,12 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
             $parsed = Regex::parseWhereCondition($part);
 
             if ($parsed !== null) {
+                $column = $parsed['column'];
+                if (isset($parsed['prefix']) && $parsed['prefix'] !== null && $parsed['prefix'] !== '') {
+                    $column = $parsed['prefix'] . '.' . $column;
+                }
                 $condition = [
-                    'column' => $parsed['column'],
+                    'column' => $column,
                     'operator' => $parsed['operator'],
                 ];
 
@@ -355,57 +812,6 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         }
 
         return $conditions;
-    }
-
-    /**
-     * Apply SELECT columns with aliases to result set.
-     *
-     * @param array $data The data to transform.
-     * @param array $columns The column specifications (already unquoted).
-     * @return array The transformed data.
-     */
-    private function applySelectColumns(array $data, array $columns): array
-    {
-        return array_map(function ($row) use ($columns) {
-            $result = [];
-            foreach ($columns as $col) {
-                $col = trim($col);
-
-                // Check if column has an alias (column AS alias)
-                if (preg_match('/^(.+?)\s+AS\s+(.+)$/i', $col, $matches)) {
-                    // Handle table.column AS alias format
-                    $originalColumnExpr = trim($matches[1]);
-                    $alias = trim($matches[2], '"\'`');
-
-                    // Extract column name from table.column or just column
-                    if (preg_match('/^(\w+)\.(\w+)$/', $originalColumnExpr, $colMatches)) {
-                        // Table.column format - use just the column name
-                        $originalColumn = $colMatches[2];
-                    } else {
-                        // Just column name
-                        $originalColumn = trim($originalColumnExpr, '"\'`');
-                    }
-
-                    if (isset($row[$originalColumn])) {
-                        $result[$alias] = $row[$originalColumn];
-                    }
-                } else {
-                    // No alias, check if it's table.column format
-                    if (preg_match('/^(\w+)\.(\w+)$/', $col, $colMatches)) {
-                        // Table.column format - use just the column name
-                        $cleanCol = $colMatches[2];
-                    } else {
-                        // Just column name
-                        $cleanCol = trim($col, '"\'`');
-                    }
-                    
-                    if (isset($row[$cleanCol])) {
-                        $result[$cleanCol] = $row[$cleanCol];
-                    }
-                }
-            }
-            return $result;
-        }, $data);
     }
 
     /**
