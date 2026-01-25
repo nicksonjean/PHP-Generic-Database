@@ -12,6 +12,7 @@ use GenericDatabase\Core\Where;
 use GenericDatabase\Core\Having;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Exceptions;
+use GenericDatabase\Helpers\Parsers\SQL;
 use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Interfaces\QueryBuilder\IBuilder;
 use GenericDatabase\Engine\JSON\Connection\JSON;
@@ -40,11 +41,14 @@ class Builder implements IBuilder
 
     /**
      * Build the select clause.
+     * For execute (DataProcessor): use column names without prefix - data keys are "id", "nome", etc.
+     * For build (SQL string): use prefix "e." for aliased queries.
      *
+     * @param bool $forSql When true, include table prefix for SQL output; when false, omit for data lookup.
      * @return array
      * @throws Exceptions
      */
-    private function buildSelect(): array
+    private function buildSelect(bool $forSql = false): array
     {
         if (empty($this->query->select)) {
             return ['*'];
@@ -54,11 +58,13 @@ class Builder implements IBuilder
         foreach ($this->query->select['columns'] as $data) {
             if (is_array($data)) {
                 if ($data['type'] === Column::METADATA()) {
-                    // Check if there's an alias
+                    $prefix = ($forSql && isset($data['prefix']) && $data['prefix'] !== '')
+                        ? $data['prefix'] . '.'
+                        : '';
                     if (!empty($data['alias'])) {
-                        $columns[] = $data['column'] . ' AS ' . $data['alias'];
+                        $columns[] = $prefix . $data['column'] . ' AS ' . $data['alias'];
                     } else {
-                        $columns[] = $data['column'];
+                        $columns[] = $prefix . $data['column'];
                     }
                 } else {
                     $columns[] = $data['value'] ?? '*';
@@ -70,7 +76,7 @@ class Builder implements IBuilder
     }
 
     /**
-     * Build the from clause (table/file name).
+     * Build the from clause (table/file name with optional alias).
      *
      * @return string
      * @throws Exceptions
@@ -82,7 +88,16 @@ class Builder implements IBuilder
         }
 
         $from = reset($this->query->from);
-        return is_array($from) ? ($from['table'] ?? '') : $from;
+        if (!is_array($from)) {
+            return $from;
+        }
+
+        $table = $from['table'] ?? '';
+        $alias = $from['alias'] ?? null;
+
+        return $alias !== null && $alias !== ''
+            ? $table . ' AS ' . $alias
+            : $table;
     }
 
     /**
@@ -111,6 +126,8 @@ class Builder implements IBuilder
             $aggregationAssert = $data['aggregation']['assert'] ?? Where::AFFIRMATION();
             $signal = strtoupper((string) ($data['signal'] ?? '='));
 
+            $alias = $data['alias'] ?? null;
+
             if ($aggregationType === Where::IN()) {
                 $values = $unlimited ?? $default;
                 if (is_string($values)) {
@@ -118,6 +135,7 @@ class Builder implements IBuilder
                 }
                 $conditions[] = [
                     'column' => $column,
+                    'alias' => $alias,
                     'operator' => $aggregationAssert === Where::NEGATION() ? 'NOT IN' : 'IN',
                     'value' => is_array($values) ? $values : [$values]
                 ];
@@ -129,6 +147,7 @@ class Builder implements IBuilder
                 $regex = JSON::regex(Regex::likeToRegex((string) $pattern));
                 $conditions[] = [
                     'column' => $column,
+                    'alias' => $alias,
                     'operator' => $aggregationAssert === Where::NEGATION() ? 'NOT LIKE' : 'LIKE',
                     'value' => $regex
                 ];
@@ -138,6 +157,7 @@ class Builder implements IBuilder
             if ($aggregationType === Where::BETWEEN()) {
                 $conditions[] = [
                     'column' => $column,
+                    'alias' => $alias,
                     'operator' => $aggregationAssert === Where::NEGATION() ? 'NOT BETWEEN' : 'BETWEEN',
                     'value' => ['min' => $default, 'max' => $extra]
                 ];
@@ -147,6 +167,7 @@ class Builder implements IBuilder
             if ($default !== null || in_array($signal, ['IS NULL', 'IS NOT NULL'], true)) {
                 $conditions[] = [
                     'column' => $column,
+                    'alias' => $alias,
                     'operator' => $signal !== '' ? $signal : '=',
                     'value' => $default
                 ];
@@ -259,8 +280,8 @@ class Builder implements IBuilder
             $processor->limit($limit['limit'], $limit['offset']);
         }
 
-        // Apply SELECT
-        $columns = $this->buildSelect();
+        // Apply SELECT - no prefix: DataProcessor looks up $row['id'], not $row['e.id']
+        $columns = $this->buildSelect(false);
         if (!in_array('*', $columns)) {
             $processor->select($columns);
         }
@@ -274,7 +295,8 @@ class Builder implements IBuilder
     }
 
     /**
-     * Parse the query string.
+     * Parse the query string using SQL::escape for identifier quoting.
+     * Matches SQLiteQueryBuilder behavior (SQL::SQL_DIALECT_DOUBLE_QUOTE).
      *
      * @param string $query The query.
      * @param int $quoteType The quote type.
@@ -283,10 +305,10 @@ class Builder implements IBuilder
      */
     public function parse(
         string $query,
-        int $quoteType = 0,
+        int $quoteType = SQL::SQL_DIALECT_DOUBLE_QUOTE,
         ?int $quoteSkip = null
     ): string {
-        return trim($query);
+        return SQL::escape(trim($query), $quoteType, $quoteSkip);
     }
 
     /**
@@ -299,8 +321,8 @@ class Builder implements IBuilder
     {
         $parts = [];
 
-        // SELECT
-        $columns = $this->buildSelect();
+        // SELECT - with prefix for SQL string (e.id AS Codigo, etc.)
+        $columns = $this->buildSelect(true);
         $distinct = $this->isDistinct() ? 'DISTINCT ' : '';
         $parts[] = "SELECT {$distinct}" . implode(', ', $columns);
 
@@ -313,7 +335,9 @@ class Builder implements IBuilder
         if (!empty($where)) {
             $whereParts = [];
             foreach ($where as $condition) {
-                $column = $condition['column'] ?? '';
+                $alias = $condition['alias'] ?? null;
+                $colBase = $condition['column'] ?? '';
+                $column = ($alias !== null && $alias !== '' ? $alias . '.' : '') . $colBase;
                 $operator = strtoupper((string) ($condition['operator'] ?? '='));
                 $value = $condition['value'] ?? null;
 
@@ -362,7 +386,7 @@ class Builder implements IBuilder
             }
         }
 
-        return implode(' ', $parts);
+        return $this->parse(implode(' ', $parts));
     }
 
     /**
@@ -377,15 +401,15 @@ class Builder implements IBuilder
         $values = $this->getValues();
 
         foreach ($values as $value) {
-            if (is_string($value)) {
-                $value = "'" . addslashes($value) . "'";
-            } elseif (is_null($value)) {
-                $value = 'NULL';
-            } elseif (is_bool($value)) {
-                $value = $value ? '1' : '0';
-            }
+            $formatted = match (true) {
+                is_null($value) => 'NULL',
+                is_bool($value) => $value ? '1' : '0',
+                is_numeric($value) => (string) $value,
+                is_string($value) => "'" . addslashes($value) . "'",
+                default => "'" . addslashes((string) $value) . "'",
+            };
 
-            $query = preg_replace('/\?/', (string) $value, $query, 1);
+            $query = preg_replace('/\?/', $formatted, $query, 1);
         }
 
         return $query;

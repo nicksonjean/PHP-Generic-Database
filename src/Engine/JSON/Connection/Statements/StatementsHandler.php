@@ -12,6 +12,7 @@ use GenericDatabase\Abstract\AbstractFlatFileStatements;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
+use GenericDatabase\Helpers\Parsers\SQL;
 
 /**
  * Handles SQL-like statement operations for JSON connections.
@@ -69,15 +70,21 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
     {
         $query = $params[0] ?? '';
         $this->setAllMetadata();
-        $this->setQueryString($query);
+        
+        // Parse the query to format with proper identifier quoting
+        $parsedQuery = $this->parse($query);
+        $this->setQueryString($parsedQuery);
 
-        // Store the query
-        $this->setStatement($query);
+        // Store the parsed query
+        $this->setStatement($parsedQuery);
 
         // Detect query type and execute DML operations for raw queries
+        // Use original query for detection to avoid issues with quoted identifiers
         $queryType = $this->detectQueryType($query);
 
         if (in_array($queryType, ['INSERT', 'UPDATE', 'DELETE'])) {
+            // For DML operations, we need to work with the original query format
+            // since the parsing logic expects unquoted identifiers
             $this->executeRawDmlQuery($query);
         }
 
@@ -414,8 +421,11 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
     {
         $query = $params[0] ?? '';
         $this->setAllMetadata();
-        $this->setQueryString($query);
-        $this->setStatement($query);
+        
+        // Parse the query to format with proper identifier quoting
+        $parsedQuery = $this->parse($query);
+        $this->setQueryString($parsedQuery);
+        $this->setStatement($parsedQuery);
 
         // Process parameters based on input format
         $parameters = [];
@@ -451,9 +461,12 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
         $this->setQueryParameters($parameters);
 
         // Detect query type and execute DML operations
+        // Use original query for detection and execution to avoid issues with quoted identifiers
         $queryType = $this->detectQueryType($query);
 
         if (in_array($queryType, ['INSERT', 'UPDATE', 'DELETE'])) {
+            // For DML operations, we need to work with the original query format
+            // since the parsing logic expects unquoted identifiers
             $this->executeDmlQuery($query, $parameters, $isMulti);
         }
 
@@ -761,5 +774,27 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
 
         // Process based on query type (determined by QueryBuilder)
         return $this->getAffectedRows();
+    }
+
+    /**
+     * Parses an SQL statement and returns an statement.
+     * Uses SQL::escape() to format the query with proper identifier quoting,
+     * matching the behavior of SQLiteConnection.
+     *
+     * @param mixed ...$params The parameters for the query function.
+     * @return string The statement resulting from the SQL statement.
+     */
+    public function parse(mixed ...$params): string
+    {
+        $query = reset($params);
+        if (empty($query)) {
+            $this->setQueryString('');
+            return '';
+        }
+
+        // Use SQL::escape() with DOUBLE_QUOTE dialect to match SQLiteConnection behavior
+        $parsedQuery = SQL::escape((string) $query, SQL::SQL_DIALECT_DOUBLE_QUOTE);
+        $this->setQueryString($parsedQuery);
+        return $parsedQuery;
     }
 }

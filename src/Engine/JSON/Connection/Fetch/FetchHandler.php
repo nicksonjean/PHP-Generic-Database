@@ -137,6 +137,74 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
     }
 
     /**
+     * Remove double quotes from identifiers in SQL query for parsing.
+     * This allows regex patterns to work with queries that have quoted identifiers.
+     * Only removes quotes from identifiers (table names, column names, aliases),
+     * not from string literals.
+     *
+     * @param string $query The SQL query with quoted identifiers.
+     * @return string The query with quotes removed from identifiers only.
+     */
+    private function unquoteIdentifiers(string $query): string
+    {
+        // Remove double quotes from identifiers (table names, column names, aliases)
+        // Pattern matches: "identifier" where identifier is a valid SQL identifier
+        // This will match: "table", "column", "alias", "table"."column", etc.
+        // But won't match string literals in WHERE clauses (those are handled separately)
+        
+        // Replace quoted identifiers - matches word characters between double quotes
+        // that are not inside single-quoted strings
+        $result = '';
+        $len = strlen($query);
+        $inSingleQuote = false;
+        $inDoubleQuote = false;
+        $i = 0;
+        
+        while ($i < $len) {
+            $char = $query[$i];
+            
+            // Track single quotes (string literals) - don't process inside them
+            if ($char === "'" && ($i === 0 || $query[$i - 1] !== '\\')) {
+                $inSingleQuote = !$inSingleQuote;
+                $result .= $char;
+                $i++;
+                continue;
+            }
+            
+            // Process double quotes (identifiers)
+            if ($char === '"' && !$inSingleQuote) {
+                // Find the matching closing quote
+                $start = $i;
+                $i++;
+                $identifier = '';
+                
+                while ($i < $len && $query[$i] !== '"') {
+                    $identifier .= $query[$i];
+                    $i++;
+                }
+                
+                // If we found a closing quote and it's a valid identifier
+                if ($i < $len && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $identifier)) {
+                    // Remove the quotes - just add the identifier
+                    $result .= $identifier;
+                    $i++; // Skip the closing quote
+                } else {
+                    // Not a valid identifier or unmatched quote, keep as is
+                    $result .= substr($query, $start, $i - $start + ($i < $len ? 1 : 0));
+                    if ($i < $len) {
+                        $i++;
+                    }
+                }
+            } else {
+                $result .= $char;
+                $i++;
+            }
+        }
+        
+        return $result;
+    }
+
+    /**
      * Parse and execute a SQL query using the DataProcessor directly.
      *
      * @param string $query The SQL query.
@@ -150,9 +218,14 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         // Get data context handler
         $structureHandler = $this->getStructureHandler();
 
+        // Remove quotes from identifiers for parsing (but keep original query for display)
+        $queryForParsing = $this->unquoteIdentifiers($query);
+
         // Extract table name from FROM clause and load data
         $tableName = null;
-        if (preg_match('/\bFROM\s+(\w+)/i', $query, $matches)) {
+        // Updated regex to handle both quoted and unquoted table names
+        if (preg_match('/\bFROM\s+(?:"?(\w+)"?)(?:\s+(?:"?(\w+)"?))?/i', $queryForParsing, $matches)) {
+            // First match is table name, second is alias (if present)
             $tableName = $matches[1];
             if ($structureHandler !== null) {
                 $structureHandler->load($tableName);
@@ -166,7 +239,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         $processor = new DataProcessor($data);
 
         // Extract and apply WHERE clause
-        if (preg_match('/\bWHERE\s+(.*?)(?:\s+ORDER\s+BY|\s+GROUP\s+BY|\s+LIMIT|$)/is', $query, $matches)) {
+        if (preg_match('/\bWHERE\s+(.*?)(?:\s+ORDER\s+BY|\s+GROUP\s+BY|\s+LIMIT|$)/is', $queryForParsing, $matches)) {
             $whereClause = trim($matches[1]);
             $conditions = $this->parseWhereClause($whereClause);
             if (!empty($conditions)) {
@@ -175,7 +248,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         }
 
         // Extract and apply ORDER BY clause
-        if (preg_match('/\bORDER\s+BY\s+(.*?)(?:\s+LIMIT|$)/is', $query, $matches)) {
+        if (preg_match('/\bORDER\s+BY\s+(.*?)(?:\s+LIMIT|$)/is', $queryForParsing, $matches)) {
             $orderClause = trim($matches[1]);
             // Check for ASC/DESC
             if (preg_match('/^(.*?)\s+(ASC|DESC)$/i', $orderClause, $orderMatches)) {
@@ -188,7 +261,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         }
 
         // Extract and apply LIMIT clause
-        if (preg_match('/\bLIMIT\s+(\d+)(?:\s*,\s*(\d+))?/i', $query, $matches)) {
+        if (preg_match('/\bLIMIT\s+(\d+)(?:\s*,\s*(\d+))?/i', $queryForParsing, $matches)) {
             if (isset($matches[2])) {
                 $processor->limit((int) $matches[2], (int) $matches[1]);
             } else {
@@ -200,10 +273,15 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         $result = $processor->getData();
 
         // Extract SELECT columns and apply aliases
-        if (preg_match('/^SELECT\s+(.*?)\s+FROM/is', $query, $matches)) {
+        // Use original query to preserve aliases with quotes, but unquote for processing
+        if (preg_match('/^SELECT\s+(.*?)\s+FROM/is', $queryForParsing, $matches)) {
             $columns = trim($matches[1]);
             if ($columns !== '*') {
                 $columnParts = array_map('trim', explode(',', $columns));
+                // Remove quotes from column parts for processing
+                $columnParts = array_map(function($col) {
+                    return $this->unquoteIdentifiers($col);
+                }, $columnParts);
                 $result = $this->applySelectColumns($result, $columnParts);
             }
         }
@@ -220,6 +298,9 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
     private function parseWhereClause(string $whereClause): array
     {
         $conditions = [];
+
+        // Remove quotes from identifiers in WHERE clause for parsing
+        $whereClause = $this->unquoteIdentifiers($whereClause);
 
         // Split by AND, preserving BETWEEN...AND
         $parts = $this->splitByTopLevelAndOperator($whereClause);
@@ -280,7 +361,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
      * Apply SELECT columns with aliases to result set.
      *
      * @param array $data The data to transform.
-     * @param array $columns The column specifications.
+     * @param array $columns The column specifications (already unquoted).
      * @return array The transformed data.
      */
     private function applySelectColumns(array $data, array $columns): array
@@ -292,15 +373,32 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
                 // Check if column has an alias (column AS alias)
                 if (preg_match('/^(.+?)\s+AS\s+(.+)$/i', $col, $matches)) {
-                    $originalColumn = trim($matches[1], '"\'`');
+                    // Handle table.column AS alias format
+                    $originalColumnExpr = trim($matches[1]);
                     $alias = trim($matches[2], '"\'`');
+
+                    // Extract column name from table.column or just column
+                    if (preg_match('/^(\w+)\.(\w+)$/', $originalColumnExpr, $colMatches)) {
+                        // Table.column format - use just the column name
+                        $originalColumn = $colMatches[2];
+                    } else {
+                        // Just column name
+                        $originalColumn = trim($originalColumnExpr, '"\'`');
+                    }
 
                     if (isset($row[$originalColumn])) {
                         $result[$alias] = $row[$originalColumn];
                     }
                 } else {
-                    // No alias, use column name as is
-                    $cleanCol = trim($col, '"\'`');
+                    // No alias, check if it's table.column format
+                    if (preg_match('/^(\w+)\.(\w+)$/', $col, $colMatches)) {
+                        // Table.column format - use just the column name
+                        $cleanCol = $colMatches[2];
+                    } else {
+                        // Just column name
+                        $cleanCol = trim($col, '"\'`');
+                    }
+                    
                     if (isset($row[$cleanCol])) {
                         $result[$cleanCol] = $row[$cleanCol];
                     }

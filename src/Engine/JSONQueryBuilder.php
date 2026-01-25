@@ -18,6 +18,7 @@ use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Generic\QueryBuilder\Context;
+use GenericDatabase\Generic\Statements\Metadata;
 use GenericDatabase\Engine\JSON\QueryBuilder\Builder;
 use GenericDatabase\Engine\JSON\QueryBuilder\Clause;
 use GenericDatabase\Engine\JSON\Connection\JSON;
@@ -609,17 +610,26 @@ class JSONQueryBuilder implements IQueryBuilder
 
     /**
      * Get all metadata.
+     * Returns Metadata structure matching SQLiteQueryBuilder (QueryMetadata, RowsMetadata).
      *
-     * @return object
+     * @return Metadata
      * @throws Exceptions
      */
-    public function getAllMetadata(): object
+    public function getAllMetadata(): Metadata
     {
         $this->runOnce();
-        return (object) [
-            'queryRows' => \count(self::$cachedResult ?? []),
-            'affectedRows' => 0
-        ];
+        $result = self::$cachedResult ?? [];
+        $rowCount = \count($result);
+        $colCount = $rowCount > 0 ? \count((array) reset($result)) : 0;
+
+        $metadata = new Metadata();
+        $metadata->query->setString((new Builder($this->query))->buildRaw());
+        $metadata->query->setArguments([]);
+        $metadata->query->setColumns($colCount);
+        $metadata->query->getRows()->setFetched($rowCount);
+        $metadata->query->getRows()->setAffected(0);
+
+        return $metadata;
     }
 
     /**
