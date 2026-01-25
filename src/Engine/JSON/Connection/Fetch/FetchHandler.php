@@ -264,19 +264,33 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
             );
         } else {
             $processor->setData($data);
-            if ($orderByCol !== null) {
-                $processor->orderBy($orderByCol, $orderDir === 'DESC' ? DataProcessor::DESC : DataProcessor::ASC);
-            }
-            if ($limit !== null) {
-                $processor->limit((int) $limit, (int) ($offset ?? 0));
-            }
-            $result = $processor->getData();
             $skipSelect = count($selectSpecs) === 1 && ($selectSpecs[0]['expr'] ?? '') === '*';
-            if (!$skipSelect) {
-                $result = $this->applySelectColumns($result, $selectSpecs, $fromAlias, $joinAlias);
-            }
+
             if ($isDistinct) {
+                // DISTINCT: project first, then distinct, then order, then limit (so LIMIT applies to distinct rows)
+                if (!$skipSelect) {
+                    $result = $this->applySelectColumns($processor->getData(), $selectSpecs, $fromAlias, $joinAlias);
+                } else {
+                    $result = $processor->getData();
+                }
                 $result = $this->applyDistinct($result);
+                if ($orderByCol !== null) {
+                    $result = $this->applyOrderBy($result, $orderByCol, $orderDir === 'DESC');
+                }
+                if ($limit !== null) {
+                    $result = array_slice($result, (int) ($offset ?? 0), (int) $limit);
+                }
+            } else {
+                if ($orderByCol !== null) {
+                    $processor->orderBy($orderByCol, $orderDir === 'DESC' ? DataProcessor::DESC : DataProcessor::ASC);
+                }
+                if ($limit !== null) {
+                    $processor->limit((int) $limit, (int) ($offset ?? 0));
+                }
+                $result = $processor->getData();
+                if (!$skipSelect) {
+                    $result = $this->applySelectColumns($result, $selectSpecs, $fromAlias, $joinAlias);
+                }
             }
         }
 
