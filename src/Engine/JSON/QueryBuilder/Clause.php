@@ -87,27 +87,94 @@ class Clause implements IClause
     }
 
     /**
-     * Build JOIN clause (not supported for flat files, returns self).
+     * Build JOIN clause.
      *
      * @param array $arguments The arguments.
      * @return IQueryBuilder
      */
     public static function join(array $arguments): IQueryBuilder
     {
-        // JOIN not supported for flat files
-        return array_key_exists('self', $arguments) ? $arguments['self'] : new JSONQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new JSONQueryBuilder();
+        $type = array_key_exists('type', $arguments) ? $arguments['type'] : Join::DEFAULT();
+        $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        if (Arrays::isMultidimensional($data) && is_iterable(reset($data))) {
+            $r = reset($data);
+            $tableSets = is_iterable($r) ? $r : $data;
+            $parsed = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => [$tableSets]]);
+            if (isset($parsed['join'])) {
+                $self->query->join[] = $parsed['join'];
+            }
+            if (isset($parsed['on'])) {
+                $self->query->on[] = $parsed['on'];
+            }
+        } else {
+            foreach ($data as $table) {
+                if (is_array($table)) {
+                    $parsed = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => $table]);
+                    $self->query->join[] = $parsed['join'] ?? $parsed;
+                    if (isset($parsed['on'])) {
+                        $self->query->on[] = $parsed['on'];
+                    }
+                } elseif (is_string($table)) {
+                    if (!str_contains($table, ',')) {
+                        $parsed = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => $table]);
+                        $self->query->join[] = $parsed['join'] ?? $parsed;
+                        if (isset($parsed['on'])) {
+                            $self->query->on[] = $parsed['on'];
+                        }
+                    } else {
+                        $join = array_map(fn($t) => [trim($t)], explode(',', $table));
+                        $parsed = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => [$join]]);
+                        if (isset($parsed['join'])) {
+                            $self->query->join[] = $parsed['join'];
+                        }
+                        if (isset($parsed['on'])) {
+                            $self->query->on[] = $parsed['on'];
+                        }
+                    }
+                }
+            }
+        }
+        return $self;
     }
 
     /**
-     * Build ON clause (not supported for flat files, returns self).
+     * Build ON clause.
      *
      * @param array $arguments The arguments.
      * @return IQueryBuilder
      */
     public static function on(array $arguments): IQueryBuilder
     {
-        // ON not supported for flat files
-        return array_key_exists('self', $arguments) ? $arguments['self'] : new JSONQueryBuilder();
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new JSONQueryBuilder();
+        $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        foreach ($data as $table) {
+            if (is_array($table)) {
+                foreach ($table as $tableName) {
+                    $parsed = Criteria::getOn(['junction' => $junction, 'data' => $tableName]);
+                    if (!empty($parsed)) {
+                        $self->query->on[] = $parsed;
+                    }
+                }
+            } elseif (is_string($table)) {
+                if (str_contains($table, ',')) {
+                    foreach (explode(',', $table) as $tableName) {
+                        $parsed = Criteria::getOn(['junction' => $junction, 'data' => trim($tableName)]);
+                        if (!empty($parsed)) {
+                            $self->query->on[] = $parsed;
+                        }
+                    }
+                } else {
+                    $parsed = Criteria::getOn(['junction' => $junction, 'data' => $table]);
+                    if (!empty($parsed)) {
+                        $self->query->on[] = $parsed;
+                    }
+                }
+            }
+        }
+        return $self;
     }
 
     /**

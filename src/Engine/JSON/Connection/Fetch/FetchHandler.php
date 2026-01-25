@@ -296,7 +296,8 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
         if (!empty($groupByCols)) {
             if ($orderByCol !== null) {
-                $result = $this->applyOrderBy($result, $orderByCol, $orderDir === 'DESC');
+                $sortCol = $this->resolveOrderByColumn($orderByCol, $selectSpecs);
+                $result = $this->applyOrderBy($result, $sortCol, $orderDir === 'DESC');
             }
             if ($limit !== null) {
                 $result = array_slice($result, (int) ($offset ?? 0), (int) $limit);
@@ -314,6 +315,23 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
             return $v !== null ? (string) $v : '';
         }
         return '';
+    }
+
+    /**
+     * Output key for a select spec: alias if present, otherwise unqualified column (no table prefix).
+     * Generic examples: "t.col" with no alias -> "col"; "a.id AS ref_id" -> "ref_id".
+     */
+    private function outputKeyForSelectSpec(array $spec): string
+    {
+        $alias = $spec['alias'] ?? null;
+        if ($alias !== null && $alias !== '') {
+            return $alias;
+        }
+        $expr = $spec['expr'] ?? '';
+        if (preg_match('/^\w+\.(\w+)$/', $expr, $m)) {
+            return $m[1];
+        }
+        return $expr;
     }
 
     /**
@@ -416,7 +434,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
     private function extractFromJoin(string $fromStr, array &$out): string
     {
-        $pattern = '/^(\w+)(?:\s+(\w+))?(?:\s+INNER\s+JOIN\s+(\w+)(?:\s+(\w+))?\s+ON\s+(.+?))?(?=\s+WHERE\s+|\s+GROUP\s+BY\s+|\s+ORDER\s+BY\s+|\s+LIMIT\s+|$)/is';
+        $pattern = '/^(\w+)(?:\s+(\w+))?(?:\s+(?:INNER\s+)?JOIN\s+(\w+)(?:\s+(\w+))?\s+ON\s+(.+?))?(?=\s+WHERE\s+|\s+GROUP\s+BY\s+|\s+ORDER\s+BY\s+|\s+LIMIT\s+|$)/is';
         if (preg_match($pattern, $fromStr, $m)) {
             $out['from'] = $m[1];
             $second = isset($m[2]) && $m[2] !== '' ? $m[2] : null;
@@ -470,7 +488,10 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                 $orderCol = $ob;
             }
         }
-        if (preg_match('/\bLIMIT\s+(\d+)(?:\s*,\s*(\d+))?\s*$/i', $s, $m)) {
+        if (preg_match('/\bLIMIT\s+(\d+)\s+OFFSET\s+(\d+)\s*$/i', $s, $m)) {
+            $limit = (int) $m[1];
+            $offset = (int) $m[2];
+        } elseif (preg_match('/\bLIMIT\s+(\d+)(?:\s*,\s*(\d+))?\s*$/i', $s, $m)) {
             if (isset($m[2]) && $m[2] !== '') {
                 $offset = (int) $m[1];
                 $limit = (int) $m[2];
@@ -586,10 +607,10 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                         'MAX' => count($values) > 0 ? max($values) : null,
                         default => null,
                     };
-                    $k = $alias ?? $expr;
+                    $k = $this->outputKeyForSelectSpec($spec);
                     $outRow[$k] = $val;
                 } else {
-                    $k = $alias ?? $expr;
+                    $k = $this->outputKeyForSelectSpec($spec);
                     $lookup = $expr;
                     if (!isset($first[$expr]) && preg_match('/^(\w+)\.(\w+)$/', $expr, $mx)) {
                         $lookup = $expr;
@@ -604,13 +625,10 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                 $havVal = $having['val'];
                 $candidate = null;
                 foreach ($selectSpecs as $s) {
-                    if (($s['aggregate'] ?? null) === $aggCol && ($s['alias'] ?? '') !== '') {
-                        $candidate = $outRow[$s['alias']] ?? null;
+                    if (($s['aggregate'] ?? null) === $aggCol) {
+                        $candidate = $outRow[$this->outputKeyForSelectSpec($s)] ?? null;
                         break;
                     }
-                }
-                if ($candidate === null) {
-                    $candidate = $outRow['total_cidades'] ?? $outRow['soma_ids'] ?? $outRow['media_ids'] ?? null;
                 }
                 $ok = match ($op) {
                     '>' => $candidate > $havVal,
@@ -646,7 +664,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                     }
                     continue;
                 }
-                $key = $alias ?? $expr;
+                $key = $this->outputKeyForSelectSpec($spec);
                 $lookup = $expr;
                 if (isset($row[$expr])) {
                     $result[$key] = $row[$expr];
@@ -672,6 +690,27 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
             }
         }
         return $out;
+    }
+
+    /**
+     * Resolve ORDER BY expression to the actual key used in result rows.
+     * For GROUP BY, rows use alias (e.g. agg_alias) not aggregate expr (e.g. COUNT(t.id)).
+     */
+    private function resolveOrderByColumn(string $orderByCol, array $selectSpecs): string
+    {
+        $norm = fn(string $s) => strtolower(preg_replace('/\s+/', '', trim($s)));
+        $needle = $norm($orderByCol);
+        foreach ($selectSpecs as $spec) {
+            $outKey = $this->outputKeyForSelectSpec($spec);
+            if ($needle === $norm($outKey)) {
+                return $outKey;
+            }
+            $expr = $spec['expr'] ?? '';
+            if ($expr !== '' && $needle === $norm($expr)) {
+                return $outKey;
+            }
+        }
+        return $orderByCol;
     }
 
     private function applyOrderBy(array $data, string $column, bool $desc): array
@@ -702,10 +741,14 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
         $typeMap = [];
         foreach ($selectSpecs as $s) {
-            $alias = $s['alias'] ?? $s['expr'];
+            $outKey = $this->outputKeyForSelectSpec($s);
             $agg = $s['aggregate'] ?? null;
             if ($agg !== null) {
-                $typeMap[$alias] = $agg === 'AVG' ? 'float' : ($agg === 'COUNT' ? 'int' : 'number');
+                $typeMap[$outKey] = match (strtoupper($agg)) {
+                    'AVG' => 'float',
+                    'COUNT', 'SUM' => 'int',
+                    default => 'number',
+                };
                 continue;
             }
             $expr = $s['expr'];
@@ -716,7 +759,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                 if ($schema !== null && !empty($schema['columns'])) {
                     foreach ($schema['columns'] as $def) {
                         if (isset($def['name']) && strcasecmp($def['name'], $col) === 0) {
-                            $typeMap[$alias] = strtolower($def['type'] ?? 'text');
+                            $typeMap[$outKey] = strtolower($def['type'] ?? 'text');
                             break;
                         }
                     }
@@ -726,13 +769,13 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                 if ($schema !== null && !empty($schema['columns'])) {
                     foreach ($schema['columns'] as $def) {
                         if (isset($def['name']) && strcasecmp($def['name'], $expr) === 0) {
-                            $typeMap[$alias] = strtolower($def['type'] ?? 'text');
+                            $typeMap[$outKey] = strtolower($def['type'] ?? 'text');
                             break;
                         }
                     }
                 }
             }
-            $typeMap[$alias] = $typeMap[$alias] ?? 'text';
+            $typeMap[$outKey] = $typeMap[$outKey] ?? 'text';
         }
 
         $out = [];

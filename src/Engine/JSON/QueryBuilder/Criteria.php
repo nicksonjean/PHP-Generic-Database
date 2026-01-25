@@ -244,11 +244,16 @@ class Criteria implements ICriteria
         $result = [];
         $sorting = array_key_exists('sorting', $arguments) ? $arguments['sorting'] : Sorting::NONE();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        $data = trim($data);
+        if (preg_match('/^(.+?)\s+(ASC|DESC)\s*$/i', $data, $dirMatch)) {
+            $data = trim($dirMatch[1]);
+            $sorting = strtoupper($dirMatch[2]) === 'DESC' ? Sorting::DESCENDING() : Sorting::ASCENDING();
+        }
         if (preg_match(Regex::getGroupOrder(), $data, $matches)) {
-            if ($matches['function_name']) {
+            if (!empty($matches['function_name'])) {
                 $result = Arrays::arraySafe([
                     'type' => Sorting::FUNCTION(),
-                    'value' => trim($data),
+                    'value' => $data,
                     'function' => $matches['function_name'],
                     'arguments' => $matches['function_arguments'],
                     'sorting' => $sorting
@@ -257,7 +262,7 @@ class Criteria implements ICriteria
             } else {
                 $result = Arrays::arraySafe([
                     'type' => Sorting::METADATA(),
-                    'value' => trim($data),
+                    'value' => $data,
                     'prefix' => $matches['table_prefix'] ?? null,
                     'column' => $matches['column_name'],
                     'sorting' => $sorting

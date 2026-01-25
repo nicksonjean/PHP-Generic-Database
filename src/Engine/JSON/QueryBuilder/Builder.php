@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace GenericDatabase\Engine\JSON\QueryBuilder;
 
 use GenericDatabase\Core\Column;
+use GenericDatabase\Core\Join;
+use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Select;
 use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Grouping;
@@ -96,8 +98,133 @@ class Builder implements IBuilder
         $alias = $from['alias'] ?? null;
 
         return $alias !== null && $alias !== ''
-            ? $table . ' AS ' . $alias
+            ? $table . ' ' . $alias
             : $table;
+    }
+
+    /**
+     * Build the JOIN clause (SQL fragment).
+     *
+     * @return string
+     * @throws Exceptions
+     */
+    private function buildJoin(): string
+    {
+        if (empty($this->query->join)) {
+            return '';
+        }
+        $output = [];
+        $type = '';
+        foreach ($this->query->join as $data) {
+            $type = match ($data['type'] ?? null) {
+                Join::DEFAULT() => '',
+                Join::SELF() => 'SELF',
+                Join::LEFT() => 'LEFT',
+                Join::RIGHT() => 'RIGHT',
+                Join::INNER() => 'INNER',
+                Join::OUTER() => 'OUTER',
+                Join::CROSS() => 'CROSS',
+                default => ''
+            };
+            $alias = $data['alias'] ?? null;
+            $t = $data['table'] ?? '';
+            $output[] = ($alias !== null && $alias !== '') ? "{$t} {$alias}" : $t;
+        }
+        $type = $type !== '' ? $type . ' ' : '';
+        return $type . 'JOIN ' . implode(', ', $output);
+    }
+
+    /**
+     * Build the ON clause (SQL fragment).
+     *
+     * @return string
+     * @throws Exceptions
+     */
+    private function buildOn(): string
+    {
+        if (empty($this->query->on)) {
+            return '';
+        }
+        $output = [];
+        foreach ($this->query->on as $data) {
+            $junction = $data['junction'] ?? Junction::NONE();
+            $junctionType = $junction === Junction::DISJUNCTION() ? 'OR' : 'AND';
+            $junctionStr = $junction === Junction::NONE() ? 'ON ' : $junctionType . ' ';
+            $host = $data['host'] ?? [];
+            $consumer = $data['consumer'] ?? [];
+            $tableHost = !empty($host['table']) ? $host['table'] . '.' : '';
+            $tableConsumer = !empty($consumer['table']) ? $consumer['table'] . '.' : '';
+            $h = $tableHost . ($host['column'] ?? '');
+            $c = $tableConsumer . ($consumer['column'] ?? '');
+            $sig = $data['signal'] ?? '=';
+            $output[] = $junctionStr . $h . ' ' . $sig . ' ' . $c;
+        }
+        return implode(' ', $output);
+    }
+
+    /**
+     * Build the GROUP BY clause (SQL fragment).
+     *
+     * @return string
+     * @throws Exceptions
+     */
+    private function buildGroup(): string
+    {
+        if (empty($this->query->group)) {
+            return '';
+        }
+        $output = [];
+        foreach ($this->query->group as $data) {
+            if (!is_array($data)) {
+                continue;
+            }
+            $gt = $data['type'] ?? null;
+            if ($gt === Grouping::METADATA()) {
+                $prefix = !empty($data['prefix']) ? $data['prefix'] . '.' : '';
+                $output[] = $prefix . ($data['column'] ?? '');
+            } else {
+                $output[] = $data['value'] ?? '';
+            }
+        }
+        return $output === [] ? '' : 'GROUP BY ' . implode(', ', $output);
+    }
+
+    /**
+     * Build the HAVING clause (SQL fragment with ? placeholders).
+     *
+     * @return string
+     * @throws Exceptions
+     */
+    private function buildHaving(): string
+    {
+        if (empty($this->query->having)) {
+            return '';
+        }
+        $output = [];
+        foreach ($this->query->having as $data) {
+            $conditionType = ($data['condition'] ?? null) === Condition::DISJUNCTION() ? 'OR' : 'AND';
+            $condition = ($data['condition'] ?? null) === Condition::NONE() ? 'HAVING' : $conditionType;
+            $alias = isset($data['alias']) && $data['alias'] !== '' ? trim($data['alias']) . '.' : '';
+            $column = $data['column'] ?? ' ';
+            $signal = isset($data['signal']) ? trim($data['signal']) : '';
+            $assert = ($data['aggregation']['assert'] ?? null) === Having::NEGATION() ? 'NOT' : ' ';
+            $fn = ($data['type'] ?? null) === Having::FUNCTION() ? ($data['function'] ?? '') : ' ';
+            $type = ($data['type'] ?? null) === Having::DEFAULT()
+                ? $alias . $column
+                : $fn . '(' . $alias . $column . ')';
+            $unl = $data['arguments']['unlimited'] ?? null;
+            $placeholders = $unl !== null
+                ? implode(', ', array_fill(0, count(explode(', ', (string) $unl)), '?'))
+                : '';
+            $output[] = match ($data['aggregation']['type'] ?? null) {
+                Having::NONE() => $condition . ' ' . $type . ' ' . $signal . ' ?',
+                Having::BETWEEN() => $condition . ' ' . $type . ' ' . $assert . ' BETWEEN ? AND ?',
+                Having::IN() => $condition . ' ' . $type . ' ' . $assert . ' IN (' . $placeholders . ')',
+                Having::LIKE() => $condition . ' ' . $type . ' ' . $assert . ' LIKE ?',
+                default => '',
+            };
+        }
+        return $output === [] ? '' : implode(' ', $output);
     }
 
     /**
@@ -200,9 +327,9 @@ class Builder implements IBuilder
     }
 
     /**
-     * Build the order by clause.
+     * Build the order by clause (for execute / DataProcessor).
      *
-     * @return array|null
+     * @return array{column: string, direction: int}|null
      */
     private function buildOrderBy(): ?array
     {
@@ -211,19 +338,70 @@ class Builder implements IBuilder
         }
 
         $order = reset($this->query->order);
-        $column = $order['column'] ?? '';
+        $expr = $this->orderExpr($order);
         $direction = match ($order['sorting'] ?? null) {
             Sorting::DESCENDING() => JSON::DESC,
             default => JSON::ASC
         };
+        if ($expr !== '' && preg_match('/^(.+?)\s+(ASC|DESC)\s*$/i', $expr, $m)) {
+            $expr = trim($m[1]);
+            $direction = strtoupper($m[2]) === 'DESC' ? JSON::DESC : JSON::ASC;
+        }
 
-        return ['column' => $column, 'direction' => $direction];
+        return ['column' => $expr, 'direction' => (int) $direction];
     }
 
     /**
-     * Build the limit clause.
+     * Build ORDER BY SQL fragment for build().
      *
-     * @return array|null
+     * @return string
+     */
+    private function buildOrderByString(): string
+    {
+        if (empty($this->query->order)) {
+            return '';
+        }
+        $out = [];
+        foreach ($this->query->order as $order) {
+            $expr = $this->orderExpr($order);
+            if ($expr === '') {
+                continue;
+            }
+            $dir = 'ASC';
+            if (preg_match('/^(.+?)\s+(ASC|DESC)\s*$/i', $expr, $m)) {
+                $expr = trim($m[1]);
+                $dir = strtoupper($m[2]);
+            } elseif (($order['sorting'] ?? null) === Sorting::DESCENDING()) {
+                $dir = 'DESC';
+            }
+            $out[] = $expr . ' ' . $dir;
+        }
+        return $out === [] ? '' : 'ORDER BY ' . implode(', ', $out);
+    }
+
+    /**
+     * @param array<string, mixed> $order
+     */
+    private function orderExpr(array $order): string
+    {
+        $type = $order['type'] ?? null;
+        if ($type === Sorting::METADATA() || (isset($order['column']) && !isset($order['function']))) {
+            $prefix = !empty($order['prefix']) ? $order['prefix'] . '.' : '';
+            $col = $order['column'] ?? '';
+            return $prefix . $col;
+        }
+        if ($type === Sorting::FUNCTION() || isset($order['function'])) {
+            $fn = $order['function'] ?? '';
+            $args = $order['arguments'] ?? '';
+            return $fn . '(' . $args . ')';
+        }
+        return (string) ($order['value'] ?? '');
+    }
+
+    /**
+     * Build the limit clause (for execute / getValues).
+     *
+     * @return array{offset: int, limit: int}|null
      */
     private function buildLimit(): ?array
     {
@@ -232,13 +410,27 @@ class Builder implements IBuilder
         }
 
         $limitValue = $this->query->limit['value'] ?? '0';
-        $parts = explode(',', $limitValue);
+        $parts = array_map('trim', explode(',', $limitValue));
 
         if (count($parts) === 2) {
-            return ['offset' => (int) trim($parts[0]), 'limit' => (int) trim($parts[1])];
+            return ['offset' => (int) $parts[0], 'limit' => (int) $parts[1]];
         }
 
-        return ['offset' => 0, 'limit' => (int) trim($parts[0])];
+        return ['offset' => 0, 'limit' => (int) $parts[0]];
+    }
+
+    /**
+     * Build LIMIT SQL fragment for build(): "LIMIT x OFFSET y".
+     *
+     * @return string
+     */
+    private function buildLimitString(): string
+    {
+        $lim = $this->buildLimit();
+        if ($lim === null) {
+            return '';
+        }
+        return 'LIMIT ' . $lim['limit'] . ' OFFSET ' . $lim['offset'];
     }
 
     /**
@@ -330,6 +522,18 @@ class Builder implements IBuilder
         $from = $this->buildFrom();
         $parts[] = "FROM {$from}";
 
+        // JOIN
+        $join = $this->buildJoin();
+        if ($join !== '') {
+            $parts[] = $join;
+        }
+
+        // ON
+        $on = $this->buildOn();
+        if ($on !== '') {
+            $parts[] = $on;
+        }
+
         // WHERE
         $where = $this->buildWhere();
         if (!empty($where)) {
@@ -369,24 +573,31 @@ class Builder implements IBuilder
             $parts[] = "WHERE " . implode(" {$logic} ", $whereParts);
         }
 
+        // GROUP BY
+        $group = $this->buildGroup();
+        if ($group !== '') {
+            $parts[] = $group;
+        }
+
+        // HAVING
+        $having = $this->buildHaving();
+        if ($having !== '') {
+            $parts[] = $having;
+        }
+
         // ORDER BY
-        $orderBy = $this->buildOrderBy();
-        if ($orderBy !== null) {
-            $direction = $orderBy['direction'] === JSON::ASC ? 'ASC' : 'DESC';
-            $parts[] = "ORDER BY {$orderBy['column']} {$direction}";
+        $orderByStr = $this->buildOrderByString();
+        if ($orderByStr !== '') {
+            $parts[] = $orderByStr;
         }
 
         // LIMIT
-        $limit = $this->buildLimit();
-        if ($limit !== null) {
-            if ($limit['offset'] > 0) {
-                $parts[] = "LIMIT {$limit['offset']}, {$limit['limit']}";
-            } else {
-                $parts[] = "LIMIT {$limit['limit']}";
-            }
+        $limitStr = $this->buildLimitString();
+        if ($limitStr !== '') {
+            $parts[] = $limitStr;
         }
 
-        return $this->parse(implode(' ', $parts));
+        return trim(implode(' ', $parts));
     }
 
     /**
@@ -446,7 +657,7 @@ class Builder implements IBuilder
                 }
 
                 if (is_object($value) && isset($value->is_regex)) {
-                    $values[] = $value->value;
+                    $values[] = ((array) $value)['value'] ?? $value;
                     continue;
                 }
 
@@ -467,12 +678,6 @@ class Builder implements IBuilder
                         $values[] = trim($val);
                     }
                 }
-            }
-        }
-
-        if (!empty($this->query->limit)) {
-            foreach (explode(', ', $this->query->limit['value']) as $limit) {
-                $values[] = $limit;
             }
         }
 

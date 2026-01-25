@@ -6,6 +6,7 @@ namespace GenericDatabase\Engine;
 
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\IQueryBuilder;
+use GenericDatabase\Core\Join;
 use GenericDatabase\Core\Where;
 use GenericDatabase\Core\Having;
 use GenericDatabase\Core\Select;
@@ -22,7 +23,6 @@ use GenericDatabase\Generic\Statements\Metadata;
 use GenericDatabase\Engine\JSON\QueryBuilder\Builder;
 use GenericDatabase\Engine\JSON\QueryBuilder\Clause;
 use GenericDatabase\Engine\JSON\Connection\JSON;
-use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
 
 /**
  * The `JSONQueryBuilder` class implements the `IQueryBuilder` interface to provide a flexible
@@ -133,113 +133,137 @@ class JSONQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * Add JOIN clause (not supported for flat files).
+     * Add JOIN clause.
      *
      * @param array|string ...$data The join parameters.
      * @return static
      */
     public static function join(array|string ...$data): static
     {
-        return self::$self;
+        /** @var static */
+        return Clause::join(
+            ['type' => Join::DEFAULT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
 
     /**
-     * Add SELF JOIN clause (not supported for flat files).
+     * Add SELF JOIN clause.
      *
      * @param array|string ...$data The join parameters.
      * @return static
      */
     public static function selfJoin(array|string ...$data): static
     {
-        return self::$self;
+        /** @var static */
+        return Clause::join(
+            ['type' => Join::SELF(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
 
     /**
-     * Add LEFT JOIN clause (not supported for flat files).
+     * Add LEFT JOIN clause.
      *
      * @param array|string ...$data The join parameters.
      * @return static
      */
     public static function leftJoin(array|string ...$data): static
     {
-        return self::$self;
+        /** @var static */
+        return Clause::join(
+            ['type' => Join::LEFT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
 
     /**
-     * Add RIGHT JOIN clause (not supported for flat files).
+     * Add RIGHT JOIN clause.
      *
      * @param array|string ...$data The join parameters.
      * @return static
      */
     public static function rightJoin(array|string ...$data): static
     {
-        return self::$self;
+        /** @var static */
+        return Clause::join(
+            ['type' => Join::RIGHT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
 
     /**
-     * Add INNER JOIN clause (not supported for flat files).
+     * Add INNER JOIN clause.
      *
      * @param array|string ...$data The join parameters.
      * @return static
      */
     public static function innerJoin(array|string ...$data): static
     {
-        return self::$self;
+        /** @var static */
+        return Clause::join(
+            ['type' => Join::INNER(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
 
     /**
-     * Add OUTER JOIN clause (not supported for flat files).
+     * Add OUTER JOIN clause.
      *
      * @param array|string ...$data The join parameters.
      * @return static
      */
     public static function outerJoin(array|string ...$data): static
     {
-        return self::$self;
+        /** @var static */
+        return Clause::join(
+            ['type' => Join::OUTER(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
 
     /**
-     * Add CROSS JOIN clause (not supported for flat files).
+     * Add CROSS JOIN clause.
      *
      * @param array|string ...$data The join parameters.
      * @return static
      */
     public static function crossJoin(array|string ...$data): static
     {
-        return self::$self;
+        /** @var static */
+        return Clause::join(
+            ['type' => Join::CROSS(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
 
     /**
-     * Add ON clause (not supported for flat files).
+     * Add ON clause.
      *
      * @param array|string ...$data The on parameters.
      * @return static
      */
     public static function on(array|string ...$data): static
     {
-        return self::$self;
+        /** @var static */
+        return Clause::on(['junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
-     * Add AND ON clause (not supported for flat files).
+     * Add AND ON clause.
      *
      * @param array|string ...$data The on parameters.
      * @return static
      */
     public static function andOn(array|string ...$data): static
     {
-        return self::$self;
+        /** @var static */
+        return Clause::on(['junction' => Junction::CONJUNCTION(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
-     * Add OR ON clause (not supported for flat files).
+     * Add OR ON clause.
      *
      * @param array|string ...$data The on parameters.
      * @return static
      */
     public static function orOn(array|string ...$data): static
     {
-        return self::$self;
+        /** @var static */
+        return Clause::on(['junction' => Junction::DISJUNCTION(), 'data' => $data, 'self' => self::$self]);
     }
 
     /**
@@ -513,29 +537,8 @@ class JSONQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * Extract the table name from the FROM clause.
-     *
-     * @return string|null The table name without alias, or null if no FROM clause.
-     */
-    private function getTableNameFromQuery(): ?string
-    {
-        if (empty($this->query->from)) {
-            return null;
-        }
-
-        $from = reset($this->query->from);
-        if (is_array($from)) {
-            // Extract table name, removing alias if present
-            $tableName = $from['table'] ?? null;
-        } else {
-            $tableName = $from;
-        }
-
-        return $tableName !== null ? trim($tableName) : null;
-    }
-
-    /**
      * Execute the query and cache results.
+     * Uses connection->query(buildRaw()) so SELECTs run through FetchHandler (JOIN, GROUP BY, etc.).
      *
      * @return void
      * @throws Exceptions
@@ -545,20 +548,10 @@ class JSONQueryBuilder implements IQueryBuilder
         $currentQuery = $this->buildRaw();
 
         if (self::$lastQuery !== $currentQuery || self::$cursorExhausted) {
-            // Get current structure handler
-            $structureHandler = StructureHandler::current();
-
-            // Extract table name and load data from JSON file
-            $tableName = $this->getTableNameFromQuery();
-            if ($tableName !== null && $structureHandler !== null) {
-                $structureHandler->load($tableName);
-            }
-
-            // Execute query on data
-            $builder = new Builder($this->query);
-            $data = $structureHandler !== null ? $structureHandler->getData() : [];
-            self::$cachedResult = $builder->execute($data);
-
+            $conn = $this->getContext();
+            $conn->query($currentQuery);
+            $rows = $conn->fetchAll(JSON::FETCH_ASSOC);
+            self::$cachedResult = is_array($rows) ? $rows : [];
             self::$lastQuery = $currentQuery;
             self::$cursorExhausted = false;
         }
@@ -623,11 +616,12 @@ class JSONQueryBuilder implements IQueryBuilder
         $colCount = $rowCount > 0 ? \count((array) reset($result)) : 0;
 
         $metadata = new Metadata();
-        $metadata->query->setString((new Builder($this->query))->buildRaw());
+        $metadata->query->setString($this->getContext()->getQueryString());
         $metadata->query->setArguments([]);
         $metadata->query->setColumns($colCount);
         $metadata->query->getRows()->setFetched($rowCount);
-        $metadata->query->getRows()->setAffected(0);
+        $aff = $this->getContext()->getAffectedRows();
+        $metadata->query->getRows()->setAffected(is_int($aff) ? $aff : 0);
 
         return $metadata;
     }
