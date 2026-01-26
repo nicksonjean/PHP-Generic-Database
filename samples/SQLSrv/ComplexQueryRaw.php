@@ -30,7 +30,7 @@ echo $sep . "Teste 1: JOIN estado x cidade, ORDER BY cidade.nome, LIMIT 10\n" . 
 
 $sql1 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, e.sigla, c.id AS cidade_id, c.nome AS cidade_nome '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
-    . 'ORDER BY c.nome ASC LIMIT 10';
+    . 'ORDER BY c.nome OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY';
 
 $stmt1 = $context->query($sql1);
 echo "Query: " . $sql1 . "\n\n";
@@ -49,7 +49,7 @@ $sql2 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, e.sigla, COUNT(c.id) A
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome, e.sigla '
     . 'HAVING COUNT(c.id) > 50 '
-    . 'ORDER BY total_cidades DESC LIMIT 5';
+    . 'ORDER BY total_cidades DESC OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY';
 
 $stmt2 = $context->query($sql2);
 echo "Query: " . $sql2 . "\n\n";
@@ -67,7 +67,7 @@ echo "\n" . $sep . "Teste 3: GROUP BY estado, SUM(c.id), ORDER BY soma DESC, LIM
 $sql3 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, SUM(c.id) AS soma_ids_cidades '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome '
-    . 'ORDER BY soma_ids_cidades DESC LIMIT 5';
+    . 'ORDER BY soma_ids_cidades DESC OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY';
 
 $stmt3 = $context->query($sql3);
 echo "Query: " . $sql3 . "\n\n";
@@ -86,7 +86,7 @@ $sql4 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, AVG(c.id) AS media_ids
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome '
     . 'HAVING AVG(c.id) > 100 '
-    . 'ORDER BY media_ids_cidades DESC LIMIT 5';
+    . 'ORDER BY media_ids_cidades DESC OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY';
 
 $stmt4 = $context->query($sql4);
 echo "Query: " . $sql4 . "\n\n";
@@ -101,7 +101,7 @@ var_dump($rows4);
 // -----------------------------------------------------------------------------
 echo "\n" . $sep . "Teste 5: DISTINCT estado_id em cidade, ORDER BY estado_id, LIMIT 10\n" . $sep;
 
-$sql5 = 'SELECT DISTINCT estado_id FROM cidade ORDER BY estado_id ASC LIMIT 10';
+$sql5 = 'SELECT DISTINCT estado_id FROM cidade ORDER BY estado_id ASC OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY';
 
 $stmt5 = $context->query($sql5);
 echo "Query: " . $sql5 . "\n\n";
@@ -121,7 +121,7 @@ $sql6 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome '
     . 'HAVING COUNT(c.id) > 20 '
-    . 'ORDER BY total_cidades DESC LIMIT 5';
+    . 'ORDER BY total_cidades DESC OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY';
 
 $stmt6 = $context->query($sql6);
 echo "Query: " . $sql6 . "\n\n";
