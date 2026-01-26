@@ -80,7 +80,14 @@ class StatementsHandler extends AbstractStatements implements IStatements
         } else {
             $this->internalBindParamArgs($params);
         }
-        $this->setQueryColumns((int) $this->getStatement()->field_count);
+        // Query columns are already set by internalBindParamArgs/internalBindParamArray
+        // Only set if not already set and statement is still a mysqli_stmt object
+        if ($this->getQueryColumns() === 0) {
+            $stmt = $this->getStatement();
+            if (is_object($stmt) && property_exists($stmt, 'field_count')) {
+                $this->setQueryColumns((int) $stmt->field_count);
+            }
+        }
     }
 
     /**
@@ -137,16 +144,67 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function internalBindParamArgs(object $params): void
     {
-        $this->setStatement(@$this->internalBindVariable($params->query->arguments, $params->statement->object));
-        if ($this->exec($this->getStatement())) {
-            if ($this->getStatement()->field_count > 0) {
-                $result = $this->getStatement()->get_result();
+        $stmt = @$this->internalBindVariable($params->query->arguments, $params->statement->object);
+        $this->setStatement($stmt);
+        if ($this->exec($stmt)) {
+            if ($stmt->field_count > 0) {
+                $result = $stmt->get_result();
                 if ($result) {
-                    $this->setStatement($result);
-                    $this->setQueryRows((int) $result->num_rows);
+                    // Get field metadata to identify aggregate function columns
+                    $fields = $result->fetch_fields();
+                    $aggregateColumns = [];
+                    foreach ($fields as $field) {
+                        $fieldName = $field->name;
+                        $fieldNameUpper = strtoupper($fieldName);
+                        // Detect aggregate functions by column name patterns
+                        if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
+                            $aggregateColumns[$fieldName] = strtoupper($matches[1]);
+                        } elseif (str_contains($fieldNameUpper, 'SOMA') || (str_contains($fieldNameUpper, 'SUM') && !str_contains($fieldNameUpper, 'TOTAL'))) {
+                            $aggregateColumns[$fieldName] = 'SUM';
+                        } elseif (str_contains($fieldNameUpper, 'MEDIA') || str_contains($fieldNameUpper, 'AVERAGE') || str_contains($fieldNameUpper, 'AVG')) {
+                            $aggregateColumns[$fieldName] = 'AVG';
+                        } elseif (str_contains($fieldNameUpper, 'COUNT') || str_contains($fieldNameUpper, 'TOTAL')) {
+                            $aggregateColumns[$fieldName] = 'COUNT';
+                        } elseif (str_contains($fieldNameUpper, 'MIN')) {
+                            $aggregateColumns[$fieldName] = 'MIN';
+                        } elseif (str_contains($fieldNameUpper, 'MAX')) {
+                            $aggregateColumns[$fieldName] = 'MAX';
+                        }
+                    }
+                    
+                    $results = [];
+                    while ($row = $result->fetch_assoc()) {
+                        // Convert aggregate function results to proper types
+                        foreach ($row as $key => $value) {
+                            if (isset($aggregateColumns[$key]) && $value !== null) {
+                                $aggType = $aggregateColumns[$key];
+                                $valueStr = (string) $value;
+                                if (is_numeric($value) || (is_string($value) && $valueStr !== '' && is_numeric($valueStr))) {
+                                    switch ($aggType) {
+                                        case 'COUNT':
+                                        case 'SUM':
+                                            $row[$key] = (int) $value;
+                                            break;
+                                        case 'AVG':
+                                            $row[$key] = (float) $value;
+                                            break;
+                                        case 'MIN':
+                                        case 'MAX':
+                                            $row[$key] = str_contains($valueStr, '.') ? (float) $value : (int) $value;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                        $results[] = $row;
+                    }
+                    $this->setStatement(['results' => $results]);
+                    $this->setQueryRows(count($results));
+                    $this->setQueryColumns($result->field_count);
                 }
             } else {
-                $this->setAffectedRows($this->getStatement()->affected_rows);
+                $this->setAffectedRows($stmt->affected_rows);
+                $this->setStatement(['results' => []]);
             }
         }
     }
@@ -164,7 +222,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
     {
         $types = '';
         $values = [];
-        foreach ($preparedParams as $value) {
+        // Get values in order, ignoring named keys to maintain placeholder order
+        $orderedValues = array_values($preparedParams);
+        foreach ($orderedValues as $value) {
             if (is_int($value)) {
                 $types .= 'i';
             } elseif (is_float($value)) {
@@ -238,7 +298,33 @@ class StatementsHandler extends AbstractStatements implements IStatements
                         if (!$result) {
                             return 0;
                         }
+                        // Get field metadata to identify aggregate function columns
+                        $fields = $result->fetch_fields();
+                        $aggregateColumns = [];
+                        foreach ($fields as $field) {
+                            $fieldName = $field->name;
+                            $fieldNameUpper = strtoupper($fieldName);
+                            // Detect aggregate functions by column name patterns
+                            if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
+                                $aggregateColumns[$fieldName] = strtoupper($matches[1]);
+                            } elseif (str_contains($fieldNameUpper, 'SOMA') || (str_contains($fieldNameUpper, 'SUM') && !str_contains($fieldNameUpper, 'TOTAL'))) {
+                                $aggregateColumns[$fieldName] = 'SUM';
+                            } elseif (str_contains($fieldNameUpper, 'MEDIA') || str_contains($fieldNameUpper, 'AVERAGE') || str_contains($fieldNameUpper, 'AVG')) {
+                                $aggregateColumns[$fieldName] = 'AVG';
+                            } elseif (str_contains($fieldNameUpper, 'COUNT') || str_contains($fieldNameUpper, 'TOTAL')) {
+                                $aggregateColumns[$fieldName] = 'COUNT';
+                            } elseif (str_contains($fieldNameUpper, 'MIN')) {
+                                $aggregateColumns[$fieldName] = 'MIN';
+                            } elseif (str_contains($fieldNameUpper, 'MAX')) {
+                                $aggregateColumns[$fieldName] = 'MAX';
+                            }
+                        }
+                        
                         $results = $result->fetch_all(MYSQLI_ASSOC);
+                        // Convert aggregate function results to proper types
+                        foreach ($results as &$row) {
+                            $row = $this->convertAggregateTypesInRow($row, $aggregateColumns);
+                        }
                         $this->setStatement(['results' => $results]);
                         return $result->num_rows;
                     })($statement)
@@ -259,9 +345,14 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function prepare(mixed ...$params): IConnection
     {
-        if (!empty($params) && ($this->prepareStatement(...$params))) {
-            $bindParams = Statement::bind([$this->getStatement(), ...$params]);
-            $this->bindParam($bindParams);
+        if (!empty($params)) {
+            // Store original query for argument extraction
+            $originalQuery = reset($params);
+            if ($this->prepareStatement(...$params)) {
+                // Extract arguments from original query (before conversion) to maintain order
+                $bindParams = Statement::bind([$this->getStatement(), $originalQuery, ...array_slice($params, 1)]);
+                $this->bindParam($bindParams);
+            }
         }
         return $this->getInstance();
     }

@@ -30,7 +30,7 @@ echo $sep . "Teste 1: JOIN estado x cidade, ORDER BY cidade.nome, LIMIT 10\n" . 
 
 $sql1 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, e.sigla, c.id AS cidade_id, c.nome AS cidade_nome '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
-    . 'ORDER BY c.nome ASC LIMIT :limit1';
+    . 'ORDER BY c.nome ASC ROWS :limit1';
 
 $stmt1 = $context->prepare($sql1, [':limit1' => 10]);
 echo "Query: " . $sql1 . " [ :limit1 => 10 ]\n\n";
@@ -49,7 +49,7 @@ $sql2 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, e.sigla, COUNT(c.id) A
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome, e.sigla '
     . 'HAVING COUNT(c.id) > :min_cidades '
-    . 'ORDER BY total_cidades DESC LIMIT :limit2';
+    . 'ORDER BY total_cidades DESC ROWS :limit2';
 
 $stmt2 = $context->prepare($sql2, [':min_cidades' => 50, ':limit2' => 5]);
 echo "Query: " . $sql2 . " [ :min_cidades => 50, :limit2 => 5 ]\n\n";
@@ -67,7 +67,7 @@ echo "\n" . $sep . "Teste 3: GROUP BY estado, SUM(c.id), ORDER BY soma DESC, LIM
 $sql3 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, SUM(c.id) AS soma_ids_cidades '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome '
-    . 'ORDER BY soma_ids_cidades DESC LIMIT :limit3';
+    . 'ORDER BY soma_ids_cidades DESC ROWS :limit3';
 
 $stmt3 = $context->prepare($sql3, [':limit3' => 5]);
 echo "Query: " . $sql3 . " [ :limit3 => 5 ]\n\n";
@@ -86,7 +86,7 @@ $sql4 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, AVG(c.id) AS media_ids
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome '
     . 'HAVING AVG(c.id) > :min_avg '
-    . 'ORDER BY media_ids_cidades DESC LIMIT :limit4';
+    . 'ORDER BY media_ids_cidades DESC ROWS :limit4';
 
 $stmt4 = $context->prepare($sql4, [':min_avg' => 100, ':limit4' => 5]);
 echo "Query: " . $sql4 . " [ :min_avg => 100, :limit4 => 5 ]\n\n";
@@ -101,7 +101,7 @@ var_dump($rows4);
 // -----------------------------------------------------------------------------
 echo "\n" . $sep . "Teste 5: DISTINCT estado_id em cidade, ORDER BY estado_id, LIMIT 10\n" . $sep;
 
-$sql5 = 'SELECT DISTINCT estado_id FROM cidade ORDER BY estado_id ASC LIMIT :limit5';
+$sql5 = 'SELECT DISTINCT estado_id FROM cidade ORDER BY estado_id ASC ROWS :limit5';
 
 $stmt5 = $context->prepare($sql5, [':limit5' => 10]);
 echo "Query: " . $sql5 . " [ :limit5 => 10 ]\n\n";
@@ -121,7 +121,7 @@ $sql6 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome '
     . 'HAVING COUNT(c.id) > :min_count '
-    . 'ORDER BY total_cidades DESC LIMIT :limit6';
+    . 'ORDER BY total_cidades DESC ROWS :limit6';
 
 $stmt6 = $context->prepare($sql6, [':min_count' => 20, ':limit6' => 5]);
 echo "Query: " . $sql6 . " [ :min_count => 20, :limit6 => 5 ]\n\n";

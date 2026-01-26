@@ -149,9 +149,35 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ((int) $this->getQueryColumns() > 0) {
                 $this->setQueryRows(
                     (function (mixed $stmt): int {
+                        // Get field metadata to identify aggregate function columns
+                        $fieldMetadata = sqlsrv_field_metadata($stmt);
+                        $aggregateColumns = [];
+                        if ($fieldMetadata) {
+                            foreach ($fieldMetadata as $field) {
+                                $fieldName = $field['Name'];
+                                $fieldNameUpper = strtoupper($fieldName);
+                                // Detect aggregate functions by column name patterns
+                                if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
+                                    $aggregateColumns[$fieldName] = strtoupper($matches[1]);
+                                } elseif (str_contains($fieldNameUpper, 'SOMA') || (str_contains($fieldNameUpper, 'SUM') && !str_contains($fieldNameUpper, 'TOTAL'))) {
+                                    $aggregateColumns[$fieldName] = 'SUM';
+                                } elseif (str_contains($fieldNameUpper, 'MEDIA') || str_contains($fieldNameUpper, 'AVERAGE') || str_contains($fieldNameUpper, 'AVG')) {
+                                    $aggregateColumns[$fieldName] = 'AVG';
+                                } elseif (str_contains($fieldNameUpper, 'COUNT') || str_contains($fieldNameUpper, 'TOTAL')) {
+                                    $aggregateColumns[$fieldName] = 'COUNT';
+                                } elseif (str_contains($fieldNameUpper, 'MIN')) {
+                                    $aggregateColumns[$fieldName] = 'MIN';
+                                } elseif (str_contains($fieldNameUpper, 'MAX')) {
+                                    $aggregateColumns[$fieldName] = 'MAX';
+                                }
+                            }
+                        }
+                        
                         $results = [];
                         $rows = 0;
                         while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+                            // Convert aggregate function results to proper types
+                            $row = $this->convertAggregateTypesInRow($row, $aggregateColumns);
                             $results[] = $row;
                             $rows++;
                         }
@@ -161,6 +187,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 );
             } else {
                 $this->setAffectedRows((int) sqlsrv_rows_affected($params->statement->object));
+                $this->setStatement(['results' => []]);
             }
         }
     }
@@ -266,9 +293,35 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 $this->setQueryColumns($colCount);
                 $this->setQueryRows(
                     (function (mixed $stmt): int {
+                        // Get field metadata to identify aggregate function columns
+                        $fieldMetadata = sqlsrv_field_metadata($stmt);
+                        $aggregateColumns = [];
+                        if ($fieldMetadata) {
+                            foreach ($fieldMetadata as $field) {
+                                $fieldName = $field['Name'];
+                                $fieldNameUpper = strtoupper($fieldName);
+                                // Detect aggregate functions by column name patterns
+                                if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
+                                    $aggregateColumns[$fieldName] = strtoupper($matches[1]);
+                                } elseif (str_contains($fieldNameUpper, 'SOMA') || (str_contains($fieldNameUpper, 'SUM') && !str_contains($fieldNameUpper, 'TOTAL'))) {
+                                    $aggregateColumns[$fieldName] = 'SUM';
+                                } elseif (str_contains($fieldNameUpper, 'MEDIA') || str_contains($fieldNameUpper, 'AVERAGE') || str_contains($fieldNameUpper, 'AVG')) {
+                                    $aggregateColumns[$fieldName] = 'AVG';
+                                } elseif (str_contains($fieldNameUpper, 'COUNT') || str_contains($fieldNameUpper, 'TOTAL')) {
+                                    $aggregateColumns[$fieldName] = 'COUNT';
+                                } elseif (str_contains($fieldNameUpper, 'MIN')) {
+                                    $aggregateColumns[$fieldName] = 'MIN';
+                                } elseif (str_contains($fieldNameUpper, 'MAX')) {
+                                    $aggregateColumns[$fieldName] = 'MAX';
+                                }
+                            }
+                        }
+                        
                         $results = [];
                         $rows = 0;
                         while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+                            // Convert aggregate function results to proper types
+                            $row = $this->convertAggregateTypesInRow($row, $aggregateColumns);
                             $results[] = $row;
                             $rows++;
                         }

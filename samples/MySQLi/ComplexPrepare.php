@@ -30,10 +30,10 @@ echo $sep . "Teste 1: JOIN estado x cidade, ORDER BY cidade.nome, LIMIT 10\n" . 
 
 $sql1 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, e.sigla, c.id AS cidade_id, c.nome AS cidade_nome '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
-    . 'ORDER BY c.nome ASC LIMIT :limit';
+    . 'ORDER BY c.nome ASC LIMIT :limit1';
 
-$stmt1 = $context->prepare($sql1, [':limit' => 10]);
-echo "Query: " . $sql1 . " [ :limit => 10 ]\n\n";
+$stmt1 = $context->prepare($sql1, [':limit1' => 10]);
+echo "Query: " . $sql1 . " [ :limit1 => 10 ]\n\n";
 echo "Metadados:\n";
 var_dump($stmt1->getAllMetadata());
 echo "Resultados:\n";
@@ -48,11 +48,11 @@ echo "\n" . $sep . "Teste 2: GROUP BY estado, COUNT(cidades), HAVING > 50, ORDER
 $sql2 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, e.sigla, COUNT(c.id) AS total_cidades '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome, e.sigla '
-    . 'HAVING COUNT(c.id) > :mincidades '
-    . 'ORDER BY total_cidades DESC LIMIT :limit';
+    . 'HAVING COUNT(c.id) > :min_cidades '
+    . 'ORDER BY total_cidades DESC LIMIT :limit2';
 
-$stmt2 = $context->prepare($sql2, [':mincidades' => 50, ':limit' => 5]);
-echo "Query: " . $sql2 . " [ :mincidades => 50, :limit => 5 ]\n\n";
+$stmt2 = $context->prepare($sql2, [':min_cidades' => 50, ':limit2' => 5]);
+echo "Query: " . $sql2 . " [ :min_cidades => 50, :limit2 => 5 ]\n\n";
 echo "Metadados:\n";
 var_dump($stmt2->getAllMetadata());
 echo "Resultados:\n";
@@ -67,10 +67,10 @@ echo "\n" . $sep . "Teste 3: GROUP BY estado, SUM(c.id), ORDER BY soma DESC, LIM
 $sql3 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, SUM(c.id) AS soma_ids_cidades '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome '
-    . 'ORDER BY soma_ids_cidades DESC LIMIT :limit';
+    . 'ORDER BY soma_ids_cidades DESC LIMIT :limit3';
 
-$stmt3 = $context->prepare($sql3, [':limit' => 5]);
-echo "Query: " . $sql3 . " [ :limit => 5 ]\n\n";
+$stmt3 = $context->prepare($sql3, [':limit3' => 5]);
+echo "Query: " . $sql3 . " [ :limit3 => 5 ]\n\n";
 echo "Metadados:\n";
 var_dump($stmt3->getAllMetadata());
 echo "Resultados:\n";
@@ -85,11 +85,11 @@ echo "\n" . $sep . "Teste 4: GROUP BY estado, AVG(c.id), HAVING AVG > 100, ORDER
 $sql4 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, AVG(c.id) AS media_ids_cidades '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome '
-    . 'HAVING AVG(c.id) > :minavg '
-    . 'ORDER BY media_ids_cidades DESC LIMIT :limit';
+    . 'HAVING AVG(c.id) > :min_avg '
+    . 'ORDER BY media_ids_cidades DESC LIMIT :limit4';
 
-$stmt4 = $context->prepare($sql4, [':minavg' => 100, ':limit' => 5]);
-echo "Query: " . $sql4 . " [ :minavg => 100, :limit => 5 ]\n\n";
+$stmt4 = $context->prepare($sql4, [':min_avg' => 100, ':limit4' => 5]);
+echo "Query: " . $sql4 . " [ :min_avg => 100, :limit4 => 5 ]\n\n";
 echo "Metadados:\n";
 var_dump($stmt4->getAllMetadata());
 echo "Resultados:\n";
@@ -101,10 +101,10 @@ var_dump($rows4);
 // -----------------------------------------------------------------------------
 echo "\n" . $sep . "Teste 5: DISTINCT estado_id em cidade, ORDER BY estado_id, LIMIT 10\n" . $sep;
 
-$sql5 = 'SELECT DISTINCT estado_id FROM cidade ORDER BY estado_id ASC LIMIT :limit';
+$sql5 = 'SELECT DISTINCT estado_id FROM cidade ORDER BY estado_id ASC LIMIT :limit5';
 
-$stmt5 = $context->prepare($sql5, [':limit' => 10]);
-echo "Query: " . $sql5 . " [ :limit => 10 ]\n\n";
+$stmt5 = $context->prepare($sql5, [':limit5' => 10]);
+echo "Query: " . $sql5 . " [ :limit5 => 10 ]\n\n";
 echo "Metadados:\n";
 var_dump($stmt5->getAllMetadata());
 echo "Resultados:\n";
@@ -120,11 +120,11 @@ $sql6 = 'SELECT e.id AS estado_id, e.nome AS estado_nome, '
     . 'COUNT(c.id) AS total_cidades, SUM(c.id) AS soma_ids, AVG(c.id) AS media_ids '
     . 'FROM estado e INNER JOIN cidade c ON c.estado_id = e.id '
     . 'GROUP BY e.id, e.nome '
-    . 'HAVING COUNT(c.id) > :mincount '
-    . 'ORDER BY total_cidades DESC LIMIT :limit';
+    . 'HAVING COUNT(c.id) > :min_count '
+    . 'ORDER BY total_cidades DESC LIMIT :limit6';
 
-$stmt6 = $context->prepare($sql6, [':mincount' => 20, ':limit' => 5]);
-echo "Query: " . $sql6 . " [ :mincount => 20, :limit => 5 ]\n\n";
+$stmt6 = $context->prepare($sql6, [':min_count' => 20, ':limit6' => 5]);
+echo "Query: " . $sql6 . " [ :min_count => 20, :limit6 => 5 ]\n\n";
 echo "Metadados:\n";
 var_dump($stmt6->getAllMetadata());
 echo "Resultados:\n";

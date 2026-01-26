@@ -118,6 +118,91 @@ abstract class AbstractFetch implements IFetchAbstract
     }
 
     /**
+     * Converts aggregate function results to proper types based on column names.
+     *
+     * @param array $row The row data
+     * @return array The row with converted types
+     */
+    protected function convertAggregateTypes(array $row): array
+    {
+        $converted = [];
+        foreach ($row as $key => $value) {
+            if ($value === null) {
+                $converted[$key] = null;
+                continue;
+            }
+
+            // Detect aggregate functions by column name patterns
+            $keyUpper = strtoupper($key);
+            $isAggregate = false;
+            $aggType = null;
+
+            // Check for common aggregate function patterns in column names
+            // First check for exact function names (COUNT, SUM, AVG, MIN, MAX)
+            if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $key, $matches)) {
+                $isAggregate = true;
+                $aggType = strtoupper($matches[1]);
+            } else {
+                // Try to infer from common naming patterns (check in order of specificity)
+                // Check for SUM patterns first (soma, sum) - must check before TOTAL
+                if (str_contains($keyUpper, 'SOMA') || (str_contains($keyUpper, 'SUM') && !str_contains($keyUpper, 'TOTAL'))) {
+                    $isAggregate = true;
+                    $aggType = 'SUM';
+                }
+                // Check for AVG patterns (media, average, avg)
+                elseif (str_contains($keyUpper, 'MEDIA') || str_contains($keyUpper, 'AVERAGE') || str_contains($keyUpper, 'AVG')) {
+                    $isAggregate = true;
+                    $aggType = 'AVG';
+                }
+                // Check for COUNT patterns (count, total) - must check after SUM to avoid false positives
+                elseif (str_contains($keyUpper, 'COUNT') || str_contains($keyUpper, 'TOTAL')) {
+                    $isAggregate = true;
+                    $aggType = 'COUNT';
+                }
+                // Check for MIN/MAX patterns
+                elseif (str_contains($keyUpper, 'MIN')) {
+                    $isAggregate = true;
+                    $aggType = 'MIN';
+                } elseif (str_contains($keyUpper, 'MAX')) {
+                    $isAggregate = true;
+                    $aggType = 'MAX';
+                }
+            }
+
+            if ($isAggregate && $aggType) {
+                // Convert based on aggregate function type
+                // Check if value is numeric (string or number)
+                $valueStr = (string) $value;
+                if (is_numeric($value) || (is_string($value) && $valueStr !== '' && is_numeric($valueStr))) {
+                    switch ($aggType) {
+                        case 'COUNT':
+                        case 'SUM':
+                            // COUNT and SUM should be integers
+                            $converted[$key] = (int) $value;
+                            break;
+                        case 'AVG':
+                            // AVG should be float
+                            $converted[$key] = (float) $value;
+                            break;
+                        case 'MIN':
+                        case 'MAX':
+                            // MIN and MAX can be int or float depending on value
+                            $converted[$key] = str_contains($valueStr, '.') ? (float) $value : (int) $value;
+                            break;
+                        default:
+                            $converted[$key] = $value;
+                    }
+                } else {
+                    $converted[$key] = $value;
+                }
+            } else {
+                $converted[$key] = $value;
+            }
+        }
+        return $converted;
+    }
+
+    /**
      * Fetches the current row as both an associative and a numeric array.
      *
      * @return bool|array Returns an associative and numeric array if successful, false on failure.
@@ -134,6 +219,7 @@ abstract class AbstractFetch implements IFetchAbstract
 
         if (isset($results[$position])) {
             $row = $results[$position++];
+            $row = $this->convertAggregateTypes($row);
             $result = [];
             $index = 0;
             foreach ($row as $key => $value) {
@@ -165,7 +251,8 @@ abstract class AbstractFetch implements IFetchAbstract
         $position = &$cacheData['position'];
 
         if (isset($results[$position])) {
-            return $results[$position++];
+            $row = $results[$position++];
+            return $this->convertAggregateTypes($row);
         }
 
         $cacheData['exhausted'] = true;
@@ -236,7 +323,8 @@ abstract class AbstractFetch implements IFetchAbstract
             return [];
         }
         $cacheData = $this->getStrategy()->cacheResults($statement);
-        return $cacheData['results'];
+        $results = $cacheData['results'];
+        return array_map([$this, 'convertAggregateTypes'], $results);
     }
 
     /**

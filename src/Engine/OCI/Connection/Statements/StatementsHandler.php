@@ -140,9 +140,46 @@ class StatementsHandler extends AbstractStatements implements IStatements
             if ((int) oci_num_fields($this->getStatement()) > 0) {
                 $this->setQueryRows(
                     (function (mixed $stmt): int {
+                        // Get field names and types to identify aggregate function columns and numeric fields
+                        $numFields = oci_num_fields($stmt);
+                        $aggregateColumns = [];
+                        $numericFields = [];
+                        for ($i = 1; $i <= $numFields; $i++) {
+                            $fieldName = oci_field_name($stmt, $i);
+                            $fieldType = oci_field_type($stmt, $i);
+                            $fieldNameUpper = strtoupper($fieldName);
+                            
+                            // Detect aggregate functions by column name patterns
+                            if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
+                                $aggregateColumns[$fieldName] = strtoupper($matches[1]);
+                            } elseif (str_contains($fieldNameUpper, 'SOMA') || (str_contains($fieldNameUpper, 'SUM') && !str_contains($fieldNameUpper, 'TOTAL'))) {
+                                $aggregateColumns[$fieldName] = 'SUM';
+                            } elseif (str_contains($fieldNameUpper, 'MEDIA') || str_contains($fieldNameUpper, 'AVERAGE') || str_contains($fieldNameUpper, 'AVG')) {
+                                $aggregateColumns[$fieldName] = 'AVG';
+                            } elseif (str_contains($fieldNameUpper, 'COUNT') || str_contains($fieldNameUpper, 'TOTAL')) {
+                                $aggregateColumns[$fieldName] = 'COUNT';
+                            } elseif (str_contains($fieldNameUpper, 'MIN')) {
+                                $aggregateColumns[$fieldName] = 'MIN';
+                            } elseif (str_contains($fieldNameUpper, 'MAX')) {
+                                $aggregateColumns[$fieldName] = 'MAX';
+                            }
+                            
+                            // Detect numeric field types (not aggregate functions)
+                            if (!isset($aggregateColumns[$fieldName])) {
+                                $fieldTypeUpper = strtoupper($fieldType);
+                                if (in_array($fieldTypeUpper, ['NUMBER', 'INTEGER', 'INT', 'BIGINT', 'SMALLINT', 'FLOAT', 'DOUBLE', 'REAL', 'NUMERIC', 'DECIMAL'])) {
+                                    $numericFields[$fieldName] = $fieldTypeUpper;
+                                }
+                            }
+                        }
+                        
                         $results = [];
                         $rows = 0;
                         while ($row = oci_fetch_array($stmt, OCI_ASSOC + OCI_RETURN_NULLS)) {
+                            // Convert aggregate function results to proper types
+                            $row = $this->convertAggregateTypesInRow($row, $aggregateColumns);
+                            // Convert numeric field types to proper types
+                            $row = $this->convertNumericTypesInRow($row, $numericFields);
                             $results[] = $row;
                             $rows++;
                         }
@@ -152,6 +189,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 );
             } else {
                 $this->setAffectedRows((int) oci_num_rows($this->getStatement()));
+                $this->setStatement(['results' => []]);
             }
         }
     }
@@ -224,9 +262,46 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 $this->setQueryColumns($colCount);
                 $this->setQueryRows(
                     (function (mixed $stmt): int {
+                        // Get field names and types to identify aggregate function columns and numeric fields
+                        $numFields = oci_num_fields($stmt);
+                        $aggregateColumns = [];
+                        $numericFields = [];
+                        for ($i = 1; $i <= $numFields; $i++) {
+                            $fieldName = oci_field_name($stmt, $i);
+                            $fieldType = oci_field_type($stmt, $i);
+                            $fieldNameUpper = strtoupper($fieldName);
+                            
+                            // Detect aggregate functions by column name patterns
+                            if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
+                                $aggregateColumns[$fieldName] = strtoupper($matches[1]);
+                            } elseif (str_contains($fieldNameUpper, 'SOMA') || (str_contains($fieldNameUpper, 'SUM') && !str_contains($fieldNameUpper, 'TOTAL'))) {
+                                $aggregateColumns[$fieldName] = 'SUM';
+                            } elseif (str_contains($fieldNameUpper, 'MEDIA') || str_contains($fieldNameUpper, 'AVERAGE') || str_contains($fieldNameUpper, 'AVG')) {
+                                $aggregateColumns[$fieldName] = 'AVG';
+                            } elseif (str_contains($fieldNameUpper, 'COUNT') || str_contains($fieldNameUpper, 'TOTAL')) {
+                                $aggregateColumns[$fieldName] = 'COUNT';
+                            } elseif (str_contains($fieldNameUpper, 'MIN')) {
+                                $aggregateColumns[$fieldName] = 'MIN';
+                            } elseif (str_contains($fieldNameUpper, 'MAX')) {
+                                $aggregateColumns[$fieldName] = 'MAX';
+                            }
+                            
+                            // Detect numeric field types (not aggregate functions)
+                            if (!isset($aggregateColumns[$fieldName])) {
+                                $fieldTypeUpper = strtoupper($fieldType);
+                                if (in_array($fieldTypeUpper, ['NUMBER', 'INTEGER', 'INT', 'BIGINT', 'SMALLINT', 'FLOAT', 'DOUBLE', 'REAL', 'NUMERIC', 'DECIMAL'])) {
+                                    $numericFields[$fieldName] = $fieldTypeUpper;
+                                }
+                            }
+                        }
+                        
                         $results = [];
                         $rows = 0;
                         while ($row = oci_fetch_array($stmt, OCI_ASSOC + OCI_RETURN_NULLS)) {
+                            // Convert aggregate function results to proper types
+                            $row = $this->convertAggregateTypesInRow($row, $aggregateColumns);
+                            // Convert numeric field types to proper types
+                            $row = $this->convertNumericTypesInRow($row, $numericFields);
                             $results[] = $row;
                             $rows++;
                         }

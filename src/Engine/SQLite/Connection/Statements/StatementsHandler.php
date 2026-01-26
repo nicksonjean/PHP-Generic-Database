@@ -130,22 +130,23 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function internalBindParamArgs(object $params): void
     {
-        $this->setStatement(@$this->internalBindVariable($params->query->arguments, $params->statement->object));
-        if ($result = $this->exec($this->getStatement())) {
+        $stmt = @$this->internalBindVariable($params->query->arguments, $params->statement->object);
+        $this->setStatement($stmt);
+        if ($result = $this->exec($stmt)) {
             $colCount = (is_object($result) && get_class($result) === 'SQLite3Result' && method_exists($result, 'numColumns')) ? $result->numColumns() : 0;
             $this->setQueryColumns($colCount);
             if ($colCount > 0) {
-                $this->setQueryRows(
-                    (function (mixed $result): int {
-                        $rows = 0;
-                        while ($result->fetchArray(SQLITE3_ASSOC)) {
-                            $rows++;
-                        }
-                        return $rows;
-                    })($result)
-                );
+                $results = [];
+                $rows = 0;
+                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                    $results[] = $row;
+                    $rows++;
+                }
+                $this->setStatement(['results' => $results]);
+                $this->setQueryRows($rows);
             } else {
                 $this->setAffectedRows($this->getInstance()->getConnection()->changes());
+                $this->setStatement(['results' => []]);
             }
         }
     }
@@ -161,8 +162,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function internalBindVariable(array &$preparedParams, mixed $stmt): mixed
     {
-        $index = 0;
-        foreach ($preparedParams as &$arg) {
+        $index = 1; // SQLite3 uses 1-based indexing for bindParam
+        $values = array_values($preparedParams); // Get values in order, ignoring named keys
+        foreach ($values as &$arg) {
             $types = match (true) {
                 is_float($arg) => SQLITE3_FLOAT,
                 is_integer($arg) => SQLITE3_INTEGER,
@@ -170,7 +172,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 is_null($arg) => SQLITE3_NULL,
                 default => SQLITE3_BLOB,
             };
-            call_user_func_array([$stmt, 'bindParam'], [array_keys($preparedParams)[$index], &$arg, $types]);
+            $stmt->bindValue($index, $arg, $types);
             $index++;
         }
         return $stmt;
@@ -184,7 +186,12 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function parse(mixed ...$params): string
     {
-        $this->setQueryString(SQL::escape(reset($params), SQL::SQL_DIALECT_DOUBLE_QUOTE));
+        $query = reset($params);
+        // Store original query for argument extraction
+        $this->setQueryString(SQL::escape($query, SQL::SQL_DIALECT_DOUBLE_QUOTE));
+        // SQLite3 doesn't support named parameters, convert them to positional placeholders
+        $convertedQuery = SQL::binding($this->getQueryString(), SQL::BIND_QUESTION_MARK);
+        $this->setQueryString($convertedQuery);
         return $this->getQueryString();
     }
 
@@ -253,9 +260,14 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function prepare(mixed ...$params): IConnection
     {
-        if (!empty($params) && ($this->prepareStatement(...$params))) {
-            $bindParams = Statement::bind([$this->getStatement(), ...$params]);
-            $this->bindParam($bindParams);
+        if (!empty($params)) {
+            // Store original query for argument extraction
+            $originalQuery = reset($params);
+            if ($this->prepareStatement(...$params)) {
+                // Extract arguments from original query (before conversion) to maintain order
+                $bindParams = Statement::bind([$this->getStatement(), $originalQuery, ...array_slice($params, 1)]);
+                $this->bindParam($bindParams);
+            }
         }
         return $this->getInstance();
     }

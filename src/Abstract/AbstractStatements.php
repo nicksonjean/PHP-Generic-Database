@@ -163,6 +163,105 @@ abstract class AbstractStatements implements IStatementsAbstract
     }
 
     /**
+     * Converts aggregate function results in a row to proper types based on column names.
+     *
+     * @param array $row The row data
+     * @param array|null $aggregateColumns Optional pre-detected aggregate columns map [columnName => aggType]
+     * @return array The row with converted types
+     */
+    protected function convertAggregateTypesInRow(array $row, ?array $aggregateColumns = null): array
+    {
+        if ($aggregateColumns === null) {
+            // Detect aggregate columns from row keys
+            $aggregateColumns = [];
+            foreach (array_keys($row) as $key) {
+                $keyUpper = strtoupper($key);
+                if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $key, $matches)) {
+                    $aggregateColumns[$key] = strtoupper($matches[1]);
+                } elseif (str_contains($keyUpper, 'SOMA') || (str_contains($keyUpper, 'SUM') && !str_contains($keyUpper, 'TOTAL'))) {
+                    $aggregateColumns[$key] = 'SUM';
+                } elseif (str_contains($keyUpper, 'MEDIA') || str_contains($keyUpper, 'AVERAGE') || str_contains($keyUpper, 'AVG')) {
+                    $aggregateColumns[$key] = 'AVG';
+                } elseif (str_contains($keyUpper, 'COUNT') || str_contains($keyUpper, 'TOTAL')) {
+                    $aggregateColumns[$key] = 'COUNT';
+                } elseif (str_contains($keyUpper, 'MIN')) {
+                    $aggregateColumns[$key] = 'MIN';
+                } elseif (str_contains($keyUpper, 'MAX')) {
+                    $aggregateColumns[$key] = 'MAX';
+                }
+            }
+        }
+
+        foreach ($row as $key => $value) {
+            if (isset($aggregateColumns[$key]) && $value !== null) {
+                $aggType = $aggregateColumns[$key];
+                $valueStr = (string) $value;
+                if (is_numeric($value) || (is_string($value) && $valueStr !== '' && is_numeric($valueStr))) {
+                    switch ($aggType) {
+                        case 'COUNT':
+                        case 'SUM':
+                            $row[$key] = (int) $value;
+                            break;
+                        case 'AVG':
+                            $row[$key] = (float) $value;
+                            break;
+                        case 'MIN':
+                        case 'MAX':
+                            $row[$key] = str_contains($valueStr, '.') ? (float) $value : (int) $value;
+                            break;
+                    }
+                }
+            }
+        }
+        return $row;
+    }
+
+    /**
+     * Converts numeric field types in a row based on field type metadata.
+     *
+     * @param array $row The row data
+     * @param array $numericFields Map of field names to their types ['fieldName' => 'INTEGER'|'FLOAT'|'NUMBER']
+     * @return array The row with converted types
+     */
+    protected function convertNumericTypesInRow(array $row, array $numericFields): array
+    {
+        foreach ($row as $key => $value) {
+            if (isset($numericFields[$key]) && $value !== null) {
+                // Only convert if value is a string that represents a number
+                // Skip if already the correct type (int or float)
+                if (is_string($value)) {
+                    $valueStr = trim($value);
+                    if ($valueStr !== '' && is_numeric($valueStr)) {
+                        $fieldType = $numericFields[$key];
+                        if ($fieldType === 'INTEGER' || $fieldType === 'INT' || $fieldType === 'BIGINT' || $fieldType === 'SMALLINT' || $fieldType === 'SERIAL' || $fieldType === 'BIGSERIAL' || $fieldType === 'OID') {
+                            $row[$key] = (int) $value;
+                        } elseif ($fieldType === 'FLOAT' || $fieldType === 'DOUBLE' || $fieldType === 'REAL' || $fieldType === 'NUMERIC' || $fieldType === 'DECIMAL' || $fieldType === 'MONEY') {
+                            $row[$key] = (float) $value;
+                        } elseif ($fieldType === 'NUMBER') {
+                            // Oracle NUMBER type - check if it has decimal places
+                            $row[$key] = str_contains($valueStr, '.') ? (float) $value : (int) $value;
+                        }
+                    }
+                } elseif (!is_int($value) && !is_float($value)) {
+                    // If it's not a string and not already numeric, try to convert
+                    $valueStr = (string) $value;
+                    if (is_numeric($valueStr)) {
+                        $fieldType = $numericFields[$key];
+                        if ($fieldType === 'INTEGER' || $fieldType === 'INT' || $fieldType === 'BIGINT' || $fieldType === 'SMALLINT' || $fieldType === 'SERIAL' || $fieldType === 'BIGSERIAL' || $fieldType === 'OID') {
+                            $row[$key] = (int) $value;
+                        } elseif ($fieldType === 'FLOAT' || $fieldType === 'DOUBLE' || $fieldType === 'REAL' || $fieldType === 'NUMERIC' || $fieldType === 'DECIMAL' || $fieldType === 'MONEY') {
+                            $row[$key] = (float) $value;
+                        } elseif ($fieldType === 'NUMBER') {
+                            $row[$key] = str_contains($valueStr, '.') ? (float) $value : (int) $value;
+                        }
+                    }
+                }
+            }
+        }
+        return $row;
+    }
+
+    /**
      * Get the current query string
      *
      * @return string Current query string

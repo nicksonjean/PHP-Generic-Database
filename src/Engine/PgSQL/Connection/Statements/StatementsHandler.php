@@ -197,9 +197,59 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 $this->setQueryColumns($colCount);
                 $this->setQueryRows(
                     (function (mixed $result): int {
+                        // Get field names and types to identify aggregate function columns and numeric fields
+                        $numFields = pg_num_fields($result);
+                        $aggregateColumns = [];
+                        $numericFields = [];
+                        for ($i = 0; $i < $numFields; $i++) {
+                            $fieldName = pg_field_name($result, $i);
+                            $fieldType = pg_field_type($result, $i);
+                            $fieldNameUpper = strtoupper($fieldName);
+                            
+                            // Detect aggregate functions by column name patterns
+                            if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
+                                $aggregateColumns[$fieldName] = strtoupper($matches[1]);
+                            } elseif (str_contains($fieldNameUpper, 'SOMA') || (str_contains($fieldNameUpper, 'SUM') && !str_contains($fieldNameUpper, 'TOTAL'))) {
+                                $aggregateColumns[$fieldName] = 'SUM';
+                            } elseif (str_contains($fieldNameUpper, 'MEDIA') || str_contains($fieldNameUpper, 'AVERAGE') || str_contains($fieldNameUpper, 'AVG')) {
+                                $aggregateColumns[$fieldName] = 'AVG';
+                            } elseif (str_contains($fieldNameUpper, 'COUNT') || str_contains($fieldNameUpper, 'TOTAL')) {
+                                $aggregateColumns[$fieldName] = 'COUNT';
+                            } elseif (str_contains($fieldNameUpper, 'MIN')) {
+                                $aggregateColumns[$fieldName] = 'MIN';
+                            } elseif (str_contains($fieldNameUpper, 'MAX')) {
+                                $aggregateColumns[$fieldName] = 'MAX';
+                            }
+                            
+                            // Detect numeric field types (not aggregate functions)
+                            if (!isset($aggregateColumns[$fieldName])) {
+                                $fieldTypeUpper = strtoupper($fieldType);
+                                // PostgreSQL returns types like 'int4', 'int8', 'numeric', etc.
+                                // Check for integer types
+                                if (in_array($fieldTypeUpper, ['INTEGER', 'INT', 'BIGINT', 'SMALLINT', 'SERIAL', 'BIGSERIAL', 'OID']) ||
+                                    preg_match('/^INT\d*$/', $fieldTypeUpper) ||
+                                    preg_match('/^INTEGER\d*$/', $fieldTypeUpper) ||
+                                    $fieldTypeUpper === 'INT4' || $fieldTypeUpper === 'INT8' || $fieldTypeUpper === 'INT2') {
+                                    $numericFields[$fieldName] = 'INTEGER';
+                                }
+                                // Check for float types
+                                elseif (in_array($fieldTypeUpper, ['FLOAT', 'DOUBLE', 'REAL', 'NUMERIC', 'DECIMAL', 'MONEY']) ||
+                                    preg_match('/^FLOAT\d*$/', $fieldTypeUpper) ||
+                                    preg_match('/^DOUBLE\d*$/', $fieldTypeUpper) ||
+                                    $fieldTypeUpper === 'FLOAT4' || $fieldTypeUpper === 'FLOAT8' ||
+                                    $fieldTypeUpper === 'NUMERIC' || $fieldTypeUpper === 'DECIMAL') {
+                                    $numericFields[$fieldName] = 'FLOAT';
+                                }
+                            }
+                        }
+                        
                         $results = [];
                         $rows = 0;
                         while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+                            // Convert aggregate function results to proper types
+                            $row = $this->convertAggregateTypesInRow($row, $aggregateColumns);
+                            // Convert numeric field types to proper types
+                            $row = $this->convertNumericTypesInRow($row, $numericFields);
                             $results[] = $row;
                             $rows++;
                         }
@@ -281,9 +331,58 @@ class StatementsHandler extends AbstractStatements implements IStatements
         if (!empty($params) && ($statement = $this->prepareStatement([...$params, Query::RAW()]))) {
             $colCount = pg_num_fields($statement);
             if ($colCount > 0) {
+                // Get field names and types to identify aggregate function columns and numeric fields
+                $aggregateColumns = [];
+                $numericFields = [];
+                for ($i = 0; $i < $colCount; $i++) {
+                    $fieldName = pg_field_name($statement, $i);
+                    $fieldType = pg_field_type($statement, $i);
+                    $fieldNameUpper = strtoupper($fieldName);
+                    
+                    // Detect aggregate functions by column name patterns
+                    if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
+                        $aggregateColumns[$fieldName] = strtoupper($matches[1]);
+                    } elseif (str_contains($fieldNameUpper, 'SOMA') || (str_contains($fieldNameUpper, 'SUM') && !str_contains($fieldNameUpper, 'TOTAL'))) {
+                        $aggregateColumns[$fieldName] = 'SUM';
+                    } elseif (str_contains($fieldNameUpper, 'MEDIA') || str_contains($fieldNameUpper, 'AVERAGE') || str_contains($fieldNameUpper, 'AVG')) {
+                        $aggregateColumns[$fieldName] = 'AVG';
+                    } elseif (str_contains($fieldNameUpper, 'COUNT') || str_contains($fieldNameUpper, 'TOTAL')) {
+                        $aggregateColumns[$fieldName] = 'COUNT';
+                    } elseif (str_contains($fieldNameUpper, 'MIN')) {
+                        $aggregateColumns[$fieldName] = 'MIN';
+                    } elseif (str_contains($fieldNameUpper, 'MAX')) {
+                        $aggregateColumns[$fieldName] = 'MAX';
+                    }
+                    
+                    // Detect numeric field types (not aggregate functions)
+                    if (!isset($aggregateColumns[$fieldName])) {
+                        $fieldTypeUpper = strtoupper($fieldType);
+                        // PostgreSQL returns types like 'int4', 'int8', 'numeric', etc.
+                        // Check for integer types
+                        if (in_array($fieldTypeUpper, ['INTEGER', 'INT', 'BIGINT', 'SMALLINT', 'SERIAL', 'BIGSERIAL', 'OID']) ||
+                            preg_match('/^INT\d*$/', $fieldTypeUpper) ||
+                            preg_match('/^INTEGER\d*$/', $fieldTypeUpper) ||
+                            $fieldTypeUpper === 'INT4' || $fieldTypeUpper === 'INT8' || $fieldTypeUpper === 'INT2') {
+                            $numericFields[$fieldName] = 'INTEGER';
+                        }
+                        // Check for float types
+                        elseif (in_array($fieldTypeUpper, ['FLOAT', 'DOUBLE', 'REAL', 'NUMERIC', 'DECIMAL', 'MONEY']) ||
+                            preg_match('/^FLOAT\d*$/', $fieldTypeUpper) ||
+                            preg_match('/^DOUBLE\d*$/', $fieldTypeUpper) ||
+                            $fieldTypeUpper === 'FLOAT4' || $fieldTypeUpper === 'FLOAT8' ||
+                            $fieldTypeUpper === 'NUMERIC' || $fieldTypeUpper === 'DECIMAL') {
+                            $numericFields[$fieldName] = 'FLOAT';
+                        }
+                    }
+                }
+                
                 $results = [];
                 $rowCount = 0;
                 while ($row = pg_fetch_array($statement, null, PGSQL_ASSOC)) {
+                    // Convert aggregate function results to proper types
+                    $row = $this->convertAggregateTypesInRow($row, $aggregateColumns);
+                    // Convert numeric field types to proper types
+                    $row = $this->convertNumericTypesInRow($row, $numericFields);
                     $results[] = $row;
                     $rowCount++;
                 }

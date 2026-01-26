@@ -395,12 +395,13 @@ class Builder implements IBuilder
 
         if (!empty($this->query->limit)) {
             $limits = explode(', ', $this->query->limit['value']);
-            $values = array_merge(
-                $values,
-                array_map(fn($limit) => $limit, count($limits) === 1
-                    ? $limits
-                    : array_reverse($limits))
-            );
+            if (isset($this->query->limit['offset']) && count($limits) === 2) {
+                // SQLite uses "LIMIT ? OFFSET ?", so we need limit first, then offset
+                // limit['value'] contains "offset, limit", so we reverse it
+                $values = array_merge($values, array_reverse($limits));
+            } else {
+                $values = array_merge($values, $limits);
+            }
         }
         return $values;
     }

@@ -102,7 +102,7 @@ class SQL
      * Regex patterns for use in class
      */
     private static array $patternMap = [
-        'sqlBinds' => '/(:[a-zA-Z]{1,})/i',
+        'sqlBinds' => '/(:[a-zA-Z_][a-zA-Z0-9_]*)/',
         'sqlArgs' => '/(:\w+)/',
         'sqlGroups' => '/(\w+)?\((.+)\)\s/m'
     ];
