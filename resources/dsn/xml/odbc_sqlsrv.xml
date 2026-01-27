@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
-  <driver>sqlsrv</driver>
-  <host>sqlsrv</host>
-  <port>1433</port>
-  <database>demodev</database>
-  <user>sa</user>
-  <password>Masterkey@1</password>
-  <charset>utf8</charset>
-  <options>
+	<driver>sqlsrv</driver>
+	<host>sqlsrv</host>
+	<port>1433</port>
+	<database>demodev</database>
+	<user>sa</user>
+	<password>Masterkey@1</password>
+	<charset>utf8</charset>
+	<options>
 		<option name="ODBC::ATTR_PERSISTENT">true</option>
 		<option name="ODBC::ATTR_CONNECT_TIMEOUT">28800</option>
 		<option name="ODBC::ATTR_DEFAULT_FETCH_MODE">ODBC::FETCH_OBJ</option>
-  </options>
-  <exception>true</exception>
+	</options>
+	<exception>true</exception>
 </root>

@@ -1,0 +1,2 @@
+database,charset,options,exception
+"../../resources/database/yaml","utf8","[{""YAML::ATTR_PERSISTENT"":true,""YAML::ATTR_AUTOCOMMIT"":true,""YAML::ATTR_CONNECT_TIMEOUT"":28800,""YAML::ATTR_DEFAULT_FETCH_MODE"":""YAML::FETCH_OBJ""}]","true"

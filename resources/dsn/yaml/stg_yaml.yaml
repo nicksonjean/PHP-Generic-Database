@@ -1,0 +1,9 @@
+engine: yaml
+database: ../../resources/database/yaml
+charset: utf8
+options:
+  - "YAML::ATTR_PERSISTENT": true
+    "YAML::ATTR_AUTOCOMMIT": true
+    "YAML::ATTR_CONNECT_TIMEOUT": 28800
+    "YAML::ATTR_DEFAULT_FETCH_MODE": "YAML::FETCH_OBJ"
+exception: true

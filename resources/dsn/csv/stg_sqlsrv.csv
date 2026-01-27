@@ -1,0 +1,2 @@
+engine,host,port,database,user,password,charset,options,exception
+"sqlsrv","sqlsrv","1433","demodev","sa","Masterkey@1","utf8","[{""SQLSrv::ATTR_PERSISTENT"":true,""SQLSrv::ATTR_CONNECT_TIMEOUT"":28800,""SQLSrv::ATTR_DEFAULT_FETCH_MODE"":""SQLSrv::FETCH_OBJ""}]","true"

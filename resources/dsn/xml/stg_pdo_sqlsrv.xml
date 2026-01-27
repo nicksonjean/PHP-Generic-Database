@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
-  <engine>pdo</engine>
-  <driver>sqlsrv</driver>
-  <host>sqlsrv</host>
-  <port>1433</port>
-  <database>demodev</database>
-  <user>sa</user>
-  <password>Masterkey@1</password>
-  <charset>utf8</charset>
-  <options>
+	<engine>pdo</engine>
+	<driver>sqlsrv</driver>
+	<host>sqlsrv</host>
+	<port>1433</port>
+	<database>demodev</database>
+	<user>sa</user>
+	<password>Masterkey@1</password>
+	<charset>utf8</charset>
+	<options>
 		<option name="PDO::ATTR_EMULATE_PREPARES">true</option>
 		<option name="PDO::ATTR_DEFAULT_FETCH_MODE">PDO::FETCH_OBJ</option>
-  </options>
-  <exception>true</exception>
+	</options>
+	<exception>true</exception>
 </root>

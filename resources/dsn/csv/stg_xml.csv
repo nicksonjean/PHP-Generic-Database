@@ -1,0 +1,2 @@
+engine,database,charset,options,exception
+"xml","../../resources/database/xml","utf8","[{""XML::ATTR_PERSISTENT"":true,""XML::ATTR_AUTOCOMMIT"":true,""XML::ATTR_CONNECT_TIMEOUT"":28800,""XML::ATTR_DEFAULT_FETCH_MODE"":""XML::FETCH_OBJ""}]","true"

@@ -1,0 +1,8 @@
+database: ../../resources/database/neon
+charset: utf8
+options:
+  - "NEON::ATTR_PERSISTENT": true
+    "NEON::ATTR_AUTOCOMMIT": true
+    "NEON::ATTR_CONNECT_TIMEOUT": 28800
+    "NEON::ATTR_DEFAULT_FETCH_MODE": "NEON::FETCH_OBJ"
+exception: true

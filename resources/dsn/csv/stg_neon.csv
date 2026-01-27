@@ -1,0 +1,2 @@
+engine,database,charset,options,exception
+"neon","../../resources/database/neon","utf8","[{""NEON::ATTR_PERSISTENT"":true,""NEON::ATTR_AUTOCOMMIT"":true,""NEON::ATTR_CONNECT_TIMEOUT"":28800,""NEON::ATTR_DEFAULT_FETCH_MODE"":""NEON::FETCH_OBJ""}]","true"

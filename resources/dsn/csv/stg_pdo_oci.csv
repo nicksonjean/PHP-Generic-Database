@@ -1,0 +1,2 @@
+engine,driver,host,port,database,user,password,charset,options,exception
+"pdo","oci","oracle","1521","freepdb1","hr","masterkey","utf8","[{""PDO::ATTR_PERSISTENT"":true,""PDO::ATTR_EMULATE_PREPARES"":true,""PDO::ATTR_DEFAULT_FETCH_MODE"":""PDO::FETCH_OBJ""}]","true"

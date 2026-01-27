@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
-  <host>postgres</host>
-  <port>5432</port>
-  <database>postgres</database>
-  <user>postgres</user>
-  <password>masterkey</password>
-  <charset>utf8</charset>
-  <options>
+	<host>postgres</host>
+	<port>5432</port>
+	<database>postgres</database>
+	<user>postgres</user>
+	<password>masterkey</password>
+	<charset>utf8</charset>
+	<options>
 		<option name="PgSQL::ATTR_PERSISTENT">true</option>
 		<option name="PgSQL::ATTR_CONNECT_ASYNC">true</option>
 		<option name="PgSQL::ATTR_CONNECT_FORCE_NEW">true</option>
 		<option name="PgSQL::ATTR_CONNECT_TIMEOUT">28800</option>
-    <option name="PgSQL::ATTR_DEFAULT_FETCH_MODE">PgSQL::FETCH_OBJ</option>
-  </options>
-  <exception>true</exception>
+		<option name="PgSQL::ATTR_DEFAULT_FETCH_MODE">PgSQL::FETCH_OBJ</option>
+	</options>
+	<exception>true</exception>
 </root>

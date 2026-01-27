@@ -1,0 +1,2 @@
+host,port,database,user,password,charset,options,exception
+"oracle","1521","freepdb1","hr","masterkey","utf8","[{""OCI::ATTR_PERSISTENT"":true,""OCI::ATTR_CONNECT_TIMEOUT"":28800,""OCI::ATTR_DEFAULT_FETCH_MODE"":""OCI::FETCH_OBJ""}]","true"

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+	<engine>csv</engine>
+	<database>../../resources/database/csv</database>
+	<charset>utf8</charset>
+	<options>
+		<option name="CSV::ATTR_PERSISTENT">true</option>
+		<option name="CSV::ATTR_AUTOCOMMIT">true</option>
+		<option name="CSV::ATTR_CONNECT_TIMEOUT">28800</option>
+		<option name="CSV::ATTR_DEFAULT_FETCH_MODE">CSV::FETCH_OBJ</option>
+	</options>
+	<exception>true</exception>
+</config>

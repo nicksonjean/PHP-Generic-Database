@@ -1,0 +1,2 @@
+driver,database,charset,options,exception
+"sqlite","../../resources/database/sqlite/data/DB.SQLITE","utf8","[{""PDO::ATTR_PERSISTENT"":true,""PDO::ATTR_EMULATE_PREPARES"":true,""PDO::ATTR_DEFAULT_FETCH_MODE"":""PDO::FETCH_OBJ""}]","true"

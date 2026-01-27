@@ -1,0 +1,2 @@
+engine,host,port,database,user,password,charset,options,exception
+"pgsql","postgres","5432","postgres","postgres","masterkey","utf8","[{""PgSQL::ATTR_PERSISTENT"":true,""PgSQL::ATTR_CONNECT_ASYNC"":true,""PgSQL::ATTR_CONNECT_FORCE_NEW"":true,""PgSQL::ATTR_CONNECT_TIMEOUT"":28800,""PgSQL::ATTR_DEFAULT_FETCH_MODE"":""PgSQL::FETCH_OBJ""}]","true"

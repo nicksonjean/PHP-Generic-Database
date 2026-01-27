@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+	<engine>neon</engine>
+	<database>../../resources/database/neon</database>
+	<charset>utf8</charset>
+	<options>
+		<option name="NEON::ATTR_PERSISTENT">true</option>
+		<option name="NEON::ATTR_AUTOCOMMIT">true</option>
+		<option name="NEON::ATTR_CONNECT_TIMEOUT">28800</option>
+		<option name="NEON::ATTR_DEFAULT_FETCH_MODE">NEON::FETCH_OBJ</option>
+	</options>
+	<exception>true</exception>
+</config>

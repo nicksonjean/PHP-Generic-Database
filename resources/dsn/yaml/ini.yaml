@@ -1,0 +1,8 @@
+database: ../../resources/database/ini
+charset: utf8
+options:
+  - "INI::ATTR_PERSISTENT": true
+    "INI::ATTR_AUTOCOMMIT": true
+    "INI::ATTR_CONNECT_TIMEOUT": 28800
+    "INI::ATTR_DEFAULT_FETCH_MODE": "INI::FETCH_OBJ"
+exception: true

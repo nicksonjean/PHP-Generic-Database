@@ -1,0 +1,2 @@
+engine,driver,host,port,database,user,password,charset,options,exception
+"pdo","sqlsrv","sqlsrv","1433","demodev","sa","Masterkey@1","utf8","[{""PDO::ATTR_EMULATE_PREPARES"":true,""PDO::ATTR_DEFAULT_FETCH_MODE"":""PDO::FETCH_OBJ""}]","true"

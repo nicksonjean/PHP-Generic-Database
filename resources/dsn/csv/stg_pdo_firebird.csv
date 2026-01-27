@@ -1,0 +1,2 @@
+engine,driver,host,port,database,user,password,charset,options,exception
+"pdo","firebird","firebird","3050","/firebird/data/DB.FDB","sysdba","masterkey","utf8","[{""PDO::ATTR_PERSISTENT"":true,""PDO::ATTR_EMULATE_PREPARES"":true,""PDO::ATTR_DEFAULT_FETCH_MODE"":""PDO::FETCH_OBJ""}]","true"

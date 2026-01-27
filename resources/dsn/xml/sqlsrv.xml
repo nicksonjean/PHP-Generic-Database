@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
-  <host>sqlsrv</host>
-  <port>1433</port>
-  <database>demodev</database>
-  <user>sa</user>
-  <password>Masterkey@1</password>
-  <charset>utf8</charset>
-  <options>
+	<host>sqlsrv</host>
+	<port>1433</port>
+	<database>demodev</database>
+	<user>sa</user>
+	<password>Masterkey@1</password>
+	<charset>utf8</charset>
+	<options>
 		<option name="SQLSrv::ATTR_PERSISTENT">true</option>
 		<option name="SQLSrv::ATTR_CONNECT_TIMEOUT">28800</option>
-    <option name="SQLSrv::ATTR_DEFAULT_FETCH_MODE">SQLSrv::FETCH_OBJ</option>
-  </options>
-  <exception>true</exception>
+		<option name="SQLSrv::ATTR_DEFAULT_FETCH_MODE">SQLSrv::FETCH_OBJ</option>
+	</options>
+	<exception>true</exception>
 </root>

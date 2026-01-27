@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
-  <engine>oci</engine>
-  <host>oracle</host>
-  <port>1521</port>
-  <database>freepdb1</database>
-  <user>hr</user>
-  <password>masterkey</password>
-  <charset>utf8</charset>
-  <options>
+	<engine>oci</engine>
+	<host>oracle</host>
+	<port>1521</port>
+	<database>freepdb1</database>
+	<user>hr</user>
+	<password>masterkey</password>
+	<charset>utf8</charset>
+	<options>
 		<option name="OCI::ATTR_PERSISTENT">true</option>
 		<option name="OCI::ATTR_CONNECT_TIMEOUT">28800</option>
-    <option name="OCI::ATTR_DEFAULT_FETCH_MODE">OCI::FETCH_OBJ</option>
-  </options>
-  <exception>true</exception>
+		<option name="OCI::ATTR_DEFAULT_FETCH_MODE">OCI::FETCH_OBJ</option>
+	</options>
+	<exception>true</exception>
 </root>

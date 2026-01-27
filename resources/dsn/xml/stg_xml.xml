@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+	<engine>xml</engine>
+	<database>../../resources/database/xml</database>
+	<charset>utf8</charset>
+	<options>
+		<option name="XML::ATTR_PERSISTENT">true</option>
+		<option name="XML::ATTR_AUTOCOMMIT">true</option>
+		<option name="XML::ATTR_CONNECT_TIMEOUT">28800</option>
+		<option name="XML::ATTR_DEFAULT_FETCH_MODE">XML::FETCH_OBJ</option>
+	</options>
+	<exception>true</exception>
+</config>

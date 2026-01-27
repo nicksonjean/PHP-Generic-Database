@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
-  <driver>mysql</driver>
-  <host>mysql</host>
-  <port>3306</port>
-  <database>demodev</database>
-  <user>root</user>
-  <password>masterkey</password>
-  <charset>utf8</charset>
-  <options>
+	<driver>mysql</driver>
+	<host>mysql</host>
+	<port>3306</port>
+	<database>demodev</database>
+	<user>root</user>
+	<password>masterkey</password>
+	<charset>utf8</charset>
+	<options>
 		<option name="PDO::ATTR_PERSISTENT">true</option>
 		<option name="PDO::ATTR_EMULATE_PREPARES">true</option>
 		<option name="PDO::ATTR_DEFAULT_FETCH_MODE">PDO::FETCH_OBJ</option>
-  </options>
-  <exception>true</exception>
+	</options>
+	<exception>true</exception>
 </root>

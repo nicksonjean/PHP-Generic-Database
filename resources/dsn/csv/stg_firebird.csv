@@ -1,0 +1,2 @@
+engine,host,port,database,user,password,charset,options,exception
+"firebird","firebird","3050","/firebird/data/DB.FDB","sysdba","masterkey","utf8","[{""Firebird::ATTR_PERSISTENT"":true,""Firebird::ATTR_CONNECT_TIMEOUT"":28800,""Firebird::ATTR_DEFAULT_FETCH_MODE"":""Firebird::FETCH_OBJ""}]","true"

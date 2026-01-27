@@ -1,2 +1,2 @@
 engine,database,charset,options,exception
-"json","../../resources/database/json","utf8","[{""JSON::ATTR_PERSISTENT"":true,""JSON::ATTR_AUTOCOMMIT"":true,""JSON::ATTR_CONNECT_TIMEOUT"":28800,""JSON::ATTR_DEFAULT_FETCH_MODE"":""JSON::FETCH_OBJ""}]",true
+"json","../../resources/database/json","utf8","[{""JSON::ATTR_PERSISTENT"":true,""JSON::ATTR_AUTOCOMMIT"":true,""JSON::ATTR_CONNECT_TIMEOUT"":28800,""JSON::ATTR_DEFAULT_FETCH_MODE"":""JSON::FETCH_OBJ""}]","true"

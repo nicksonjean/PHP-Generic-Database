@@ -1,0 +1,9 @@
+engine: csv
+database: ../../resources/database/csv
+charset: utf8
+options:
+  - "CSV::ATTR_PERSISTENT": true
+    "CSV::ATTR_AUTOCOMMIT": true
+    "CSV::ATTR_CONNECT_TIMEOUT": 28800
+    "CSV::ATTR_DEFAULT_FETCH_MODE": "CSV::FETCH_OBJ"
+exception: true
