@@ -25,6 +25,8 @@ $csvOutputPath = __DIR__ . '/../resources/database/csv';
 $jsonOutputPath = __DIR__ . '/../resources/database/json';
 $xmlOutputPath = __DIR__ . '/../resources/database/xml';
 $yamlOutputPath = __DIR__ . '/../resources/database/yaml';
+$iniOutputPath = __DIR__ . '/../resources/database/ini';
+$neonOutputPath = __DIR__ . '/../resources/database/neon';
 
 try {
     echo "Iniciando exportação do banco de dados SQLite...\n\n";
@@ -36,7 +38,9 @@ try {
         ->toCSV($csvOutputPath)
         ->toXML($xmlOutputPath)
         ->toJSON($jsonOutputPath)
-        ->toYAML($yamlOutputPath);
+        ->toYAML($yamlOutputPath)
+        ->toINI($iniOutputPath)
+        ->toNEON($neonOutputPath);
 
     echo "Exportação concluída com sucesso!\n\n";
 

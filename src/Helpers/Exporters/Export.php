@@ -13,7 +13,9 @@ use Exception;
  *     ->toCSV('path/to/output')
  *     ->toXML('path/to/output')
  *     ->toJSON('path/to/output')
- *     ->toYAML('path/to/output');
+ *     ->toYAML('path/to/output')
+ *     ->toINI('path/to/output')
+ *     ->toNEON('path/to/output');
  *
  * Export::fromMySQLi($host, $user, $password, $database, $outputPath)
  *     ->toCSV('path/to/output')
@@ -331,6 +333,78 @@ class Export
     }
 
     /**
+     * Export to INI format
+     *
+     * @param string $outputPath Path where INI files will be saved
+     * @return self
+     * @throws Exception
+     */
+    public function toINI(string $outputPath): self
+    {
+        $outputPath = rtrim($outputPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        if (!is_dir($outputPath)) {
+            mkdir($outputPath, 0755, true);
+        }
+
+        $originalPath = $this->engineExporter->getOutputPath();
+        $this->setExporterOutputPath($outputPath);
+
+        $formatExporter = new INIExporter($this->engineExporter);
+
+        $files = $formatExporter->export();
+        $this->exportedPaths['ini'] = $files;
+
+        // Generate Schema.ini
+        $schemaGenerator = new SchemaGenerator(
+            $outputPath,
+            $this->engineExporter->getTables(),
+            $this->engineExporter->getTableSchemas(),
+            'ini'
+        );
+        $schemaGenerator->generate($this->engineExporter);
+
+        $this->setExporterOutputPath($originalPath);
+
+        return $this;
+    }
+
+    /**
+     * Export to NEON format
+     *
+     * @param string $outputPath Path where NEON files will be saved
+     * @return self
+     * @throws Exception
+     */
+    public function toNEON(string $outputPath): self
+    {
+        $outputPath = rtrim($outputPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        if (!is_dir($outputPath)) {
+            mkdir($outputPath, 0755, true);
+        }
+
+        $originalPath = $this->engineExporter->getOutputPath();
+        $this->setExporterOutputPath($outputPath);
+
+        $formatExporter = new NEONExporter($this->engineExporter);
+
+        $files = $formatExporter->export();
+        $this->exportedPaths['neon'] = $files;
+
+        // Generate Schema.ini
+        $schemaGenerator = new SchemaGenerator(
+            $outputPath,
+            $this->engineExporter->getTables(),
+            $this->engineExporter->getTableSchemas(),
+            'neon'
+        );
+        $schemaGenerator->generate($this->engineExporter);
+
+        $this->setExporterOutputPath($originalPath);
+
+        return $this;
+    }
+
+    /**
      * Set exporter output path
      *
      * @param string $outputPath New output path
@@ -354,7 +428,7 @@ class Export
     /**
      * Get exported files for a specific format
      *
-     * @param string $format Format (csv, xml, json, yaml)
+     * @param string $format Format (csv, xml, json, yaml, ini, neon)
      * @return array Array of file paths
      */
     public function getExportedFiles(string $format): array
