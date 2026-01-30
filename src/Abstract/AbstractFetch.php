@@ -106,6 +106,7 @@ abstract class AbstractFetch implements IFetchAbstract
 
         if (isset($results[$position])) {
             $row = $results[$position++];
+            $row = $this->convertAggregateTypes($this->convertRowToNativeTypes($row));
             return Reflections::createObjectAndSetPropertiesCaseInsensitive(
                 $aClassOrObject,
                 $constructorArguments ?? [],
@@ -203,6 +204,52 @@ abstract class AbstractFetch implements IFetchAbstract
     }
 
     /**
+     * Applies convertToNativeType to every value in a row (for FETCH_ASSOC / FETCH_BOTH consistency).
+     *
+     * @param array $row The row data
+     * @return array The row with native types
+     */
+    protected function convertRowToNativeTypes(array $row): array
+    {
+        $converted = [];
+        foreach ($row as $key => $value) {
+            $converted[$key] = $this->convertToNativeType($value);
+        }
+        return $converted;
+    }
+
+    /**
+     * Converts a value to its appropriate type (int, float, or string).
+     *
+     * @param mixed $value The value to convert
+     * @return mixed The converted value
+     */
+    protected function convertToNativeType(mixed $value): mixed
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        // If already a number type, return as is
+        if (is_int($value) || is_float($value)) {
+            return $value;
+        }
+
+        // If it's a string that represents a number
+        if (is_string($value) && $value !== '' && is_numeric($value)) {
+            // Check if it's a float (contains decimal point or uses scientific notation)
+            if (str_contains($value, '.') || str_contains(strtolower($value), 'e')) {
+                return (float) $value;
+            }
+            // Otherwise it's an integer
+            return (int) $value;
+        }
+
+        // Return as is for other types (strings, booleans, etc.)
+        return $value;
+    }
+
+    /**
      * Fetches the current row as both an associative and a numeric array.
      *
      * @return bool|array Returns an associative and numeric array if successful, false on failure.
@@ -223,8 +270,9 @@ abstract class AbstractFetch implements IFetchAbstract
             $result = [];
             $index = 0;
             foreach ($row as $key => $value) {
-                $result[$index] = (string) $value;
-                $result[$key] = (string) $value;
+                $typedValue = $this->convertToNativeType($value);
+                $result[$index] = $typedValue;
+                $result[$key] = $typedValue;
                 $index++;
             }
             return $result;
@@ -252,7 +300,7 @@ abstract class AbstractFetch implements IFetchAbstract
 
         if (isset($results[$position])) {
             $row = $results[$position++];
-            return $this->convertAggregateTypes($row);
+            return $this->convertAggregateTypes($this->convertRowToNativeTypes($row));
         }
 
         $cacheData['exhausted'] = true;
@@ -276,7 +324,7 @@ abstract class AbstractFetch implements IFetchAbstract
 
         if (isset($results[$position])) {
             $row = array_values($results[$position++]);
-            return array_map('strval', $row);
+            return array_map([$this, 'convertToNativeType'], $row);
         }
 
         $cacheData['exhausted'] = true;
@@ -287,9 +335,9 @@ abstract class AbstractFetch implements IFetchAbstract
      * Fetches a single value from the result set, or false if there are no more rows.
      *
      * @param int $columnIndex Index of the value to fetch. If not provided, fetches the first column.
-     * @return string|false The value of the row at the specified index, false if no more rows, or null on error.
+     * @return mixed The value of the row at the specified index, false if no more rows, or null on error.
      */
-    public function internalFetchColumn(int $columnIndex = 0): false|string
+    public function internalFetchColumn(int $columnIndex = 0): mixed
     {
         $statement = $this->getInstance()->getStatement();
         if (!$statement) {
@@ -304,7 +352,7 @@ abstract class AbstractFetch implements IFetchAbstract
         if (isset($results[$position])) {
             $row = $results[$position++];
             $values = array_values($row);
-            return isset($values[$columnIndex]) ? (string) $values[$columnIndex] : false;
+            return isset($values[$columnIndex]) ? $this->convertToNativeType($values[$columnIndex]) : false;
         }
 
         $cacheData['exhausted'] = true;
@@ -324,14 +372,16 @@ abstract class AbstractFetch implements IFetchAbstract
         }
         $cacheData = $this->getStrategy()->cacheResults($statement);
         $results = $cacheData['results'];
-        return array_map([$this, 'convertAggregateTypes'], $results);
+        return array_map(function (array $row): array {
+            return $this->convertAggregateTypes($this->convertRowToNativeTypes($row));
+        }, $results);
     }
 
     /**
      * Fetches all rows from the result set as a numerically indexed array of arrays,
-     * converting all values to strings, or an empty array if there are no more rows.
+     * converting values to their native types, or an empty array if there are no more rows.
      *
-     * @return array A numerically indexed array of the row values as strings, or an empty array if no more rows, or null on error.
+     * @return array A numerically indexed array of the row values with native types, or an empty array if no more rows, or null on error.
      */
     public function internalFetchAllNum(): array
     {
@@ -343,16 +393,16 @@ abstract class AbstractFetch implements IFetchAbstract
 
         $result = [];
         foreach ($cacheData['results'] as $row) {
-            $result[] = array_map('strval', array_values($row));
+            $result[] = array_map([$this, 'convertToNativeType'], array_values($row));
         }
         return $result;
     }
 
     /**
      * Fetches all rows from the result set as an array of arrays, where each row is both numerically and associatively indexed.
-     * All values are converted to strings. If there are no more rows, an empty array is returned.
+     * All values are converted to their native types. If there are no more rows, an empty array is returned.
      *
-     * @return array An array of the row values as strings, with both numerical and associative indexes, or an empty array if no more rows, or null on error.
+     * @return array An array of the row values with native types, with both numerical and associative indexes, or an empty array if no more rows, or null on error.
      */
     public function internalFetchAllBoth(): array
     {
@@ -367,8 +417,9 @@ abstract class AbstractFetch implements IFetchAbstract
             $combined = [];
             $index = 0;
             foreach ($row as $key => $value) {
-                $combined[$index] = (string) $value;
-                $combined[$key] = (string) $value;
+                $typedValue = $this->convertToNativeType($value);
+                $combined[$index] = $typedValue;
+                $combined[$key] = $typedValue;
                 $index++;
             }
             $result[] = $combined;
@@ -377,10 +428,10 @@ abstract class AbstractFetch implements IFetchAbstract
     }
 
     /**
-     * Fetches all values of a single column from the result set as an array of strings.
+     * Fetches all values of a single column from the result set as an array with native types.
      *
      * @param int $columnIndex Index of the value to fetch. If not provided, fetches the first column.
-     * @return array An array of the column values as strings, or an empty array if no more rows, or null on error.
+     * @return array An array of the column values with native types, or an empty array if no more rows, or null on error.
      */
     public function internalFetchAllColumn(int $columnIndex = 0): array
     {
@@ -394,7 +445,7 @@ abstract class AbstractFetch implements IFetchAbstract
         foreach ($cacheData['results'] as $row) {
             $values = array_values($row);
             if (isset($values[$columnIndex])) {
-                $result[] = (string) $values[$columnIndex];
+                $result[] = $this->convertToNativeType($values[$columnIndex]);
             }
         }
         return $result;
@@ -420,6 +471,7 @@ abstract class AbstractFetch implements IFetchAbstract
 
         $result = [];
         foreach ($cacheData['results'] as $row) {
+            $row = $this->convertAggregateTypes($this->convertRowToNativeTypes($row));
             $result[] = Reflections::createObjectAndSetPropertiesCaseInsensitive(
                 $aClassOrObject,
                 $constructorArguments ?? [],

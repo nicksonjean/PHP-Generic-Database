@@ -19,7 +19,12 @@ require_once PATH_ROOT . '/vendor/autoload.php';
 
 Dotenv::createImmutable(PATH_ROOT)->load();
 
-$context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::odbcSQLSrv(env: $_ENV, strategy: false)->connect();
+// $context = Chainable::odbcMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::odbcOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 
 $sep = str_repeat('=', 80) . "\n";
 

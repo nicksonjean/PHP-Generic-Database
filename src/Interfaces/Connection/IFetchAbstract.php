@@ -32,10 +32,10 @@ interface IFetchAbstract
     public function internalFetchBoth(): bool|array;
 
     /**
-     * Fetches a single row from the result set as a numerically indexed array,
-     * converting all values to strings, or returns false if there are no more rows.
+     * Fetches a single row from the result set as an associative array,
+     * converting values to their native types, or returns false if there are no more rows.
      *
-     * @return array|false|null A numerically indexed array of the row values as strings, false if no more rows, or null on error.
+     * @return array|false|null An associative array of the row values with native types, false if no more rows, or null on error.
      */
     public function internalFetchAssoc(): array|null|false;
 
@@ -50,38 +50,38 @@ interface IFetchAbstract
      * Fetches a single value from the result set, or false if there are no more rows.
      *
      * @param int $columnIndex Index of the value to fetch. If not provided, fetches the first column.
-     * @return string|false The value of the row at the specified index, false if no more rows, or null on error.
+     * @return mixed The value of the row at the specified index with native type, false if no more rows, or null on error.
      */
-    public function internalFetchColumn(int $columnIndex = 0): false|string;
+    public function internalFetchColumn(int $columnIndex = 0): mixed;
 
     /**
      * Fetches all rows from the result set as an associative array, or an empty array if there are no more rows.
      *
-     * @return array An associative array of the row values as strings, or an empty array if no more rows, or null on error.
+     * @return array An associative array of the row values with native types, or an empty array if no more rows, or null on error.
      */
     public function internalFetchAllAssoc(): array;
 
     /**
      * Fetches all rows from the result set as a numerically indexed array of arrays,
-     * converting all values to strings, or an empty array if there are no more rows.
+     * converting values to their native types, or an empty array if there are no more rows.
      *
-     * @return array A numerically indexed array of the row values as strings, or an empty array if no more rows, or null on error.
+     * @return array A numerically indexed array of the row values with native types, or an empty array if no more rows, or null on error.
      */
     public function internalFetchAllNum(): array;
 
     /**
      * Fetches all rows from the result set as an array of arrays, where each row is both numerically and associatively indexed.
-     * All values are converted to strings. If there are no more rows, an empty array is returned.
+     * All values are converted to their native types. If there are no more rows, an empty array is returned.
      *
-     * @return array An array of the row values as strings, with both numerical and associative indexes, or an empty array if no more rows, or null on error.
+     * @return array An array of the row values with native types, with both numerical and associative indexes, or an empty array if no more rows, or null on error.
      */
     public function internalFetchAllBoth(): array;
 
     /**
-     * Fetches all values of a single column from the result set as an array of strings.
+     * Fetches all values of a single column from the result set as an array with native types.
      *
      * @param int $columnIndex Index of the value to fetch. If not provided, fetches the first column.
-     * @return array An array of the column values as strings, or an empty array if no more rows, or null on error.
+     * @return array An array of the column values with native types, or an empty array if no more rows, or null on error.
      */
     public function internalFetchAllColumn(int $columnIndex = 0): array;
 

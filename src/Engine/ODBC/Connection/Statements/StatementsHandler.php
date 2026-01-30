@@ -320,6 +320,145 @@ class StatementsHandler extends AbstractStatements implements IStatements
     }
 
     /**
+     * Builds the ordered array of values for odbc_execute from named or positional parameters.
+     * When arguments are named (associative array with :placeholder keys), values are ordered
+     * by the order of placeholders in the original SQL so they match the ? positions.
+     *
+     * @param string $queryString Original SQL with :placeholders
+     * @param array $arguments Named [':key' => value] or positional [value, ...] arguments
+     * @return array Values in the order required by odbc_execute
+     */
+    private function getOrderedExecuteParams(string $queryString, array $arguments): array
+    {
+        $placeholderOrder = SQL::arguments($queryString, null);
+        if (empty($placeholderOrder)) {
+            return array_values($arguments);
+        }
+        $isNamed = !empty($arguments) && is_string(array_key_first($arguments));
+        if (!$isNamed) {
+            return array_values($arguments);
+        }
+        $ordered = [];
+        foreach ($placeholderOrder as $key) {
+            $name = (str_starts_with((string) $key, ':')) ? $key : (':' . $key);
+            $ordered[] = $arguments[$name] ?? $arguments[$key] ?? null;
+        }
+        return $ordered;
+    }
+
+    /**
+     * Quotes a value for SQL substitution (used when replacing ? in the parsed query).
+     */
+    private function quoteValueForSubstitution(mixed $value): string
+    {
+        return match (true) {
+            $value === null => 'NULL',
+            is_bool($value) => $value ? '1' : '0',
+            is_int($value), is_float($value) => (string) $value,
+            is_string($value) => "'" . str_replace("'", "''", $value) . "'",
+            default => "'" . str_replace("'", "''", (string) $value) . "'",
+        };
+    }
+
+    /**
+     * Executes a raw query (no params) via odbc_exec - same path as ComplexPrepare substitution.
+     * Parse + odbc_exec + fetch + setStatement so fetchAll() returns results.
+     *
+     * @param string $query Raw SQL string
+     * @return bool True if execution succeeded and results were set
+     */
+    private function executeRawQuery(string $query): bool
+    {
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
+            return false;
+        }
+
+        $this->setAllMetadata();
+        $parsedQuery = $this->parse($query);
+        $this->setQueryString($parsedQuery);
+
+        $statement = @odbc_exec($connection, $parsedQuery);
+        if (!$statement) {
+            return false;
+        }
+
+        $numFields = odbc_num_fields($statement);
+        $this->setQueryColumns($numFields);
+
+        if ($numFields > 0) {
+            $results = [];
+            while ($row = odbc_fetch_array($statement, 0)) {
+                $results[] = $row;
+            }
+            $this->setStatement(['results' => $results]);
+            $this->setQueryRows(count($results));
+            if (function_exists('odbc_free_result')) {
+                odbc_free_result($statement);
+            }
+        } else {
+            $this->setAffectedRows(odbc_num_rows($statement));
+            if (function_exists('odbc_free_result')) {
+                odbc_free_result($statement);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Substitutes named placeholders in the original SQL with their values and runs odbc_exec.
+     * Uses parsed query (quoted identifiers + ?) then substitutes ? with values so metadata stores the final query.
+     *
+     * @param string $queryString Original SQL with :placeholders
+     * @param array $arguments Named [':key' => value] arguments
+     * @return bool True if execution succeeded and results were set
+     */
+    private function executeWithSubstitutedParams(string $queryString, array $arguments): bool
+    {
+        $connection = $this->getInstance()->getConnection();
+        if (!$connection) {
+            return false;
+        }
+
+        $parsedQuery = $this->parse($queryString);
+        $orderedValues = $this->getOrderedExecuteParams($queryString, $arguments);
+
+        $processedQuery = $parsedQuery;
+        foreach ($orderedValues as $value) {
+            $processedValue = $this->quoteValueForSubstitution($value);
+            $processedQuery = preg_replace('/\?/', $processedValue, $processedQuery, 1);
+        }
+
+        $this->setQueryString($processedQuery);
+
+        $statement = @odbc_exec($connection, $processedQuery);
+        if (!$statement) {
+            return false;
+        }
+
+        $numFields = odbc_num_fields($statement);
+        $this->setQueryColumns($numFields);
+
+        if ($numFields > 0) {
+            $results = [];
+            while ($row = odbc_fetch_array($statement, 0)) {
+                $results[] = $row;
+            }
+            $this->setStatement(['results' => $results]);
+            $this->setQueryRows(count($results));
+            if (function_exists('odbc_free_result')) {
+                odbc_free_result($statement);
+            }
+        } else {
+            $this->setAffectedRows(odbc_num_rows($statement));
+            if (function_exists('odbc_free_result')) {
+                odbc_free_result($statement);
+            }
+        }
+        return true;
+    }
+
+    /**
      * Binds a parameter to a variable in the SQL statement.
      *
      * @param object $params The name of the parameter or an args of parameters and values.
@@ -328,7 +467,14 @@ class StatementsHandler extends AbstractStatements implements IStatements
     private function internalBindParamArgs(object $params): void
     {
         $this->internalBindVariable($params->query->arguments);
-        if ($this->exec($params->statement->object, array_values($params->query->arguments))) {
+        $executeParams = $this->getOrderedExecuteParams(
+            $params->query->string ?? '',
+            $params->query->arguments
+        );
+
+        $execSucceeded = $this->exec($params->statement->object, $executeParams);
+
+        if ($execSucceeded) {
             if (odbc_num_fields($params->statement->object) > 0) {
                 $results = [];
                 while ($row = odbc_fetch_array($params->statement->object, 0)) {
@@ -338,6 +484,16 @@ class StatementsHandler extends AbstractStatements implements IStatements
                 $this->setQueryRows(count($results));
             } else {
                 $this->setAffectedRows(odbc_num_rows($params->statement->object));
+            }
+            return;
+        }
+
+        // odbc_execute failed (common with SQLite ODBC and multiple params): run query with substituted values
+        $args = $params->query->arguments ?? [];
+        $isNamedParams = !empty($args) && is_string(array_key_first($args));
+        if ($isNamedParams && ($params->query->string ?? '') !== '') {
+            if ($this->executeWithSubstitutedParams($params->query->string, $args)) {
+                return;
             }
         }
     }
@@ -365,7 +521,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     {
         $dialectQuote = match ($this->get('driver')) {
             'mysql' => SQL::SQL_DIALECT_BACKTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird' => SQL::SQL_DIALECT_DOUBLE_QUOTE,
+            'pgsql', 'sqlsrv', 'oci', 'firebird', 'sqlite' => SQL::SQL_DIALECT_DOUBLE_QUOTE,
             default => SQL::SQL_DIALECT_NONE,
         };
         $this->setQueryString(SQL::binding(SQL::escape(reset($params), $dialectQuote)));
@@ -481,29 +637,57 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function query(mixed ...$params): IConnection
     {
-        if (!empty($params) && ($statement = $this->prepareStatement(...$params)) && $this->exec($statement)) {
-            $isValidStatement = is_resource($statement) || (PHP_VERSION_ID >= 80400 && is_object($statement) && get_class($statement) === 'Odbc\Result');
+        if (empty($params)) {
+            return $this->getInstance();
+        }
 
-            if ($isValidStatement) {
-                $colCount = odbc_num_fields($statement);
-                if ($colCount > 0) {
-                    $this->setQueryColumns($colCount);
-                    $this->setQueryRows(
-                        (function (mixed $stmt): int {
-                            $results = [];
-                            $rows = 0;
-                            while ($row = odbc_fetch_array($stmt, 0)) {
-                                $results[] = $row;
-                                $rows++;
-                            }
-                            $this->setStatement(['results' => $results, 'statement' => $stmt]);
-                            return $rows;
-                        })($statement)
-                    );
-                } else {
-                    $this->setAffectedRows(odbc_num_rows($statement));
-                }
+        // Raw query (single string): same path as ComplexPrepare - odbc_exec + fetch + setStatement
+        if (count($params) === 1 && is_string($params[0]) && $params[0] !== '') {
+            if ($this->executeRawQuery($params[0])) {
+                return $this->getInstance();
             }
+        }
+
+        $statement = $this->prepareStatement(...$params);
+        if (!$statement) {
+            return $this->getInstance();
+        }
+
+        $isValidStatement = is_resource($statement) || (PHP_VERSION_ID >= 80400 && is_object($statement) && get_class($statement) === 'Odbc\Result');
+        if (!$isValidStatement) {
+            return $this->getInstance();
+        }
+
+        $execSucceeded = $this->exec($statement);
+
+        if ($execSucceeded) {
+            $colCount = odbc_num_fields($statement);
+            if ($colCount > 0) {
+                $this->setQueryColumns($colCount);
+                $results = [];
+                while ($row = odbc_fetch_array($statement, 0)) {
+                    $results[] = $row;
+                }
+                $this->setStatement(['results' => $results, 'statement' => $statement]);
+                $this->setQueryRows(count($results));
+            } else {
+                $this->setAffectedRows(odbc_num_rows($statement));
+            }
+            return $this->getInstance();
+        }
+
+        // exec() failed: statement may be a result set from odbc_exec (prepareStatement fallback), fetch directly
+        $colCount = odbc_num_fields($statement);
+        if ($colCount > 0) {
+            $this->setQueryColumns($colCount);
+            $results = [];
+            while ($row = odbc_fetch_array($statement, 0)) {
+                $results[] = $row;
+            }
+            $this->setStatement(['results' => $results, 'statement' => $statement]);
+            $this->setQueryRows(count($results));
+        } else {
+            $this->setAffectedRows(odbc_num_rows($statement));
         }
         return $this->getInstance();
     }
@@ -518,6 +702,18 @@ class StatementsHandler extends AbstractStatements implements IStatements
     {
         if (empty($params)) {
             return $this->getInstance();
+        }
+
+        // Named params (associative array): use substitution + odbc_exec to avoid driver issues with multiple params
+        if (count($params) === 2 && is_array($params[1]) && !empty($params[1])) {
+            $firstKey = array_key_first($params[1]);
+                if (is_string($firstKey) && str_starts_with($firstKey, ':')) {
+                $this->setAllMetadata();
+                $this->setQueryParameters($params[1]);
+                if ($this->executeWithSubstitutedParams($params[0], $params[1])) {
+                    return $this->getInstance();
+                }
+            }
         }
 
         $statement = $this->prepareStatement(...$params);
