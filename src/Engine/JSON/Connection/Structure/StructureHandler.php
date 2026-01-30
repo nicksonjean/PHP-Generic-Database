@@ -10,6 +10,8 @@ use GenericDatabase\Helpers\Parsers\Schema;
 use GenericDatabase\Interfaces\Connection\IStructure;
 use GenericDatabase\Generic\Connection\Structure;
 use GenericDatabase\Engine\JSON\Connection\JSON;
+use GenericDatabase\Interfaces\Connection\IStructureStrategy;
+use GenericDatabase\Engine\JSON\Connection\Structure\Strategy\StructureStrategy;
 
 #[AllowDynamicProperties]
 class StructureHandler implements IStructure
@@ -52,14 +54,35 @@ class StructureHandler implements IStructure
     private static array $data = [];
 
     /**
+     * Structure strategy for DML (load/getData/setData/save) used by StatementsHandler and TransactionsHandler.
+     * @var StructureStrategy|null
+     */
+    private ?StructureStrategy $structureStrategy = null;
+
+    /**
      * Constructor for the StructureHandler.
      *
      * @param IConnection $instance The instance of the connection.
+     * @param StructureStrategy|null $structureStrategy Optional strategy; when provided, handler injects itself into it.
      */
-    public function __construct(IConnection $instance)
+    public function __construct(IConnection $instance, ?StructureStrategy $structureStrategy = null)
     {
         self::$instance = $instance;
         self::$self = $this;
+        if ($structureStrategy !== null) {
+            $structureStrategy->setStructureHandler($this);
+            $this->structureStrategy = $structureStrategy;
+        }
+    }
+
+    /**
+     * Get the structure strategy (for StatementsHandler and TransactionsHandler).
+     *
+     * @return IStructureStrategy|null
+     */
+    public function getStructureStrategy(): ?IStructureStrategy
+    {
+        return $this->structureStrategy;
     }
 
     /**

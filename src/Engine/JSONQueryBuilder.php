@@ -538,21 +538,24 @@ class JSONQueryBuilder implements IQueryBuilder
 
     /**
      * Execute the query and cache results.
-     * Uses connection->query(buildRaw()) so SELECTs run through FetchHandler (JOIN, GROUP BY, etc.).
+     * Passes unquoted query (buildRawForExecution) to execution; sets metadata
+     * query string to display version (buildRaw with double quotes) after fetch.
      *
      * @return void
      * @throws Exceptions
      */
     private function runOnce(): void
     {
-        $currentQuery = $this->buildRaw();
+        $currentQueryForDisplay = $this->buildRaw();
+        $currentQueryForExecution = (new Builder($this->query))->buildRawForExecution();
 
-        if (self::$lastQuery !== $currentQuery || self::$cursorExhausted) {
+        if (self::$lastQuery !== $currentQueryForDisplay || self::$cursorExhausted) {
             $conn = $this->getContext();
-            $conn->query($currentQuery);
+            $conn->query($currentQueryForExecution);
             $rows = $conn->fetchAll(JSON::FETCH_ASSOC);
             self::$cachedResult = is_array($rows) ? $rows : [];
-            self::$lastQuery = $currentQuery;
+            $conn->setQueryString($currentQueryForDisplay);
+            self::$lastQuery = $currentQueryForDisplay;
             self::$cursorExhausted = false;
         }
     }

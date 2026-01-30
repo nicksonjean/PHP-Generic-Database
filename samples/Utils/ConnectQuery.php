@@ -26,13 +26,20 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 // $context = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::pdoSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
+// $context = Chainable::odbcMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::odbcSQLSrv(env: $_ENV, strategy: false)->connect();
+// $context = Chainable::odbcOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
+
 $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)->connect();
 
-var_dump($context);
+// var_dump($context);
 
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :id', [':id' => 10]);
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id = :id', '27');
-// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id');
+// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id DESC');
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :idA AND id <= :idB', [':idA' => 5, ':idB' => 10]);
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id BETWEEN :idA AND :idB', [':idA' => 15, ':idB' => 20]);
 // $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id NOT BETWEEN :idA AND :idB', [':idA' => 15, ':idB' => 20]);
@@ -72,22 +79,24 @@ var_dump($context);
 // $b = $context->prepare('UPDATE estado SET nome = :nome WHERE id = :id', [':nome' => 'TE', ':id' => '30']);
 // $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'TES', 'TI', 30);
 // $b = $context->prepare('DELETE FROM estado WHERE id IN (:id)', [[':id' => '28'], [':id' => '29'], [':id' => '30']]);
-// // $b = $context->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
+// $b = $context->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
 // $b = $context->query('DELETE FROM estado WHERE id IN (28, 29)');
 
 // var_dump($b);
 
 // var_dump($b->getAllMetadata());
 
-// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE "%TES%"');
+$a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE "%TES%"');
 
-// var_dump([
-//     $b->getQueryString(),
-//     $b->getQueryParameters(),
-//     $b->getQueryRows(),
-//     $b->getQueryColumns(),
-//     $b->getAffectedRows()
-// ]);
+var_dump($a->fetchAll(Connection::FETCH_OBJ));
+
+var_dump([
+    $a->getQueryString(),
+    $a->getQueryParameters(),
+    $a->getQueryRows(),
+    $a->getQueryColumns(),
+    $a->getAffectedRows()
+]);
 
 /*
 SQLite: 'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id'

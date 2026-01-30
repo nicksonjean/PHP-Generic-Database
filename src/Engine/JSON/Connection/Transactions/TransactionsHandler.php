@@ -6,6 +6,7 @@ namespace GenericDatabase\Engine\JSON\Connection\Transactions;
 
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\ITransactions;
+use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
 
 /**
  * Handles transaction operations for JSON connections.
@@ -40,13 +41,21 @@ class TransactionsHandler implements ITransactions
     protected static IConnection $instance;
 
     /**
+     * Structure handler; strategy from getStructureStrategy() is used for commit/rollback.
+     * @var StructureHandler|null
+     */
+    protected static ?StructureHandler $structureHandler = null;
+
+    /**
      * Constructor.
      *
      * @param IConnection $instance The connection instance.
+     * @param StructureHandler|null $structureHandler Structure handler; strategy from getStructureStrategy() is used for commit/rollback.
      */
-    public function __construct(IConnection $instance)
+    public function __construct(IConnection $instance, ?StructureHandler $structureHandler = null)
     {
         self::$instance = $instance;
+        self::$structureHandler = $structureHandler;
     }
 
     /**
@@ -73,7 +82,10 @@ class TransactionsHandler implements ITransactions
         }
 
         // Backup current data for potential rollback
-        if (method_exists($this->getInstance(), 'getData')) {
+        $strategy = self::$structureHandler?->getStructureStrategy();
+        if ($strategy !== null) {
+            self::$transactionBackup = $strategy->getData();
+        } elseif (method_exists($this->getInstance(), 'getData')) {
             self::$transactionBackup = $this->getInstance()->getData();
         }
 
@@ -102,7 +114,10 @@ class TransactionsHandler implements ITransactions
 
         // Save data to file
         $result = true;
-        if (method_exists($this->getInstance(), 'save') && method_exists($this->getInstance(), 'getData')) {
+        $strategy = self::$structureHandler?->getStructureStrategy();
+        if ($strategy !== null) {
+            $result = $strategy->save($strategy->getData());
+        } elseif (method_exists($this->getInstance(), 'save') && method_exists($this->getInstance(), 'getData')) {
             $result = $this->getInstance()->save($this->getInstance()->getData());
         }
 
@@ -132,8 +147,13 @@ class TransactionsHandler implements ITransactions
         }
 
         // Restore backup data
-        if (self::$transactionBackup !== null && method_exists($this->getInstance(), 'setData')) {
-            $this->getInstance()->setData(self::$transactionBackup);
+        if (self::$transactionBackup !== null) {
+            $strategy = self::$structureHandler?->getStructureStrategy();
+            if ($strategy !== null) {
+                $strategy->setData(self::$transactionBackup);
+            } elseif (method_exists($this->getInstance(), 'setData')) {
+                $this->getInstance()->setData(self::$transactionBackup);
+            }
         }
 
         self::$inTransaction = false;

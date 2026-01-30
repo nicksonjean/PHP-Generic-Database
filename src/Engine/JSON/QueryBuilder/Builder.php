@@ -609,7 +609,126 @@ class Builder implements IBuilder
             $parts[] = $limitStr;
         }
 
+        return SQL::escape(trim(implode(' ', $parts)), SQL::SQL_DIALECT_DOUBLE_QUOTE);
+    }
+
+    /**
+     * Build the query without identifier quoting (for internal execution).
+     * Used by the JSON engine so parseAndExecuteQuery receives unquoted identifiers.
+     *
+     * @return string
+     * @throws Exceptions
+     */
+    public function buildForExecution(): string
+    {
+        $parts = [];
+
+        $columns = $this->buildSelect(true);
+        $distinct = $this->isDistinct() ? 'DISTINCT ' : '';
+        $parts[] = "SELECT {$distinct}" . implode(', ', $columns);
+
+        $from = $this->buildFrom();
+        $parts[] = "FROM {$from}";
+
+        $join = $this->buildJoin();
+        if ($join !== '') {
+            $parts[] = $join;
+        }
+
+        $on = $this->buildOn();
+        if ($on !== '') {
+            $parts[] = $on;
+        }
+
+        $where = $this->buildWhere();
+        if (!empty($where)) {
+            $whereParts = [];
+            foreach ($where as $condition) {
+                $alias = $condition['alias'] ?? null;
+                $colBase = $condition['column'] ?? '';
+                $column = ($alias !== null && $alias !== '' ? $alias . '.' : '') . $colBase;
+                $operator = strtoupper((string) ($condition['operator'] ?? '='));
+                $value = $condition['value'] ?? null;
+
+                if ($operator === 'IN' || $operator === 'NOT IN') {
+                    $values = is_array($value) ? $value : [$value];
+                    $placeholders = implode(', ', array_fill(0, count($values), '?'));
+                    $whereParts[] = "{$column} {$operator} ({$placeholders})";
+                    continue;
+                }
+
+                if ($operator === 'BETWEEN' || $operator === 'NOT BETWEEN') {
+                    $whereParts[] = "{$column} {$operator} ? AND ?";
+                    continue;
+                }
+
+                if ($operator === 'IS NULL' || $operator === 'IS NOT NULL') {
+                    $whereParts[] = "{$column} {$operator}";
+                    continue;
+                }
+
+                if (is_object($value) && isset($value->is_regex)) {
+                    $whereParts[] = "{$column} {$operator} ?";
+                    continue;
+                }
+
+                $whereParts[] = "{$column} {$operator} ?";
+            }
+            $whereStr = $whereParts[0];
+            for ($i = 1; $i < count($whereParts); $i++) {
+                $connector = ($where[$i]['condition'] ?? null) === Condition::DISJUNCTION() ? 'OR' : 'AND';
+                $whereStr .= ' ' . $connector . ' ' . $whereParts[$i];
+            }
+            $parts[] = "WHERE " . $whereStr;
+        }
+
+        $group = $this->buildGroup();
+        if ($group !== '') {
+            $parts[] = $group;
+        }
+
+        $having = $this->buildHaving();
+        if ($having !== '') {
+            $parts[] = $having;
+        }
+
+        $orderByStr = $this->buildOrderByString();
+        if ($orderByStr !== '') {
+            $parts[] = $orderByStr;
+        }
+
+        $limitStr = $this->buildLimitString();
+        if ($limitStr !== '') {
+            $parts[] = $limitStr;
+        }
+
         return trim(implode(' ', $parts));
+    }
+
+    /**
+     * Build the raw query with values substituted, without identifier quoting (for execution).
+     *
+     * @return string
+     * @throws Exceptions
+     */
+    public function buildRawForExecution(): string
+    {
+        $query = $this->buildForExecution();
+        $values = $this->getValues();
+
+        foreach ($values as $value) {
+            $formatted = match (true) {
+                is_null($value) => 'NULL',
+                is_bool($value) => $value ? '1' : '0',
+                is_numeric($value) => (string) $value,
+                is_string($value) => "'" . addslashes($value) . "'",
+                default => "'" . addslashes((string) $value) . "'",
+            };
+
+            $query = preg_replace('/\?/', $formatted, $query, 1);
+        }
+
+        return $query;
     }
 
     /**

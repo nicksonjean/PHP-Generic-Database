@@ -13,6 +13,7 @@ use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
 
 /**
  * Handles SQL-like statement operations for JSON connections.
@@ -28,15 +29,26 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
     private IConnection $connection;
 
     /**
+     * @var StructureHandler|null Structure handler; strategy is obtained via getStructureStrategy() for DML.
+     */
+    private ?StructureHandler $structureHandler;
+
+    /**
      * Constructor.
      *
      * @param IConnection $connection The connection instance.
+     * @param StructureHandler|null $structureHandler Structure handler; strategy from getStructureStrategy() is used for INSERT/UPDATE/DELETE.
      * @param IOptions|null $optionsHandler The options handler (optional).
      * @param IReport|null $reportHandler The report handler (optional).
      */
-    public function __construct(IConnection $connection, ?IOptions $optionsHandler = null, ?IReport $reportHandler = null)
-    {
+    public function __construct(
+        IConnection $connection,
+        ?StructureHandler $structureHandler = null,
+        ?IOptions $optionsHandler = null,
+        ?IReport $reportHandler = null
+    ) {
         $this->connection = $connection;
+        $this->structureHandler = $structureHandler;
 
         // Create default handlers if not provided
         if ($optionsHandler === null) {
@@ -60,6 +72,48 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
     }
 
     /**
+     * Load table data via structure handler (strategy when available, otherwise handler directly).
+     *
+     * @param string $tableName The table name.
+     * @return array
+     */
+    private function loadTableData(string $tableName): array
+    {
+        if ($this->structureHandler === null) {
+            return [];
+        }
+        $strategy = $this->structureHandler->getStructureStrategy();
+        if ($strategy !== null) {
+            $strategy->load($tableName);
+            return $strategy->getData();
+        }
+        $this->structureHandler->load($tableName);
+        return $this->structureHandler->getData();
+    }
+
+    /**
+     * Persist table data via structure handler (strategy when available, otherwise handler directly).
+     *
+     * @param array $newData The data to save.
+     * @param string $tableName The table name.
+     * @return void
+     */
+    private function persistTableData(array $newData, string $tableName): void
+    {
+        if ($this->structureHandler === null) {
+            return;
+        }
+        $strategy = $this->structureHandler->getStructureStrategy();
+        if ($strategy !== null) {
+            $strategy->setData($newData);
+            $strategy->save($newData, $tableName);
+            return;
+        }
+        $this->structureHandler->setData($newData);
+        $this->structureHandler->save($newData, $tableName);
+    }
+
+    /**
      * Execute a query.
      *
      * @param mixed ...$params The query parameters.
@@ -70,21 +124,11 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
     {
         $query = $params[0] ?? '';
         $this->setAllMetadata();
-        
-        // Parse the query to format with proper identifier quoting
-        $parsedQuery = $this->parse($query);
-        $this->setQueryString($parsedQuery);
-
-        // Store the parsed query
-        $this->setStatement($parsedQuery);
-
-        // Detect query type and execute DML operations for raw queries
-        // Use original query for detection to avoid issues with quoted identifiers
+        $this->setQueryString($query);
+        $this->setStatement($query);
         $queryType = $this->detectQueryType($query);
 
         if (in_array($queryType, ['INSERT', 'UPDATE', 'DELETE'])) {
-            // For DML operations, we need to work with the original query format
-            // since the parsing logic expects unquoted identifiers
             $this->executeRawDmlQuery($query);
         }
 
@@ -131,12 +175,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
         // Parse values (handle quoted strings)
         $values = $this->parseRawValues($rawValues);
 
-        // Load table data
-        if (method_exists($this->connection, 'load')) {
-            $this->connection->load($tableName);
-        }
-
-        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+        $data = $this->loadTableData($tableName);
 
         // Build the row to insert
         $row = [];
@@ -161,12 +200,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
 
         if ($result) {
             $newData = $processor->getData();
-            if (method_exists($this->connection, 'setData')) {
-                $this->connection->setData($newData);
-            }
-            if (method_exists($this->connection, 'save')) {
-                $this->connection->save($newData, $tableName);
-            }
+            $this->persistTableData($newData, $tableName);
             $this->setLastInsertId((int) $row['id']);
             return 1;
         }
@@ -191,12 +225,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
         $setClause = $matches[2];
         $whereClause = $matches[3];
 
-        // Load table data
-        if (method_exists($this->connection, 'load')) {
-            $this->connection->load($tableName);
-        }
-
-        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+        $data = $this->loadTableData($tableName);
 
         // Parse SET clause (raw values)
         $updateData = $this->parseRawSetClause($setClause);
@@ -209,12 +238,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
 
         if ($affected > 0) {
             $newData = $processor->getData();
-            if (method_exists($this->connection, 'setData')) {
-                $this->connection->setData($newData);
-            }
-            if (method_exists($this->connection, 'save')) {
-                $this->connection->save($newData, $tableName);
-            }
+            $this->persistTableData($newData, $tableName);
         }
 
         return $affected;
@@ -236,12 +260,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
         $tableName = $matches[1];
         $whereClause = $matches[2];
 
-        // Load table data
-        if (method_exists($this->connection, 'load')) {
-            $this->connection->load($tableName);
-        }
-
-        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+        $data = $this->loadTableData($tableName);
 
         // Parse WHERE clause (raw values)
         $conditions = $this->parseRawWhereClause($whereClause);
@@ -251,12 +270,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
 
         if ($deleted > 0) {
             $newData = $processor->getData();
-            if (method_exists($this->connection, 'setData')) {
-                $this->connection->setData($newData);
-            }
-            if (method_exists($this->connection, 'save')) {
-                $this->connection->save($newData, $tableName);
-            }
+            $this->persistTableData($newData, $tableName);
         }
 
         return $deleted;
@@ -421,7 +435,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
     {
         $query = $params[0] ?? '';
         $this->setAllMetadata();
-        
+
         // Parse the query to format with proper identifier quoting
         $parsedQuery = $this->parse($query);
         $this->setQueryString($parsedQuery);
@@ -534,12 +548,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
         $columns = array_map('trim', explode(',', $matches[2]));
         $valuePlaceholders = array_map('trim', explode(',', $matches[3]));
 
-        // Load table data
-        if (method_exists($this->connection, 'load')) {
-            $this->connection->load($tableName);
-        }
-
-        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+        $data = $this->loadTableData($tableName);
 
         // Build the row to insert
         $row = [];
@@ -568,12 +577,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
 
         if ($result) {
             $newData = $processor->getData();
-            if (method_exists($this->connection, 'setData')) {
-                $this->connection->setData($newData);
-            }
-            if (method_exists($this->connection, 'save')) {
-                $this->connection->save($newData, $tableName);
-            }
+            $this->persistTableData($newData, $tableName);
             $this->setLastInsertId((int) $row['id']);
             return 1;
         }
@@ -599,12 +603,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
         $setClause = $matches[2];
         $whereClause = $matches[3];
 
-        // Load table data
-        if (method_exists($this->connection, 'load')) {
-            $this->connection->load($tableName);
-        }
-
-        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+        $data = $this->loadTableData($tableName);
 
         // Parse SET clause
         $updateData = $this->parseSetClause($setClause, $parameters);
@@ -617,12 +616,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
 
         if ($affected > 0) {
             $newData = $processor->getData();
-            if (method_exists($this->connection, 'setData')) {
-                $this->connection->setData($newData);
-            }
-            if (method_exists($this->connection, 'save')) {
-                $this->connection->save($newData, $tableName);
-            }
+            $this->persistTableData($newData, $tableName);
         }
 
         return $affected;
@@ -645,12 +639,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
         $tableName = $matches[1];
         $whereClause = $matches[2];
 
-        // Load table data
-        if (method_exists($this->connection, 'load')) {
-            $this->connection->load($tableName);
-        }
-
-        $data = method_exists($this->connection, 'getData') ? $this->connection->getData() : [];
+        $data = $this->loadTableData($tableName);
 
         // Parse WHERE clause
         $conditions = $this->parseWhereClauseSimple($whereClause, $parameters);
@@ -660,12 +649,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
 
         if ($deleted > 0) {
             $newData = $processor->getData();
-            if (method_exists($this->connection, 'setData')) {
-                $this->connection->setData($newData);
-            }
-            if (method_exists($this->connection, 'save')) {
-                $this->connection->save($newData, $tableName);
-            }
+            $this->persistTableData($newData, $tableName);
         }
 
         return $deleted;

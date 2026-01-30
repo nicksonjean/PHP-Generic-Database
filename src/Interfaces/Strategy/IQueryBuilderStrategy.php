@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GenericDatabase\Interfaces\Strategy;
 
 use GenericDatabase\Interfaces\IQueryBuilder;

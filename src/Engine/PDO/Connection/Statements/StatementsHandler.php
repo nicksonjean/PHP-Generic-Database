@@ -333,7 +333,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     {
         $dialectQuote = match ($this->get('driver')) {
             'mysql' => SQL::SQL_DIALECT_BACKTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird' => SQL::SQL_DIALECT_DOUBLE_QUOTE,
+            'pgsql', 'sqlsrv', 'oci', 'firebird', 'sqlite' => SQL::SQL_DIALECT_DOUBLE_QUOTE,
             default => SQL::SQL_DIALECT_NONE,
         };
         $this->setQueryString(SQL::escape(reset($params), $dialectQuote));

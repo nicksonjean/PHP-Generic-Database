@@ -36,6 +36,8 @@ use GenericDatabase\Engine\JSON\Connection\Transactions\TransactionsHandler;
 use GenericDatabase\Engine\JSON\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Interfaces\Connection\IStructure;
 use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
+use GenericDatabase\Engine\JSON\Connection\Structure\Strategy\StructureStrategy;
+use GenericDatabase\Interfaces\Connection\IReport;
 
 /**
  * JSON Connection class for flat file database operations.
@@ -94,19 +96,27 @@ class JSONConnection implements IConnection
 
     private static IStructure $structureHandler;
 
+    private static IReport $reportHandler;
+
     /**
      * Empty constructor since initialization is handled by traits and interface methods
      */
     public function __construct()
     {
-        self::$structureHandler = new StructureHandler($this);
+        self::$structureHandler = new StructureHandler($this, new StructureStrategy());
         self::$fetchHandler = new FetchHandler($this, new FetchStrategy(), self::$structureHandler);
         self::$optionsHandler = new OptionsHandler($this);
         self::$dsnHandler = new DSNHandler($this);
-        self::$statementsHandler = new StatementsHandler($this, self::$optionsHandler, new ReportHandler());
+        self::$reportHandler = new ReportHandler($this);
+        self::$statementsHandler = new StatementsHandler($this, self::$structureHandler, self::$optionsHandler, self::$reportHandler);
         self::$attributesHandler = new AttributesHandler($this, self::$optionsHandler);
         self::$argumentsHandler = new ArgumentsHandler($this, self::$optionsHandler, new ArgumentsStrategy());
-        self::$transactionsHandler = new TransactionsHandler($this);
+        self::$transactionsHandler = new TransactionsHandler($this, self::$structureHandler);
+    }
+
+    private function getReportHandler(): IReport
+    {
+        return self::$reportHandler;
     }
 
     private function getStructureHandler(): IStructure

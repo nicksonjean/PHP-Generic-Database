@@ -256,9 +256,12 @@ class Schema
     public static function parseColumnDefinition(string $definition): array
     {
         $parts = preg_split('/\s+/', trim($definition));
+        $rawName = $parts[0] ?? '';
+        // Strip surrounding quotes so display/API get clean name; Schema.ini may use quotes for special names (e.g. spaces, case).
+        $columnName = trim((string) $rawName, "\"' \t");
 
         $column = [
-            'name' => $parts[0] ?? '',
+            'name' => $columnName,
             'type' => $parts[1] ?? self::TYPE_CHAR,
             'width' => null,
             'nullable' => true,

@@ -172,29 +172,35 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                 continue;
             }
 
-            // Process double quotes (identifiers)
+            // Process double quotes (identifiers); support SQL escaped quotes "" = one "
             if ($char === '"' && !$inSingleQuote) {
-                // Find the matching closing quote
                 $start = $i;
                 $i++;
                 $identifier = '';
 
-                while ($i < $len && $query[$i] !== '"') {
-                    $identifier .= $query[$i];
-                    $i++;
-                }
-
-                // If we found a closing quote and it's a valid identifier
-                if ($i < $len && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $identifier)) {
-                    // Remove the quotes - just add the identifier
-                    $result .= $identifier;
-                    $i++; // Skip the closing quote
-                } else {
-                    // Not a valid identifier or unmatched quote, keep as is
-                    $result .= substr($query, $start, $i - $start + ($i < $len ? 1 : 0));
-                    if ($i < $len) {
+                while ($i < $len) {
+                    if ($i + 1 < $len && $query[$i] === '"' && $query[$i + 1] === '"') {
+                        $identifier .= '"';
+                        $i += 2;
+                    } elseif ($query[$i] === '"') {
+                        $i++;
+                        break;
+                    } else {
+                        $identifier .= $query[$i];
                         $i++;
                     }
+                }
+
+                // Normalize identifier: strip surrounding quotes when escaped (""e"" -> e)
+                while (strlen($identifier) >= 2 && $identifier[0] === '"' && $identifier[-1] === '"') {
+                    $identifier = substr($identifier, 1, -1);
+                    $identifier = str_replace('""', '"', $identifier);
+                }
+
+                if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $identifier)) {
+                    $result .= $identifier;
+                } else {
+                    $result .= substr($query, $start, $i - $start);
                 }
             } else {
                 $result .= $char;
@@ -1125,6 +1131,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
     /**
      * Fetch all rows into objects.
+     * When object is null (FETCH_INTO not configured), behave like FETCH_OBJ.
      *
      * @param object|null $object The object template.
      * @return array The populated objects.
@@ -1132,6 +1139,9 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
     private function fetchAllIntoObjects(?object $object): array
     {
         $results = $this->internalFetchAllAssoc();
+        if ($object === null) {
+            return array_map(fn($row) => (object) $row, $results);
+        }
         return array_map(fn($row) => $this->fetchInto($row, clone $object), $results);
     }
 
