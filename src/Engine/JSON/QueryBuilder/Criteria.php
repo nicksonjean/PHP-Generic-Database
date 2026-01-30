@@ -83,10 +83,9 @@ class Criteria implements ICriteria
     {
         $result = [];
         if (Arrays::isMultidimensional($arguments['data'])) {
-            $tableSets = call_user_func_array(
-                'array_merge',
-                is_iterable(reset($arguments['data'])) ? reset($arguments['data']) : $arguments['data']
-            );
+            // $arguments['data'] is array of arrays (e.g. [['cidade c'], ['estado e']]); pass it directly to array_merge.
+            // Do not use reset() which could pass a single array or string and cause TypeError.
+            $tableSets = call_user_func_array('array_merge', $arguments['data']);
             foreach ($tableSets as $table) {
                 if (!str_contains($table, '=')) {
                     $result['join'] = self::getFrom(['type' => $arguments['type'], 'data' => $table]);
@@ -161,6 +160,12 @@ class Criteria implements ICriteria
                 str_contains($data, 'NOT') => $enum::NEGATION(),
                 default => $enum::AFFIRMATION()
             };
+
+            // For LIKE, extract full pattern after "LIKE " (regex getWhereHaving may cut at space)
+            if ($aggregationType === $enum::LIKE() && preg_match('/\s+LIKE\s+(.+)$/is', $data, $likeMatch)) {
+                $matches['arguments'] = trim(trim($likeMatch[1]), "'\"");
+                $matches['arguments_unlimited'] = $matches['arguments'];
+            }
 
             $result = isset($matches['function_name']) ? Arrays::arraySafe([
                 'type' => $enum::FUNCTION(),

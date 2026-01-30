@@ -152,7 +152,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         // Pattern matches: "identifier" where identifier is a valid SQL identifier
         // This will match: "table", "column", "alias", "table"."column", etc.
         // But won't match string literals in WHERE clauses (those are handled separately)
-        
+
         // Replace quoted identifiers - matches word characters between double quotes
         // that are not inside single-quoted strings
         $result = '';
@@ -160,10 +160,10 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         $inSingleQuote = false;
         $inDoubleQuote = false;
         $i = 0;
-        
+
         while ($i < $len) {
             $char = $query[$i];
-            
+
             // Track single quotes (string literals) - don't process inside them
             if ($char === "'" && ($i === 0 || $query[$i - 1] !== '\\')) {
                 $inSingleQuote = !$inSingleQuote;
@@ -171,19 +171,19 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                 $i++;
                 continue;
             }
-            
+
             // Process double quotes (identifiers)
             if ($char === '"' && !$inSingleQuote) {
                 // Find the matching closing quote
                 $start = $i;
                 $i++;
                 $identifier = '';
-                
+
                 while ($i < $len && $query[$i] !== '"') {
                     $identifier .= $query[$i];
                     $i++;
                 }
-                
+
                 // If we found a closing quote and it's a valid identifier
                 if ($i < $len && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $identifier)) {
                     // Remove the quotes - just add the identifier
@@ -201,7 +201,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                 $i++;
             }
         }
-        
+
         return $result;
     }
 
@@ -225,6 +225,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         $isDistinct = $parsed['distinct'];
         $fromTable = $parsed['from'];
         $fromAlias = $parsed['from_alias'];
+        $fromTables = $parsed['from_tables'] ?? [];
         $joinTable = $parsed['join_table'];
         $joinAlias = $parsed['join_alias'];
         $onCondition = $parsed['on_condition'];
@@ -236,18 +237,46 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         $limit = $parsed['limit'];
         $offset = $parsed['offset'];
 
-        $data = $this->loadTableData($structureHandler, $fromTable, $fromAlias);
-        if ($joinTable !== null) {
-            $rightData = $this->loadTableData($structureHandler, $joinTable, $joinAlias);
-            $data = $this->executeJoin($data, $rightData, $fromAlias, $joinAlias, $onCondition);
+        // Multiple tables in FROM (comma-separated) – load all and build Cartesian product
+        if (count($fromTables) >= 2) {
+            $data = $this->loadTableData($structureHandler, $fromTables[0]['table'], $fromTables[0]['alias']);
+            for ($i = 1; $i < count($fromTables); $i++) {
+                $rightData = $this->loadTableData($structureHandler, $fromTables[$i]['table'], $fromTables[$i]['alias']);
+                $data = $this->cartesianProduct($data, $rightData);
+            }
+            $joinTable = $fromTables[1]['table'] ?? null;
+            $joinAlias = $fromTables[1]['alias'] ?? null;
+        } else {
+            $data = $this->loadTableData($structureHandler, $fromTable, $fromAlias);
+            if ($joinTable !== null) {
+                $rightData = $this->loadTableData($structureHandler, $joinTable, $joinAlias);
+                $data = $this->executeJoin($data, $rightData, $fromAlias, $joinAlias, $onCondition);
+            }
         }
 
         $processor = new DataProcessor($data);
 
         if ($whereClause !== null && $whereClause !== '') {
-            $conditions = $this->parseWhereClause($whereClause);
-            if (!empty($conditions)) {
-                $processor->where($conditions, 'AND');
+            $whereParsed = $this->parseWhereClauseWithLogic($whereClause);
+            if (isset($whereParsed['groups'])) {
+                // Mixed AND/OR: row matches if it matches any group (each group is AND of conditions)
+                $data = array_values(array_filter($data, function ($row) use ($whereParsed) {
+                    foreach ($whereParsed['groups'] as $groupConditions) {
+                        $proc = new DataProcessor([(array) $row]);
+                        $proc->where($groupConditions, 'AND');
+                        if (!empty($proc->getData())) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }));
+                $processor->setData($data);
+            } else {
+                $conditions = $whereParsed['conditions'];
+                $whereLogic = $whereParsed['logic'];
+                if (!empty($conditions)) {
+                    $processor->where($conditions, $whereLogic);
+                }
             }
         }
 
@@ -348,6 +377,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
             'distinct' => false,
             'from' => '',
             'from_alias' => null,
+            'from_tables' => [],  // multiple tables from "t1 a, t2 b" (Cartesian product)
             'join_table' => null,
             'join_alias' => null,
             'on_condition' => null,
@@ -434,27 +464,67 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
     private function extractFromJoin(string $fromStr, array &$out): string
     {
-        $pattern = '/^(\w+)(?:\s+(\w+))?(?:\s+(?:INNER\s+)?JOIN\s+(\w+)(?:\s+(\w+))?\s+ON\s+(.+?))?(?=\s+WHERE\s+|\s+GROUP\s+BY\s+|\s+ORDER\s+BY\s+|\s+LIMIT\s+|$)/is';
-        if (preg_match($pattern, $fromStr, $m)) {
+        // Extract FROM clause content (until WHERE, GROUP BY, ORDER BY, LIMIT)
+        if (preg_match('/^(.+?)(?=\s+WHERE\s+|\s+GROUP\s+BY\s+|\s+ORDER\s+BY\s+|\s+LIMIT\s+|$)/is', $fromStr, $fromMatch)) {
+            $fromClause = trim($fromMatch[1]);
+        } else {
+            $fromClause = $fromStr;
+        }
+        $afterFrom = trim(preg_replace('/^.+?(?=\s+WHERE\s+|\s+GROUP\s+BY\s+|\s+ORDER\s+BY\s+|\s+LIMIT\s+|$)/is', '', $fromStr, 1));
+
+        // Check for explicit JOIN ... ON (single pattern: table alias JOIN table alias ON cond)
+        $joinPattern = '/^(\w+)(?:\s+(\w+))?(?:\s+(?:INNER\s+)?JOIN\s+(\w+)(?:\s+(\w+))?\s+ON\s+(.+?))$/is';
+        if (preg_match($joinPattern, $fromClause, $m)) {
             $out['from'] = $m[1];
             $second = isset($m[2]) && $m[2] !== '' ? $m[2] : null;
-            $hasJoin = isset($m[3]) && $m[3] !== '';
-            if ($second !== null && !$hasJoin && in_array(strtolower($second), self::RESERVED_WORDS, true)) {
+            if ($second !== null && in_array(strtolower($second), self::RESERVED_WORDS, true)) {
                 $second = null;
             }
             $out['from_alias'] = $second;
-            if ($hasJoin) {
-                $out['join_table'] = $m[3];
-                $out['join_alias'] = isset($m[4]) && $m[4] !== '' ? $m[4] : null;
-                $on = trim($m[5]);
-                if (preg_match('/^(\w+\.\w+)\s*=\s*(\w+\.\w+)\s*$/i', $on, $onM)) {
-                    $out['on_condition'] = ['left' => trim($onM[1]), 'right' => trim($onM[2])];
+            $out['join_table'] = $m[3];
+            $out['join_alias'] = isset($m[4]) && $m[4] !== '' ? $m[4] : null;
+            $on = trim($m[5]);
+            if (preg_match('/^(\w+\.\w+)\s*=\s*(\w+\.\w+)\s*$/i', $on, $onM)) {
+                $out['on_condition'] = ['left' => trim($onM[1]), 'right' => trim($onM[2])];
+            }
+            return $afterFrom;
+        }
+
+        // Comma-separated FROM (e.g. "estado e, cidade c") – multiple tables, Cartesian product
+        if (str_contains($fromClause, ',')) {
+            $out['from_tables'] = [];
+            foreach (array_map('trim', explode(',', $fromClause)) as $part) {
+                if ($part === '') {
+                    continue;
+                }
+                if (preg_match('/^(\w+)\s+(\w+)\s*$/', $part, $tm)) {
+                    $alias = in_array(strtolower($tm[2]), self::RESERVED_WORDS, true) ? null : $tm[2];
+                    $out['from_tables'][] = ['table' => $tm[1], 'alias' => $alias];
+                } else {
+                    $out['from_tables'][] = ['table' => $part, 'alias' => null];
                 }
             }
-            $afterFrom = preg_replace($pattern, '', $fromStr, 1);
-            return trim($afterFrom);
+            if (!empty($out['from_tables'])) {
+                $first = $out['from_tables'][0];
+                $out['from'] = $first['table'];
+                $out['from_alias'] = $first['alias'];
+            }
+            return $afterFrom;
         }
-        return $fromStr;
+
+        // Single table [alias]
+        $singlePattern = '/^(\w+)(?:\s+(\w+))?$/';
+        if (preg_match($singlePattern, $fromClause, $m)) {
+            $out['from'] = $m[1];
+            $second = isset($m[2]) && $m[2] !== '' ? $m[2] : null;
+            if ($second !== null && in_array(strtolower($second), self::RESERVED_WORDS, true)) {
+                $second = null;
+            }
+            $out['from_alias'] = $second;
+            return $afterFrom;
+        }
+
+        return $afterFrom;
     }
 
     private function extractWhereGroupHavingOrderLimit(string $s, array &$out): void
@@ -507,6 +577,29 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         $out['order_by_dir'] = $orderDir;
         $out['limit'] = $limit;
         $out['offset'] = $offset;
+    }
+
+    /**
+     * Build Cartesian product of two result sets (each row of left × each row of right, merged).
+     *
+     * @param array $left Rows with prefixed keys (e.g. e.id, e.nome).
+     * @param array $right Rows with prefixed keys (e.g. c.id, c.nome).
+     * @return array Cartesian product rows (merged associative arrays).
+     */
+    private function cartesianProduct(array $left, array $right): array
+    {
+        if (empty($left) || empty($right)) {
+            return [];
+        }
+        $result = [];
+        foreach ($left as $lRow) {
+            $lRow = (array) $lRow;
+            foreach ($right as $rRow) {
+                $rRow = (array) $rRow;
+                $result[] = $lRow + $rRow;
+            }
+        }
+        return $result;
     }
 
     private function loadTableData(?IStructure $handler, string $table, ?string $alias): array
@@ -664,8 +757,18 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                     }
                     continue;
                 }
+                // table.* wildcard: copy columns using unprefixed names (SQLite-style). Same column name = last wins.
+                if (preg_match('/^(\w+)\.\*$/', $expr, $starM)) {
+                    $prefix = $starM[1] . '.';
+                    foreach ($row as $k => $v) {
+                        if (str_starts_with((string) $k, $prefix)) {
+                            $colName = substr((string) $k, strlen($prefix));
+                            $result[$colName] = $v;
+                        }
+                    }
+                    continue;
+                }
                 $key = $this->outputKeyForSelectSpec($spec);
-                $lookup = $expr;
                 if (isset($row[$expr])) {
                     $result[$key] = $row[$expr];
                 } elseif (preg_match('/^(\w+)\.(\w+)$/', $expr, $m)) {
@@ -800,75 +903,163 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
     }
 
     /**
-     * Parse WHERE clause and return conditions array for DataProcessor.
+     * Split WHERE clause by OR operator (word boundary), for use when clause uses OR logic.
+     *
+     * @param string $clause The clause to split.
+     * @return array The split conditions (each trimmed).
+     */
+    private function splitByTopLevelOrOperator(string $clause): array
+    {
+        $parts = [];
+        $current = '';
+        $index = 0;
+        $len = strlen($clause);
+
+        while ($index < $len) {
+            if (strtoupper(substr($clause, $index, 2)) === 'OR') {
+                $beforeOk = ($index === 0) || !ctype_alnum($clause[$index - 1]);
+                $afterOk = ($index + 2 >= $len) || !ctype_alnum($clause[$index + 2]);
+
+                if ($beforeOk && $afterOk) {
+                    if (!empty(trim($current))) {
+                        $parts[] = trim($current);
+                    }
+                    $current = '';
+                    $index += 2;
+                    while ($index < $len && ctype_space($clause[$index])) {
+                        $index++;
+                    }
+                    continue;
+                }
+            }
+
+            $current .= $clause[$index];
+            $index++;
+        }
+
+        if (!empty(trim($current))) {
+            $parts[] = trim($current);
+        }
+
+        return !empty($parts) ? $parts : [$clause];
+    }
+
+    /**
+     * Parse WHERE clause. Supports mixed AND/OR: split by OR first, then each part by AND.
+     * Returns groups: (group1_cond1 AND group1_cond2 AND ...) OR (group2_cond1 AND ...).
+     *
+     * @param string $whereClause The WHERE clause string.
+     * @return array{conditions: array, logic: string, groups?: array} For single logic: conditions+logic. For mixed: groups (array of condition arrays).
+     */
+    private function parseWhereClauseWithLogic(string $whereClause): array
+    {
+        $whereClause = $this->unquoteIdentifiers($whereClause);
+
+        $hasOr = (bool) preg_match('/\bOR\b/i', $whereClause);
+        $hasAnd = (bool) preg_match('/\bAND\b/i', $whereClause);
+
+        // Mixed AND/OR: split by OR, then each part by AND (each OR-segment is AND of conditions)
+        if ($hasOr && $hasAnd) {
+            $orParts = $this->splitByTopLevelOrOperator($whereClause);
+            $groups = [];
+            foreach ($orParts as $part) {
+                $part = trim($part);
+                if ($part === '') {
+                    continue;
+                }
+                $andParts = $this->splitByTopLevelAndOperator($part);
+                $groupConditions = [];
+                foreach ($andParts as $sub) {
+                    $sub = trim($sub);
+                    if ($sub === '') {
+                        continue;
+                    }
+                    $cond = $this->parseOneWhereCondition($sub);
+                    if ($cond !== null) {
+                        $groupConditions[] = $cond;
+                    }
+                }
+                if (!empty($groupConditions)) {
+                    $groups[] = $groupConditions;
+                }
+            }
+            return ['groups' => $groups, 'group_logic' => 'OR'];
+        }
+
+        // Single logic: all OR or all AND
+        $parts = $hasOr
+            ? $this->splitByTopLevelOrOperator($whereClause)
+            : $this->splitByTopLevelAndOperator($whereClause);
+        $logic = $hasOr ? 'OR' : 'AND';
+
+        $conditions = [];
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if (empty($part)) {
+                continue;
+            }
+            $cond = $this->parseOneWhereCondition($part);
+            if ($cond !== null) {
+                $conditions[] = $cond;
+            }
+        }
+
+        return ['conditions' => $conditions, 'logic' => $logic];
+    }
+
+    /**
+     * Parse a single condition string (e.g. "e.id = 10") into a condition array for DataProcessor.
+     */
+    private function parseOneWhereCondition(string $part): ?array
+    {
+        $parsed = Regex::parseWhereCondition($part);
+        if ($parsed === null) {
+            return null;
+        }
+        $column = $parsed['column'];
+        if (isset($parsed['prefix']) && $parsed['prefix'] !== null && $parsed['prefix'] !== '') {
+            $column = $parsed['prefix'] . '.' . $column;
+        }
+        $condition = [
+            'column' => $column,
+            'operator' => $parsed['operator'],
+        ];
+        switch (strtoupper($parsed['operator'])) {
+            case 'BETWEEN':
+            case 'NOT BETWEEN':
+                $condition['value'] = [
+                    'min' => $parsed['value'],
+                    'max' => $parsed['value2'] ?? $parsed['value']
+                ];
+                break;
+            case 'IN':
+            case 'NOT IN':
+                $values = array_map(function ($val) {
+                    return trim(trim($val), "'\"");
+                }, explode(',', $parsed['value']));
+                $condition['value'] = $values;
+                break;
+            case 'LIKE':
+            case 'NOT LIKE':
+                $condition['value'] = $parsed['value'];
+                break;
+            default:
+                $condition['value'] = $parsed['value'];
+                break;
+        }
+        return $condition;
+    }
+
+    /**
+     * Parse WHERE clause and return conditions array for DataProcessor (backward compat).
      *
      * @param string $whereClause The WHERE clause string.
      * @return array The conditions array.
      */
     private function parseWhereClause(string $whereClause): array
     {
-        $conditions = [];
-
-        // Remove quotes from identifiers in WHERE clause for parsing
-        $whereClause = $this->unquoteIdentifiers($whereClause);
-
-        // Split by AND, preserving BETWEEN...AND
-        $parts = $this->splitByTopLevelAndOperator($whereClause);
-
-        foreach ($parts as $part) {
-            $part = trim($part);
-            if (empty($part)) {
-                continue;
-            }
-
-            // Use Regex::parseWhereCondition for parsing
-            $parsed = Regex::parseWhereCondition($part);
-
-            if ($parsed !== null) {
-                $column = $parsed['column'];
-                if (isset($parsed['prefix']) && $parsed['prefix'] !== null && $parsed['prefix'] !== '') {
-                    $column = $parsed['prefix'] . '.' . $column;
-                }
-                $condition = [
-                    'column' => $column,
-                    'operator' => $parsed['operator'],
-                ];
-
-                // Handle different operators
-                switch (strtoupper($parsed['operator'])) {
-                    case 'BETWEEN':
-                    case 'NOT BETWEEN':
-                        $condition['value'] = [
-                            'min' => $parsed['value'],
-                            'max' => $parsed['value2'] ?? $parsed['value']
-                        ];
-                        break;
-
-                    case 'IN':
-                    case 'NOT IN':
-                        // Parse IN values - can be comma-separated
-                        $values = array_map(function ($val) {
-                            return trim(trim($val), "'\"");
-                        }, explode(',', $parsed['value']));
-                        $condition['value'] = $values;
-                        break;
-
-                    case 'LIKE':
-                    case 'NOT LIKE':
-                        // Keep the LIKE pattern as is (with % wildcards)
-                        $condition['value'] = $parsed['value'];
-                        break;
-
-                    default:
-                        $condition['value'] = $parsed['value'];
-                        break;
-                }
-
-                $conditions[] = $condition;
-            }
-        }
-
-        return $conditions;
+        $result = $this->parseWhereClauseWithLogic($whereClause);
+        return $result['conditions'] ?? [];
     }
 
     /**

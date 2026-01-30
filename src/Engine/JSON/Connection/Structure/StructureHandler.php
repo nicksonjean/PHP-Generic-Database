@@ -294,11 +294,17 @@ class StructureHandler implements IStructure
             return self::$data;
         }
 
+        // No database path set (e.g. connection not fully initialized) – avoid creating invalid files
+        if ($database === '' || $database === null) {
+            return [];
+        }
+
         $filePath = $this->getTablePath(self::$currentTable);
 
-        if (!file_exists($filePath)) {
-            // Create empty file
-            file_put_contents($filePath, '[]');
+        if ($filePath === '' || !file_exists($filePath)) {
+            if ($filePath !== '') {
+                file_put_contents($filePath, '[]');
+            }
             return [];
         }
 

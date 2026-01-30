@@ -24,8 +24,6 @@ use GenericDatabase\Interfaces\Connection\IFlatFileFetch;
 use GenericDatabase\Interfaces\Connection\IFlatFileStatements;
 use GenericDatabase\Helpers\Parsers\QueryTypeDetector;
 use GenericDatabase\Interfaces\Connection\ITransactions;
-use GenericDatabase\Generic\Connection\Structure;
-use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Engine\JSON\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\JSON\Connection\Fetch\FetchHandler;
 use GenericDatabase\Engine\JSON\Connection\Report\ReportHandler;
@@ -204,99 +202,6 @@ class JSONConnection implements IConnection
     }
 
     /**
-     * Gets the structure of the database.
-     *
-     * @return array|Structure|Exceptions The structure of the database or an exception if getting the structure fails.
-     */
-    private function mount(): array|Structure|Exceptions
-    {
-        return $this->getStructureHandler()->mount();
-    }
-
-    /**
-     * Get the full file path for a table.
-     *
-     * @param string $table The table name.
-     * @return string The full file path (or empty string for memory database).
-     */
-    private function getTablePath(string $table): string
-    {
-        return $this->getStructureHandler()->getTablePath($table);
-    }
-
-    /**
-     * Get the schema.
-     *
-     * @return Structure|null The schema.
-     */
-    private function getSchema(): ?Structure
-    {
-        return $this->getStructureHandler()->getSchema()?->getSchema();
-    }
-
-    /**
-     * Get the schema file.
-     *
-     * @return string|null The file.
-     */
-    private function getSchemaFile(): ?string
-    {
-        return $this->getStructureHandler()->getSchema()?->getFile();
-    }
-
-    /**
-     * Get the schema data.
-     *
-     * @return array|null The data.
-     */
-    private function getSchemaData(): ?array
-    {
-        return $this->getStructureHandler()->getSchema()?->getData();
-    }
-
-    /**
-     * Get the tables.
-     *
-     * @return array|null The tables.
-     */
-    private function getTables(): ?array
-    {
-        return $this->getStructureHandler()->getTables();
-    }
-
-    /**
-     * Set the tables.
-     *
-     * @param array $tables The tables.
-     * @return void
-     */
-    private function setTables(array $tables): void
-    {
-        $this->getStructureHandler()->setTables($tables);
-    }
-
-    /**
-     * Get the structure.
-     *
-     * @return Structure|null The structure.
-     */
-    private function getStructure(): ?Structure
-    {
-        return $this->getStructureHandler()->getStructure();
-    }
-
-    /**
-     * Set the structure.
-     *
-     * @param Structure $structure The structure.
-     * @return void
-     */
-    private function setStructure(array|Structure|Exceptions $structure): void
-    {
-        $this->getStructureHandler()->setStructure($structure);
-    }
-
-    /**
      * This method is responsible for creating a new instance of the JSON connection.
      *
      * @param string $database The path of the database directory or 'memory' for in-memory database
@@ -451,81 +356,6 @@ class JSONConnection implements IConnection
     }
 
     /**
-     * Load data from a JSON table file.
-     *
-     * @param string|null $table The table name (JSON file without extension).
-     * @return array
-     * @throws Exceptions
-     */
-    private function load(?string $table = null): array
-    {
-        $data = $this->getStructureHandler()->load($table);
-        self::$connection = $data;
-        return $data;
-    }
-
-    /**
-     * Save data to a JSON table file.
-     *
-     * @param array $data The data to save.
-     * @param string|null $table The table name (optional).
-     * @return bool
-     */
-    private function save(array $data, ?string $table = null): bool
-    {
-        $result = $this->getStructureHandler()->save($data, $table);
-        if ($result) {
-            self::$connection = $data;
-        }
-        return $result;
-    }
-
-    /**
-     * Get the current data.
-     *
-     * @return array
-     */
-    private function getData(): array
-    {
-        return $this->getStructureHandler()->getData();
-    }
-
-    /**
-     * Set the data.
-     *
-     * @param array $data The data.
-     * @return void
-     */
-    private function setData(array $data): void
-    {
-        $this->getStructureHandler()->setData($data);
-        self::$connection = $data;
-    }
-
-    /**
-     * Set the current active table.
-     *
-     * @param string $table The table name.
-     * @return JSONConnection
-     */
-    private function from(string $table): JSONConnection
-    {
-        $this->getStructureHandler()->setCurrentTable(str_replace('.json', '', $table));
-        $this->load($this->getStructureHandler()->getCurrentTable());
-        return $this;
-    }
-
-    /**
-     * Get the current active table.
-     *
-     * @return string|null
-     */
-    private function getCurrentTable(): ?string
-    {
-        return $this->getStructureHandler()->getCurrentTable();
-    }
-
-    /**
      * Begin a transaction.
      *
      * @return bool
@@ -588,113 +418,6 @@ class JSONConnection implements IConnection
     }
 
     /**
-     * Insert a new row.
-     *
-     * @param array $row The row to insert.
-     * @return bool
-     */
-    private function insert(array $row): bool
-    {
-        $data = $this->getData();
-        $processor = new DataProcessor($data);
-        $result = $processor->insert($row);
-
-        if ($result) {
-            $newData = $processor->getData();
-            $this->setData($newData);
-
-            // Auto-save if not in transaction and auto-save is enabled
-            if (!$this->inTransaction() && JSON::getAttribute(JSON::ATTR_AUTO_SAVE)) {
-                $this->save($newData);
-            }
-
-            // Update last insert ID using reflection
-            $statementsHandler = $this->getStatementsHandler();
-            if (method_exists($statementsHandler, 'setLastInsertId')) {
-                $lastId = isset($row['id']) ? (int) $row['id'] : count($newData);
-                $statementsHandler->setLastInsertId($lastId);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Update rows matching the criteria.
-     *
-     * @param array $data The data to update.
-     * @param array $where The criteria.
-     * @return int
-     */
-    private function update(array $data, array $where): int
-    {
-        $currentData = $this->getData();
-        $processor = new DataProcessor($currentData);
-        $affected = $processor->update($data, $where);
-
-        if ($affected > 0) {
-            $newData = $processor->getData();
-            $this->setData($newData);
-
-            if (!$this->inTransaction() && JSON::getAttribute(JSON::ATTR_AUTO_SAVE)) {
-                $this->save($newData);
-            }
-        }
-
-        $this->getStatementsHandler()->setAffectedRows($affected);
-        return $affected;
-    }
-
-    /**
-     * Delete rows matching the criteria.
-     *
-     * @param array $where The criteria.
-     * @return int
-     */
-    private function delete(array $where): int
-    {
-        $currentData = $this->getData();
-        $processor = new DataProcessor($currentData);
-        $deleted = $processor->delete($where);
-
-        if ($deleted > 0) {
-            $newData = $processor->getData();
-            $this->setData($newData);
-
-            if (!$this->inTransaction() && JSON::getAttribute(JSON::ATTR_AUTO_SAVE)) {
-                $this->save($newData);
-            }
-        }
-
-        $this->getStatementsHandler()->setAffectedRows($deleted);
-        return $deleted;
-    }
-
-    /**
-     * Select rows matching the criteria.
-     *
-     * @param array $columns The columns to select.
-     * @param array $where The criteria.
-     * @return array
-     */
-    private function selectWhere(array $columns, array $where): array
-    {
-        $processor = new DataProcessor($this->getData());
-
-        if (!empty($where)) {
-            $processor->where($where);
-        }
-
-        if (!empty($columns) && !in_array('*', $columns)) {
-            $processor->select($columns);
-        }
-
-        return $processor->getData();
-    }
-
-    // IStatements implementation
-
-    /**
      * Reset all metadata.
      *
      * @return void
@@ -715,23 +438,12 @@ class JSONConnection implements IConnection
         $queryString = $this->getStatementsHandler()->getQueryString();
 
         // Only execute for SELECT queries - DML operations are already executed
-        if ($this->getStatementsHandler()->getQueryRows() === 0 && !empty($queryString) && $this->isDmlQuery($queryString) === false) {
+        if ($this->getStatementsHandler()->getQueryRows() === 0 && !empty($queryString) && QueryTypeDetector::isDmlQuery($queryString) === false) {
             // Force execution to populate metadata, cursor is reset for subsequent fetches
             $this->getFetchHandler()->execute();
         }
 
         return $this->getStatementsHandler()->getAllMetadata();
-    }
-
-    /**
-     * Check if the query is a DML operation (INSERT, UPDATE, DELETE).
-     *
-     * @param string $query The SQL query.
-     * @return bool
-     */
-    private function isDmlQuery(string $query): bool
-    {
-        return QueryTypeDetector::isDmlQuery($query);
     }
 
     /**
@@ -837,27 +549,6 @@ class JSONConnection implements IConnection
     public function setAffectedRows(int|false $params): void
     {
         $this->getStatementsHandler()->setAffectedRows($params);
-    }
-
-    /**
-     * Get the number of fetched rows.
-     *
-     * @return int
-     */
-    private function getFetchedRows(): int
-    {
-        return $this->getStatementsHandler()->getFetchedRows();
-    }
-
-    /**
-     * Set the number of fetched rows.
-     *
-     * @param int $params The number of fetched rows.
-     * @return void
-     */
-    private function setFetchedRows(int $params): void
-    {
-        $this->getStatementsHandler()->setFetchedRows($params);
     }
 
     /**

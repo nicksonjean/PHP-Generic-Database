@@ -192,11 +192,19 @@ class Clause implements IClause
         $getWhere = fn($arrayData) => Criteria::getWhereHaving($arrayData);
         foreach ($data as $column) {
             if (is_array($column)) {
-                array_map(fn($key) => $self->query->where[] = $getWhere([
-                    'data' => $key,
-                    'enum' => $enum,
-                    'condition' => $condition
-                ]), $column);
+                foreach ($column as $condKey => $expr) {
+                    $itemCondition = $condition;
+                    if (is_string($condKey)) {
+                        $itemCondition = strtoupper($condKey) === 'OR'
+                            ? Condition::DISJUNCTION()
+                            : Condition::CONJUNCTION();
+                    }
+                    $self->query->where[] = $getWhere([
+                        'data' => $expr,
+                        'enum' => $enum,
+                        'condition' => $itemCondition
+                    ]);
+                }
             } elseif (is_string($column)) {
                 $self->query->where[] = $getWhere(['data' => $column, 'enum' => $enum, 'condition' => $condition]);
             }

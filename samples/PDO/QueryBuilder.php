@@ -245,43 +245,44 @@ var_dump($testJ2);
 var_dump($testJ2->build());
 var_dump($testJ2->buildRaw());
 var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
+
 // while ($row = $testJ2->fetch(Connection::FETCH_ASSOC)) {
 //     var_dump($row);
 // }
 // var_dump($testJ2->getAllMetadata());
 
-// $combinedQuery = PDOQueryBuilder::with($context)::select(['maconha.id', 'maconha.nome'])
-//     ->from('estado AS maconha')
-//     ->where('maconha.id', '=', 'teste')
+// $combinedQuery = JSONQueryBuilder::with($context)::select(['e.id', 'e.nome'])
+//     ->from('estado AS e')
+//     ->where('e.id', '=', '10')
 //     ->union(
-//         PDOQueryBuilder::with($context)::select(['c.id', 'c.nome'])
+//         JSONQueryBuilder::with($context)::select(['c.id', 'c.nome'])
 //             ->from('estado AS c')
-//             ->where('c.id', '=', 'maconha.id')
+//             ->where('c.id', '=', 'e.id')
 //     )
 //     ->union(
-//         PDOQueryBuilder::with($context)::select(['d.id', 'd.nome'])
+//         JSONQueryBuilder::with($context)::select(['d.id', 'd.nome'])
 //             ->from('estado AS d')
-//             ->where('d.id', '=', 'maconha.id')
+//             ->where('d.id', '=', 'e.id')
 //     );
 
 // var_dump($combinedQuery);
 // var_dump($combinedQuery->build());
 // var_dump($combinedQuery->buildRaw());
 
-// $query = PDOQueryBuilder::with($context)::select(['*'])
+// $query = JSONQueryBuilder::with($context)::select(['*'])
 //     ->from('orders AS o')
 //     ->where('o.status', '=', 'completed')
 //     ->where('o.total_amount', '>', 1000)
 //     ->andWhere(
-//         PDOQueryBuilder::with($context)::exists(
-//             PDOQueryBuilder::with($context)::select(['1'])
+//         JSONQueryBuilder::with($context)::exists(
+//             JSONQueryBuilder::with($context)::select(['1'])
 //                 ->from('customers c')
 //                 ->where('c.id', '=', 'o.customer_id')
 //         )
 //     )
 //     ->orWhere(
-//         PDOQueryBuilder::with($context)::notExists(
-//             PDOQueryBuilder::with($context)::select(['1'])
+//         JSONQueryBuilder::with($context)::notExists(
+//             JSONQueryBuilder::with($context)::select(['1'])
 //                 ->from('returns r')
 //                 ->where('r.order_id', '=', 'o.id')
 //         )
@@ -291,8 +292,8 @@ var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
 // var_dump($query);
 
 
-// var_dump(PDOQueryBuilder::with($context)::getRegexSelect());
-// var_dump(PDOQueryBuilder::with($context)::getRegexFrom());
-// var_dump(PDOQueryBuilder::with($context)::getRegexOn());
-// var_dump(PDOQueryBuilder::with($context)::getRegexGroupOrder());
-// var_dump(PDOQueryBuilder::with($context)::getRegexWhereHaving());
+// var_dump(JSONQueryBuilder::with($context)::getRegexSelect());
+// var_dump(JSONQueryBuilder::with($context)::getRegexFrom());
+// var_dump(JSONQueryBuilder::with($context)::getRegexOn());
+// var_dump(JSONQueryBuilder::with($context)::getRegexGroupOrder());
+// var_dump(JSONQueryBuilder::with($context)::getRegexWhereHaving());

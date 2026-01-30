@@ -194,7 +194,17 @@ class Regex implements IRegex
     {
         $condition = trim($condition);
 
-        // Try simple pattern first
+        // Try table.column pattern FIRST (operators longest-first: >=, <=, !=, <>, then =, >, <)
+        if (preg_match('/^(\w+)\.(\w+)\s*(>=|<=|!=|<>|=|>|<)\s*(.+)$/', $condition, $matches)) {
+            return [
+                'column' => $matches[2],
+                'operator' => $matches[3],
+                'value' => trim($matches[4], "'\""),
+                'prefix' => $matches[1]
+            ];
+        }
+
+        // Try simple pattern (column without prefix; operators same order)
         if (preg_match(self::SIMPLE_PATTERN, $condition, $matches)) {
             return [
                 'column' => $matches[1],
@@ -204,10 +214,21 @@ class Regex implements IRegex
             ];
         }
 
-        // Try LIKE pattern
+        // Try table.column LIKE pattern
+        if (preg_match('/^(\w+)\.(\w+)\s+(NOT\s+)?LIKE\s+(.+)$/i', $condition, $matches)) {
+            $operator = !empty($matches[3]) ? 'NOT LIKE' : 'LIKE';
+            $value = trim($matches[4], "'\"");
+            return [
+                'column' => $matches[2],
+                'operator' => $operator,
+                'value' => $value,
+                'prefix' => $matches[1]
+            ];
+        }
+
+        // Try LIKE pattern (column without prefix)
         if (preg_match(self::LIKE_PATTERN, $condition, $matches)) {
             $operator = !empty($matches[2]) ? 'NOT LIKE' : 'LIKE';
-            // Value is in group 3 (quoted) or group 4 (unquoted)
             $value = !empty($matches[3]) ? $matches[3] : ($matches[4] ?? '');
             return [
                 'column' => $matches[1],
@@ -217,7 +238,18 @@ class Regex implements IRegex
             ];
         }
 
-        // Try IN pattern
+        // Try table.column IN (...) pattern first (column with prefix)
+        if (preg_match('/^(\w+)\.(\w+)\s+(NOT\s+)?IN\s*\(([^)]+)\)$/i', $condition, $matches)) {
+            $operator = !empty($matches[3]) ? 'NOT IN' : 'IN';
+            return [
+                'column' => $matches[2],
+                'operator' => $operator,
+                'value' => $matches[4],
+                'prefix' => $matches[1]
+            ];
+        }
+
+        // Try IN pattern (column without prefix)
         if (preg_match(self::IN_PATTERN, $condition, $matches)) {
             $operator = !empty($matches[2]) ? 'NOT IN' : 'IN';
             return [
@@ -228,7 +260,19 @@ class Regex implements IRegex
             ];
         }
 
-        // Try BETWEEN pattern
+        // Try table.column BETWEEN x AND y pattern first (column with prefix)
+        if (preg_match('/^(\w+)\.(\w+)\s+(NOT\s+)?BETWEEN\s+([^\s]+)\s+AND\s+([^\s]+)$/i', $condition, $matches)) {
+            $operator = !empty($matches[3]) ? 'NOT BETWEEN' : 'BETWEEN';
+            return [
+                'column' => $matches[2],
+                'operator' => $operator,
+                'value' => trim($matches[4], "'\""),
+                'value2' => trim($matches[5], "'\""),
+                'prefix' => $matches[1]
+            ];
+        }
+
+        // Try BETWEEN pattern (column without prefix)
         if (preg_match(self::BETWEEN_PATTERN, $condition, $matches)) {
             $operator = !empty($matches[2]) ? 'NOT BETWEEN' : 'BETWEEN';
             return [
@@ -248,16 +292,6 @@ class Regex implements IRegex
                 'operator' => $operator,
                 'value' => null,
                 'prefix' => null
-            ];
-        }
-
-        // Try with table prefix (table.column)
-        if (preg_match('/^(\w+)\.(\w+)\s*(=|!=|<>|>|<|>=|<=)\s*(.+)$/', $condition, $matches)) {
-            return [
-                'column' => $matches[2],
-                'operator' => $matches[3],
-                'value' => trim($matches[4], "'\""),
-                'prefix' => $matches[1]
             ];
         }
 

@@ -89,17 +89,19 @@ class Builder implements IBuilder
             throw new Exceptions("No file specified in FROM clause.");
         }
 
-        $from = reset($this->query->from);
-        if (!is_array($from)) {
-            return $from;
+        $parts = [];
+        foreach ($this->query->from as $from) {
+            if (!is_array($from)) {
+                $parts[] = $from;
+                continue;
+            }
+            $table = $from['table'] ?? '';
+            $alias = $from['alias'] ?? null;
+            $parts[] = $alias !== null && $alias !== ''
+                ? $table . ' ' . $alias
+                : $table;
         }
-
-        $table = $from['table'] ?? '';
-        $alias = $from['alias'] ?? null;
-
-        return $alias !== null && $alias !== ''
-            ? $table . ' ' . $alias
-            : $table;
+        return implode(', ', $parts);
     }
 
     /**
@@ -254,6 +256,7 @@ class Builder implements IBuilder
             $signal = strtoupper((string) ($data['signal'] ?? '='));
 
             $alias = $data['alias'] ?? null;
+            $condition = $data['condition'] ?? null;
 
             if ($aggregationType === Where::IN()) {
                 $values = $unlimited ?? $default;
@@ -264,7 +267,8 @@ class Builder implements IBuilder
                     'column' => $column,
                     'alias' => $alias,
                     'operator' => $aggregationAssert === Where::NEGATION() ? 'NOT IN' : 'IN',
-                    'value' => is_array($values) ? $values : [$values]
+                    'value' => is_array($values) ? $values : [$values],
+                    'condition' => $condition
                 ];
                 continue;
             }
@@ -276,7 +280,9 @@ class Builder implements IBuilder
                     'column' => $column,
                     'alias' => $alias,
                     'operator' => $aggregationAssert === Where::NEGATION() ? 'NOT LIKE' : 'LIKE',
-                    'value' => $regex
+                    'value' => $regex,
+                    'valueForRaw' => $pattern,
+                    'condition' => $condition
                 ];
                 continue;
             }
@@ -286,7 +292,8 @@ class Builder implements IBuilder
                     'column' => $column,
                     'alias' => $alias,
                     'operator' => $aggregationAssert === Where::NEGATION() ? 'NOT BETWEEN' : 'BETWEEN',
-                    'value' => ['min' => $default, 'max' => $extra]
+                    'value' => ['min' => $default, 'max' => $extra],
+                    'condition' => $condition
                 ];
                 continue;
             }
@@ -296,7 +303,8 @@ class Builder implements IBuilder
                     'column' => $column,
                     'alias' => $alias,
                     'operator' => $signal !== '' ? $signal : '=',
-                    'value' => $default
+                    'value' => $default,
+                    'condition' => $condition
                 ];
             }
         }
@@ -534,7 +542,7 @@ class Builder implements IBuilder
             $parts[] = $on;
         }
 
-        // WHERE
+        // WHERE – use per-condition logic (AND/OR) from each item
         $where = $this->buildWhere();
         if (!empty($where)) {
             $whereParts = [];
@@ -569,8 +577,12 @@ class Builder implements IBuilder
 
                 $whereParts[] = "{$column} {$operator} ?";
             }
-            $logic = $this->getWhereLogic();
-            $parts[] = "WHERE " . implode(" {$logic} ", $whereParts);
+            $whereStr = $whereParts[0];
+            for ($i = 1; $i < count($whereParts); $i++) {
+                $connector = ($where[$i]['condition'] ?? null) === Condition::DISJUNCTION() ? 'OR' : 'AND';
+                $whereStr .= ' ' . $connector . ' ' . $whereParts[$i];
+            }
+            $parts[] = "WHERE " . $whereStr;
         }
 
         // GROUP BY
@@ -657,7 +669,7 @@ class Builder implements IBuilder
                 }
 
                 if (is_object($value) && isset($value->is_regex)) {
-                    $values[] = ((array) $value)['value'] ?? $value;
+                    $values[] = $condition['valueForRaw'] ?? ((array) $value)['value'] ?? $value;
                     continue;
                 }
 

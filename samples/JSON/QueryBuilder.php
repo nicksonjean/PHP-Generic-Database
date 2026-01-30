@@ -240,23 +240,24 @@ var_dump($testJ2);
 var_dump($testJ2->build());
 var_dump($testJ2->buildRaw());
 var_dump($testJ2->fetchAll(Connection::FETCH_BOTH));
+
 // while ($row = $testJ2->fetch(Connection::FETCH_ASSOC)) {
 //     var_dump($row);
 // }
 // var_dump($testJ2->getAllMetadata());
 
-// $combinedQuery = JSONQueryBuilder::with($context)::select(['maconha.id', 'maconha.nome'])
-//     ->from('estado AS maconha')
-//     ->where('maconha.id', '=', 'teste')
+// $combinedQuery = JSONQueryBuilder::with($context)::select(['e.id', 'e.nome'])
+//     ->from('estado AS e')
+//     ->where('e.id', '=', '10')
 //     ->union(
 //         JSONQueryBuilder::with($context)::select(['c.id', 'c.nome'])
 //             ->from('estado AS c')
-//             ->where('c.id', '=', 'maconha.id')
+//             ->where('c.id', '=', 'e.id')
 //     )
 //     ->union(
 //         JSONQueryBuilder::with($context)::select(['d.id', 'd.nome'])
 //             ->from('estado AS d')
-//             ->where('d.id', '=', 'maconha.id')
+//             ->where('d.id', '=', 'e.id')
 //     );
 
 // var_dump($combinedQuery);

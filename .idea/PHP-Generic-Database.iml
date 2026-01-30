@@ -112,6 +112,10 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/tasuku43/mermaid-class-diagram" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dave-arg/zod-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/senadir/zod-php-to-schema" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/cweagans/composer-configurable-plugin" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/cweagans/composer-patches" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php84" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php85" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
