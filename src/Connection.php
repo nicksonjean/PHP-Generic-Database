@@ -24,6 +24,7 @@ use GenericDatabase\Engine\SQLiteConnection;
 use GenericDatabase\Engine\SQLSrvConnection;
 use GenericDatabase\Engine\FirebirdConnection;
 use GenericDatabase\Engine\JSONConnection;
+use GenericDatabase\Engine\INIConnection;
 use GenericDatabase\Engine\CSVConnection;
 use GenericDatabase\Engine\XMLConnection;
 use GenericDatabase\Engine\YAMLConnection;
@@ -206,6 +207,7 @@ class Connection implements IConnection, IConnectionStrategy
         return match ($name) {
             'new' => match (true) {
                 JSON::isValidJSON(...$argumentsFile) => self::callArgumentsByFormat('json', $argumentsFile),
+                CSV::isValidCSV(...$argumentsFile) => self::callArgumentsByFormat('json', $argumentsFile),
                 YAML::isValidYAML(...$argumentsFile) => self::callArgumentsByFormat('yaml', $argumentsFile),
                 INI::isValidINI(...$argumentsFile) => self::callArgumentsByFormat('ini', $argumentsFile),
                 XML::isValidXML(...$argumentsFile) => self::callArgumentsByFormat('xml', $argumentsFile),
@@ -265,6 +267,7 @@ class Connection implements IConnection, IConnectionStrategy
             'csv' => new CSVConnection(),
             'xml' => new XMLConnection(),
             'yaml' => new YAMLConnection(),
+            'ini' => new INIConnection(),
             default => null,
         });
     }
@@ -331,6 +334,10 @@ class Connection implements IConnection, IConnectionStrategy
             $data = YAML::parseYAML(...$arguments);
         } elseif ($format === 'neon') {
             $data = NEON::parseNEON(...$arguments);
+        } elseif ($format === 'csv') {
+            $data = CSV::parseCSV(...$arguments);
+        } elseif ($format === 'ini') {
+            $data = INI::parseINI(...$arguments);
         }
         self::call(self::getInstance(), 'initFactory', Arrays::assocToIndex(Arrays::recombine($data)));
         $caseArgumentClass = PHP_VERSION_ID >= 80100

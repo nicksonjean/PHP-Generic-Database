@@ -1,11 +1,11 @@
 <?php
 
-namespace GenericDatabase\Engine\CSV\Connection\Options;
+namespace GenericDatabase\Engine\INI\Connection\Options;
 
 use ReflectionException;
 use GenericDatabase\Helpers\Reflections;
 use GenericDatabase\Interfaces\Connection\IOptions;
-use GenericDatabase\Engine\CSV\Connection\CSV;
+use GenericDatabase\Engine\INI\Connection\INI;
 use GenericDatabase\Abstract\AbstractOptions;
 
 class OptionsHandler extends AbstractOptions implements IOptions
@@ -22,20 +22,20 @@ class OptionsHandler extends AbstractOptions implements IOptions
         if ($options === null) {
             return;
         }
-        $class = CSV::class;
+        $class = INI::class;
         foreach (Reflections::getClassConstants($class) as $key => $value) {
             $index = in_array($value, array_keys($options));
             if ($index !== false) {
                 $keyName = $key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT' && $key !== 'ATTR_AUTOCOMMIT'
-                    ? str_replace("ATTR", "CSV", $key)
+                    ? str_replace("ATTR", "INI", $key)
                     : $key;
-                $this->getInstance()->setAttribute("CSV::$key", $options[$value]);
+                $this->getInstance()->setAttribute("INI::$key", $options[$value]);
                 if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT' && $key !== 'ATTR_AUTOCOMMIT') {
                     $this->getInstance()->setAttribute($keyName, $options[$value]);
                     $this->getInstance()->setAttribute($value, $options[$value]);
                 }
                 if (str_contains($options[$value], 'FETCH')) {
-                    self::$options[constant("$class::$key")] = constant("$class::" . str_replace("CSV::", '', $options[$value]));
+                    self::$options[constant("$class::$key")] = constant("$class::" . str_replace("INI::", '', $options[$value]));
                 } else {
                     self::$options[constant("$class::$key")] = $options[$value];
                 }
@@ -45,12 +45,12 @@ class OptionsHandler extends AbstractOptions implements IOptions
 
     /**
      * This method is responsible for set options after connect in database
-     * Note: CSV engine has no native PHP extension; persistence is file-based.
+     * Note: INI engine has no native PHP extension; persistence is file-based.
      *
      * @return void
      */
     public function define(): void
     {
-        // No native csv extension options to set for file-based CSV engine
+        // No native ini extension options to set for file-based INI engine
     }
 }

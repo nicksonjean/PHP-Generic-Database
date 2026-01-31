@@ -45,15 +45,12 @@ class OptionsHandler extends AbstractOptions implements IOptions
 
     /**
      * This method is responsible for set options after connect in database
+     * Note: JSON engine has no native PHP extension; persistence is file-based.
      *
      * @return void
      */
     public function define(): void
     {
-        foreach (array_keys($this->getOptions()) as $key) {
-            if ($key === 'ATTR_PERSISTENT' && ini_get('json.allow_persistent') !== '1') {
-                ini_set('json.allow_persistent', 1);
-            }
-        }
+        // No native json extension options to set for file-based JSON engine
     }
 }

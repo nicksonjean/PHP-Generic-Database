@@ -65,6 +65,31 @@ final class Entity extends EmulatedStringEnum
     protected const CLASS_JSON_ENGINE = \GenericDatabase\Engine\JSONConnection::class;
 
     /**
+     * The fully qualified class name of the INI database engine class.
+     */
+    protected const CLASS_INI_ENGINE = \GenericDatabase\Engine\INIConnection::class;
+
+    /**
+     * The fully qualified class name of the YAML database engine class.
+     */
+    protected const CLASS_YAML_ENGINE = \GenericDatabase\Engine\YAMLConnection::class;
+
+    /**
+     * The fully qualified class name of the XML database engine class.
+     */
+    protected const CLASS_XML_ENGINE = \GenericDatabase\Engine\XMLConnection::class;
+
+    /**
+     * The fully qualified class name of the NEON database engine class.
+     */
+    protected const CLASS_NEON_ENGINE = \GenericDatabase\Engine\NEONConnection::class;
+
+    /**
+     * The fully qualified class name of the CSV database engine class.
+     */
+    protected const CLASS_CSV_ENGINE = \GenericDatabase\Engine\CSVConnection::class;
+
+    /**
      * The fully qualified class name of the internal classes databases.
      */
     protected const CASE_INTERNAL_CLASS = 'GenericDatabase\Engine\%s\Connection\%s::%s';

@@ -30,6 +30,8 @@ use GenericDatabase\Engine\YAMLConnection;
 use GenericDatabase\Engine\YAML\Connection\YAML;
 use GenericDatabase\Engine\CSVConnection;
 use GenericDatabase\Engine\CSV\Connection\CSV;
+use GenericDatabase\Engine\INIConnection;
+use GenericDatabase\Engine\INI\Connection\INI;
 
 /**
  * Class StaticArgs
@@ -1543,6 +1545,47 @@ class StaticArgs
                     CSV::ATTR_CONNECT_TIMEOUT => 28800,
                     CSV::ATTR_DEFAULT_FETCH_MODE => CSV::FETCH_OBJ,
                     CSV::ATTR_REPORT => CSV::REPORT_ERROR | CSV::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
+    }
+
+    public static function nativeINI(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|INIConnection {
+        /** @var Connection|INIConnection $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_INI_ENGINE()->value;
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        if ($strategy) {
+            return $constructor(
+                engine: 'ini',
+                database: $env['INI_DATABASE'],
+                charset: $env['INI_CHARSET'],
+                options: [
+                    INI::ATTR_PERSISTENT => $persistent,
+                    INI::ATTR_AUTOCOMMIT => true,
+                    INI::ATTR_CONNECT_TIMEOUT => 28800,
+                    INI::ATTR_DEFAULT_FETCH_MODE => INI::FETCH_OBJ,
+                    INI::ATTR_REPORT => INI::REPORT_ERROR | INI::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                database: $env['INI_DATABASE'],
+                charset: $env['INI_CHARSET'],
+                options: [
+                    INI::ATTR_PERSISTENT => $persistent,
+                    INI::ATTR_AUTOCOMMIT => true,
+                    INI::ATTR_CONNECT_TIMEOUT => 28800,
+                    INI::ATTR_DEFAULT_FETCH_MODE => INI::FETCH_OBJ,
+                    INI::ATTR_REPORT => INI::REPORT_ERROR | INI::REPORT_STRICT
                 ],
                 exception: true
             );

@@ -56,7 +56,7 @@ class INI
      */
     public static function parseINI(string $ini): array
     {
-        return (array) parse_ini_file($ini, false, INI_SCANNER_TYPED);
+        return (array) parse_ini_file($ini, false, INI_SCANNER_NORMAL);
     }
 
     /**
@@ -97,5 +97,60 @@ class INI
         }
 
         return $result;
+    }
+
+    /**
+     * Parse INI string content (tabular format with [row_N] sections) into array of rows.
+     * Compatible with JSON/CSV-like structure: array of associative arrays.
+     * Uses INI_SCANNER_RAW to avoid "unexpected BOOL_FALSE" when values match reserved
+     * keywords (yes, no, true, false, on, off, null, none). Type coercion is applied by Schema.
+     *
+     * @param string $content The INI string content.
+     * @param int $scannerMode INI_SCANNER_RAW (default), INI_SCANNER_NORMAL or INI_SCANNER_TYPED.
+     * @return array Array of rows (associative arrays).
+     */
+    public static function parseTableIniString(string $content, int $scannerMode = INI_SCANNER_RAW): array
+    {
+        $content = trim($content);
+        if ($content === '') {
+            return [];
+        }
+
+        $parsed = parse_ini_string($content, true, $scannerMode);
+        if ($parsed === false || !is_array($parsed)) {
+            return [];
+        }
+        // Sections become rows; preserve order via array_values
+        return array_values(array_filter($parsed, 'is_array'));
+    }
+
+    /**
+     * Encode array of rows to INI format (tabular with [row_N] sections).
+     * PHP has no native ini_encode; this provides the conversion.
+     *
+     * @param array $data Array of rows (associative arrays).
+     * @param int $flags Reserved for future use.
+     * @return string INI format string, or empty string on invalid input.
+     */
+    public static function encodeTableToIni(array $data, int $flags = 0): string
+    {
+        $lines = [];
+        $idx = 1;
+        foreach ($data as $row) {
+            if (!is_array($row) && !$row instanceof \stdClass) {
+                continue;
+            }
+            $lines[] = '[row_' . $idx . ']';
+            foreach ((array) $row as $key => $value) {
+                if ($value === null) {
+                    $value = '';
+                }
+                $value = (string) $value;
+                $lines[] = $key . ' = ' . $value;
+            }
+            $lines[] = '';
+            $idx++;
+        }
+        return implode("\n", $lines);
     }
 }
