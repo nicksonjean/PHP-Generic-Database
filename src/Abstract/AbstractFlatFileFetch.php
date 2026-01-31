@@ -229,9 +229,9 @@ abstract class AbstractFlatFileFetch extends AbstractFetch implements IFlatFileF
      * Internal fetch for column - overrides parent to use local result set.
      *
      * @param int $columnIndex
-     * @return false|string
+     * @return mixed
      */
-    public function internalFetchColumn(int $columnIndex = 0): false|string
+    public function internalFetchColumn(int $columnIndex = 0): mixed
     {
         $results = $this->getResultSet();
 

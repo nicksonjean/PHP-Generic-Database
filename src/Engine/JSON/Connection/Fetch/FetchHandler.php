@@ -902,6 +902,8 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                     $r[$k] = $v === null ? null : (int) $v;
                 } elseif ($t === 'float' || $t === 'double' || $t === 'number') {
                     $r[$k] = $v === null ? null : (float) $v;
+                } elseif ($v !== null && $v !== '' && is_string($v) && is_numeric($v)) {
+                    $r[$k] = strpos($v, '.') !== false ? (float) $v : (int) $v;
                 } else {
                     $r[$k] = $v;
                 }
@@ -1069,6 +1071,108 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
     {
         $result = $this->parseWhereClauseWithLogic($whereClause);
         return $result['conditions'] ?? [];
+    }
+
+    /**
+     * Internal fetch for numeric array - preserve native types (int/float) from result set.
+     *
+     * @return array|false|null
+     */
+    public function internalFetchNum(): array|false|null
+    {
+        $results = $this->getResultSet();
+
+        if ($this->cursor >= count($results)) {
+            return false;
+        }
+
+        $row = $results[$this->cursor++];
+        return array_values((array) $row);
+    }
+
+    /**
+     * Internal fetch for both mode - preserve native types (int/float) from result set.
+     *
+     * @return bool|array
+     */
+    public function internalFetchBoth(): bool|array
+    {
+        $results = $this->getResultSet();
+
+        if ($this->cursor >= count($results)) {
+            return false;
+        }
+
+        $row = $results[$this->cursor++];
+        return $this->formatBothMode((array) $row);
+    }
+
+    /**
+     * Internal fetch for column - preserve native types (int/float) from result set.
+     *
+     * @param int $columnIndex
+     * @return mixed
+     */
+    public function internalFetchColumn(int $columnIndex = 0): mixed
+    {
+        $results = $this->getResultSet();
+
+        if ($this->cursor >= count($results)) {
+            return false;
+        }
+
+        $row = $results[$this->cursor++];
+        $values = array_values((array) $row);
+        return isset($values[$columnIndex]) ? $values[$columnIndex] : false;
+    }
+
+    /**
+     * Internal fetch all for numeric array - preserve native types (int/float) from result set.
+     *
+     * @return array
+     */
+    public function internalFetchAllNum(): array
+    {
+        $results = $this->getResultSet();
+        $result = [];
+        foreach ($results as $row) {
+            $result[] = array_values((array) $row);
+        }
+        return $result;
+    }
+
+    /**
+     * Internal fetch all for both mode - preserve native types (int/float) from result set.
+     *
+     * @return array
+     */
+    public function internalFetchAllBoth(): array
+    {
+        $results = $this->getResultSet();
+        $result = [];
+        foreach ($results as $row) {
+            $result[] = $this->formatBothMode((array) $row);
+        }
+        return $result;
+    }
+
+    /**
+     * Internal fetch all for column - preserve native types (int/float) from result set.
+     *
+     * @param int $columnIndex
+     * @return array
+     */
+    public function internalFetchAllColumn(int $columnIndex = 0): array
+    {
+        $results = $this->getResultSet();
+        $result = [];
+        foreach ($results as $row) {
+            $values = array_values((array) $row);
+            if (isset($values[$columnIndex])) {
+                $result[] = $values[$columnIndex];
+            }
+        }
+        return $result;
     }
 
     /**
