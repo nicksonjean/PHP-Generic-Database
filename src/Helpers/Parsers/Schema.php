@@ -68,6 +68,11 @@ class Schema
     public const FORMAT_YAML_DELIMITED = 'YAMLDelimited';
 
     /**
+     * Default primary key column names to try when Schema.ini has no PrimaryKey (first match in table wins).
+     */
+    public const DEFAULT_PRIMARY_KEY_CANDIDATES = ['id', '_id', '__id'];
+
+    /**
      * Cached schema data
      *
      * @var array
@@ -245,6 +250,77 @@ class Schema
         }
 
         return null;
+    }
+
+    /**
+     * Get PrimaryKey from schema definition settings.
+     *
+     * @param array $definition The schema section definition.
+     * @return string|null The primary key column name if set.
+     */
+    public static function getPrimaryKeyFromDefinition(array $definition): ?string
+    {
+        if (!isset($definition['settings']) || !is_array($definition['settings'])) {
+            return null;
+        }
+
+        foreach ($definition['settings'] as $key => $value) {
+            if (strtolower((string) $key) === 'primarykey') {
+                return trim((string) $value, "\"' ");
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolve primary key column name from row keys using DEFAULT_PRIMARY_KEY_CANDIDATES.
+     * Returns the first candidate that exists in the given keys (exact or as suffix after a dot).
+     *
+     * @param array $rowKeys List of column names (e.g. ['id', 'nome'] or ['e.id', 'e.nome']).
+     * @return string Primary key column name (e.g. 'id', '_id', '__id').
+     */
+    public static function getPrimaryKeyFromRowKeys(array $rowKeys): string
+    {
+        foreach (self::DEFAULT_PRIMARY_KEY_CANDIDATES as $candidate) {
+            if (in_array($candidate, $rowKeys, true)) {
+                return $candidate;
+            }
+            foreach ($rowKeys as $k) {
+                if ($k === $candidate || str_ends_with($k, '.' . $candidate)) {
+                    return $candidate;
+                }
+            }
+        }
+
+        return self::DEFAULT_PRIMARY_KEY_CANDIDATES[0];
+    }
+
+    /**
+     * Get primary key for a table: first from Schema.ini (PrimaryKey), then from row keys via DEFAULT_PRIMARY_KEY_CANDIDATES.
+     *
+     * @param string $directory Directory containing Schema.ini.
+     * @param string $tableOrFile Table or filename (e.g. 'estado' or 'estado.json').
+     * @param array $tableData Rows of the table (used when no Schema or no PrimaryKey).
+     * @return string Primary key column name.
+     */
+    public static function getPrimaryKeyForTable(string $directory, string $tableOrFile, array $tableData = []): string
+    {
+        $definition = self::getSchemaForFile($directory, $tableOrFile);
+        if ($definition !== null) {
+            $pk = self::getPrimaryKeyFromDefinition($definition);
+            if ($pk !== null && $pk !== '') {
+                return $pk;
+            }
+        }
+
+        if (!empty($tableData)) {
+            $first = reset($tableData);
+            $rowKeys = array_keys($first instanceof \stdClass ? (array) $first : (array) $first);
+            return self::getPrimaryKeyFromRowKeys($rowKeys);
+        }
+
+        return self::DEFAULT_PRIMARY_KEY_CANDIDATES[0];
     }
 
     /**

@@ -83,8 +83,6 @@ class Criteria implements ICriteria
     {
         $result = [];
         if (Arrays::isMultidimensional($arguments['data'])) {
-            // $arguments['data'] is array of arrays (e.g. [['cidade c'], ['estado e']]); pass it directly to array_merge.
-            // Do not use reset() which could pass a single array or string and cause TypeError.
             $tableSets = call_user_func_array('array_merge', $arguments['data']);
             foreach ($tableSets as $table) {
                 if (!str_contains($table, '=')) {

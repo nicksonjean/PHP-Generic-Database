@@ -480,7 +480,7 @@ class Builder implements IBuilder
             $processor->limit($limit['limit'], $limit['offset']);
         }
 
-        // Apply SELECT - no prefix: DataProcessor looks up $row['id'], not $row['e.id']
+        // Apply SELECT - no prefix: DataProcessor looks up $row['field'], not $row['alias.field']
         $columns = $this->buildSelect(false);
         if (!in_array('*', $columns)) {
             $processor->select($columns);

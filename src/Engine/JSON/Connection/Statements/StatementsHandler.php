@@ -13,7 +13,10 @@ use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\Schema;
 use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
+use GenericDatabase\Engine\JSON\Connection\Options\OptionsHandler;
+use GenericDatabase\Engine\JSON\Connection\Report\ReportHandler;
 
 /**
  * Handles SQL-like statement operations for JSON connections.
@@ -36,29 +39,24 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
     /**
      * Constructor.
      *
-     * @param IConnection $connection The connection instance.
+     * @param IConnection $instance The connection instance.
      * @param StructureHandler|null $structureHandler Structure handler; strategy from getStructureStrategy() is used for INSERT/UPDATE/DELETE.
      * @param IOptions|null $optionsHandler The options handler (optional).
      * @param IReport|null $reportHandler The report handler (optional).
      */
     public function __construct(
-        IConnection $connection,
+        IConnection $instance,
         ?StructureHandler $structureHandler = null,
         ?IOptions $optionsHandler = null,
         ?IReport $reportHandler = null
     ) {
-        $this->connection = $connection;
+        $this->connection = $instance;
         $this->structureHandler = $structureHandler;
-
         // Create default handlers if not provided
-        if ($optionsHandler === null) {
-            $optionsHandler = new \GenericDatabase\Engine\JSON\Connection\Options\OptionsHandler($connection);
-        }
-        if ($reportHandler === null) {
-            $reportHandler = new \GenericDatabase\Engine\JSON\Connection\Report\ReportHandler($connection);
-        }
+        $optionsHandler = $optionsHandler ?? new OptionsHandler($instance);
+        $reportHandler = $reportHandler ?? new ReportHandler($instance);
 
-        parent::__construct($connection, $optionsHandler, $reportHandler);
+        parent::__construct($instance, $optionsHandler, $reportHandler);
     }
 
     /**
@@ -177,22 +175,25 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
 
         $data = $this->loadTableData($tableName);
 
+        $directory = $this->structureHandler !== null ? (string) $this->structureHandler->get('database') : '';
+        $primaryKey = Schema::getPrimaryKeyForTable($directory, $tableName, $data);
+
         // Build the row to insert
         $row = [];
         foreach ($columns as $index => $column) {
             $row[$column] = $values[$index] ?? null;
         }
 
-        // Generate auto-increment ID if 'id' column exists and not provided
-        if (!isset($row['id']) || $row['id'] === null) {
+        // Generate auto-increment for primary key column if not provided
+        if (!isset($row[$primaryKey]) || $row[$primaryKey] === null) {
             $maxId = 0;
             foreach ($data as $existingRow) {
                 $existingRow = (array) $existingRow;
-                if (isset($existingRow['id']) && (int) $existingRow['id'] > $maxId) {
-                    $maxId = (int) $existingRow['id'];
+                if (isset($existingRow[$primaryKey]) && (int) $existingRow[$primaryKey] > $maxId) {
+                    $maxId = (int) $existingRow[$primaryKey];
                 }
             }
-            $row['id'] = $maxId + 1;
+            $row[$primaryKey] = $maxId + 1;
         }
 
         $processor = new DataProcessor($data);
@@ -201,7 +202,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
         if ($result) {
             $newData = $processor->getData();
             $this->persistTableData($newData, $tableName);
-            $this->setLastInsertId((int) $row['id']);
+            $this->setLastInsertId((int) $row[$primaryKey]);
             return 1;
         }
 
@@ -550,6 +551,9 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
 
         $data = $this->loadTableData($tableName);
 
+        $directory = $this->structureHandler !== null ? (string) $this->structureHandler->get('database') : '';
+        $primaryKey = Schema::getPrimaryKeyForTable($directory, $tableName, $data);
+
         // Build the row to insert
         $row = [];
         foreach ($columns as $index => $column) {
@@ -560,16 +564,16 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
             }
         }
 
-        // Generate auto-increment ID if 'id' column exists and not provided
-        if (!isset($row['id']) || $row['id'] === null) {
+        // Generate auto-increment for primary key column if not provided
+        if (!isset($row[$primaryKey]) || $row[$primaryKey] === null) {
             $maxId = 0;
             foreach ($data as $existingRow) {
                 $existingRow = (array) $existingRow;
-                if (isset($existingRow['id']) && (int) $existingRow['id'] > $maxId) {
-                    $maxId = (int) $existingRow['id'];
+                if (isset($existingRow[$primaryKey]) && (int) $existingRow[$primaryKey] > $maxId) {
+                    $maxId = (int) $existingRow[$primaryKey];
                 }
             }
-            $row['id'] = $maxId + 1;
+            $row[$primaryKey] = $maxId + 1;
         }
 
         $processor = new DataProcessor($data);
@@ -578,7 +582,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
         if ($result) {
             $newData = $processor->getData();
             $this->persistTableData($newData, $tableName);
-            $this->setLastInsertId((int) $row['id']);
+            $this->setLastInsertId((int) $row[$primaryKey]);
             return 1;
         }
 

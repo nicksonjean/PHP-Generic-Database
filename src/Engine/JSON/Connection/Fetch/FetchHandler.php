@@ -13,6 +13,7 @@ use GenericDatabase\Engine\JSON\Connection\JSON;
 use GenericDatabase\Engine\JSON\QueryBuilder\Regex;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Helpers\Parsers\Schema;
+use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
 
 /**
  * Handles fetch operations for JSON connections.
@@ -345,7 +346,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
     private function getDatabasePath(): string
     {
         $h = $this->getStructureHandler();
-        if ($h !== null && method_exists($h, 'get')) {
+        if ($h instanceof StructureHandler) {
             $v = $h->get('database');
             return $v !== null ? (string) $v : '';
         }
@@ -496,7 +497,6 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
             return $afterFrom;
         }
 
-        // Comma-separated FROM (e.g. "estado e, cidade c") – multiple tables, Cartesian product
         if (str_contains($fromClause, ',')) {
             $out['from_tables'] = [];
             foreach (array_map('trim', explode(',', $fromClause)) as $part) {
@@ -694,7 +694,10 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                         $col = (array_key_exists(1, $m) && $m[1] !== '') ? $m[1] . '.' . $m[2] : $m[2];
                     }
                     if ($col === '*') {
-                        $col = $joinAlias ? $joinAlias . '.id' : 'id';
+                        $firstRow = reset($rows);
+                        $rowKeys = array_keys($firstRow instanceof \stdClass ? (array) $firstRow : (array) $firstRow);
+                        $pk = Schema::getPrimaryKeyFromRowKeys($rowKeys);
+                        $col = $joinAlias ? $joinAlias . '.' . $pk : $pk;
                     }
                     $values = array_column($rows, $col);
                     $values = array_filter($values, fn($v) => $v !== null);
