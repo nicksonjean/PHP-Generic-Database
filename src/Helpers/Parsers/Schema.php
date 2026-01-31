@@ -166,6 +166,28 @@ class Schema
     }
 
     /**
+     * Extract CSV delimiter from Schema.ini format string.
+     * Supports: Delimited(;), Delimited(,), Delimited(\t), TabDelimited, CSVDelimited.
+     *
+     * @param string|null $format The format string from schema (e.g. "Delimited(;)").
+     * @return string|null The delimiter character or null to use default.
+     */
+    public static function getDelimiterFromFormat(?string $format): ?string
+    {
+        if ($format === null || $format === '') {
+            return null;
+        }
+        $format = trim($format);
+        if (preg_match('/^Delimited\s*\(\s*(.)\s*\)$/i', $format, $m)) {
+            return $m[1] === 't' ? "\t" : $m[1];
+        }
+        if (stripos($format, 'TabDelimited') !== false) {
+            return "\t";
+        }
+        return null;
+    }
+
+    /**
      * Get schema for a specific file from Schema.ini.
      *
      * @param string $directory The directory containing Schema.ini.

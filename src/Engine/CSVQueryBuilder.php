@@ -6,17 +6,21 @@ namespace GenericDatabase\Engine;
 
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\IQueryBuilder;
+use GenericDatabase\Core\Join;
 use GenericDatabase\Core\Where;
 use GenericDatabase\Core\Having;
 use GenericDatabase\Core\Select;
 use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Grouping;
+use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Generic\QueryBuilder\Context;
+use GenericDatabase\Generic\Statements\Metadata;
+use GenericDatabase\Engine\CSV\Connection\CSV;
 use GenericDatabase\Engine\CSV\QueryBuilder\Builder;
 use GenericDatabase\Engine\CSV\QueryBuilder\Clause;
 
@@ -68,43 +72,66 @@ class CSVQueryBuilder implements IQueryBuilder
 
     public static function join(array|string ...$data): static
     {
-        return self::$self;
+        return Clause::join(
+            ['type' => Join::DEFAULT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
+
     public static function selfJoin(array|string ...$data): static
     {
-        return self::$self;
+        return Clause::join(
+            ['type' => Join::SELF(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
+
     public static function leftJoin(array|string ...$data): static
     {
-        return self::$self;
+        return Clause::join(
+            ['type' => Join::LEFT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
+
     public static function rightJoin(array|string ...$data): static
     {
-        return self::$self;
+        return Clause::join(
+            ['type' => Join::RIGHT(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
+
     public static function innerJoin(array|string ...$data): static
     {
-        return self::$self;
+        return Clause::join(
+            ['type' => Join::INNER(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
+
     public static function outerJoin(array|string ...$data): static
     {
-        return self::$self;
+        return Clause::join(
+            ['type' => Join::OUTER(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
+
     public static function crossJoin(array|string ...$data): static
     {
-        return self::$self;
+        return Clause::join(
+            ['type' => Join::CROSS(), 'junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]
+        );
     }
+
     public static function on(array|string ...$data): static
     {
-        return self::$self;
+        return Clause::on(['junction' => Junction::NONE(), 'data' => $data, 'self' => self::$self]);
     }
+
     public static function andOn(array|string ...$data): static
     {
-        return self::$self;
+        return Clause::on(['junction' => Junction::CONJUNCTION(), 'data' => $data, 'self' => self::$self]);
     }
+
     public static function orOn(array|string ...$data): static
     {
-        return self::$self;
+        return Clause::on(['junction' => Junction::DISJUNCTION(), 'data' => $data, 'self' => self::$self]);
     }
 
     public static function where(array|string ...$data): static
@@ -200,12 +227,16 @@ class CSVQueryBuilder implements IQueryBuilder
 
     private function runOnce(): void
     {
-        $currentQuery = $this->buildRaw();
-        if (self::$lastQuery !== $currentQuery || self::$cursorExhausted) {
-            $builder = new Builder($this->query);
-            $data = $this->getContext()->getData();
-            self::$cachedResult = $builder->execute($data);
-            self::$lastQuery = $currentQuery;
+        $currentQueryForDisplay = $this->buildRaw();
+        $currentQueryForExecution = (new Builder($this->query))->buildRawForExecution();
+
+        if (self::$lastQuery !== $currentQueryForDisplay || self::$cursorExhausted) {
+            $conn = $this->getContext();
+            $conn->query($currentQueryForExecution);
+            $rows = $conn->fetchAll(CSV::FETCH_ASSOC);
+            self::$cachedResult = is_array($rows) ? $rows : [];
+            $conn->setQueryString($currentQueryForDisplay);
+            self::$lastQuery = $currentQueryForDisplay;
             self::$cursorExhausted = false;
         }
     }
@@ -233,7 +264,73 @@ class CSVQueryBuilder implements IQueryBuilder
     public function getAllMetadata(): object
     {
         $this->runOnce();
-        return (object) ['queryRows' => count(self::$cachedResult ?? []), 'affectedRows' => 0];
+        $result = self::$cachedResult ?? [];
+        $rowCount = count($result);
+        $colCount = $rowCount > 0 ? count((array) reset($result)) : 0;
+
+        $metadata = new Metadata();
+        $metadata->query->setString($this->getContext()->getQueryString());
+        $metadata->query->setArguments([]);
+        $metadata->query->setColumns($colCount);
+        $metadata->query->getRows()->setFetched($rowCount);
+        $aff = $this->getContext()->getAffectedRows();
+        $metadata->query->getRows()->setAffected(is_int($aff) ? $aff : 0);
+
+        return $metadata;
+    }
+
+    private function formatRow(mixed $row, int $fetchStyle, mixed $fetchArgument = null, mixed $optArgs = null): mixed
+    {
+        $row = (array) $row;
+
+        return match ($fetchStyle) {
+            CSV::FETCH_NUM => array_values($row),
+            CSV::FETCH_BOTH => $this->formatBothMode($row),
+            CSV::FETCH_OBJ => (object) $row,
+            CSV::FETCH_COLUMN => $fetchArgument !== null
+                ? ($row[$fetchArgument] ?? array_values($row)[0] ?? null)
+                : (array_values($row)[0] ?? null),
+            CSV::FETCH_CLASS => $this->fetchClass($row, $fetchArgument, $optArgs),
+            CSV::FETCH_INTO => $this->fetchInto($row, $fetchArgument),
+            default => $row,
+        };
+    }
+
+    private function formatBothMode(array $row): array
+    {
+        $result = [];
+        $index = 0;
+        foreach ($row as $key => $value) {
+            $result[$index] = $value;
+            $result[$key] = $value;
+            $index++;
+        }
+        return $result;
+    }
+
+    private function fetchClass(array $row, ?string $className, mixed $ctorArgs): object
+    {
+        if ($className === null) {
+            return (object) $row;
+        }
+        $instance = $ctorArgs !== null
+            ? new $className(...(array) $ctorArgs)
+            : new $className();
+        foreach ($row as $key => $value) {
+            $instance->$key = $value;
+        }
+        return $instance;
+    }
+
+    private function fetchInto(array $row, ?object $object): object
+    {
+        if ($object === null) {
+            return (object) $row;
+        }
+        foreach ($row as $key => $value) {
+            $object->$key = $value;
+        }
+        return $object;
     }
 
     public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
@@ -248,6 +345,9 @@ class CSVQueryBuilder implements IQueryBuilder
             self::$cursorExhausted = true;
             return false;
         }
+        if ($fetchStyle !== null) {
+            return $this->formatRow($result, $fetchStyle, $fetchArgument, $optArgs);
+        }
         return $result;
     }
 
@@ -257,6 +357,13 @@ class CSVQueryBuilder implements IQueryBuilder
         $result = self::$cachedResult ?? [];
         self::$cursorExhausted = true;
         self::$cachedResult = null;
+        if ($fetchStyle !== null && !empty($result)) {
+            $formatted = [];
+            foreach ($result as $row) {
+                $formatted[] = $this->formatRow($row, $fetchStyle, $fetchArgument, $optArgs);
+            }
+            return $formatted;
+        }
         return $result;
     }
 }

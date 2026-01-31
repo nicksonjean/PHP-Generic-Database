@@ -251,13 +251,14 @@ class CSV
     }
 
     /**
-     * Get the default delimiter.
+     * Get the default delimiter for CSV parsing.
      *
      * @return string
      */
     public static function getDelimiter(): string
     {
-        return self::$dataAttribute['delimiter'] ?? ',';
+        $value = self::getAttribute(self::ATTR_DELIMITER);
+        return $value !== null ? (string) $value : (self::$dataAttribute['delimiter'] ?? ',');
     }
 
     /**
@@ -272,13 +273,14 @@ class CSV
     }
 
     /**
-     * Get the enclosure character.
+     * Get the enclosure character for CSV parsing.
      *
      * @return string
      */
     public static function getEnclosure(): string
     {
-        return self::$dataAttribute['enclosure'] ?? '"';
+        $value = self::getAttribute(self::ATTR_ENCLOSURE);
+        return $value !== null ? (string) $value : (self::$dataAttribute['enclosure'] ?? '"');
     }
 
     /**
@@ -293,13 +295,14 @@ class CSV
     }
 
     /**
-     * Get the escape character.
+     * Get the escape character for CSV parsing.
      *
      * @return string
      */
     public static function getEscape(): string
     {
-        return self::$dataAttribute['escape'] ?? '\\';
+        $value = self::getAttribute(self::ATTR_ESCAPE);
+        return $value !== null ? (string) $value : (self::$dataAttribute['escape'] ?? '\\');
     }
 
     /**
@@ -320,7 +323,8 @@ class CSV
      */
     public static function hasHeader(): bool
     {
-        return self::$dataAttribute['hasHeader'] ?? true;
+        $value = self::getAttribute(self::ATTR_HAS_HEADER);
+        return $value !== null ? (bool) $value : (self::$dataAttribute['hasHeader'] ?? true);
     }
 
     /**
@@ -332,5 +336,16 @@ class CSV
     public static function setHasHeader(bool $hasHeader): void
     {
         self::$dataAttribute['hasHeader'] = $hasHeader;
+    }
+
+    /**
+     * Check if empty lines should be skipped when parsing.
+     *
+     * @return bool
+     */
+    public static function getSkipEmptyLines(): bool
+    {
+        $value = self::getAttribute(self::ATTR_SKIP_EMPTY_LINES);
+        return $value !== null ? (bool) $value : (self::$dataAttribute['skipEmptyLines'] ?? true);
     }
 }
