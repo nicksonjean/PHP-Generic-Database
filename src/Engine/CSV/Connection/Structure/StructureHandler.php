@@ -336,12 +336,18 @@ class StructureHandler implements IStructure
             $schema = Schema::getSchemaForFile($database, self::$currentTable);
         }
 
-        $delimiter = ($schema !== null && isset($schema['format']))
-            ? (Schema::getDelimiterFromFormat($schema['format']) ?? CSV::getDelimiter())
-            : CSV::getDelimiter();
-        $enclosure = CSV::getEnclosure();
-        $escape = CSV::getEscape();
-        $hasHeader = CSV::hasHeader();
+        if ($schema !== null && isset($schema['format'])) {
+            $delimiter = Schema::getDelimiterFromFormat($schema['format']) ?? CSV::getDelimiter();
+            $enclosure = CSV::getEnclosure();
+            $escape = CSV::getEscape();
+            $hasHeader = CSV::hasHeader();
+        } else {
+            $inferred = Schema::inferCsvPropertiesFromFile($filePath);
+            $delimiter = $inferred['delimiter'];
+            $enclosure = $inferred['enclosure'];
+            $escape = $inferred['escape'];
+            $hasHeader = $inferred['hasHeader'];
+        }
 
         $handle = fopen($filePath, 'rb');
         if ($handle === false) {
@@ -431,12 +437,18 @@ class StructureHandler implements IStructure
             $schema = Schema::getSchemaForFile($database, self::$currentTable);
         }
 
-        $delimiter = ($schema !== null && isset($schema['format']))
-            ? (Schema::getDelimiterFromFormat($schema['format']) ?? CSV::getDelimiter())
-            : CSV::getDelimiter();
-        $enclosure = CSV::getEnclosure();
-        $escape = CSV::getEscape();
-        $hasHeader = CSV::hasHeader();
+        if ($schema !== null && isset($schema['format'])) {
+            $delimiter = Schema::getDelimiterFromFormat($schema['format']) ?? CSV::getDelimiter();
+            $enclosure = CSV::getEnclosure();
+            $escape = CSV::getEscape();
+            $hasHeader = CSV::hasHeader();
+        } else {
+            $inferred = Schema::inferCsvPropertiesFromFile($filePath);
+            $delimiter = $inferred['delimiter'];
+            $enclosure = $inferred['enclosure'];
+            $escape = $inferred['escape'];
+            $hasHeader = $inferred['hasHeader'];
+        }
 
         $handle = fopen($filePath, 'wb');
         if ($handle === false) {

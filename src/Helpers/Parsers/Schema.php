@@ -6,7 +6,7 @@ namespace GenericDatabase\Helpers\Parsers;
 
 /**
  * The `GenericDatabase\Helpers\Parsers\Schema` class provides methods for working with Schema.ini files.
- * Schema.ini files define column types and formats for flat file databases (CSV, JSON, XML, YAML).
+ * Schema.ini files define column types and formats for flat file databases (CSV, JSON, XML, YAML, INI and NEON).
  *
  * Schema.ini Format Example:
  * ```
@@ -185,6 +185,82 @@ class Schema
             return "\t";
         }
         return null;
+    }
+
+    /**
+     * Infer CSV properties (delimiter, hasHeader) from the file itself.
+     * Used when Schema.ini does not exist.
+     *
+     * @param string $filePath Full path to the CSV file.
+     * @return array{delimiter: string, hasHeader: bool, enclosure: string, escape: string}
+     */
+    public static function inferCsvPropertiesFromFile(string $filePath): array
+    {
+        $default = [
+            'delimiter' => ',',
+            'hasHeader' => true,
+            'enclosure' => '"',
+            'escape' => '\\',
+        ];
+
+        if (!file_exists($filePath) || !is_readable($filePath)) {
+            return $default;
+        }
+
+        $content = file_get_contents($filePath, false, null, 0, 65536);
+        if ($content === false || $content === '') {
+            return $default;
+        }
+
+        $lines = preg_split('/\r\n|\r|\n/', $content, 11);
+        $lines = array_filter(array_map('trim', $lines), fn($l) => $l !== '');
+
+        if (empty($lines)) {
+            return $default;
+        }
+
+        $delimiters = [',', ';', "\t", '|'];
+        $bestDelimiter = ',';
+        $bestScore = -1;
+
+        foreach ($delimiters as $delim) {
+            $counts = [];
+            foreach ($lines as $line) {
+                $parsed = str_getcsv($line, $delim, '"', '\\');
+                $counts[] = count($parsed);
+            }
+            if (empty($counts)) {
+                continue;
+            }
+            $minC = min($counts);
+            $maxC = max($counts);
+            if ($minC < 2) {
+                continue;
+            }
+            $consistent = ($minC === $maxC) ? count($counts) : 0;
+            $score = $consistent * 10 + $minC;
+            if ($score > $bestScore) {
+                $bestScore = $score;
+                $bestDelimiter = $delim;
+            }
+        }
+
+        $hasHeader = true;
+        if (count($lines) >= 2) {
+            $firstRow = str_getcsv($lines[0], $bestDelimiter, '"', '\\');
+            $firstVal = trim($firstRow[0] ?? '');
+            $firstVal = str_starts_with($firstVal, "\xEF\xBB\xBF") ? substr($firstVal, 3) : $firstVal;
+            if ($firstVal !== '' && (ctype_digit($firstVal) || (is_numeric($firstVal) && strpos($firstVal, '.') === false))) {
+                $hasHeader = false;
+            }
+        }
+
+        return [
+            'delimiter' => $bestDelimiter,
+            'hasHeader' => $hasHeader,
+            'enclosure' => $default['enclosure'],
+            'escape' => $default['escape'],
+        ];
     }
 
     /**
