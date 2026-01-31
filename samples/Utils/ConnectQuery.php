@@ -1,8 +1,6 @@
 <?php
 
 use GenericDatabase\Connection;
-use GenericDatabase\Engine\MySQLi\MySQL;
-use GenericDatabase\Engine\MySQLiConnection;
 use GenericDatabase\Modules\Chainable;
 use Dotenv\Dotenv;
 
@@ -33,7 +31,8 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 // $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
-$context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeCSV(env: $_ENV, persistent: true, strategy: false)->connect();
 
 // var_dump($context);
 
@@ -80,6 +79,9 @@ $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)-
 // $b = $context->prepare('UPDATE estado SET nome = :nome, sigla = :sigla WHERE id = :id', 'TES', 'TI', 30);
 // $b = $context->prepare('DELETE FROM estado WHERE id IN (:id)', [[':id' => '28'], [':id' => '29'], [':id' => '30']]);
 // $b = $context->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE', 'TE')");
+// $b = $context->query("INSERT INTO estado (nome, sigla) VALUES ('TESTE2', 'TE')");
+// $b = $context->query("UPDATE estado SET nome = 'TES', sigla = 'TI' WHERE id = 28");
+// $b = $context->query("UPDATE estado SET nome = 'TES2', sigla = 'TI' WHERE id = 29");
 // $b = $context->query('DELETE FROM estado WHERE id IN (28, 29)');
 
 // var_dump($b);
