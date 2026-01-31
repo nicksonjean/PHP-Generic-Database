@@ -32,6 +32,7 @@ class OptionsHandler extends AbstractOptions implements IOptions
                 $this->getInstance()->setAttribute("JSON::$key", $options[$value]);
                 if ($key !== 'ATTR_PERSISTENT' && $key !== 'ATTR_CONNECT_TIMEOUT' && $key !== 'ATTR_AUTOCOMMIT') {
                     $this->getInstance()->setAttribute($keyName, $options[$value]);
+                    $this->getInstance()->setAttribute($value, $options[$value]);
                 }
                 if (str_contains($options[$value], 'FETCH')) {
                     self::$options[constant("$class::$key")] = constant("$class::" . str_replace("JSON::", '', $options[$value]));

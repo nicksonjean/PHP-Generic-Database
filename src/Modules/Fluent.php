@@ -943,7 +943,8 @@ class Fluent
                 JSON::ATTR_AUTOCOMMIT => true,
                 JSON::ATTR_CONNECT_TIMEOUT => 28800,
                 JSON::ATTR_DEFAULT_FETCH_MODE => JSON::FETCH_OBJ,
-                JSON::ATTR_REPORT => JSON::REPORT_ERROR | JSON::REPORT_STRICT
+                JSON::ATTR_REPORT => JSON::REPORT_ERROR | JSON::REPORT_STRICT,
+                JSON::ATTR_JSON_PRETTY_PRINT => true
             ])
             ::setException(true);
 

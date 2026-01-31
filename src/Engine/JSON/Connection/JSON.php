@@ -190,16 +190,15 @@ class JSON
      */
     public static function getAttribute(mixed $name): mixed
     {
-        if (isset(self::$dataAttribute[$name])) {
-            if (is_int($name)) {
-                $result = self::$dataAttribute[Reflections::getClassConstantName(static::class, $name)];
-            } else {
-                $result = self::$dataAttribute[$name];
-            }
-        } else {
-            $result = null;
+        $lookupKey = is_int($name)
+            ? Reflections::getClassConstantName(static::class, $name)
+            : $name;
+
+        if ($lookupKey === false) {
+            return null;
         }
-        return $result;
+
+        return self::$dataAttribute[$lookupKey] ?? null;
     }
 
     /**
