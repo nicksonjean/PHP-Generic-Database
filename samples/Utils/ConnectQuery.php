@@ -32,7 +32,12 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 // $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 // $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)->connect();
-$context = Chainable::nativeCSV(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeCSV(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeINI(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeNEON(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeYAML(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeXML(env: $_ENV, persistent: true, strategy: false)->connect();
+
 
 // var_dump($context);
 
@@ -88,17 +93,21 @@ $context = Chainable::nativeCSV(env: $_ENV, persistent: true, strategy: false)->
 
 // var_dump($b->getAllMetadata());
 
-$a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE "%TES%"');
+// $a = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE "%Rio%"');
+// $a = $context->prepare('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome LIKE :nome', [':nome' => '%Rio%']);
+$a = $context->query('SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome = "Rio de Janeiro"');
 
 var_dump($a->fetchAll(Connection::FETCH_OBJ));
 
-var_dump([
-    $a->getQueryString(),
-    $a->getQueryParameters(),
-    $a->getQueryRows(),
-    $a->getQueryColumns(),
-    $a->getAffectedRows()
-]);
+var_dump($a->getAllMetadata());
+
+// var_dump([
+//     $a->getQueryString(),
+//     $a->getQueryParameters(),
+//     $a->getQueryRows(),
+//     $a->getQueryColumns(),
+//     $a->getAffectedRows()
+// ]);
 
 /*
 SQLite: 'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado ORDER BY id'

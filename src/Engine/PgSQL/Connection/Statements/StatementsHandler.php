@@ -329,6 +329,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function query(mixed ...$params): IConnection
     {
         if (!empty($params) && ($statement = $this->prepareStatement([...$params, Query::RAW()]))) {
+            $this->setQueryParameters(Parse::parseParameters($this->getQueryString()));
             $colCount = pg_num_fields($statement);
             if ($colCount > 0) {
                 // Get field names and types to identify aggregate function columns and numeric fields

@@ -257,6 +257,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function query(mixed ...$params): IConnection
     {
         if (!empty($params) && ($statement = $this->prepareStatement(...$params)) && $this->exec($statement)) {
+            $this->setQueryParameters(Parse::parseParameters($this->getQueryString()));
             $colCount = is_resource($statement) ? oci_num_fields($statement) : 0;
             if ($colCount > 0) {
                 $this->setQueryColumns($colCount);

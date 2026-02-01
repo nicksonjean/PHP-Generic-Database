@@ -123,6 +123,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
         $query = $params[0] ?? '';
         $this->setAllMetadata();
         $this->setQueryString($query);
+        $this->setQueryParameters(Parse::parseParameters($query));
         $this->setStatement($query);
         $queryType = $this->detectQueryType($query);
 

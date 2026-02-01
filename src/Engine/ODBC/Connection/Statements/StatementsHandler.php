@@ -377,6 +377,10 @@ class StatementsHandler extends AbstractStatements implements IStatements
         $this->setAllMetadata();
         $parsedQuery = $this->parse($query);
         $this->setQueryString($parsedQuery);
+        $this->setQueryParameters(Parse::parseParameters($parsedQuery, match ($this->get('driver')) {
+            'mysql' => Parse::SQL_DIALECT_BACKTICK,
+            default => Parse::SQL_DIALECT_DOUBLE_QUOTE,
+        }));
 
         $statement = @odbc_exec($connection, $parsedQuery);
         if (!$statement) {
@@ -661,6 +665,10 @@ class StatementsHandler extends AbstractStatements implements IStatements
         $execSucceeded = $this->exec($statement);
 
         if ($execSucceeded) {
+            $this->setQueryParameters(Parse::parseParameters($this->getQueryString(), match ($this->get('driver')) {
+                'mysql' => Parse::SQL_DIALECT_BACKTICK,
+                default => Parse::SQL_DIALECT_DOUBLE_QUOTE,
+            }));
             $colCount = odbc_num_fields($statement);
             if ($colCount > 0) {
                 $this->setQueryColumns($colCount);
@@ -677,6 +685,10 @@ class StatementsHandler extends AbstractStatements implements IStatements
         }
 
         // exec() failed: statement may be a result set from odbc_exec (prepareStatement fallback), fetch directly
+        $this->setQueryParameters(Parse::parseParameters($this->getQueryString(), match ($this->get('driver')) {
+            'mysql' => Parse::SQL_DIALECT_BACKTICK,
+            default => Parse::SQL_DIALECT_DOUBLE_QUOTE,
+        }));
         $colCount = odbc_num_fields($statement);
         if ($colCount > 0) {
             $this->setQueryColumns($colCount);

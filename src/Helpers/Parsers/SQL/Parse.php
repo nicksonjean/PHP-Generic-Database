@@ -117,15 +117,68 @@ class Parse
     }
 
     /**
-     * Analyze raw query and return parameters (placeholders) found.
-     * Supports both named parameters (:name) and positional placeholders (?).
+     * Analyze raw query and return all parameters in sequential order.
+     * Extracts:
+     * - Named parameters (:name) and positional placeholders (?)
+     * - Literal values: numbers, single-quoted strings; double-quoted when dialect is BACKTICK.
+     *
+     * For SQL_DIALECT_DOUBLE_QUOTE (PostgreSQL, SQLite): double quotes = identifiers, skip them.
+     * For SQL_DIALECT_BACKTICK (MySQL): double quotes = string literals, extract them.
      *
      * @param string $query The raw SQL query to analyze.
-     * @return array Named parameters as keys without colon, or positional indices (0, 1, 2...).
+     * @param int|null $dialect SQL dialect for quote interpretation. Default: DOUBLE_QUOTE.
+     * @return array Parameters in positional order of appearance.
      */
-    public static function parseParameters(string $query): array
+    public static function parseParameters(string $query, ?int $dialect = null): array
     {
-        return self::arguments($query, null);
+        $params = self::arguments($query, null);
+        $literals = self::extractLiteralValues($query, $dialect ?? self::SQL_DIALECT_DOUBLE_QUOTE);
+
+        return empty($literals) ? $params : array_merge($params, $literals);
+    }
+
+    /**
+     * Extract all literal values (numbers and quoted strings) from the query in order of appearance.
+     *
+     * @param string $query The raw SQL query.
+     * @param int $dialect SQL dialect to interpret double-quoted strings.
+     * @return array Values in sequential, positional order.
+     */
+    private static function extractLiteralValues(string $query, int $dialect = self::SQL_DIALECT_DOUBLE_QUOTE): array
+    {
+        $found = [];
+
+        // Single-quoted strings: '...' (SQL standard for string literals)
+        if (preg_match_all("/'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'/s", $query, $matches, PREG_OFFSET_CAPTURE)) {
+            foreach ($matches[1] as $match) {
+                $found[] = ['pos' => $match[1], 'value' => $match[0]];
+            }
+        }
+
+        // Double-quoted: literals in MySQL (backtick), identifiers in PostgreSQL (double-quote) - skip for double-quote
+        if ($dialect === self::SQL_DIALECT_BACKTICK &&
+            preg_match_all('/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/s', $query, $matches, PREG_OFFSET_CAPTURE)) {
+            foreach ($matches[1] as $match) {
+                $found[] = ['pos' => $match[1], 'value' => $match[0]];
+            }
+        }
+
+        // Numeric literals (only outside quoted regions to avoid duplicates)
+        $masked = preg_replace("/'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'/s", "''", $query);
+        $masked = $masked !== null ? preg_replace('/"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"/s', '""', $masked) : '';
+        if ($masked !== null && preg_match_all('/\b(\d+(?:\.\d+)?)\b/', $masked, $matches, PREG_OFFSET_CAPTURE)) {
+            foreach ($matches[1] as $match) {
+                $num = $match[0];
+                $found[] = [
+                    'pos' => $match[1],
+                    'value' => str_contains($num, '.') ? (float) $num : (int) $num
+                ];
+            }
+        }
+
+        usort($found, fn($a, $b) => $a['pos'] <=> $b['pos']);
+
+        return array_map(fn($item) => $item['value'], $found);
     }
 
     /**
@@ -269,24 +322,31 @@ class Parse
     ): string {
         $object = new stdClass();
         $bindQm = self::$bindingMap[self::BIND_QUESTION_MARK];
-        $result = match (true) {
-            self::isFunction($word) => self::applyQuotesFunction($word, $quote),
-            str_contains($word, '*') => self::applyWildCard($word, $quote),
-            str_contains($word, '.') => self::applyQuotes($word, $quote),
-            str_contains($word, ']') => self::processCondition($object, $word, false),
-            str_contains($word, '[') => self::processCondition($object, $word, true),
-            $inFunction && str_contains($word, ')') => self::processCondition($object, $word, false),
-            !$inFunction && str_contains($word, '(') => self::processCondition($object, $word, true),
-            $inSingleQt && str_contains($word, "'") => self::processCondition($object, $word, false),
-            !$inSingleQt && str_contains($word, "'") => self::processCondition($object, $word, true),
-            $inDoubleQt && str_contains($word, '"') => self::processCondition($object, $word, false),
-            !$inDoubleQt && str_contains($word, '"') => self::processCondition($object, $word, true),
-            str_contains($word, ':') => $word,
-            in_array(mb_strtoupper($word), $resWords) => mb_strtoupper($word),
-            is_numeric($word) || preg_match('/\d+/im', $word) => $word,
-            str_contains($word, $bindQm) => str_replace($quote . $bindQm . $quote, $bindQm, $word),
-            default => self::encloseWord($word, $quote),
-        };
+
+        // Inside string literal (inFunction tracks quote state): do not modify the word
+        // Avoids backticks on "de" in "Rio de Janeiro" - words inside literals stay unchanged
+        if ($inFunction) {
+            $result = (str_contains($word, "'") || str_contains($word, '"'))
+                ? self::processCondition($object, $word, false)
+                : $word;
+        } else {
+            $result = match (true) {
+                self::isFunction($word) => self::applyQuotesFunction($word, $quote),
+                str_contains($word, '*') => self::applyWildCard($word, $quote),
+                str_contains($word, '.') => self::applyQuotes($word, $quote),
+                str_contains($word, ']') => self::processCondition($object, $word, false),
+                str_contains($word, '[') => self::processCondition($object, $word, true),
+                $inFunction && str_contains($word, ')') => self::processCondition($object, $word, false),
+                !$inFunction && str_contains($word, '(') => self::processCondition($object, $word, true),
+                str_contains($word, "'") => self::processCondition($object, $word, true),
+                str_contains($word, '"') => self::processCondition($object, $word, true),
+                str_contains($word, ':') => $word,
+                in_array(mb_strtoupper($word), $resWords) => mb_strtoupper($word),
+                is_numeric($word) || preg_match('/\d+/im', $word) => $word,
+                str_contains($word, $bindQm) => str_replace($quote . $bindQm . $quote, $bindQm, $word),
+                default => self::encloseWord($word, $quote),
+            };
+        }
 
         if (is_bool($result)) {
             $inFunction = $result;
@@ -326,8 +386,29 @@ class Parse
                 $input = str_replace($char, self::$quoteMap[self::SQL_DIALECT_NONE], $input);
             }
         }
+        // PostgreSQL, SQLite, etc.: double quotes = identifiers. Convert double-quoted
+        // string literals (MySQL style) to single-quoted for SQL standard compliance.
+        if ($dialect === self::SQL_DIALECT_DOUBLE_QUOTE) {
+            $input = self::normalizeStringLiteralsToSingleQuotes($input);
+        }
         $quote = self::$quoteMap[$dialect] ?? '';
         return self::escapeType($input, $quote);
+    }
+
+    /**
+     * Converts double-quoted string literals to single-quoted for dialects that use
+     * double quotes for identifiers (PostgreSQL, SQLite, Firebird, etc.).
+     *
+     * @param string $input The SQL string.
+     * @return string The string with literals normalized.
+     */
+    private static function normalizeStringLiteralsToSingleQuotes(string $input): string
+    {
+        $pattern = '/(=\s*|(?:NOT\s+)?(?:I?LIKE)\s+|!=\s*|<>?\s*|>\s*|<\s*|>=\s*|<=\s*|,\s*)\s*"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/i';
+        return preg_replace_callback($pattern, static function (array $m): string {
+            $value = str_replace("'", "''", $m[2]);
+            return $m[1] . "'" . $value . "'";
+        }, $input);
     }
 
     /**

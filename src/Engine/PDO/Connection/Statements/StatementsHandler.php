@@ -380,6 +380,10 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function query(mixed ...$params): IConnection
     {
         if (!empty($params) && ($statement = $this->prepareStatement(...$params)) && $this->exec($statement)) {
+            $this->setQueryParameters(Parse::parseParameters($this->getQueryString(), match ($this->get('driver')) {
+            'mysql' => Parse::SQL_DIALECT_BACKTICK,
+            default => Parse::SQL_DIALECT_DOUBLE_QUOTE,
+        }));
             $colCount = $statement->columnCount();
             if ($colCount > 0) {
                 $this->setQueryColumns($colCount);

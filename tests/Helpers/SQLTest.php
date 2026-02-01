@@ -23,7 +23,8 @@ final class SQLTest extends TestCase
     public function testEscapeDquoteDialect()
     {
         $input = 'SELECT * FROM users WHERE name = "John"';
-        $expected = 'SELECT * FROM "users" WHERE "name" = "John"';
+        // PostgreSQL/SQLite: identifiers use ", literals use ' (SQL standard)
+        $expected = 'SELECT * FROM "users" WHERE "name" = \'John\'';
 
         $actual = Parse::escape($input, Parse::SQL_DIALECT_DOUBLE_QUOTE);
 
@@ -153,5 +154,83 @@ final class SQLTest extends TestCase
         $parameters = Parse::parseParameters($input);
 
         $this->assertEquals([0, 1], $parameters);
+    }
+
+    public function testParseParametersExtractLimitOffset(): void
+    {
+        $input = "SELECT * FROM users ORDER BY id LIMIT 10";
+        $parameters = Parse::parseParameters($input);
+
+        $this->assertEquals([10], $parameters);
+    }
+
+    public function testParseParametersExtractLimitAndOffset(): void
+    {
+        $input = "SELECT * FROM users ORDER BY id LIMIT 10 OFFSET 0";
+        $parameters = Parse::parseParameters($input);
+
+        $this->assertEquals([10, 0], $parameters);
+    }
+
+    public function testParseParametersExtractHavingAndLimit(): void
+    {
+        $input = "SELECT e.id, COUNT(c.id) AS total FROM estado e JOIN cidade c ON c.estado_id = e.id "
+            . "GROUP BY e.id HAVING COUNT(c.id) > 50 ORDER BY total DESC LIMIT 5";
+        $parameters = Parse::parseParameters($input);
+
+        $this->assertEquals([50, 5], $parameters);
+    }
+
+    public function testParseParametersExtractStringLiteral(): void
+    {
+        // Single-quoted strings only (double-quoted = identifiers in PostgreSQL/SQLite)
+        $input = "SELECT * FROM estado WHERE nome LIKE '%Rio%'";
+        $parameters = Parse::parseParameters($input);
+
+        $this->assertEquals(['%Rio%'], $parameters);
+    }
+
+    public function testParseParametersExtractMixedLiterals(): void
+    {
+        $input = "SELECT * FROM estado WHERE nome LIKE '%Rio%' AND id > 10 LIMIT 5";
+        $parameters = Parse::parseParameters($input);
+
+        $this->assertEquals(['%Rio%', 10, 5], $parameters);
+    }
+
+    public function testEscapeCompoundStringLiteralNoBackticks(): void
+    {
+        $input = 'SELECT id, nome FROM estado WHERE nome = "Rio de Janeiro"';
+        $result = Parse::escape($input, Parse::SQL_DIALECT_BACKTICK);
+
+        $this->assertStringNotContainsString('`de`', $result);
+        $this->assertStringContainsString('Rio de Janeiro', $result);
+    }
+
+    public function testEscapeCompoundStringLiteralPgSQL(): void
+    {
+        $input = 'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE nome = "Rio de Janeiro"';
+        $result = Parse::escape($input, Parse::SQL_DIALECT_DOUBLE_QUOTE);
+
+        $this->assertStringContainsString("'Rio de Janeiro'", $result);
+        $this->assertStringNotContainsString('"Rio de Janeiro"', $result);
+    }
+
+    public function testParseParametersExcludesDoubleQuotedIdentifiers(): void
+    {
+        // Escaped PostgreSQL-style query: double-quoted = identifiers, single-quoted = literals
+        $input = 'SELECT "id" AS "Codigo", "nome" AS "Estado" FROM "estado" WHERE "nome" = \'Rio de Janeiro\'';
+        $parameters = Parse::parseParameters($input);
+
+        $this->assertEquals(['Rio de Janeiro'], $parameters);
+    }
+
+    public function testParseParametersExtractDoubleQuotedForBacktickDialect(): void
+    {
+        // MySQL: double-quoted = string literals, backticks = identifiers
+        $input = 'SELECT `id`, `nome` FROM `estado` WHERE `nome` = "Rio de Janeiro"';
+        $parameters = Parse::parseParameters($input, Parse::SQL_DIALECT_BACKTICK);
+
+        $this->assertEquals(['Rio de Janeiro'], $parameters);
     }
 }
