@@ -45,7 +45,7 @@ if (extension_loaded('interbase')) {
     } catch (Exception $e) {
         var_dump($e);
     }
-    
+
 }
 
 try {
@@ -180,6 +180,48 @@ try {
 
 try {
     $context = StaticArgs::odbcMemory(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArgs::nativeNEON(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArgs::nativeYAML(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArgs::nativeCSV(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArgs::nativeINI(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArgs::nativeXML(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArgs::nativeJSON(env: $_ENV, persistent: true, strategy: true)->connect();
     var_dump($context);
 } catch (Exception $e) {
     var_dump($e);

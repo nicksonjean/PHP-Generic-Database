@@ -17,10 +17,12 @@ use GenericDatabase\Engine\SQLSrvQueryBuilder;
 use GenericDatabase\Engine\SQLiteQueryBuilder;
 use GenericDatabase\Engine\PDOQueryBuilder;
 use GenericDatabase\Engine\ODBCQueryBuilder;
+use GenericDatabase\Engine\INIQueryBuilder;
 use GenericDatabase\Engine\JSONQueryBuilder;
 use GenericDatabase\Engine\CSVQueryBuilder;
 use GenericDatabase\Engine\XMLQueryBuilder;
 use GenericDatabase\Engine\YAMLQueryBuilder;
+use GenericDatabase\Engine\NEONQueryBuilder;
 use Exception;
 
 /**
@@ -168,9 +170,11 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
             'pdo' => (new PDOQueryBuilder(self::$context)),
             'odbc' => (new ODBCQueryBuilder(self::$context)),
             'json' => (new JSONQueryBuilder(self::$context)),
+            'neon' => (new NEONQueryBuilder(self::$context)),
             'csv' => (new CSVQueryBuilder(self::$context)),
             'xml' => (new XMLQueryBuilder(self::$context)),
             'yaml' => (new YAMLQueryBuilder(self::$context)),
+            'ini' => (new INIQueryBuilder(self::$context)),
             default => null,
         };
 

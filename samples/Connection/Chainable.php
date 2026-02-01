@@ -184,3 +184,45 @@ try {
 } catch (Exception $e) {
     var_dump($e);
 }
+
+try {
+    $context = Chainable::nativeNEON(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Chainable::nativeYAML(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Chainable::nativeCSV(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Chainable::nativeINI(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Chainable::nativeXML(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}

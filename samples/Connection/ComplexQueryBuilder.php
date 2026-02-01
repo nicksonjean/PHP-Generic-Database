@@ -41,6 +41,13 @@ $context = Chainable::nativeOCI(env: $_ENV, persistent: true, strategy: true)->c
 // $context = Chainable::odbcPgSQL(env: $_ENV, persistent: true, strategy: true)->connect();
 // $context = Chainable::odbcOCI(env: $_ENV, persistent: true, strategy: true)->connect();
 
+// $context = Chainable::nativeNEON(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeYAML(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeINI(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeXML(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeCSV(env: $_ENV, persistent: true, strategy: true)->connect();
+
 $sep = str_repeat('=', 80) . "\n";
 
 // -----------------------------------------------------------------------------

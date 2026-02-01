@@ -27,6 +27,7 @@ use GenericDatabase\Engine\JSONConnection;
 use GenericDatabase\Engine\INIConnection;
 use GenericDatabase\Engine\CSVConnection;
 use GenericDatabase\Engine\XMLConnection;
+use GenericDatabase\Engine\NEONConnection;
 use GenericDatabase\Engine\YAMLConnection;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Interfaces\Strategy\IConnectionStrategy;
@@ -264,6 +265,7 @@ class Connection implements IConnection, IConnectionStrategy
             'sqlite' => new SQLiteConnection(),
             'odbc' => new ODBCConnection(),
             'json' => new JSONConnection(),
+            'neon' => new NEONConnection(),
             'csv' => new CSVConnection(),
             'xml' => new XMLConnection(),
             'yaml' => new YAMLConnection(),
@@ -336,8 +338,6 @@ class Connection implements IConnection, IConnectionStrategy
             $data = NEON::parseNEON(...$arguments);
         } elseif ($format === 'csv') {
             $data = CSV::parseCSV(...$arguments);
-        } elseif ($format === 'ini') {
-            $data = INI::parseINI(...$arguments);
         }
         self::call(self::getInstance(), 'initFactory', Arrays::assocToIndex(Arrays::recombine($data)));
         $caseArgumentClass = PHP_VERSION_ID >= 80100

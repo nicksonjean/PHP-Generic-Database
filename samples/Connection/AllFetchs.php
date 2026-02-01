@@ -32,6 +32,13 @@ $context = Chainable::nativeMySQLi(env: $_ENV, persistent: true, strategy: true)
 // $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: true)->connect();
 // $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: true)->connect();
 
+// $context = Chainable::nativeNEON(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeYAML(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeINI(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeXML(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: true)->connect();
+// $context = Chainable::nativeCSV(env: $_ENV, persistent: true, strategy: true)->connect();
+
 $test0 = (new QueryBuilder($context))->select(['e.id AS Codigo', 'e.nome AS Estado', 'e.sigla AS Sigla'])
     ->from(['estado e'])
     ->where(['e.id >= 25']);

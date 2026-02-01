@@ -184,3 +184,45 @@ try {
 } catch (Exception $e) {
     var_dump($e);
 }
+
+try {
+    $context = StaticArray::nativeNEON(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArray::nativeYAML(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArray::nativeCSV(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArray::nativeINI(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArray::nativeXML(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
+
+try {
+    $context = StaticArray::nativeJSON(env: $_ENV, persistent: true, strategy: true)->connect();
+    var_dump($context);
+} catch (Exception $e) {
+    var_dump($e);
+}
