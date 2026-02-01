@@ -32,6 +32,8 @@ use GenericDatabase\Engine\CSVConnection;
 use GenericDatabase\Engine\CSV\Connection\CSV;
 use GenericDatabase\Engine\INIConnection;
 use GenericDatabase\Engine\INI\Connection\INI;
+use GenericDatabase\Engine\NEONConnection;
+use GenericDatabase\Engine\NEON\Connection\NEON;
 
 /**
  * Class StaticArgs
@@ -62,6 +64,12 @@ use GenericDatabase\Engine\INI\Connection\INI;
  * - `odbcExcel(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Microsoft Excel connection.
  * - `odbcText(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Text connection.
  * - `odbcMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC SQLite in-memory connection.
+ * - `nativeJSON(array $env, bool $persistent = false, bool $strategy = false): Connection|JSONConnection`: Creates a native JSON connection.
+ * - `nativeXML(array $env, bool $persistent = false, bool $strategy = false): Connection|XMLConnection`: Creates a native XML connection.
+ * - `nativeYAML(array $env, bool $persistent = false, bool $strategy = false): Connection|YAMLConnection`: Creates a native YAML connection.
+ * - `nativeCSV(array $env, bool $persistent = false, bool $strategy = false): Connection|CSVConnection`: Creates a native CSV connection.
+ * - `nativeINI(array $env, bool $persistent = false, bool $strategy = false): Connection|INIConnection`: Creates a native INI connection.
+ * - `nativeNEON(array $env, bool $persistent = false, bool $strategy = false): Connection|NEONConnection`: Creates a native NEON connection.
  */
 class StaticArgs
 {
@@ -1385,6 +1393,14 @@ class StaticArgs
         }
     }
 
+    /**
+     * Creates a native JSON connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing native JSON connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|JSONConnection Returns a native JSON connection instance.
+     */
     public static function nativeJSON(
         array $env,
         bool $persistent = false,
@@ -1428,6 +1444,14 @@ class StaticArgs
         }
     }
 
+    /**
+     * Creates a native XML connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing native XML connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|XMLConnection Returns a native XML connection instance.
+     */
     public static function nativeXML(
         array $env,
         bool $persistent = false,
@@ -1469,6 +1493,14 @@ class StaticArgs
         }
     }
 
+    /**
+     * Creates a native YAML connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing native YAML connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|YAMLConnection Returns a native YAML connection instance.
+     */
     public static function nativeYAML(
         array $env,
         bool $persistent = false,
@@ -1510,6 +1542,14 @@ class StaticArgs
         }
     }
 
+    /**
+     * Creates a native CSV connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing native CSV connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|CSVConnection Returns a native CSV connection instance.
+     */
     public static function nativeCSV(
         array $env,
         bool $persistent = false,
@@ -1551,6 +1591,14 @@ class StaticArgs
         }
     }
 
+    /**
+     * Creates a native INI connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing native INI connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|INIConnection Returns a native INI connection instance.
+     */
     public static function nativeINI(
         array $env,
         bool $persistent = false,
@@ -1586,6 +1634,55 @@ class StaticArgs
                     INI::ATTR_CONNECT_TIMEOUT => 28800,
                     INI::ATTR_DEFAULT_FETCH_MODE => INI::FETCH_OBJ,
                     INI::ATTR_REPORT => INI::REPORT_ERROR | INI::REPORT_STRICT
+                ],
+                exception: true
+            );
+        }
+    }
+
+    /**
+     * Creates a native NEON connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing native NEON connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|NEONConnection Returns a native NEON connection instance.
+     */
+    public static function nativeNEON(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|NEONConnection {
+        /** @var Connection|NEONConnection $className */
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_NEON_ENGINE()->value;
+
+        /** @var callable $constructor */
+        $constructor = [$className, 'new'];
+
+        if ($strategy) {
+            return $constructor(
+                engine: 'neon',
+                database: $env['NEON_DATABASE'],
+                charset: $env['NEON_CHARSET'],
+                options: [
+                    NEON::ATTR_PERSISTENT => $persistent,
+                    NEON::ATTR_AUTOCOMMIT => true,
+                    NEON::ATTR_CONNECT_TIMEOUT => 28800,
+                    NEON::ATTR_DEFAULT_FETCH_MODE => NEON::FETCH_OBJ,
+                    NEON::ATTR_REPORT => NEON::REPORT_ERROR | NEON::REPORT_STRICT
+                ],
+                exception: true
+            );
+        } else {
+            return $constructor(
+                database: $env['NEON_DATABASE'],
+                charset: $env['NEON_CHARSET'],
+                options: [
+                    NEON::ATTR_PERSISTENT => $persistent,
+                    NEON::ATTR_AUTOCOMMIT => true,
+                    NEON::ATTR_CONNECT_TIMEOUT => 28800,
+                    NEON::ATTR_DEFAULT_FETCH_MODE => NEON::FETCH_OBJ,
+                    NEON::ATTR_REPORT => NEON::REPORT_ERROR | NEON::REPORT_STRICT
                 ],
                 exception: true
             );

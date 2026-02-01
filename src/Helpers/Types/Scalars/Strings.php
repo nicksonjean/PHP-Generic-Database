@@ -35,7 +35,7 @@ class Strings
      * @param string $string The string to be repeated.
      * @return string The repeated string.
      */
-    public static function strRpeat(int $num, string $string): string
+    public static function strRepeat(int $num, string $string): string
     {
         $result = "";
         for ($x = 0; $x < $num; $x++) {

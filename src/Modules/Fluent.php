@@ -32,6 +32,8 @@ use GenericDatabase\Engine\CSVConnection;
 use GenericDatabase\Engine\CSV\Connection\CSV;
 use GenericDatabase\Engine\INIConnection;
 use GenericDatabase\Engine\INI\Connection\INI;
+use GenericDatabase\Engine\NEONConnection;
+use GenericDatabase\Engine\NEON\Connection\NEON;
 
 /**
  * Class Fluent
@@ -62,6 +64,12 @@ use GenericDatabase\Engine\INI\Connection\INI;
  * - `odbcExcel(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Microsoft Excel connection.
  * - `odbcText(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC Text connection.
  * - `odbcMemory(array $env, bool $persistent = false, bool $strategy = false): Connection|ODBCConnection`: Creates an ODBC SQLite in-memory connection.
+ * - `nativeJSON(array $env, bool $persistent = false, bool $strategy = false): Connection|JSONConnection`: Creates a native JSON connection.
+ * - `nativeXML(array $env, bool $persistent = false, bool $strategy = false): Connection|XMLConnection`: Creates a native XML connection.
+ * - `nativeYAML(array $env, bool $persistent = false, bool $strategy = false): Connection|YAMLConnection`: Creates a native YAML connection.
+ * - `nativeCSV(array $env, bool $persistent = false, bool $strategy = false): Connection|CSVConnection`: Creates a native CSV connection.
+ * - `nativeINI(array $env, bool $persistent = false, bool $strategy = false): Connection|INIConnection`: Creates a native INI connection.
+ * - `nativeNEON(array $env, bool $persistent = false, bool $strategy = false): Connection|NEONConnection`: Creates a native NEON connection.
  */
 class Fluent
 {
@@ -1080,4 +1088,37 @@ class Fluent
 
         return $instance;
     }
+
+    /**
+     * Creates a native NEON connection using the provided environment settings.
+     *
+     * @param array $env An associative array containing native NEON connection parameters.
+     * @param bool $persistent Optional. Whether to use a persistent connection. Default is false.
+     * @param bool $strategy Optional. Whether to use a generic connection strategy. Default is false.
+     * @return Connection|NEONConnection Returns a native NEON connection instance.
+     */
+    public static function nativeNEON(
+        array $env,
+        bool $persistent = false,
+        bool $strategy = false
+    ): Connection|NEONConnection {
+        $className = $strategy ? Entity::CLASS_CONNECTION()->value : Entity::CLASS_NEON_ENGINE()->value;
+        if ($strategy) {
+            call_user_func([$className, 'setEngine'], 'neon');
+        }
+        /** @var Connection|NEONConnection $instance */
+        $instance = $className::setDatabase($env['NEON_DATABASE']);
+        $instance::setCharset($env['NEON_CHARSET'])
+            ::setOptions([
+                NEON::ATTR_PERSISTENT => $persistent,
+                NEON::ATTR_AUTOCOMMIT => true,
+                NEON::ATTR_CONNECT_TIMEOUT => 28800,
+                NEON::ATTR_DEFAULT_FETCH_MODE => NEON::FETCH_OBJ,
+                NEON::ATTR_REPORT => NEON::REPORT_ERROR | NEON::REPORT_STRICT
+            ])
+            ::setException(true);
+
+        return $instance;
+    }
+
 }
