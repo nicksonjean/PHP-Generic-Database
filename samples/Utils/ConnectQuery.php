@@ -31,12 +31,12 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 // $context = Chainable::odbcFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::odbcSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
-// $context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)->connect();
+$context = Chainable::nativeJSON(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeCSV(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeINI(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeNEON(env: $_ENV, persistent: true, strategy: false)->connect();
 // $context = Chainable::nativeYAML(env: $_ENV, persistent: true, strategy: false)->connect();
-$context = Chainable::nativeXML(env: $_ENV, persistent: true, strategy: false)->connect();
+// $context = Chainable::nativeXML(env: $_ENV, persistent: true, strategy: false)->connect();
 
 
 // var_dump($context);

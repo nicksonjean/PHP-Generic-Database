@@ -122,9 +122,10 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
     {
         $query = $params[0] ?? '';
         $this->setAllMetadata();
-        $this->setQueryString($query);
-        $this->setQueryParameters(Parse::parseParameters($query));
-        $this->setStatement($query);
+        $formattedQuery = Parse::escape((string) $query, Parse::SQL_DIALECT_DOUBLE_QUOTE);
+        $this->setQueryString($formattedQuery);
+        $this->setQueryParameters(Parse::parseParameters($formattedQuery, Parse::SQL_DIALECT_DOUBLE_QUOTE));
+        $this->setStatement($formattedQuery);
         $queryType = $this->detectQueryType($query);
 
         if (in_array($queryType, ['INSERT', 'UPDATE', 'DELETE'])) {
