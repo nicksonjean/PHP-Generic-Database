@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace GenericDatabase\Helpers\Parsers;
+namespace GenericDatabase\Helpers\Parsers\SQL\Query;
 
 /**
  * Data Transfer Object for SQL query analysis information.
  *
- * @package GenericDatabase\Helpers\Parsers
+ * @package GenericDatabase\Helpers\Parsers\SQL\Query
  */
-class QueryInfo
+class Info
 {
     /**
-     * Create a new QueryInfo instance.
+     * Create a new Info instance.
      *
      * @param string $primaryType The primary type of the query (SELECT, INSERT, UPDATE, DELETE, UNKNOWN).
      * @param bool $isCompound Whether the query is a compound query (e.g., INSERT...SELECT).
@@ -36,7 +36,7 @@ class QueryInfo
      */
     public function isSelect(): bool
     {
-        return $this->primaryType === QueryTypeDetector::TYPE_SELECT;
+        return $this->primaryType === TypeDetector::TYPE_SELECT;
     }
 
     /**
@@ -46,7 +46,7 @@ class QueryInfo
      */
     public function isInsert(): bool
     {
-        return $this->primaryType === QueryTypeDetector::TYPE_INSERT;
+        return $this->primaryType === TypeDetector::TYPE_INSERT;
     }
 
     /**
@@ -56,7 +56,7 @@ class QueryInfo
      */
     public function isUpdate(): bool
     {
-        return $this->primaryType === QueryTypeDetector::TYPE_UPDATE;
+        return $this->primaryType === TypeDetector::TYPE_UPDATE;
     }
 
     /**
@@ -66,7 +66,7 @@ class QueryInfo
      */
     public function isDelete(): bool
     {
-        return $this->primaryType === QueryTypeDetector::TYPE_DELETE;
+        return $this->primaryType === TypeDetector::TYPE_DELETE;
     }
 
     /**
@@ -77,9 +77,9 @@ class QueryInfo
     public function isDml(): bool
     {
         return in_array($this->primaryType, [
-            QueryTypeDetector::TYPE_INSERT,
-            QueryTypeDetector::TYPE_UPDATE,
-            QueryTypeDetector::TYPE_DELETE
+            TypeDetector::TYPE_INSERT,
+            TypeDetector::TYPE_UPDATE,
+            TypeDetector::TYPE_DELETE
         ]);
     }
 }

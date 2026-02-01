@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace GenericDatabase\Helpers\Parsers;
+namespace GenericDatabase\Helpers\Parsers\SQL\Query;
 
 /**
  * Robust SQL query type detector that handles complex query patterns.
  * Supports CTE queries, compound queries (INSERT...SELECT), subqueries,
  * UNION/INTERSECT/EXCEPT operations, and nested queries.
  *
- * @package GenericDatabase\Helpers\Parsers
+ * @package GenericDatabase\Helpers\Parsers\SQL\Query
  */
-class QueryTypeDetector
+class TypeDetector
 {
     public const TYPE_SELECT = 'SELECT';
     public const TYPE_INSERT = 'INSERT';
@@ -81,9 +81,9 @@ class QueryTypeDetector
      * Perform detailed analysis of a query.
      *
      * @param string $query The SQL query to analyze.
-     * @return QueryInfo Complete query information.
+     * @return Info Complete query information.
      */
-    public static function analyze(string $query): QueryInfo
+    public static function analyze(string $query): Info
     {
         $cleanQuery = self::stripComments(trim($query));
 
@@ -93,7 +93,7 @@ class QueryTypeDetector
         $operations = self::getOperations($cleanQuery);
         $tables = self::extractTables($cleanQuery);
 
-        return new QueryInfo(
+        return new Info(
             primaryType: $primaryType,
             isCompound: $isCompound,
             hasSubquery: $hasSubquery,

@@ -8,7 +8,7 @@ use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Interfaces\Connection\IReport;
 use GenericDatabase\Interfaces\Connection\IFlatFileStatements;
-use GenericDatabase\Helpers\Parsers\QueryTypeDetector;
+use GenericDatabase\Helpers\Parsers\SQL\Query\TypeDetector;
 
 /**
  * Abstract base class for flat-file statement operations.
@@ -92,7 +92,7 @@ abstract class AbstractFlatFileStatements extends AbstractStatements implements 
      */
     protected function detectQueryType(string $query): string
     {
-        return QueryTypeDetector::detect($query);
+        return TypeDetector::detect($query);
     }
 
     /**
@@ -103,7 +103,7 @@ abstract class AbstractFlatFileStatements extends AbstractStatements implements 
      */
     protected function isDmlQuery(string $query): bool
     {
-        return QueryTypeDetector::isDmlQuery($query);
+        return TypeDetector::isDmlQuery($query);
     }
 
     /**
@@ -114,7 +114,7 @@ abstract class AbstractFlatFileStatements extends AbstractStatements implements 
      */
     protected function isSelectQuery(string $query): bool
     {
-        return QueryTypeDetector::isSelectQuery($query);
+        return TypeDetector::isSelectQuery($query);
     }
 
     /**

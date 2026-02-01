@@ -6,7 +6,7 @@ use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Generic\Statements\Statement;
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Engine\SQLite\Connection\SQLite;
 use SQLite3Result;
 
@@ -188,9 +188,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
     {
         $query = reset($params);
         // Store original query for argument extraction
-        $this->setQueryString(SQL::escape($query, SQL::SQL_DIALECT_DOUBLE_QUOTE));
+        $this->setQueryString(Parse::escape($query, Parse::SQL_DIALECT_DOUBLE_QUOTE));
         // SQLite3 doesn't support named parameters, convert them to positional placeholders
-        $convertedQuery = SQL::binding($this->getQueryString(), SQL::BIND_QUESTION_MARK);
+        $convertedQuery = Parse::binding($this->getQueryString(), Parse::BIND_QUESTION_MARK);
         $this->setQueryString($convertedQuery);
         return $this->getQueryString();
     }

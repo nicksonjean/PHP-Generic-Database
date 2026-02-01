@@ -14,7 +14,7 @@ use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Shared\Singleton;
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Generic\QueryBuilder\Context;
@@ -550,8 +550,8 @@ class ODBCQueryBuilder implements IQueryBuilder
         $builder = new Builder($this->query, $this->getContext());
         return $builder->parse(
             $buildResult,
-            SQL::SQL_DIALECT_NONE,
-            SQL::SQL_DIALECT_SINGLE_QUOTE
+            Parse::SQL_DIALECT_NONE,
+            Parse::SQL_DIALECT_SINGLE_QUOTE
         );
     }
 

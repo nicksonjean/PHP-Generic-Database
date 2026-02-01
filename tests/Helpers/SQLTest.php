@@ -2,7 +2,7 @@
 
 namespace GenericDatabase\Tests\Helpers;
 
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
@@ -15,7 +15,7 @@ final class SQLTest extends TestCase
         $input = self::$userQuery;
         $expected = self::$userQuery;
 
-        $actual = SQL::escape($input);
+        $actual = Parse::escape($input);
 
         $this->assertEquals($expected, $actual);
     }
@@ -25,7 +25,7 @@ final class SQLTest extends TestCase
         $input = 'SELECT * FROM users WHERE name = "John"';
         $expected = 'SELECT * FROM "users" WHERE "name" = "John"';
 
-        $actual = SQL::escape($input, SQL::SQL_DIALECT_DOUBLE_QUOTE);
+        $actual = Parse::escape($input, Parse::SQL_DIALECT_DOUBLE_QUOTE);
 
         $this->assertEquals($expected, $actual);
     }
@@ -35,7 +35,7 @@ final class SQLTest extends TestCase
         $input = self::$userQuery;
         $expected = "SELECT * FROM 'users' WHERE 'name' = 'John'";
 
-        $actual = SQL::escape($input, SQL::SQL_DIALECT_SINGLE_QUOTE);
+        $actual = Parse::escape($input, Parse::SQL_DIALECT_SINGLE_QUOTE);
 
         $this->assertEquals($expected, $actual);
     }
@@ -45,7 +45,7 @@ final class SQLTest extends TestCase
         $input = self::$userQuery;
         $expected = "SELECT * FROM `users` WHERE `name` = 'John'";
 
-        $actual = SQL::escape($input, SQL::SQL_DIALECT_BACKTICK);
+        $actual = Parse::escape($input, Parse::SQL_DIALECT_BACKTICK);
 
         $this->assertEquals($expected, $actual);
     }
@@ -55,7 +55,7 @@ final class SQLTest extends TestCase
         $input = self::$userQuery;
         $expected = self::$userQuery;
 
-        $actual = SQL::escape($input, SQL::SQL_DIALECT_NONE);
+        $actual = Parse::escape($input, Parse::SQL_DIALECT_NONE);
 
         $this->assertEquals($expected, $actual);
     }
@@ -65,7 +65,7 @@ final class SQLTest extends TestCase
         $input = "SELECT * FROM users WHERE name = 'SELECT'";
         $expected = "SELECT * FROM users WHERE name = 'SELECT'";
 
-        $actual = SQL::escape($input);
+        $actual = Parse::escape($input);
 
         $this->assertEquals($expected, $actual);
     }
@@ -74,7 +74,7 @@ final class SQLTest extends TestCase
     {
         $input = "SELECT * FROM table WHERE id = :id";
         $expected = "SELECT * FROM table WHERE id = ?";
-        $actual = SQL::binding($input);
+        $actual = Parse::binding($input);
         $this->assertEquals($expected, $actual);
     }
 
@@ -82,7 +82,7 @@ final class SQLTest extends TestCase
     {
         $input = "SELECT * FROM table WHERE id = :id";
         $expected = "SELECT * FROM table WHERE id = $1";
-        $actual = SQL::binding($input, SQL::BIND_DOLLAR_SIGN);
+        $actual = Parse::binding($input, Parse::BIND_DOLLAR_SIGN);
         $this->assertEquals($expected, $actual);
     }
 
@@ -90,7 +90,7 @@ final class SQLTest extends TestCase
     {
         $input = "SELECT * FROM users WHERE id = :id AND name = :name";
         $values = ['id' => 1, 'name' => 'John'];
-        $arguments = SQL::arguments($input, $values);
+        $arguments = Parse::arguments($input, $values);
         $this->assertEquals([':id' => 1, ':name' => 'John'], $arguments);
     }
 
@@ -103,7 +103,7 @@ final class SQLTest extends TestCase
         $quote = '"';
         $forbiddenWords = ['INSERT', 'INTO', 'VALUES'];
 
-        $reflectionClass = new ReflectionClass(SQL::class);
+        $reflectionClass = new ReflectionClass(Parse::class);
         $method = $reflectionClass->getMethod('replaceParameters');
         $method->setAccessible(true); //NOSONAR
 
@@ -121,7 +121,7 @@ final class SQLTest extends TestCase
         $quote = '';
         $forbiddenWords = [''];
 
-        $reflectionClass = new ReflectionClass(SQL::class);
+        $reflectionClass = new ReflectionClass(Parse::class);
         $method = $reflectionClass->getMethod('replaceParameters');
         $method->setAccessible(true); //NOSONAR
 
@@ -134,8 +134,24 @@ final class SQLTest extends TestCase
     {
         $input = "SELECT * FROM users";
 
-        $arguments = SQL::arguments($input, null);
+        $arguments = Parse::arguments($input, null);
 
         $this->assertEmpty($arguments);
+    }
+
+    public function testParseParametersFromRawQuery(): void
+    {
+        $input = "SELECT * FROM users WHERE id = :id AND name = :name";
+        $parameters = Parse::parseParameters($input);
+
+        $this->assertEquals([':id', ':name'], $parameters);
+    }
+
+    public function testParseParametersPositionalPlaceholders(): void
+    {
+        $input = "SELECT * FROM users WHERE id = ? AND name = ?";
+        $parameters = Parse::parseParameters($input);
+
+        $this->assertEquals([0, 1], $parameters);
     }
 }

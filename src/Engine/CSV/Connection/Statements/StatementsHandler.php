@@ -12,7 +12,7 @@ use GenericDatabase\Abstract\AbstractFlatFileStatements;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Helpers\Parsers\Schema;
 use GenericDatabase\Engine\CSV\Connection\Structure\StructureHandler;
 use GenericDatabase\Engine\CSV\Connection\Options\OptionsHandler;
@@ -763,7 +763,7 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
 
     /**
      * Parses an SQL statement and returns an statement.
-     * Uses SQL::escape() to format the query with proper identifier quoting,
+     * Uses Parse::escape() to format the query with proper identifier quoting,
      * matching the behavior of SQLiteConnection.
      *
      * @param mixed ...$params The parameters for the query function.
@@ -777,8 +777,8 @@ class StatementsHandler extends AbstractFlatFileStatements implements IFlatFileS
             return '';
         }
 
-        // Use SQL::escape() with DOUBLE_QUOTE dialect to match SQLiteConnection behavior
-        $parsedQuery = SQL::escape((string) $query, SQL::SQL_DIALECT_DOUBLE_QUOTE);
+        // Use Parse::escape() with DOUBLE_QUOTE dialect to match SQLiteConnection behavior
+        $parsedQuery = Parse::escape((string) $query, Parse::SQL_DIALECT_DOUBLE_QUOTE);
         $this->setQueryString($parsedQuery);
         return $parsedQuery;
     }

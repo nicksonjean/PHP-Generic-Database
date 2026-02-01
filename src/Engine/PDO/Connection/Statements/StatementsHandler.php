@@ -6,7 +6,7 @@ use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Generic\Statements\Statement;
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Engine\PDO\Connection\XPDO;
 use PDOStatement;
 use PDO;
@@ -332,11 +332,11 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function parse(mixed ...$params): string
     {
         $dialectQuote = match ($this->get('driver')) {
-            'mysql' => SQL::SQL_DIALECT_BACKTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird', 'sqlite' => SQL::SQL_DIALECT_DOUBLE_QUOTE,
-            default => SQL::SQL_DIALECT_NONE,
+            'mysql' => Parse::SQL_DIALECT_BACKTICK,
+            'pgsql', 'sqlsrv', 'oci', 'firebird', 'sqlite' => Parse::SQL_DIALECT_DOUBLE_QUOTE,
+            default => Parse::SQL_DIALECT_NONE,
         };
-        $this->setQueryString(SQL::escape(reset($params), $dialectQuote));
+        $this->setQueryString(Parse::escape(reset($params), $dialectQuote));
         return $this->getQueryString();
     }
 

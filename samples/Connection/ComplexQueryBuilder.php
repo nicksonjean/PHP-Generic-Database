@@ -12,7 +12,7 @@
 use Dotenv\Dotenv;
 use GenericDatabase\Connection;
 use GenericDatabase\Modules\Chainable;
-use GenericDatabase\Engine\SQLiteQueryBuilder;
+use GenericDatabase\QueryBuilder;
 
 define('PATH_ROOT', dirname(__DIR__, 2));
 
@@ -55,7 +55,7 @@ $sep = str_repeat('=', 80) . "\n";
 // -----------------------------------------------------------------------------
 echo $sep . "Teste 1: JOIN estado x cidade, ORDER BY cidade.nome, LIMIT 10\n" . $sep;
 
-$qb1 = (new SQLiteQueryBuilder($context))
+$qb1 = (new QueryBuilder($context))
     ->select('e.id AS estado_id, e.nome AS estado_nome, e.sigla, c.id AS cidade_id, c.nome AS cidade_nome')
     ->from('estado e')
     ->join('cidade c')
@@ -75,7 +75,7 @@ var_dump($rows1);
 // -----------------------------------------------------------------------------
 echo "\n" . $sep . "Teste 2: GROUP BY estado, COUNT(cidades), HAVING > 50, ORDER BY total DESC, LIMIT 5\n" . $sep;
 
-$qb2 = (new SQLiteQueryBuilder($context))
+$qb2 = (new QueryBuilder($context))
     ->select('e.id AS estado_id, e.nome AS estado_nome, e.sigla, COUNT(c.id) AS total_cidades')
     ->from('estado e')
     ->join('cidade c')
@@ -97,7 +97,7 @@ var_dump($rows2);
 // -----------------------------------------------------------------------------
 echo "\n" . $sep . "Teste 3: GROUP BY estado, SUM(c.id), ORDER BY soma DESC, LIMIT 5\n" . $sep;
 
-$qb3 = (new SQLiteQueryBuilder($context))
+$qb3 = (new QueryBuilder($context))
     ->select('e.id AS estado_id, e.nome AS estado_nome, SUM(c.id) AS soma_ids_cidades')
     ->from('estado e')
     ->join('cidade c')
@@ -118,7 +118,7 @@ var_dump($rows3);
 // -----------------------------------------------------------------------------
 echo "\n" . $sep . "Teste 4: GROUP BY estado, AVG(c.id), HAVING AVG > 100, ORDER BY media DESC, LIMIT 5\n" . $sep;
 
-$qb4 = (new SQLiteQueryBuilder($context))
+$qb4 = (new QueryBuilder($context))
     ->select('e.id AS estado_id, e.nome AS estado_nome, AVG(c.id) AS media_ids_cidades')
     ->from('estado e')
     ->join('cidade c')
@@ -140,7 +140,7 @@ var_dump($rows4);
 // -----------------------------------------------------------------------------
 echo "\n" . $sep . "Teste 5: DISTINCT estado_id em cidade, ORDER BY estado_id, LIMIT 10\n" . $sep;
 
-$qb5 = SQLiteQueryBuilder::with($context)::distinct('estado_id')
+$qb5 = QueryBuilder::with($context)::distinct('estado_id')
     ->from('cidade')
     ->order('estado_id ASC')
     ->limit('0, 10');
@@ -157,7 +157,7 @@ var_dump($rows5);
 // -----------------------------------------------------------------------------
 echo "\n" . $sep . "Teste 6: GROUP BY + COUNT + SUM + AVG + HAVING (>20) + ORDER BY + LIMIT 5\n" . $sep;
 
-$qb6 = (new SQLiteQueryBuilder($context))
+$qb6 = (new QueryBuilder($context))
     ->select('e.id AS estado_id, e.nome AS estado_nome, COUNT(c.id) AS total_cidades, SUM(c.id) AS soma_ids, AVG(c.id) AS media_ids')
     ->from('estado e')
     ->join('cidade c')

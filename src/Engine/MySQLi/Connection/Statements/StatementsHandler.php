@@ -4,7 +4,7 @@ namespace GenericDatabase\Engine\MySQLi\Connection\Statements;
 
 use mysqli_stmt;
 use GenericDatabase\Generic\Statements\Statement;
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Engine\MySQLi\Connection\MySQL;
@@ -251,7 +251,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function parse(mixed ...$params): string
     {
-        $this->setQueryString(SQL::binding(SQL::escape(reset($params), SQL::SQL_DIALECT_BACKTICK)));
+        $this->setQueryString(Parse::binding(Parse::escape(reset($params), Parse::SQL_DIALECT_BACKTICK)));
         return $this->getQueryString();
     }
 

@@ -22,7 +22,7 @@ use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IFlatFileFetch;
 use GenericDatabase\Interfaces\Connection\IFlatFileStatements;
-use GenericDatabase\Helpers\Parsers\QueryTypeDetector;
+use GenericDatabase\Helpers\Parsers\SQL\Query\TypeDetector;
 use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\JSON\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\JSON\Connection\Fetch\FetchHandler;
@@ -448,7 +448,7 @@ class JSONConnection implements IConnection
         $queryString = $this->getStatementsHandler()->getQueryString();
 
         // Only execute for SELECT queries - DML operations are already executed
-        if ($this->getStatementsHandler()->getQueryRows() === 0 && !empty($queryString) && QueryTypeDetector::isDmlQuery($queryString) === false) {
+        if ($this->getStatementsHandler()->getQueryRows() === 0 && !empty($queryString) && TypeDetector::isDmlQuery($queryString) === false) {
             // Force execution to populate metadata, cursor is reset for subsequent fetches
             $this->getFetchHandler()->execute();
         }

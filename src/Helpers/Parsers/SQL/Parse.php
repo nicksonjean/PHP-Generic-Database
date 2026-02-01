@@ -1,70 +1,40 @@
 <?php
 
-namespace GenericDatabase\Helpers\Parsers;
+declare(strict_types=1);
+
+namespace GenericDatabase\Helpers\Parsers\SQL;
 
 use stdClass;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 
 /**
- * The `GenericDatabase\Helpers\Parsers\SQL` class is responsible for
+ * The `GenericDatabase\Helpers\Parsers\SQL\Parse` class is responsible for
  * escaping SQL strings and replacing parameters and binds in the SQL queries.
  * It provides methods to escape SQL strings based on different SQL dialects,
  * extract SQL arguments, and replace SQL binds with different bind types.
  *
  * Example Usage:
  * <code>
- * //Escape an SQL query using the default dialect
- * $escapedQuery = SQL::escape("SELECT * FROM users WHERE id = :id");
+ * // Escape an SQL query using the default dialect
+ * $escapedQuery = Parse::escape("SELECT * FROM users WHERE id = :id");
  *
- * //Escape an SQL query using a specific dialect
- * $escapedQuery = SQL::escape("SELECT * FROM users WHERE id = :id", SQL::SQL_DIALECT_DOUBLE_QUOTE);
+ * // Extract parameters from a raw SQL query
+ * $parameters = Parse::parseParameters("SELECT * FROM users WHERE id = :id");
  *
- * //Extract parameters from an SQL query
- * $parameters = SQL::arguments("SELECT * FROM users WHERE id = :id");
- *
- * //Bind parameters in an SQL query with question marks
- * $boundQuery = SQL::binding("SELECT * FROM users WHERE id = :id");
- *
- * //Bind parameters in an SQL query with dollar signs
- * $boundQuery = SQL::binding("SELECT * FROM users WHERE id = :id", SQL::BIND_QUESTION_MARK);
+ * // Bind parameters in an SQL query with question marks
+ * $boundQuery = Parse::binding("SELECT * FROM users WHERE id = :id");
  * </code>
  *
  * Main functionalities:
  * - Escaping SQL strings by replacing certain characters with their escaped versions.
  * - Extracting SQL arguments from an SQL string.
  * - Replacing SQL binds with the specified bind type.
- * - Processing words based on certain conditions, such as whether they are inside quotes or a function.
- * - Loading reserved words from a JSON file and using them to escape the input string.
+ * - Analyzing raw queries to return parameters.
+ * - Loading reserved words from Lexicon and using them to escape the input string.
  *
- * Methods:
- * - `loadReservedWords():` Loads reserved words from a JSON file and returns them as an array.
- * - `escapeType(string $input, string $quote):` Escapes the input string by replacing certain characters with their escaped versions.
- * - `replaceParameters(string $input, string $quote, array $resWords):` Replaces parameters in a given input string and returns the modified string.
- * - `processWord(string $word, array $resWords, string $quote, bool &$inFunction, bool $inSingleQt, bool $inDoubleQt):` Processes a word based on certain conditions and returns the processed word.
- * - `processCondition(stdClass $object, string $processedWord, bool $processedCondition):` Processes a condition based on certain conditions and returns the processed condition.
- * - `encloseWord(string $word, string $quote):` Encloses a word with quotes or backticks, depending on the SQL dialect.
- * - `escape(string $input, int $dialect = self::SQL_DIALECT_NONE):` Escapes the SQL string by replacing parameters with their quoted versions.
- * - `arguments(string $input, array $values = null):` Extracts the SQL arguments from the input string.
- * - `binding(string $input, int $bindType = self::BIND_QUESTION_MARK):` Replaces the SQL binds with the specified bind type.
- * - `bindWithQuestionMark(string $input, string $bindType):` Replaces the SQL binds with question marks.
- * - `bindWithDollarSign(string $input, string $bindType):` Replaces the SQL binds with dollar signs.
- *
- * Fields:
- * - `SQL_DIALECT_BACKTICK`: Constant representing the SQL dialect using backticks.
- * - `SQL_DIALECT_DOUBLE_QUOTE`: Constant representing the SQL dialect using double quotes.
- * - `SQL_DIALECT_SINGLE_QUOTE`: Constant representing the SQL dialect using single quotes.
- * - `SQL_DIALECT_NONE`: Constant representing no SQL dialect.
- * - `BIND_QUESTION_MARK`: Constant representing the bind type using question marks.
- * - `BIND_DOLLAR_SIGN`: Constant representing the bind type using dollar signs.
- * - `$patternMap`: An array mapping regex patterns used in the class.
- * - `$quoteMap`: An array mapping SQL dialects to their corresponding quote characters.
- * - `$bindingMap`: An array mapping bind types to their corresponding bind characters.
- * - `$resWords`: An instance of the reserved word dictionary, loaded from a JSON file.
- *
- * @package GenericDatabase\Helpers\Parsers
- * @subpackage SQL
+ * @package GenericDatabase\Helpers\Parsers\SQL
  */
-class SQL
+class Parse
 {
     /**
      * SQL Dialect used by MySQL, MariaDB, Percona and Other Forks,
@@ -134,31 +104,32 @@ class SQL
     private static mixed $resWords;
 
     /**
-     * Load reserved words from JSON file
-     * This method loads the reserved words from a JSON file and returns them as an array.
+     * Load reserved words from Lexicon.
      *
      * @return array The reserved words
      */
     private static function loadReservedWords(): array
     {
         if (!isset(self::$resWords)) {
-            $json = __DIR__ . DIRECTORY_SEPARATOR . 'SQL' . DIRECTORY_SEPARATOR . 'SQL.json';
-            self::$resWords = json_decode(
-                file_get_contents($json)
-            );
+            self::$resWords = Lexicon::getReservedWords();
         }
         return self::$resWords;
     }
 
     /**
-     * Escape the input string
+     * Analyze raw query and return parameters (placeholders) found.
+     * Supports both named parameters (:name) and positional placeholders (?).
      *
-     * This method escapes the input string by replacing certain characters with their escaped versions.
-     * It uses the `loadReservedWords()` method to get the reserved words and then splits the input
-     * string into individual words.
-     * It then iterates over each word and processes it based on certain conditions, such as whether it
-     * is inside quotes or a function.
-     * The processed words are then joined back together and returned as the escaped string.
+     * @param string $query The raw SQL query to analyze.
+     * @return array Named parameters as keys without colon, or positional indices (0, 1, 2...).
+     */
+    public static function parseParameters(string $query): array
+    {
+        return self::arguments($query, null);
+    }
+
+    /**
+     * Escape the input string
      *
      * @param string $input The input string that needs to be escaped
      * @param string $quote The quote character to be used for escaping
@@ -345,7 +316,7 @@ class SQL
      * Escapes the SQL string by replacing parameters with their quoted versions.
      *
      * @param string $input The SQL string to be escaped.
-     * @param int $dialect The SQL dialect to be used for escaping. Defaults to `SQL::SQL_DIALECT_NONE`.
+     * @param int $dialect The SQL dialect to be used for escaping. Defaults to `Parse::SQL_DIALECT_NONE`.
      * @return string The escaped SQL string.
      */
     public static function escape(string $input, int $dialect = self::SQL_DIALECT_NONE, ?int $quoteSkip = null): string
@@ -410,7 +381,7 @@ class SQL
      * Replaces the SQL binds with the specified bind type.
      *
      * @param string $input The SQL string to replace the binds in.
-     * @param int $bindType The type of binding to be used. Defaults to `SQL::BIND_QUESTION_MARK`.
+     * @param int $bindType The type of binding to be used. Defaults to `Parse::BIND_QUESTION_MARK`.
      * @return string The SQL string with the binds replaced.
      */
     public static function binding(string $input, int $bindType = self::BIND_QUESTION_MARK): string

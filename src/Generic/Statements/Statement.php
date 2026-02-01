@@ -3,7 +3,7 @@
 namespace GenericDatabase\Generic\Statements;
 
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Shared\Objectable;
 use AllowDynamicProperties;
 
@@ -44,7 +44,7 @@ class Statement
                 $isArgs = true;
                 $isArray = false;
                 $isMulti = false;
-                $sqlArgs = SQL::arguments($params[$index['isArgs']], array_slice($params, $index['isMulti']));
+                $sqlArgs = Parse::arguments($params[$index['isArgs']], array_slice($params, $index['isMulti']));
             }
         }
         $result = new self();

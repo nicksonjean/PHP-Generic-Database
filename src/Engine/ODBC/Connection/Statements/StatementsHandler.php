@@ -7,7 +7,7 @@ use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Shared\Run;
 use GenericDatabase\Generic\Statements\Statement;
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Engine\ODBC\Connection\ODBC;
 
@@ -330,7 +330,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function getOrderedExecuteParams(string $queryString, array $arguments): array
     {
-        $placeholderOrder = SQL::arguments($queryString, null);
+        $placeholderOrder = Parse::arguments($queryString, null);
         if (empty($placeholderOrder)) {
             return array_values($arguments);
         }
@@ -520,11 +520,11 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function parse(mixed ...$params): string
     {
         $dialectQuote = match ($this->get('driver')) {
-            'mysql' => SQL::SQL_DIALECT_BACKTICK,
-            'pgsql', 'sqlsrv', 'oci', 'firebird', 'sqlite' => SQL::SQL_DIALECT_DOUBLE_QUOTE,
-            default => SQL::SQL_DIALECT_NONE,
+            'mysql' => Parse::SQL_DIALECT_BACKTICK,
+            'pgsql', 'sqlsrv', 'oci', 'firebird', 'sqlite' => Parse::SQL_DIALECT_DOUBLE_QUOTE,
+            default => Parse::SQL_DIALECT_NONE,
         };
-        $this->setQueryString(SQL::binding(SQL::escape(reset($params), $dialectQuote)));
+        $this->setQueryString(Parse::binding(Parse::escape(reset($params), $dialectQuote)));
         return $this->getQueryString();
     }
 

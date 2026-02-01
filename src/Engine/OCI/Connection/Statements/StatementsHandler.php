@@ -6,7 +6,7 @@ use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Generic\Statements\Statement;
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Engine\OCI\Connection\OCI;
 
 /**
@@ -219,7 +219,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function parse(mixed ...$params): string
     {
-        $this->setQueryString(SQL::escape(reset($params), SQL::SQL_DIALECT_DOUBLE_QUOTE));
+        $this->setQueryString(Parse::escape(reset($params), Parse::SQL_DIALECT_DOUBLE_QUOTE));
         return $this->getQueryString();
     }
 

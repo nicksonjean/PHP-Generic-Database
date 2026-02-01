@@ -24,7 +24,7 @@ use GenericDatabase\Interfaces\Connection\IStructure;
 use GenericDatabase\Interfaces\Connection\IReport;
 use GenericDatabase\Interfaces\Connection\IFlatFileFetch;
 use GenericDatabase\Interfaces\Connection\IFlatFileStatements;
-use GenericDatabase\Helpers\Parsers\QueryTypeDetector;
+use GenericDatabase\Helpers\Parsers\SQL\Query\TypeDetector;
 use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Engine\NEON\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\NEON\Connection\Fetch\FetchHandler;
@@ -295,7 +295,7 @@ class NEONConnection implements IConnection
     {
         $queryString = $this->getStatementsHandler()->getQueryString();
 
-        if ($this->getStatementsHandler()->getQueryRows() === 0 && !empty($queryString) && QueryTypeDetector::isDmlQuery($queryString) === false) {
+        if ($this->getStatementsHandler()->getQueryRows() === 0 && !empty($queryString) && TypeDetector::isDmlQuery($queryString) === false) {
             $this->getFetchHandler()->execute();
         }
 

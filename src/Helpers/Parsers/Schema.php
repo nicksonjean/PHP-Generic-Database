@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace GenericDatabase\Helpers\Parsers;
 
 /**
- * The `GenericDatabase\Helpers\Parsers\Schema` class provides methods for working with Schema.ini files.
+ * The `GenericDatabase\Helpers\Parsers\Schema` class provides methods for working with Schema.ini files,
+ * parsing TXT/CSV files, and generating schema information from flat file data.
  * Schema.ini files define column types and formats for flat file databases (CSV, JSON, XML, YAML, INI and NEON).
  *
  * Schema.ini Format Example:
@@ -78,6 +79,20 @@ class Schema
      * @var array
      */
     private static array $schemaCache = [];
+
+    /**
+     * Path to the folder containing CSV files (used by parse/structure/write).
+     *
+     * @var string|null
+     */
+    private static ?string $folderPath = null;
+
+    /**
+     * Separator used in CSV files (used by parse/structure/write).
+     *
+     * @var string
+     */
+    private static string $separator = ';';
 
     /**
      * Check if a Schema.ini file exists in the given directory.
@@ -690,6 +705,175 @@ class Schema
         }
 
         return self::TYPE_CHAR . " Width $maxWidth";
+    }
+
+    /**
+     * Checks if all columns in the provided data are null.
+     *
+     * @param array $data The data to check.
+     * @return bool True if all columns are null, false otherwise.
+     */
+    private static function allColumnsNull(array $data): bool
+    {
+        foreach ($data as $row) {
+            foreach ($row as $value) {
+                if ($value !== null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Parses a CSV file and returns its data as an array.
+     *
+     * @param string $filePath The path to the CSV file.
+     * @param string $separator The separator used in the CSV file. Defaults to ';'.
+     * @return array The parsed data.
+     */
+    public static function parse(string $filePath, string $separator = ';'): array
+    {
+        $data = [];
+        $currentSeparator = self::$separator;
+        self::$separator = $separator;
+
+        if (($handle = fopen($filePath, 'r')) !== false) {
+            $header = fgetcsv($handle, 0, self::$separator);
+            if (($row = fgetcsv($handle, 0, self::$separator)) !== false) {
+                while ($row !== false) {
+                    $rowData = [];
+                    foreach ($header as $index => $columnName) {
+                        $rowData[$columnName] = $row[$index] ?? null;
+                    }
+                    $data[] = $rowData;
+                    $row = fgetcsv($handle, 0, self::$separator);
+                }
+            } else {
+                foreach ($header as $columnName) {
+                    $data[] = [$columnName => null];
+                }
+            }
+            fclose($handle);
+        }
+
+        self::$separator = $currentSeparator;
+        return $data;
+    }
+
+    /**
+     * Analyzes the data and determines the type of each column.
+     *
+     * @param array $data The data to analyze.
+     * @return array An associative array where keys are column names and values are their types.
+     */
+    private static function analyzeColumnTypes(array $data): array
+    {
+        $types = [];
+        if (self::allColumnsNull($data)) {
+            foreach ($data as $value) {
+                $types[array_keys($value)[0]] = 'string';
+            }
+            return $types;
+        }
+        foreach ($data[0] as $columnName => $value) {
+            $types[$columnName] = 'string';
+        }
+        foreach ($data as $row) {
+            foreach ($row as $columnName => $value) {
+                if (is_numeric($value) && (int) $value == $value) {
+                    if ($types[$columnName] != 'float') {
+                        $types[$columnName] = 'integer';
+                    }
+                } elseif (is_float($value)) {
+                    $types[$columnName] = 'float';
+                } elseif (strtotime($value) !== false && preg_match('/[^a-zA-Z\s{1,}]/', $value)) {
+                    $types[$columnName] = 'datetime';
+                }
+            }
+        }
+        return $types;
+    }
+
+    /**
+     * Generates the structure of the CSV files in the specified folder.
+     *
+     * @param string $folderPath The path to the folder containing CSV files.
+     * @param string $separator The separator used in the CSV files.
+     * @return array An associative array where keys are file names and values are arrays of column schemas.
+     */
+    public static function structure(string $folderPath, string $separator): array
+    {
+        self::$folderPath = $folderPath;
+        self::$separator = $separator;
+        $files = glob($folderPath . DIRECTORY_SEPARATOR . '*.csv');
+        $schemas = [];
+
+        foreach ($files as $file) {
+            $data = self::parse($file, $separator);
+            $types = self::analyzeColumnTypes($data);
+            $schema = [];
+            foreach ($types as $columnName => $type) {
+                $schema[] = ['name' => $columnName, 'type' => $type];
+            }
+            $schemas[basename($file)] = $schema;
+        }
+
+        return $schemas;
+    }
+
+    /**
+     * Writes the schema information to a Schemas.ini file in the folder path.
+     *
+     * @param bool $overwrite Whether to overwrite the existing Schemas.ini file.
+     * @param string|null $folderPath Optional folder path (uses value from structure() if null).
+     * @param string|null $separator Optional separator (uses value from structure() if null).
+     * @return void
+     */
+    public static function write(bool $overwrite = false, ?string $folderPath = null, ?string $separator = null): void
+    {
+        $targetPath = $folderPath ?? self::$folderPath;
+        $targetSeparator = $separator ?? self::$separator;
+
+        if ($targetPath === null) {
+            return;
+        }
+
+        $schemaFilePath = $targetPath . DIRECTORY_SEPARATOR . 'Schemas.ini';
+        if (!file_exists($schemaFilePath) || $overwrite) {
+            $structure = self::structure($targetPath, $targetSeparator);
+            $output = '';
+            foreach ($structure as $filename => $columns) {
+                $output .= "[$filename]\n";
+                $output .= "Format=Delimited(;) \n";
+                $output .= "ColNameHeader=True\n";
+                foreach ($columns as $index => $column) {
+                    $regexParts = [
+                        "/([\x{00}-\x{7E}]|",
+                        "[\x{C2}-\x{DF}][\x{80}-\x{BF}]|",
+                        "\x{E0}[\x{A0}-\x{BF}][\x{80}-\x{BF}]|",
+                        "[\x{E1}-\x{EC}\x{EE}\x{EF}][\x{80}-\x{BF}]{2}|",
+                        "\x{ED}[\x{80}-\x{9F}][\x{80}-\x{BF}]|",
+                        "\x{F0}[\x{90}-\x{BF}][\x{80}-\x{BF}]{2}|",
+                        "[\x{F1}-\x{F3}][\x{80}-\x{BF}]{3}|",
+                        "\x{F4}[\x{80}-\x{8F}][\x{80}-\x{BF}]{2})|",
+                        "(.)/s"
+                    ];
+                    $columnName = preg_replace(implode('', $regexParts), "$1", $column['name']);
+                    $output .= 'Col' . ($index + 1) . '="' . $columnName . '"';
+                    $output .= match ($column['type']) {
+                        'integer' => " Integer\n",
+                        'date' => " Date\n",
+                        'datetime' => " DateTime\n",
+                        default => " Text\n",
+                    };
+                }
+                $output .= "MaxScanRows=0\n";
+                $output .= "CharacterSet=ANSI\n";
+                $output .= "DateTimeFormat=yyyy-MM-dd HH:nn:ss\n";
+            }
+            file_put_contents($schemaFilePath, $output);
+        }
     }
 
     /**

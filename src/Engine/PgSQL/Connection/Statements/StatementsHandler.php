@@ -8,7 +8,7 @@ use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Core\Query;
 use GenericDatabase\Helpers\Hash;
 use GenericDatabase\Generic\Statements\Statement;
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Helpers\Validations;
 use GenericDatabase\Engine\PgSQL\Connection\PgSQL;
 use PgSql\Result;
@@ -286,7 +286,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function parse(mixed ...$params): string
     {
-        $this->setQueryString(SQL::binding(SQL::escape(reset($params), SQL::SQL_DIALECT_DOUBLE_QUOTE), SQL::BIND_DOLLAR_SIGN));
+        $this->setQueryString(Parse::binding(Parse::escape(reset($params), Parse::SQL_DIALECT_DOUBLE_QUOTE), Parse::BIND_DOLLAR_SIGN));
         return $this->getQueryString();
     }
 

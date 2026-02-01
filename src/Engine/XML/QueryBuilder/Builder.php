@@ -14,7 +14,7 @@ use GenericDatabase\Core\Where;
 use GenericDatabase\Core\Having;
 use GenericDatabase\Core\Condition;
 use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Helpers\Parsers\SQL;
+use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Interfaces\QueryBuilder\IBuilder;
 use GenericDatabase\Engine\XML\Connection\XML;
@@ -495,8 +495,8 @@ class Builder implements IBuilder
     }
 
     /**
-     * Parse the query string using SQL::escape for identifier quoting.
-     * Matches SQLiteQueryBuilder behavior (SQL::SQL_DIALECT_DOUBLE_QUOTE).
+     * Parse the query string using Parse::escape for identifier quoting.
+     * Matches SQLiteQueryBuilder behavior (Parse::SQL_DIALECT_DOUBLE_QUOTE).
      *
      * @param string $query The query.
      * @param int $quoteType The quote type.
@@ -505,10 +505,10 @@ class Builder implements IBuilder
      */
     public function parse(
         string $query,
-        int $quoteType = SQL::SQL_DIALECT_DOUBLE_QUOTE,
+        int $quoteType = Parse::SQL_DIALECT_DOUBLE_QUOTE,
         ?int $quoteSkip = null
     ): string {
-        return SQL::escape(trim($query), $quoteType, $quoteSkip);
+        return Parse::escape(trim($query), $quoteType, $quoteSkip);
     }
 
     /**
@@ -609,7 +609,7 @@ class Builder implements IBuilder
             $parts[] = $limitStr;
         }
 
-        return SQL::escape(trim(implode(' ', $parts)), SQL::SQL_DIALECT_DOUBLE_QUOTE);
+        return Parse::escape(trim(implode(' ', $parts)), Parse::SQL_DIALECT_DOUBLE_QUOTE);
     }
 
     /**

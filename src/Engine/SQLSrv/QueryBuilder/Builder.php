@@ -331,10 +331,10 @@ class Builder implements IBuilder
 
     public function parse(
         string $query,
-        int $quoteType = SQL::SQL_DIALECT_DOUBLE_QUOTE,
+        int $quoteType = Parse::SQL_DIALECT_DOUBLE_QUOTE,
         ?int $quoteSkip = null
     ): string {
-        return SQL::binding(SQL::escape(trim($query), $quoteType, $quoteSkip));
+        return Parse::binding(Parse::escape(trim($query), $quoteType, $quoteSkip));
     }
 
     /**
