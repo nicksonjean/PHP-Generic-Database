@@ -1,0 +1,359 @@
+<?php
+
+namespace GenericDatabase\Engine\YAML\QueryBuilder;
+
+use GenericDatabase\Core\Join;
+use GenericDatabase\Core\Table;
+use GenericDatabase\Core\Where;
+use GenericDatabase\Core\Having;
+use GenericDatabase\Core\Select;
+use GenericDatabase\Core\Sorting;
+use GenericDatabase\Core\Junction;
+use GenericDatabase\Core\Condition;
+use GenericDatabase\Interfaces\IQueryBuilder;
+use GenericDatabase\Engine\YAMLQueryBuilder;
+use GenericDatabase\Generic\QueryBuilder\Query;
+use GenericDatabase\Helpers\Types\Compounds\Arrays;
+use GenericDatabase\Interfaces\QueryBuilder\IClause;
+
+/**
+ * Clause class for YAML QueryBuilder.
+ * Handles building various SQL clauses for YAML data operations.
+ *
+ * @package GenericDatabase\Engine\YAML\QueryBuilder
+ */
+class Clause implements IClause
+{
+    use Query;
+
+    /**
+     * Build SELECT clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function select(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new YAMLQueryBuilder();
+        $type = array_key_exists('type', $arguments) ? $arguments['type'] : Select::DEFAULT();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        $self->query->select['type'] = $type;
+        $getSelect = fn($value) => Criteria::getSelect($value);
+        foreach ($data as $column) {
+            if (is_array($column)) {
+                array_map(fn($key) => $self->query->select['columns'][] = $getSelect(['data' => $key]), $column);
+            } elseif (is_string($column)) {
+                if (str_contains($column, ',')) {
+                    array_map(
+                        fn($key) => $self->query->select['columns'][] = $getSelect(
+                            ['data' => $key]
+                        ),
+                        explode(',', $column)
+                    );
+                } else {
+                    $self->query->select['columns'][] = $getSelect(['data' => $column]);
+                }
+            }
+        }
+        return $self;
+    }
+
+    /**
+     * Build FROM clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function from(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new YAMLQueryBuilder();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        foreach ($data as $table) {
+            if (is_array($table)) {
+                foreach ($table as $tableName) {
+                    $self->query->from[] = Criteria::getFrom(['type' => Table::METADATA(), 'data' => trim($tableName)]);
+                }
+            } elseif (is_string($table)) {
+                if (str_contains($table, ',')) {
+                    foreach (explode(',', $table) as $tableName) {
+                        $self->query->from[] = Criteria::getFrom(['type' => Table::METADATA(), 'data' => trim($tableName)]);
+                    }
+                } else {
+                    $self->query->from[] = Criteria::getFrom(['type' => Table::METADATA(), 'data' => $table]);
+                }
+            }
+        }
+        return $self;
+    }
+
+    /**
+     * Build JOIN clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function join(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new YAMLQueryBuilder();
+        $type = array_key_exists('type', $arguments) ? $arguments['type'] : Join::DEFAULT();
+        $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        if (Arrays::isMultidimensional($data) && is_iterable(reset($data))) {
+            $r = reset($data);
+            $tableSets = is_iterable($r) ? $r : $data;
+            $parsed = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => [$tableSets]]);
+            if (isset($parsed['join'])) {
+                $self->query->join[] = $parsed['join'];
+            }
+            if (isset($parsed['on'])) {
+                $self->query->on[] = $parsed['on'];
+            }
+        } else {
+            foreach ($data as $table) {
+                if (is_array($table)) {
+                    $parsed = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => $table]);
+                    $self->query->join[] = $parsed['join'] ?? $parsed;
+                    if (isset($parsed['on'])) {
+                        $self->query->on[] = $parsed['on'];
+                    }
+                } elseif (is_string($table)) {
+                    if (!str_contains($table, ',')) {
+                        $parsed = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => $table]);
+                        $self->query->join[] = $parsed['join'] ?? $parsed;
+                        if (isset($parsed['on'])) {
+                            $self->query->on[] = $parsed['on'];
+                        }
+                    } else {
+                        $join = array_map(fn($t) => [trim($t)], explode(',', $table));
+                        $parsed = Criteria::getJoin(['type' => $type, 'junction' => $junction, 'data' => [$join]]);
+                        if (isset($parsed['join'])) {
+                            $self->query->join[] = $parsed['join'];
+                        }
+                        if (isset($parsed['on'])) {
+                            $self->query->on[] = $parsed['on'];
+                        }
+                    }
+                }
+            }
+        }
+        return $self;
+    }
+
+    /**
+     * Build ON clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function on(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new YAMLQueryBuilder();
+        $junction = array_key_exists('junction', $arguments) ? $arguments['junction'] : Junction::NONE();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        foreach ($data as $table) {
+            if (is_array($table)) {
+                foreach ($table as $tableName) {
+                    $parsed = Criteria::getOn(['junction' => $junction, 'data' => $tableName]);
+                    if (!empty($parsed)) {
+                        $self->query->on[] = $parsed;
+                    }
+                }
+            } elseif (is_string($table)) {
+                if (str_contains($table, ',')) {
+                    foreach (explode(',', $table) as $tableName) {
+                        $parsed = Criteria::getOn(['junction' => $junction, 'data' => trim($tableName)]);
+                        if (!empty($parsed)) {
+                            $self->query->on[] = $parsed;
+                        }
+                    }
+                } else {
+                    $parsed = Criteria::getOn(['junction' => $junction, 'data' => $table]);
+                    if (!empty($parsed)) {
+                        $self->query->on[] = $parsed;
+                    }
+                }
+            }
+        }
+        return $self;
+    }
+
+    /**
+     * Build WHERE clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function makeWhere(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new YAMLQueryBuilder();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Where::class;
+        $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
+        $getWhere = fn($arrayData) => Criteria::getWhereHaving($arrayData);
+        foreach ($data as $column) {
+            if (is_array($column)) {
+                foreach ($column as $condKey => $expr) {
+                    $itemCondition = $condition;
+                    if (is_string($condKey)) {
+                        $itemCondition = strtoupper($condKey) === 'OR'
+                            ? Condition::DISJUNCTION()
+                            : Condition::CONJUNCTION();
+                    }
+                    $self->query->where[] = $getWhere([
+                        'data' => $expr,
+                        'enum' => $enum,
+                        'condition' => $itemCondition
+                    ]);
+                }
+            } elseif (is_string($column)) {
+                $self->query->where[] = $getWhere(['data' => $column, 'enum' => $enum, 'condition' => $condition]);
+            }
+        }
+        return $self;
+    }
+
+    /**
+     * Build WHERE clause with array support.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function where(array $arguments): IQueryBuilder
+    {
+        $self = null;
+        if (Arrays::isDepthArray($arguments) > 3) {
+            foreach ($arguments as $argument) {
+                $self = self::makeWhere($argument);
+            }
+        } else {
+            $self = self::makeWhere($arguments);
+        }
+        return $self;
+    }
+
+    /**
+     * Build HAVING clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function makeHaving(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new YAMLQueryBuilder();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Having::class;
+        $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
+        $getHaving = fn($arrayData) => Criteria::getWhereHaving($arrayData);
+        foreach ($data as $column) {
+            if (is_array($column)) {
+                array_map(fn($key) => $self->query->having[] = $getHaving([
+                    'data' => $key,
+                    'enum' => $enum,
+                    'condition' => $condition
+                ]), $column);
+            } elseif (is_string($column)) {
+                $self->query->having[] = $getHaving(['data' => $column, 'enum' => $enum, 'condition' => $condition]);
+            }
+        }
+        return $self;
+    }
+
+    /**
+     * Build HAVING clause with array support.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function having(array $arguments): IQueryBuilder
+    {
+        $self = null;
+        if (Arrays::isDepthArray($arguments) > 3) {
+            foreach ($arguments as $argument) {
+                $self = self::makeHaving($argument);
+            }
+        } else {
+            $self = self::makeHaving($arguments);
+        }
+        return $self;
+    }
+
+    /**
+     * Build GROUP BY clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function group(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new YAMLQueryBuilder();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        $getGroup = fn($value) => Criteria::getGroup($value);
+        foreach ($data as $column) {
+            if (is_array($column)) {
+                array_map(fn($key) => $self->query->group[] = $getGroup(['data' => $key]), $column);
+            } elseif (is_string($column)) {
+                if (str_contains($column, ',')) {
+                    $columns = explode(',', $column);
+                    array_map(fn($key) => $self->query->group[] = $getGroup(['data' => $key]), $columns);
+                } else {
+                    $self->query->group[] = $getGroup(['data' => $column]);
+                }
+            }
+        }
+        return $self;
+    }
+
+    /**
+     * Build ORDER BY clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function order(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new YAMLQueryBuilder();
+        $sorting = array_key_exists('sorting', $arguments) ? $arguments['sorting'] : Sorting::NONE();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        $getOrder = fn($value) => Criteria::getOrder($value);
+        foreach ($data as $column) {
+            if (is_array($column)) {
+                array_map(fn($key) => $self->query->order[] = $getOrder(
+                    ['sorting' => $sorting, 'data' => $key]
+                ), $column);
+            } elseif (is_string($column)) {
+                if (str_contains($column, ',')) {
+                    array_map(
+                        fn($key) => $self->query->order[] = $getOrder(
+                            ['sorting' => $sorting, 'data' => $key]
+                        ),
+                        explode(',', $column)
+                    );
+                } else {
+                    $self->query->order[] = $getOrder(['sorting' => $sorting, 'data' => $column]);
+                }
+            }
+        }
+        return $self;
+    }
+
+    /**
+     * Build LIMIT clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function limit(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new YAMLQueryBuilder();
+        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
+        if (Arrays::isDepthArray($data) === 1 && count($data) > 1) {
+            $data = [implode(', ', $data)];
+        }
+        if (Arrays::isMultidimensional($data)) {
+            $self->query->limit = Criteria::getLimit(['data' => implode(', ', reset($data))]);
+        } else {
+            $self->query->limit = Criteria::getLimit(['data' => reset($data)]);
+        }
+        return $self;
+    }
+}

@@ -179,4 +179,44 @@ class YAML
         }
         return $output;
     }
+
+    /**
+     * Parse YAML string content (tabular format - array of objects) into array of rows.
+     *
+     * @param string $content The YAML string content.
+     * @return array Array of rows (associative arrays).
+     */
+    public static function parseTableYamlString(string $content): array
+    {
+        $content = trim($content);
+        if ($content === '') {
+            return [];
+        }
+
+        $parsed = self::parseYaml($content);
+        if (!is_array($parsed)) {
+            return [];
+        }
+
+        $rows = [];
+        foreach ($parsed as $row) {
+            if (is_array($row) || $row instanceof \stdClass) {
+                $rows[] = (array) $row;
+            }
+        }
+        return $rows;
+    }
+
+    /**
+     * Encode array of rows to YAML format.
+     *
+     * @param array $data Array of rows (associative arrays).
+     * @param int $flags 0 = compact, 1 = pretty (indented).
+     * @return string YAML format string.
+     */
+    public static function encodeTableToYaml(array $data, int $flags = 0): string
+    {
+        $indentation = $flags === 1 ? 2 : 0;
+        return self::emitYaml($data, 2, $indentation > 0 ? $indentation : 2);
+    }
 }

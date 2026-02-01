@@ -8,9 +8,9 @@ use GenericDatabase\Helpers\Reflections;
 use ReflectionException;
 
 /**
- * JSON-specific constants and attribute management.
+ * YAML-specific constants and attribute management.
  *
- * @package GenericDatabase\Engine\JSON\Connection
+ * @package GenericDatabase\Engine\YAML\Connection
  */
 class YAML
 {
@@ -150,36 +150,6 @@ class YAML
     public const DESC = 0;
 
     /**
-     * CSV delimiter character.
-     */
-    public const ATTR_DELIMITER = 4001;
-
-    /**
-     * CSV enclosure character.
-     */
-    public const ATTR_ENCLOSURE = 4002;
-
-    /**
-     * CSV escape character.
-     */
-    public const ATTR_ESCAPE = 4003;
-
-    /**
-     * Whether the first row contains headers.
-     */
-    public const ATTR_HAS_HEADER = 4004;
-
-    /**
-     * Line ending style (auto, unix, windows, mac).
-     */
-    public const ATTR_LINE_ENDING = 4005;
-
-    /**
-     * Skip empty lines.
-     */
-    public const ATTR_SKIP_EMPTY_LINES = 4006;
-
-    /**
      * Array of data attributes.
      *
      * @var array
@@ -195,16 +165,15 @@ class YAML
      */
     public static function getAttribute(mixed $name): mixed
     {
-        if (isset(self::$dataAttribute[$name])) {
-            if (is_int($name)) {
-                $result = self::$dataAttribute[Reflections::getClassConstantName(static::class, $name)];
-            } else {
-                $result = self::$dataAttribute[$name];
-            }
-        } else {
-            $result = null;
+        $lookupKey = is_int($name)
+            ? Reflections::getClassConstantName(static::class, $name)
+            : $name;
+
+        if ($lookupKey === false) {
+            return null;
         }
-        return $result;
+
+        return self::$dataAttribute[$lookupKey] ?? null;
     }
 
     /**
@@ -241,5 +210,15 @@ class YAML
         $regexObj->options = $pregMatchFlags;
 
         return $regexObj;
+    }
+
+    /**
+     * Get default YAML encoding flags (0 = compact, 1 = pretty).
+     *
+     * @return int The encoding flags.
+     */
+    public static function getDefaultEncodingFlags(): int
+    {
+        return self::getAttribute(self::ATTR_PRETTY_PRINT) === true ? 1 : 0;
     }
 }

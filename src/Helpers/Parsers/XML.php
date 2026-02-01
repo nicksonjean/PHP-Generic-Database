@@ -146,4 +146,75 @@ class XML
         libxml_use_internal_errors(false);
         return $result;
     }
+
+    /**
+     * Parse XML string content (tabular format with root/item structure) into array of rows.
+     * Expects structure: <root><item><col1>val</col1><col2>val</col2></item>...</root>
+     *
+     * @param string $content The XML string content.
+     * @return array Array of rows (associative arrays).
+     */
+    public static function parseTableXmlString(string $content): array
+    {
+        $content = trim($content);
+        if ($content === '') {
+            return [];
+        }
+
+        libxml_use_internal_errors(true);
+        $xml = @simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
+        libxml_use_internal_errors(false);
+
+        if ($xml === false) {
+            return [];
+        }
+
+        $rows = [];
+        foreach ($xml->item ?? [] as $item) {
+            $decoded = json_decode(json_encode($item), true);
+            if (!is_array($decoded)) {
+                continue;
+            }
+            $row = [];
+            foreach ($decoded as $key => $value) {
+                if ($key === '@attributes') {
+                    continue;
+                }
+                $row[$key] = is_array($value) ? ($value[0] ?? '') : (string) $value;
+            }
+            if (!empty($row)) {
+                $rows[] = $row;
+            }
+        }
+        return $rows;
+    }
+
+    /**
+     * Encode array of rows to XML format (root/item structure).
+     *
+     * @param array $data Array of rows (associative arrays).
+     * @param int $flags 0 = compact, 1 = pretty (indented).
+     * @return string XML format string.
+     */
+    public static function encodeTableToXml(array $data, int $flags = 0): string
+    {
+        $indent = $flags === 1 ? '  ' : '';
+        $nl = $flags === 1 ? "\n" : '';
+        $decl = '<?xml version="1.0" encoding="UTF-8"?>' . $nl;
+        $decl .= '<root>' . $nl;
+
+        foreach ($data as $row) {
+            if (!is_array($row) && !$row instanceof \stdClass) {
+                continue;
+            }
+            $decl .= $indent . '<item>' . $nl;
+            foreach ((array) $row as $key => $value) {
+                $val = htmlspecialchars((string) ($value ?? ''), ENT_XML1, 'UTF-8');
+                $decl .= str_repeat($indent, 2) . '<' . $key . '>' . $val . '</' . $key . '>' . $nl;
+            }
+            $decl .= $indent . '</item>' . $nl;
+        }
+        $decl .= '</root>';
+        return $decl;
+    }
 }
