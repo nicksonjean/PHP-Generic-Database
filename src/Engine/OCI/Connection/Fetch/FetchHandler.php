@@ -23,7 +23,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             OCI::FETCH_OBJ,
             OCI::FETCH_INTO,
-            OCI::FETCH_CLASS => $this->internalFetchClass($fetchArgument ?? null, $optArgs),
+            OCI::FETCH_CLASS => $this->internalFetchClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             OCI::FETCH_COLUMN => $this->internalFetchColumn($fetchArgument ?? 0),
             OCI::FETCH_ASSOC => $this->internalFetchAssoc(),
             OCI::FETCH_NUM => $this->internalFetchNum(),
@@ -42,7 +45,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             OCI::FETCH_OBJ,
             OCI::FETCH_INTO,
-            OCI::FETCH_CLASS => $this->internalFetchAllClass($fetchArgument ?? null, $optArgs),
+            OCI::FETCH_CLASS => $this->internalFetchAllClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             OCI::FETCH_COLUMN => $this->internalFetchAllColumn($fetchArgument ?? 0),
             OCI::FETCH_ASSOC => $this->internalFetchAllAssoc(),
             OCI::FETCH_NUM => $this->internalFetchAllNum(),

@@ -194,7 +194,7 @@ class Arrays
      */
     public static function isMultidimensional(array|string $array): bool
     {
-        if (!is_array($array)) {
+        if (!is_array($array) || empty($array)) {
             return false;
         }
         return is_array($array[array_key_first($array)]);

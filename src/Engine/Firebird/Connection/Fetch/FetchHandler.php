@@ -23,7 +23,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             Firebird::FETCH_OBJ,
             Firebird::FETCH_INTO,
-            Firebird::FETCH_CLASS => $this->internalFetchClass($fetchArgument ?? null, $optArgs),
+            Firebird::FETCH_CLASS => $this->internalFetchClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             Firebird::FETCH_COLUMN => $this->internalFetchColumn($fetchArgument ?? 0),
             Firebird::FETCH_ASSOC => $this->internalFetchAssoc(),
             Firebird::FETCH_NUM => $this->internalFetchNum(),
@@ -42,7 +45,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             Firebird::FETCH_OBJ,
             Firebird::FETCH_INTO,
-            Firebird::FETCH_CLASS => $this->internalFetchAllClass($fetchArgument ?? null, $optArgs),
+            Firebird::FETCH_CLASS => $this->internalFetchAllClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             Firebird::FETCH_COLUMN => $this->internalFetchAllColumn($fetchArgument ?? 0),
             Firebird::FETCH_ASSOC => $this->internalFetchAllAssoc(),
             Firebird::FETCH_NUM => $this->internalFetchAllNum(),

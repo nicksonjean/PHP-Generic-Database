@@ -225,6 +225,26 @@ class YAMLQueryBuilder implements IQueryBuilder
         return Clause::limit(['data' => $data, 'self' => self::$self]);
     }
 
+    public function union(string|IQueryBuilder $query): static
+    {
+        return Clause::union(['query' => $query, 'self' => $this]);
+    }
+
+    public function unionAll(string|IQueryBuilder $query): static
+    {
+        return Clause::unionAll(['query' => $query, 'self' => $this]);
+    }
+
+    public function whereExists(string|IQueryBuilder $subquery): static
+    {
+        return Clause::where(['subquery' => $subquery, 'negate' => false, 'self' => $this]);
+    }
+
+    public function whereNotExists(string|IQueryBuilder $subquery): static
+    {
+        return Clause::where(['subquery' => $subquery, 'negate' => true, 'self' => $this]);
+    }
+
     private function runOnce(): void
     {
         $currentQueryForDisplay = $this->buildRaw();

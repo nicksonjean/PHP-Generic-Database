@@ -74,7 +74,8 @@ class Parse
     private static array $patternMap = [
         'sqlBinds' => '/(:[a-zA-Z_][a-zA-Z0-9_]*)/',
         'sqlArgs' => '/(:\w+)/',
-        'sqlGroups' => '/(\w+)?\((.+)\)\s/m'
+        'sqlGroups' => '/(\w+)?\((.+)\)\s/m',
+        'sqlGroupsNonGreedy' => '/(\w+)?\((.+?)\)\s/m'
     ];
 
     private static string $patternFunction =
@@ -148,14 +149,12 @@ class Parse
     {
         $found = [];
 
-        // Single-quoted strings: '...' (SQL standard for string literals)
         if (preg_match_all("/'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'/s", $query, $matches, PREG_OFFSET_CAPTURE)) {
             foreach ($matches[1] as $match) {
                 $found[] = ['pos' => $match[1], 'value' => $match[0]];
             }
         }
 
-        // Double-quoted: literals in MySQL (backtick), identifiers in PostgreSQL (double-quote) - skip for double-quote
         if ($dialect === self::SQL_DIALECT_BACKTICK &&
             preg_match_all('/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/s', $query, $matches, PREG_OFFSET_CAPTURE)) {
             foreach ($matches[1] as $match) {
@@ -163,7 +162,6 @@ class Parse
             }
         }
 
-        // Numeric literals (only outside quoted regions to avoid duplicates)
         $masked = preg_replace("/'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'/s", "''", $query);
         $masked = $masked !== null ? preg_replace('/"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"/s', '""', $masked) : '';
         if ($masked !== null && preg_match_all('/\b(\d+(?:\.\d+)?)\b/', $masked, $matches, PREG_OFFSET_CAPTURE)) {
@@ -177,7 +175,6 @@ class Parse
         }
 
         usort($found, fn($a, $b) => $a['pos'] <=> $b['pos']);
-
         return array_map(fn($item) => $item['value'], $found);
     }
 
@@ -192,6 +189,7 @@ class Parse
     {
         $resWords = self::loadReservedWords();
         $input = self::replaceParameters($input, $quote, $resWords);
+        $input = self::quoteSubqueryAliasAndOrderBy($input, $quote);
         $words = preg_split('/\s+/', $input);
         $inSingleQt = false;
         $inDoubleQt = false;
@@ -205,6 +203,41 @@ class Parse
     }
 
     /**
+     * Adds quotes to subquery alias and ORDER BY column.
+     *
+     * @param string $input The input string to be processed.
+     * @param string $quote The quote character to be used for enclosing words.
+     * @return string The input string with quotes added to subquery alias and ORDER BY column.
+     */
+    private static function quoteSubqueryAliasAndOrderBy(string $input, string $quote): string
+    {
+        if ($quote === '') {
+            return $input;
+        }
+        $ident = '[a-zA-Z_][a-zA-Z0-9_]*';
+        $input = preg_replace('/\bAS\s+(' . $ident . ')(?=\s|,|$)/i', 'AS ' . $quote . '${1}' . $quote, $input);
+        $input = preg_replace(
+            '/\)\s+(' . $ident . ')\s+(?=ORDER|FROM|WHERE|GROUP|HAVING|LIMIT|FETCH|OFFSET|UNION|$)/i',
+            ') ' . $quote . '${1}' . $quote . ' ',
+            $input
+        );
+        $input = preg_replace_callback(
+            '/\b(ORDER|GROUP)\s+BY\s+(' . $ident . '(?:\.' . $ident . ')?)(?=\s|$)/i',
+            static function (array $m) use ($quote): string {
+                $expr = $m[2];
+                if (str_contains($expr, '.')) {
+                    $expr = self::applyQuotes($expr, $quote);
+                } elseif ($quote !== '') {
+                    $expr = $quote . $expr . $quote;
+                }
+                return $m[1] . ' BY ' . $expr;
+            },
+            $input
+        );
+        return $input;
+    }
+
+    /**
      * Replaces parameters in a given input string and returns the modified string.
      *
      * @param string $input The input string containing parameters to be replaced.
@@ -214,17 +247,81 @@ class Parse
      */
     private static function replaceParameters(string $input, string $quote, array $resWords): string
     {
-        return preg_replace_callback(
-            self::$patternMap['sqlGroups'],
-            function ($matches) use ($quote, $resWords) {
-                if (!empty($matches) && !in_array($matches[1], $resWords)) {
-                    $pWords = array_map(fn($word) => $quote . trim($word) . $quote, explode(',', trim($matches[2])));
-                    return '(' . implode(', ', $pWords) . ') ';
+        $result = '';
+        $offset = 0;
+        $pattern = self::$patternMap['sqlGroupsNonGreedy'];
+
+        while ($offset < strlen($input) && preg_match($pattern, $input, $matches, PREG_OFFSET_CAPTURE, $offset) === 1) {
+            $fullMatch = $matches[0][0];
+            $fullStart = (int) $matches[0][1];
+            $prefix = trim($matches[1][0] ?? '');
+            $content = trim($matches[2][0] ?? '');
+            $isSubquerySelect = preg_match('/^\s*SELECT\b/i', $content);
+            $isExistsLike = strtoupper($prefix) === 'EXISTS' || (strtoupper($prefix) === 'NOT' && preg_match('/^\s*EXISTS\s/i', $content));
+            if ($quote !== '' && $isExistsLike && $isSubquerySelect && substr_count($content, '(') !== substr_count($content, ')')) {
+                $prefixLen = strlen($matches[1][0] ?? '');
+                $openParenPos = $fullStart + $prefixLen + 1;
+                $contentStart = $openParenPos + 1;
+                $depth = 1;
+                $p = $contentStart;
+                while ($p < strlen($input) && $depth > 0) {
+                    $ch = $input[$p];
+                    if ($ch === '(') {
+                        $depth++;
+                    } elseif ($ch === ')') {
+                        $depth--;
+                        if ($depth === 0) {
+                            $content = trim(substr($input, $contentStart, $p - $contentStart));
+                            $fullMatch = substr($input, $fullStart, $p - $fullStart + 1) . ' ';
+                            break;
+                        }
+                    }
+                    $p++;
                 }
-                return $matches[0];
-            },
-            $input
-        );
+            }
+            $replacement = self::replaceParametersProcessMatch($prefix, $content, $fullMatch, $quote);
+            $result .= substr($input, $offset, $fullStart - $offset) . $replacement;
+            $offset = $fullStart + strlen($fullMatch);
+        }
+        $result .= substr($input, $offset);
+        return $result;
+    }
+
+    /**
+     * Processa um único match (...) de replaceParameters.
+     *
+     * @param string $prefix O prefixo do match.
+     * @param string $content O conteúdo do match.
+     * @param string $fullMatch O match completo.
+     * @param string $quote O quote character to be used for enclosing words.
+     * @return string O match processado.
+     */
+    private static function replaceParametersProcessMatch(string $prefix, string $content, string $fullMatch, string $quote): string
+    {
+        $isSubquerySelect = preg_match('/^\s*SELECT\b/i', $content);
+        $isExistsSubquery = $isSubquerySelect && strtoupper($prefix) === 'EXISTS';
+        $isNotExistsSubquery = strtoupper($prefix) === 'NOT' && preg_match('/^\s*EXISTS\s/i', $content);
+        $isAnonymousSubquery = $isSubquerySelect && $prefix === '';
+        if ($quote !== '' && ($isExistsSubquery || $isNotExistsSubquery || $isAnonymousSubquery)) {
+            return $prefix . ($prefix !== '' ? ' ' : '') . '(' . self::escapeType($content, $quote) . ') ';
+        }
+        if ($content === '?' || preg_match('/^:\w+$/', $content)) {
+            return $fullMatch;
+        }
+        $pWords = array_map(function ($word) use ($quote): string {
+            $w = trim($word);
+            if (preg_match('/^-?\d+(\.\d+)?\s*$/D', $w)) {
+                return $w;
+            }
+            if ($quote !== '' && str_contains($w, '.')) {
+                $parts = explode('.', $w);
+                return implode('.', array_map(fn(string $p): string => $quote . trim($p) . $quote, $parts));
+            }
+            return $quote !== '' ? $quote . $w . $quote : $w;
+        }, explode(',', $content));
+        $quotedContent = implode(', ', $pWords);
+        $inner = '(' . $quotedContent . ') ';
+        return $prefix !== '' ? $prefix . $inner : $inner;
     }
 
     /**
@@ -236,11 +333,29 @@ class Parse
      */
     private static function applyQuotes(string $input, string $quote): string
     {
-        $wordWithComma = explode('.', substr($input, 0, -1));
-        $wordWithoutComma = explode('.', $input);
-        return (str_ends_with($input, ','))
-            ? "$quote$wordWithComma[0]$quote.$quote$wordWithComma[1]$quote,"
-            : "$quote$wordWithoutComma[0]$quote.$quote$wordWithoutComma[1]$quote";
+        $original = $input;
+        $suffix = '';
+        while ($input !== '' && str_contains('),', substr($input, -1))) {
+            $suffix = substr($input, -1) . $suffix;
+            $input = substr($input, 0, -1);
+        }
+        $parts = explode('.', $input);
+        if (count($parts) !== 2) {
+            return $original;
+        }
+        $alreadyQuoted = static function (string $p, string $q) {
+            if ($q === '' || $p === '') {
+                return false;
+            }
+            $trimmed = trim($p);
+            return str_starts_with($trimmed, $q) && str_ends_with($trimmed, $q) && strlen($trimmed) >= 2;
+        };
+        if ($alreadyQuoted($parts[0], $quote) && $alreadyQuoted($parts[1], $quote)) {
+            return $original;
+        }
+        $left = trim($parts[0]);
+        $right = trim($parts[1]);
+        return "$quote$left$quote.$quote$right$quote" . $suffix;
     }
 
     /**
@@ -253,6 +368,10 @@ class Parse
      */
     private static function encloseWord(string $input, string $quote): string
     {
+        $content = str_ends_with($input, ',') ? substr($input, 0, -1) : $input;
+        if ($quote !== '' && $content !== '' && str_starts_with($content, $quote) && str_ends_with($content, $quote) && strlen($content) >= 2) {
+            return $input;
+        }
         $wordWithComma = substr($input, 0, -1);
         $wordWithoutComma = $input;
         return (str_ends_with($input, ','))
@@ -291,14 +410,27 @@ class Parse
     /** @noinspection PhpUnused */
     private static function applyQuotesFunction(string $input, string $quote): string
     {
-        $result = '';
+        if ($quote === '') {
+            return $input;
+        }
         if (preg_match(self::$patternFunction, $input, $matches)) {
             $matches = Arrays::arraySafe($matches);
-            $result = (isset($matches['table']))
+            $table = trim($matches['table'] ?? '');
+            $column = trim($matches['column'] ?? '');
+            $tableQuoted = $table !== '' && str_starts_with($table, $quote) && str_ends_with($table, $quote);
+            $columnQuoted = $column !== '' && str_starts_with($column, $quote) && str_ends_with($column, $quote);
+            if ($tableQuoted && $columnQuoted) {
+                return $input;
+            }
+            if ($columnQuoted && $table === '') {
+                return $input;
+            }
+            $result = (isset($matches['table']) && $matches['table'] !== '')
                 ? preg_replace(self::$patternFunction, "$1($quote$2$quote.$quote$3$quote)", $input)
                 : preg_replace(self::$patternFunction, "$1($quote$3$quote)", $input);
+            return $result;
         }
-        return $result;
+        return $input;
     }
 
     /**
@@ -322,30 +454,48 @@ class Parse
     ): string {
         $object = new stdClass();
         $bindQm = self::$bindingMap[self::BIND_QUESTION_MARK];
-
-        // Inside string literal (inFunction tracks quote state): do not modify the word
-        // Avoids backticks on "de" in "Rio de Janeiro" - words inside literals stay unchanged
         if ($inFunction) {
             $result = (str_contains($word, "'") || str_contains($word, '"'))
-                ? self::processCondition($object, $word, false)
+                ? self::processCondition(
+                    $object,
+                    $word,
+                    (substr_count($word, "'") % 2) === 1 || (substr_count($word, '"') % 2) === 1
+                )
                 : $word;
         } else {
-            $result = match (true) {
-                self::isFunction($word) => self::applyQuotesFunction($word, $quote),
-                str_contains($word, '*') => self::applyWildCard($word, $quote),
-                str_contains($word, '.') => self::applyQuotes($word, $quote),
-                str_contains($word, ']') => self::processCondition($object, $word, false),
-                str_contains($word, '[') => self::processCondition($object, $word, true),
-                $inFunction && str_contains($word, ')') => self::processCondition($object, $word, false),
-                !$inFunction && str_contains($word, '(') => self::processCondition($object, $word, true),
-                str_contains($word, "'") => self::processCondition($object, $word, true),
-                str_contains($word, '"') => self::processCondition($object, $word, true),
-                str_contains($word, ':') => $word,
-                in_array(mb_strtoupper($word), $resWords) => mb_strtoupper($word),
-                is_numeric($word) || preg_match('/\d+/im', $word) => $word,
-                str_contains($word, $bindQm) => str_replace($quote . $bindQm . $quote, $bindQm, $word),
-                default => self::encloseWord($word, $quote),
-            };
+            $trailing = (str_ends_with($word, ',')) ? ',' : '';
+            $w = $trailing !== '' ? substr($word, 0, -1) : $word;
+            $w = trim($w);
+            $stripped = $quote !== '' ? trim($w, $quote) : $w;
+            if ($stripped !== '' && in_array(mb_strtoupper($stripped), $resWords)) {
+                $result = mb_strtoupper($stripped) . $trailing;
+            } else {
+                $result = match (true) {
+                    self::isFunction($word) => self::applyQuotesFunction($word, $quote),
+                    str_contains($word, '*') => self::applyWildCard($word, $quote),
+                    str_contains($word, '.') => self::applyQuotes($word, $quote),
+                    str_contains($word, ']') => self::processCondition($object, $word, false),
+                    str_contains($word, '[') => self::processCondition($object, $word, true),
+                    $inFunction && str_contains($word, ')') => self::processCondition($object, $word, false),
+                    !$inFunction && str_contains($word, '(') => self::processCondition($object, $word, true),
+                    str_contains($word, "'") => self::processCondition(
+                        $object,
+                        $word,
+                        (substr_count($word, "'") % 2) === 1
+                    ),
+                    str_contains($word, '"') => self::processCondition(
+                        $object,
+                        $word,
+                        (substr_count($word, '"') % 2) === 1
+                    ),
+                    str_contains($word, ':') => $word,
+                    in_array(mb_strtoupper($word), $resWords) => mb_strtoupper($word) . $trailing,
+                    preg_match('/^[=<>!]=?$|^<>$/', trim($word)) => $word,
+                    is_numeric($word) || preg_match('/\d+/im', $word) => $word,
+                    str_contains($word, $bindQm) => str_replace($quote . $bindQm . $quote, $bindQm, $word),
+                    default => self::encloseWord($word, $quote),
+                };
+            }
         }
 
         if (is_bool($result)) {
@@ -386,8 +536,6 @@ class Parse
                 $input = str_replace($char, self::$quoteMap[self::SQL_DIALECT_NONE], $input);
             }
         }
-        // PostgreSQL, SQLite, etc.: double quotes = identifiers. Convert double-quoted
-        // string literals (MySQL style) to single-quoted for SQL standard compliance.
         if ($dialect === self::SQL_DIALECT_DOUBLE_QUOTE) {
             $input = self::normalizeStringLiteralsToSingleQuotes($input);
         }
@@ -435,26 +583,20 @@ class Parse
             }
             return array_combine($matches[1], $values);
         }
-
         preg_match_all('/\?/', $input, $questionMatches);
         $placeholderCount = count($questionMatches[0]);
-
         if ($placeholderCount > 0) {
             if (is_null($values)) {
                 return range(0, $placeholderCount - 1);
             }
-
             if (count($values) !== $placeholderCount) {
                 $values = array_slice(array_pad($values, $placeholderCount, null), 0, $placeholderCount);
             }
-
             return array_combine(range(0, $placeholderCount - 1), $values);
         }
-
         if (is_null($values)) {
             return [];
         }
-
         return array_combine(array_keys($values), array_values($values));
     }
 

@@ -526,6 +526,17 @@ class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
     }
 
     /**
+     * Clears the fetch cache to avoid returning stale results from previous queries.
+     * Called automatically before each new query execution.
+     *
+     * @return void
+     */
+    public function clearFetchCache(): void
+    {
+        $this->getFetchHandler()->getStrategy()->clearAllCache();
+    }
+
+    /**
      * Returns the statement for the function.
      *
      * @return mixed

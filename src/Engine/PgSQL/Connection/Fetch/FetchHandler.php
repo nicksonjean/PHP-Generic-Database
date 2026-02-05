@@ -23,7 +23,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             PgSQL::FETCH_OBJ,
             PgSQL::FETCH_INTO,
-            PgSQL::FETCH_CLASS => $this->internalFetchClass($fetchArgument ?? null, $optArgs),
+            PgSQL::FETCH_CLASS => $this->internalFetchClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             PgSQL::FETCH_COLUMN => $this->internalFetchColumn($fetchArgument ?? 0),
             PgSQL::FETCH_ASSOC => $this->internalFetchAssoc(),
             PgSQL::FETCH_NUM => $this->internalFetchNum(),
@@ -42,7 +45,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             PgSQL::FETCH_OBJ,
             PgSQL::FETCH_INTO,
-            PgSQL::FETCH_CLASS => $this->internalFetchAllClass($fetchArgument ?? null, $optArgs),
+            PgSQL::FETCH_CLASS => $this->internalFetchAllClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             PgSQL::FETCH_COLUMN => $this->internalFetchAllColumn($fetchArgument ?? 0),
             PgSQL::FETCH_ASSOC => $this->internalFetchAllAssoc(),
             PgSQL::FETCH_NUM => $this->internalFetchAllNum(),

@@ -23,7 +23,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             SQLite::FETCH_OBJ,
             SQLite::FETCH_INTO,
-            SQLite::FETCH_CLASS => $this->internalFetchClass($fetchArgument ?? null, $optArgs),
+            SQLite::FETCH_CLASS => $this->internalFetchClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             SQLite::FETCH_COLUMN => $this->internalFetchColumn($fetchArgument ?? 0),
             SQLite::FETCH_ASSOC => $this->internalFetchAssoc(),
             SQLite::FETCH_NUM => $this->internalFetchNum(),
@@ -42,7 +45,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             SQLite::FETCH_OBJ,
             SQLite::FETCH_INTO,
-            SQLite::FETCH_CLASS => $this->internalFetchAllClass($fetchArgument ?? null, $optArgs),
+            SQLite::FETCH_CLASS => $this->internalFetchAllClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             SQLite::FETCH_COLUMN => $this->internalFetchAllColumn($fetchArgument ?? 0),
             SQLite::FETCH_ASSOC => $this->internalFetchAllAssoc(),
             SQLite::FETCH_NUM => $this->internalFetchAllNum(),

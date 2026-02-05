@@ -211,7 +211,8 @@ class StatementsHandler extends AbstractStatements implements IStatements
 
         $this->setAllMetadata();
         if (!empty($params)) {
-            $statement = $this->getInstance()->getConnection()->prepare($this->parse(...$params));
+            $parsedSql = $this->parse(...$params);
+            $statement = $this->getInstance()->getConnection()->prepare($parsedSql);
             if ($statement) {
                 $this->setStatement($statement);
             }

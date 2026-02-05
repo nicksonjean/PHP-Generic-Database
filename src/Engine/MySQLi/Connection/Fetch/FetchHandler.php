@@ -23,7 +23,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             MySQL::FETCH_OBJ,
             MySQL::FETCH_INTO,
-            MySQL::FETCH_CLASS => $this->internalFetchClass($fetchArgument ?? null, $optArgs),
+            MySQL::FETCH_CLASS => $this->internalFetchClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             MySQL::FETCH_COLUMN => $this->internalFetchColumn($fetchArgument ?? 0),
             MySQL::FETCH_ASSOC => $this->internalFetchAssoc(),
             MySQL::FETCH_NUM => $this->internalFetchNum(),
@@ -42,7 +45,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             MySQL::FETCH_OBJ,
             MySQL::FETCH_INTO,
-            MySQL::FETCH_CLASS => $this->internalFetchAllClass($fetchArgument ?? null, $optArgs),
+            MySQL::FETCH_CLASS => $this->internalFetchAllClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             MySQL::FETCH_COLUMN => $this->internalFetchAllColumn($fetchArgument ?? 0),
             MySQL::FETCH_ASSOC => $this->internalFetchAllAssoc(),
             MySQL::FETCH_NUM => $this->internalFetchAllNum(),

@@ -497,6 +497,38 @@ class SQLiteQueryBuilder implements IQueryBuilder
         return Clause::limit(['data' => $data, 'self' => self::$self]);
     }
 
+    public function union(string|IQueryBuilder $query): static
+    {
+        /** @var static */
+        $result = Clause::union(['query' => $query, 'self' => $this]);
+        self::$self = $this;
+        return $result;
+    }
+
+    public function unionAll(string|IQueryBuilder $query): static
+    {
+        /** @var static */
+        $result = Clause::unionAll(['query' => $query, 'self' => $this]);
+        self::$self = $this;
+        return $result;
+    }
+
+    public function whereExists(string|IQueryBuilder $subquery): static
+    {
+        /** @var static */
+        $result = Clause::where(['subquery' => $subquery, 'negate' => false, 'self' => $this]);
+        self::$self = $this;
+        return $result;
+    }
+
+    public function whereNotExists(string|IQueryBuilder $subquery): static
+    {
+        /** @var static */
+        $result = Clause::where(['subquery' => $subquery, 'negate' => true, 'self' => $this]);
+        self::$self = $this;
+        return $result;
+    }
+
     /**
      * @throws Exceptions
      */
@@ -536,12 +568,43 @@ class SQLiteQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @throws Exceptions
-     * @return string
+     * Orquestrador: resolve todas as subqueries primeiro (por posição) e retorna mapa para inserção na query principal.
+     *
+     * @return array<string, array<int, string>> ['where' => [index => sql], 'union' => [...], 'unionAll' => [...]]
      */
+    private function resolveSubqueries(): array
+    {
+        $resolved = ['where' => [], 'union' => [], 'unionAll' => []];
+        if (!empty($this->query->where)) {
+            foreach ($this->query->where as $i => $item) {
+                if (isset($item['type']) && $item['type'] === Where::EXISTS()) {
+                    $sub = $item['subquery'] ?? null;
+                    if ($sub instanceof IQueryBuilder) {
+                        $resolved['where'][$i] = $sub->buildRaw();
+                    }
+                }
+            }
+        }
+        if (!empty($this->query->union)) {
+            foreach ($this->query->union as $i => $union) {
+                if (isset($union['type']) && $union['type'] === 'subquery' && $union['query'] instanceof IQueryBuilder) {
+                    $resolved['union'][$i] = $union['query']->buildRaw();
+                }
+            }
+        }
+        if (!empty($this->query->unionAll)) {
+            foreach ($this->query->unionAll as $i => $unionAll) {
+                if (isset($unionAll['type']) && $unionAll['type'] === 'subquery' && $unionAll['query'] instanceof IQueryBuilder) {
+                    $resolved['unionAll'][$i] = $unionAll['query']->buildRaw();
+                }
+            }
+        }
+        return $resolved;
+    }
+
     public function build(): string
     {
-        return (new Builder($this->query))->build();
+        return (new Builder($this->query, $this->resolveSubqueries()))->build();
     }
 
     /**
@@ -550,7 +613,7 @@ class SQLiteQueryBuilder implements IQueryBuilder
      */
     public function buildRaw(): string
     {
-        return (new Builder($this->query))->buildRaw();
+        return (new Builder($this->query, $this->resolveSubqueries()))->buildRaw();
     }
 
     /**

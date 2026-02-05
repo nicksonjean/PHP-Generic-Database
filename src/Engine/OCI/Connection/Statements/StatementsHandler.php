@@ -148,7 +148,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                             $fieldName = oci_field_name($stmt, $i);
                             $fieldType = oci_field_type($stmt, $i);
                             $fieldNameUpper = strtoupper($fieldName);
-                            
+
                             // Detect aggregate functions by column name patterns
                             if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
                                 $aggregateColumns[$fieldName] = strtoupper($matches[1]);
@@ -163,7 +163,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                             } elseif (str_contains($fieldNameUpper, 'MAX')) {
                                 $aggregateColumns[$fieldName] = 'MAX';
                             }
-                            
+
                             // Detect numeric field types (not aggregate functions)
                             if (!isset($aggregateColumns[$fieldName])) {
                                 $fieldTypeUpper = strtoupper($fieldType);
@@ -172,7 +172,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                                 }
                             }
                         }
-                        
+
                         $results = [];
                         $rows = 0;
                         while ($row = oci_fetch_array($stmt, OCI_ASSOC + OCI_RETURN_NULLS)) {
@@ -239,7 +239,8 @@ class StatementsHandler extends AbstractStatements implements IStatements
 
         $this->setAllMetadata();
         if (!empty($params)) {
-            $statement = oci_parse($this->getInstance()->getConnection(), $this->parse(...$params));
+            $parsedSql = $this->parse(...$params);
+            $statement = oci_parse($this->getInstance()->getConnection(), $parsedSql);
             if ($statement) {
                 $this->setStatement($statement);
             }
@@ -271,7 +272,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                             $fieldName = oci_field_name($stmt, $i);
                             $fieldType = oci_field_type($stmt, $i);
                             $fieldNameUpper = strtoupper($fieldName);
-                            
+
                             // Detect aggregate functions by column name patterns
                             if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
                                 $aggregateColumns[$fieldName] = strtoupper($matches[1]);
@@ -286,7 +287,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                             } elseif (str_contains($fieldNameUpper, 'MAX')) {
                                 $aggregateColumns[$fieldName] = 'MAX';
                             }
-                            
+
                             // Detect numeric field types (not aggregate functions)
                             if (!isset($aggregateColumns[$fieldName])) {
                                 $fieldTypeUpper = strtoupper($fieldType);
@@ -295,7 +296,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                                 }
                             }
                         }
-                        
+
                         $results = [];
                         $rows = 0;
                         while ($row = oci_fetch_array($stmt, OCI_ASSOC + OCI_RETURN_NULLS)) {

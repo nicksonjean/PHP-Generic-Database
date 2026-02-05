@@ -473,6 +473,54 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     }
 
     /**
+     * Adds a UNION clause to the query
+     *
+     * @param string|IQueryBuilder $query The query to union with
+     * @return QueryBuilder
+     */
+    public function union(string|IQueryBuilder $query): IQueryBuilder
+    {
+        $this->getStrategy()->union($query);
+        return $this;
+    }
+
+    /**
+     * Adds a UNION ALL clause to the query
+     *
+     * @param string|IQueryBuilder $query The query to union with
+     * @return QueryBuilder
+     */
+    public function unionAll(string|IQueryBuilder $query): IQueryBuilder
+    {
+        $this->getStrategy()->unionAll($query);
+        return $this;
+    }
+
+    /**
+     * Adds a WHERE EXISTS clause to the query
+     *
+     * @param string|IQueryBuilder $subquery The subquery to check existence
+     * @return QueryBuilder
+     */
+    public function whereExists(string|IQueryBuilder $subquery): IQueryBuilder
+    {
+        $this->getStrategy()->whereExists($subquery);
+        return $this;
+    }
+
+    /**
+     * Adds a WHERE NOT EXISTS clause to the query
+     *
+     * @param string|IQueryBuilder $subquery The subquery to check non-existence
+     * @return QueryBuilder
+     */
+    public function whereNotExists(string|IQueryBuilder $subquery): IQueryBuilder
+    {
+        $this->getStrategy()->whereNotExists($subquery);
+        return $this;
+    }
+
+    /**
      * Summary of build
      * @return string
      */

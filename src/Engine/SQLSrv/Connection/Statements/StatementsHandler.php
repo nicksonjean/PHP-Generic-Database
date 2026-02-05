@@ -172,7 +172,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                                 }
                             }
                         }
-                        
+
                         $results = [];
                         $rows = 0;
                         while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
@@ -213,8 +213,13 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     public function parse(mixed ...$params): string
     {
-        $this->setQueryString(Parse::binding(Parse::escape(reset($params), Parse::SQL_DIALECT_DOUBLE_QUOTE)));
-        return $this->getQueryString();
+        $raw = reset($params);
+        $execSql = Parse::binding(Parse::escape($raw, Parse::SQL_DIALECT_NONE));
+        $displaySql = Parse::binding(
+            Parse::escape($raw, Parse::SQL_DIALECT_DOUBLE_QUOTE, Parse::SQL_DIALECT_SINGLE_QUOTE)
+        );
+        $this->setQueryString($displaySql);
+        return $execSql;
     }
 
     /**
@@ -260,15 +265,16 @@ class StatementsHandler extends AbstractStatements implements IStatements
 
         $this->setAllMetadata();
         if (!empty($params)) {
+            $parsedSql = $this->parse(...$params);
             $bindParams = Statement::bind([null, ...$params]);
             $statement = null;
             if ($bindParams->by->array) {
                 foreach (($bindParams->is->array->multi ? $bindParams->query->arguments : [$bindParams->query->arguments]) as $bindParam) {
-                    $statement = $this->sqlsrvQuery($this->parse(...$params), array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
+                    $statement = $this->sqlsrvQuery($parsedSql, array_values($bindParam), ['Scrollable' => SQLSRV_CURSOR_FORWARD]);
                 }
             } else {
                 $queryParams = !empty($bindParams->query->arguments) ? array_values($bindParams->query->arguments) : [];
-                $statement = $this->sqlsrvQuery($this->parse(...$params), $queryParams);
+                $statement = $this->sqlsrvQuery($parsedSql, $queryParams);
             }
             if ($statement) {
                 $this->setStatement($statement);
@@ -317,7 +323,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                                 }
                             }
                         }
-                        
+
                         $results = [];
                         $rows = 0;
                         while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {

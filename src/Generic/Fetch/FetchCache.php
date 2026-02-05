@@ -73,6 +73,20 @@ trait FetchCache
     }
 
     /**
+     * Clears all cached results to avoid returning stale data from previous queries.
+     * Call when executing a new query to ensure fresh results.
+     *
+     * @return void
+     */
+    public function clearAllCache(): void
+    {
+        $this->cachedResults = [];
+        $this->positions = [];
+        $this->lastFetchAll = [];
+        $this->exhausted = [];
+    }
+
+    /**
      * Handles resetting the fetch position and caching results if not already cached
      *
      * @param mixed $resource The statement resource

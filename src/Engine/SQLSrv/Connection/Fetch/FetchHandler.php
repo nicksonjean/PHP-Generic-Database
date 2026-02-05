@@ -23,7 +23,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             SQLSrv::FETCH_OBJ,
             SQLSrv::FETCH_INTO,
-            SQLSrv::FETCH_CLASS => $this->internalFetchClass($fetchArgument ?? null, $optArgs),
+            SQLSrv::FETCH_CLASS => $this->internalFetchClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             SQLSrv::FETCH_COLUMN => $this->internalFetchColumn($fetchArgument ?? 0),
             SQLSrv::FETCH_ASSOC => $this->internalFetchAssoc(),
             SQLSrv::FETCH_NUM => $this->internalFetchNum(),
@@ -42,7 +45,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             SQLSrv::FETCH_OBJ,
             SQLSrv::FETCH_INTO,
-            SQLSrv::FETCH_CLASS => $this->internalFetchAllClass($fetchArgument ?? null, $optArgs),
+            SQLSrv::FETCH_CLASS => $this->internalFetchAllClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             SQLSrv::FETCH_COLUMN => $this->internalFetchAllColumn($fetchArgument ?? 0),
             SQLSrv::FETCH_ASSOC => $this->internalFetchAllAssoc(),
             SQLSrv::FETCH_NUM => $this->internalFetchAllNum(),

@@ -16,14 +16,19 @@ use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Interfaces\QueryBuilder\IBuilder;
+use GenericDatabase\Interfaces\IQueryBuilder;
 
 class Builder implements IBuilder
 {
     use Query;
 
-    public function __construct($query)
+    /** @var array<string, array<int, string>> Subquery SQL by slot */
+    private array $resolvedSubqueries = [];
+
+    public function __construct($query, array $resolvedSubqueries = [])
     {
         $this->query = $query;
+        $this->resolvedSubqueries = $resolvedSubqueries;
     }
 
     /**
@@ -139,29 +144,53 @@ class Builder implements IBuilder
             throw new Exceptions("No conditions specified in WHERE clause.");
         }
         $output = [];
-        foreach ($this->query->where as $data) {
-            $conditionType = $data['condition'] === Condition::DISJUNCTION() ? 'OR' : 'AND';
-            $condition = $data['condition'] === Condition::NONE() ? 'WHERE' : $conditionType;
+        foreach ($this->query->where as $whereIndex => $data) {
+            if (empty($data) || !is_array($data)) {
+                continue;
+            }
+            $conditionType = ($data['condition'] ?? Condition::NONE()) === Condition::DISJUNCTION() ? 'OR' : 'AND';
+            $condition = ($data['condition'] ?? Condition::NONE()) === Condition::NONE() ? 'WHERE' : $conditionType;
+            if (isset($data['type']) && $data['type'] === Where::EXISTS()) {
+                $output[] = $this->buildExistsCondition($data, $condition, $whereIndex);
+                continue;
+            }
             $alias = isset($data['alias']) ? trim($data['alias']) . '.' : '';
             $column = $data['column'] ?? ' ';
             $signal = isset($data['signal']) ? trim($data['signal']) : '';
-            $assert = $data['aggregation']['assert'] === Where::NEGATION() ? 'NOT' : ' ';
-            $function = $data['type'] === Where::FUNCTION() ? $data['function'] : ' ';
-            $type = $data['type'] === Where::DEFAULT() ? "$alias$column" : "$function($alias$column)";
+            $aggregation = $data['aggregation'] ?? [];
+            $assert = ($aggregation['assert'] ?? Where::AFFIRMATION()) === Where::NEGATION() ? 'NOT' : ' ';
+            $function = ($data['type'] ?? Where::DEFAULT()) === Where::FUNCTION() ? ($data['function'] ?? '') : ' ';
+            $type = ($data['type'] ?? Where::DEFAULT()) === Where::DEFAULT() ? "$alias$column" : "$function($alias$column)";
             $placeholders = isset($data['arguments']['unlimited']) ?
                 implode(
                     ', ',
                     array_fill(0, count(explode(', ', $data['arguments']['unlimited'])), '?')
                 ) : '';
-            $output[] = match ($data['aggregation']['type']) {
+            $output[] = match ($aggregation['type'] ?? Where::NONE()) {
                 Where::NONE() => "$condition $type $signal ?",
                 Where::BETWEEN() => "$condition $type $assert BETWEEN ? AND ?",
                 Where::IN() => "$condition $type $assert IN ($placeholders)",
                 Where::LIKE() => "$condition $type $assert LIKE ?",
+                Where::EXISTS() => $this->buildExistsCondition($data, $condition, $whereIndex),
                 default => "",
             };
         }
         return $this->parse(implode(' ', $output)) . ' ';
+    }
+
+    private function buildExistsCondition(array $data, string $condition, int $whereIndex = 0): string
+    {
+        $negate = $data['negate'] ?? false;
+        $subquery = $data['subquery'] ?? '';
+        $existsClause = $negate ? 'NOT EXISTS' : 'EXISTS';
+        $resolved = $this->resolvedSubqueries['where'][$whereIndex] ?? null;
+        if ($resolved !== null) {
+            return "$condition $existsClause ($resolved)";
+        }
+        if ($subquery instanceof IQueryBuilder) {
+            return "$condition $existsClause (" . $subquery->build() . ")";
+        }
+        return "$condition $existsClause ($subquery)";
     }
 
     /**
@@ -291,6 +320,20 @@ class Builder implements IBuilder
         if (!empty($this->query->having)) {
             $query .= $this->buildHaving();
         }
+        if (!empty($this->query->union)) {
+            foreach ($this->query->union as $i => $union) {
+                $resolved = $this->resolvedSubqueries['union'][$i] ?? null;
+                $inner = $resolved !== null ? $resolved : ($union['type'] === 'subquery' ? $union['query']->build() : $union['query']);
+                $query .= " UNION " . $inner . " ";
+            }
+        }
+        if (!empty($this->query->unionAll)) {
+            foreach ($this->query->unionAll as $i => $unionAll) {
+                $resolved = $this->resolvedSubqueries['unionAll'][$i] ?? null;
+                $inner = $resolved !== null ? $resolved : ($unionAll['type'] === 'subquery' ? $unionAll['query']->build() : $unionAll['query']);
+                $query .= " UNION ALL " . $inner . " ";
+            }
+        }
         if (!empty($this->query->order)) {
             $query .= $this->buildOrder();
         }
@@ -322,7 +365,8 @@ class Builder implements IBuilder
     {
         return match (true) {
             is_bool($value) => $value ? '1' : '0',
-            is_numeric(trim($value)) => (int) trim($value),
+            is_numeric(trim((string) $value)) => (int) trim((string) $value),
+            is_string($value) && preg_match('/^\w+\.\w+$/', trim($value)) => trim($value),
             is_string($value) => "'" . trim($value) . "'",
             is_null($value) => 'NULL',
             default => throw new Exceptions("Unsupported value type: " . gettype($value))
@@ -362,8 +406,14 @@ class Builder implements IBuilder
     {
         $values = [];
         if (!empty($this->query->where)) {
-            foreach ($this->query->where as $value) {
-                if (isset($value['arguments']['default'])) {
+            foreach ($this->query->where as $whereIndex => $value) {
+                if (isset($value['type']) && $value['type'] === Where::EXISTS()) {
+                    $subquery = $value['subquery'] ?? null;
+                    $resolved = $this->resolvedSubqueries['where'][$whereIndex] ?? null;
+                    if ($subquery instanceof IQueryBuilder && $resolved === null) {
+                        $values = array_merge($values, $subquery->getValues());
+                    }
+                } elseif (isset($value['arguments']['default'])) {
                     $values[] = trim($value['arguments']['default']);
                 }
                 if (isset($value['arguments']['extra'])) {
@@ -393,9 +443,25 @@ class Builder implements IBuilder
             }
         }
 
+        if (!empty($this->query->union)) {
+            foreach ($this->query->union as $i => $union) {
+                $resolved = $this->resolvedSubqueries['union'][$i] ?? null;
+                if ($union['type'] === 'subquery' && $resolved === null) {
+                    $values = array_merge($values, $union['query']->getValues());
+                }
+            }
+        }
+        if (!empty($this->query->unionAll)) {
+            foreach ($this->query->unionAll as $i => $unionAll) {
+                $resolved = $this->resolvedSubqueries['unionAll'][$i] ?? null;
+                if ($unionAll['type'] === 'subquery' && $resolved === null) {
+                    $values = array_merge($values, $unionAll['query']->getValues());
+                }
+            }
+        }
         if (!empty($this->query->limit)) {
             foreach (explode(', ', $this->query->limit['value']) as $limit) {
-                $values[] = $limit;
+                $values[] = trim($limit);
             }
         }
         return $values;

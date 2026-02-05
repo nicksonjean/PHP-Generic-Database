@@ -18,7 +18,14 @@ class Criteria
     {
         $result = [];
         $data = array_key_exists('data', $arguments) ? trim($arguments['data']) : [];
-        if (preg_match(Regex::getSelect(), $data, $matches)) {
+        // Raw/literal expression: quoted string or expression with AS that would misparse (e.g. "'Estado' AS origem", '"Estado" as origem')
+        $isRaw = !empty($data) && (
+            (str_starts_with($data, '"') || str_starts_with($data, "'")) ||
+            (preg_match('/\s+AS\s+\w+/i', $data) && (str_contains($data, "'") || str_contains($data, '"')))
+        );
+        if ($isRaw) {
+            $result = Arrays::arraySafe(['type' => Column::FUNCTION(), 'value' => $data]);
+        } elseif (preg_match(Regex::getSelect(), $data, $matches)) {
             $result = $matches['function_name'] ? Arrays::arraySafe([
                 'type' => Column::FUNCTION(),
                 'value' => trim($data),
@@ -32,6 +39,8 @@ class Criteria
                 'column' => $matches['column_name'],
                 'alias' => $matches['column_alias'] ?? null,
             ]);
+        } elseif (!empty($data)) {
+            $result = Arrays::arraySafe(['type' => Column::FUNCTION(), 'value' => $data]);
         }
         return $result;
     }
@@ -109,6 +118,18 @@ class Criteria
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Where::class;
         $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
+        $subquery = array_key_exists('subquery', $arguments) ? $arguments['subquery'] : null;
+        $negate = array_key_exists('negate', $arguments) ? $arguments['negate'] : false;
+
+        if ($subquery !== null) {
+            $result = Arrays::arraySafe([
+                'type' => $enum::EXISTS(),
+                'subquery' => $subquery,
+                'negate' => $negate,
+                'condition' => $condition,
+            ]);
+            return $result;
+        }
 
         if (preg_match(Regex::getWhereHaving(), $data, $matches)) {
             $aggregationType = match (true) {

@@ -29,4 +29,8 @@ interface IClause
     public static function order(array $arguments): IQueryBuilder;
 
     public static function limit(array $arguments): IQueryBuilder;
+
+    public static function union(array $arguments): IQueryBuilder;
+
+    public static function unionAll(array $arguments): IQueryBuilder;
 }

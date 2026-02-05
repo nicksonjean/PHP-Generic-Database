@@ -213,7 +213,7 @@ abstract class AbstractFetch implements IFetchAbstract
     {
         $converted = [];
         foreach ($row as $key => $value) {
-            $converted[$key] = $this->convertToNativeType($value);
+            $converted[$key] = $this->convertToNativeType(trim($value));
         }
         return $converted;
     }

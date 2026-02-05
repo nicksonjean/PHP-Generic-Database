@@ -348,6 +348,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function prepareStatement(mixed ...$params): PDOStatement|false
     {
+        if (method_exists($this->getInstance(), 'clearFetchCache')) {
+            $this->getInstance()->clearFetchCache();
+        }
         $report = $this->getOptionsHandler()->getOptions(XPDO::ATTR_REPORT);
         if (!empty($report) || !is_null($report)) {
             $reportHandler = $this->getReportHandler();
@@ -356,13 +359,14 @@ class StatementsHandler extends AbstractStatements implements IStatements
 
         $this->setAllMetadata();
         if (!empty($params)) {
+            $parsedSql = $this->parse(...$params);
             $cursor = match ($this->get('driver')) {
                 'oci', 'mysql', 'pgsql' => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
                 'firebird', 'sqlsrv' => [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL],
                 'sqlite' => [],
                 default => [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY],
             };
-            $statement = $this->getInstance()->getConnection()->prepare($this->parse(...$params), $cursor);
+            $statement = $this->getInstance()->getConnection()->prepare($parsedSql, $cursor);
             if ($statement) {
                 $this->setStatement($statement);
             }

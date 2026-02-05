@@ -205,7 +205,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                             $fieldName = pg_field_name($result, $i);
                             $fieldType = pg_field_type($result, $i);
                             $fieldNameUpper = strtoupper($fieldName);
-                            
+
                             // Detect aggregate functions by column name patterns
                             if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
                                 $aggregateColumns[$fieldName] = strtoupper($matches[1]);
@@ -220,7 +220,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                             } elseif (str_contains($fieldNameUpper, 'MAX')) {
                                 $aggregateColumns[$fieldName] = 'MAX';
                             }
-                            
+
                             // Detect numeric field types (not aggregate functions)
                             if (!isset($aggregateColumns[$fieldName])) {
                                 $fieldTypeUpper = strtoupper($fieldType);
@@ -242,7 +242,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                                 }
                             }
                         }
-                        
+
                         $results = [];
                         $rows = 0;
                         while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
@@ -307,10 +307,11 @@ class StatementsHandler extends AbstractStatements implements IStatements
         $this->setAllMetadata();
         if (!empty($params)) {
             $this->setStmtName(Hash::hash());
+            $parsedSql = $this->parse(reset($params)[0]);
             if (reset($params)[1] === Query::RAW()) {
-                $statement = pg_query($this->getInstance()->getConnection(), $this->parse(reset($params)[0]));
+                $statement = pg_query($this->getInstance()->getConnection(), $parsedSql);
             } else {
-                $statement = pg_prepare($this->getInstance()->getConnection(), $this->getStmtName(), $this->parse(reset($params)[0]));
+                $statement = pg_prepare($this->getInstance()->getConnection(), $this->getStmtName(), $parsedSql);
             }
             if ($statement) {
                 $this->setStatement($statement);
@@ -339,7 +340,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                     $fieldName = pg_field_name($statement, $i);
                     $fieldType = pg_field_type($statement, $i);
                     $fieldNameUpper = strtoupper($fieldName);
-                    
+
                     // Detect aggregate functions by column name patterns
                     if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\b/i', $fieldName, $matches)) {
                         $aggregateColumns[$fieldName] = strtoupper($matches[1]);
@@ -354,7 +355,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                     } elseif (str_contains($fieldNameUpper, 'MAX')) {
                         $aggregateColumns[$fieldName] = 'MAX';
                     }
-                    
+
                     // Detect numeric field types (not aggregate functions)
                     if (!isset($aggregateColumns[$fieldName])) {
                         $fieldTypeUpper = strtoupper($fieldType);
@@ -376,7 +377,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                         }
                     }
                 }
-                
+
                 $results = [];
                 $rowCount = 0;
                 while ($row = pg_fetch_array($statement, null, PGSQL_ASSOC)) {

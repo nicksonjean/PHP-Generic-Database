@@ -497,6 +497,38 @@ class ODBCQueryBuilder implements IQueryBuilder
         return Clause::limit(['data' => $data, 'self' => self::$self, 'context' => self::$context]);
     }
 
+    public function union(string|IQueryBuilder $query): static
+    {
+        /** @var static */
+        $result = Clause::union(['query' => $query, 'self' => $this]);
+        self::$self = $this;
+        return $result;
+    }
+
+    public function unionAll(string|IQueryBuilder $query): static
+    {
+        /** @var static */
+        $result = Clause::unionAll(['query' => $query, 'self' => $this]);
+        self::$self = $this;
+        return $result;
+    }
+
+    public function whereExists(string|IQueryBuilder $subquery): static
+    {
+        /** @var static */
+        $result = Clause::where(['subquery' => $subquery, 'negate' => false, 'self' => $this]);
+        self::$self = $this;
+        return $result;
+    }
+
+    public function whereNotExists(string|IQueryBuilder $subquery): static
+    {
+        /** @var static */
+        $result = Clause::where(['subquery' => $subquery, 'negate' => true, 'self' => $this]);
+        self::$self = $this;
+        return $result;
+    }
+
     /**
      * @throws Exceptions
      */
@@ -506,25 +538,26 @@ class ODBCQueryBuilder implements IQueryBuilder
         $values = $this->getValues();
 
         if (self::$lastQuery !== $currentQuery || self::$cursorExhausted) {
-            if (PHP_VERSION_ID >= 80400 && !empty($values)) {
-                $processedQuery = $currentQuery;
+            $finalQuery = $currentQuery;
+            if (!empty($values)) {
                 foreach ($values as $value) {
                     $processedValue = match (true) {
-                        is_string($value) => "'" . str_replace("'", "''", $value) . "'",
-                        is_null($value) => 'NULL',
+                        is_string($value) && strcasecmp(trim($value), 'null') === 0 => 'NULL',
+                        is_string($value) && strcasecmp(trim($value), 'true') === 0 => '1',
+                        is_string($value) && strcasecmp(trim($value), 'false') === 0 => '0',
+                        is_string($value) && preg_match('/^-?\d+$/', trim($value)) === 1 => (string) ((int) trim($value)),
+                        is_string($value) && preg_match('/^-?\d+\.\d+$/', trim($value)) === 1 => (string) ((float) trim($value)),
+                        is_int($value) || is_float($value) => (string) $value,
                         is_bool($value) => $value ? '1' : '0',
-                        is_numeric($value) => (string)$value,
-                        default => "'" . str_replace("'", "''", (string)$value) . "'"
+                        is_string($value) => "'" . str_replace("'", "''", $value) . "'",
+                        default => "'" . str_replace("'", "''", (string) $value) . "'",
                     };
-                    $processedQuery = preg_replace('/\?/', $processedValue, $processedQuery, 1);
+                    $finalQuery = preg_replace('/\?/', $processedValue, $finalQuery, 1);
                 }
-                $this->getContext()->query($processedQuery);
-            } elseif (!empty($values)) {
-                $this->getContext()->prepare($currentQuery, ...$values);
-            } else {
-                $this->getContext()->query($currentQuery);
             }
-            self::$lastQuery = $currentQuery;
+
+            $this->getContext()->query($finalQuery);
+            self::$lastQuery = $finalQuery;
             self::$cursorExhausted = false;
         }
     }
@@ -544,10 +577,8 @@ class ODBCQueryBuilder implements IQueryBuilder
      */
     private function parse(): string
     {
-        // Use build() instead of buildRaw() to keep placeholders for odbc_prepare()
-        // PHP 8.4+ requires placeholders in prepared statements
         $buildResult = $this->build();
-        $builder = new Builder($this->query, $this->getContext());
+        $builder = new Builder($this->query, $this->getContext(), $this->resolveSubqueries());
         return $builder->parse(
             $buildResult,
             Parse::SQL_DIALECT_NONE,
@@ -556,12 +587,47 @@ class ODBCQueryBuilder implements IQueryBuilder
     }
 
     /**
+     * Orquestrador: resolve todas as subqueries primeiro (por posição) e retorna mapa para inserção na query principal.
+     *
+     * @return array<string, array<int, string>> ['where' => [index => sql], 'union' => [...], 'unionAll' => [...]]
+     */
+    private function resolveSubqueries(): array
+    {
+        $resolved = ['where' => [], 'union' => [], 'unionAll' => []];
+        if (!empty($this->query->where)) {
+            foreach ($this->query->where as $i => $item) {
+                if (isset($item['type']) && $item['type'] === Where::EXISTS()) {
+                    $sub = $item['subquery'] ?? null;
+                    if ($sub instanceof IQueryBuilder) {
+                        $resolved['where'][$i] = $sub->buildRaw();
+                    }
+                }
+            }
+        }
+        if (!empty($this->query->union)) {
+            foreach ($this->query->union as $i => $union) {
+                if (isset($union['type']) && $union['type'] === 'subquery' && $union['query'] instanceof IQueryBuilder) {
+                    $resolved['union'][$i] = $union['query']->buildRaw();
+                }
+            }
+        }
+        if (!empty($this->query->unionAll)) {
+            foreach ($this->query->unionAll as $i => $unionAll) {
+                if (isset($unionAll['type']) && $unionAll['type'] === 'subquery' && $unionAll['query'] instanceof IQueryBuilder) {
+                    $resolved['unionAll'][$i] = $unionAll['query']->buildRaw();
+                }
+            }
+        }
+        return $resolved;
+    }
+
+    /**
      * @throws Exceptions
      * @return string
      */
     public function build(): string
     {
-        return (new Builder($this->query, $this->getContext()))->build();
+        return (new Builder($this->query, $this->getContext(), $this->resolveSubqueries()))->build();
     }
 
     /**
@@ -570,7 +636,7 @@ class ODBCQueryBuilder implements IQueryBuilder
      */
     public function buildRaw(): string
     {
-        return (new Builder($this->query, $this->getContext()))->buildRaw();
+        return (new Builder($this->query, $this->getContext(), $this->resolveSubqueries()))->buildRaw();
     }
 
     /**
@@ -578,7 +644,7 @@ class ODBCQueryBuilder implements IQueryBuilder
      */
     public function getValues(): array
     {
-        return (new Builder($this->query, $this->getContext()))->getValues();
+        return (new Builder($this->query, $this->getContext(), $this->resolveSubqueries()))->getValues();
     }
 
     /**

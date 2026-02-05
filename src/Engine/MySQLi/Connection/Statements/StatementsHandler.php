@@ -171,7 +171,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                             $aggregateColumns[$fieldName] = 'MAX';
                         }
                     }
-                    
+
                     $results = [];
                     while ($row = $result->fetch_assoc()) {
                         // Convert aggregate function results to proper types
@@ -271,7 +271,8 @@ class StatementsHandler extends AbstractStatements implements IStatements
 
         $this->setAllMetadata();
         if (!empty($params)) {
-            $statement = $this->getInstance()->getConnection()->prepare($this->parse(...$params));
+            $parsedSql = $this->parse(...$params);
+            $statement = $this->getInstance()->getConnection()->prepare($parsedSql);
             if ($statement) {
                 $this->setStatement($statement);
             }
@@ -320,7 +321,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
                                 $aggregateColumns[$fieldName] = 'MAX';
                             }
                         }
-                        
+
                         $results = $result->fetch_all(MYSQLI_ASSOC);
                         // Convert aggregate function results to proper types
                         foreach ($results as &$row) {

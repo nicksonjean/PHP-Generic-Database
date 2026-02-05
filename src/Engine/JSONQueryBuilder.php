@@ -537,6 +537,54 @@ class JSONQueryBuilder implements IQueryBuilder
     }
 
     /**
+     * Add UNION clause.
+     *
+     * @param string|IQueryBuilder $query The query to union with.
+     * @return static
+     */
+    public function union(string|IQueryBuilder $query): static
+    {
+        /** @var static */
+        return Clause::union(['query' => $query, 'self' => $this]);
+    }
+
+    /**
+     * Add UNION ALL clause.
+     *
+     * @param string|IQueryBuilder $query The query to union with.
+     * @return static
+     */
+    public function unionAll(string|IQueryBuilder $query): static
+    {
+        /** @var static */
+        return Clause::unionAll(['query' => $query, 'self' => $this]);
+    }
+
+    /**
+     * Add WHERE EXISTS clause.
+     *
+     * @param string|IQueryBuilder $subquery The subquery to check existence.
+     * @return static
+     */
+    public function whereExists(string|IQueryBuilder $subquery): static
+    {
+        /** @var static */
+        return Clause::where(['subquery' => $subquery, 'negate' => false, 'self' => $this]);
+    }
+
+    /**
+     * Add WHERE NOT EXISTS clause.
+     *
+     * @param string|IQueryBuilder $subquery The subquery to check non-existence.
+     * @return static
+     */
+    public function whereNotExists(string|IQueryBuilder $subquery): static
+    {
+        /** @var static */
+        return Clause::where(['subquery' => $subquery, 'negate' => true, 'self' => $this]);
+    }
+
+    /**
      * Execute the query and cache results.
      * Passes unquoted query (buildRawForExecution) to execution; sets metadata
      * query string to display version (buildRaw with double quotes) after fetch.

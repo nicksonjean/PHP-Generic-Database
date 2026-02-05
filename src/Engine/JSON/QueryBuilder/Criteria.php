@@ -145,6 +145,17 @@ class Criteria implements ICriteria
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Where::class;
         $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
+        $subquery = array_key_exists('subquery', $arguments) ? $arguments['subquery'] : null;
+        $negate = array_key_exists('negate', $arguments) ? $arguments['negate'] : false;
+
+        if ($subquery !== null) {
+            return Arrays::arraySafe([
+                'type' => $enum::EXISTS(),
+                'subquery' => $subquery,
+                'negate' => $negate,
+                'condition' => $condition,
+            ]);
+        }
 
         if (preg_match(Regex::getWhereHaving(), $data, $matches)) {
             $aggregationType = match (true) {

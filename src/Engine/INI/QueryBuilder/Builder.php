@@ -17,6 +17,7 @@ use GenericDatabase\Helpers\Exceptions;
 use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Generic\QueryBuilder\Query;
 use GenericDatabase\Interfaces\QueryBuilder\IBuilder;
+use GenericDatabase\Interfaces\IQueryBuilder;
 use GenericDatabase\Engine\INI\Connection\INI;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Engine\INI\QueryBuilder\Regex;
@@ -242,6 +243,9 @@ class Builder implements IBuilder
 
         $conditions = [];
         foreach ($this->query->where as $data) {
+            if (isset($data['type']) && $data['type'] === Where::EXISTS()) {
+                continue;
+            }
             $column = $data['column'] ?? '';
             if ($column === '') {
                 continue;
@@ -460,38 +464,83 @@ class Builder implements IBuilder
      */
     public function execute(array $data): array
     {
+        $mainResults = $this->executeSingle($data);
+
+        if (!empty($this->query->union) || !empty($this->query->unionAll)) {
+            $allResults = [$mainResults];
+            if (!empty($this->query->union)) {
+                foreach ($this->query->union as $union) {
+                    $allResults[] = $this->executeUnionQuery($union, $data);
+                }
+            }
+            if (!empty($this->query->unionAll)) {
+                foreach ($this->query->unionAll as $unionAll) {
+                    $allResults[] = $this->executeUnionQuery($unionAll, $data);
+                }
+            }
+            return $this->mergeResults($allResults, !empty($this->query->union));
+        }
+
+        return $mainResults;
+    }
+
+    private function executeSingle(array $data): array
+    {
         $processor = new DataProcessor($data);
 
-        // Apply WHERE
         $where = $this->buildWhere();
         if (!empty($where)) {
             $processor->where($where, $this->getWhereLogic());
         }
 
-        // Apply ORDER BY
         $orderBy = $this->buildOrderBy();
         if ($orderBy !== null) {
             $processor->orderBy($orderBy['column'], $orderBy['direction']);
         }
 
-        // Apply LIMIT
         $limit = $this->buildLimit();
         if ($limit !== null) {
             $processor->limit($limit['limit'], $limit['offset']);
         }
 
-        // Apply SELECT - no prefix: DataProcessor looks up $row['field'], not $row['alias.field']
         $columns = $this->buildSelect(false);
         if (!in_array('*', $columns)) {
             $processor->select($columns);
         }
 
-        // Apply DISTINCT
         if ($this->isDistinct()) {
             $processor->distinct();
         }
 
         return $processor->getData();
+    }
+
+    private function executeUnionQuery(array $union, array $data): array
+    {
+        if ($union['type'] === 'subquery' && $union['query'] instanceof IQueryBuilder) {
+            return $union['query']->execute();
+        }
+        throw new Exceptions("Raw SQL UNION queries not yet supported for flat files");
+    }
+
+    private function mergeResults(array $resultSets, bool $removeDuplicates): array
+    {
+        $merged = [];
+        $seen = [];
+        foreach ($resultSets as $results) {
+            foreach ($results as $row) {
+                $key = serialize($row);
+                if ($removeDuplicates) {
+                    if (!isset($seen[$key])) {
+                        $merged[] = $row;
+                        $seen[$key] = true;
+                    }
+                } else {
+                    $merged[] = $row;
+                }
+            }
+        }
+        return $merged;
     }
 
     /**
@@ -584,6 +633,14 @@ class Builder implements IBuilder
             }
             $parts[] = "WHERE " . $whereStr;
         }
+        $existsStr = $this->buildExistsWhereString();
+        if ($existsStr !== '') {
+            if (!empty($where)) {
+                $parts[count($parts) - 1] .= ' AND ' . $existsStr;
+            } else {
+                $parts[] = "WHERE " . $existsStr;
+            }
+        }
 
         // GROUP BY
         $group = $this->buildGroup();
@@ -609,7 +666,55 @@ class Builder implements IBuilder
             $parts[] = $limitStr;
         }
 
+        $this->appendUnionToParts($parts);
         return Parse::escape(trim(implode(' ', $parts)), Parse::SQL_DIALECT_DOUBLE_QUOTE);
+    }
+
+    private function buildExistsWhereString(): string
+    {
+        if (empty($this->query->where)) {
+            return '';
+        }
+        $existsClauses = [];
+        foreach ($this->query->where as $data) {
+            if (!isset($data['type']) || $data['type'] !== Where::EXISTS()) {
+                continue;
+            }
+            $negate = $data['negate'] ?? false;
+            $subquery = $data['subquery'] ?? null;
+            if ($subquery === null) {
+                continue;
+            }
+            $existsClause = $negate ? 'NOT EXISTS' : 'EXISTS';
+            if ($subquery instanceof IQueryBuilder) {
+                $existsClauses[] = $existsClause . ' (' . $subquery->build() . ')';
+            } else {
+                $existsClauses[] = $existsClause . ' (' . (string) $subquery . ')';
+            }
+        }
+        return $existsClauses === [] ? '' : implode(' AND ', $existsClauses);
+    }
+
+    private function appendUnionToParts(array &$parts): void
+    {
+        if (!empty($this->query->union)) {
+            foreach ($this->query->union as $union) {
+                if ($union['type'] === 'subquery' && $union['query'] instanceof IQueryBuilder) {
+                    $parts[] = 'UNION (' . $union['query']->build() . ')';
+                } else {
+                    $parts[] = 'UNION (' . (string) $union['query'] . ')';
+                }
+            }
+        }
+        if (!empty($this->query->unionAll)) {
+            foreach ($this->query->unionAll as $unionAll) {
+                if ($unionAll['type'] === 'subquery' && $unionAll['query'] instanceof IQueryBuilder) {
+                    $parts[] = 'UNION ALL (' . $unionAll['query']->build() . ')';
+                } else {
+                    $parts[] = 'UNION ALL (' . (string) $unionAll['query'] . ')';
+                }
+            }
+        }
     }
 
     /**
@@ -681,6 +786,14 @@ class Builder implements IBuilder
             }
             $parts[] = "WHERE " . $whereStr;
         }
+        $existsStr = $this->buildExistsWhereString();
+        if ($existsStr !== '') {
+            if (!empty($where)) {
+                $parts[count($parts) - 1] .= ' AND ' . $existsStr;
+            } else {
+                $parts[] = "WHERE " . $existsStr;
+            }
+        }
 
         $group = $this->buildGroup();
         if ($group !== '') {
@@ -702,6 +815,7 @@ class Builder implements IBuilder
             $parts[] = $limitStr;
         }
 
+        $this->appendUnionToParts($parts);
         return trim(implode(' ', $parts));
     }
 
@@ -793,6 +907,33 @@ class Builder implements IBuilder
                 }
 
                 $values[] = $value;
+            }
+        }
+
+        if (!empty($this->query->where)) {
+            foreach ($this->query->where as $whereItem) {
+                if (isset($whereItem['type']) && $whereItem['type'] === Where::EXISTS()) {
+                    $subquery = $whereItem['subquery'] ?? null;
+                    if ($subquery instanceof IQueryBuilder) {
+                        $values = array_merge($values, $subquery->getValues());
+                    }
+                }
+            }
+        }
+
+        if (!empty($this->query->union)) {
+            foreach ($this->query->union as $union) {
+                if (isset($union['type']) && $union['type'] === 'subquery' && $union['query'] instanceof IQueryBuilder) {
+                    $values = array_merge($values, $union['query']->getValues());
+                }
+            }
+        }
+
+        if (!empty($this->query->unionAll)) {
+            foreach ($this->query->unionAll as $unionAll) {
+                if (isset($unionAll['type']) && $unionAll['type'] === 'subquery' && $unionAll['query'] instanceof IQueryBuilder) {
+                    $values = array_merge($values, $unionAll['query']->getValues());
+                }
             }
         }
 

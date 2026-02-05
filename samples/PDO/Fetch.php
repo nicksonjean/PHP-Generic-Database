@@ -76,7 +76,7 @@ while ($row = $testC->fetch(Connection::FETCH_BOTH)) {
     var_dump($row);
 }
 
-$contextD = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: false)->connect();
+$contextD = Chainable::pdoSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
 $testD = $contextD->prepare(
     'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id IN(:idA, :idB, :idC)',

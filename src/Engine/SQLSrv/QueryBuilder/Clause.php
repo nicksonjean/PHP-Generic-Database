@@ -135,6 +135,24 @@ class Clause implements IClause
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Where::class;
         $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
+        $subquery = array_key_exists('subquery', $arguments) ? $arguments['subquery'] : null;
+        $negate = array_key_exists('negate', $arguments) ? $arguments['negate'] : false;
+
+        if ($subquery !== null) {
+            $self->query->where[] = [
+                'type' => Where::EXISTS(),
+                'subquery' => $subquery,
+                'negate' => $negate,
+                'condition' => $condition,
+            ];
+            return $self;
+        }
+
+        // When where(col, op, val) is used, combine into "col op val" for regex parsing
+        if (count($data) === 3 && isset($data[0], $data[1], $data[2]) && is_string($data[1])
+            && preg_match('/^(=|<>|!=|<=|>=|<|>|LIKE|IN|BETWEEN)$/i', trim((string) $data[1]))) {
+            $data = [implode(' ', array_map('trim', $data))];
+        }
         $getWhere = fn($arrayData) => Criteria::getWhereHaving($arrayData);
         foreach ($data as $column) {
             if (is_array($column)) {
@@ -144,7 +162,10 @@ class Clause implements IClause
                     'condition' => $condition
                 ]), $column);
             } elseif (is_string($column)) {
-                $self->query->where[] = $getWhere(['data' => $column, 'enum' => $enum, 'condition' => $condition]);
+                $parsed = $getWhere(['data' => $column, 'enum' => $enum, 'condition' => $condition]);
+                if (!empty($parsed)) {
+                    $self->query->where[] = $parsed;
+                }
             }
         }
         return $self;
@@ -254,6 +275,30 @@ class Clause implements IClause
             $self->query->limit = Criteria::getLimit(['data' => implode(', ', reset($data))]);
         } else {
             $self->query->limit = Criteria::getLimit(['data' => reset($data)]);
+        }
+        return $self;
+    }
+
+    public static function union(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $query = array_key_exists('query', $arguments) ? $arguments['query'] : '';
+        if ($query instanceof IQueryBuilder) {
+            $self->query->union[] = ['type' => 'subquery', 'query' => $query];
+        } elseif (is_string($query)) {
+            $self->query->union[] = ['type' => 'raw', 'query' => $query];
+        }
+        return $self;
+    }
+
+    public static function unionAll(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new SQLSrvQueryBuilder();
+        $query = array_key_exists('query', $arguments) ? $arguments['query'] : '';
+        if ($query instanceof IQueryBuilder) {
+            $self->query->unionAll[] = ['type' => 'subquery', 'query' => $query];
+        } elseif (is_string($query)) {
+            $self->query->unionAll[] = ['type' => 'raw', 'query' => $query];
         }
         return $self;
     }

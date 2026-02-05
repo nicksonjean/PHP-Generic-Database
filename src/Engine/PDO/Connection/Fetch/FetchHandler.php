@@ -23,7 +23,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             PDO::FETCH_OBJ,
             PDO::FETCH_INTO,
-            PDO::FETCH_CLASS => $this->internalFetchClass($fetchArgument ?? null, $optArgs),
+            PDO::FETCH_CLASS => $this->internalFetchClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             PDO::FETCH_COLUMN => $this->internalFetchColumn($fetchArgument ?? 0),
             PDO::FETCH_ASSOC => $this->internalFetchAssoc(),
             PDO::FETCH_NUM => $this->internalFetchNum(),
@@ -42,7 +45,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             PDO::FETCH_OBJ,
             PDO::FETCH_INTO,
-            PDO::FETCH_CLASS => $this->internalFetchAllClass($fetchArgument ?? null, $optArgs),
+            PDO::FETCH_CLASS => $this->internalFetchAllClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             PDO::FETCH_COLUMN => $this->internalFetchAllColumn($fetchArgument ?? 0),
             PDO::FETCH_ASSOC => $this->internalFetchAllAssoc(),
             PDO::FETCH_NUM => $this->internalFetchAllNum(),

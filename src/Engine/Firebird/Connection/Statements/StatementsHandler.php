@@ -203,7 +203,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
 
         $this->setAllMetadata();
         if (!empty($params)) {
-            $statement = call_user_func_array((reset($params)[1] === Query::RAW()) ? 'ibase_query' : 'ibase_prepare', [$this->getInstance()->getConnection(), $this->parse(reset($params)[0])]);
+            $parsedSql = $this->parse(reset($params)[0]);
+            $this->setQueryParameters(Parse::parseParameters($parsedSql, Parse::SQL_DIALECT_DOUBLE_QUOTE));
+            $statement = call_user_func_array((reset($params)[1] === Query::RAW()) ? 'ibase_query' : 'ibase_prepare', [$this->getInstance()->getConnection(), $parsedSql]);
             if ($statement) {
                 $this->setStatement($statement);
             }
@@ -221,7 +223,7 @@ class StatementsHandler extends AbstractStatements implements IStatements
     public function query(mixed ...$params): IConnection
     {
         if (!empty($params) && ($statement = $this->prepareStatement([...$params, Query::RAW()]))) {
-            $this->setQueryParameters(Parse::parseParameters($this->getQueryString()));
+            $this->setQueryParameters(Parse::parseParameters($this->getQueryString(), Parse::SQL_DIALECT_DOUBLE_QUOTE));
             $colCount = is_resource($statement) ? ibase_num_fields($statement) : 0;
             if ($colCount > 0) {
                 $cloneStmt = function () use ($statement, $params): mixed {

@@ -189,6 +189,19 @@ class Clause implements IClause
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Where::class;
         $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
+        $subquery = array_key_exists('subquery', $arguments) ? $arguments['subquery'] : null;
+        $negate = array_key_exists('negate', $arguments) ? $arguments['negate'] : false;
+
+        if ($subquery !== null) {
+            $self->query->where[] = [
+                'type' => Where::EXISTS(),
+                'subquery' => $subquery,
+                'negate' => $negate,
+                'condition' => $condition,
+            ];
+            return $self;
+        }
+
         $getWhere = fn($arrayData) => Criteria::getWhereHaving($arrayData);
         foreach ($data as $column) {
             if (is_array($column)) {
@@ -353,6 +366,42 @@ class Clause implements IClause
             $self->query->limit = Criteria::getLimit(['data' => implode(', ', reset($data))]);
         } else {
             $self->query->limit = Criteria::getLimit(['data' => reset($data)]);
+        }
+        return $self;
+    }
+
+    /**
+     * Build UNION clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function union(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new INIQueryBuilder();
+        $query = array_key_exists('query', $arguments) ? $arguments['query'] : '';
+        if ($query instanceof IQueryBuilder) {
+            $self->query->union[] = ['type' => 'subquery', 'query' => $query];
+        } elseif (is_string($query)) {
+            $self->query->union[] = ['type' => 'raw', 'query' => $query];
+        }
+        return $self;
+    }
+
+    /**
+     * Build UNION ALL clause.
+     *
+     * @param array $arguments The arguments.
+     * @return IQueryBuilder
+     */
+    public static function unionAll(array $arguments): IQueryBuilder
+    {
+        $self = array_key_exists('self', $arguments) ? $arguments['self'] : new INIQueryBuilder();
+        $query = array_key_exists('query', $arguments) ? $arguments['query'] : '';
+        if ($query instanceof IQueryBuilder) {
+            $self->query->unionAll[] = ['type' => 'subquery', 'query' => $query];
+        } elseif (is_string($query)) {
+            $self->query->unionAll[] = ['type' => 'raw', 'query' => $query];
         }
         return $self;
     }

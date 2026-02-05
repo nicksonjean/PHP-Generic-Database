@@ -23,7 +23,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             ODBC::FETCH_OBJ,
             ODBC::FETCH_INTO,
-            ODBC::FETCH_CLASS => $this->internalFetchClass($fetchArgument ?? null, $optArgs),
+            ODBC::FETCH_CLASS => $this->internalFetchClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             ODBC::FETCH_COLUMN => $this->internalFetchColumn($fetchArgument ?? 0),
             ODBC::FETCH_ASSOC => $this->internalFetchAssoc(),
             ODBC::FETCH_NUM => $this->internalFetchNum(),
@@ -42,7 +45,10 @@ class FetchHandler extends AbstractFetch implements IFetch
         return match ($fetch) {
             ODBC::FETCH_OBJ,
             ODBC::FETCH_INTO,
-            ODBC::FETCH_CLASS => $this->internalFetchAllClass($fetchArgument ?? null, $optArgs),
+            ODBC::FETCH_CLASS => $this->internalFetchAllClass(
+                is_array($optArgs) ? $optArgs : null,
+                $fetchArgument ?? null
+            ),
             ODBC::FETCH_COLUMN => $this->internalFetchAllColumn($fetchArgument ?? 0),
             ODBC::FETCH_ASSOC => $this->internalFetchAllAssoc(),
             ODBC::FETCH_NUM => $this->internalFetchAllNum(),

@@ -43,7 +43,9 @@ class QueryObject
         'having',
         'group',
         'order',
-        'limit'
+        'limit',
+        'union',
+        'unionAll'
     ];
 
     /**

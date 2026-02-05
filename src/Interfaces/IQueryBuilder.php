@@ -207,6 +207,38 @@ interface IQueryBuilder
     public static function limit(array|string ...$data): IQueryBuilder;
 
     /**
+     * Adds a UNION clause to the query.
+     *
+     * @param string|IQueryBuilder $query The query to union with.
+     * @return IQueryBuilder The query builder instance.
+     */
+    public function union(string|IQueryBuilder $query): IQueryBuilder;
+
+    /**
+     * Adds a UNION ALL clause to the query.
+     *
+     * @param string|IQueryBuilder $query The query to union with.
+     * @return IQueryBuilder The query builder instance.
+     */
+    public function unionAll(string|IQueryBuilder $query): IQueryBuilder;
+
+    /**
+     * Adds a WHERE EXISTS clause to the query.
+     *
+     * @param string|IQueryBuilder $subquery The subquery to check existence.
+     * @return IQueryBuilder The query builder instance.
+     */
+    public function whereExists(string|IQueryBuilder $subquery): IQueryBuilder;
+
+    /**
+     * Adds a WHERE NOT EXISTS clause to the query.
+     *
+     * @param string|IQueryBuilder $subquery The subquery to check non-existence.
+     * @return IQueryBuilder The query builder instance.
+     */
+    public function whereNotExists(string|IQueryBuilder $subquery): IQueryBuilder;
+
+    /**
      * Builds the final SQL query string.
      *
      * @return string The SQL query string.

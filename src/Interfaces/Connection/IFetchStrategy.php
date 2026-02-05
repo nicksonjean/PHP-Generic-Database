@@ -38,4 +38,11 @@ interface IFetchStrategy
      * @return void
      */
     public function handleFetchReset(mixed $resource): void;
+
+    /**
+     * Clears all cached results to avoid returning stale data from previous queries
+     *
+     * @return void
+     */
+    public function clearAllCache(): void;
 }
