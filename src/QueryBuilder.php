@@ -481,6 +481,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     public function union(string|IQueryBuilder $query): IQueryBuilder
     {
         $this->getStrategy()->union($query);
+        self::$self = $this;
         return $this;
     }
 
@@ -493,6 +494,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     public function unionAll(string|IQueryBuilder $query): IQueryBuilder
     {
         $this->getStrategy()->unionAll($query);
+        self::$self = $this;
         return $this;
     }
 
@@ -505,6 +507,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     public function whereExists(string|IQueryBuilder $subquery): IQueryBuilder
     {
         $this->getStrategy()->whereExists($subquery);
+        self::$self = $this;
         return $this;
     }
 
@@ -517,6 +520,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
     public function whereNotExists(string|IQueryBuilder $subquery): IQueryBuilder
     {
         $this->getStrategy()->whereNotExists($subquery);
+        self::$self = $this;
         return $this;
     }
 
@@ -526,7 +530,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      */
     public function build(): string
     {
-        return self::$self->getStrategy()->build();
+        return $this->getStrategy()->build();
     }
 
     /**
@@ -535,7 +539,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      */
     public function buildRaw(): string
     {
-        return self::$self->getStrategy()->buildRaw();
+        return $this->getStrategy()->buildRaw();
     }
 
     /**
@@ -545,7 +549,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      */
     public function getValues(): array
     {
-        return self::$self->getStrategy()->getValues();
+        return $this->getStrategy()->getValues();
     }
 
     /**
@@ -555,7 +559,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      */
     public function getAllMetadata(): object
     {
-        return self::$self->getStrategy()->getAllMetadata();
+        return $this->getStrategy()->getAllMetadata();
     }
 
     /**
@@ -568,7 +572,7 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      */
     public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
-        return self::$self->getStrategy()->fetch($fetchStyle, $fetchArgument, $optArgs);
+        return $this->getStrategy()->fetch($fetchStyle, $fetchArgument, $optArgs);
     }
 
     /**
@@ -581,6 +585,6 @@ class QueryBuilder implements IQueryBuilder, IQueryBuilderStrategy
      */
     public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
-        return self::$self->getStrategy()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
+        return $this->getStrategy()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
     }
 }
