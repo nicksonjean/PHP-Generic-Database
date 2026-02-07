@@ -544,15 +544,6 @@ class OCIQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * @return void
-     */
-    public function reset(): void
-    {
-        self::$lastQuery = null;
-        self::$cursorExhausted = true;
-    }
-
-    /**
      * @return string
      * @throws Exceptions
      */

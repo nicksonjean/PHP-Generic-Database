@@ -26,6 +26,7 @@ use GenericDatabase\Interfaces\Connection\IArguments;
 use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IStatements;
 use GenericDatabase\Interfaces\Connection\ITransactions;
+use GenericDatabase\Interfaces\Connection\IFetchCache;
 use GenericDatabase\Engine\PDO\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\PDO\Connection\Fetch\FetchHandler;
 use GenericDatabase\Engine\PDO\Connection\Report\ReportHandler;
@@ -66,7 +67,7 @@ use GenericDatabase\Engine\PDO\Connection\Arguments\Strategy\ArgumentsStrategy;
  * @method static PDOConnection|mixed getException($value = null) Retrieves an exception from the database.
  */
 #[AllowDynamicProperties]
-class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions
+class PDOConnection implements IConnection, IFetch, IStatements, IDSN, IArguments, ITransactions, IFetchCache
 {
     use Methods;
     use Singleton;

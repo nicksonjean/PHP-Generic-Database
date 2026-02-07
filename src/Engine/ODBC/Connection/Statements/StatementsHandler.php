@@ -4,6 +4,7 @@ namespace GenericDatabase\Engine\ODBC\Connection\Statements;
 
 use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Interfaces\Connection\IStatements;
+use GenericDatabase\Interfaces\Connection\IFetchCache;
 use GenericDatabase\Abstract\AbstractStatements;
 use GenericDatabase\Shared\Run;
 use GenericDatabase\Generic\Statements\Statement;
@@ -534,8 +535,9 @@ class StatementsHandler extends AbstractStatements implements IStatements
      */
     private function prepareStatement(mixed ...$params): mixed
     {
-        if (method_exists($this->getInstance(), 'clearFetchCache')) {
-            $this->getInstance()->clearFetchCache();
+        $instance = $this->getInstance();
+        if ($instance instanceof IFetchCache) {
+            $instance->clearFetchCache();
         }
         $report = $this->getOptionsHandler()->getOptions(ODBC::ATTR_REPORT);
         if (!empty($report) || !is_null($report)) {

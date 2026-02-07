@@ -609,18 +609,6 @@ class JSONQueryBuilder implements IQueryBuilder
     }
 
     /**
-     * Reset the query state.
-     *
-     * @return void
-     */
-    public function reset(): void
-    {
-        self::$lastQuery = null;
-        self::$cursorExhausted = true;
-        self::$cachedResult = null;
-    }
-
-    /**
      * Build the query string.
      *
      * @return string

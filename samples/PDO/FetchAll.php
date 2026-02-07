@@ -13,8 +13,8 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 $contextA = Chainable::pdoMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 
 $testA = $contextA->prepare(
-    'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :id',
-    [':id' => 10]
+    'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :idA AND id <= :idB',
+    [':idA' => 1, ':idB' => rand(2, 27)]
 );
 
 var_dump($testA);
@@ -22,14 +22,18 @@ var_dump($testA);
 var_dump($testA->getAllMetadata());
 
 var_dump([
-    $testA->queryString(),
-    $testA->queryParameters(),
-    $testA->queryRows(),
-    $testA->queryColumns(),
-    $testA->affectedRows()
+    $testA->getQueryString(),
+    $testA->getQueryParameters(),
+    $testA->getQueryRows(),
+    $testA->getQueryColumns(),
+    $testA->getAffectedRows()
 ]);
 
-var_dump($testA->fetchAll(Connection::FETCH_BOTH));
+var_dump(
+    $testA->fetchAll(Connection::FETCH_BOTH)
+);
+
+echo '<hr>';
 
 $contextB = Chainable::pdoPgSQL(env: $_ENV, persistent: true, strategy: false)->connect();
 
@@ -43,14 +47,18 @@ var_dump($testB);
 var_dump($testB->getAllMetadata());
 
 var_dump([
-    $testB->queryString(),
-    $testB->queryParameters(),
-    $testB->queryRows(),
-    $testB->queryColumns(),
-    $testB->affectedRows()
+    $testB->getQueryString(),
+    $testB->getQueryParameters(),
+    $testB->getQueryRows(),
+    $testB->getQueryColumns(),
+    $testB->getAffectedRows()
 ]);
 
-var_dump($testB->fetchAll(Connection::FETCH_BOTH));
+var_dump(
+    $testB->fetchAll(Connection::FETCH_BOTH)
+);
+
+echo '<hr>';
 
 $contextC = Chainable::pdoSQLSrv(env: $_ENV, strategy: false)->connect();
 
@@ -61,14 +69,18 @@ var_dump($testC);
 var_dump($testC->getAllMetadata());
 
 var_dump([
-    $testC->queryString(),
-    $testC->queryParameters(),
-    $testC->queryRows(),
-    $testC->queryColumns(),
-    $testC->affectedRows()
+    $testC->getQueryString(),
+    $testC->getQueryParameters(),
+    $testC->getQueryRows(),
+    $testC->getQueryColumns(),
+    $testC->getAffectedRows()
 ]);
 
-var_dump($testC->fetchAll(Connection::FETCH_BOTH));
+var_dump(
+    $testC->fetchAll(Connection::FETCH_BOTH)
+);
+
+echo '<hr>';
 
 $contextD = Chainable::pdoOCI(env: $_ENV, persistent: true, strategy: false)->connect();
 
@@ -84,14 +96,18 @@ var_dump($testD);
 var_dump($testD->getAllMetadata());
 
 var_dump([
-    $testD->queryString(),
-    $testD->queryParameters(),
-    $testD->queryRows(),
-    $testD->queryColumns(),
-    $testD->affectedRows()
+    $testD->getQueryString(),
+    $testD->getQueryParameters(),
+    $testD->getQueryRows(),
+    $testD->getQueryColumns(),
+    $testD->getAffectedRows()
 ]);
 
-var_dump($testD->fetchAll(Connection::FETCH_BOTH));
+var_dump(
+    $testD->fetchAll(Connection::FETCH_BOTH)
+);
+
+echo '<hr>';
 
 $contextE = Chainable::pdoFirebird(env: $_ENV, persistent: true, strategy: false)->connect();
 
@@ -102,14 +118,18 @@ var_dump($testE);
 var_dump($testE->getAllMetadata());
 
 var_dump([
-    $testE->queryString(),
-    $testE->queryParameters(),
-    $testE->queryRows(),
-    $testE->queryColumns(),
-    $testE->affectedRows()
+    $testE->getQueryString(),
+    $testE->getQueryParameters(),
+    $testE->getQueryRows(),
+    $testE->getQueryColumns(),
+    $testE->getAffectedRows()
 ]);
 
-var_dump($testE->fetchAll(Connection::FETCH_BOTH));
+var_dump(
+    $testE->fetchAll(Connection::FETCH_BOTH)
+);
+
+echo '<hr>';
 
 $contextF = Chainable::pdoSQLite(env: $_ENV, persistent: true, strategy: false)->connect();
 
@@ -122,11 +142,15 @@ var_dump($testF);
 var_dump($testF->getAllMetadata());
 
 var_dump([
-    $testF->queryString(),
-    $testF->queryParameters(),
-    $testF->queryRows(),
-    $testF->queryColumns(),
-    $testF->affectedRows()
+    $testF->getQueryString(),
+    $testF->getQueryParameters(),
+    $testF->getQueryRows(),
+    $testF->getQueryColumns(),
+    $testF->getAffectedRows()
 ]);
 
-var_dump($testF->fetchAll(Connection::FETCH_BOTH));
+var_dump(
+    $testF->fetchAll(Connection::FETCH_BOTH)
+);
+
+echo '<hr>';

@@ -261,13 +261,6 @@ class YAMLQueryBuilder implements IQueryBuilder
         }
     }
 
-    public function reset(): void
-    {
-        self::$lastQuery = null;
-        self::$cursorExhausted = true;
-        self::$cachedResult = null;
-    }
-
     public function build(): string
     {
         return (new Builder($this->query))->build();

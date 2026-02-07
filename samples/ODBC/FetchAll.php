@@ -13,15 +13,25 @@ Dotenv::createImmutable(PATH_ROOT)->load();
 $contextA = Chainable::odbcMySQL(env: $_ENV, persistent: true, strategy: false)->connect();
 
 $testA = $contextA->prepare(
-    'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :id',
-    [':id' => 10]
+    'SELECT id AS Codigo, nome AS Estado, sigla AS Sigla FROM estado WHERE id >= :idA AND id <= :idB',
+    [':idA' => 1, ':idB' => rand(2, 27)]
 );
 
 var_dump($testA);
 
 var_dump($testA->getAllMetadata());
 
-var_dump($testA->fetchAll(Connection::FETCH_BOTH));
+var_dump([
+    $testA->getQueryString(),
+    $testA->getQueryParameters(),
+    $testA->getQueryRows(),
+    $testA->getQueryColumns(),
+    $testA->getAffectedRows()
+]);
+
+var_dump(
+    $testA->fetchAll(Connection::FETCH_BOTH)
+);
 
 echo '<hr>';
 
@@ -36,7 +46,17 @@ var_dump($testB);
 
 var_dump($testB->getAllMetadata());
 
-var_dump($testB->fetchAll(Connection::FETCH_BOTH));
+var_dump([
+    $testB->getQueryString(),
+    $testB->getQueryParameters(),
+    $testB->getQueryRows(),
+    $testB->getQueryColumns(),
+    $testB->getAffectedRows()
+]);
+
+var_dump(
+    $testB->fetchAll(Connection::FETCH_BOTH)
+);
 
 echo '<hr>';
 
@@ -48,7 +68,17 @@ var_dump($testC);
 
 var_dump($testC->getAllMetadata());
 
-var_dump($testC->fetchAll(Connection::FETCH_BOTH));
+var_dump([
+    $testC->getQueryString(),
+    $testC->getQueryParameters(),
+    $testC->getQueryRows(),
+    $testC->getQueryColumns(),
+    $testC->getAffectedRows()
+]);
+
+var_dump(
+    $testC->fetchAll(Connection::FETCH_BOTH)
+);
 
 echo '<hr>';
 
@@ -65,7 +95,17 @@ var_dump($testD);
 
 var_dump($testD->getAllMetadata());
 
-var_dump($testD->fetchAll(Connection::FETCH_BOTH));
+var_dump([
+    $testD->getQueryString(),
+    $testD->getQueryParameters(),
+    $testD->getQueryRows(),
+    $testD->getQueryColumns(),
+    $testD->getAffectedRows()
+]);
+
+var_dump(
+    $testD->fetchAll(Connection::FETCH_BOTH)
+);
 
 echo '<hr>';
 
@@ -77,7 +117,17 @@ var_dump($testE);
 
 var_dump($testE->getAllMetadata());
 
-var_dump($testE->fetchAll(Connection::FETCH_BOTH));
+var_dump([
+    $testE->getQueryString(),
+    $testE->getQueryParameters(),
+    $testE->getQueryRows(),
+    $testE->getQueryColumns(),
+    $testE->getAffectedRows()
+]);
+
+var_dump(
+    $testE->fetchAll(Connection::FETCH_BOTH)
+);
 
 echo '<hr>';
 
@@ -91,7 +141,17 @@ var_dump($testF);
 
 var_dump($testF->getAllMetadata());
 
-var_dump($testF->fetchAll(Connection::FETCH_BOTH));
+var_dump([
+    $testF->getQueryString(),
+    $testF->getQueryParameters(),
+    $testF->getQueryRows(),
+    $testF->getQueryColumns(),
+    $testF->getAffectedRows()
+]);
+
+var_dump(
+    $testF->fetchAll(Connection::FETCH_BOTH)
+);
 
 echo '<hr>';
 
@@ -107,7 +167,17 @@ if (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 
     var_dump($testG->getAllMetadata());
 
-    var_dump($testG->fetchAll(Connection::FETCH_BOTH));
+    var_dump([
+        $testG->getQueryString(),
+        $testG->getQueryParameters(),
+        $testG->getQueryRows(),
+        $testG->getQueryColumns(),
+        $testG->getAffectedRows()
+    ]);
+
+    var_dump(
+        $testG->fetchAll(Connection::FETCH_BOTH)
+    );
 
     echo '<hr>';
 
@@ -121,7 +191,17 @@ if (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 
     var_dump($testH->getAllMetadata());
 
-    var_dump($testH->fetchAll(Connection::FETCH_BOTH));
+    var_dump([
+        $testH->getQueryString(),
+        $testH->getQueryParameters(),
+        $testH->getQueryRows(),
+        $testH->getQueryColumns(),
+        $testH->getAffectedRows()
+    ]);
+
+    var_dump(
+        $testH->fetchAll(Connection::FETCH_BOTH)
+    );
 
     echo '<hr>';
 
@@ -135,6 +215,16 @@ if (mb_strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 
     var_dump($testI->getAllMetadata());
 
-    var_dump($testI->fetchAll(Connection::FETCH_BOTH));
+    var_dump([
+        $testI->getQueryString(),
+        $testI->getQueryParameters(),
+        $testI->getQueryRows(),
+        $testI->getQueryColumns(),
+        $testI->getAffectedRows()
+    ]);
+
+    var_dump(
+        $testI->fetchAll(Connection::FETCH_BOTH)
+    );
 
 }
