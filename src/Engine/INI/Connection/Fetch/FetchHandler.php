@@ -25,6 +25,14 @@ use GenericDatabase\Engine\INI\Connection\Structure\StructureHandler;
 class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 {
     /**
+     * Cache of loaded table data by table name (per executeStoredQuery) to avoid re-loading
+     * the same table multiple times during EXISTS subquery evaluation.
+     *
+     * @var array<string, array>
+     */
+    private array $loadedTablesCache = [];
+
+    /**
      * Constructor.
      *
      * @param IConnection $instance The connection instance.
@@ -63,6 +71,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         }
 
         try {
+            $this->loadedTablesCache = [];
             // Replace parameters in the query string
             $processedQuery = $this->replaceQueryParameters($queryString, $queryParameters);
             // Unquote identifiers so UNION split and ORDER BY/LIMIT suffix match column names (StatementsHandler stores query with Parse::escape double quotes)
@@ -783,8 +792,11 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         if ($handler === null) {
             return [];
         }
-        $handler->load($table);
-        $rows = $handler->getData();
+        if (!isset($this->loadedTablesCache[$table])) {
+            $handler->load($table);
+            $this->loadedTablesCache[$table] = $handler->getData();
+        }
+        $rows = $this->loadedTablesCache[$table];
         if ($alias === null || $alias === '') {
             return $rows;
         }
