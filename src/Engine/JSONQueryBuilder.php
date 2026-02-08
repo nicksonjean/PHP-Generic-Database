@@ -544,8 +544,11 @@ class JSONQueryBuilder implements IQueryBuilder
      */
     public function union(string|IQueryBuilder $query): static
     {
+        $this->query; // ensure init
+        $out = Clause::union(['query' => $query, 'self' => $this]);
+        self::$self = $this; // restore so order/limit apply to main builder, not subquery
         /** @var static */
-        return Clause::union(['query' => $query, 'self' => $this]);
+        return $out;
     }
 
     /**
@@ -556,8 +559,11 @@ class JSONQueryBuilder implements IQueryBuilder
      */
     public function unionAll(string|IQueryBuilder $query): static
     {
+        $this->query; // ensure init
+        $out = Clause::unionAll(['query' => $query, 'self' => $this]);
+        self::$self = $this; // restore so order/limit apply to main builder, not subquery
         /** @var static */
-        return Clause::unionAll(['query' => $query, 'self' => $this]);
+        return $out;
     }
 
     /**
@@ -568,8 +574,11 @@ class JSONQueryBuilder implements IQueryBuilder
      */
     public function whereExists(string|IQueryBuilder $subquery): static
     {
+        $this->query; // ensure init
+        $out = Clause::where(['subquery' => $subquery, 'negate' => false, 'self' => $this]);
+        self::$self = $this; // restore so subsequent clauses apply to main builder, not subquery
         /** @var static */
-        return Clause::where(['subquery' => $subquery, 'negate' => false, 'self' => $this]);
+        return $out;
     }
 
     /**
@@ -580,8 +589,11 @@ class JSONQueryBuilder implements IQueryBuilder
      */
     public function whereNotExists(string|IQueryBuilder $subquery): static
     {
+        $this->query; // ensure init
+        $out = Clause::where(['subquery' => $subquery, 'negate' => true, 'self' => $this]);
+        self::$self = $this; // restore so subsequent clauses apply to main builder, not subquery
         /** @var static */
-        return Clause::where(['subquery' => $subquery, 'negate' => true, 'self' => $this]);
+        return $out;
     }
 
     /**
@@ -606,6 +618,24 @@ class JSONQueryBuilder implements IQueryBuilder
             self::$lastQuery = $currentQueryForDisplay;
             self::$cursorExhausted = false;
         }
+    }
+
+    /**
+     * Execute query on given data (used by Builder for UNION subqueries and EXISTS).
+     * When $data is null, returns [] (no new methods on Connection).
+     * $contextRow is the current outer row for correlated subqueries.
+     *
+     * @param array|null $data Rows of the main FROM table, or null.
+     * @param array $contextRow Current outer row for resolving references like "users.name".
+     * @return array<int, array<string, mixed>>
+     * @throws Exceptions
+     */
+    public function execute(?array $data = null, array $contextRow = []): array
+    {
+        if ($data === null) {
+            return [];
+        }
+        return (new Builder($this->query))->execute($data, $contextRow);
     }
 
     /**
@@ -656,7 +686,7 @@ class JSONQueryBuilder implements IQueryBuilder
 
         $metadata = new Metadata();
         $metadata->query->setString($this->getContext()->getQueryString());
-        $metadata->query->setArguments([]);
+        $metadata->query->setArguments($this->getValues());
         $metadata->query->setColumns($colCount);
         $metadata->query->getRows()->setFetched($rowCount);
         $aff = $this->getContext()->getAffectedRows();

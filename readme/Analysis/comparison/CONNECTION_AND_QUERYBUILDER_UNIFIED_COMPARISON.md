@@ -47,8 +47,20 @@
 | Tipo | Classe | Arquivo | Observação |
 |------|--------|---------|------------|
 | **Facade/Strategy** | `QueryBuilder` | `src/QueryBuilder.php` | Delega para a strategy. |
-| **DB** | `FirebirdQueryBuilder`, `MySQLiQueryBuilder`, `OCIQueryBuilder`, `ODBCQueryBuilder`, `PDOQueryBuilder`, `PgSQLQueryBuilder`, `SQLiteQueryBuilder`, `SQLSrvQueryBuilder` | `src/Engine/*QueryBuilder.php` | Mesma API (IQueryBuilder); |
-| **Flat** | `CSVQueryBuilder`, `INIQueryBuilder`, `JSONQueryBuilder`, `NEONQueryBuilder`, `XMLQueryBuilder`, `YAMLQueryBuilder` | `src/Engine/*QueryBuilder.php` | Mesma API que as DB. |
+| **DB – Firebird** | `FirebirdQueryBuilder` | `src/Engine/FirebirdQueryBuilder.php` | Mesma API (IQueryBuilder) |
+| **DB – MySQL** | `MySQLiQueryBuilder` | `src/Engine/MySQLiQueryBuilder.php` | Mesma API (IQueryBuilder) |
+| **DB – OCI** | `OCIQueryBuilder` | `src/Engine/OCIQueryBuilder.php` | Mesma API (IQueryBuilder) |
+| **DB – ODBC** | `ODBCQueryBuilder` | `src/Engine/ODBCQueryBuilder.php` | Mesma API (IQueryBuilder) |
+| **DB – PDO** | `PDOQueryBuilder` | `src/Engine/PDOQueryBuilder.php` | Mesma API (IQueryBuilder) |
+| **DB – PostgreSQL** | `PgSQLQueryBuilder` | `src/Engine/PgSQLQueryBuilder.php` | Mesma API (IQueryBuilder) |
+| **DB – SQLite** | `SQLiteQueryBuilder` | `src/Engine/SQLiteQueryBuilder.php` | Mesma API (IQueryBuilder) |
+| **DB – SQL Server** | `SQLSrvQueryBuilder` | `src/Engine/SQLSrvQueryBuilder.php` | Mesma API (IQueryBuilder) |
+| **Flat – CSV** | `CSVQueryBuilder` | `src/Engine/CSVQueryBuilder.php` | Mesma API que as DB. |
+| **Flat – INI** | `INIQueryBuilder` | `src/Engine/INIQueryBuilder.php` | Mesma API que as DB. |
+| **Flat – JSON** | `JSONQueryBuilder` | `src/Engine/JSONQueryBuilder.php` | Mesma API que as DB. |
+| **Flat – NEON** | `NEONQueryBuilder` | `src/Engine/NEONQueryBuilder.php` | Mesma API que as DB. |
+| **Flat – XML** | `XMLQueryBuilder` | `src/Engine/XMLQueryBuilder.php` | Mesma API que as DB. |
+| **Flat – YAML** | `YAMLQueryBuilder` | `src/Engine/YAMLQueryBuilder.php` | Mesma API que as DB. |
 
 ---
 

@@ -554,7 +554,11 @@ class Parse
     {
         $pattern = '/(=\s*|(?:NOT\s+)?(?:I?LIKE)\s+|!=\s*|<>?\s*|>\s*|<\s*|>=\s*|<=\s*|,\s*)\s*"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/i';
         return preg_replace_callback($pattern, static function (array $m): string {
-            $value = str_replace("'", "''", $m[2]);
+            $content = $m[2];
+            if (preg_match('/^\w+$/D', $content)) {
+                return $m[0];
+            }
+            $value = str_replace("'", "''", $content);
             return $m[1] . "'" . $value . "'";
         }, $input);
     }

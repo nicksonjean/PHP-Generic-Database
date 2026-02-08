@@ -33,7 +33,15 @@ class Criteria implements ICriteria
     {
         $result = [];
         $data = array_key_exists('data', $arguments) ? trim($arguments['data']) : [];
-        if (preg_match(Regex::getSelect(), $data, $matches)) {
+        $dataStr = is_string($data) ? $data : '';
+        if ($dataStr !== '' && preg_match('/\s+AS\s+/i', $dataStr) && (str_starts_with($dataStr, "'") || str_starts_with($dataStr, '"'))) {
+            $parts = preg_split('/\s+AS\s+/i', $dataStr, 2);
+            $result = Arrays::arraySafe([
+                'type' => 'literal',
+                'value' => trim($parts[0]),
+                'alias' => isset($parts[1]) ? trim($parts[1]) : null,
+            ]);
+        } elseif (preg_match(Regex::getSelect(), $data, $matches)) {
             $result = $matches['function_name'] ? Arrays::arraySafe([
                 'type' => Column::FUNCTION(),
                 'value' => trim($data),
@@ -47,6 +55,21 @@ class Criteria implements ICriteria
                 'column' => $matches['column_name'],
                 'alias' => $matches['column_alias'] ?? null,
             ]);
+        } elseif ($dataStr !== '') {
+            if (preg_match('/\s+AS\s+/i', $dataStr)) {
+                $parts = preg_split('/\s+AS\s+/i', $dataStr, 2);
+                $result = Arrays::arraySafe([
+                    'type' => 'literal',
+                    'value' => trim($parts[0]),
+                    'alias' => isset($parts[1]) ? trim($parts[1]) : null,
+                ]);
+            } else {
+                $result = Arrays::arraySafe([
+                    'type' => 'literal',
+                    'value' => $dataStr,
+                    'alias' => null,
+                ]);
+            }
         }
         return $result;
     }
@@ -213,6 +236,29 @@ class Criteria implements ICriteria
                 'condition' => $condition,
             ]);
         }
+
+        $useFallback = is_string($data) && trim($data) !== '' && preg_match('/^(\w+\.)?(\w+)\s*(=|>=|<=|!=|<>|>|<)\s*(.+)$/s', trim($data), $m);
+        if ($useFallback && ($result === [] || (isset($result['column']) && (string) $result['column'] === ''))) {
+            $result = Arrays::arraySafe([
+                'type' => $enum::DEFAULT(),
+                'value' => trim($data),
+                'alias' => $m[1] !== '' ? rtrim($m[1], '.') : null,
+                'column' => $m[2],
+                'arguments' => [
+                    'default' => trim($m[3]),
+                    'extra' => null,
+                    'unlimited' => null,
+                ],
+                'aggregation' => [
+                    'value' => null,
+                    'type' => $enum::NONE(),
+                    'assert' => $enum::AFFIRMATION(),
+                ],
+                'signal' => $m[4],
+                'condition' => $condition,
+            ]);
+        }
+
         return $result;
     }
 

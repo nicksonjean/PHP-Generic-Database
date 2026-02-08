@@ -202,6 +202,10 @@ class Clause implements IClause
             return $self;
         }
 
+        if (count($data) === 3 && is_string($data[0] ?? null) && is_string($data[1] ?? null)) {
+            $data = [trim($data[0]) . ' ' . trim($data[1]) . ' ' . trim((string) ($data[2] ?? ''))];
+        }
+
         $getWhere = fn($arrayData) => Criteria::getWhereHaving($arrayData);
         foreach ($data as $column) {
             if (is_array($column)) {

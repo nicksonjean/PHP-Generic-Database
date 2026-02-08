@@ -13,6 +13,7 @@ use GenericDatabase\Engine\XML\Connection\XML;
 use GenericDatabase\Engine\XML\QueryBuilder\Regex;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Helpers\Parsers\Schema;
+use GenericDatabase\Helpers\Parsers\SQL\FlatFileSelectParser;
 use GenericDatabase\Engine\XML\Connection\Structure\StructureHandler;
 
 /**
@@ -64,9 +65,71 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         try {
             // Replace parameters in the query string
             $processedQuery = $this->replaceQueryParameters($queryString, $queryParameters);
+            // Unquote identifiers so UNION split and ORDER BY/LIMIT suffix match column names (StatementsHandler stores query with Parse::escape double quotes)
+            $queryForParsing = $this->unquoteIdentifiers($processedQuery);
 
-            // Parse and execute the query
-            $result = $this->parseAndExecuteQuery($processedQuery);
+            // UNION / UNION ALL: use regex fallback first when query contains UNION (guarantees both SELECTs run, SQLite behavior)
+            $segments = [];
+            $unionTypes = [];
+            $orderByLimitSuffix = '';
+            if (preg_match('/\s+UNION\s+/i', $queryForParsing)) {
+                $fallback = $this->splitUnionFallback($queryForParsing);
+                if ($fallback !== null && count($fallback['segments']) >= 2) {
+                    $segments = $fallback['segments'];
+                    $unionTypes = $fallback['types'];
+                    $orderByLimitSuffix = $fallback['order_by_limit_suffix'];
+                }
+            }
+            if (count($segments) < 2) {
+                $unionParsed = FlatFileSelectParser::splitUnionSegments($queryForParsing);
+                $segments = $unionParsed['segments'];
+                $unionTypes = $unionParsed['types'];
+                $orderByLimitSuffix = $unionParsed['order_by_limit_suffix'];
+            }
+
+            if (count($segments) > 1) {
+                $merged = [];
+                $seen = [];
+                foreach ($segments as $idx => $segmentSql) {
+                    $segmentResult = $this->parseAndExecuteQuery(trim($segmentSql));
+                    $typeBefore = $unionTypes[$idx - 1] ?? 'union';
+                    foreach ($segmentResult as $row) {
+                        $rowArr = (array) $row;
+                        if ($rowArr === []) {
+                            continue;
+                        }
+                        $key = serialize($rowArr);
+                        if ($idx > 0 && $typeBefore === 'union' && isset($seen[$key])) {
+                            continue;
+                        }
+                        $seen[$key] = true;
+                        $merged[] = $row;
+                    }
+                }
+                $result = $merged;
+                if ($orderByLimitSuffix !== '') {
+                    $suffixOut = [
+                        'where' => null, 'group_by' => [], 'having' => null,
+                        'order_by_col' => null, 'order_by_dir' => 'ASC', 'limit' => null, 'offset' => null,
+                    ];
+                    $this->extractWhereGroupHavingOrderLimit($orderByLimitSuffix, $suffixOut);
+                    $orderCol = $suffixOut['order_by_col'] !== null ? trim($suffixOut['order_by_col']) : null;
+                    if ($orderCol === '' || $orderCol === null) {
+                        if (preg_match('/ORDER\s+BY\s+(\w+)(?:\s+(ASC|DESC))?/i', $orderByLimitSuffix, $om)) {
+                            $orderCol = trim($om[1]);
+                            $suffixOut['order_by_dir'] = isset($om[2]) ? strtoupper($om[2]) : 'ASC';
+                        }
+                    }
+                    if ($orderCol !== null && $orderCol !== '') {
+                        $result = $this->applyOrderBy($result, $orderCol, $suffixOut['order_by_dir'] === 'DESC');
+                    }
+                    if ($suffixOut['limit'] !== null) {
+                        $result = array_slice($result, (int) ($suffixOut['offset'] ?? 0), (int) $suffixOut['limit']);
+                    }
+                }
+            } else {
+                $result = $this->parseAndExecuteQuery($queryForParsing);
+            }
 
             // Update metadata with actual counts
             $rowCount = count($result);
@@ -81,6 +144,45 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
             // Re-throw exception to help debugging - don't silently fail
             throw $e;
         }
+    }
+
+    /**
+     * Fallback split when FlatFileSelectParser returns one segment but query contains UNION.
+     *
+     * @return array{segments: list<string>, types: list<string>, order_by_limit_suffix: string}|null
+     */
+    private function splitUnionFallback(string $query): ?array
+    {
+        $query = trim($query);
+        if ($query === '') {
+            return null;
+        }
+        if (preg_match('/^(.*?)\s+UNION\s+ALL\s+(.*)$/is', $query, $m)) {
+            $segment1 = trim($m[1]);
+            $part2 = trim($m[2]);
+            $unionAll = true;
+        } elseif (preg_match('/^(.*?)\s+UNION\s+(?!ALL\s)(.*)$/is', $query, $m)) {
+            $segment1 = trim($m[1]);
+            $part2 = trim($m[2]);
+            $unionAll = false;
+        } else {
+            return null;
+        }
+        if (preg_match('/\s+ORDER\s+BY\s+.+$/is', $part2, $ob)) {
+            $suffix = trim($ob[0]);
+            $segment2 = trim(preg_replace('/\s+ORDER\s+BY\s+.+$/is', '', $part2));
+        } else {
+            $suffix = '';
+            $segment2 = $part2;
+        }
+        if ($segment1 === '' || $segment2 === '' || !preg_match('/^\s*SELECT\s+/i', $segment1) || !preg_match('/^\s*SELECT\s+/i', $segment2)) {
+            return null;
+        }
+        return [
+            'segments' => [$segment1, $segment2],
+            'types' => [$unionAll ? 'union_all' : 'union'],
+            'order_by_limit_suffix' => $suffix,
+        ];
     }
 
     /**
@@ -263,8 +365,19 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
         $processor = new DataProcessor($data);
 
-        if ($whereClause !== null && $whereClause !== '') {
-            $whereParsed = $this->parseWhereClauseWithLogic($whereClause);
+        $existsConditions = ($whereClause !== null && $whereClause !== '')
+            ? FlatFileSelectParser::extractExistsConditions($whereClause)
+            : [];
+        $whereWithoutExists = ($whereClause !== null && $whereClause !== '')
+            ? FlatFileSelectParser::stripExistsFromWhere($whereClause)
+            : '';
+        $whereForNormal = trim($whereWithoutExists);
+        if ($whereForNormal === '' || $whereForNormal === '1=1') {
+            $whereForNormal = null;
+        }
+
+        if ($whereForNormal !== null && $whereForNormal !== '') {
+            $whereParsed = $this->parseWhereClauseWithLogic($whereForNormal);
             if (isset($whereParsed['groups'])) {
                 // Mixed AND/OR: row matches if it matches any group (each group is AND of conditions)
                 $data = array_values(array_filter($data, function ($row) use ($whereParsed) {
@@ -288,6 +401,26 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         }
 
         $data = $processor->getData();
+
+        // Apply EXISTS / NOT EXISTS: for each row, run each subquery with outer row as context
+        if (!empty($existsConditions)) {
+            $data = array_values(array_filter($data, function ($row) use ($existsConditions, $fromAlias, $joinAlias) {
+                $rowArr = (array) $row;
+                foreach ($existsConditions as $ex) {
+                    $negate = $ex['negate'];
+                    $subquery = $ex['subquery'];
+                    $substituted = $this->substituteOuterReferencesInSubquery($subquery, $rowArr);
+                    $subResult = $this->parseAndExecuteQuery($substituted);
+                    $hasRows = !empty($subResult);
+                    $keep = $negate ? !$hasRows : $hasRows;
+                    if (!$keep) {
+                        return false;
+                    }
+                }
+                return true;
+            }));
+            $processor->setData($data);
+        }
 
         if (!empty($groupByCols)) {
             $result = $this->executeGroupByAggregate(
@@ -341,6 +474,43 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         }
 
         return $this->applyResultTypes($result, $selectSpecs, $fromTable, $joinTable, $fromAlias, $joinAlias, $database);
+    }
+
+    /**
+     * Substitute outer query column references (e.g. e.id) in a subquery with literal values from the context row.
+     *
+     * @param string $subquery Subquery SQL (e.g. "SELECT 1 FROM cidade c WHERE c.estado_id = e.id")
+     * @param array<string, mixed> $contextRow Current row from outer query (e.g. ["e.id" => 1, "e.nome" => "SP"])
+     * @return string Subquery with references replaced by literals
+     */
+    private function substituteOuterReferencesInSubquery(string $subquery, array $contextRow): string
+    {
+        $result = $subquery;
+        foreach ($contextRow as $key => $value) {
+            if (str_contains($key, '.')) {
+                $literal = $this->formatValueAsSqlLiteral($value);
+                $result = preg_replace(
+                    '/\b' . preg_quote($key, '/') . '\b/',
+                    $literal,
+                    $result
+                );
+            }
+        }
+        return $result;
+    }
+
+    private function formatValueAsSqlLiteral(mixed $value): string
+    {
+        if ($value === null) {
+            return 'NULL';
+        }
+        if (is_bool($value)) {
+            return $value ? '1' : '0';
+        }
+        if (is_numeric($value)) {
+            return (string) $value;
+        }
+        return "'" . addslashes((string) $value) . "'";
     }
 
     private function getDatabasePath(): string
@@ -754,7 +924,7 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
     private function applySelectColumns(array $data, array $selectSpecs, ?string $fromAlias, ?string $joinAlias): array
     {
-        return array_map(function ($row) use ($selectSpecs) {
+        return array_map(function ($row) use ($selectSpecs, $fromAlias, $joinAlias) {
             $row = (array) $row;
             $result = [];
             foreach ($selectSpecs as $spec) {
@@ -778,16 +948,42 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                     continue;
                 }
                 $key = $this->outputKeyForSelectSpec($spec);
-                if (isset($row[$expr])) {
-                    $result[$key] = $row[$expr];
-                } elseif (preg_match('/^(\w+)\.(\w+)$/', $expr, $m)) {
-                    $result[$key] = $row[$expr] ?? $row[$m[2]] ?? null;
-                } else {
-                    $result[$key] = $row[$expr] ?? null;
+                // String literal in SELECT (e.g. 'Estado' AS origem): use the literal value, not row lookup
+                if (preg_match("/^'(.*)'\s*$/s", $expr, $litM)) {
+                    $result[$key] = str_replace("\\'", "'", $litM[1]);
+                    continue;
                 }
+                $val = $this->resolveSelectExprFromRow($row, $expr, $fromAlias, $joinAlias);
+                $result[$key] = $val;
             }
             return $result;
         }, $data);
+    }
+
+    /**
+     * Resolve a SELECT expression to a value from a row. Row keys may be alias-prefixed (e.g. e.nome when FROM estado e).
+     */
+    private function resolveSelectExprFromRow(array $row, string $expr, ?string $fromAlias, ?string $joinAlias): mixed
+    {
+        if (isset($row[$expr])) {
+            return $row[$expr];
+        }
+        if ($fromAlias !== null && $fromAlias !== '') {
+            $prefixed = $fromAlias . '.' . $expr;
+            if (isset($row[$prefixed])) {
+                return $row[$prefixed];
+            }
+        }
+        if ($joinAlias !== null && $joinAlias !== '') {
+            $prefixed = $joinAlias . '.' . $expr;
+            if (isset($row[$prefixed])) {
+                return $row[$prefixed];
+            }
+        }
+        if (preg_match('/^(\w+)\.(\w+)$/', $expr, $m)) {
+            return $row[$expr] ?? $row[$m[2]] ?? null;
+        }
+        return $row[$expr] ?? null;
     }
 
     private function applyDistinct(array $data): array
@@ -827,11 +1023,22 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
     private function applyOrderBy(array $data, string $column, bool $desc): array
     {
-        usort($data, function ($a, $b) use ($column, $desc) {
+        $resolve = function (array $row, string $col) {
+            if (array_key_exists($col, $row)) {
+                return $row[$col];
+            }
+            foreach ($row as $k => $v) {
+                if (strcasecmp((string) $k, $col) === 0) {
+                    return $v;
+                }
+            }
+            return null;
+        };
+        usort($data, function ($a, $b) use ($column, $desc, $resolve) {
             $a = (array) $a;
             $b = (array) $b;
-            $av = $a[$column] ?? null;
-            $bv = $b[$column] ?? null;
+            $av = $resolve($a, $column);
+            $bv = $resolve($b, $column);
             $c = $av <=> $bv;
             return $desc ? -$c : $c;
         });

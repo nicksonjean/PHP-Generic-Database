@@ -64,10 +64,21 @@ class Builder implements IBuilder
                     $prefix = ($forSql && isset($data['prefix']) && $data['prefix'] !== '')
                         ? $data['prefix'] . '.'
                         : '';
+                    $col = isset($data['column']) ? trim($data['column'], "'\"") : '';
                     if (!empty($data['alias'])) {
-                        $columns[] = $prefix . $data['column'] . ' AS ' . $data['alias'];
+                        $columns[] = $prefix . $col . ' AS ' . $data['alias'];
                     } else {
-                        $columns[] = $prefix . $data['column'];
+                        $columns[] = $prefix . $col;
+                    }
+                } elseif (isset($data['type']) && $data['type'] === 'literal') {
+                    $expr = $data['value'] ?? '';
+                    if ($expr === '' && !empty($data['alias'])) {
+                        $expr = '*';
+                    }
+                    if ($forSql && $expr !== '*') {
+                        $columns[] = '?' . (!empty($data['alias']) ? ' AS ' . $data['alias'] : '');
+                    } else {
+                        $columns[] = $expr . (!empty($data['alias']) ? ' AS ' . $data['alias'] : '');
                     }
                 } else {
                     $columns[] = $data['value'] ?? '*';
@@ -103,6 +114,14 @@ class Builder implements IBuilder
                 : $table;
         }
         return implode(', ', $parts);
+    }
+
+    private function buildSelectFromOnly(): string
+    {
+        $columns = $this->buildSelect(true);
+        $distinct = $this->isDistinct() ? 'DISTINCT ' : '';
+        $from = $this->buildFrom();
+        return "SELECT {$distinct}" . implode(', ', $columns) . " FROM {$from}";
     }
 
     /**
@@ -231,11 +250,12 @@ class Builder implements IBuilder
     }
 
     /**
-     * Build the where conditions.
+     * Build the where conditions (optionally resolve outer refs from contextRow for EXISTS subqueries).
      *
+     * @param array $contextRow Current outer row for correlated subqueries.
      * @return array
      */
-    private function buildWhere(): array
+    private function buildWhere(array $contextRow = []): array
     {
         if (empty($this->query->where)) {
             return [];
@@ -252,9 +272,14 @@ class Builder implements IBuilder
             }
 
             $arguments = $data['arguments'] ?? [];
-            $default = $arguments['default'] ?? null;
-            $extra = $arguments['extra'] ?? null;
+            $default = $this->resolveContextValue($arguments['default'] ?? null, $contextRow);
+            $extra = $this->resolveContextValue($arguments['extra'] ?? null, $contextRow);
             $unlimited = $arguments['unlimited'] ?? null;
+            if (is_string($unlimited)) {
+                $unlimited = $this->resolveContextValue($unlimited, $contextRow);
+            } elseif (is_array($unlimited)) {
+                $unlimited = array_map(fn($v) => $this->resolveContextValue($v, $contextRow), $unlimited);
+            }
             $aggregationType = $data['aggregation']['type'] ?? Where::NONE();
             $aggregationAssert = $data['aggregation']['assert'] ?? Where::AFFIRMATION();
             $signal = strtoupper((string) ($data['signal'] ?? '='));
@@ -314,6 +339,49 @@ class Builder implements IBuilder
         }
 
         return $conditions;
+    }
+
+    /**
+     * Build WHERE clause fragment (content after "WHERE ") with quoted identifiers.
+     * Used to append WHERE to EXISTS subquery when build() omits it.
+     *
+     * @param array $contextRow Current outer row for correlated subqueries.
+     * @return string
+     */
+    private function buildWhereClauseFragment(array $contextRow = []): string
+    {
+        $where = $this->buildWhere($contextRow);
+        if (empty($where)) {
+            return '';
+        }
+        $whereParts = [];
+        foreach ($where as $condition) {
+            $alias = $condition['alias'] ?? null;
+            $colBase = $condition['column'] ?? '';
+            $column = ($alias !== null && $alias !== '' ? '"' . $alias . '"."' . $colBase . '"' : '"' . $colBase . '"');
+            $operator = strtoupper((string) ($condition['operator'] ?? '='));
+            $value = $condition['value'] ?? null;
+            if ($operator === 'IN' || $operator === 'NOT IN') {
+                $values = is_array($value) ? $value : [$value];
+                $placeholders = implode(', ', array_fill(0, count($values), '?'));
+                $whereParts[] = "{$column} {$operator} ({$placeholders})";
+            } elseif ($operator === 'BETWEEN' || $operator === 'NOT BETWEEN') {
+                $whereParts[] = "{$column} {$operator} ? AND ?";
+            } elseif ($operator === 'IS NULL' || $operator === 'IS NOT NULL') {
+                $whereParts[] = "{$column} {$operator}";
+            } elseif (is_string($value) && preg_match('/^\w+\.\w+$/', $value)) {
+                $rightCol = '"' . str_replace('.', '"."', $value) . '"';
+                $whereParts[] = "{$column} {$operator} {$rightCol}";
+            } else {
+                $whereParts[] = "{$column} {$operator} ?";
+            }
+        }
+        $whereStr = $whereParts[0];
+        for ($i = 1; $i < count($whereParts); $i++) {
+            $connector = ($where[$i]['condition'] ?? null) === Condition::DISJUNCTION() ? 'OR' : 'AND';
+            $whereStr .= ' ' . $connector . ' ' . $whereParts[$i];
+        }
+        return $whereStr;
     }
 
     /**
@@ -462,9 +530,9 @@ class Builder implements IBuilder
      * @return array The query results.
      * @throws Exceptions
      */
-    public function execute(array $data): array
+    public function execute(array $data, array $contextRow = []): array
     {
-        $mainResults = $this->executeSingle($data);
+        $mainResults = $this->executeSingle($data, $contextRow);
 
         if (!empty($this->query->union) || !empty($this->query->unionAll)) {
             $allResults = [$mainResults];
@@ -484,14 +552,18 @@ class Builder implements IBuilder
         return $mainResults;
     }
 
-    private function executeSingle(array $data): array
+    private function executeSingle(array $data, array $contextRow = []): array
     {
         $processor = new DataProcessor($data);
 
-        $where = $this->buildWhere();
+        $where = $this->buildWhere($contextRow);
         if (!empty($where)) {
             $processor->where($where, $this->getWhereLogic());
         }
+
+        $data = $processor->getData();
+        $data = $this->applyExistsFilter($data);
+        $processor->setData($data);
 
         $orderBy = $this->buildOrderBy();
         if ($orderBy !== null) {
@@ -513,6 +585,58 @@ class Builder implements IBuilder
         }
 
         return $processor->getData();
+    }
+
+    private function resolveContextValue(mixed $value, array $contextRow): mixed
+    {
+        if (!is_string($value) || $value === '' || empty($contextRow)) {
+            return $value;
+        }
+        if (preg_match('/^\w+\.(\w+)$/', $value, $m) && array_key_exists($m[1], $contextRow)) {
+            return $contextRow[$m[1]];
+        }
+        return $value;
+    }
+
+    private function applyExistsFilter(array $data): array
+    {
+        if (empty($this->query->where)) {
+            return $data;
+        }
+        $existsItems = [];
+        foreach ($this->query->where as $item) {
+            if (!isset($item['type']) || $item['type'] !== Where::EXISTS()) {
+                continue;
+            }
+            $subquery = $item['subquery'] ?? null;
+            if (!$subquery instanceof IQueryBuilder) {
+                continue;
+            }
+            $existsItems[] = [
+                'subquery' => $subquery,
+                'negate' => (bool) ($item['negate'] ?? false),
+            ];
+        }
+        if (empty($existsItems)) {
+            return $data;
+        }
+        $filtered = [];
+        foreach ($data as $row) {
+            $rowArr = (array) $row;
+            $pass = true;
+            foreach ($existsItems as $item) {
+                $subResult = $item['subquery']->execute(null, $rowArr);
+                $hasRows = !empty($subResult);
+                $pass = $item['negate'] ? !$hasRows : $hasRows;
+                if (!$pass) {
+                    break;
+                }
+            }
+            if ($pass) {
+                $filtered[] = $row;
+            }
+        }
+        return $filtered;
     }
 
     private function executeUnionQuery(array $union, array $data): array
@@ -654,20 +778,79 @@ class Builder implements IBuilder
             $parts[] = $having;
         }
 
-        // ORDER BY
-        $orderByStr = $this->buildOrderByString();
-        if ($orderByStr !== '') {
-            $parts[] = $orderByStr;
-        }
-
-        // LIMIT
-        $limitStr = $this->buildLimitString();
-        if ($limitStr !== '') {
-            $parts[] = $limitStr;
+        $hasUnion = !empty($this->query->union) || !empty($this->query->unionAll);
+        if (!$hasUnion) {
+            $orderByStr = $this->buildOrderByString();
+            if ($orderByStr !== '') {
+                $parts[] = $orderByStr;
+            }
+            $limitStr = $this->buildLimitString();
+            if ($limitStr !== '') {
+                $parts[] = $limitStr;
+            }
         }
 
         $this->appendUnionToParts($parts);
+
+        if ($hasUnion) {
+            $orderByStr = $this->buildOrderByString();
+            if ($orderByStr !== '') {
+                $parts[] = $orderByStr;
+            }
+            $limitStr = $this->buildLimitString();
+            if ($limitStr !== '') {
+                $parts[] = $limitStr;
+            }
+        }
+
         return Parse::escape(trim(implode(' ', $parts)), Parse::SQL_DIALECT_DOUBLE_QUOTE);
+    }
+
+    /**
+     * Build WHERE fragment from a query's raw where array (for EXISTS subquery).
+     *
+     * @param object $query Query object with where array.
+     * @return string
+     */
+    private function buildExistsSubqueryWhereFragment(object $query): string
+    {
+        if (empty($query->where)) {
+            return '';
+        }
+        $parts = [];
+        foreach ($query->where as $data) {
+            if (isset($data['type']) && $data['type'] === Where::EXISTS()) {
+                continue;
+            }
+            $col = trim((string) ($data['column'] ?? ''), "'\"");
+            if ($col === '') {
+                continue;
+            }
+            $alias = isset($data['alias']) ? trim((string) $data['alias'], "'\"") : null;
+            $left = ($alias !== null && $alias !== '') ? $alias . '.' . $col : $col;
+            $signal = strtoupper((string) ($data['signal'] ?? '='));
+            $right = '?';
+            $rawCondition = trim((string) ($data['value'] ?? ''));
+            if ($rawCondition !== '' && preg_match('/=\s*(\w+\.\w+)\s*$/s', $rawCondition, $m)) {
+                $right = trim($m[1]);
+            } else {
+                $args = $data['arguments'] ?? [];
+                $value = $args['default'] ?? null;
+                if (is_string($value) && preg_match('/^\w+\.\w+$/D', trim($value))) {
+                    $right = trim($value);
+                }
+            }
+            $parts[] = $left . ' ' . $signal . ' ' . $right;
+        }
+        if ($parts === []) {
+            return '';
+        }
+        $fragment = $parts[0];
+        for ($i = 1; $i < count($parts); $i++) {
+            $connector = (isset($query->where[$i]['condition']) && $query->where[$i]['condition'] === Condition::DISJUNCTION()) ? 'OR' : 'AND';
+            $fragment .= ' ' . $connector . ' ' . $parts[$i];
+        }
+        return $fragment;
     }
 
     private function buildExistsWhereString(): string
@@ -687,7 +870,18 @@ class Builder implements IBuilder
             }
             $existsClause = $negate ? 'NOT EXISTS' : 'EXISTS';
             if ($subquery instanceof IQueryBuilder) {
-                $existsClauses[] = $existsClause . ' (' . $subquery->build() . ')';
+                if (property_exists($subquery, 'query')) {
+                    $subBuilder = new Builder($subquery->query);
+                    $sql = $subBuilder->buildSelectFromOnly();
+                    $sql = preg_replace('/^SELECT\s+1\s+FROM/i', 'SELECT ? FROM', $sql, 1);
+                    $whereFragment = $this->buildExistsSubqueryWhereFragment($subquery->query);
+                    if ($whereFragment !== '') {
+                        $sql .= ' WHERE ' . $whereFragment;
+                    }
+                } else {
+                    $sql = $subquery->build();
+                }
+                $existsClauses[] = $existsClause . ' (' . $sql . ')';
             } else {
                 $existsClauses[] = $existsClause . ' (' . (string) $subquery . ')';
             }
@@ -700,18 +894,18 @@ class Builder implements IBuilder
         if (!empty($this->query->union)) {
             foreach ($this->query->union as $union) {
                 if ($union['type'] === 'subquery' && $union['query'] instanceof IQueryBuilder) {
-                    $parts[] = 'UNION (' . $union['query']->build() . ')';
+                    $parts[] = 'UNION ' . $union['query']->build();
                 } else {
-                    $parts[] = 'UNION (' . (string) $union['query'] . ')';
+                    $parts[] = 'UNION ' . (string) $union['query'];
                 }
             }
         }
         if (!empty($this->query->unionAll)) {
             foreach ($this->query->unionAll as $unionAll) {
                 if ($unionAll['type'] === 'subquery' && $unionAll['query'] instanceof IQueryBuilder) {
-                    $parts[] = 'UNION ALL (' . $unionAll['query']->build() . ')';
+                    $parts[] = 'UNION ALL ' . $unionAll['query']->build();
                 } else {
-                    $parts[] = 'UNION ALL (' . (string) $unionAll['query'] . ')';
+                    $parts[] = 'UNION ALL ' . (string) $unionAll['query'];
                 }
             }
         }
@@ -805,17 +999,31 @@ class Builder implements IBuilder
             $parts[] = $having;
         }
 
-        $orderByStr = $this->buildOrderByString();
-        if ($orderByStr !== '') {
-            $parts[] = $orderByStr;
-        }
-
-        $limitStr = $this->buildLimitString();
-        if ($limitStr !== '') {
-            $parts[] = $limitStr;
+        $hasUnion = !empty($this->query->union) || !empty($this->query->unionAll);
+        if (!$hasUnion) {
+            $orderByStr = $this->buildOrderByString();
+            if ($orderByStr !== '') {
+                $parts[] = $orderByStr;
+            }
+            $limitStr = $this->buildLimitString();
+            if ($limitStr !== '') {
+                $parts[] = $limitStr;
+            }
         }
 
         $this->appendUnionToParts($parts);
+
+        if ($hasUnion) {
+            $orderByStr = $this->buildOrderByString();
+            if ($orderByStr !== '') {
+                $parts[] = $orderByStr;
+            }
+            $limitStr = $this->buildLimitString();
+            if ($limitStr !== '') {
+                $parts[] = $limitStr;
+            }
+        }
+
         return trim(implode(' ', $parts));
     }
 
@@ -876,9 +1084,38 @@ class Builder implements IBuilder
      *
      * @return array
      */
+    private function getSelectLiteralValues(object $query): array
+    {
+        $literals = [];
+        if (empty($query->select['columns'])) {
+            return $literals;
+        }
+        foreach ($query->select['columns'] as $data) {
+            if (is_array($data) && isset($data['type']) && $data['type'] === 'literal') {
+                $v = $data['value'] ?? null;
+                if ($v !== null && $v !== '') {
+                    $literals[] = trim((string) $v, "'\"");
+                }
+            }
+        }
+        return $literals;
+    }
+
     public function getValues(): array
     {
         $values = [];
+
+        foreach ($this->getSelectLiteralValues($this->query) as $literal) {
+            $values[] = $literal;
+        }
+
+        if (!empty($this->query->where)) {
+            foreach ($this->query->where as $whereItem) {
+                if (isset($whereItem['type']) && $whereItem['type'] === Where::EXISTS()) {
+                    $values[] = 1;
+                }
+            }
+        }
 
         $where = $this->buildWhere();
         if (!empty($where)) {
@@ -906,18 +1143,11 @@ class Builder implements IBuilder
                     continue;
                 }
 
-                $values[] = $value;
-            }
-        }
-
-        if (!empty($this->query->where)) {
-            foreach ($this->query->where as $whereItem) {
-                if (isset($whereItem['type']) && $whereItem['type'] === Where::EXISTS()) {
-                    $subquery = $whereItem['subquery'] ?? null;
-                    if ($subquery instanceof IQueryBuilder) {
-                        $values = array_merge($values, $subquery->getValues());
-                    }
+                if (is_string($value) && preg_match('/^\w+\.\w+$/', $value)) {
+                    continue;
                 }
+
+                $values[] = $value;
             }
         }
 
@@ -953,6 +1183,23 @@ class Builder implements IBuilder
             }
         }
 
+        $lim = $this->buildLimit();
+        if ($lim !== null) {
+            $values[] = $lim['limit'];
+            $values[] = $lim['offset'];
+        }
+
+        return $this->normalizeNumericArguments($values);
+    }
+
+    private function normalizeNumericArguments(array $values): array
+    {
+        foreach ($values as $i => $v) {
+            if (is_string($v) && is_numeric($v)) {
+                $f = (float) $v;
+                $values[$i] = $f === (float) (int) $f ? (int) $f : $f;
+            }
+        }
         return $values;
     }
 }

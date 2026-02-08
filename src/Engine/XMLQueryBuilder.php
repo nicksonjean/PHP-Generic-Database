@@ -227,22 +227,30 @@ class XMLQueryBuilder implements IQueryBuilder
 
     public function union(string|IQueryBuilder $query): static
     {
-        return Clause::union(['query' => $query, 'self' => $this]);
+        $out = Clause::union(['query' => $query, 'self' => $this]);
+        self::$self = $this;
+        return $out;
     }
 
     public function unionAll(string|IQueryBuilder $query): static
     {
-        return Clause::unionAll(['query' => $query, 'self' => $this]);
+        $out = Clause::unionAll(['query' => $query, 'self' => $this]);
+        self::$self = $this;
+        return $out;
     }
 
     public function whereExists(string|IQueryBuilder $subquery): static
     {
-        return Clause::where(['subquery' => $subquery, 'negate' => false, 'self' => $this]);
+        $out = Clause::where(['subquery' => $subquery, 'negate' => false, 'self' => $this]);
+        self::$self = $this;
+        return $out;
     }
 
     public function whereNotExists(string|IQueryBuilder $subquery): static
     {
-        return Clause::where(['subquery' => $subquery, 'negate' => true, 'self' => $this]);
+        $out = Clause::where(['subquery' => $subquery, 'negate' => true, 'self' => $this]);
+        self::$self = $this;
+        return $out;
     }
 
     private function runOnce(): void
@@ -259,6 +267,14 @@ class XMLQueryBuilder implements IQueryBuilder
             self::$lastQuery = $currentQueryForDisplay;
             self::$cursorExhausted = false;
         }
+    }
+
+    public function execute(?array $data = null, array $contextRow = []): array
+    {
+        if ($data === null) {
+            return [];
+        }
+        return (new Builder($this->query))->execute($data, $contextRow);
     }
 
     public function build(): string
@@ -283,7 +299,7 @@ class XMLQueryBuilder implements IQueryBuilder
 
         $metadata = new Metadata();
         $metadata->query->setString($this->getContext()->getQueryString());
-        $metadata->query->setArguments([]);
+        $metadata->query->setArguments($this->getValues());
         $metadata->query->setColumns($colCount);
         $metadata->query->getRows()->setFetched($rowCount);
         $aff = $this->getContext()->getAffectedRows();
