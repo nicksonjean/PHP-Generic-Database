@@ -162,8 +162,8 @@ class Parse
             }
         }
 
-        $masked = preg_replace("/'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'/s", "''", $query);
-        $masked = $masked !== null ? preg_replace('/"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"/s', '""', $masked) : '';
+        $masked = preg_replace_callback("/'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'/s", fn($m) => str_repeat(' ', strlen($m[0])), $query);
+        $masked = $masked !== null ? preg_replace_callback('/"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"/s', fn($m) => str_repeat(' ', strlen($m[0])), $masked) : '';
         if ($masked !== null && preg_match_all('/\b(\d+(?:\.\d+)?)\b/', $masked, $matches, PREG_OFFSET_CAPTURE)) {
             foreach ($matches[1] as $match) {
                 $num = $match[0];
@@ -540,7 +540,17 @@ class Parse
             $input = self::normalizeStringLiteralsToSingleQuotes($input);
         }
         $quote = self::$quoteMap[$dialect] ?? '';
-        return self::escapeType($input, $quote);
+        $escaped = self::escapeType($input, $quote);
+
+        // Special handling for MySQL-like dialects (backtick) to ensure that
+        // the first column after UNION SELECT / UNION ALL SELECT is quoted.
+        // Antes isso era tratado em MySQLi\StatementsHandler::parse(), mas
+        // a correção agora passa a ser centralizada aqui no parser.
+        if ($dialect === self::SQL_DIALECT_BACKTICK && $quote !== '') {
+            $escaped = self::ensureUnionSelectFirstColumnQuoted($escaped, $quote);
+        }
+
+        return $escaped;
     }
 
     /**
@@ -561,6 +571,38 @@ class Parse
             $value = str_replace("'", "''", $content);
             return $m[1] . "'" . $value . "'";
         }, $input);
+    }
+
+    /**
+     * Garante que a primeira coluna após UNION SELECT / UNION ALL SELECT
+     * esteja entre aspas do dialeto (no caso do MySQL, backticks).
+     *
+     * Exemplo alvo:
+     *   UNION SELECT nome, 'Cidade' AS origem ...
+     * vira
+     *   UNION SELECT `nome`, 'Cidade' AS origem ...
+     *
+     * @param string $input  SQL já escapado por {@see escapeType()}.
+     * @param string $quote  Caractere de quote/backtick do dialeto.
+     * @return string
+     */
+    private static function ensureUnionSelectFirstColumnQuoted(string $input, string $quote): string
+    {
+        // UNION ALL SELECT <ident>
+        $input = preg_replace(
+            '/\bUNION\s+ALL\s+SELECT\s+([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*,|\s+FROM|\s+WHERE|\s+\)|\s*$)/i',
+            'UNION ALL SELECT ' . $quote . '$1' . $quote,
+            $input
+        );
+
+        // UNION SELECT <ident>
+        $input = preg_replace(
+            '/\bUNION\s+SELECT\s+([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*,|\s+FROM|\s+WHERE|\s+\)|\s*$)/i',
+            'UNION SELECT ' . $quote . '$1' . $quote,
+            $input
+        );
+
+        return $input;
     }
 
     /**
@@ -640,9 +682,16 @@ class Parse
      */
     private static function bindWithDollarSign(string $input, string $bindType): string
     {
-        return preg_replace_callback(self::$patternMap['sqlBinds'], function () use (&$bindType) {
-            static $dollarCount = 1;
-            return sprintf("$bindType%d", $dollarCount++);
-        }, $input);
+        // A numeração com cifrão ($1, $2, ...) deve reiniciar a cada chamada,
+        // portanto o contador é local à função e não estático.
+        $dollarCount = 1;
+
+        return preg_replace_callback(
+            self::$patternMap['sqlBinds'],
+            static function (array $matches) use ($bindType, &$dollarCount): string {
+                return sprintf('%s%d', $bindType, $dollarCount++);
+            },
+            $input
+        );
     }
 }
