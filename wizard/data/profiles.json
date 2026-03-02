@@ -1,0 +1,52 @@
+[
+    {
+        "env_file": ".\/profiles\/.custom_fluent_native_mysqli",
+        "php_file": ".\/profiles\/custom_fluent_native_mysqli.php",
+        "source": "Custom",
+        "module": "Chainable",
+        "engine": "Native",
+        "driver": "MySQLi",
+        "type": "Specific",
+        "name": "custom_fluent_native_mysqli"
+    },
+    {
+        "name": "preset_chainable_native_pgsql",
+        "env_file": null,
+        "php_file": "profiles\/preset_chainable_native_pgsql.php",
+        "source": "Preset",
+        "module": "Chainable",
+        "engine": "Native",
+        "driver": "PostgreSQL",
+        "type": "Specific"
+    },
+    {
+        "name": "preset_chainable_pdo_pgsql",
+        "env_file": null,
+        "php_file": "profiles\/preset_chainable_pdo_pgsql.php",
+        "source": "Preset",
+        "module": "Chainable",
+        "engine": "PDO",
+        "driver": "PostgreSQL",
+        "type": "Specific"
+    },
+    {
+        "name": "preset_fluent_pdo_pgsql",
+        "env_file": null,
+        "php_file": "profiles\/preset_fluent_pdo_pgsql.php",
+        "source": "Preset",
+        "module": "Fluent",
+        "engine": "PDO",
+        "driver": "PostgreSQL",
+        "type": "Specific"
+    },
+    {
+        "name": "custom_fluent_odbc_oci",
+        "env_file": ".\/profiles\/.custom_fluent_odbc_oci",
+        "php_file": ".\/profiles\/custom_fluent_odbc_oci.php",
+        "source": "Custom",
+        "module": "Fluent",
+        "engine": "ODBC",
+        "driver": "Oracle",
+        "type": "Specific"
+    }
+]

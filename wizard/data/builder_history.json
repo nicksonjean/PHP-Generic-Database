@@ -1,0 +1,92 @@
+[
+    {
+        "id": "bh_69a2ee3af3db34.86527406",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "qb_code": "$qb = (new MySQLiQueryBuilder($context))\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado e')\r\n    ->whereExists(\r\n        (new MySQLiQueryBuilder($context))\r\n            ->select('1')\r\n            ->from('cidade c')\r\n            ->where('c.estado_id', '=', 'e.id')\r\n    )\r\n    ->order('nome ASC')\r\n    ->limit(5);",
+        "executed_at": "2026-02-28 13:31:38",
+        "duration_ms": 29.17,
+        "row_count": 5
+    },
+    {
+        "id": "bh_69a2ecb028c0e4.11495349",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "qb_code": "$qb = (new MySQLiQueryBuilder($context))\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado e')\r\n    ->whereExists(\r\n        (new MySQLiQueryBuilder($context))\r\n            ->select('1')\r\n            ->from('cidade c')\r\n            ->where('c.estado_id', '=', 'e.id')\r\n    )\r\n    ->order('nome ASC')\r\n    ->limit(5);",
+        "executed_at": "2026-02-28 13:25:04",
+        "duration_ms": 8.97,
+        "row_count": 5
+    },
+    {
+        "id": "bh_6999d976a1dd25.89184660",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "qb_code": "$qb = (new MySQLiQueryBuilder($context))\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado e')\r\n    ->whereExists(\r\n        (new MySQLiQueryBuilder($context))\r\n            ->select('1')\r\n            ->from('cidade c')\r\n            ->where('c.estado_id', '=', 'e.id')\r\n    )\r\n    ->order('nome ASC')\r\n    ->limit(5);",
+        "executed_at": "2026-02-21 16:12:38",
+        "duration_ms": 11.65,
+        "row_count": 5
+    },
+    {
+        "id": "bh_6999d8e12291a2.13771158",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "qb_code": "$qb = (new MySQLiQueryBuilder($context))\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado e')\r\n    ->whereExists(\r\n        (new MySQLiQueryBuilder($context))\r\n            ->select('1')\r\n            ->from('cidade c')\r\n            ->where('c.estado_id', '=', 'e.id')\r\n    )\r\n    ->order('nome ASC')\r\n    ->limit(5);",
+        "executed_at": "2026-02-21 16:10:09",
+        "duration_ms": 29,
+        "row_count": 5
+    },
+    {
+        "id": "bh_6999d881109454.74366527",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "qb_code": "$qb = (new MySQLiQueryBuilder($context))\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado e')\r\n    ->whereExists(\r\n        (new MySQLiQueryBuilder($context))\r\n            ->select('1')\r\n            ->from('cidade c')\r\n            ->where('c.estado_id', '=', 'e.id')\r\n    )\r\n    ->order('nome ASC')\r\n    ->limit(5);",
+        "executed_at": "2026-02-21 16:08:33",
+        "duration_ms": 30.51,
+        "row_count": 5
+    },
+    {
+        "id": "bh_6999b4a89c8688.53221420",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "qb_code": "$qb = (new MySQLiQueryBuilder($context))\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado e')\r\n    ->whereExists(\r\n        (new MySQLiQueryBuilder($context))\r\n            ->select('1')\r\n            ->from('cidade c')\r\n            ->where('c.estado_id', '=', 'e.id')\r\n    )\r\n    ->order('nome ASC')\r\n    ->limit(5);",
+        "executed_at": "2026-02-21 13:35:36",
+        "duration_ms": 2.1,
+        "row_count": 5
+    },
+    {
+        "id": "bh_6999b45c619455.55352487",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE NOT EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) LIMIT 5",
+        "qb_code": "$qb = (new MySQLiQueryBuilder($context))\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado e')\r\n    ->whereNotExists(\r\n        (new MySQLiQueryBuilder($context))\r\n            ->select('1')\r\n            ->from('cidade c')\r\n            ->where('c.estado_id', '=', 'e.id')\r\n    )\r\n    ->limit(5);",
+        "executed_at": "2026-02-21 13:34:20",
+        "duration_ms": 1.91,
+        "row_count": 0
+    },
+    {
+        "id": "bh_6999b44c2c6ce1.84033542",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE NOT EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "qb_code": "$qb = (new MySQLiQueryBuilder($context))\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado e')\r\n    ->whereNotExists(\r\n        (new MySQLiQueryBuilder($context))\r\n            ->select('1')\r\n            ->from('cidade c')\r\n            ->where('c.estado_id', '=', 'e.id')\r\n    )\r\n    ->order('nome ASC')\r\n    ->limit(5);",
+        "executed_at": "2026-02-21 13:34:04",
+        "duration_ms": 2.19,
+        "row_count": 0
+    },
+    {
+        "id": "bh_6999b0f828b198.16290620",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE NOT EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "qb_code": "$qb = (new PDOQueryBuilder($context))\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado e')\r\n    ->whereNotExists(\r\n        (new PDOQueryBuilder($context))\r\n            ->select('1')\r\n            ->from('cidade c')\r\n            ->where('c.estado_id', '=', 'e.id')\r\n    )\r\n    ->order('e.nome')\r\n    ->limit(5);",
+        "executed_at": "2026-02-21 13:19:52",
+        "duration_ms": 2.31,
+        "row_count": 0
+    },
+    {
+        "id": "bh_699916f0b026f7.24442069",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE NOT EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "qb_code": "$qb\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado', 'e')\r\n    ->where('NOT EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id)')\r\n    ->orderAsc('e.nome')\r\n    ->limit(5);",
+        "executed_at": "2026-02-21 02:22:40",
+        "duration_ms": 20.89,
+        "row_count": 0
+    }
+]

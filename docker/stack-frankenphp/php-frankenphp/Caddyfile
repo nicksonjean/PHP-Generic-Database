@@ -23,7 +23,7 @@ http://:80 {
     @blocked_root {
         path_regexp ^/(\.|vendor|cache|assets|resources|bin|docker|adminer|patches|trash|scripts|src|tests|\.devcontainer|\.stub|\.git|\.env|\.cursor|\.idea|\.phpunit\.cache|\.qodo|\.stubs|\.vscode)/|^/(composer\.(json|lock)|phpcs\.xml|phpunit\.xml|phpmd\.xml|phpstan\.neon|grumphp\.yml|doctum\.php|docker-compose\.yml|favicon\.ico|\.htaccess|README\.md|class-diagram\.mmd|flowchart\.mmd|.*\.(stub\.php|md|sh|bat|mmd|txt|json|xml|yml|yaml|lock|log|ini|conf|css|js|html|png|jpg|jpeg|gif|svg|ico|zip))$|^/\.
         not path /docker/assets/frankenphp-directory-listing/*
-        not path_regexp ^/(build|connections|docs|readme|samples)/
+        not path_regexp ^/(build|connections|docs|readme|samples|wizard|querybuilder)/
     }
     handle @blocked_root {
         respond "Not Found" 404
@@ -87,7 +87,7 @@ https://:443 {
     @blocked_root {
         path_regexp ^/(\.|vendor|cache|assets|resources|bin|docker|adminer|patches|trash|scripts|src|tests|\.devcontainer|\.stub|\.git|\.env|\.cursor|\.idea|\.phpunit\.cache|\.qodo|\.stubs|\.vscode)/|^/(composer\.(json|lock)|phpcs\.xml|phpunit\.xml|phpmd\.xml|phpstan\.neon|grumphp\.yml|doctum\.php|docker-compose\.yml|favicon\.ico|\.htaccess|README\.md|class-diagram\.mmd|flowchart\.mmd|.*\.(stub\.php|md|sh|bat|mmd|txt|json|xml|yml|yaml|lock|log|ini|conf|css|js|html|png|jpg|jpeg|gif|svg|ico|zip))$|^/\.
         not path /docker/assets/frankenphp-directory-listing/*
-        not path_regexp ^/(build|connections|docs|readme|samples)/
+        not path_regexp ^/(build|connections|docs|readme|samples|wizard|querybuilder)/
     }
     handle @blocked_root {
         respond "Not Found" 404

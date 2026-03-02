@@ -69,20 +69,36 @@ class Parse
     public const BIND_DOLLAR_SIGN = 2;
 
     /**
-     * Regex patterns for use in class
+     * Regex patterns for generic SQL parsing (dialect-agnostic).
+     * All patterns are centralized here so escape/placeholder/literal logic stays consistent.
      */
     private static array $patternMap = [
         'sqlBinds' => '/(:[a-zA-Z_][a-zA-Z0-9_]*)/',
         'sqlArgs' => '/(:\w+)/',
         'sqlGroups' => '/(\w+)?\((.+)\)\s/m',
-        'sqlGroupsNonGreedy' => '/(\w+)?\((.+?)\)\s/m'
+        'sqlGroupsNonGreedy' => '/(\w+)?\((.+?)\)\s/m',
+        'singleQuotedLiteralContent' => "/'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'/s",
+        'doubleQuotedLiteralContent' => '/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/s',
+        'singleQuotedLiteralMask' => "/'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'/s",
+        'doubleQuotedLiteralMask' => '/"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"/s',
+        'numberInMasked' => '/\b(\d+(?:\.\d+)?)\b/',
+        'wordSplit' => '/\s+/',
+        'identifier' => '[a-zA-Z_][a-zA-Z0-9_]*',
+        'subquerySelect' => '/^\s*SELECT\b/i',
+        'existsAfterNot' => '/^\s*EXISTS\s/i',
+        'namedParamOnly' => '/^:\w+$/',
+        'numericWord' => '/^-?\d+(\.\d+)?\s*$/D',
+        'functionWord' => '/\w+\(.*\)/m',
+        'comparisonOp' => '/^[=<>!]=?$|^<>$/',
+        'containsDigit' => '/\d+/im',
+        'normalizeDoubleQuotedLiteral' => '/(=\s*|(?:NOT\s+)?(?:I?LIKE)\s+|!=\s*|<>?\s*|>\s*|<\s*|>=\s*|<=\s*)\s*"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/i',
+        'identifierOnly' => '/^\w+$/D',
+        'questionMarkPlaceholder' => '/\?/',
+        'patternFunction' => '/(?<function>\w+)\s*\(\s*(?:(?<table>["]?[a-zA-Z0-9_]+["]?)\.)?(?<column>["]?[a-zA-Z0-9_]+["]?)\s*\)/m',
     ];
 
-    private static string $patternFunction =
-    '/(?<function>\w+)\s*\(\s*(?:(?<table>["]?[a-zA-Z0-9_]+["]?)\.)?(?<column>["]?[a-zA-Z0-9_]+["]?)\s*\)/m';
-
     /**
-     * SQL dialect array map
+     * SQL dialect → identifier quote character.
      */
     private static array $quoteMap = [
         self::SQL_DIALECT_BACKTICK => '`',
@@ -97,6 +113,17 @@ class Parse
     private static array $bindingMap = [
         self::BIND_QUESTION_MARK => '?',
         self::BIND_DOLLAR_SIGN => '$'
+    ];
+
+    /**
+     * Per-dialect: quote characters that denote string literals (for literal extraction).
+     * Used homogeneously by extractLiteralValues: we iterate this list regardless of dialect.
+     */
+    private static array $literalQuoteCharsByDialect = [
+        self::SQL_DIALECT_BACKTICK => ["'", '"'],
+        self::SQL_DIALECT_DOUBLE_QUOTE => ["'"],
+        self::SQL_DIALECT_SINGLE_QUOTE => ["'"],
+        self::SQL_DIALECT_NONE => ["'"],
     ];
 
     /**
@@ -119,15 +146,12 @@ class Parse
 
     /**
      * Analyze raw query and return all parameters in sequential order.
-     * Extracts:
-     * - Named parameters (:name) and positional placeholders (?)
-     * - Literal values: numbers, single-quoted strings; double-quoted when dialect is BACKTICK.
-     *
-     * For SQL_DIALECT_DOUBLE_QUOTE (PostgreSQL, SQLite): double quotes = identifiers, skip them.
-     * For SQL_DIALECT_BACKTICK (MySQL): double quotes = string literals, extract them.
+     * Extracts: named parameters (:name), positional placeholders (?), and literal values
+     * (numbers and quoted strings). Which quote characters denote literals is given by
+     * the dialect (literalQuoteCharsByDialect); the same extraction logic runs for every dialect.
      *
      * @param string $query The raw SQL query to analyze.
-     * @param int|null $dialect SQL dialect for quote interpretation. Default: DOUBLE_QUOTE.
+     * @param int|null $dialect SQL dialect (determines literal quote chars). Default: DOUBLE_QUOTE.
      * @return array Parameters in positional order of appearance.
      */
     public static function parseParameters(string $query, ?int $dialect = null): array
@@ -140,42 +164,44 @@ class Parse
 
     /**
      * Extract all literal values (numbers and quoted strings) from the query in order of appearance.
+     * One code path for all dialects: we use literalQuoteCharsByDialect[$dialect] and iterate
+     * over those quote characters to extract and mask; then we extract numbers from the masked string.
      *
      * @param string $query The raw SQL query.
-     * @param int $dialect SQL dialect to interpret double-quoted strings.
+     * @param int $dialect SQL dialect (selects which quote chars denote literals).
      * @return array Values in sequential, positional order.
      */
     private static function extractLiteralValues(string $query, int $dialect = self::SQL_DIALECT_DOUBLE_QUOTE): array
     {
         $found = [];
+        $literalChars = self::$literalQuoteCharsByDialect[$dialect] ?? ["'"];
 
-        if (preg_match_all("/'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'/s", $query, $matches, PREG_OFFSET_CAPTURE)) {
-            foreach ($matches[1] as $match) {
-                $found[] = ['pos' => $match[1], 'value' => $match[0]];
+        foreach ($literalChars as $quoteChar) {
+            $contentPattern = $quoteChar === "'" ? self::$patternMap['singleQuotedLiteralContent'] : self::$patternMap['doubleQuotedLiteralContent'];
+            if (preg_match_all($contentPattern, $query, $matches, PREG_OFFSET_CAPTURE)) {
+                foreach ($matches[1] as $match) {
+                    $found[] = ['pos' => $match[1], 'value' => $match[0]];
+                }
             }
         }
 
-        if ($dialect === self::SQL_DIALECT_BACKTICK &&
-            preg_match_all('/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/s', $query, $matches, PREG_OFFSET_CAPTURE)) {
-            foreach ($matches[1] as $match) {
-                $found[] = ['pos' => $match[1], 'value' => $match[0]];
-            }
+        $masked = $query;
+        foreach ($literalChars as $quoteChar) {
+            $maskPattern = $quoteChar === "'" ? self::$patternMap['singleQuotedLiteralMask'] : self::$patternMap['doubleQuotedLiteralMask'];
+            $masked = preg_replace_callback($maskPattern, fn(array $maskMatch) => str_repeat(' ', strlen($maskMatch[0])), $masked ?? '');
         }
-
-        $masked = preg_replace_callback("/'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'/s", fn($m) => str_repeat(' ', strlen($m[0])), $query);
-        $masked = $masked !== null ? preg_replace_callback('/"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"/s', fn($m) => str_repeat(' ', strlen($m[0])), $masked) : '';
-        if ($masked !== null && preg_match_all('/\b(\d+(?:\.\d+)?)\b/', $masked, $matches, PREG_OFFSET_CAPTURE)) {
+        if ($masked !== null && preg_match_all(self::$patternMap['numberInMasked'], $masked, $matches, PREG_OFFSET_CAPTURE)) {
             foreach ($matches[1] as $match) {
-                $num = $match[0];
+                $number = $match[0];
                 $found[] = [
                     'pos' => $match[1],
-                    'value' => str_contains($num, '.') ? (float) $num : (int) $num
+                    'value' => str_contains($number, '.') ? (float) $number : (int) $number
                 ];
             }
         }
 
-        usort($found, fn($a, $b) => $a['pos'] <=> $b['pos']);
-        return array_map(fn($item) => $item['value'], $found);
+        usort($found, fn(array $firstItem, array $secondItem) => $firstItem['pos'] <=> $secondItem['pos']);
+        return array_map(fn(array $literalEntry) => $literalEntry['value'], $found);
     }
 
     /**
@@ -190,7 +216,7 @@ class Parse
         $resWords = self::loadReservedWords();
         $input = self::replaceParameters($input, $quote, $resWords);
         $input = self::quoteSubqueryAliasAndOrderBy($input, $quote);
-        $words = preg_split('/\s+/', $input);
+        $words = preg_split(self::$patternMap['wordSplit'], $input);
         $inSingleQt = false;
         $inDoubleQt = false;
         $inFunction = false;
@@ -214,23 +240,23 @@ class Parse
         if ($quote === '') {
             return $input;
         }
-        $ident = '[a-zA-Z_][a-zA-Z0-9_]*';
-        $input = preg_replace('/\bAS\s+(' . $ident . ')(?=\s|,|$)/i', 'AS ' . $quote . '${1}' . $quote, $input);
+        $identifierPattern = self::$patternMap['identifier'];
+        $input = preg_replace('/\bAS\s+(' . $identifierPattern . ')(?=\s|,|$)/i', 'AS ' . $quote . '${1}' . $quote, $input);
         $input = preg_replace(
-            '/\)\s+(' . $ident . ')\s+(?=ORDER|FROM|WHERE|GROUP|HAVING|LIMIT|FETCH|OFFSET|UNION|$)/i',
+            '/\)\s+(' . $identifierPattern . ')\s+(?=ORDER|FROM|WHERE|GROUP|HAVING|LIMIT|FETCH|OFFSET|UNION|$)/i',
             ') ' . $quote . '${1}' . $quote . ' ',
             $input
         );
         $input = preg_replace_callback(
-            '/\b(ORDER|GROUP)\s+BY\s+(' . $ident . '(?:\.' . $ident . ')?)(?=\s|$)/i',
-            static function (array $m) use ($quote): string {
-                $expr = $m[2];
+            '/\b(ORDER|GROUP)\s+BY\s+(' . $identifierPattern . '(?:\.' . $identifierPattern . ')?)(?=\s|$)/i',
+            static function (array $orderByMatch) use ($quote): string {
+                $expr = $orderByMatch[2];
                 if (str_contains($expr, '.')) {
                     $expr = self::applyQuotes($expr, $quote);
                 } elseif ($quote !== '') {
                     $expr = $quote . $expr . $quote;
                 }
-                return $m[1] . ' BY ' . $expr;
+                return $orderByMatch[1] . ' BY ' . $expr;
             },
             $input
         );
@@ -256,27 +282,27 @@ class Parse
             $fullStart = (int) $matches[0][1];
             $prefix = trim($matches[1][0] ?? '');
             $content = trim($matches[2][0] ?? '');
-            $isSubquerySelect = preg_match('/^\s*SELECT\b/i', $content);
-            $isExistsLike = strtoupper($prefix) === 'EXISTS' || (strtoupper($prefix) === 'NOT' && preg_match('/^\s*EXISTS\s/i', $content));
+            $isSubquerySelect = preg_match(self::$patternMap['subquerySelect'], $content);
+            $isExistsLike = strtoupper($prefix) === 'EXISTS' || (strtoupper($prefix) === 'NOT' && preg_match(self::$patternMap['existsAfterNot'], $content));
             if ($quote !== '' && $isExistsLike && $isSubquerySelect && substr_count($content, '(') !== substr_count($content, ')')) {
                 $prefixLen = strlen($matches[1][0] ?? '');
                 $openParenPos = $fullStart + $prefixLen + 1;
                 $contentStart = $openParenPos + 1;
                 $depth = 1;
-                $p = $contentStart;
-                while ($p < strlen($input) && $depth > 0) {
-                    $ch = $input[$p];
-                    if ($ch === '(') {
+                $position = $contentStart;
+                while ($position < strlen($input) && $depth > 0) {
+                    $character = $input[$position];
+                    if ($character === '(') {
                         $depth++;
-                    } elseif ($ch === ')') {
+                    } elseif ($character === ')') {
                         $depth--;
                         if ($depth === 0) {
-                            $content = trim(substr($input, $contentStart, $p - $contentStart));
-                            $fullMatch = substr($input, $fullStart, $p - $fullStart + 1) . ' ';
+                            $content = trim(substr($input, $contentStart, $position - $contentStart));
+                            $fullMatch = substr($input, $fullStart, $position - $fullStart + 1) . ' ';
                             break;
                         }
                     }
-                    $p++;
+                    $position++;
                 }
             }
             $replacement = self::replaceParametersProcessMatch($prefix, $content, $fullMatch, $quote);
@@ -298,26 +324,26 @@ class Parse
      */
     private static function replaceParametersProcessMatch(string $prefix, string $content, string $fullMatch, string $quote): string
     {
-        $isSubquerySelect = preg_match('/^\s*SELECT\b/i', $content);
+        $isSubquerySelect = preg_match(self::$patternMap['subquerySelect'], $content);
         $isExistsSubquery = $isSubquerySelect && strtoupper($prefix) === 'EXISTS';
-        $isNotExistsSubquery = strtoupper($prefix) === 'NOT' && preg_match('/^\s*EXISTS\s/i', $content);
+        $isNotExistsSubquery = strtoupper($prefix) === 'NOT' && preg_match(self::$patternMap['existsAfterNot'], $content);
         $isAnonymousSubquery = $isSubquerySelect && $prefix === '';
         if ($quote !== '' && ($isExistsSubquery || $isNotExistsSubquery || $isAnonymousSubquery)) {
             return $prefix . ($prefix !== '' ? ' ' : '') . '(' . self::escapeType($content, $quote) . ') ';
         }
-        if ($content === '?' || preg_match('/^:\w+$/', $content)) {
+        if ($content === '?' || preg_match(self::$patternMap['namedParamOnly'], $content)) {
             return $fullMatch;
         }
-        $pWords = array_map(function ($word) use ($quote): string {
-            $w = trim($word);
-            if (preg_match('/^-?\d+(\.\d+)?\s*$/D', $w)) {
-                return $w;
+        $pWords = array_map(function (string $word) use ($quote): string {
+            $token = trim($word);
+            if (preg_match(self::$patternMap['numericWord'], $token)) {
+                return $token;
             }
-            if ($quote !== '' && str_contains($w, '.')) {
-                $parts = explode('.', $w);
-                return implode('.', array_map(fn(string $p): string => $quote . trim($p) . $quote, $parts));
+            if ($quote !== '' && str_contains($token, '.')) {
+                $parts = explode('.', $token);
+                return implode('.', array_map(fn(string $segment): string => $quote . trim($segment) . $quote, $parts));
             }
-            return $quote !== '' ? $quote . $w . $quote : $w;
+            return $quote !== '' ? $quote . $token . $quote : $token;
         }, explode(',', $content));
         $quotedContent = implode(', ', $pWords);
         $inner = '(' . $quotedContent . ') ';
@@ -343,12 +369,12 @@ class Parse
         if (count($parts) !== 2) {
             return $original;
         }
-        $alreadyQuoted = static function (string $p, string $q) {
-            if ($q === '' || $p === '') {
+        $alreadyQuoted = static function (string $segment, string $quoteChar): bool {
+            if ($quoteChar === '' || $segment === '') {
                 return false;
             }
-            $trimmed = trim($p);
-            return str_starts_with($trimmed, $q) && str_ends_with($trimmed, $q) && strlen($trimmed) >= 2;
+            $trimmed = trim($segment);
+            return str_starts_with($trimmed, $quoteChar) && str_ends_with($trimmed, $quoteChar) && strlen($trimmed) >= 2;
         };
         if ($alreadyQuoted($parts[0], $quote) && $alreadyQuoted($parts[1], $quote)) {
             return $original;
@@ -400,11 +426,7 @@ class Parse
     /** @noinspection PhpUnused */
     private static function isFunction(string $input): bool
     {
-        $result = false;
-        if (preg_match('/\w+\(.*\)/m', $input)) {
-            $result = true;
-        }
-        return $result;
+        return preg_match(self::$patternMap['functionWord'], $input) === 1;
     }
 
     /** @noinspection PhpUnused */
@@ -413,7 +435,7 @@ class Parse
         if ($quote === '') {
             return $input;
         }
-        if (preg_match(self::$patternFunction, $input, $matches)) {
+        if (preg_match(self::$patternMap['patternFunction'], $input, $matches)) {
             $matches = Arrays::arraySafe($matches);
             $table = trim($matches['table'] ?? '');
             $column = trim($matches['column'] ?? '');
@@ -426,8 +448,8 @@ class Parse
                 return $input;
             }
             $result = (isset($matches['table']) && $matches['table'] !== '')
-                ? preg_replace(self::$patternFunction, "$1($quote$2$quote.$quote$3$quote)", $input)
-                : preg_replace(self::$patternFunction, "$1($quote$3$quote)", $input);
+                ? preg_replace(self::$patternMap['patternFunction'], "$1($quote$2$quote.$quote$3$quote)", $input)
+                : preg_replace(self::$patternMap['patternFunction'], "$1($quote$3$quote)", $input);
             return $result;
         }
         return $input;
@@ -464,9 +486,9 @@ class Parse
                 : $word;
         } else {
             $trailing = (str_ends_with($word, ',')) ? ',' : '';
-            $w = $trailing !== '' ? substr($word, 0, -1) : $word;
-            $w = trim($w);
-            $stripped = $quote !== '' ? trim($w, $quote) : $w;
+            $wordTrimmed = $trailing !== '' ? substr($word, 0, -1) : $word;
+            $wordTrimmed = trim($wordTrimmed);
+            $stripped = $quote !== '' ? trim($wordTrimmed, $quote) : $wordTrimmed;
             if ($stripped !== '' && in_array(mb_strtoupper($stripped), $resWords)) {
                 $result = mb_strtoupper($stripped) . $trailing;
             } else {
@@ -490,8 +512,8 @@ class Parse
                     ),
                     str_contains($word, ':') => $word,
                     in_array(mb_strtoupper($word), $resWords) => mb_strtoupper($word) . $trailing,
-                    preg_match('/^[=<>!]=?$|^<>$/', trim($word)) => $word,
-                    is_numeric($word) || preg_match('/\d+/im', $word) => $word,
+                    preg_match(self::$patternMap['comparisonOp'], trim($word)) => $word,
+                    is_numeric($word) || preg_match(self::$patternMap['containsDigit'], $word) => $word,
                     str_contains($word, $bindQm) => str_replace($quote . $bindQm . $quote, $bindQm, $word),
                     default => self::encloseWord($word, $quote),
                 };
@@ -523,86 +545,51 @@ class Parse
     }
 
     /**
-     * Escapes the SQL string by replacing parameters with their quoted versions.
+     * Escapes the SQL string in a single pipeline parameterized only by the dialect's
+     * identifier quote character. Same steps for every dialect:
+     * 1) Optional quoteSkip: strip quote chars not belonging to the chosen dialect.
+     * 2) Normalize literals: double-quoted strings in value position (=, LIKE, comparison) → single-quoted.
+     * 3) escapeType(input, quote): apply identifier quoting and reserved-word handling.
      *
      * @param string $input The SQL string to be escaped.
      * @param int $dialect The SQL dialect to be used for escaping. Defaults to `Parse::SQL_DIALECT_NONE`.
+     * @param int|null $quoteSkip If set, strip all quote characters except this dialect's quote.
      * @return string The escaped SQL string.
      */
     public static function escape(string $input, int $dialect = self::SQL_DIALECT_NONE, ?int $quoteSkip = null): string
     {
         foreach (self::$quoteMap as $char) {
-            if (!is_null($quoteSkip) && $char !== self::$quoteMap[$quoteSkip]) {
-                $input = str_replace($char, self::$quoteMap[self::SQL_DIALECT_NONE], $input);
+            if ($quoteSkip !== null && $char !== self::$quoteMap[$quoteSkip]) {
+                $input = str_replace($char, self::$quoteMap[$dialect], $input);
             }
         }
-        if ($dialect === self::SQL_DIALECT_DOUBLE_QUOTE) {
-            $input = self::normalizeStringLiteralsToSingleQuotes($input);
-        }
+
+        $input = self::normalizeQuotedLiteralsToSingleQuote($input);
+
         $quote = self::$quoteMap[$dialect] ?? '';
-        $escaped = self::escapeType($input, $quote);
-
-        // Special handling for MySQL-like dialects (backtick) to ensure that
-        // the first column after UNION SELECT / UNION ALL SELECT is quoted.
-        // Antes isso era tratado em MySQLi\StatementsHandler::parse(), mas
-        // a correção agora passa a ser centralizada aqui no parser.
-        if ($dialect === self::SQL_DIALECT_BACKTICK && $quote !== '') {
-            $escaped = self::ensureUnionSelectFirstColumnQuoted($escaped, $quote);
-        }
-
-        return $escaped;
+        return self::escapeType($input, $quote);
     }
 
     /**
-     * Converts double-quoted string literals to single-quoted for dialects that use
-     * double quotes for identifiers (PostgreSQL, SQLite, Firebird, etc.).
+     * Normalizes string literals in value context (after =, LIKE, comparison operators) to
+     * single-quoted form. Applied for every dialect so the rest of the pipeline always
+     * sees one convention: single quote = string literal. The pattern matches only
+     * double-quoted strings in those contexts and converts them to single-quoted.
      *
      * @param string $input The SQL string.
-     * @return string The string with literals normalized.
+     * @return string The string with double-quoted literals in value position normalized to single-quoted.
      */
-    private static function normalizeStringLiteralsToSingleQuotes(string $input): string
+    private static function normalizeQuotedLiteralsToSingleQuote(string $input): string
     {
-        $pattern = '/(=\s*|(?:NOT\s+)?(?:I?LIKE)\s+|!=\s*|<>?\s*|>\s*|<\s*|>=\s*|<=\s*|,\s*)\s*"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/i';
-        return preg_replace_callback($pattern, static function (array $m): string {
-            $content = $m[2];
-            if (preg_match('/^\w+$/D', $content)) {
-                return $m[0];
-            }
-            $value = str_replace("'", "''", $content);
-            return $m[1] . "'" . $value . "'";
-        }, $input);
-    }
-
-    /**
-     * Garante que a primeira coluna após UNION SELECT / UNION ALL SELECT
-     * esteja entre aspas do dialeto (no caso do MySQL, backticks).
-     *
-     * Exemplo alvo:
-     *   UNION SELECT nome, 'Cidade' AS origem ...
-     * vira
-     *   UNION SELECT `nome`, 'Cidade' AS origem ...
-     *
-     * @param string $input  SQL já escapado por {@see escapeType()}.
-     * @param string $quote  Caractere de quote/backtick do dialeto.
-     * @return string
-     */
-    private static function ensureUnionSelectFirstColumnQuoted(string $input, string $quote): string
-    {
-        // UNION ALL SELECT <ident>
-        $input = preg_replace(
-            '/\bUNION\s+ALL\s+SELECT\s+([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*,|\s+FROM|\s+WHERE|\s+\)|\s*$)/i',
-            'UNION ALL SELECT ' . $quote . '$1' . $quote,
+        return preg_replace_callback(
+            self::$patternMap['normalizeDoubleQuotedLiteral'],
+            static function (array $normalizeMatch): string {
+                $content = $normalizeMatch[2];
+                $value = str_replace("'", "''", $content);
+                return $normalizeMatch[1] . "'" . $value . "'";
+            },
             $input
         );
-
-        // UNION SELECT <ident>
-        $input = preg_replace(
-            '/\bUNION\s+SELECT\s+([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*,|\s+FROM|\s+WHERE|\s+\)|\s*$)/i',
-            'UNION SELECT ' . $quote . '$1' . $quote,
-            $input
-        );
-
-        return $input;
     }
 
     /**
@@ -629,7 +616,7 @@ class Parse
             }
             return array_combine($matches[1], $values);
         }
-        preg_match_all('/\?/', $input, $questionMatches);
+        preg_match_all(self::$patternMap['questionMarkPlaceholder'], $input, $questionMatches);
         $placeholderCount = count($questionMatches[0]);
         if ($placeholderCount > 0) {
             if (is_null($values)) {
@@ -688,7 +675,7 @@ class Parse
 
         return preg_replace_callback(
             self::$patternMap['sqlBinds'],
-            static function (array $matches) use ($bindType, &$dollarCount): string {
+            static function (array $bindMatch) use ($bindType, &$dollarCount): string {
                 return sprintf('%s%d', $bindType, $dollarCount++);
             },
             $input

@@ -1,0 +1,15 @@
+[
+    {
+        "id": "d_699916d86891c2.55617046",
+        "name": "custom_fluent_native_mysqli",
+        "alias": "custom_fluent_native_mysqli_3ec49e",
+        "source": "query",
+        "is_draft": true,
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE NOT EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "created_at": "2026-02-21 02:22:16",
+        "updated_at": "2026-02-21 02:22:16",
+        "query_type": "raw",
+        "placeholder_type": "question",
+        "params": []
+    }
+]

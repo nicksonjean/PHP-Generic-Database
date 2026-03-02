@@ -74,21 +74,21 @@ class OCIConnection implements IConnection, IFetch, IStatements, IDSN, IArgument
      * Instance of the connection with database
      * @var mixed $connection
      */
-    private static mixed $connection;
+    private static mixed $connection = null;
 
-    private static IFetch $fetchHandler;
+    private static ?IFetch $fetchHandler = null;
 
-    private static IStatements $statementsHandler;
+    private static ?IStatements $statementsHandler = null;
 
-    private static IDSN $dsnHandler;
+    private static ?IDSN $dsnHandler = null;
 
-    private static IAttributes $attributesHandler;
+    private static ?IAttributes $attributesHandler = null;
 
-    private static IOptions $optionsHandler;
+    private static ?IOptions $optionsHandler = null;
 
-    private static IArguments $argumentsHandler;
+    private static ?IArguments $argumentsHandler = null;
 
-    private static ITransactions $transactionsHandler;
+    private static ?ITransactions $transactionsHandler = null;
 
     /**
      * Empty constructor since initialization is handled by traits and interface methods

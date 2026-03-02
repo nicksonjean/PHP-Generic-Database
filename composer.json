@@ -66,6 +66,7 @@
       "src/Core/Sorting.php",
       "src/Core/Table.php",
       "src/Core/Types.php",
+      "src/Core/Union.php",
       "src/Core/Where.php"
     ],
     "psr-4": {
@@ -145,7 +146,7 @@
       "php vendor/bin/phpcs --config-set report_width auto"
     ],
     "mermaid:class-diagram": "php ./vendor/bin/mermaid-class-diagram generate --path src > class-diagram.mmd 2>&1",
-    "mermaid:flowchart": "php ./scripts/mermaid-flowchart-generate.php",
+    "mermaid:flowchart": "php ./.devtools/.source/mermaid-flowchart-generate.php",
     "grumphp": "php ./vendor/bin/grumphp -n run",
     "phpstan": "php vendor/bin/phpstan --memory-limit=-1 --ansi analyze -c phpstan.neon",
     "phpmd": "php vendor/bin/phpmd src/,samples/ ansi phpmd.xml",
@@ -153,7 +154,7 @@
     "phpcbf": "php vendor/bin/phpcbf --extensions=php --ignore-annotations --standard=./phpcs.xml src/ tests/",
     "phplint": "php vendor/bin/parallel-lint --colors --exclude assets --exclude scripts --exclude samples --exclude connections --exclude pdo.stub.php --exclude pgsql.stub.php --exclude vendor .",
     "run:docs": "php vendor/bin/doctum.php update ./doctum.php --ignore-parse-errors -vvv",
-    "run:docs:phar": "php -d memory_limit=-1 ../.devtools/doctum.phar update ./doctum.php",
+    "run:docs:phar": "php -d memory_limit=-1 ./.devtools/doctum.phar update ./doctum.php",
     "run:test": "php vendor/bin/phpunit --colors=always --exclude-group=ignore-test-cases --do-not-cache-result --display-notices --display-warnings --display-deprecations --testdox tests/",
     "run:test:migrate": "vendor/bin/phpunit --migrate-configuration",
     "run:test:coverage": "php -d pcov.directory=src vendor/bin/phpunit tests --colors=always --configuration phpunit.xml --do-not-cache-result --coverage-html build/coverage --coverage-clover build/logs/clover.xml",
@@ -162,17 +163,19 @@
       "php -r \"if(file_exists('.env')){unlink('.env');}\"",
       "@run:env"
     ],
-    "run:migrate": "php scripts/developer/migrate-sqlite-to-databases.php",
-    "clear:cache": "php scripts/developer/secure_eraser_cli.php --dest=./cache/",
-    "clear:docs": "php scripts/developer/secure_eraser_cli.php --dest=./docs/",
-    "clear:test:coverage": "php scripts/developer/secure_eraser_cli.php --dest=./build/coverage/",
-    "clear:vendor": "php scripts/developer/secure_eraser_cli.php --dest=./vendor/",
-    "clear:build": "php scripts/developer/secure_eraser_cli.php --dest=./build/",
-    "clear:lock": "php scripts/developer/secure_eraser_cli.php --dest=./composer.lock",
-    "clear:env": "php scripts/developer/secure_eraser_cli.php --dest=./.env",
+    "run:export": "php ./.devtools/export.phar",
+    "run:migrate": "php ./.devtools/migrate.phar",
+    "run:convert": "php ./.devtools/convert.phar",
+    "clear:cache": "php ./.devtools/del.phar --dest=./cache/",
+    "clear:docs": "php ./.devtools/del.phar --dest=./docs/",
+    "clear:test:coverage": "php ./.devtools/del.phar --dest=./build/coverage/",
+    "clear:vendor": "php ./.devtools/del.phar --dest=./vendor/",
+    "clear:build": "php ./.devtools/del.phar --dest=./build/",
+    "clear:lock": "php ./.devtools/del.phar --dest=./composer.lock",
+    "clear:env": "php ./.devtools/del.phar --dest=./.env",
     "clear:git": [
-      "php scripts/developer/secure_eraser_cli.php --dest=./.git/hooks/commit-msg",
-      "php scripts/developer/secure_eraser_cli.php --dest=./.git/hooks/pre-commit"
+      "php ./.devtools/del.phar --dest=./.git/hooks/commit-msg",
+      "php ./.devtools/del.phar --dest=./.git/hooks/pre-commit"
     ],
     "post-install-cmd": "@phpcs:config",
     "post-update-cmd": "@run:env"

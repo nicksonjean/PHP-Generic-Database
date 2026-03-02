@@ -11,6 +11,7 @@ use GenericDatabase\Core\Grouping;
 use GenericDatabase\Core\Where;
 use GenericDatabase\Core\Having;
 use GenericDatabase\Core\Condition;
+use GenericDatabase\Core\Union;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Helpers\Parsers\SQL\Parse;
 use GenericDatabase\Helpers\Exceptions;
@@ -26,14 +27,10 @@ class Builder implements IBuilder
 
     private static Connection|ODBCConnection $context;
 
-    /** @var array<string, array<int, string>> Subquery SQL by slot */
-    private array $resolvedSubqueries = [];
-
-    public function __construct($query, $context, array $resolvedSubqueries = [])
+    public function __construct($query, $context)
     {
         $this->query = $query;
         self::$context = $context;
-        $this->resolvedSubqueries = $resolvedSubqueries;
     }
 
     /**
@@ -159,10 +156,10 @@ class Builder implements IBuilder
                 $output[] = $this->buildExistsCondition($data, $condition, $whereIndex);
                 continue;
             }
-            $aggregation = $data['aggregation'] ?? [];
             $alias = isset($data['alias']) ? trim($data['alias']) . '.' : '';
             $column = $data['column'] ?? ' ';
             $signal = isset($data['signal']) ? trim($data['signal']) : '';
+            $aggregation = $data['aggregation'] ?? [];
             $assert = ($aggregation['assert'] ?? Where::AFFIRMATION()) === Where::NEGATION() ? 'NOT' : ' ';
             $function = ($data['type'] ?? Where::DEFAULT()) === Where::FUNCTION() ? ($data['function'] ?? '') : ' ';
             $type = ($data['type'] ?? Where::DEFAULT()) === Where::DEFAULT() ? "$alias$column" : "$function($alias$column)";
@@ -183,6 +180,13 @@ class Builder implements IBuilder
         return $this->parse(implode(' ', $output)) . ' ';
     }
 
+    /**
+     * Builds EXISTS condition from $query->where data, following Builder/Clause/Criteria pattern.
+     * Uses $data['subquery'] from $this->query (IQueryBuilder or raw string).
+     *
+     * @param array<string, mixed> $data Item from $this->query->where
+     * @param string $condition WHERE|AND|OR
+     */
     private function buildExistsCondition(array $data, string $condition, int $whereIndex = 0): string
     {
         $negate = $data['negate'] ?? false;
@@ -208,24 +212,33 @@ class Builder implements IBuilder
         }
         $output = [];
         foreach ($this->query->having as $data) {
-            $conditionType = $data['condition'] === Condition::DISJUNCTION() ? 'OR' : 'AND';
-            $condition = $data['condition'] === Condition::NONE() ? 'HAVING' : $conditionType;
+            if (empty($data) || !is_array($data)) {
+                continue;
+            }
+            $conditionType = ($data['condition'] ?? Condition::NONE()) === Condition::DISJUNCTION() ? 'OR' : 'AND';
+            $condition = ($data['condition'] ?? Condition::NONE()) === Condition::NONE() ? 'HAVING' : $conditionType;
+            if (isset($data['type']) && $data['type'] === Having::EXISTS()) {
+                $output[] = $this->buildExistsCondition($data, $condition);
+                continue;
+            }
+            $aggregation = $data['aggregation'] ?? [];
             $alias = isset($data['alias']) ? trim($data['alias']) . '.' : '';
             $column = $data['column'] ?? ' ';
             $signal = isset($data['signal']) ? trim($data['signal']) : '';
-            $assert = ($data['aggregation']['assert'] === Having::NEGATION()) ? 'NOT' : ' ';
-            $function = $data['type'] === Having::FUNCTION() ? $data['function'] : ' ';
-            $type = ($data['type'] === Having::DEFAULT()) ? "$alias$column" : "$function($alias$column)";
+            $assert = ($aggregation['assert'] ?? Having::AFFIRMATION()) === Having::NEGATION() ? 'NOT' : ' ';
+            $function = ($data['type'] ?? Having::DEFAULT()) === Having::FUNCTION() ? ($data['function'] ?? '') : ' ';
+            $type = ($data['type'] ?? Having::DEFAULT()) === Having::DEFAULT() ? "$alias$column" : "$function($alias$column)";
             $placeholders = isset($data['arguments']['unlimited']) ?
                 implode(
                     ', ',
                     array_fill(0, count(explode(', ', $data['arguments']['unlimited'])), '?')
                 ) : '';
-            $output[] = match ($data['aggregation']['type']) {
+            $output[] = match ($aggregation['type'] ?? Having::NONE()) {
                 Having::NONE() => "$condition $type $signal ?",
                 Having::BETWEEN() => "$condition $type $assert BETWEEN ? AND ?",
                 Having::IN() => "$condition $type $assert IN ($placeholders)",
                 Having::LIKE() => "$condition $type $assert LIKE ?",
+                Having::EXISTS() => $this->buildExistsCondition($data, $condition),
                 default => "",
             };
         }
@@ -282,6 +295,46 @@ class Builder implements IBuilder
     }
 
     /**
+     * Builds UNION clause from $this->query->union, following Builder/Clause/Criteria pattern.
+     */
+    private function buildUnion(): string
+    {
+        if (empty($this->query->union)) {
+            return '';
+        }
+        $output = [];
+        foreach ($this->query->union as $union) {
+            $queryObj = $union['query'] ?? null;
+            $inner = ($union['type'] ?? '') === Union::SUBQUERY() && $queryObj instanceof IQueryBuilder
+                ? $queryObj->build()
+                : ($queryObj ?? '');
+            $output[] = $inner;
+        }
+        return $this->parse(' UNION ' . implode(' UNION ', $output)) . ' ';
+    }
+
+    /**
+     * Builds UNION ALL clause from $this->query->unionAll, following Builder/Clause/Criteria pattern.
+     *
+     * @throws Exceptions
+     */
+    private function buildUnionAll(): string
+    {
+        if (empty($this->query->unionAll)) {
+            return '';
+        }
+        $output = [];
+        foreach ($this->query->unionAll as $unionAll) {
+            $queryObj = $unionAll['query'] ?? null;
+            $inner = ($unionAll['type'] ?? '') === Union::SUBQUERY() && $queryObj instanceof IQueryBuilder
+                ? $queryObj->build()
+                : ($queryObj ?? '');
+            $output[] = $inner;
+        }
+        return $this->parse(' UNION ALL ' . implode(' UNION ALL ', $output)) . ' ';
+    }
+
+    /**
      * @throws Exceptions
      */
     private function buildLimit(): string
@@ -297,8 +350,8 @@ class Builder implements IBuilder
             'pgsql' => (isset($this->query->limit['offset'])) ? "OFFSET ? LIMIT ?" : "LIMIT ?",
             'sqlite' => (isset($this->query->limit['offset'])) ? "LIMIT ? OFFSET ?" : "LIMIT ?",
             'sqlsrv', 'oci' => (isset($this->query->limit['offset']))
-                ? "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
-                : "FETCH NEXT ? ROWS ONLY",
+                ? (empty($this->query->order) ? 'ORDER BY (SELECT NULL) ' : '') . "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
+                : (empty($this->query->order) ? 'ORDER BY (SELECT NULL) ' : '') . "FETCH FIRST ? ROWS ONLY",
             default => '',
         };
         return $this->parse(implode(', ', $output)) . ' ';
@@ -332,18 +385,10 @@ class Builder implements IBuilder
             $query .= $this->buildHaving();
         }
         if (!empty($this->query->union)) {
-            foreach ($this->query->union as $i => $union) {
-                $resolved = $this->resolvedSubqueries['union'][$i] ?? null;
-                $inner = $resolved !== null ? $resolved : ($union['type'] === 'subquery' ? $union['query']->build() : $union['query']);
-                $query .= " UNION " . $inner . " ";
-            }
+            $query .= $this->buildUnion();
         }
         if (!empty($this->query->unionAll)) {
-            foreach ($this->query->unionAll as $i => $unionAll) {
-                $resolved = $this->resolvedSubqueries['unionAll'][$i] ?? null;
-                $inner = $resolved !== null ? $resolved : ($unionAll['type'] === 'subquery' ? $unionAll['query']->build() : $unionAll['query']);
-                $query .= " UNION ALL " . $inner . " ";
-            }
+            $query .= $this->buildUnionAll();
         }
         if (!empty($this->query->order)) {
             $query .= $this->buildOrder();
@@ -420,8 +465,7 @@ class Builder implements IBuilder
             foreach ($this->query->where as $whereIndex => $value) {
                 if (isset($value['type']) && $value['type'] === Where::EXISTS()) {
                     $subquery = $value['subquery'] ?? null;
-                    $resolved = $this->resolvedSubqueries['where'][$whereIndex] ?? null;
-                    if ($subquery instanceof IQueryBuilder && $resolved === null) {
+                    if ($subquery instanceof IQueryBuilder) {
                         $values = array_merge($values, $subquery->getValues());
                     }
                 } elseif (isset($value['arguments']['default'])) {
@@ -455,17 +499,15 @@ class Builder implements IBuilder
         }
 
         if (!empty($this->query->union)) {
-            foreach ($this->query->union as $i => $union) {
-                $resolved = $this->resolvedSubqueries['union'][$i] ?? null;
-                if ($union['type'] === 'subquery' && $resolved === null) {
+            foreach ($this->query->union as $union) {
+                if (($union['type'] ?? '') === Union::SUBQUERY() && ($union['query'] ?? null) instanceof IQueryBuilder) {
                     $values = array_merge($values, $union['query']->getValues());
                 }
             }
         }
         if (!empty($this->query->unionAll)) {
-            foreach ($this->query->unionAll as $i => $unionAll) {
-                $resolved = $this->resolvedSubqueries['unionAll'][$i] ?? null;
-                if ($unionAll['type'] === 'subquery' && $resolved === null) {
+            foreach ($this->query->unionAll as $unionAll) {
+                if (($unionAll['type'] ?? '') === Union::SUBQUERY() && ($unionAll['query'] ?? null) instanceof IQueryBuilder) {
                     $values = array_merge($values, $unionAll['query']->getValues());
                 }
             }
@@ -473,10 +515,9 @@ class Builder implements IBuilder
         if (!empty($this->query->limit)) {
             $limits = explode(', ', $this->query->limit['value']);
             if (self::$context->getDriver() === 'sqlite') {
-                $values = array_merge(
-                    $values,
-                    array_map(fn($limit) => trim($limit), count($limits) === 1 ? $limits : array_reverse($limits))
-                );
+                foreach (isset($this->query->limit['offset']) && count($limits) === 2 ? array_reverse($limits) : $limits as $limit) {
+                    $values[] = trim($limit);
+                }
             } else {
                 foreach ($limits as $limit) {
                     $values[] = trim($limit);

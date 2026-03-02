@@ -307,4 +307,18 @@ class Arrays
         }
         return array_filter($array, fn($value) => !empty($value));
     }
+
+    /**
+     * Secure explode that fills with null indices missing
+     *
+     * @param string $delimiter Delimiter
+     * @param string $string String to divide
+     * @param int $expectedParts Expected number of parts (fill with null if missing)
+     * @return array
+     */
+    public static function secureExplode(string $delimiter, string $string, int $expectedParts = 2): array
+    {
+        $parts = explode($delimiter, $string);
+        return array_pad($parts, $expectedParts, null);
+    }
 }

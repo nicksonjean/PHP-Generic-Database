@@ -26,8 +26,9 @@ $context = Chainable::nativeSQLSrv(env: $_ENV, strategy: false)->connect();
 // =============================================================================
 echo "1. query() - Raw UNION";
 
-$sqlUnion = 'SELECT nome FROM (SELECT nome FROM estado UNION SELECT nome FROM cidade) AS resultado ORDER BY nome OFFSET 0 ROWS FETCH NEXT 15 ROWS ONLY';
+$sqlUnion = 'SELECT nome FROM estado UNION SELECT nome FROM cidade ORDER BY nome OFFSET 0 ROWS FETCH NEXT 15 ROWS ONLY';
 $stmtUnion = $context->query($sqlUnion);
+
 var_dump($stmtUnion->getAllMetadata());
 
 echo "fetchAll(FETCH_ASSOC):";
@@ -57,7 +58,7 @@ while ($row = $stmtUnion5->fetch(Connection::FETCH_ASSOC)) {
 // =============================================================================
 echo "2. query() - Raw UNION ALL";
 
-$sqlUnionAll = 'SELECT nome FROM (SELECT nome FROM estado UNION SELECT nome FROM cidade) AS resultado ORDER BY nome OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY';
+$sqlUnionAll = 'SELECT nome FROM estado UNION ALL SELECT nome FROM cidade ORDER BY nome OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY';
 $stmtUnionAll = $context->query($sqlUnionAll);
 var_dump($stmtUnionAll->getAllMetadata());
 echo "fetchAll(FETCH_BOTH):";
@@ -125,6 +126,9 @@ var_dump($qbUnion->getAllMetadata());
 echo "fetchAll(FETCH_ASSOC):";
 var_dump($qbUnion->fetchAll(Connection::FETCH_ASSOC));
 
+var_dump($qbUnion);
+var_dump($qbUnion->getAllMetadata());
+
 echo "fetch(FETCH_NUM) - iterativo:";
 $qbUnion2 = (new SQLSrvQueryBuilder($context))
     ->select('nome')
@@ -132,6 +136,10 @@ $qbUnion2 = (new SQLSrvQueryBuilder($context))
     ->union((new SQLSrvQueryBuilder($context))->select('nome')->from('cidade'))
     ->order('nome ASC')
     ->limit('0, 5');
+
+var_dump($qbUnion2);
+var_dump($qbUnion2->getAllMetadata());
+
 while ($row = $qbUnion2->fetch(Connection::FETCH_NUM)) {
     var_dump($row);
 }
@@ -150,7 +158,9 @@ $qbUnionAll = (new SQLSrvQueryBuilder($context))
     ->order('nome ASC')
     ->limit('0, 8');
 
+var_dump($qbUnionAll);
 var_dump($qbUnionAll->getAllMetadata());
+
 echo "fetchAll(FETCH_ASSOC):";
 var_dump($qbUnionAll->fetchAll(Connection::FETCH_ASSOC));
 
@@ -170,7 +180,9 @@ $qbExists = (new SQLSrvQueryBuilder($context))
     )
     ->limit('0, 5');
 
+var_dump($qbExists);
 var_dump($qbExists->getAllMetadata());
+
 echo "fetchAll(FETCH_ASSOC):";
 var_dump($qbExists->fetchAll(Connection::FETCH_ASSOC));
 
@@ -185,6 +197,9 @@ $qbExists2 = (new SQLSrvQueryBuilder($context))
             ->where('c.estado_id', '=', 'e.id')
     )
     ->limit('0, 3');
+
+var_dump($qbExists2);
+var_dump($qbExists2->getAllMetadata());
 var_dump($qbExists2->fetchAll(Connection::FETCH_CLASS, stdClass::class));
 
 // =============================================================================
@@ -233,3 +248,32 @@ $qbComplex = (new SQLSrvQueryBuilder($context))
 var_dump($qbComplex->getAllMetadata());
 echo "fetchAll(FETCH_ASSOC):";
 var_dump($qbComplex->fetchAll(Connection::FETCH_ASSOC));
+
+// =============================================================================
+// 12. Raw SQL - UNION ALL com colunas não escapadas
+// =============================================================================
+echo "12. query() - Raw UNION ALL com colunas não escapadas";
+
+$sqlUnionAllUnquoted = 'SELECT id, nome FROM estado UNION ALL SELECT id, nome FROM cidade ORDER BY nome OFFSET 0 ROWS FETCH NEXT 8 ROWS ONLY';
+$stmtUnionAllUnquoted = $context->query($sqlUnionAllUnquoted);
+var_dump($stmtUnionAllUnquoted->getAllMetadata());
+echo "fetchAll(FETCH_ASSOC):";
+var_dump($stmtUnionAllUnquoted->fetchAll(Connection::FETCH_ASSOC));
+
+// =============================================================================
+// 13. QueryBuilder - mesma query do teste 12
+// =============================================================================
+echo "13. QueryBuilder - mesma query do teste 12";
+
+$qbUnionAllTest13 = (new SQLSrvQueryBuilder($context))
+    ->select('id', 'nome')
+    ->from('estado')
+    ->unionAll(
+        (new SQLSrvQueryBuilder($context))->select('id', 'nome')->from('cidade')
+    )
+    ->order('nome')
+    ->limit('0, 10');
+
+var_dump($qbUnionAllTest13->getAllMetadata());
+echo "fetchAll(FETCH_ASSOC):";
+var_dump($qbUnionAllTest13->fetchAll(Connection::FETCH_ASSOC));

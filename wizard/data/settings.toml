@@ -1,0 +1,17 @@
+# Wizard Configuration File
+# Gerado automaticamente — não edite manualmente
+
+queries_page_size = 10
+history_page_size = 10
+connections_page_size = 10
+builders_page_size = 10
+builder_history_page_size = 10
+
+profiles_dir = '/profiles'
+active_profile_file = '/active_profile.json'
+profiles_file = '/profiles.json'
+queries_file = '/queries.json'
+query_history_file = '/query_history.json'
+builders_file = '/builders.json'
+builder_history_file = '/builder_history.json'
+draft_file = '/draft.json'

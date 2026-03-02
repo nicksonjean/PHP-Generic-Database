@@ -1,0 +1,11 @@
+[
+    {
+        "id": "b_6999b4b2451904.89827433",
+        "name": "custom_fluent_native_mysqli",
+        "title": "build_1771680946",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "qb_code": "$qb = (new MySQLiQueryBuilder($context))\r\n    ->select('e.id', 'e.nome', 'e.sigla')\r\n    ->from('estado e')\r\n    ->whereExists(\r\n        (new MySQLiQueryBuilder($context))\r\n            ->select('1')\r\n            ->from('cidade c')\r\n            ->where('c.estado_id', '=', 'e.id')\r\n    )\r\n    ->order('nome ASC')\r\n    ->limit(5);",
+        "created_at": "2026-02-21 13:35:46",
+        "updated_at": "2026-02-21 13:35:46"
+    }
+]

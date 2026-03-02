@@ -11,14 +11,21 @@ use GenericDatabase\Core\Grouping;
 use GenericDatabase\Core\Limit;
 use GenericDatabase\Core\Where;
 use GenericDatabase\Core\Condition;
+use GenericDatabase\Core\Union;
+use GenericDatabase\Interfaces\IQueryBuilder;
 
 class Criteria
 {
+    /**
+     * Parse SELECT clause into structured array.
+     *
+     * @param array{data: string} $arguments
+     * @return array{type: string, value: string, function: string, arguments: string, alias: string|null}
+     */
     public static function getSelect(array $arguments): array
     {
         $result = [];
         $data = array_key_exists('data', $arguments) ? trim($arguments['data']) : [];
-        // Raw/literal expression: quoted string or expression with AS that would misparse (e.g. "'Estado' AS origem", '"Estado" as origem')
         $isRaw = !empty($data) && (
             (str_starts_with($data, '"') || str_starts_with($data, "'")) ||
             (preg_match('/\s+AS\s+\w+/i', $data) && (str_contains($data, "'") || str_contains($data, '"')))
@@ -45,6 +52,12 @@ class Criteria
         return $result;
     }
 
+    /**
+     * Parse FROM clause into structured array.
+     *
+     * @param array{type: string, data: string|array} $arguments
+     * @return array{type: string, value: string, table: string, alias: string|null}
+     */
     public static function getFrom(array $arguments): array
     {
         $result = [];
@@ -61,6 +74,12 @@ class Criteria
         return $result;
     }
 
+    /**
+     * Parse JOIN clause into structured array.
+     *
+     * @param array{type: string, data: string|array, junction: Junction} $arguments
+     * @return array{join: array{type: string, value: string, table: string, alias: string|null}, on: array{junction: Junction, value: string, host: array{table: string, column: string|null}, signal: string, consumer: array{table: string, column: string|null}}}
+     */
     public static function getJoin(array $arguments): array
     {
         $result = [];
@@ -89,6 +108,12 @@ class Criteria
         return $result;
     }
 
+    /**
+     * Parse ON clause into structured array.
+     *
+     * @param array{junction: Junction, data: string} $arguments
+     * @return array{junction: Junction, value: string, host: array{table: string, column: string|null}, signal: string, consumer: array{table: string, column: string|null}}
+     */
     public static function getOn(array $arguments): array
     {
         $result = [];
@@ -112,6 +137,12 @@ class Criteria
         return $result;
     }
 
+    /**
+     * Parse WHERE/HAVING clause into structured array.
+     *
+     * @param array{data: string, enum: string, condition: string, subquery: IQueryBuilder|null, negate: bool} $arguments
+     * @return array{type: string, value: string, function: string, arguments: string, aggregation: array{value: string, type: string, assert: string}, signal: string, condition: string}
+     */
     public static function getWhereHaving(array $arguments): array
     {
         $result = [];
@@ -184,6 +215,12 @@ class Criteria
         return $result;
     }
 
+     /**
+     * Parse GROUP clause into structured array.
+     *
+     * @param array{data: string} $arguments
+     * @return array{type: string, value: string, function: string, arguments: string}
+     */
     public static function getGroup(array $arguments): array
     {
         $result = [];
@@ -209,6 +246,12 @@ class Criteria
         return $result;
     }
 
+    /**
+     * Parse ORDER clause into structured array.
+     *
+     * @param array{sorting: Sorting, data: string} $arguments
+     * @return array{type: string, value: string, function: string, arguments: string, sorting: Sorting}
+     */
     public static function getOrder(array $arguments): array
     {
         $result = [];
@@ -237,29 +280,92 @@ class Criteria
         return $result;
     }
 
+    /**
+     * Parse LIMIT clause into structured array.
+     *
+     * @param array{data: string} $arguments
+     * @return array{type: string, value: string, limit: int, offset: int|null}
+     */
     public static function getLimit(array $arguments): array
     {
         $result = [];
-        $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
-        $context = $arguments['context'] ?? null;
-        if (preg_match(Regex::getLimit(), $data, $matches)) {
-            if ($context->getDriver() === 'firebird') {
-                $lmt = explode(', ', $data);
-                $setLimit = fn(int $rows, ?int $offset): array => isset($offset) ? [$rows, $offset] : [$rows];
-                $value = ((int) $lmt[0] === 0) ? $setLimit(1, (int) $lmt[1]) : $setLimit((int) $lmt[0], (int) $lmt[1]);
-                $value = trim(implode(', ', $value));
-                $limit = (int) $matches['limit'] === 0 ? 1 : $matches['limit'];
-            } else {
-                $value = trim($data);
-                $limit = (int) $matches['limit'];
-            }
-            $result = Arrays::arraySafe([
-                'type' => isset($matches['offset']) ? Limit::OFFSET() : Limit::DEFAULT(),
-                'value' => $value,
+        $data = array_key_exists('data', $arguments) ? trim((string) $arguments['data']) : '';
+        if ($data !== '' && preg_match(Regex::getLimit(), $data, $matches)) {
+            $limit = (int) $matches['limit'];
+            $offset = (isset($matches['offset']) && $matches['offset'] !== '') ? (int) $matches['offset'] : null;
+            $result = [
+                'type' => $offset !== null ? Limit::OFFSET() : Limit::DEFAULT(),
+                'value' => $data,
                 'limit' => $limit,
-                'offset' => isset($matches['offset']) ? (int) $matches['offset'] : null,
-            ]);
+                'offset' => $offset,
+            ];
         }
         return $result;
+    }
+
+    /**
+     * Parse UNION query (IQueryBuilder or raw string) into structured array.
+     * Raw string validated via Regex::getUnion() (must contain UNION SELECT).
+     * When matched, strips "UNION " prefix for Builder output.
+     *
+     * @param array{query: IQueryBuilder|string} $arguments
+     * @return array{type: string, query: IQueryBuilder|string}
+     */
+    public static function getUnion(array $arguments): array
+    {
+        $query = $arguments['query'] ?? '';
+        $union = array_key_exists('union', $arguments) ? $arguments['union'] : Union::DISTINCT();
+        if ($query instanceof IQueryBuilder) {
+            return Arrays::arraySafe([
+                'type' => Union::SUBQUERY(),
+                'union' => $union,
+                'query' => $query,
+            ]);
+        }
+        $raw = is_string($query) ? trim($query) : '';
+        if ($raw !== '' && preg_match(Regex::getUnion(), $raw)) {
+            $stripped = preg_replace(Regex::getUnion(), '', $raw);
+            return Arrays::arraySafe([
+                'type' => Union::RAW(),
+                'union' => $union,
+                'query' => $stripped !== null ? trim($stripped) : $raw,
+            ]);
+        }
+        return Arrays::arraySafe([
+            'type' => Union::RAW(),
+            'union' => $union,
+            'query' => $raw,
+        ]);
+    }
+
+    /**
+     * Parse UNION ALL query (IQueryBuilder or raw string) into structured array.
+     * Raw string validated via Regex::getUnion() (casa UNION e UNION ALL).
+     *
+     * @param array{query: IQueryBuilder|string} $arguments
+     * @return array{type: string, query: IQueryBuilder|string}
+     */
+    public static function getUnionAll(array $arguments): array
+    {
+        return self::getUnion($arguments);
+    }
+
+    /**
+     * Parse EXISTS condition into structured array for WHERE clause.
+     *
+     * @param array{subquery: IQueryBuilder|null, negate?: bool, condition?: string} $arguments
+     * @return array{type: string, subquery: IQueryBuilder|null, negate: bool, condition: string}
+     */
+    public static function getExists(array $arguments): array
+    {
+        $subquery = $arguments['subquery'] ?? null;
+        $negate = $arguments['negate'] ?? false;
+        $condition = $arguments['condition'] ?? Condition::NONE();
+        return Arrays::arraySafe([
+            'type' => Where::EXISTS(),
+            'subquery' => $subquery,
+            'negate' => $negate,
+            'condition' => $condition,
+        ]);
     }
 }

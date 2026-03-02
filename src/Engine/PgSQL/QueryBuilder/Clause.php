@@ -11,6 +11,7 @@ use GenericDatabase\Core\Select;
 use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
+use GenericDatabase\Core\Union;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Engine\PgSQLQueryBuilder;
 use GenericDatabase\Generic\QueryBuilder\Query;
@@ -139,18 +140,20 @@ class Clause implements IClause
         $negate = array_key_exists('negate', $arguments) ? $arguments['negate'] : false;
 
         if ($subquery !== null) {
-            $self->query->where[] = [
+            $self->query->where[] = Criteria::getExists([
                 'type' => Where::EXISTS(),
                 'subquery' => $subquery,
                 'negate' => $negate,
                 'condition' => $condition,
-            ];
+            ]);
             return $self;
         }
 
         // When where(col, op, val) is used, combine into "col op val" for regex parsing
-        if (count($data) === 3 && isset($data[0], $data[1], $data[2]) && is_string($data[1])
-            && preg_match('/^(=|<>|!=|<=|>=|<|>|LIKE|IN|BETWEEN)$/i', trim((string) $data[1]))) {
+        if (
+            count($data) === 3 && isset($data[0], $data[1], $data[2]) && is_string($data[1])
+            && preg_match('/^(=|<>|!=|<=|>=|<|>|LIKE|IN|BETWEEN)$/i', trim((string) $data[1]))
+        ) {
             $data = [implode(' ', array_map('trim', $data))];
         }
         $getWhere = fn($arrayData) => Criteria::getWhereHaving($arrayData);
@@ -190,6 +193,25 @@ class Clause implements IClause
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
         $enum = array_key_exists('enum', $arguments) ? $arguments['enum'] : Having::class;
         $condition = array_key_exists('condition', $arguments) ? $arguments['condition'] : Condition::NONE();
+        $subquery = array_key_exists('subquery', $arguments) ? $arguments['subquery'] : null;
+        $negate = array_key_exists('negate', $arguments) ? $arguments['negate'] : false;
+
+        if ($subquery !== null) {
+            $self->query->having[] = Criteria::getExists([
+                'type' => Having::EXISTS(),
+                'subquery' => $subquery,
+                'negate' => $negate,
+                'condition' => $condition,
+            ]);
+            return $self;
+        }
+
+        if (
+            count($data) === 3 && isset($data[0], $data[1], $data[2]) && is_string($data[1])
+            && preg_match('/^(=|<>|!=|<=|>=|<|>|LIKE|IN|BETWEEN)$/i', trim((string) $data[1]))
+        ) {
+            $data = [implode(' ', array_map('trim', $data))];
+        }
         $getHaving = fn($arrayData) => Criteria::getWhereHaving($arrayData);
         foreach ($data as $column) {
             if (is_array($column)) {
@@ -199,7 +221,10 @@ class Clause implements IClause
                     'condition' => $condition
                 ]), $column);
             } elseif (is_string($column)) {
-                $self->query->having[] = $getHaving(['data' => $column, 'enum' => $enum, 'condition' => $condition]);
+                $parsed = $getHaving(['data' => $column, 'enum' => $enum, 'condition' => $condition]);
+                if (!empty($parsed)) {
+                    $self->query->having[] = $parsed;
+                }
             }
         }
         return $self;
@@ -228,8 +253,7 @@ class Clause implements IClause
                 array_map(fn($key) => $self->query->group[] = $getGroup(['data' => $key]), $column);
             } elseif (is_string($column)) {
                 if (str_contains($column, ',')) {
-                    $columns = explode(',', $column);
-                    array_map(fn($key) => $self->query->group[] = $getGroup(['data' => $key]), $columns);
+                    array_map(fn($key) => $self->query->group[] = $getGroup(['data' => $key]), explode(',', $column));
                 } else {
                     $self->query->group[] = $getGroup(['data' => $column]);
                 }
@@ -269,13 +293,21 @@ class Clause implements IClause
     {
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new PgSQLQueryBuilder();
         $data = array_key_exists('data', $arguments) ? $arguments['data'] : [];
-        if (Arrays::isDepthArray($data) === 1 && count($data) > 1) {
-            $data = [implode(', ', $data)];
-        }
-        if (Arrays::isMultidimensional($data)) {
-            $self->query->limit = Criteria::getLimit(['data' => implode(', ', reset($data))]);
-        } else {
-            $self->query->limit = Criteria::getLimit(['data' => reset($data)]);
+        $normalizeLimitData = fn(array|string|int $args): string => match (true) {
+            is_string($args) => trim($args),
+            is_int($args) => (string) $args,
+            empty($args) || !is_array($args) => '',
+            default => (function () use ($args): string {
+                $flat = Arrays::isDepthArray($args) > 1 ? reset($args) : $args;
+                return !is_array($flat) ? (string) $flat : implode(', ', array_map('trim', array_map('strval', $flat)));
+            })()
+        };
+        $limitStr = is_array($data) ? $normalizeLimitData($data) : trim((string) $data);
+        if ($limitStr !== '') {
+            $parsed = Criteria::getLimit(['data' => $limitStr]);
+            if (!empty($parsed)) {
+                $self->query->limit = $parsed;
+            }
         }
         return $self;
     }
@@ -284,11 +316,8 @@ class Clause implements IClause
     {
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new PgSQLQueryBuilder();
         $query = array_key_exists('query', $arguments) ? $arguments['query'] : '';
-        if ($query instanceof IQueryBuilder) {
-            $self->query->union[] = ['type' => 'subquery', 'query' => $query];
-        } elseif (is_string($query)) {
-            $self->query->union[] = ['type' => 'raw', 'query' => $query];
-        }
+        $union = array_key_exists('union', $arguments) ? $arguments['union'] : Union::DISTINCT();
+        $self->query->union[] = Criteria::getUnion(['query' => $query, 'union' => $union]);
         return $self;
     }
 
@@ -296,11 +325,8 @@ class Clause implements IClause
     {
         $self = array_key_exists('self', $arguments) ? $arguments['self'] : new PgSQLQueryBuilder();
         $query = array_key_exists('query', $arguments) ? $arguments['query'] : '';
-        if ($query instanceof IQueryBuilder) {
-            $self->query->unionAll[] = ['type' => 'subquery', 'query' => $query];
-        } elseif (is_string($query)) {
-            $self->query->unionAll[] = ['type' => 'raw', 'query' => $query];
-        }
+        $union = array_key_exists('union', $arguments) ? $arguments['union'] : Union::INDISTINCT();
+        $self->query->unionAll[] = Criteria::getUnionAll(['query' => $query, 'union' => $union]);
         return $self;
     }
 }

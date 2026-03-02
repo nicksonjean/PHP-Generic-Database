@@ -1,0 +1,194 @@
+[
+    {
+        "id": "qh_69a2ee2aa5d313.78829136",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT :lim",
+        "params": [
+            "8"
+        ],
+        "query_type": "prepared",
+        "placeholder_type": "named",
+        "executed_at": "2026-02-28 13:31:22",
+        "duration_ms": 39.55,
+        "row_count": 8
+    },
+    {
+        "id": "qh_69a2eca83bf9c5.99367838",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT :lim",
+        "params": [
+            "8"
+        ],
+        "query_type": "prepared",
+        "placeholder_type": "named",
+        "executed_at": "2026-02-28 13:24:56",
+        "duration_ms": 88.31,
+        "row_count": 8
+    },
+    {
+        "id": "qh_6999d98b00e6a8.41778365",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT :lim",
+        "params": [
+            "8"
+        ],
+        "query_type": "prepared",
+        "placeholder_type": "named",
+        "executed_at": "2026-02-21 16:12:59",
+        "duration_ms": 41.09,
+        "row_count": 8
+    },
+    {
+        "id": "qh_6999d953a66ac4.78991301",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT :lim",
+        "params": [
+            "8"
+        ],
+        "query_type": "prepared",
+        "placeholder_type": "named",
+        "executed_at": "2026-02-21 16:12:03",
+        "duration_ms": 43.35,
+        "row_count": 8
+    },
+    {
+        "id": "qh_6999d8ec67eeb9.67298299",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT :lim",
+        "params": [
+            "8"
+        ],
+        "query_type": "prepared",
+        "placeholder_type": "named",
+        "executed_at": "2026-02-21 16:10:20",
+        "duration_ms": 26.26,
+        "row_count": 8
+    },
+    {
+        "id": "qh_6999d86892dd38.50265822",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT nome FROM estado UNION SELECT nome FROM cidade ORDER BY nome LIMIT 15",
+        "params": [],
+        "query_type": "raw",
+        "placeholder_type": "named",
+        "executed_at": "2026-02-21 16:08:08",
+        "duration_ms": 31.53,
+        "row_count": 15
+    },
+    {
+        "id": "qh_6999c428f3dd50.01280745",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT :lim",
+        "params": [
+            "8"
+        ],
+        "query_type": "prepared",
+        "placeholder_type": "named",
+        "executed_at": "2026-02-21 14:41:44",
+        "duration_ms": 49.55,
+        "row_count": 8
+    },
+    {
+        "id": "qh_6999b48ae9d262.81018108",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT nome FROM estado UNION SELECT nome FROM cidade ORDER BY nome LIMIT 15",
+        "params": [],
+        "query_type": "raw",
+        "placeholder_type": "question",
+        "executed_at": "2026-02-21 13:35:06",
+        "duration_ms": 6.13,
+        "row_count": 15
+    },
+    {
+        "id": "qh_69985d732e4331.79788956",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT nome FROM estado UNION SELECT nome FROM cidade ORDER BY nome LIMIT 15",
+        "params": [],
+        "query_type": "raw",
+        "connection": "preset_fluent_pdo_pgsql",
+        "executed_at": "2026-02-20 13:11:15",
+        "duration_ms": 9.64,
+        "row_count": 15
+    },
+    {
+        "id": "qh_69984dd4155b33.88325544",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT :lim",
+        "params": [
+            "3"
+        ],
+        "query_type": "prepared",
+        "connection": "preset_fluent_pdo_pgsql",
+        "executed_at": "2026-02-20 12:04:36",
+        "duration_ms": 8.23,
+        "row_count": 3
+    },
+    {
+        "id": "qh_69984d6e8c23c9.66137742",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT nome FROM estado UNION SELECT nome FROM cidade ORDER BY nome LIMIT :lim",
+        "params": [
+            "8"
+        ],
+        "query_type": "prepared",
+        "connection": "preset_fluent_pdo_pgsql",
+        "executed_at": "2026-02-20 12:02:54",
+        "duration_ms": 14.59,
+        "row_count": 8
+    },
+    {
+        "id": "qh_69984d54bf7864.74520391",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE NOT EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "params": [],
+        "query_type": "raw",
+        "connection": "preset_fluent_pdo_pgsql",
+        "executed_at": "2026-02-20 12:02:28",
+        "duration_ms": 8.29,
+        "row_count": 0
+    },
+    {
+        "id": "qh_69984d4320cd08.96409463",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome, e.sigla FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT 5",
+        "params": [],
+        "query_type": "raw",
+        "connection": "preset_fluent_pdo_pgsql",
+        "executed_at": "2026-02-20 12:02:11",
+        "duration_ms": 23.6,
+        "row_count": 5
+    },
+    {
+        "id": "qh_69984d32ccd282.31832899",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT nome FROM estado UNION ALL SELECT nome FROM cidade ORDER BY nome LIMIT 10",
+        "params": [],
+        "query_type": "raw",
+        "connection": "preset_fluent_pdo_pgsql",
+        "executed_at": "2026-02-20 12:01:54",
+        "duration_ms": 7.66,
+        "row_count": 10
+    },
+    {
+        "id": "qh_69984ce9d36686.92116660",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT nome FROM estado UNION SELECT nome FROM cidade ORDER BY nome LIMIT 15",
+        "params": [],
+        "query_type": "raw",
+        "connection": "preset_fluent_pdo_pgsql",
+        "executed_at": "2026-02-20 12:00:41",
+        "duration_ms": 67.74,
+        "row_count": 15
+    },
+    {
+        "id": "qh_699844ce2cf651.10075273",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT * FROM estado",
+        "params": [],
+        "query_type": "raw",
+        "connection": "preset_fluent_pdo_pgsql",
+        "executed_at": "2026-02-20 11:26:06",
+        "duration_ms": 34.98,
+        "row_count": 27
+    }
+]

@@ -1,0 +1,12 @@
+{
+    "active_connection": {
+        "source": "Custom",
+        "name": "custom_fluent_native_mysqli",
+        "module": "Chainable",
+        "engine": "Native",
+        "driver": "MySQLi",
+        "type": "Specific",
+        "env_file": "profiles\/.custom_fluent_native_mysqli",
+        "php_file": "profiles\/custom_fluent_native_mysqli.php"
+    }
+}

@@ -20,8 +20,8 @@ class Regex
     private const SQL_FUNCTION_SIGNAL = '(?<function_signal>[=<>!]+)';
     private const SQL_TABLE_PREFIX_CONSUMER = '(?<table_prefix_consumer>\w+)[\.]';
     private const SQL_COLUMN_NAME_CONSUMER = '(?<column_name_consumer>\w+|\*)';
-    private const SQL_LIMIT = '(?<limit>\w+)';
-    private const SQL_OFFSET = '(?:[\,]\s*(?<offset>\w+))?';
+    private const SQL_LIMIT = '(?<limit>\d+)';
+    private const SQL_OFFSET = '(?<offset>\d+)\s*,\s*';
     private const SQL_AGGREGATION = '(?<aggregation>(?:(?:NOT\s+)?(?:LIKE|IN|BETWEEN)))';
     private const SQL_ARGUMENTS = '(?<arguments>[^\n,| AND ]+)';
     private const SQL_AND_OR_COMMA = '\s*(?:(?:AND)|(?:,))\s*';
@@ -33,6 +33,8 @@ class Regex
     private const SQL_FUNCTION_ARGUMENTS_WITHOUT_COMMA = '(?<function_arguments>[^\n,| AND ]+)';
     private const SQL_FUNCTION_ARGUMENTS_EXTRA = '(?<function_arguments_extra>[^\)\n]+)';
     private const SQL_FUNCTION_ARGUMENTS_WITHOUT = '(?:\(?(?<function_arguments_unlimited>[^\)\n]+)\)?)';
+    private const SQL_HAS_UNION = '(?<has_union>\bUNION\b(?:\s+ALL)?)';
+    private const SQL_HAS_EXISTS = '(?<has_exists>(?:NOT\s+)?\bEXISTS\b)';
 
     private static function getRegex(string $regex, int $init = 1, int $term = 0): string
     {
@@ -41,12 +43,12 @@ class Regex
 
     private static function regexLimit(): string
     {
-        return '^(?:' . self::SQL_LIMIT . self::SQL_OFFSET . ')$';
+        return '(?:' . self::SQL_OFFSET . ')?' . self::SQL_LIMIT;
     }
 
     public static function getLimit(): string
     {
-        return '/^' . self::getRegex(self::regexLimit(), 2, 2) . '$/i';
+        return '/^' . self::regexLimit() . '$/';
     }
 
     private static function regexFunctionWithoutAlias(): string
@@ -120,5 +122,35 @@ class Regex
     public static function getWhereHaving(): string
     {
         return '/^' . self::getRegex(self::regexWhereHaving(), 2, 2) . '$/i';
+    }
+
+    /**
+     * Valida raw UNION/UNION ALL subquery e remove prefixo quando aplicável.
+     * Mesma regex para ambos os propósitos, evitando duplicidade.
+     */
+    public static function getUnion(): string
+    {
+        return '/^\s*' . self::getRegex(self::SQL_HAS_UNION, 12, 26) . '\s+(?:ALL\s+)?/i';
+    }
+
+    /**
+     * Alias: mesma regex de getUnion (UNION e UNION ALL).
+     */
+    public static function getUnionAll(): string
+    {
+        return self::getUnion();
+    }
+
+    private static function regexExists(): string
+    {
+        return '^(?:' . self::SQL_HAS_EXISTS . ')$';
+    }
+
+    /**
+     * Valida EXISTS/NOT EXISTS subquery pattern.
+     */
+    public static function getExists(): string
+    {
+        return '/^' . self::getRegex(self::regexExists(), 2, 2) . '/i';
     }
 }

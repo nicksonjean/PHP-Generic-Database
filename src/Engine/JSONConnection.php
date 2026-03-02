@@ -78,25 +78,25 @@ class JSONConnection implements IConnection
      * Instance of the connection with database
      * @var mixed $connection
      */
-    private static mixed $connection;
+    private static mixed $connection = null;
 
-    private static IFlatFileFetch $fetchHandler;
+    private static ?IFlatFileFetch $fetchHandler = null;
 
-    private static IFlatFileStatements $statementsHandler;
+    private static ?IFlatFileStatements $statementsHandler = null;
 
-    private static IDSN $dsnHandler;
+    private static ?IDSN $dsnHandler = null;
 
-    private static IAttributes $attributesHandler;
+    private static ?IAttributes $attributesHandler = null;
 
-    private static IOptions $optionsHandler;
+    private static ?IOptions $optionsHandler = null;
 
-    private static IArguments $argumentsHandler;
+    private static ?IArguments $argumentsHandler = null;
 
-    private static ITransactions $transactionsHandler;
+    private static ?ITransactions $transactionsHandler = null;
 
-    private static IStructure $structureHandler;
+    private static ?IStructure $structureHandler = null;
 
-    private static IReport $reportHandler;
+    private static ?IReport $reportHandler = null;
 
     /**
      * Empty constructor since initialization is handled by traits and interface methods

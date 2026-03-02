@@ -1,0 +1,14 @@
+[
+    {
+        "id": "q_69984e092d5d55.46765420",
+        "name": "custom_fluent_native_mysqli",
+        "sql": "SELECT e.id, e.nome FROM estado e WHERE EXISTS (SELECT 1 FROM cidade c WHERE c.estado_id = e.id) ORDER BY e.nome LIMIT :lim",
+        "query_type": "prepared",
+        "placeholder_type": "named",
+        "created_at": "2026-02-20 12:05:29",
+        "updated_at": "2026-02-20 13:29:55",
+        "params": [
+            "8"
+        ]
+    }
+]

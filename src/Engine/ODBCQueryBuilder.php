@@ -12,6 +12,7 @@ use GenericDatabase\Core\Sorting;
 use GenericDatabase\Core\Grouping;
 use GenericDatabase\Core\Junction;
 use GenericDatabase\Core\Condition;
+use GenericDatabase\Core\Union;
 use GenericDatabase\Helpers\Types\Compounds\Arrays;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Parsers\SQL\Parse;
@@ -58,6 +59,10 @@ use GenericDatabase\Engine\ODBC\QueryBuilder\Clause;
  * - `orderAsc(array|string ...$data)`: Adds an ORDER BY ASC clause to the query.
  * - `orderDesc(array|string ...$data)`: Adds an ORDER BY DESC clause to the query.
  * - `limit(array|string ...$data)`: Adds a LIMIT clause to the query.
+ * - `union(string|IQueryBuilder $query)`: Adds a UNION clause to the query.
+ * - `unionAll(string|IQueryBuilder $query)`: Adds a UNION ALL clause to the query.
+ * - `whereExists(string|IQueryBuilder $subquery)`: Adds a WHERE EXISTS clause to the query.
+ * - `whereNotExists(string|IQueryBuilder $subquery)`: Adds a WHERE NOT EXISTS clause to the query.
  *
  * Query Execution Methods:
  * - `build()`: Builds the query string.
@@ -497,22 +502,34 @@ class ODBCQueryBuilder implements IQueryBuilder
         return Clause::limit(['data' => $data, 'self' => self::$self, 'context' => self::$context]);
     }
 
+    /**
+     * @param string|IQueryBuilder $query
+     * @return static
+     */
     public function union(string|IQueryBuilder $query): static
     {
         /** @var static */
-        $result = Clause::union(['query' => $query, 'self' => $this]);
+        $result = Clause::union(['query' => $query, 'union' => Union::DISTINCT(), 'self' => $this]);
         self::$self = $this;
         return $result;
     }
 
+    /**
+     * @param string|IQueryBuilder $query
+     * @return static
+     */
     public function unionAll(string|IQueryBuilder $query): static
     {
         /** @var static */
-        $result = Clause::unionAll(['query' => $query, 'self' => $this]);
+        $result = Clause::unionAll(['query' => $query, 'union' => Union::INDISTINCT(), 'self' => $this]);
         self::$self = $this;
         return $result;
     }
 
+    /**
+     * @param string|IQueryBuilder $subquery
+     * @return static
+     */
     public function whereExists(string|IQueryBuilder $subquery): static
     {
         /** @var static */
@@ -521,6 +538,10 @@ class ODBCQueryBuilder implements IQueryBuilder
         return $result;
     }
 
+    /**
+     * @param string|IQueryBuilder $subquery
+     * @return static
+     */
     public function whereNotExists(string|IQueryBuilder $subquery): static
     {
         /** @var static */
@@ -568,48 +589,13 @@ class ODBCQueryBuilder implements IQueryBuilder
      */
     private function parse(): string
     {
-        $buildResult = $this->build();
-        $builder = new Builder($this->query, $this->getContext(), $this->resolveSubqueries());
+        $buildRawResult = $this->buildRaw();
+        $builder = new Builder($this->query, $this->getContext());
         return $builder->parse(
-            $buildResult,
+            $buildRawResult,
             Parse::SQL_DIALECT_NONE,
             Parse::SQL_DIALECT_SINGLE_QUOTE
         );
-    }
-
-    /**
-     * Orquestrador: resolve todas as subqueries primeiro (por posição) e retorna mapa para inserção na query principal.
-     *
-     * @return array<string, array<int, string>> ['where' => [index => sql], 'union' => [...], 'unionAll' => [...]]
-     */
-    private function resolveSubqueries(): array
-    {
-        $resolved = ['where' => [], 'union' => [], 'unionAll' => []];
-        if (!empty($this->query->where)) {
-            foreach ($this->query->where as $i => $item) {
-                if (isset($item['type']) && $item['type'] === Where::EXISTS()) {
-                    $sub = $item['subquery'] ?? null;
-                    if ($sub instanceof IQueryBuilder) {
-                        $resolved['where'][$i] = $sub->buildRaw();
-                    }
-                }
-            }
-        }
-        if (!empty($this->query->union)) {
-            foreach ($this->query->union as $i => $union) {
-                if (isset($union['type']) && $union['type'] === 'subquery' && $union['query'] instanceof IQueryBuilder) {
-                    $resolved['union'][$i] = $union['query']->buildRaw();
-                }
-            }
-        }
-        if (!empty($this->query->unionAll)) {
-            foreach ($this->query->unionAll as $i => $unionAll) {
-                if (isset($unionAll['type']) && $unionAll['type'] === 'subquery' && $unionAll['query'] instanceof IQueryBuilder) {
-                    $resolved['unionAll'][$i] = $unionAll['query']->buildRaw();
-                }
-            }
-        }
-        return $resolved;
     }
 
     /**
@@ -618,7 +604,7 @@ class ODBCQueryBuilder implements IQueryBuilder
      */
     public function build(): string
     {
-        return (new Builder($this->query, $this->getContext(), $this->resolveSubqueries()))->build();
+        return (new Builder($this->query, $this->getContext()))->build();
     }
 
     /**
@@ -627,7 +613,7 @@ class ODBCQueryBuilder implements IQueryBuilder
      */
     public function buildRaw(): string
     {
-        return (new Builder($this->query, $this->getContext(), $this->resolveSubqueries()))->buildRaw();
+        return (new Builder($this->query, $this->getContext()))->buildRaw();
     }
 
     /**
@@ -635,7 +621,7 @@ class ODBCQueryBuilder implements IQueryBuilder
      */
     public function getValues(): array
     {
-        return (new Builder($this->query, $this->getContext(), $this->resolveSubqueries()))->getValues();
+        return (new Builder($this->query, $this->getContext()))->getValues();
     }
 
     /**

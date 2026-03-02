@@ -478,6 +478,7 @@ composer.lock
 *.scss.map
 ###> symfony/framework-bundle ###
 /.env
+/.var
 /.env.local
 /.env.local.php
 /.env.*.local

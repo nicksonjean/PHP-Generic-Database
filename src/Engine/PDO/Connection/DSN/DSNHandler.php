@@ -241,22 +241,19 @@ class DSNHandler implements IDSN
      */
     private function handleSQLite(): string
     {
-        $result = null;
-        if (!Path::isAbsolute($this->get('database')) && $this->get('database') !== 'memory') {
-            $this->set('database', Path::toAbsolute($this->get('database')));
+        $database = $this->get('database');
+        if ($database === 'memory' || $database === ':memory:') {
+            $result = 'sqlite::memory:';
+        } else {
+            if (!Path::isAbsolute($database)) {
+                $database = Path::toAbsolute($database);
+                $this->set('database', $database);
+            }
             $result = vsprintf(
                 "%s:%s",
                 [
                     $this->get('driver'),
-                    $this->get('database')
-                ]
-            );
-        } else {
-            $result = vsprintf(
-                "%s::%s:",
-                [
-                    $this->get('driver'),
-                    $this->get('database')
+                    $database
                 ]
             );
         }
