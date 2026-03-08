@@ -88,7 +88,6 @@
     "symfony/yaml": "6.0.x-dev",
     "vlucas/phpdotenv": "^5.5@dev",
     "hiqdev/hoa-compiler": "^1.0",
-    "marcocesarato/sqlparser": "^0.2.106",
     "cweagans/composer-patches": "^1.7"
   },
   "autoload-dev": {

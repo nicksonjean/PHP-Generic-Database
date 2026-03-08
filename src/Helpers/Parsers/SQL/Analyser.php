@@ -4,16 +4,37 @@ declare(strict_types=1);
 
 namespace GenericDatabase\Helpers\Parsers\SQL;
 
+use Hoa\Compiler\Llk\Llk;
+use Hoa\Compiler\Llk\Parser;
 use Hoa\Compiler\Llk\TreeNode;
+use Hoa\File\Read;
 
 /**
  * SQL Query Analyzer - Complete AST analysis and query reconstruction
  *
  * Extracts and rebuilds all query components: tables, columns, aliases,
  * joins, unions, subqueries, literals, identifiers, parameters, etc.
+ *
+ * The grammar file is loaded once and kept in a static cache per path,
+ * so repeated instantiations (even with different SQL strings) reuse
+ * the same compiled grammar without re-reading the file.
+ *
+ * Usage:
+ *   $analyzer = new Analyser($sql);                          // default grammar
+ *   $analyzer = new Analyser($sql, '/path/to/custom.hoa');   // custom grammar
+ *   $analyzer = new Analyser($sql, null, 'InsertQuery');     // custom rule
  */
 class Analyser
 {
+    /** Absolute path to the bundled grammar file */
+    private const DEFAULT_GRAMMAR = __DIR__ . '/resources/SQL_Grammar_Syntax.hoa';
+
+    /** Grammar rule used as entry point when none is specified */
+    private const DEFAULT_RULE = 'SelectQuery';
+
+    /** @var array<string, Parser> Compiled grammars keyed by resolved file path */
+    private static array $compilerCache = [];
+
     private TreeNode $ast;
 
     /** @var array Complete parsed structure */
@@ -40,10 +61,54 @@ class Analyser
     /** @var array All values (literals + parameters) in query order */
     private array $orderedValues = [];
 
-    public function __construct(TreeNode $ast)
-    {
-        $this->ast = $ast;
+    /**
+     * @param string      $sql         SQL string to analyze
+     * @param string|null $grammarPath Path to a .hoa grammar file; null = bundled grammar
+     * @param string      $rule        Grammar entry-point rule (e.g. 'SelectQuery')
+     */
+    public function __construct(
+        string $sql,
+        ?string $grammarPath = null,
+        string $rule = self::DEFAULT_RULE
+    ) {
+        $this->ast = self::compileAndParse($sql, $grammarPath ?? self::DEFAULT_GRAMMAR, $rule);
         $this->analyze();
+    }
+
+    /**
+     * Return the compiler for $grammarPath, loading it once and caching it.
+     * Subsequent calls with the same path return the cached instance immediately.
+     */
+    private static function getCompiler(string $grammarPath): Parser
+    {
+        if (!isset(self::$compilerCache[$grammarPath])) {
+            self::$compilerCache[$grammarPath] = Llk::load(new Read($grammarPath));
+        }
+
+        return self::$compilerCache[$grammarPath];
+    }
+
+    /**
+     * Parse $sql with the (possibly cached) compiler for $grammarPath.
+     */
+    private static function compileAndParse(string $sql, string $grammarPath, string $rule): TreeNode
+    {
+        return self::getCompiler($grammarPath)->parse($sql, $rule);
+    }
+
+    /**
+     * Evict one or all cached compilers.
+     * Useful in long-running processes when a grammar file is updated on disk.
+     *
+     * @param string|null $grammarPath Path to evict; null evicts all entries
+     */
+    public static function clearCompilerCache(?string $grammarPath = null): void
+    {
+        if ($grammarPath === null) {
+            self::$compilerCache = [];
+        } else {
+            unset(self::$compilerCache[$grammarPath]);
+        }
     }
 
     // =========================================================================

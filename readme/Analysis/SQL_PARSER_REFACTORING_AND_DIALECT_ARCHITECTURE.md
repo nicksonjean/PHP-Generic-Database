@@ -2,7 +2,7 @@
 
 **Objetivo:** Recomendar a melhor abordagem para refatorar o código do projeto, criando um parser SQL que suporte o léxico de diversos dialetos (SQLite, MySQL, Oracle, PostgreSQL, SQL Server, Firebird), facilitando a expansão das classes QueryBuilder, mantendo o suporte a queries puras já funcional.
 
-**Última atualização:** 2025-02-07
+**Última atualização:** 2026-03-07
 
 ---
 
@@ -14,8 +14,10 @@
 |------------|-------------|------------------|----------|
 | **Lexicon** | `Helpers/Parsers/SQL/Lexicon.php` | Palavras reservadas SQL (lista única) | Única lista; não diferencia dialetos (ex.: `LIMIT` vs `FETCH FIRST n ROWS`, `TOP`, `ROWNUM`). |
 | **Parse** | `Helpers/Parsers/SQL/Parse.php` | Escape de identificadores, binds (`:name`/`?`/`$n`), extração de parâmetros | Dialeto é um `int` (BACKTICK, DOUBLE_QUOTE, etc.); lógica de escape e regex espalhada e frágil. |
+| **Analyser** | `Helpers/Parsers/SQL/Analyser.php` | Análise AST via Hoa Compiler (LL(k)); extração de tabelas, colunas, parâmetros, subqueries, EXISTS | Cache estático de gramática por path; construtor recebe `string $sql` + `?string $grammarPath`; suporta gramáticas customizadas e regras alternativas via terceiro parâmetro. |
 | **TypeDetector** | `Helpers/Parsers/SQL/Query/TypeDetector.php` | Detecção de tipo (SELECT/INSERT/UPDATE/DELETE), CTE, subqueries | Regex e comentários hardcoded; não considera diferenças de sintaxe por dialeto. |
 | **Info** | `Helpers/Parsers/SQL/Query/Info.php` | DTO com resultado da análise da query | Depende do TypeDetector; sem noção de dialeto. |
+| **FlatFile/SelectParser** | `Helpers/Parsers/SQL/FlatFile/SelectParser.php` | Helpers para Flat Files: split UNION/UNION ALL, extração de EXISTS do WHERE | Exclusivo para engines Flat File (CSV, JSON, XML, YAML, INI, NEON). |
 | **Regex (RDBMS)** | `Engine/{SQLite,MySQLi,PgSQL,OCI,Firebird,ODBC,PDO,SQLSrv}/QueryBuilder/Regex.php` | Padrões para SELECT, FROM, ON, WHERE/HAVING, GROUP/ORDER, LIMIT | **Código praticamente idêntico** entre engines (copy-paste); cada engine tem sua classe. |
 | **Regex (FlatFiles)** | `Engine/{JSON,CSV,XML,YAML,INI,NEON}/QueryBuilder/Regex.php` | Implementam `IRegex` com padrões próprios | Outra “família” de regex; fragmentação duplicada. |
 | **Criteria** | `Engine/*/QueryBuilder/Criteria.php` | Parse de cláusulas (getSelect, getFrom, getWhereHaving, etc.) usando `Regex` da engine | **Lógica duplicada** em cada engine; pequenas variações. |

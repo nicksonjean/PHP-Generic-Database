@@ -2,7 +2,7 @@
 
 **Objetivo:** Avaliar a utilidade e os benefícios de integrar a classe `Analyser` no projeto PHP-Generic-Database, especificamente nos métodos `query()` e `prepare()` da classe `Connection` e no `QueryBuilder`.
 
-**Última atualização:** 2025-02-16
+**Última atualização:** 2026-03-07
 
 ---
 
@@ -46,23 +46,43 @@ src/Helpers/Parsers/SQL/
 | Dependência | Versão | Propósito |
 |-------------|--------|-----------|
 | `hiqdev/hoa-compiler` | ^1.0 | Compilador LL(k) para gramática G4 |
-| `marcocesarato/sqlparser` | ^0.2.106 | Parser SQL alternativo (se usado) |
 
 **Nota:** O projeto usa `Hoa\Compiler\Llk` para carregar e executar a gramática `src\Helpers\Parsers\SQL\resources\SQL_Grammar_Syntax.hoa`. A gramática define tokens e regras de produção para SQL padrão.
 
 ### 2.3 Fluxo de Parsing
 
 ```
-SQL String → Hoa Compiler (grammar) → AST (TreeNode)
-                                          ↓
-                              Analyser($ast)
-                                          ↓
-                              Estrutura analisada + métodos de extração
+SQL String → Analyser($sql)
+                  ↓
+          Cache estático (por path de gramática)
+          → na 1ª chamada: Llk::load() + cache
+          → nas demais: retorna instância cacheada
+                  ↓
+          Parser::parse($sql, $rule) → TreeNode (AST)
+                  ↓
+          Estrutura analisada + métodos de extração
 ```
 
-1. **Carregamento da gramática:** `Hoa\Compiler\Llk::load(new Hoa\File\Read(GRAMMAR_FILE))`
-2. **Parse:** `$compiler->parse($query, 'SelectQuery')` — retorna `TreeNode` (AST)
-3. **Análise:** `new Analyser($ast)` — percorre a árvore e extrai componentes
+1. **Carregamento da gramática (automático, uma única vez):** Na primeira instância, `Llk::load(new Read($grammarPath))` é chamado e armazenado em `Analyser::$compilerCache[$grammarPath]`. Chamadas subsequentes reutilizam o compilador já carregado.
+2. **Parse:** Internamente, `$compiler->parse($sql, $rule)` — retorna `TreeNode` (AST)
+3. **Análise:** `new Analyser($sql)` — faz o parse e percorre a árvore extraindo componentes
+
+**API simplificada:**
+
+```php
+// Gramática padrão (bundled), regra padrão 'SelectQuery'
+$analyzer = new Analyser($sql);
+
+// Gramática customizada
+$analyzer = new Analyser($sql, '/path/to/custom.hoa');
+
+// Gramática customizada + regra alternativa
+$analyzer = new Analyser($sql, '/path/to/custom.hoa', 'InsertQuery');
+
+// Limpar cache (quando o arquivo .hoa for atualizado em disco)
+Analyser::clearCompilerCache();           // limpa tudo
+Analyser::clearCompilerCache($path);      // limpa apenas um entry
+```
 
 ---
 
@@ -112,7 +132,7 @@ Conforme `src\Helpers\Parsers\SQL\resources\SQL_Grammar_Syntax.hoa`:
 - **UpdateQuery** — UPDATE
 - **DeleteQuery** — DELETE
 
-O `Analyser` atual está focado em **SelectQuery** (conforme `ParserSQL.php` que usa `$compiler->parse($query, 'SelectQuery')`). INSERT/UPDATE/DELETE exigiriam extensão do analyzer.
+O `Analyser` atual está focado em **SelectQuery** (regra padrão). INSERT/UPDATE/DELETE podem ser utilizados passando a regra explícita no terceiro parâmetro do construtor (`new Analyser($sql, null, 'InsertQuery')`), mas o `detectQueryType()` e os métodos de extração ainda são otimizados para SELECT.
 
 ---
 
@@ -198,11 +218,11 @@ O `parse()` usa `Parse::escape()` para normalizar identificadores. O `parseParam
 
 | Aspecto | Impacto |
 |---------|---------|
-| **Carregamento da gramática** | O custo de `load()` é significativo; deve ser feito uma vez e cacheado. |
+| **Carregamento da gramática** | O custo de `load()` é significativo na **primeira** instância; a partir daí a gramática fica em `Analyser::$compilerCache` (memória do processo) e não é recarregada. |
 | **Parse** | Em queries muito complexas (UNION, múltiplas subqueries, EXISTS aninhados), o usuário relatou que **chega a ser extremamente lento**. |
 | **Custo por operação** | Cada `query()` ou `prepare()` que usar o parser adiciona latência. |
 
-**Mitigação:** Usar o parser apenas quando configurado (ex.: `ATTR_VALIDATE_SQL` ou `ATTR_SQL_ANALYZER`) ou em modo debug. Não aplicar em produção por padrão para todas as queries.
+**Mitigação:** Usar o parser apenas quando configurado (ex.: `ATTR_VALIDATE_SQL` ou `ATTR_SQL_ANALYZER`) ou em modo debug. Não aplicar em produção por padrão para todas as queries. O cache estático elimina o custo de `load()` em requisições subsequentes do mesmo processo.
 
 ### 6.2 Cobertura da Gramática
 
@@ -214,9 +234,10 @@ O `parse()` usa `Parse::escape()` para normalizar identificadores. O `parseParam
 
 ### 6.3 Dependências e Manutenção
 
-- **Hoa Compiler:** Biblioteca externa; patches aplicados no projeto (cf. `apply-patches.py`) para compatibilidade.
-- **Gramática:** Manutenção da `src\Helpers\Parsers\SQL\resources\SQL_Grammar_Syntax.hoa` para adicionar novos tokens ou regras.
-- **Namespace:** O projeto usa `PhpSqlParser\Analyser`; o composer.json referencia `kphoen/sql-parser` — pode haver divergência de versões.
+- **Hoa Compiler (`hiqdev/hoa-compiler ^1.0`):** Biblioteca externa; patches aplicados no projeto (cf. arquivos em `patches/`) para compatibilidade com PHP 8.x.
+- **SQL Parser alternativo (`marcocesarato/sqlparser ^0.2.106`):** Disponível como dependência complementar para cenários onde a gramática Hoa não cobre (ex.: DDL, dialetos específicos).
+- **Gramática:** Manutenção do arquivo `src/Helpers/Parsers/SQL/resources/SQL_Grammar_Syntax.hoa` para adicionar novos tokens ou regras. Após atualizar o arquivo em disco, chamar `Analyser::clearCompilerCache()` para invalidar o cache do processo.
+- **Namespace:** `GenericDatabase\Helpers\Parsers\SQL\Analyser` (namespace canônico do projeto).
 
 ---
 
@@ -226,26 +247,26 @@ O `parse()` usa `Parse::escape()` para normalizar identificadores. O `parseParam
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Connection::query() / prepare()                                  │
+│  Connection::query() / prepare()                                │
 └─────────────────────────────────────────────────────────────────┘
                                     │
-                    ┌───────────────┴───────────────┐
-                    │  ATTR_VALIDATE_SQL / ATTR_SQL_ANALYZER?       │
-                    └───────────────┬───────────────┘
+                    ┌───────────────┴────────────────────────────┐
+                    │  ATTR_VALIDATE_SQL / ATTR_SQL_ANALYZER?    │
+                    └───────────────┬────────────────────────────┘
                                     │
-              ┌─────────────────────┼─────────────────────┐
-              │ NÃO                  │ SIM                  │
-              ▼                     ▼                     │
-    Parse::escape()          Parse::escape()              │
-    Parse::parseParameters() │ Analyser::parse()  │
-              │              │ (se falhar → fallback)     │
-              │              │ getOrderedValues() para   │
-              │              │ validar params            │
-              └──────────────────────┴─────────────────────┘
+              ┌─────────────────────┼─────────────────────────┐
+              │ NÃO                 │ SIM                     │
+              ▼                     ▼                         │
+    Parse::escape()          Parse::escape()                  │
+    Parse::parseParameters()        │ Analyser::parse()       │
+              │                     │ (se falhar → fallback)  │
+              │                     │ getOrderedValues() para │
+              │                     │ validar params          │
+              └─────────────────────┴─────────────────────────┘
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│  Driver (PDO, MySQLi, etc.)                                      │
+│  Driver (PDO, MySQLi, etc.)                                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -273,11 +294,26 @@ $connection->query('SELECT * FROM users WHERE id = ?');
 $connection->prepare('SELECT * FROM users WHERE id = :id', [':id' => 1]);
 ```
 
+**Uso direto do Analyser (gramática carregada uma única vez por processo):**
+
+```php
+use GenericDatabase\Helpers\Parsers\SQL\Analyser;
+
+// Primeira chamada: carrega a gramática bundled e armazena em cache estático
+$a1 = new Analyser('SELECT * FROM users WHERE id = ?');
+
+// Demais chamadas: reutilizam o compilador já em memória
+$a2 = new Analyser('SELECT id, name FROM accounts WHERE status = :status');
+
+// Com gramática customizada (também cacheada por path)
+$a3 = new Analyser($sql, '/path/to/my_grammar.hoa');
+```
+
 ### 7.4 Fallback e Performance
 
 - Se o parser falhar (timeout, exceção, query não suportada), **fallback automático** para `Parse::escape()` e `Parse::parseParameters()`.
 - Considerar **timeout** para o parse (ex.: 100ms); se exceder, usar fallback.
-- **Cache** do compilador de gramática em singleton para evitar recarregar a cada request.
+- **Cache** do compilador de gramática já implementado internamente em `Analyser::$compilerCache` — o compilador é carregado apenas uma vez por path de gramática durante o ciclo de vida do processo.
 
 ---
 
@@ -330,42 +366,42 @@ Há **utilidade e benefício** em utilizar o `Analyser` no projeto, **desde que*
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         PHP-Generic-Database                                   │
+│                         PHP-Generic-Database                                │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Connection::query($sql)  │  Connection::prepare($sql, $params)              │
+│  Connection::query($sql)  │  Connection::prepare($sql, $params)             │
 └─────────────────────────────────────────────────────────────────────────────┘
                                         │
                                         ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│  StatementsHandler::query() / prepare()                                        │
-│  - prepareStatement() → parse()                                                │
+│  StatementsHandler::query() / prepare()                                     │
+│  - prepareStatement() → parse()                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
                                         │
                                         ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│  SqlParserFacade (novo)                                                       │
-│  - escape($sql, $dialect)                                                     │
-│  - parseParameters($sql, $dialect)                                           │
-│  - validate($sql) [opcional]                                                  │
+│  SqlParserFacade (novo)                                                     │
+│  - escape($sql, $dialect)                                                   │
+│  - parseParameters($sql, $dialect)                                          │
+│  - validate($sql) [opcional]                                                │
 └─────────────────────────────────────────────────────────────────────────────┘
-                    │                                    │
-        ┌───────────┴───────────┐            ┌───────────┴───────────┐
-        │ ATTR_VALIDATE_SQL=0   │            │ ATTR_VALIDATE_SQL=1    │
-        ▼                       │            ▼                       │
-┌───────────────────┐           │    ┌───────────────────┐           │
-│ Parse (regex)      │           │    │ Hoa Compiler       │           │
-│ - escape()         │           │    │ + Analyser  │           │
-│ - parseParameters()│           │    │ - getOrderedValues()│          │
-└───────────────────┘           │    │ - toSqlWithEscape() │           │
-        │                       │    └───────────────────┘           │
-        │                       │            │                       │
-        │                       │            │ (timeout/falha?)      │
-        │                       │            └───────────────────────┘
-        └───────────────────────┴───────────────────────────────────┘
+                    │                                     │
+        ┌───────────┴────────────┐            ┌───────────┴─────────────┐
+        │ ATTR_VALIDATE_SQL=0    │            │ ATTR_VALIDATE_SQL=1     │
+        ▼                        │            ▼                         │
+┌────────────────────┐           │    ┌─────────────────────┐           │
+│ Parse (regex)      │           │    │ Hoa Compiler        │           │
+│ - escape()         │           │    │ + Analyser          │           │
+│ - parseParameters()│           │    │ - getOrderedValues()│           │
+└────────────────────┘           │    │ - toSqlWithEscape() │           │
+        │                        │    └─────────────────────┘           │
+        │                        │            │                         │
+        │                        │            │ (timeout/falha?)        │
+        │                        │            └─────────────────────────┘
+        └────────────────────────┴───────────────────────────────────┘
                                         │
                                         ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│  Driver (PDO, MySQLi, OCI, etc.)                                             │
+│  Driver (PDO, MySQLi, OCI, etc.)                                            │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -401,9 +437,13 @@ Há **utilidade e benefício** em utilizar o `Analyser` no projeto, **desde que*
 
 ## 12. Referências
 
-- `php-sql-parser/src/Analyser.php` — Implementação do analyzer
-- `php-sql-parser/src/ParserSQL.php` — Exemplo de uso
-- `php-sql-parser/lexic/sql_lexic.g4` — Gramática SQL
-- `src/Helpers/Parsers/SQL/Parse.php` — Parser atual
-- `readme/Analysis/SQL_PARSER_REFACTORING_AND_DIALECT_ARCHITECTURE.md` — Arquitetura de parser e dialetos
-- `readme/Analysis/dql/DQL_EXISTS_UNION_SUBQUERY_IMPACT_ANALYSIS.md` — Impacto de EXISTS/UNION
+- [src/Helpers/Parsers/SQL/Analyser.php](../../src/Helpers/Parsers/SQL/Analyser.php) — Implementação do analyzer (cache estático de gramática)
+- [src/Helpers/Parsers/SQL/resources/SQL_Grammar_Syntax.hoa](../../src/Helpers/Parsers/SQL/resources/SQL_Grammar_Syntax.hoa) — Gramática LL(k) SQL
+- [src/Helpers/Parsers/SQL/resources/SQL_Reserved_Words.lex](../../src/Helpers/Parsers/SQL/resources/SQL_Reserved_Words.lex) — Arquivo de léxico
+- [src/Helpers/Parsers/SQL/Parse.php](../../src/Helpers/Parsers/SQL/Parse.php) — Parser atual (escape/binding via regex)
+- [src/Helpers/Parsers/SQL/FlatFile/SelectParser.php](../../src/Helpers/Parsers/SQL/FlatFile/SelectParser.php) — Parser SQL-Like para Flat Files
+- [src/Helpers/Parsers/SQL/Lexicon.php](../../src/Helpers/Parsers/SQL/Lexicon.php) — Wrapper do léxico (palavras reservadas)
+- [src/Helpers/Parsers/SQL/Query/Info.php](../../src/Helpers/Parsers/SQL/Query/Info.php) — DTO de informações de query
+- [src/Helpers/Parsers/SQL/Query/TypeDetector.php](../../src/Helpers/Parsers/SQL/Query/TypeDetector.php) — Detecção rápida de tipo de query
+- [samples/Utils/Hoa.php](../../samples/Utils/Hoa.php) — Exemplo de uso do Analyser
+- [readme/Analysis/SQL_PARSER_REFACTORING_AND_DIALECT_ARCHITECTURE.md](SQL_PARSER_REFACTORING_AND_DIALECT_ARCHITECTURE.md) — Arquitetura de parser e dialetos
