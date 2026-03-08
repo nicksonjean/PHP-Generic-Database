@@ -14,11 +14,11 @@
 | **Recomendação** | **Integração híbrida e opcional** — usar como camada complementar, não substituta |
 | **Prioridade** | Média — benefícios incrementais; performance é fator limitante |
 
-A biblioteca `php-sql-parser` oferece **validação e análise baseada em AST** (gramática SQL), superando as limitações do parser atual baseado em regex. Porém, o custo de performance em queries complexas exige uma abordagem **seletiva e configurável**.
+A Classe `Analyser` oferece **validação e análise baseada em AST** (gramática SQL), superando as limitações do parser atual baseado em regex. Porém, o custo de performance em queries complexas exige uma abordagem **seletiva e configurável**.
 
 ---
 
-## 2. Visão Geral da Biblioteca php-sql-parser
+## 2. Visão Geral da Classe Analyser
 
 ### 2.1 Arquitetura
 
