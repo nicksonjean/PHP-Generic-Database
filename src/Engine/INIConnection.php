@@ -5,27 +5,27 @@ declare(strict_types=1);
 namespace GenericDatabase\Engine;
 
 use Exception;
+use ReflectionException;
 use AllowDynamicProperties;
+use Dotenv\Exception\ValidationException;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Exceptions;
-use GenericDatabase\Helpers\Parsers\Schema;
 use GenericDatabase\Helpers\Zod\SchemaParser;
 use GenericDatabase\Helpers\Zod\Zod\ZodError;
 use GenericDatabase\Helpers\Zod\SchemaValidator;
-use Dotenv\Exception\ValidationException;
+use GenericDatabase\Helpers\Parsers\SQL\Query\TypeDetector;
 use GenericDatabase\Generic\Connection\Methods;
 use GenericDatabase\Interfaces\IConnection;
-use GenericDatabase\Engine\INI\Connection\INI;
 use GenericDatabase\Interfaces\Connection\IDSN;
+use GenericDatabase\Interfaces\Connection\IReport;
 use GenericDatabase\Interfaces\Connection\IOptions;
 use GenericDatabase\Interfaces\Connection\IArguments;
-use GenericDatabase\Interfaces\Connection\IAttributes;
 use GenericDatabase\Interfaces\Connection\IStructure;
-use GenericDatabase\Interfaces\Connection\IReport;
+use GenericDatabase\Interfaces\Connection\IAttributes;
+use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Interfaces\Connection\IFlatFileFetch;
 use GenericDatabase\Interfaces\Connection\IFlatFileStatements;
-use GenericDatabase\Helpers\Parsers\SQL\Query\TypeDetector;
-use GenericDatabase\Interfaces\Connection\ITransactions;
+use GenericDatabase\Engine\INI\Connection\INI;
 use GenericDatabase\Engine\INI\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\INI\Connection\Fetch\FetchHandler;
 use GenericDatabase\Engine\INI\Connection\Report\ReportHandler;
@@ -33,19 +33,42 @@ use GenericDatabase\Engine\INI\Connection\Options\OptionsHandler;
 use GenericDatabase\Engine\INI\Connection\Arguments\ArgumentsHandler;
 use GenericDatabase\Engine\INI\Connection\Attributes\AttributesHandler;
 use GenericDatabase\Engine\INI\Connection\Fetch\Strategy\FetchStrategy;
-use GenericDatabase\Engine\INI\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\INI\Connection\Statements\StatementsHandler;
 use GenericDatabase\Engine\INI\Connection\Transactions\TransactionsHandler;
+use GenericDatabase\Engine\INI\Connection\Arguments\Strategy\ArgumentsStrategy;
 use GenericDatabase\Engine\INI\Connection\Structure\StructureHandler;
 use GenericDatabase\Engine\INI\Connection\Structure\Strategy\StructureStrategy;
 
 /**
  * INI Connection class for flat file database operations.
  * Provides SQL-like operations on INI files with Schema.ini support.
- * Uses StructureHandler for load/save (same architecture as INIConnection).
  *
- * @method static INIConnection|void setDatabase(mixed $value) Sets the database (directory) path.
- * @method static INIConnection|string getDatabase($value = null) Retrieves the database path.
+ * @method static INIConnection|void setDriver(mixed $value) Sets a driver from the database.
+ * @method static INIConnection|string getDriver($value = null) Retrieves a driver from the database.
+ * @method static INIConnection|void setHost(mixed $value) Sets a host from the database.
+ * @method static INIConnection|string getHost($value = null) Retrieves a host from the database.
+ * @method static INIConnection|void setPort(mixed $value) Sets a port from the database.
+ * @method static INIConnection|int getPort($value = null) Retrieves a port from the database.
+ * @method static INIConnection|void setUser(mixed $value) Sets a user from the database.
+ * @method static INIConnection|string getUser($value = null) Retrieves a user from the database.
+ * @method static INIConnection|void setPassword(mixed $value) Sets a password from the database.
+ * @method static INIConnection|string getPassword($value = null) Retrieves a password from the database.
+ * @method static INIConnection|void setDatabase(mixed $value) Sets a database name from the database.
+ * @method static INIConnection|string getDatabase($value = null) Retrieves a database name from the database.
+ * @method static INIConnection|void setOptions(mixed $value) Sets an options from the database.
+ * @method static INIConnection|array|null getOptions($value = null) Retrieves an options from the database.
+ * @method static INIConnection|void setStrcture(mixed $value) Sets an structure from the database.
+ * @method static INIConnection|array|null getStructure($value = null) Retrieves an structure from the database.*
+ * @method static INIConnection|static setConnected(mixed $value) Sets a connected status from the database.
+ * @method static INIConnection|mixed getConnected($value = null) Retrieves a connected status from the database.
+ * @method static INIConnection|void setDsn(mixed $value) Sets a dsn string from the database.
+ * @method static INIConnection|mixed getDsn($value = null) Retrieves a dsn string from the database.
+ * @method static INIConnection|void setAttributes(mixed $value) Sets an attributes from the database.
+ * @method static INIConnection|mixed getAttributes($value = null) Retrieves an attributes from the database.
+ * @method static INIConnection|void setCharset(mixed $value) Sets a charset from the database.
+ * @method static INIConnection|string getCharset($value = null) Retrieves a charset from the database.
+ * @method static INIConnection|void setException(mixed $value) Sets an exception from the database.
+ * @method static INIConnection|mixed getException($value = null) Retrieves an exception from the database.
  */
 #[AllowDynamicProperties]
 class INIConnection implements IConnection
@@ -53,18 +76,33 @@ class INIConnection implements IConnection
     use Methods;
     use Singleton;
 
+    /**
+     * Instance of the connection with database
+     * @var mixed $connection
+     */
     private static mixed $connection = null;
-    private static IFlatFileFetch $fetchHandler;
-    private static IFlatFileStatements $statementsHandler;
-    private static IDSN $dsnHandler;
-    private static IAttributes $attributesHandler;
-    private static IOptions $optionsHandler;
-    private static IArguments $argumentsHandler;
-    private static ITransactions $transactionsHandler;
-    private static IStructure $structureHandler;
-    private static IReport $reportHandler;
-    private static string $engine = 'ini';
 
+    private static ?IFlatFileFetch $fetchHandler = null;
+
+    private static ?IFlatFileStatements $statementsHandler = null;
+
+    private static ?IDSN $dsnHandler = null;
+
+    private static ?IAttributes $attributesHandler = null;
+
+    private static ?IOptions $optionsHandler = null;
+
+    private static ?IArguments $argumentsHandler = null;
+
+    private static ?ITransactions $transactionsHandler = null;
+
+    private static ?IStructure $structureHandler = null;
+
+    private static ?IReport $reportHandler = null;
+
+    /**
+     * Empty constructor since initialization is handled by traits and interface methods
+     */
     public function __construct()
     {
         self::$structureHandler = new StructureHandler($this, new StructureStrategy());
@@ -123,16 +161,37 @@ class INIConnection implements IConnection
         return self::$transactionsHandler;
     }
 
+    /**
+     * Triggered when invoking inaccessible methods in an object context
+     *
+     * @param string $name Name of the method
+     * @param array $arguments Array of arguments
+     * @return IConnection|string|int|bool|array|null
+     * @throws ReflectionException
+     */
     public function __call(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
         return $this->getArgumentsHandler()->__call($name, $arguments);
     }
 
+    /**
+     * Triggered when invoking inaccessible methods in a static context
+     *
+     * @param string $name Name of the static method
+     * @param array $arguments Array of arguments
+     * @return IConnection|string|int|bool|array|null
+     * @throws ReflectionException
+     */
     public static function __callStatic(string $name, array $arguments): IConnection|string|int|bool|array|null
     {
         return self::getInstance()->getArgumentsHandler()->__callStatic($name, $arguments);
     }
 
+    /**
+     * This method is responsible for prepare the connection options before connect.
+     *
+     * @return INIConnection
+     */
     private function preConnect(): INIConnection
     {
         $this->getOptionsHandler()->setOptions(static::getOptions());
@@ -142,6 +201,11 @@ class INIConnection implements IConnection
         return $this;
     }
 
+    /**
+     * This method is responsible for update in date late binding the connection.
+     *
+     * @return INIConnection
+     */
     private function postConnect(): INIConnection
     {
         $this->getOptionsHandler()->define();
@@ -149,37 +213,37 @@ class INIConnection implements IConnection
         return $this;
     }
 
-    private function parseDsn(): string|Exceptions
-    {
-        return $this->getDsnHandler()->parse();
-    }
-
+    /**
+     * This method is responsible for creating a new instance of the INI connection.
+     *
+     * @param string $database The path of the database directory or 'memory' for in-memory database
+     * @return INIConnection
+     * @throws Exception
+     */
     private function realConnect(string $database): INIConnection
     {
         try {
-            $schemaJson = __DIR__ . '/INI/Connection/INI.json';
-            $schemaParser = new SchemaParser($schemaJson);
-            $validJson = $schemaParser->parse([
+            $schemaFile = __DIR__ . '/INI/Connection/INI.json';
+            $schemaParsed = (new SchemaParser($schemaFile))->parse([
                 'database' => $database,
                 'charset' => static::getCharset() ?? 'UTF-8'
             ]);
-            $validator = new SchemaValidator($schemaJson);
+            $validator = new SchemaValidator($schemaFile);
 
-            if ($validator->validate($validJson)) {
+            if ($validator->validate($schemaParsed)) {
                 $isMemory = $database === 'memory';
 
                 if (!$isMemory) {
-                    if (!is_dir($database)) {
-                        $projectRoot = defined('PATH_ROOT') ? constant('PATH_ROOT') : getcwd();
-                        $potentialPath = realpath($projectRoot . DIRECTORY_SEPARATOR . $database);
+                    if (!is_dir(filename: $database)) {
+                        $realDatabase = realpath(path: defined(constant_name: 'PATH_ROOT') ? constant(name: 'PATH_ROOT') : getcwd() . DIRECTORY_SEPARATOR . $database);
 
-                        if ($potentialPath !== false && is_dir($potentialPath)) {
-                            static::setDatabase($potentialPath);
-                            $database = $potentialPath;
-                        } elseif (!mkdir($database, 0755, true) && !is_dir($database)) {
-                            throw new Exceptions("Database directory does not exist and could not be created: " . $database);
-                        }
+                        ($realDatabase === false || !is_dir($realDatabase))
+                            && throw new Exceptions(message: "Database path " . $database . " directory does not exists: ");
+
+                        static::setDatabase($realDatabase);
                     }
+                } else {
+                    static::setDatabase($database);
                 }
 
                 self::$connection = $this->getStructureHandler()->getData();
@@ -201,6 +265,13 @@ class INIConnection implements IConnection
         return $this;
     }
 
+
+    /**
+     * Connect to the INI database (folder).
+     *
+     * @return INIConnection
+     * @throws Exceptions
+     */
     public function connect(): INIConnection
     {
         try {
@@ -218,6 +289,11 @@ class INIConnection implements IConnection
         }
     }
 
+    /**
+     * Ping the connection.
+     *
+     * @return bool
+     */
     public function ping(): bool
     {
         $database = static::getDatabase();
@@ -227,6 +303,11 @@ class INIConnection implements IConnection
         return is_dir($database);
     }
 
+    /**
+     * Disconnect from the INI database.
+     *
+     * @return void
+     */
     public function disconnect(): void
     {
         if ($this->isConnected()) {
@@ -236,6 +317,11 @@ class INIConnection implements IConnection
         }
     }
 
+    /**
+     * Check if connected.
+     *
+     * @return bool
+     */
     public function isConnected(): bool
     {
         $database = static::getDatabase();
@@ -245,177 +331,386 @@ class INIConnection implements IConnection
         return is_dir($database) && $this->getInstance()->getConnected();
     }
 
+    /**
+     * This method is responsible for parsing the DSN from DSN class.
+     *
+     * @return string|Exceptions
+     */
+    private function parseDsn(): string|Exceptions
+    {
+        return $this->getDsnHandler()->parse();
+    }
+
+    /**
+     * Get the connection instance (data array).
+     *
+     * @return mixed
+     */
     public function getConnection(): mixed
     {
         return self::$connection;
     }
 
+    /**
+     * Set the connection instance.
+     *
+     * @param mixed $connection The connection.
+     * @return mixed
+     */
     public function setConnection(mixed $connection): mixed
     {
         self::$connection = $connection;
         return self::$connection;
     }
 
+    /**
+     * Begin a transaction.
+     *
+     * @return bool
+     */
     public function beginTransaction(): bool
     {
         return $this->getTransactionsHandler()->beginTransaction();
     }
 
+    /**
+     * Commit the transaction.
+     *
+     * @return bool
+     */
     public function commit(): bool
     {
         return $this->getTransactionsHandler()->commit();
     }
 
+    /**
+     * Rollback the transaction.
+     *
+     * @return bool
+     */
     public function rollback(): bool
     {
         return $this->getTransactionsHandler()->rollback();
     }
 
+    /**
+     * Check if in transaction.
+     *
+     * @return bool
+     */
     public function inTransaction(): bool
     {
         return $this->getTransactionsHandler()->inTransaction();
     }
 
+    /**
+     * Get the last insert ID.
+     *
+     * @param string|null $name The name.
+     * @return string|int|false
+     */
     public function lastInsertId(?string $name = null): string|int|false
     {
         return $this->getStatementsHandler()->lastInsertId($name);
     }
 
+    /**
+     * Quote a value.
+     *
+     * @param mixed ...$params The value to quote.
+     * @return string|int
+     */
     public function quote(mixed ...$params): string|int
     {
         return $this->getStatementsHandler()->quote(...$params);
     }
 
+    /**
+     * Reset all metadata.
+     *
+     * @return void
+     */
     public function setAllMetadata(): void
     {
         $this->getStatementsHandler()->setAllMetadata();
     }
 
+    /**
+     * Get all metadata.
+     * Executes the query if not already executed to get accurate metadata.
+     *
+     * @return object
+     */
     public function getAllMetadata(): object
     {
         $queryString = $this->getStatementsHandler()->getQueryString();
 
+        // Only execute for SELECT queries - DML operations are already executed
         if ($this->getStatementsHandler()->getQueryRows() === 0 && !empty($queryString) && TypeDetector::isDmlQuery($queryString) === false) {
+            // Force execution to populate metadata, cursor is reset for subsequent fetches
             $this->getFetchHandler()->execute();
         }
 
         return $this->getStatementsHandler()->getAllMetadata();
     }
 
+    /**
+     * Get the query string.
+     *
+     * @return string
+     */
     public function getQueryString(): string
     {
         return $this->getStatementsHandler()->getQueryString();
     }
 
+    /**
+     * Set the query string.
+     *
+     * @param string $params The query string.
+     * @return void
+     */
     public function setQueryString(string $params): void
     {
         $this->getStatementsHandler()->setQueryString($params);
     }
 
+    /**
+     * Get the query parameters.
+     *
+     * @return array|null
+     */
     public function getQueryParameters(): ?array
     {
         return $this->getStatementsHandler()->getQueryParameters();
     }
 
+    /**
+     * Set the query parameters.
+     *
+     * @param array|null $params The parameters.
+     * @return void
+     */
     public function setQueryParameters(?array $params): void
     {
         $this->getStatementsHandler()->setQueryParameters($params);
     }
 
+    /**
+     * Get the number of query rows.
+     *
+     * @return int|false
+     */
     public function getQueryRows(): int|false
     {
         return $this->getStatementsHandler()->getQueryRows();
     }
 
+    /**
+     * Set the number of query rows.
+     *
+     * @param callable|int|false $params The number of rows.
+     * @return void
+     */
     public function setQueryRows(callable|int|false $params): void
     {
         $this->getStatementsHandler()->setQueryRows($params);
     }
 
+    /**
+     * Get the number of query columns.
+     *
+     * @return int|false
+     */
     public function getQueryColumns(): int|false
     {
         return $this->getStatementsHandler()->getQueryColumns();
     }
 
+    /**
+     * Set the number of query columns.
+     *
+     * @param int|false $params The number of columns.
+     * @return void
+     */
     public function setQueryColumns(int|false $params): void
     {
         $this->getStatementsHandler()->setQueryColumns($params);
     }
 
+    /**
+     * Get the number of affected rows.
+     *
+     * @return int|false
+     */
     public function getAffectedRows(): int|false
     {
         return $this->getStatementsHandler()->getAffectedRows();
     }
 
+    /**
+     * Set the number of affected rows.
+     *
+     * @param int|false $params The number of affected rows.
+     * @return void
+     */
     public function setAffectedRows(int|false $params): void
     {
         $this->getStatementsHandler()->setAffectedRows($params);
     }
 
+    /**
+     * Get the statement.
+     *
+     * @return mixed
+     */
     public function getStatement(): mixed
     {
         return $this->getStatementsHandler()->getStatement();
     }
 
+    /**
+     * Set the statement.
+     *
+     * @param mixed $statement The statement.
+     * @return void
+     */
     public function setStatement(mixed $statement): void
     {
         $this->getStatementsHandler()->setStatement($statement);
     }
 
+    /**
+     * Bind a parameter.
+     *
+     * @param object $params The parameter object.
+     * @return void
+     */
     public function bindParam(object $params): void
     {
         $this->getStatementsHandler()->bindParam($params);
     }
 
+    /**
+     * Parse a query.
+     *
+     * @param mixed ...$params The parameters.
+     * @return string
+     */
     public function parse(mixed ...$params): string
     {
         return $this->getStatementsHandler()->parse(...$params);
     }
 
+    /**
+     * Execute a query.
+     *
+     * @param mixed ...$params The query parameters.
+     * @return static|null
+     */
     public function query(mixed ...$params): static|null
     {
+        // Clear fetch cache for new query
         $this->getFetchHandler()->clearCache();
         $this->getStatementsHandler()->query(...$params);
         return $this;
     }
 
+    /**
+     * Prepare a statement.
+     *
+     * @param mixed ...$params The parameters.
+     * @return static|null
+     */
     public function prepare(mixed ...$params): static|null
     {
+        // Clear fetch cache for new query
         $this->getFetchHandler()->clearCache();
         $this->getStatementsHandler()->prepare(...$params);
         return $this;
     }
 
+    /**
+     * Execute a statement.
+     *
+     * @param mixed ...$params The parameters.
+     * @return mixed
+     */
     public function exec(mixed ...$params): mixed
     {
         return $this->getStatementsHandler()->exec(...$params);
     }
 
+    // IFetch implementation
+
+    /**
+     * Fetch the next row.
+     *
+     * @param int|null $fetchStyle The fetch style.
+     * @param mixed|null $fetchArgument The fetch argument.
+     * @param mixed|null $optArgs Additional options.
+     * @return mixed
+     */
     public function fetch(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): mixed
     {
         return $this->getFetchHandler()->fetch($fetchStyle, $fetchArgument, $optArgs);
     }
 
+    /**
+     * Fetch all rows.
+     *
+     * @param int|null $fetchStyle The fetch style.
+     * @param mixed|null $fetchArgument The fetch argument.
+     * @param mixed|null $optArgs Additional options.
+     * @return array|bool
+     */
     public function fetchAll(?int $fetchStyle = null, mixed $fetchArgument = null, mixed $optArgs = null): array|bool
     {
         return $this->getFetchHandler()->fetchAll($fetchStyle, $fetchArgument, $optArgs);
     }
 
+    /**
+     * Get an attribute.
+     *
+     * @param mixed $name The attribute name.
+     * @return mixed
+     * @throws ReflectionException
+     */
     public function getAttribute(mixed $name): mixed
     {
         return INI::getAttribute($name);
     }
 
+    /**
+     * Set an attribute.
+     *
+     * @param mixed $name The attribute name.
+     * @param mixed $value The attribute value.
+     * @return void
+     * @throws ReflectionException
+     */
     public function setAttribute(mixed $name, mixed $value): void
     {
         INI::setAttribute($name, $value);
     }
 
+    /**
+     * Get the error code.
+     *
+     * @param mixed $inst The instance.
+     * @return int|string|bool
+     */
     public function errorCode(mixed $inst = null): int|string|bool
     {
         return 0;
     }
 
+    /**
+     * Get the error info.
+     *
+     * @param mixed $inst The instance.
+     * @return string|bool|array
+     */
     public function errorInfo(mixed $inst = null): string|bool|array
     {
         return '';

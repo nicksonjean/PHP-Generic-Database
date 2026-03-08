@@ -1,0 +1,1203 @@
+%skip   space           \s
+%skip   comment_line    --[^\n]*
+%skip   comment_block   /\*(.|\n)*?\*/
+
+// =============================================================================
+// STRINGS E DELIMITADORES
+// =============================================================================
+
+// strings single quote
+%token quote_          '        -> string
+%token string:string   [^']+
+%token string:_quote   '        -> default
+
+// strings double quote
+%token dquote_         "        -> dstring
+%token dstring:dstring [^"]+
+%token dstring:_dquote "        -> default
+
+// backticks (MySQL)
+%token backtick_       `        -> btstring
+%token btstring:btstring [^`]+
+%token btstring:_backtick `     -> default
+
+// square brackets (SQL Server)
+%token lbracket_       \[       -> brstring
+%token brstring:brstring [^\]]+
+%token brstring:_rbracket \]    -> default
+
+// =============================================================================
+// PREFIX PRIORITY TOKENS
+// =============================================================================
+// These tokens MUST be defined before their shorter prefixes to ensure
+// the lexer matches the longest token first.
+// Example: INNER must come before IN, otherwise IN matches and NER is left over
+
+// Tokens starting with IN (must come before 'in') - case-insensitive
+%token inner        (?i)INNER(?![a-zA-Z0-9_])
+%token into         (?i)INTO(?![a-zA-Z0-9_])
+%token intersect    (?i)INTERSECT(?![a-zA-Z0-9_])
+%token integer      (?i)INTEGER(?![a-zA-Z0-9_])
+%token interval     (?i)INTERVAL(?![a-zA-Z0-9_])
+%token instead      (?i)INSTEAD(?![a-zA-Z0-9_])
+%token inserted     (?i)INSERTED(?![a-zA-Z0-9_])
+%token insert       (?i)INSERT(?![a-zA-Z0-9_])
+%token invoker      (?i)INVOKER(?![a-zA-Z0-9_])
+%token infile       (?i)INFILE(?![a-zA-Z0-9_])
+%token inet         (?i)INET(?![a-zA-Z0-9_])
+%token info         (?i)INFO(?![a-zA-Z0-9_])
+%token index        (?i)INDEX(?![a-zA-Z0-9_])
+%token int          (?i)INT(?![a-zA-Z0-9_])
+%token in           (?i)IN(?![a-zA-Z0-9_])
+
+// Tokens starting with IS (must come before 'is')
+%token isnull       (?i)ISNULL(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - DML (Data Manipulation Language)
+// =============================================================================
+%token select       (?i)SELECT(?![a-zA-Z0-9_])
+// insert moved to PREFIX PRIORITY section
+%token update       (?i)UPDATE(?![a-zA-Z0-9_])
+%token delete       (?i)DELETE(?![a-zA-Z0-9_])
+%token replace      (?i)REPLACE(?![a-zA-Z0-9_])
+%token merge        (?i)MERGE(?![a-zA-Z0-9_])
+%token upsert       (?i)UPSERT(?![a-zA-Z0-9_])
+%token truncate     (?i)TRUNCATE(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - DDL (Data Definition Language)
+// =============================================================================
+%token create       (?i)CREATE(?![a-zA-Z0-9_])
+%token alter        (?i)ALTER(?![a-zA-Z0-9_])
+%token drop         (?i)DROP(?![a-zA-Z0-9_])
+%token rename       (?i)RENAME(?![a-zA-Z0-9_])
+
+// Object types
+%token table        (?i)TABLE(?![a-zA-Z0-9_])
+%token column       (?i)COLUMN(?![a-zA-Z0-9_])
+// index moved to PREFIX PRIORITY section
+%token view         (?i)VIEW(?![a-zA-Z0-9_])
+%token database     (?i)DATABASE(?![a-zA-Z0-9_])
+%token schema       (?i)SCHEMA(?![a-zA-Z0-9_])
+%token sequence     (?i)SEQUENCE(?![a-zA-Z0-9_])
+%token trigger      (?i)TRIGGER(?![a-zA-Z0-9_])
+%token procedure    (?i)PROCEDURE(?![a-zA-Z0-9_])
+%token function     (?i)FUNCTION(?![a-zA-Z0-9_])
+%token package      (?i)PACKAGE(?![a-zA-Z0-9_])
+%token type         (?i)TYPE(?![a-zA-Z0-9_])
+%token domain       (?i)DOMAIN(?![a-zA-Z0-9_])
+%token event        (?i)EVENT(?![a-zA-Z0-9_])
+%token user         (?i)USER(?![a-zA-Z0-9_])
+%token role         (?i)ROLE(?![a-zA-Z0-9_])
+%token grant        (?i)GRANT(?![a-zA-Z0-9_])
+%token revoke       (?i)REVOKE(?![a-zA-Z0-9_])
+
+// Table/Column modifiers
+%token temporary    (?i)TEMPORARY(?![a-zA-Z0-9_])
+%token temp         (?i)TEMP(?![a-zA-Z0-9_])
+%token global       (?i)GLOBAL(?![a-zA-Z0-9_])
+%token local        (?i)LOCAL(?![a-zA-Z0-9_])
+%token if           (?i)IF(?![a-zA-Z0-9_])
+%token exists       (?i)EXISTS(?![a-zA-Z0-9_])
+%token cascade      (?i)CASCADE(?![a-zA-Z0-9_])
+%token restrict     (?i)RESTRICT(?![a-zA-Z0-9_])
+%token add          (?i)ADD(?![a-zA-Z0-9_])
+%token modify       (?i)MODIFY(?![a-zA-Z0-9_])
+%token change       (?i)CHANGE(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - CLAUSES
+// =============================================================================
+%token from         (?i)FROM(?![a-zA-Z0-9_])
+// into moved to PREFIX PRIORITY section
+%token values       (?i)VALUES(?![a-zA-Z0-9_])
+%token set          (?i)SET(?![a-zA-Z0-9_])
+%token where        (?i)WHERE(?![a-zA-Z0-9_])
+%token group        (?i)GROUP(?![a-zA-Z0-9_])
+%token having       (?i)HAVING(?![a-zA-Z0-9_])
+%token order        (?i)ORDER(?![a-zA-Z0-9_])
+%token limit        (?i)LIMIT(?![a-zA-Z0-9_])
+%token offset       (?i)OFFSET(?![a-zA-Z0-9_])
+%token fetch        (?i)FETCH(?![a-zA-Z0-9_])
+%token first        (?i)FIRST(?![a-zA-Z0-9_])
+%token last         (?i)LAST(?![a-zA-Z0-9_])
+%token next         (?i)NEXT(?![a-zA-Z0-9_])
+%token rows         (?i)ROWS(?![a-zA-Z0-9_])
+%token only         (?i)ONLY(?![a-zA-Z0-9_])
+%token with         (?i)WITH(?![a-zA-Z0-9_])
+%token recursive    (?i)RECURSIVE(?![a-zA-Z0-9_])
+%token returns      (?i)RETURNS(?![a-zA-Z0-9_])
+%token return       (?i)RETURN(?![a-zA-Z0-9_])
+%token returning    (?i)RETURNING(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - MODIFIERS
+// =============================================================================
+%token distinct     (?i)DISTINCT(?![a-zA-Z0-9_])
+%token all          (?i)ALL(?![a-zA-Z0-9_])
+%token top          (?i)TOP(?![a-zA-Z0-9_])
+%token percent      (?i)PERCENT(?![a-zA-Z0-9_])
+%token asc          (?i)ASC(?![a-zA-Z0-9_])
+%token as           (?i)AS(?![a-zA-Z0-9_])
+%token desc         (?i)DESC(?![a-zA-Z0-9_])
+%token by           (?i)BY(?![a-zA-Z0-9_])
+%token nulls        (?i)NULLS(?![a-zA-Z0-9_])
+%token auto_increment (?i)AUTO_INCREMENT(?![a-zA-Z0-9_])
+%token identity     (?i)IDENTITY(?![a-zA-Z0-9_])
+%token serial       (?i)SERIAL(?![a-zA-Z0-9_])
+%token generated    (?i)GENERATED(?![a-zA-Z0-9_])
+%token always       (?i)ALWAYS(?![a-zA-Z0-9_])
+%token stored       (?i)STORED(?![a-zA-Z0-9_])
+%token virtual      (?i)VIRTUAL(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - LOGICAL OPERATORS
+// =============================================================================
+%token and          (?i)AND(?![a-zA-Z0-9_])
+%token or           (?i)OR(?![a-zA-Z0-9_])
+%token not          (?i)NOT(?![a-zA-Z0-9_])
+%token xor          (?i)XOR(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - COMPARISON OPERATORS
+// =============================================================================
+// IMPORTANT: 'inner', 'into', 'intersect', etc. must come BEFORE 'in'
+// because 'IN' would match as prefix of 'INNER' otherwise
+%token exists       (?i)EXISTS(?![a-zA-Z0-9_])
+%token between      (?i)BETWEEN(?![a-zA-Z0-9_])
+%token like         (?i)LIKE(?![a-zA-Z0-9_])
+%token ilike        (?i)ILIKE(?![a-zA-Z0-9_])
+%token glob         (?i)GLOB(?![a-zA-Z0-9_])
+%token regexp       (?i)REGEXP(?![a-zA-Z0-9_])
+%token rlike        (?i)RLIKE(?![a-zA-Z0-9_])
+%token match        (?i)MATCH(?![a-zA-Z0-9_])
+%token contains     (?i)CONTAINS(?![a-zA-Z0-9_])
+%token is           (?i)IS(?![a-zA-Z0-9_])
+%token any          (?i)ANY(?![a-zA-Z0-9_])
+%token some         (?i)SOME(?![a-zA-Z0-9_])
+%token similar      (?i)SIMILAR(?![a-zA-Z0-9_])
+%token escape       (?i)ESCAPE(?![a-zA-Z0-9_])
+%token to           (?i)TO(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - JOINS (case-insensitive)
+// =============================================================================
+%token join         (?i)JOIN(?![a-zA-Z0-9_])
+// inner and in moved to PREFIX PRIORITY section
+%token outer        (?i)OUTER(?![a-zA-Z0-9_])
+%token left         (?i)LEFT(?![a-zA-Z0-9_])
+%token right        (?i)RIGHT(?![a-zA-Z0-9_])
+%token full         (?i)FULL(?![a-zA-Z0-9_])
+%token cross        (?i)CROSS(?![a-zA-Z0-9_])
+%token natural      (?i)NATURAL(?![a-zA-Z0-9_])
+%token on           (?i)ON(?![a-zA-Z0-9_])
+%token using        (?i)USING(?![a-zA-Z0-9_])
+%token straight_join (?i)STRAIGHT_JOIN(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - SET OPERATIONS
+// =============================================================================
+%token union        (?i)UNION(?![a-zA-Z0-9_])
+// intersect moved to PREFIX PRIORITY section
+%token except       (?i)EXCEPT(?![a-zA-Z0-9_])
+%token minus        (?i)MINUS(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - CASE
+// =============================================================================
+%token case         (?i)CASE(?![a-zA-Z0-9_])
+%token when         (?i)WHEN(?![a-zA-Z0-9_])
+%token then         (?i)THEN(?![a-zA-Z0-9_])
+%token else         (?i)ELSE(?![a-zA-Z0-9_])
+%token end          (?i)END(?![a-zA-Z0-9_])
+%token elseif       (?i)ELSEIF(?![a-zA-Z0-9_])
+%token elsif        (?i)ELSIF(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - NULL
+// =============================================================================
+%token null         (?i)NULL(?![a-zA-Z0-9_])
+%token isnull       (?i)ISNULL(?![a-zA-Z0-9_])
+%token notnull      (?i)NOTNULL(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - BOOLEAN
+// =============================================================================
+%token true         (?i)TRUE(?![a-zA-Z0-9_])
+%token false        (?i)FALSE(?![a-zA-Z0-9_])
+%token unknown      (?i)UNKNOWN(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - CAST/CONVERT
+// =============================================================================
+%token cast         (?i)CAST(?![a-zA-Z0-9_])
+%token convert      (?i)CONVERT(?![a-zA-Z0-9_])
+%token try_cast     (?i)TRY_CAST(?![a-zA-Z0-9_])
+%token try_convert  (?i)TRY_CONVERT(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - WINDOW FUNCTIONS
+// =============================================================================
+%token over         (?i)OVER(?![a-zA-Z0-9_])
+%token partition    (?i)PARTITION(?![a-zA-Z0-9_])
+%token window       (?i)WINDOW(?![a-zA-Z0-9_])
+%token range        (?i)RANGE(?![a-zA-Z0-9_])
+%token unbounded    (?i)UNBOUNDED(?![a-zA-Z0-9_])
+%token preceding    (?i)PRECEDING(?![a-zA-Z0-9_])
+%token following    (?i)FOLLOWING(?![a-zA-Z0-9_])
+%token current      (?i)CURRENT(?![a-zA-Z0-9_])
+%token row          (?i)ROW(?![a-zA-Z0-9_])
+%token groups       (?i)GROUPS(?![a-zA-Z0-9_])
+%token exclude      (?i)EXCLUDE(?![a-zA-Z0-9_])
+%token ties         (?i)TIES(?![a-zA-Z0-9_])
+%token no           (?i)NO(?![a-zA-Z0-9_])
+%token others       (?i)OTHERS(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - CONSTRAINTS
+// =============================================================================
+%token primary      (?i)PRIMARY(?![a-zA-Z0-9_])
+%token foreign      (?i)FOREIGN(?![a-zA-Z0-9_])
+%token key          (?i)KEY(?![a-zA-Z0-9_])
+%token references   (?i)REFERENCES(?![a-zA-Z0-9_])
+%token unique       (?i)UNIQUE(?![a-zA-Z0-9_])
+%token check        (?i)CHECK(?![a-zA-Z0-9_])
+%token default      (?i)DEFAULT(?![a-zA-Z0-9_])
+%token constraint   (?i)CONSTRAINT(?![a-zA-Z0-9_])
+%token unsigned     (?i)UNSIGNED(?![a-zA-Z0-9_])
+%token zerofill     (?i)ZEROFILL(?![a-zA-Z0-9_])
+%token binary       (?i)BINARY(?![a-zA-Z0-9_])
+%token collate      (?i)COLLATE(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - CONFLICT RESOLUTION (SQLite/PostgreSQL/MySQL)
+// =============================================================================
+%token ignore       (?i)IGNORE(?![a-zA-Z0-9_])
+%token conflict     (?i)CONFLICT(?![a-zA-Z0-9_])
+%token duplicate    (?i)DUPLICATE(?![a-zA-Z0-9_])
+%token nothing      (?i)NOTHING(?![a-zA-Z0-9_])
+%token abort        (?i)ABORT(?![a-zA-Z0-9_])
+%token fail         (?i)FAIL(?![a-zA-Z0-9_])
+%token rollback     (?i)ROLLBACK(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - LOCKING
+// =============================================================================
+%token for          (?i)FOR(?![a-zA-Z0-9_])
+%token nowait       (?i)NOWAIT(?![a-zA-Z0-9_])
+%token skip_kw      (?i)SKIP(?![a-zA-Z0-9_])
+%token locked       (?i)LOCKED(?![a-zA-Z0-9_])
+%token share        (?i)SHARE(?![a-zA-Z0-9_])
+%token wait         (?i)WAIT(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - TRANSACTIONS
+// =============================================================================
+%token begin        (?i)BEGIN(?![a-zA-Z0-9_])
+%token start        (?i)START(?![a-zA-Z0-9_])
+%token transaction  (?i)TRANSACTION(?![a-zA-Z0-9_])
+%token commit       (?i)COMMIT(?![a-zA-Z0-9_])
+%token savepoint    (?i)SAVEPOINT(?![a-zA-Z0-9_])
+%token release      (?i)RELEASE(?![a-zA-Z0-9_])
+%token work         (?i)WORK(?![a-zA-Z0-9_])
+
+// =============================================================================
+// KEYWORDS - DATA TYPES
+// =============================================================================
+// Numeric types
+// token int          INT (moved to PREFIX PRIORITY section)
+// token integer      INTEGER (moved to PREFIX PRIORITY section)
+%token smallint     (?i)SMALLINT(?![a-zA-Z0-9_])
+%token bigint       (?i)BIGINT(?![a-zA-Z0-9_])
+%token tinyint      (?i)TINYINT(?![a-zA-Z0-9_])
+%token mediumint    (?i)MEDIUMINT(?![a-zA-Z0-9_])
+%token decimal      (?i)DECIMAL(?![a-zA-Z0-9_])
+%token numeric      (?i)NUMERIC(?![a-zA-Z0-9_])
+%token float        (?i)FLOAT(?![a-zA-Z0-9_])
+%token real         (?i)REAL(?![a-zA-Z0-9_])
+%token double       (?i)DOUBLE(?![a-zA-Z0-9_])
+%token precision    (?i)PRECISION(?![a-zA-Z0-9_])
+%token money        (?i)MONEY(?![a-zA-Z0-9_])
+%token smallmoney   (?i)SMALLMONEY(?![a-zA-Z0-9_])
+%token number       (?i)NUMBER(?![a-zA-Z0-9_])
+
+// String types
+%token char         (?i)CHAR(?![a-zA-Z0-9_])
+%token varchar      (?i)VARCHAR(?![a-zA-Z0-9_])
+%token varchar2     (?i)VARCHAR2
+%token nchar        (?i)NCHAR(?![a-zA-Z0-9_])
+%token nvarchar     (?i)NVARCHAR(?![a-zA-Z0-9_])
+%token text         (?i)TEXT(?![a-zA-Z0-9_])
+%token tinytext     (?i)TINYTEXT(?![a-zA-Z0-9_])
+%token mediumtext   (?i)MEDIUMTEXT(?![a-zA-Z0-9_])
+%token longtext     (?i)LONGTEXT(?![a-zA-Z0-9_])
+%token clob         (?i)CLOB(?![a-zA-Z0-9_])
+%token nclob        (?i)NCLOB(?![a-zA-Z0-9_])
+%token ntext        (?i)NTEXT(?![a-zA-Z0-9_])
+
+// Binary types
+%token blob         (?i)BLOB(?![a-zA-Z0-9_])
+%token tinyblob     (?i)TINYBLOB(?![a-zA-Z0-9_])
+%token mediumblob   (?i)MEDIUMBLOB(?![a-zA-Z0-9_])
+%token longblob     (?i)LONGBLOB(?![a-zA-Z0-9_])
+%token bytea        (?i)BYTEA(?![a-zA-Z0-9_])
+%token varbinary    (?i)VARBINARY(?![a-zA-Z0-9_])
+%token image        (?i)IMAGE(?![a-zA-Z0-9_])
+%token raw          (?i)RAW(?![a-zA-Z0-9_])
+%token long         (?i)LONG(?![a-zA-Z0-9_])
+
+// Date/Time types
+%token date         (?i)DATE(?![a-zA-Z0-9_])
+%token time         (?i)TIME(?![a-zA-Z0-9_])
+%token datetime     (?i)DATETIME(?![a-zA-Z0-9_])
+%token datetime2    DATETIME2
+%token timestamp    (?i)TIMESTAMP(?![a-zA-Z0-9_])
+%token timestamptz  (?i)TIMESTAMPTZ(?![a-zA-Z0-9_])
+// token interval     INTERVAL (moved to PREFIX PRIORITY section)
+%token smalldatetime (?i)SMALLDATETIME(?![a-zA-Z0-9_])
+%token datetimeoffset (?i)DATETIMEOFFSET(?![a-zA-Z0-9_])
+
+// =============================================================================
+// DATE/TIME FIELDS (for EXTRACT function)
+// =============================================================================
+%token year         (?i)YEAR(?![a-zA-Z0-9_])
+%token month        (?i)MONTH(?![a-zA-Z0-9_])
+%token day          (?i)DAY(?![a-zA-Z0-9_])
+%token hour         (?i)HOUR(?![a-zA-Z0-9_])
+%token minute       (?i)MINUTE(?![a-zA-Z0-9_])
+%token second       (?i)SECOND(?![a-zA-Z0-9_])
+%token millisecond  (?i)MILLISECOND(?![a-zA-Z0-9_])
+%token microsecond  (?i)MICROSECOND(?![a-zA-Z0-9_])
+%token timezone     (?i)TIMEZONE(?![a-zA-Z0-9_])
+%token timezone_hour (?i)TIMEZONE_HOUR(?![a-zA-Z0-9_])
+%token timezone_minute (?i)TIMEZONE_MINUTE(?![a-zA-Z0-9_])
+%token week         (?i)WEEK(?![a-zA-Z0-9_])
+%token quarter      (?i)QUARTER(?![a-zA-Z0-9_])
+%token dayofweek    (?i)DAYOFWEEK(?![a-zA-Z0-9_])
+%token dayofyear    (?i)DAYOFYEAR(?![a-zA-Z0-9_])
+%token epoch        (?i)EPOCH(?![a-zA-Z0-9_])
+
+// Boolean type
+%token boolean      (?i)BOOLEAN(?![a-zA-Z0-9_])
+%token bool         (?i)BOOL(?![a-zA-Z0-9_])
+%token bit          (?i)BIT(?![a-zA-Z0-9_])
+
+// UUID/GUID
+%token uuid         (?i)UUID(?![a-zA-Z0-9_])
+%token uniqueidentifier (?i)UNIQUEIDENTIFIER(?![a-zA-Z0-9_])
+%token guid         (?i)GUID(?![a-zA-Z0-9_])
+
+// JSON types
+%token json         (?i)JSON(?![a-zA-Z0-9_])
+%token jsonb        (?i)JSONB(?![a-zA-Z0-9_])
+%token xml          (?i)XML(?![a-zA-Z0-9_])
+
+// Geometric/Special types
+%token geometry     (?i)GEOMETRY(?![a-zA-Z0-9_])
+%token geography    (?i)GEOGRAPHY(?![a-zA-Z0-9_])
+%token point        (?i)POINT(?![a-zA-Z0-9_])
+%token linestring   (?i)LINESTRING(?![a-zA-Z0-9_])
+%token polygon      (?i)POLYGON(?![a-zA-Z0-9_])
+%token enum         (?i)ENUM(?![a-zA-Z0-9_])
+%token set_type     (?i)SET(?![a-zA-Z0-9_])
+%token array        (?i)ARRAY(?![a-zA-Z0-9_])
+%token hstore       (?i)HSTORE(?![a-zA-Z0-9_])
+%token cidr         (?i)CIDR(?![a-zA-Z0-9_])
+// token inet         INET (moved to PREFIX PRIORITY section)
+%token macaddr      (?i)MACADDR(?![a-zA-Z0-9_])
+
+// =============================================================================
+// AGGREGATE FUNCTIONS
+// =============================================================================
+%token avg          (?i)AVG(?![a-zA-Z0-9_])
+%token max          (?i)MAX(?![a-zA-Z0-9_])
+%token min          (?i)MIN(?![a-zA-Z0-9_])
+%token sum          (?i)SUM(?![a-zA-Z0-9_])
+%token count        (?i)COUNT(?![a-zA-Z0-9_])
+%token group_concat (?i)GROUP_CONCAT(?![a-zA-Z0-9_])
+%token string_agg   (?i)STRING_AGG(?![a-zA-Z0-9_])
+%token array_agg    (?i)ARRAY_AGG(?![a-zA-Z0-9_])
+%token json_agg     (?i)JSON_AGG(?![a-zA-Z0-9_])
+%token xmlagg       (?i)XMLAGG(?![a-zA-Z0-9_])
+%token listagg      (?i)LISTAGG(?![a-zA-Z0-9_])
+%token stddev       (?i)STDDEV(?![a-zA-Z0-9_])
+%token stddev_pop   (?i)STDDEV_POP(?![a-zA-Z0-9_])
+%token stddev_samp  (?i)STDDEV_SAMP(?![a-zA-Z0-9_])
+%token variance     (?i)VARIANCE(?![a-zA-Z0-9_])
+%token var_pop      (?i)VAR_POP(?![a-zA-Z0-9_])
+%token var_samp     (?i)VAR_SAMP(?![a-zA-Z0-9_])
+
+// =============================================================================
+// WINDOW/ANALYTIC FUNCTIONS
+// =============================================================================
+%token rank         (?i)RANK(?![a-zA-Z0-9_])
+%token dense_rank   (?i)DENSE_RANK(?![a-zA-Z0-9_])
+%token row_number   (?i)ROW_NUMBER(?![a-zA-Z0-9_])
+%token ntile        (?i)NTILE(?![a-zA-Z0-9_])
+%token lag          (?i)LAG(?![a-zA-Z0-9_])
+%token lead         (?i)LEAD(?![a-zA-Z0-9_])
+%token first_value  (?i)FIRST_VALUE(?![a-zA-Z0-9_])
+%token last_value   (?i)LAST_VALUE(?![a-zA-Z0-9_])
+%token nth_value    (?i)NTH_VALUE(?![a-zA-Z0-9_])
+%token percent_rank (?i)PERCENT_RANK(?![a-zA-Z0-9_])
+%token cume_dist    (?i)CUME_DIST(?![a-zA-Z0-9_])
+%token ratio_to_report (?i)RATIO_TO_REPORT(?![a-zA-Z0-9_])
+
+// =============================================================================
+// STRING FUNCTIONS (Common)
+// =============================================================================
+%token substring    (?i)SUBSTRING(?![a-zA-Z0-9_])
+%token substr       (?i)SUBSTR(?![a-zA-Z0-9_])
+%token concat       (?i)CONCAT(?![a-zA-Z0-9_])
+%token concat_ws    (?i)CONCAT_WS(?![a-zA-Z0-9_])
+%token length       (?i)LENGTH(?![a-zA-Z0-9_])
+%token char_length  (?i)CHAR_LENGTH(?![a-zA-Z0-9_])
+%token upper        (?i)UPPER(?![a-zA-Z0-9_])
+%token lower        (?i)LOWER(?![a-zA-Z0-9_])
+%token trim         (?i)TRIM(?![a-zA-Z0-9_])
+%token ltrim        (?i)LTRIM(?![a-zA-Z0-9_])
+%token rtrim        (?i)RTRIM(?![a-zA-Z0-9_])
+%token coalesce     (?i)COALESCE(?![a-zA-Z0-9_])
+%token nullif       (?i)NULLIF(?![a-zA-Z0-9_])
+%token ifnull       (?i)IFNULL(?![a-zA-Z0-9_])
+%token nvl          (?i)NVL(?![a-zA-Z0-9_])
+%token nvl2         (?i)NVL2(?![a-zA-Z0-9_])
+
+// =============================================================================
+// DATE FUNCTIONS (Common)
+// =============================================================================
+%token now          (?i)NOW(?![a-zA-Z0-9_])
+%token current_timestamp (?i)CURRENT_TIMESTAMP(?![a-zA-Z0-9_])
+%token current_date (?i)CURRENT_DATE(?![a-zA-Z0-9_])
+%token current_time (?i)CURRENT_TIME(?![a-zA-Z0-9_])
+%token getdate      (?i)GETDATE(?![a-zA-Z0-9_])
+%token sysdate      (?i)SYSDATE(?![a-zA-Z0-9_])
+%token extract      (?i)EXTRACT(?![a-zA-Z0-9_])
+%token datepart     (?i)DATEPART(?![a-zA-Z0-9_])
+%token datediff     (?i)DATEDIFF(?![a-zA-Z0-9_])
+%token dateadd      (?i)DATEADD(?![a-zA-Z0-9_])
+%token date_add     (?i)DATE_ADD(?![a-zA-Z0-9_])
+%token date_sub     (?i)DATE_SUB(?![a-zA-Z0-9_])
+%token age          (?i)AGE(?![a-zA-Z0-9_])
+
+// =============================================================================
+// CONTROL FLOW (Procedures/Functions)
+// =============================================================================
+%token declare      (?i)DECLARE(?![a-zA-Z0-9_])
+%token do           (?i)DO(?![a-zA-Z0-9_])
+%token loop         (?i)LOOP(?![a-zA-Z0-9_])
+%token while        (?i)WHILE(?![a-zA-Z0-9_])
+%token repeat       (?i)REPEAT(?![a-zA-Z0-9_])
+%token until        (?i)UNTIL(?![a-zA-Z0-9_])
+%token continue     (?i)CONTINUE(?![a-zA-Z0-9_])
+%token break        (?i)BREAK(?![a-zA-Z0-9_])
+%token exit         (?i)EXIT(?![a-zA-Z0-9_])
+%token goto         (?i)GOTO(?![a-zA-Z0-9_])
+%token label        (?i)LABEL(?![a-zA-Z0-9_])
+%token leave        (?i)LEAVE(?![a-zA-Z0-9_])
+%token iterate      (?i)ITERATE(?![a-zA-Z0-9_])
+%token open         (?i)OPEN(?![a-zA-Z0-9_])
+%token close        (?i)CLOSE(?![a-zA-Z0-9_])
+%token cursor       (?i)CURSOR(?![a-zA-Z0-9_])
+%token fetch        (?i)FETCH(?![a-zA-Z0-9_])
+%token call         (?i)CALL(?![a-zA-Z0-9_])
+%token execute      (?i)EXECUTE(?![a-zA-Z0-9_])
+%token exec         (?i)EXEC(?![a-zA-Z0-9_])
+%token prepare      (?i)PREPARE(?![a-zA-Z0-9_])
+%token deallocate   (?i)DEALLOCATE(?![a-zA-Z0-9_])
+
+// =============================================================================
+// EXCEPTION HANDLING
+// =============================================================================
+%token exception    (?i)EXCEPTION(?![a-zA-Z0-9_])
+%token raise        (?i)RAISE(?![a-zA-Z0-9_])
+%token signal       (?i)SIGNAL(?![a-zA-Z0-9_])
+%token resignal     (?i)RESIGNAL(?![a-zA-Z0-9_])
+%token sqlstate     (?i)SQLSTATE(?![a-zA-Z0-9_])
+%token sqlcode      (?i)SQLCODE(?![a-zA-Z0-9_])
+%token sqlerrm      (?i)SQLERRM(?![a-zA-Z0-9_])
+
+// =============================================================================
+// TRIGGER KEYWORDS
+// =============================================================================
+%token before       (?i)BEFORE(?![a-zA-Z0-9_])
+%token after        (?i)AFTER(?![a-zA-Z0-9_])
+// token instead      INSTEAD (moved to PREFIX PRIORITY section)
+%token of           (?i)OF(?![a-zA-Z0-9_])
+%token each         (?i)EACH(?![a-zA-Z0-9_])
+%token statement    (?i)STATEMENT(?![a-zA-Z0-9_])
+%token old          (?i)OLD(?![a-zA-Z0-9_])
+%token new          (?i)NEW(?![a-zA-Z0-9_])
+%token referencing  (?i)REFERENCING(?![a-zA-Z0-9_])
+%token follows      (?i)FOLLOWS(?![a-zA-Z0-9_])
+%token precedes     (?i)PRECEDES(?![a-zA-Z0-9_])
+
+// =============================================================================
+// INDEX KEYWORDS
+// =============================================================================
+%token clustered    (?i)CLUSTERED(?![a-zA-Z0-9_])
+%token nonclustered (?i)NONCLUSTERED(?![a-zA-Z0-9_])
+%token spatial      (?i)SPATIAL(?![a-zA-Z0-9_])
+%token fulltext     (?i)FULLTEXT(?![a-zA-Z0-9_])
+%token hash         (?i)HASH(?![a-zA-Z0-9_])
+%token btree        (?i)BTREE(?![a-zA-Z0-9_])
+%token gin          (?i)GIN(?![a-zA-Z0-9_])
+%token gist         (?i)GIST(?![a-zA-Z0-9_])
+%token spgist       (?i)SPGIST(?![a-zA-Z0-9_])
+%token brin         (?i)BRIN(?![a-zA-Z0-9_])
+
+// =============================================================================
+// OPERATORS
+// =============================================================================
+// IMPORTANT: Multi-character operators MUST come before their single-char prefixes!
+// e.g., <= must come before <, otherwise < matches first and = becomes a separate token
+%token op_lte       <=
+%token op_gte       >=
+%token op_neq       <>
+%token op_lshift    <<
+%token op_rshift    >>
+%token op_neq2      !=
+%token op_not_tilde !~
+%token op_concat    \|\|
+%token op_assign    :=
+%token op_darrow    ->>
+%token op_arrow     ->
+%token op_atat      @@
+%token op_eq        =
+%token op_lt        <
+%token op_gt        >
+// op_question, op_at, op_hash removed - use param versions instead
+%token op_tilde     ~
+%token op_pipe      \|
+%token op_amp       &
+%token op_caret     \^
+%token op_plus      \+
+%token op_minus     \-
+%token op_mul       \*
+%token op_div       /
+%token op_mod       %
+%token op_intdiv    (?i)DIV(?![a-zA-Z0-9_])
+
+// =============================================================================
+// DELIMITERS
+// =============================================================================
+%token left_paren   \(
+%token right_paren  \)
+%token left_bracket \[
+%token right_bracket \]
+%token left_brace   \{
+%token right_brace  \}
+%token period       \.
+%token comma        ,
+%token semicolon    ;
+
+// Parameters (must come before single-char versions)
+%token double_colon ::
+%token named_param  :[a-zA-Z_][a-zA-Z0-9_]*
+%token numbered_param \$\d+
+%token question_param \?
+%token at_param     @[a-zA-Z_][a-zA-Z0-9_]*
+%token hash_param   #[a-zA-Z_][a-zA-Z0-9_]*
+
+// Single-char delimiters (after multi-char versions)
+%token colon        :
+%token at           @
+%token dollar       \$
+%token exclamation  !
+
+// =============================================================================
+// LITERALS
+// =============================================================================
+%token num_literal  \-?\d+(\.\d+)?([eE][+-]?\d+)?
+%token hex_number   0[xX][0-9a-fA-F]+
+%token binary_num   0[bB][01]+
+%token octal_num    0[oO][0-7]+
+
+// =============================================================================
+// MySQL SPECIFIC
+// =============================================================================
+%token outfile      (?i)OUTFILE(?![a-zA-Z0-9_])
+// token infile       INFILE (moved to PREFIX PRIORITY section)
+%token load         (?i)LOAD(?![a-zA-Z0-9_])
+%token data         (?i)DATA(?![a-zA-Z0-9_])
+%token fields       (?i)FIELDS(?![a-zA-Z0-9_])
+%token terminated   (?i)TERMINATED(?![a-zA-Z0-9_])
+%token enclosed     (?i)ENCLOSED(?![a-zA-Z0-9_])
+%token escaped      (?i)ESCAPED(?![a-zA-Z0-9_])
+%token lines        (?i)LINES(?![a-zA-Z0-9_])
+%token starting     (?i)STARTING(?![a-zA-Z0-9_])
+%token ending       (?i)ENDING(?![a-zA-Z0-9_])
+%token optionally   (?i)OPTIONALLY(?![a-zA-Z0-9_])
+%token high_priority (?i)HIGH_PRIORITY(?![a-zA-Z0-9_])
+%token low_priority (?i)LOW_PRIORITY(?![a-zA-Z0-9_])
+%token delayed      (?i)DELAYED(?![a-zA-Z0-9_])
+%token quick        (?i)QUICK(?![a-zA-Z0-9_])
+%token sql_cache    (?i)SQL_CACHE(?![a-zA-Z0-9_])
+%token sql_no_cache (?i)SQL_NO_CACHE(?![a-zA-Z0-9_])
+%token sql_calc_found_rows (?i)SQL_CALC_FOUND_ROWS(?![a-zA-Z0-9_])
+%token force        (?i)FORCE(?![a-zA-Z0-9_])
+%token use          (?i)USE(?![a-zA-Z0-9_])
+%token engine       (?i)ENGINE(?![a-zA-Z0-9_])
+%token charset      (?i)CHARSET(?![a-zA-Z0-9_])
+%token character    (?i)CHARACTER(?![a-zA-Z0-9_])
+%token collation    (?i)COLLATION(?![a-zA-Z0-9_])
+
+// =============================================================================
+// SQL SERVER SPECIFIC
+// =============================================================================
+%token go           (?i)GO(?![a-zA-Z0-9_])
+%token print        (?i)PRINT(?![a-zA-Z0-9_])
+%token raiserror    (?i)RAISERROR(?![a-zA-Z0-9_])
+%token throw        (?i)THROW(?![a-zA-Z0-9_])
+%token try          (?i)TRY(?![a-zA-Z0-9_])
+%token catch        (?i)CATCH(?![a-zA-Z0-9_])
+%token output       (?i)OUTPUT(?![a-zA-Z0-9_])
+// token inserted     INSERTED (moved to PREFIX PRIORITY section)
+%token deleted      (?i)DELETED(?![a-zA-Z0-9_])
+%token apply        (?i)APPLY(?![a-zA-Z0-9_])
+%token pivot        (?i)PIVOT(?![a-zA-Z0-9_])
+%token unpivot      (?i)UNPIVOT(?![a-zA-Z0-9_])
+%token option       (?i)OPTION(?![a-zA-Z0-9_])
+%token recompile    (?i)RECOMPILE(?![a-zA-Z0-9_])
+%token maxrecursion (?i)MAXRECURSION(?![a-zA-Z0-9_])
+%token within       (?i)WITHIN(?![a-zA-Z0-9_])
+
+// =============================================================================
+// ORACLE SPECIFIC
+// =============================================================================
+%token connect      (?i)CONNECT(?![a-zA-Z0-9_])
+%token prior        (?i)PRIOR(?![a-zA-Z0-9_])
+%token nocycle      (?i)NOCYCLE(?![a-zA-Z0-9_])
+%token level        (?i)LEVEL(?![a-zA-Z0-9_])
+%token rownum       (?i)ROWNUM(?![a-zA-Z0-9_])
+%token rowid        (?i)ROWID(?![a-zA-Z0-9_])
+%token dual         (?i)DUAL(?![a-zA-Z0-9_])
+%token bulk         (?i)BULK(?![a-zA-Z0-9_])
+%token collect      (?i)COLLECT(?![a-zA-Z0-9_])
+%token forall       (?i)FORALL(?![a-zA-Z0-9_])
+%token pragma       (?i)PRAGMA(?![a-zA-Z0-9_])
+%token autonomous_transaction (?i)AUTONOMOUS_TRANSACTION(?![a-zA-Z0-9_])
+%token pipelined    (?i)PIPELINED(?![a-zA-Z0-9_])
+%token deterministic (?i)DETERMINISTIC(?![a-zA-Z0-9_])
+%token parallel_enable (?i)PARALLEL_ENABLE(?![a-zA-Z0-9_])
+
+// =============================================================================
+// POSTGRESQL SPECIFIC
+// =============================================================================
+%token lateral      (?i)LATERAL(?![a-zA-Z0-9_])
+%token ordinality   (?i)ORDINALITY(?![a-zA-Z0-9_])
+%token variadic     (?i)VARIADIC(?![a-zA-Z0-9_])
+%token strict       (?i)STRICT(?![a-zA-Z0-9_])
+%token immutable    (?i)IMMUTABLE(?![a-zA-Z0-9_])
+%token stable       (?i)STABLE(?![a-zA-Z0-9_])
+%token volatile     (?i)VOLATILE(?![a-zA-Z0-9_])
+%token leakproof    (?i)LEAKPROOF(?![a-zA-Z0-9_])
+%token security     (?i)SECURITY(?![a-zA-Z0-9_])
+%token definer      (?i)DEFINER(?![a-zA-Z0-9_])
+// token invoker      INVOKER (moved to PREFIX PRIORITY section)
+%token cost         (?i)COST(?![a-zA-Z0-9_])
+%token language     (?i)LANGUAGE(?![a-zA-Z0-9_])
+%token plpgsql      (?i)PLPGSQL(?![a-zA-Z0-9_])
+%token sql          (?i)SQL(?![a-zA-Z0-9_])
+%token notice       (?i)NOTICE(?![a-zA-Z0-9_])
+%token warning      (?i)WARNING(?![a-zA-Z0-9_])
+// token info         INFO (moved to PREFIX PRIORITY section)
+%token log          (?i)LOG(?![a-zA-Z0-9_])
+%token debug        (?i)DEBUG(?![a-zA-Z0-9_])
+
+// =============================================================================
+// FIREBIRD SPECIFIC
+// =============================================================================
+%token plan         (?i)PLAN(?![a-zA-Z0-9_])
+%token sort         (?i)SORT(?![a-zA-Z0-9_])
+%token recreate     (?i)RECREATE(?![a-zA-Z0-9_])
+%token position     (?i)POSITION(?![a-zA-Z0-9_])
+%token suspend      (?i)SUSPEND(?![a-zA-Z0-9_])
+%token singular     (?i)SINGULAR(?![a-zA-Z0-9_])
+%token autonomous   (?i)AUTONOMOUS(?![a-zA-Z0-9_])
+
+// =============================================================================
+// IDENTIFIERS (must be AFTER all keyword tokens)
+// =============================================================================
+%token identifier   [a-zA-Z_][a-zA-Z0-9_]*
+
+// =============================================================================
+// GRAMMAR RULES
+// =============================================================================
+
+#string:
+    ::quote_:: <string>? ::_quote::
+    | ::dquote_:: <dstring>? ::_dquote::
+
+#number:
+    <num_literal> | <hex_number> | <binary_num> | <octal_num>
+
+#boolean:
+    <true> | <false>
+
+#Literal:
+    string() | number() | boolean() | <null>
+
+#Parameter:
+    <question_param> | <named_param> | <numbered_param> | <at_param> | <hash_param>
+
+#Identifier:
+        <identifier>
+    |   ::backtick_:: <btstring> ::_backtick::
+    |   ::dquote_:: <dstring> ::_dquote::
+    |   ::lbracket_:: <brstring> ::_rbracket::
+
+#DatabaseIdentifier:
+    Identifier()
+
+#SchemaIdentifier:
+    Identifier()
+
+#QualifiedTableName:
+        Identifier()
+    |   SchemaIdentifier() ::period:: Identifier()
+    |   DatabaseIdentifier() ::period:: SchemaIdentifier() ::period:: Identifier()
+
+#TableAlias:
+    (<as> | ::period::)? Identifier()
+
+#TablePrimaryIdentifier:
+        QualifiedTableName() TableAlias()?
+    |   ::left_paren:: SelectQuery() ::right_paren:: TableAlias()?
+    |   TableValuedFunction() TableAlias()?
+
+#TableValuedFunction:
+    Identifier() ::left_paren:: ArgumentsList()? ::right_paren::
+
+#ColumnIdentifier:
+        Identifier()
+    |   QualifiedTableName() ::period:: Identifier()
+    |   Identifier() ::period:: Identifier()
+
+#ColumnAlias:
+        <as> Identifier()
+    |   <identifier>
+
+// =============================================================================
+// JOIN OPERATIONS
+// =============================================================================
+
+#OuterJoinType:
+    <left> | <right> | <full>
+
+#JoinType:
+        <inner>
+    |   OuterJoinType() <outer>?
+    |   <cross>
+    |   <natural> <inner>?
+    |   <natural> OuterJoinType() <outer>?
+    |   <straight_join>
+
+#JoinCondition:
+    <on> ConditionalExpression() | <using> ::left_paren:: Identifier() (::comma:: Identifier())* ::right_paren::
+
+#JoinSpecification:
+    JoinCondition()?
+
+#QualifiedJoin:
+    JoinType()? <join> TablePrimaryIdentifier() JoinSpecification()
+
+#ApplyClause:
+    (<cross> | <outer>) <apply> TablePrimaryIdentifier()
+
+#JoinedTable:
+    TablePrimaryIdentifier() (QualifiedJoin() | ApplyClause())+
+
+#TableIdentifier:
+    TablePrimaryIdentifier() | JoinedTable()
+
+// =============================================================================
+// OPERATORS
+// =============================================================================
+
+#ComparisonOperator:
+    <op_eq> | <op_neq> | <op_neq2> | <op_lt> | <op_gt> | <op_lte> | <op_gte>
+
+#BitwiseOperator:
+    <op_amp> | <op_pipe> | <op_caret> | <op_lshift> | <op_rshift>
+
+// =============================================================================
+// FUNCTIONS
+// =============================================================================
+
+#AggregateFunction:
+    <avg> | <max> | <min> | <sum> | <count> | <group_concat> | <string_agg>
+    | <array_agg> | <json_agg> | <xmlagg> | <listagg>
+    | <stddev> | <stddev_pop> | <stddev_samp> | <variance> | <var_pop> | <var_samp>
+
+#WindowFunction:
+    <rank> | <dense_rank> | <row_number> | <ntile> | <lag> | <lead>
+    | <first_value> | <last_value> | <nth_value> | <percent_rank> | <cume_dist>
+    | <ratio_to_report>
+
+#StringFunction:
+    <substring> | <substr> | <concat> | <concat_ws> | <length> | <char_length>
+    | <upper> | <lower> | <trim> | <ltrim> | <rtrim> | <replace>
+
+#NullFunction:
+    <coalesce> | <nullif> | <ifnull> | <nvl> | <nvl2> | <isnull>
+
+#DateFunction:
+    <now> | <current_timestamp> | <current_date> | <current_time> | <getdate>
+    | <sysdate> | <extract> | <datepart> | <datediff> | <dateadd>
+    | <date_add> | <date_sub> | <age>
+
+#Argument:
+        Literal()
+    |   Parameter()
+    |   ColumnIdentifier()
+    |   FunctionCall()
+    |   SimpleArithmeticExpression()
+    |   CaseExpression()
+    |   ::left_paren:: Subselect() ::right_paren::
+
+#ArgumentsList:
+    Argument() (::comma:: Argument())*
+
+#ExtractField:
+    <year> | <month> | <day> | <hour> | <minute> | <second>
+
+#ExtractExpression:
+    <extract> ::left_paren:: ExtractField() <from> ArithmeticExpression() ::right_paren::
+
+// FunctionName accepts identifiers and keywords commonly used as function names
+#FunctionName:
+        Identifier()
+    |   <nvl> | <nvl2> | <coalesce>
+    |   <trim> | <ltrim> | <rtrim> | <replace>
+    |   <substr> | <substring> | <position> | <left> | <right>
+    |   <date> | <time> | <timestamp> | <year> | <month> | <day> | <hour> | <minute> | <second>
+    |   <user> | <type> | <values>
+
+#FunctionCall:
+        CastExpression()
+    |   ExtractExpression()
+    |   FunctionName() ::left_paren:: (<distinct>? ArgumentsList() | ::op_mul::)? ::right_paren::
+
+// =============================================================================
+// ARITHMETIC EXPRESSIONS
+// =============================================================================
+
+#ArithmeticPrimary:
+        Literal()
+    |   Parameter()
+    |   CaseExpression()
+    |   AggregateExpression()
+    |   FunctionCall()
+    |   ColumnIdentifier()
+    |   ::left_paren:: (SimpleArithmeticExpression() | Subselect()) ::right_paren::
+
+#ArithmeticFactor:
+    (<op_plus>| <op_minus> | <op_tilde> | <not>)? ArithmeticPrimary()
+
+#ArithmeticTerm:
+    ArithmeticFactor() ((<op_mul> | <op_div> | <op_mod> | <op_intdiv> | BitwiseOperator()) ArithmeticFactor())*
+
+#SimpleArithmeticExpression:
+    ArithmeticTerm() ((<op_plus> | <op_minus> | <op_concat> | BitwiseOperator()) ArithmeticTerm())*
+
+#ArithmeticExpression:
+    SimpleArithmeticExpression()
+
+// =============================================================================
+// CONDITIONAL EXPRESSIONS
+// =============================================================================
+
+#QuantifiedExpression:
+    (<all> | <any> | <some>) ::left_paren:: Subselect() ::right_paren::
+
+#ComparisonExpression:
+    ArithmeticExpression() ComparisonOperator() ( QuantifiedExpression() | ArithmeticExpression() )
+
+#BetweenExpression:
+    ArithmeticExpression() <not>? <between> ArithmeticExpression() <and> ArithmeticExpression()
+
+#LikeExpression:
+    StringExpression() <not>? (<like> | <ilike> | <glob> | <regexp> | <rlike> | <match> | (<similar> <to>)) StringExpression() (<escape> StringExpression())?
+
+#InExpression:
+        ColumnIdentifier() <not>? <in> ::left_paren:: (Subselect() | Literal() (::comma:: Literal())*) ::right_paren::
+    |   ColumnIdentifier() <not>? <in> ::left_paren:: Parameter() ::right_paren::
+
+#ExistsExpression:
+    <exists> ::left_paren:: Subselect() ::right_paren::
+
+#NullComparisonExpression:
+    (FunctionCall() | ColumnIdentifier() | ArithmeticExpression()) <is> <not>? (<null> | <unknown>)
+
+#SimpleConditionalExpression:
+        ExistsExpression()
+    |   ArithmeticExpression() (
+            ComparisonOperator() ( QuantifiedExpression() | ArithmeticExpression() )
+        |   <not>? <between> ArithmeticExpression() <and> ArithmeticExpression()
+        |   <not>? <like> ArithmeticExpression() (<escape> ArithmeticExpression())?
+        |   <is> <not>? (<null> | <unknown>)
+        )
+    |   ColumnIdentifier() <not>? <in> ::left_paren:: (Subselect() | Literal() (::comma:: Literal())* | Parameter()) ::right_paren::
+    |   boolean()
+
+#ConditionalPrimary:
+    SimpleConditionalExpression() | ::left_paren:: ConditionalExpression() ::right_paren::
+
+#ConditionalFactor:
+    <not>? ConditionalPrimary()
+
+#ConditionalTerm:
+    ConditionalFactor() (<and> ConditionalFactor())*
+
+#ConditionalExpression:
+    ConditionalTerm() ((<or> | <xor>) ConditionalTerm())*
+
+// =============================================================================
+// CASE EXPRESSIONS
+// =============================================================================
+
+#GeneralCaseExpression:
+    <case> CaseWhenClause()+ (<else> ScalarExpression())? <end>
+
+#CaseWhenClause:
+    <when> ConditionalExpression() <then> ScalarExpression()
+
+#SimpleCaseExpression:
+    <case> CaseOperand() CaseSimpleWhenClause()+ (<else> ScalarExpression())? <end>
+
+#CaseOperand:
+    ColumnIdentifier() | ArithmeticExpression()
+
+#CaseSimpleWhenClause:
+    <when> ScalarExpression() <then> ScalarExpression()
+
+#CaseExpression:
+    GeneralCaseExpression() | SimpleCaseExpression()
+
+// =============================================================================
+// CAST EXPRESSION
+// =============================================================================
+
+#DataType:
+        <int> | <integer> | <smallint> | <bigint> | <tinyint> | <mediumint>
+    |   <number> | <decimal> | <numeric> | <float> | <real> | <double> (<precision>)?
+    |   <money> | <smallmoney>
+    |   <char> | <varchar> | <varchar2> | <nchar> | <nvarchar>
+    |   <text> | <tinytext> | <mediumtext> | <longtext> | <clob> | <nclob> | <ntext>
+    |   <blob> | <tinyblob> | <mediumblob> | <longblob> | <bytea> | <varbinary> | <image>
+    |   <date> | <time> | <datetime> | <datetime2> | <timestamp> | <timestamptz> | <year>
+    |   <boolean> | <bool> | <bit>
+    |   <uuid> | <uniqueidentifier> | <guid>
+    |   <json> | <jsonb> | <xml>
+    |   <geometry> | <geography> | <point> | <linestring> | <polygon>
+    |   Identifier()
+
+#DataTypeWithSize:
+    DataType() (::left_paren:: number() (::comma:: number())? ::right_paren::)?
+
+#CastExpression:
+    (<cast> ::left_paren:: ArithmeticExpression() <as> DataTypeWithSize() ::right_paren::)
+    | (<convert> ::left_paren:: DataTypeWithSize() ::comma:: ArithmeticExpression() (::comma:: number())? ::right_paren::)
+    | (<try_cast> ::left_paren:: ArithmeticExpression() <as> DataTypeWithSize() ::right_paren::)
+    | (<try_convert> ::left_paren:: DataTypeWithSize() ::comma:: ArithmeticExpression() ::right_paren::)
+
+// =============================================================================
+// OTHER EXPRESSIONS
+// =============================================================================
+
+#StringExpression:
+    ColumnIdentifier() | FunctionCall() | Parameter()
+
+#ScalarExpression:
+        SimpleArithmeticExpression()
+    |   ColumnIdentifier()
+    |   string()
+    |   FunctionCall()
+    |   boolean()
+    |   CaseExpression()
+    |   Literal()
+    |   Parameter()
+
+// =============================================================================
+// WINDOW FUNCTIONS
+// =============================================================================
+
+#PartitionByClause:
+    <partition> <by> ScalarExpression() (::comma:: ScalarExpression())*
+
+#WindowFrameUnits:
+    <rows> | <range> | <groups>
+
+#WindowFrameBound:
+        <unbounded> <preceding>
+    |   number() <preceding>
+    |   <current> <row>
+    |   number() <following>
+    |   <unbounded> <following>
+
+#WindowFrameExclusion:
+    <exclude> (<current> <row> | <group> | <ties> | <no> <others>)
+
+#WindowFrameClause:
+    WindowFrameUnits() (WindowFrameBound() | (<between> WindowFrameBound() <and> WindowFrameBound())) WindowFrameExclusion()?
+
+#WindowSpecification:
+    ::left_paren:: PartitionByClause()? OrderByClause()? WindowFrameClause()? ::right_paren::
+
+#WindowFunctionCall:
+    (AggregateFunction() | WindowFunction()) ::left_paren:: ArgumentsList()? ::right_paren:: <over> WindowSpecification()
+
+// =============================================================================
+// AGGREGATE EXPRESSIONS
+// =============================================================================
+
+#AggregateExpression:
+        AggregateFunction() ::left_paren:: (<distinct> | <all>)? (ArgumentsList() | ::op_mul::) ::right_paren:: WithinGroupClause()?
+    |   WindowFunctionCall()
+
+#WithinGroupClause:
+    <within> <group> ::left_paren:: OrderByClause() ::right_paren::
+
+// =============================================================================
+// SELECT EXPRESSIONS
+// =============================================================================
+
+#SelectExpression:
+        (AggregateExpression() | ScalarExpression() | WindowFunctionCall() | ::op_mul::) ColumnAlias()?
+    |   QualifiedTableName() ::period:: ::op_mul::
+
+// =============================================================================
+// CLAUSES
+// =============================================================================
+
+#SelectClause:
+    <select> (<all> | <distinct>)? (<top> number() <percent>? (<with> <ties>)?)? SelectExpression() (::comma:: SelectExpression())*
+
+#FromClause:
+    <from> TableIdentifier() (::comma:: TableIdentifier())*
+
+#WhereClause:
+    <where> ConditionalExpression()
+
+#OrderByItem:
+    (SimpleArithmeticExpression() | ScalarExpression() | FunctionCall() | number()) (<asc> | <desc>)? (<nulls> (<first> | <last>))?
+
+#OrderByClause:
+    <order> <by> OrderByItem() (::comma:: OrderByItem())*
+
+#GroupByItem:
+    ColumnIdentifier() | SimpleArithmeticExpression() | number()
+
+#GroupByClause:
+    <group> <by> GroupByItem() (::comma:: GroupByItem())* (<with> <rollback>)?
+
+#HavingClause:
+    <having> ConditionalExpression()
+
+#LimitClause:
+        <limit> number() (<offset> number())?
+    |   <limit> number() ::comma:: number()
+    |   <offset> number() <rows>? (<fetch> (<first> | <next>) number() <rows> <only>)?
+    |   <top> number() <percent>?
+
+#ForUpdateClause:
+    <for> <update> (<of> ColumnIdentifier() (::comma:: ColumnIdentifier())*)? (<nowait> | <skip_kw> <locked> | <wait> number())?
+
+// =============================================================================
+// CTE (Common Table Expressions)
+// =============================================================================
+
+#CteQuery:
+    Identifier() (::left_paren:: Identifier() (::comma:: Identifier())* ::right_paren::)? <as> ::left_paren:: SelectQuery() ::right_paren::
+
+#WithClause:
+    <with> <recursive>? CteQuery() (::comma:: CteQuery())*
+
+// =============================================================================
+// SELECT QUERY
+// =============================================================================
+
+#ConnectByClause:
+    <connect> <by> <nocycle>? ConditionalExpression() (<start> <with> ConditionalExpression())?
+
+#SimpleSelectQuery:
+    SelectClause() FromClause()? WhereClause()? ConnectByClause()? GroupByClause()? HavingClause()? OrderByClause()? LimitClause()? ForUpdateClause()?
+
+#Subselect:
+    SimpleSelectQuery()
+
+#SetOperator:
+    (<union> | <intersect> | <except> | <minus>) <all>?
+
+#SelectQuery:
+        WithClause()? SimpleSelectQuery() (SetOperator() SimpleSelectQuery())*
+    |   ::left_paren:: SelectQuery() ::right_paren::
+
+// =============================================================================
+// INSERT QUERY
+// =============================================================================
+
+#InsertColumnsClause:
+    ::left_paren:: Identifier() (::comma:: Identifier())* ::right_paren::
+
+#InsertValue:
+    Literal() | Parameter() | ArithmeticExpression() | <default> | <null>
+
+#InsertValuesRow:
+    ::left_paren:: InsertValue() (::comma:: InsertValue())* ::right_paren::
+
+#InsertValuesClause:
+    <values> InsertValuesRow() (::comma:: InsertValuesRow())*
+
+#InsertSelectClause:
+    SelectQuery()
+
+#OnDuplicateKeyClause:
+    <on> <duplicate> <key> <update> UpdateItem() (::comma:: UpdateItem())*
+
+#OnConflictClause:
+    <on> <conflict> (::left_paren:: Identifier() (::comma:: Identifier())* ::right_paren::)? <do> (<nothing> | <update> <set> UpdateItem() (::comma:: UpdateItem())* (<where> ConditionalExpression())?)
+
+#ReturningClause:
+    <returning> SelectExpression() (::comma:: SelectExpression())*
+
+#InsertQuery:
+    (<insert> | <replace>) (<ignore> | <or> (<replace> | <ignore> | <rollback> | <abort> | <fail>))? <into> QualifiedTableName() InsertColumnsClause()? (InsertValuesClause() | InsertSelectClause()) (OnDuplicateKeyClause() | OnConflictClause())? ReturningClause()?
+
+// =============================================================================
+// UPDATE QUERY
+// =============================================================================
+
+#UpdateItem:
+    ColumnIdentifier() ::op_eq:: (ArithmeticExpression() | <null> | <default> | Parameter())
+
+#UpdateClause:
+    <update> (<ignore> | <or> (<replace> | <ignore> | <rollback> | <abort> | <fail>))? TableIdentifier() <set> UpdateItem() (::comma:: UpdateItem())*
+
+#UpdateQuery:
+    UpdateClause() WhereClause()? OrderByClause()? LimitClause()? ReturningClause()?
+
+// =============================================================================
+// DELETE QUERY
+// =============================================================================
+
+#DeleteClause:
+    <delete> <from> TableIdentifier()
+
+#DeleteQuery:
+    DeleteClause() WhereClause()? OrderByClause()? LimitClause()? ReturningClause()?
+
+// =============================================================================
+// MAIN QUERY
+// =============================================================================
+
+#Query:
+        SelectQuery()
+    |   InsertQuery()
+    |   UpdateQuery()
+    |   DeleteQuery()
+
+#QueryList:
+    Query() (::semicolon:: Query())*

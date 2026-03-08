@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GenericDatabase\Helpers\Parsers\SQL;
+namespace GenericDatabase\Helpers\Parsers\SQL\FlatFile;
 
 /**
  * Parser helpers for FlatFiles: split SELECT by UNION/UNION ALL and extract EXISTS from WHERE.
@@ -10,7 +10,7 @@ namespace GenericDatabase\Helpers\Parsers\SQL;
  *
  * @package GenericDatabase\Helpers\Parsers\SQL
  */
-final class FlatFileSelectParser
+final class SelectParser
 {
     /**
      * Split a compound SELECT (with UNION / UNION ALL) into segments and return trailing ORDER BY/LIMIT.
@@ -155,10 +155,11 @@ final class FlatFileSelectParser
         $pos = 0;
         $len = strlen($whereClause);
         while ($pos < $len) {
-            if (preg_match('/\b(NOT\s+)?EXISTS\s*\(\s*/i', substr($whereClause, $pos), $m)) {
-                $negate = isset($m[1]) && trim($m[1]) === 'NOT';
-                $pos += strlen($m[0]);
-                $open = $pos - 1;
+            if (preg_match('/\b(NOT\s+)?EXISTS\s*\(\s*/i', substr($whereClause, $pos), $m, PREG_OFFSET_CAPTURE)) {
+                $matchOffset = $m[0][1];
+                $negate = isset($m[1]) && trim($m[1][0]) === 'NOT';
+                // Advance past the characters before the match AND the match itself
+                $pos += $matchOffset + strlen($m[0][0]);
                 $depth = 1;
                 $start = $pos;
                 while ($pos < $len && $depth > 0) {
@@ -273,9 +274,13 @@ final class FlatFileSelectParser
         $i = 0;
         $result = '';
         while ($i < $len) {
-            if (preg_match('/\b(NOT\s+)?EXISTS\s*\(\s*/i', substr($whereClause, $i), $m)) {
+            if (preg_match('/\b(NOT\s+)?EXISTS\s*\(\s*/i', substr($whereClause, $i), $m, PREG_OFFSET_CAPTURE)) {
+                $matchOffset = (int)$m[0][1];
+                // Copy characters before the match
+                $result .= substr($whereClause, $i, $matchOffset);
                 $result .= '1=1';
-                $i += strlen($m[0]);
+                // Advance past pre-match chars + the match itself
+                $i += $matchOffset + strlen($m[0][0]);
                 $depth = 1;
                 while ($i < $len && $depth > 0) {
                     $c = $whereClause[$i];

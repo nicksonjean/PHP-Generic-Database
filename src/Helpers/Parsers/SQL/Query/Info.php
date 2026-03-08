@@ -26,8 +26,7 @@ class Info
         public readonly bool $hasSubquery,
         public readonly array $operations,
         public readonly array $tables
-    ) {
-    }
+    ) {}
 
     /**
      * Check if this is a SELECT query.

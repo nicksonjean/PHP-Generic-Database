@@ -404,8 +404,9 @@ WORKDIR /var/www/html
 RUN \
   chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 
-# Copy composer.json
+# Copy composer.json and patches
 COPY ./composer.json /var/www/html/composer.json
+COPY ./patches /var/www/html/patches
 
 # Copy environment variables
 COPY ./.env.docker /var/www/html/.env

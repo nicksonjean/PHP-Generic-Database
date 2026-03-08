@@ -1,0 +1,50 @@
+--- a/Buffer.php
++++ b/Buffer.php
+@@ -103,6 +103,7 @@
+      *
+      * @return  \Iterator
+      */
++    #[ReturnTypeWillChange]
+     public function getInnerIterator()
+     {
+         return $this->_iterator;
+@@ -133,6 +134,7 @@
+      *
+      * @return  mixed
+      */
++    #[ReturnTypeWillChange]
+     public function current()
+     {
+         return $this->getBuffer()->current()[self::BUFFER_VALUE];
+@@ -143,6 +145,7 @@
+      *
+      * @return  mixed
+      */
++    #[ReturnTypeWillChange]
+     public function key()
+     {
+         return $this->getBuffer()->current()[self::BUFFER_KEY];
+@@ -153,6 +156,7 @@
+      *
+      * @return  void
+      */
++    #[ReturnTypeWillChange]
+     public function next()
+     {
+         $innerIterator = $this->getInnerIterator();
+@@ -204,6 +208,7 @@
+      *
+      * @return  void
+      */
++    #[ReturnTypeWillChange]
+     public function rewind()
+     {
+         $innerIterator = $this->getInnerIterator();
+@@ -228,6 +233,7 @@
+      *
+      * @return  bool
+      */
++    #[ReturnTypeWillChange]
+     public function valid()
+     {
+         return

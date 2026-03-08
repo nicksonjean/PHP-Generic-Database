@@ -7,23 +7,25 @@ namespace GenericDatabase\Engine;
 use Exception;
 use ReflectionException;
 use AllowDynamicProperties;
+use Dotenv\Exception\ValidationException;
 use GenericDatabase\Shared\Singleton;
 use GenericDatabase\Helpers\Exceptions;
-use Dotenv\Exception\ValidationException;
-use GenericDatabase\Interfaces\IConnection;
 use GenericDatabase\Helpers\Zod\SchemaParser;
 use GenericDatabase\Helpers\Zod\Zod\ZodError;
-use GenericDatabase\Generic\Connection\Methods;
-use GenericDatabase\Interfaces\Connection\IDSN;
 use GenericDatabase\Helpers\Zod\SchemaValidator;
+use GenericDatabase\Helpers\Parsers\SQL\Query\TypeDetector;
+use GenericDatabase\Generic\Connection\Methods;
+use GenericDatabase\Interfaces\IConnection;
+use GenericDatabase\Interfaces\Connection\IDSN;
+use GenericDatabase\Interfaces\Connection\IReport;
 use GenericDatabase\Interfaces\Connection\IOptions;
-use GenericDatabase\Engine\JSON\Connection\JSON;
 use GenericDatabase\Interfaces\Connection\IArguments;
+use GenericDatabase\Interfaces\Connection\IStructure;
 use GenericDatabase\Interfaces\Connection\IAttributes;
+use GenericDatabase\Interfaces\Connection\ITransactions;
 use GenericDatabase\Interfaces\Connection\IFlatFileFetch;
 use GenericDatabase\Interfaces\Connection\IFlatFileStatements;
-use GenericDatabase\Helpers\Parsers\SQL\Query\TypeDetector;
-use GenericDatabase\Interfaces\Connection\ITransactions;
+use GenericDatabase\Engine\JSON\Connection\JSON;
 use GenericDatabase\Engine\JSON\Connection\DSN\DSNHandler;
 use GenericDatabase\Engine\JSON\Connection\Fetch\FetchHandler;
 use GenericDatabase\Engine\JSON\Connection\Report\ReportHandler;
@@ -34,10 +36,8 @@ use GenericDatabase\Engine\JSON\Connection\Fetch\Strategy\FetchStrategy;
 use GenericDatabase\Engine\JSON\Connection\Statements\StatementsHandler;
 use GenericDatabase\Engine\JSON\Connection\Transactions\TransactionsHandler;
 use GenericDatabase\Engine\JSON\Connection\Arguments\Strategy\ArgumentsStrategy;
-use GenericDatabase\Interfaces\Connection\IStructure;
 use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
 use GenericDatabase\Engine\JSON\Connection\Structure\Strategy\StructureStrategy;
-use GenericDatabase\Interfaces\Connection\IReport;
 
 /**
  * JSON Connection class for flat file database operations.
@@ -57,6 +57,8 @@ use GenericDatabase\Interfaces\Connection\IReport;
  * @method static JSONConnection|string getDatabase($value = null) Retrieves a database name from the database.
  * @method static JSONConnection|void setOptions(mixed $value) Sets an options from the database.
  * @method static JSONConnection|array|null getOptions($value = null) Retrieves an options from the database.
+ * @method static JSONConnection|void setStrcture(mixed $value) Sets an structure from the database.
+ * @method static JSONConnection|array|null getStructure($value = null) Retrieves an structure from the database.*
  * @method static JSONConnection|static setConnected(mixed $value) Sets a connected status from the database.
  * @method static JSONConnection|mixed getConnected($value = null) Retrieves a connected status from the database.
  * @method static JSONConnection|void setDsn(mixed $value) Sets a dsn string from the database.
@@ -221,30 +223,27 @@ class JSONConnection implements IConnection
     private function realConnect(string $database): JSONConnection
     {
         try {
-            $schemaJson = __DIR__ . '/JSON/Connection/JSON.json';
-            $schemaParser = new SchemaParser($schemaJson);
-            $validJson = $schemaParser->parse([
+            $schemaFile = __DIR__ . '/JSON/Connection/JSON.json';
+            $schemaParsed = (new SchemaParser($schemaFile))->parse([
                 'database' => $database,
                 'charset' => static::getCharset() ?? 'UTF-8'
             ]);
-            $validator = new SchemaValidator($schemaJson);
+            $validator = new SchemaValidator($schemaFile);
 
-            if ($validator->validate($validJson)) {
+            if ($validator->validate($schemaParsed)) {
                 $isMemory = $database === 'memory';
 
                 if (!$isMemory) {
-                    $resolvedPath = $database;
-                    if (!is_dir($database)) {
-                        $projectRoot = defined('PATH_ROOT') ? constant('PATH_ROOT') : getcwd();
-                        $potentialPath = realpath($projectRoot . DIRECTORY_SEPARATOR . $database);
+                    if (!is_dir(filename: $database)) {
+                        $realDatabase = realpath(path: defined(constant_name: 'PATH_ROOT') ? constant(name: 'PATH_ROOT') : getcwd() . DIRECTORY_SEPARATOR . $database);
 
-                        if ($potentialPath !== false && is_dir($potentialPath)) {
-                            $resolvedPath = $potentialPath;
-                            static::setDatabase($resolvedPath);
-                        } else {
-                            throw new Exceptions("Database path " . $database . " directory does not exists: ");
-                        }
+                        ($realDatabase === false || !is_dir($realDatabase))
+                            && throw new Exceptions(message: "Database path " . $database . " directory does not exists: ");
+
+                        static::setDatabase($realDatabase);
                     }
+                } else {
+                    static::setDatabase($database);
                 }
 
                 self::$connection = $this->getStructureHandler()->getData();
@@ -279,9 +278,7 @@ class JSONConnection implements IConnection
             $this
                 ->preConnect()
                 ->getInstance()
-                ->realConnect(
-                    static::getDatabase()
-                )
+                ->realConnect(static::getDatabase())
                 ->postConnect()
                 ->setConnected(true);
             return $this;

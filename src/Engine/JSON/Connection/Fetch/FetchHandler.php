@@ -13,7 +13,7 @@ use GenericDatabase\Engine\JSON\Connection\JSON;
 use GenericDatabase\Engine\JSON\QueryBuilder\Regex;
 use GenericDatabase\Generic\FlatFiles\DataProcessor;
 use GenericDatabase\Helpers\Parsers\Schema;
-use GenericDatabase\Helpers\Parsers\SQL\FlatFileSelectParser;
+use GenericDatabase\Helpers\Parsers\SQL\FlatFile\SelectParser;
 use GenericDatabase\Engine\JSON\Connection\Structure\StructureHandler;
 
 /**
@@ -77,23 +77,21 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
             // Unquote identifiers so UNION split and ORDER BY/LIMIT suffix match column names (StatementsHandler stores query with Parse::escape double quotes)
             $queryForParsing = $this->unquoteIdentifiers($processedQuery);
 
-            // UNION / UNION ALL: use regex fallback first when query contains UNION (guarantees both SELECTs run, SQLite behavior)
+            // UNION / UNION ALL: use proper parser first (handles N segments, balanced parens); fallback for edge cases
             $segments = [];
             $unionTypes = [];
             $orderByLimitSuffix = '';
-            if (preg_match('/\s+UNION\s+/i', $queryForParsing)) {
+            $unionParsed = SelectParser::splitUnionSegments($queryForParsing);
+            $segments = $unionParsed['segments'];
+            $unionTypes = $unionParsed['types'];
+            $orderByLimitSuffix = $unionParsed['order_by_limit_suffix'];
+            if (count($segments) < 2 && preg_match('/\s+UNION\s+/i', $queryForParsing)) {
                 $fallback = $this->splitUnionFallback($queryForParsing);
                 if ($fallback !== null && count($fallback['segments']) >= 2) {
                     $segments = $fallback['segments'];
                     $unionTypes = $fallback['types'];
                     $orderByLimitSuffix = $fallback['order_by_limit_suffix'];
                 }
-            }
-            if (count($segments) < 2) {
-                $unionParsed = FlatFileSelectParser::splitUnionSegments($queryForParsing);
-                $segments = $unionParsed['segments'];
-                $unionTypes = $unionParsed['types'];
-                $orderByLimitSuffix = $unionParsed['order_by_limit_suffix'];
             }
 
             if (count($segments) > 1) {
@@ -118,11 +116,16 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                 $result = $merged;
                 if ($orderByLimitSuffix !== '') {
                     $suffixOut = [
-                        'where' => null, 'group_by' => [], 'having' => null,
-                        'order_by_col' => null, 'order_by_dir' => 'ASC', 'limit' => null, 'offset' => null,
+                        'where' => null,
+                        'group_by' => [],
+                        'having' => null,
+                        'order_by_col' => null,
+                        'order_by_dir' => 'ASC',
+                        'limit' => null,
+                        'offset' => null,
                     ];
                     $this->extractWhereGroupHavingOrderLimit($orderByLimitSuffix, $suffixOut);
-                    $orderCol = $suffixOut['order_by_col'] !== null ? trim($suffixOut['order_by_col']) : null;
+                    $orderCol = $suffixOut['order_by_col'] !== null ? trim((string) $suffixOut['order_by_col']) : null;
                     if ($orderCol === '' || $orderCol === null) {
                         if (preg_match('/ORDER\s+BY\s+(\w+)(?:\s+(ASC|DESC))?/i', $orderByLimitSuffix, $om)) {
                             $orderCol = trim($om[1]);
@@ -382,10 +385,10 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         $processor = new DataProcessor($data);
 
         $existsConditions = ($whereClause !== null && $whereClause !== '')
-            ? FlatFileSelectParser::extractExistsConditions($whereClause)
+            ? SelectParser::extractExistsConditions($whereClause)
             : [];
         $whereWithoutExists = ($whereClause !== null && $whereClause !== '')
-            ? FlatFileSelectParser::stripExistsFromWhere($whereClause)
+            ? SelectParser::stripExistsFromWhere($whereClause)
             : '';
         $whereForNormal = trim($whereWithoutExists);
         if ($whereForNormal === '' || $whereForNormal === '1=1') {
@@ -467,7 +470,13 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
                 }
             } else {
                 if ($orderByCol !== null) {
-                    $processor->orderBy($orderByCol, $orderDir === 'DESC' ? DataProcessor::DESC : DataProcessor::ASC);
+                    $col = $orderByCol;
+                    if (ctype_digit($col) && !empty($data)) {
+                        $idx = (int) $col - 1;
+                        $keys = array_keys((array) reset($data));
+                        $col = $keys[$idx] ?? $col;
+                    }
+                    $processor->orderBy($col, $orderDir === 'DESC' ? DataProcessor::DESC : DataProcessor::ASC);
                 }
                 if ($limit !== null) {
                     $processor->limit((int) $limit, (int) ($offset ?? 0));
@@ -729,19 +738,19 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
         $limit = null;
         $offset = null;
 
-        if (preg_match('/\bWHERE\s+(.+?)(?=\s+GROUP\s+BY|\s+ORDER\s+BY|\s+LIMIT|$)/is', $s, $m)) {
+        if (preg_match('/\bWHERE\s+(.+?)(?=\s+GROUP\s+BY|\s+ORDER\s+BY|\s+LIMIT|\s+ROWS|$)/is', $s, $m)) {
             $where = trim($m[1]);
         }
-        if (preg_match('/\bGROUP\s+BY\s+(.+?)(?=\s+HAVING|\s+ORDER\s+BY|\s+LIMIT|$)/is', $s, $m)) {
+        if (preg_match('/\bGROUP\s+BY\s+(.+?)(?=\s+HAVING|\s+ORDER\s+BY|\s+LIMIT|\s+ROWS|$)/is', $s, $m)) {
             $groupBy = array_map('trim', explode(',', trim($m[1])));
         }
-        if (preg_match('/\bHAVING\s+(.+?)(?=\s+ORDER\s+BY|\s+LIMIT|$)/is', $s, $m)) {
+        if (preg_match('/\bHAVING\s+(.+?)(?=\s+ORDER\s+BY|\s+LIMIT|\s+ROWS|$)/is', $s, $m)) {
             $hav = trim($m[1]);
             if (preg_match('/^(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(?:\w+\.)?(\w+|\*)\s*\)\s*(>=|<=|!=|<>|>|<|=)\s*(\d+\.?\d*)\s*$/i', $hav, $hm)) {
                 $having = ['agg' => strtoupper($hm[1]), 'op' => $hm[3], 'val' => strpos((string) $hm[4], '.') !== false ? (float) $hm[4] : (int) $hm[4]];
             }
         }
-        if (preg_match('/\bORDER\s+BY\s+(.+?)(?=\s+LIMIT|$)/is', $s, $m)) {
+        if (preg_match('/\bORDER\s+BY\s+(.+?)(?=\s+LIMIT|\s+ROWS|$)/is', $s, $m)) {
             $ob = trim($m[1]);
             if (preg_match('/^(.+?)\s+(ASC|DESC)\s*$/i', $ob, $om)) {
                 $orderCol = trim($om[1]);
@@ -760,6 +769,8 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
             } else {
                 $limit = (int) $m[1];
             }
+        } elseif (preg_match('/\bROWS\s+(\d+)\s*$/i', $s, $m)) {
+            $limit = (int) $m[1];
         }
 
         $out['where'] = $where;
@@ -1042,6 +1053,12 @@ class FetchHandler extends AbstractFlatFileFetch implements IFlatFileFetch
 
     private function applyOrderBy(array $data, string $column, bool $desc): array
     {
+        // Resolve ordinal (e.g. ORDER BY 1 → first column name)
+        if (ctype_digit($column) && !empty($data)) {
+            $idx = (int) $column - 1;
+            $keys = array_keys((array) reset($data));
+            $column = $keys[$idx] ?? $column;
+        }
         $resolve = function (array $row, string $col) {
             if (array_key_exists($col, $row)) {
                 return $row[$col];

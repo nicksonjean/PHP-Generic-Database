@@ -1,6 +1,6 @@
-# Análise: Integração do php-sql-parser (SqlQueryAnalyzer) no PHP-Generic-Database
+# Análise: Integração a Analyser no PHP-Generic-Database
 
-**Objetivo:** Avaliar a utilidade e os benefícios de integrar a biblioteca `php-sql-parser` (classe `SqlQueryAnalyzer`) no projeto PHP-Generic-Database, especificamente nos métodos `query()` e `prepare()` da classe `Connection` e no `QueryBuilder`.
+**Objetivo:** Avaliar a utilidade e os benefícios de integrar a classe `Analyser` no projeto PHP-Generic-Database, especificamente nos métodos `query()` e `prepare()` da classe `Connection` e no `QueryBuilder`.
 
 **Última atualização:** 2025-02-16
 
@@ -23,16 +23,22 @@ A biblioteca `php-sql-parser` oferece **validação e análise baseada em AST** 
 ### 2.1 Arquitetura
 
 ```
-php-sql-parser/
-├── lexic/
-│   ├── sql_lexic.g4      # Gramática SQL (ANTLR-like, Hoa Compiler)
-│   └── sql_light.g4      # Gramática simplificada
-├── src/
-│   ├── SqlQueryAnalyzer.php   # Classe principal de análise
-│   └── ParserSQL.php          # Script de demonstração
-├── vendor/
-│   └── hoa/compiler/          # Hoa Compiler (parser LL(k))
-└── composer.json
+src/Helpers/Parsers/SQL/
+│
+├── resources/                           ← Arquivos de Dados (não-PHP)
+│   ├── SQL_Reserved_Words.lex           ← Arquivo de Léxico com as Palavras Reservadas
+│   └── SQL_Grammar_Syntax.hoa           ← Arquivo de Gramática/Sintaxe
+│
+├── Lexicon.php                          ← Wrapper Privado do Léxico
+├── Parse.php                            ← Classe com o Parse do Léxico para uso com Escape & Binding
+├── Analyser.php                         ← Classe Principal de Análise para uso com AST através Hoa Compiler (Parser LL(k))
+│
+├── FlatFile/                            ← Namespace Excluivo para arquivos Flat
+│   └── SelectParser.php                 ← Select SQL-Like para Arquivos Flat
+│
+└── Query/                               ← Camada de Análise de Queries
+    ├── Info.php                         ← Classe para Informações Dinâmicas das Queries
+    └── TypeDetector.php                 ← Classe para Detecção Rápida de Tipo de Query
 ```
 
 ### 2.2 Dependências
@@ -42,25 +48,25 @@ php-sql-parser/
 | `hiqdev/hoa-compiler` | ^1.0 | Compilador LL(k) para gramática G4 |
 | `marcocesarato/sqlparser` | ^0.2.106 | Parser SQL alternativo (se usado) |
 
-**Nota:** O projeto usa `Hoa\Compiler\Llk` para carregar e executar a gramática `sql_lexic.g4`. A gramática define tokens e regras de produção para SQL padrão.
+**Nota:** O projeto usa `Hoa\Compiler\Llk` para carregar e executar a gramática `src\Helpers\Parsers\SQL\resources\SQL_Grammar_Syntax.hoa`. A gramática define tokens e regras de produção para SQL padrão.
 
 ### 2.3 Fluxo de Parsing
 
 ```
 SQL String → Hoa Compiler (grammar) → AST (TreeNode)
                                           ↓
-                              SqlQueryAnalyzer($ast)
+                              Analyser($ast)
                                           ↓
                               Estrutura analisada + métodos de extração
 ```
 
 1. **Carregamento da gramática:** `Hoa\Compiler\Llk::load(new Hoa\File\Read(GRAMMAR_FILE))`
 2. **Parse:** `$compiler->parse($query, 'SelectQuery')` — retorna `TreeNode` (AST)
-3. **Análise:** `new SqlQueryAnalyzer($ast)` — percorre a árvore e extrai componentes
+3. **Análise:** `new Analyser($ast)` — percorre a árvore e extrai componentes
 
 ---
 
-## 3. Capacidades do SqlQueryAnalyzer
+## 3. Capacidades do Analyser
 
 ### 3.1 Extração de Componentes
 
@@ -87,7 +93,7 @@ SQL String → Hoa Compiler (grammar) → AST (TreeNode)
 
 ### 3.3 Suporte a Placeholders
 
-O `SqlQueryAnalyzer` reconhece nativamente (via gramática):
+O `Analyser` reconhece nativamente (via gramática):
 
 - `?` — posicional (question_param)
 - `:name` — nomeado (named_param)
@@ -99,14 +105,14 @@ O `SqlQueryAnalyzer` reconhece nativamente (via gramática):
 
 ### 3.4 Tipos de Query Suportados pela Gramática
 
-Conforme `sql_lexic.g4`:
+Conforme `src\Helpers\Parsers\SQL\resources\SQL_Grammar_Syntax.hoa`:
 
 - **SelectQuery** — SELECT, WITH (CTE), UNION/INTERSECT/EXCEPT, subqueries
 - **InsertQuery** — INSERT
 - **UpdateQuery** — UPDATE
 - **DeleteQuery** — DELETE
 
-O `SqlQueryAnalyzer` atual está focado em **SelectQuery** (conforme `ParserSQL.php` que usa `$compiler->parse($query, 'SelectQuery')`). INSERT/UPDATE/DELETE exigiriam extensão do analyzer.
+O `Analyser` atual está focado em **SelectQuery** (conforme `ParserSQL.php` que usa `$compiler->parse($query, 'SelectQuery')`). INSERT/UPDATE/DELETE exigiriam extensão do analyzer.
 
 ---
 
@@ -174,7 +180,7 @@ O `parse()` usa `Parse::escape()` para normalizar identificadores. O `parseParam
 | Benefício | Descrição |
 |-----------|-----------|
 | **Validação da saída** | Após `Builder::parse()` gerar o SQL, validar com o parser AST antes de executar. |
-| **Unificação de Criteria** | Em vez de regex por engine, `SqlQueryAnalyzer` poderia extrair tabelas, colunas, WHERE, etc. de uma query raw — útil para **queries puras** passadas ao QueryBuilder ou para análise. |
+| **Unificação de Criteria** | Em vez de regex por engine, `Analyser` poderia extrair tabelas, colunas, WHERE, etc. de uma query raw — útil para **queries puras** passadas ao QueryBuilder ou para análise. |
 | **Emitir SQL por dialeto** | `toSqlWithEscape()` permite gerar a mesma query com escape de identificadores adequado a cada engine. |
 
 ### 5.3 Casos de Uso Concretos
@@ -209,8 +215,8 @@ O `parse()` usa `Parse::escape()` para normalizar identificadores. O `parseParam
 ### 6.3 Dependências e Manutenção
 
 - **Hoa Compiler:** Biblioteca externa; patches aplicados no projeto (cf. `apply-patches.py`) para compatibilidade.
-- **Gramática:** Manutenção da `sql_lexic.g4` para adicionar novos tokens ou regras.
-- **Namespace:** O projeto usa `PhpSqlParser\SqlQueryAnalyzer`; o composer.json referencia `kphoen/sql-parser` — pode haver divergência de versões.
+- **Gramática:** Manutenção da `src\Helpers\Parsers\SQL\resources\SQL_Grammar_Syntax.hoa` para adicionar novos tokens ou regras.
+- **Namespace:** O projeto usa `PhpSqlParser\Analyser`; o composer.json referencia `kphoen/sql-parser` — pode haver divergência de versões.
 
 ---
 
@@ -231,7 +237,7 @@ O `parse()` usa `Parse::escape()` para normalizar identificadores. O `parseParam
               │ NÃO                  │ SIM                  │
               ▼                     ▼                     │
     Parse::escape()          Parse::escape()              │
-    Parse::parseParameters() │ SqlQueryAnalyzer::parse()  │
+    Parse::parseParameters() │ Analyser::parse()  │
               │              │ (se falhar → fallback)     │
               │              │ getOrderedValues() para   │
               │              │ validar params            │
@@ -250,7 +256,7 @@ O `parse()` usa `Parse::escape()` para normalizar identificadores. O `parseParam
 | **Options/Connection** | Nova opção `ATTR_VALIDATE_SQL` ou `ATTR_SQL_ANALYZER` (bool). Se true, usar parser antes de query/prepare. |
 | **StatementsHandler::parse()** | Manter `Parse::escape()` como padrão. Opcionalmente, se `ATTR_SQL_ANALYZER` e query for SELECT, chamar parser para validação e usar `getOrderedValues()` para validar argumentos. |
 | **StatementsHandler::query()** | Se validação ativa e parser disponível, validar antes de `prepareStatement`. Em caso de falha de parse, logar e continuar com fluxo atual (não bloquear). |
-| **Helpers\Parsers\SQL** | Novo facade `SqlParserFacade` que encapsula: (a) Parse (regex) e (b) SqlQueryAnalyzer (AST). Escolhe com base em configuração e tipo de query. |
+| **Helpers\Parsers\SQL** | Novo facade `SqlParserFacade` que encapsula: (a) Parse (regex) e (b) Analyser (AST). Escolhe com base em configuração e tipo de query. |
 | **QueryBuilder** | Opcional: após `Builder::parse()` gerar SQL, se `ATTR_VALIDATE_SQL`, validar com parser. Útil em desenvolvimento. |
 
 ### 7.3 Exemplo de Uso (Configuração)
@@ -275,9 +281,9 @@ $connection->prepare('SELECT * FROM users WHERE id = :id', [':id' => 1]);
 
 ---
 
-## 8. Comparação: Parse (Regex) vs SqlQueryAnalyzer (AST)
+## 8. Comparação: Parse (Regex) vs Analyser (AST)
 
-| Critério | Parse (Regex) | SqlQueryAnalyzer (AST) |
+| Critério | Parse (Regex) | Analyser (AST) |
 |----------|---------------|-------------------------|
 | **Velocidade** | Rápido | Lento em queries complexas |
 | **Precisão** | Pode falhar em subqueries aninhadas, EXISTS | Alta — gramática define estrutura |
@@ -294,7 +300,7 @@ $connection->prepare('SELECT * FROM users WHERE id = :id', [':id' => 1]);
 
 ### 9.1 Conclusão
 
-Há **utilidade e benefício** em utilizar o `SqlQueryAnalyzer` no projeto, **desde que**:
+Há **utilidade e benefício** em utilizar o `Analyser` no projeto, **desde que**:
 
 1. A integração seja **opcional** e **configurável**.
 2. Haja **fallback** para o parser atual em caso de falha ou timeout.
@@ -305,7 +311,7 @@ Há **utilidade e benefício** em utilizar o `SqlQueryAnalyzer` no projeto, **de
 | Prioridade | Ação |
 |------------|------|
 | **Alta** | Implementar `ATTR_VALIDATE_SQL` ou similar como opção de conexão. |
-| **Alta** | Criar facade `SqlParserFacade` que escolhe entre Parse e SqlQueryAnalyzer conforme configuração. |
+| **Alta** | Criar facade `SqlParserFacade` que escolhe entre Parse e Analyser conforme configuração. |
 | **Média** | Integrar validação opcional em `prepare()` para verificar correspondência de parâmetros. |
 | **Média** | Documentar o uso do parser em modo debug/auditoria. |
 | **Baixa** | Avaliar uso no QueryBuilder para validação da saída (após build). |
@@ -348,7 +354,7 @@ Há **utilidade e benefício** em utilizar o `SqlQueryAnalyzer` no projeto, **de
         ▼                       │            ▼                       │
 ┌───────────────────┐           │    ┌───────────────────┐           │
 │ Parse (regex)      │           │    │ Hoa Compiler       │           │
-│ - escape()         │           │    │ + SqlQueryAnalyzer  │           │
+│ - escape()         │           │    │ + Analyser  │           │
 │ - parseParameters()│           │    │ - getOrderedValues()│          │
 └───────────────────┘           │    │ - toSqlWithEscape() │           │
         │                       │    └───────────────────┘           │
@@ -395,7 +401,7 @@ Há **utilidade e benefício** em utilizar o `SqlQueryAnalyzer` no projeto, **de
 
 ## 12. Referências
 
-- `php-sql-parser/src/SqlQueryAnalyzer.php` — Implementação do analyzer
+- `php-sql-parser/src/Analyser.php` — Implementação do analyzer
 - `php-sql-parser/src/ParserSQL.php` — Exemplo de uso
 - `php-sql-parser/lexic/sql_lexic.g4` — Gramática SQL
 - `src/Helpers/Parsers/SQL/Parse.php` — Parser atual
